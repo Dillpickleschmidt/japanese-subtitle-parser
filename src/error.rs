@@ -1,3 +1,4 @@
+use csv;
 use std::error::Error as StdError;
 use std::fmt;
 use std::result;
@@ -6,17 +7,18 @@ use std::result;
 pub enum Error {
     Io(std::io::Error),
     Database(rusqlite::Error),
+    Csv(csv::Error),
     NotFound(String),
     InvalidInput(String),
     Other(String),
 }
 
-// Implement the Display trait for the Error enum to format error messages consistently.
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Error::Io(err) => write!(f, "IO error: {}", err),
             Error::Database(err) => write!(f, "Database error: {}", err),
+            Error::Csv(err) => write!(f, "CSV error: {}", err),
             Error::NotFound(msg) => write!(f, "Not found: {}", msg),
             Error::InvalidInput(msg) => write!(f, "Invalid input: {}", msg),
             Error::Other(msg) => write!(f, "Error: {}", msg),
@@ -24,36 +26,37 @@ impl fmt::Display for Error {
     }
 }
 
-// Implement the Error trait for the Error enum to allow it to be used with the standard library's error
-// handling mechanisms.
 impl StdError for Error {
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match self {
             Error::Io(err) => Some(err),
             Error::Database(err) => Some(err),
+            Error::Csv(err) => Some(err),
             _ => None,
         }
     }
 }
 
-// Implement the From trait for the Error enum to allow automatic conversion from standard library errors
-// or third-party library errors into your custom Error type.
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Self {
         Error::Io(err)
     }
 }
+
 impl From<rusqlite::Error> for Error {
     fn from(err: rusqlite::Error) -> Self {
         Error::Database(err)
     }
 }
 
-// Define a type alias for the Result type that uses the custom Error type as the error variant to be used
-// throughout the application.
+impl From<csv::Error> for Error {
+    fn from(err: csv::Error) -> Self {
+        Error::Csv(err)
+    }
+}
+
 pub type Result<T> = result::Result<T, Error>;
 
-// Helper functions - These functions provide a convenient way to create specific error variants.
 impl Error {
     pub fn not_found(message: &str) -> Self {
         Error::NotFound(message.to_string())
@@ -84,6 +87,10 @@ mod tests {
         let io_err = io::Error::new(io::ErrorKind::NotFound, "file not found");
         let err = Error::Io(io_err);
         assert_eq!(err.to_string(), "IO error: file not found");
+
+        let csv_err = csv::Error::from(io::Error::new(io::ErrorKind::Other, "CSV error"));
+        let err = Error::Csv(csv_err);
+        assert_eq!(err.to_string(), "CSV error: CSV error");
     }
 
     #[test]
@@ -101,6 +108,10 @@ mod tests {
         );
         let err: Error = db_err.into();
         assert!(matches!(err, Error::Database(_)));
+
+        let csv_err = csv::Error::from(io::Error::new(io::ErrorKind::Other, "CSV error"));
+        let err: Error = csv_err.into();
+        assert!(matches!(err, Error::Csv(_)));
     }
 
     #[test]

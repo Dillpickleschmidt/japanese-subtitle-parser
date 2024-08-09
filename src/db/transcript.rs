@@ -1,9 +1,6 @@
-use crate::db::episode::Episode;
-use crate::db::DbHandler;
 use crate::error::Error;
-use rusqlite::params;
+use rusqlite::{params, Connection};
 
-/// Represents a transcript line in the database
 #[derive(Debug)]
 pub struct Transcript {
     pub id: Option<i64>,
@@ -15,7 +12,6 @@ pub struct Transcript {
 }
 
 impl Transcript {
-    /// Creates a new Transcript instance
     pub fn new(
         episode_id: i64,
         line_id: i32,
@@ -33,20 +29,16 @@ impl Transcript {
         }
     }
 
-    /// Inserts the transcript into the database
-    pub fn insert(&mut self, db: &DbHandler) -> Result<(), Error> {
-        let conn = db.get_connection();
+    pub fn insert(&mut self, conn: &Connection) -> Result<(), Error> {
         conn.execute(
-            "INSERT INTO transcripts (episode_id, line_id, time_start, time_end, text) VALUES (?1, ?2, ?3, ?4, ?5)",
+            "INSERT OR IGNORE INTO transcripts (episode_id, line_id, time_start, time_end, text) VALUES (?1, ?2, ?3, ?4, ?5)",
             params![self.episode_id, self.line_id, self.time_start, self.time_end, self.text],
         )?;
         self.id = Some(conn.last_insert_rowid());
         Ok(())
     }
 
-    /// Updates the transcript in the database
-    pub fn update(&self, db: &DbHandler) -> Result<(), Error> {
-        let conn = db.get_connection();
+    pub fn update(&self, conn: &Connection) -> Result<(), Error> {
         conn.execute(
             "UPDATE transcripts SET episode_id = ?1, line_id = ?2, time_start = ?3, time_end = ?4, text = ?5 WHERE id = ?6",
             params![self.episode_id, self.line_id, self.time_start, self.time_end, self.text, self.id],
@@ -54,16 +46,12 @@ impl Transcript {
         Ok(())
     }
 
-    /// Deletes the transcript from the database
-    pub fn delete(&self, db: &DbHandler) -> Result<(), Error> {
-        let conn = db.get_connection();
+    pub fn delete(&self, conn: &Connection) -> Result<(), Error> {
         conn.execute("DELETE FROM transcripts WHERE id = ?1", params![self.id])?;
         Ok(())
     }
 
-    /// Retrieves a transcript from the database by ID
-    pub fn get_by_id(db: &DbHandler, id: i64) -> Result<Transcript, Error> {
-        let conn = db.get_connection();
+    pub fn get_by_id(conn: &Connection, id: i64) -> Result<Transcript, Error> {
         let mut stmt = conn.prepare("SELECT id, episode_id, line_id, time_start, time_end, text FROM transcripts WHERE id = ?1")?;
         let transcript = stmt.query_row(params![id], |row| {
             Ok(Transcript {
@@ -78,9 +66,10 @@ impl Transcript {
         Ok(transcript)
     }
 
-    /// Retrieves all transcripts for a specific episode
-    pub fn get_all_for_episode(db: &DbHandler, episode_id: i64) -> Result<Vec<Transcript>, Error> {
-        let conn = db.get_connection();
+    pub fn get_all_for_episode(
+        conn: &Connection,
+        episode_id: i64,
+    ) -> Result<Vec<Transcript>, Error> {
         let mut stmt = conn.prepare("SELECT id, episode_id, line_id, time_start, time_end, text FROM transcripts WHERE episode_id = ?1 ORDER BY line_id")?;
         let transcripts_iter = stmt.query_map(params![episode_id], |row| {
             Ok(Transcript {
@@ -93,16 +82,12 @@ impl Transcript {
             })
         })?;
 
-        let mut transcripts = Vec::new();
-        for transcript in transcripts_iter {
-            transcripts.push(transcript?);
-        }
-        Ok(transcripts)
+        transcripts_iter
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(Error::from)
     }
 
-    /// Searches for transcripts by text content
-    pub fn search_by_text(db: &DbHandler, search_term: &str) -> Result<Vec<Transcript>, Error> {
-        let conn = db.get_connection();
+    pub fn search_by_text(conn: &Connection, search_term: &str) -> Result<Vec<Transcript>, Error> {
         let mut stmt = conn.prepare("SELECT id, episode_id, line_id, time_start, time_end, text FROM transcripts WHERE text LIKE ?1")?;
         let transcripts_iter = stmt.query_map(params![format!("%{}%", search_term)], |row| {
             Ok(Transcript {
@@ -115,26 +100,17 @@ impl Transcript {
             })
         })?;
 
-        let mut transcripts = Vec::new();
-        for transcript in transcripts_iter {
-            transcripts.push(transcript?);
-        }
-        Ok(transcripts)
+        transcripts_iter
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(Error::from)
     }
 
-    /// Gets the associated Episode for this Transcript
-    pub fn get_episode(&self, db: &DbHandler) -> Result<Episode, Error> {
-        Episode::get_by_id(db, self.episode_id)
-    }
-
-    /// Gets surrounding context for a transcript line
     pub fn get_context(
-        db: &DbHandler,
+        conn: &Connection,
         episode_id: i64,
         line_id: i32,
         context_lines: i32,
     ) -> Result<Vec<Transcript>, Error> {
-        let conn = db.get_connection();
         let mut stmt = conn.prepare(
             "SELECT id, episode_id, line_id, time_start, time_end, text 
              FROM transcripts 
@@ -158,11 +134,9 @@ impl Transcript {
                 })
             })?;
 
-        let mut transcripts = Vec::new();
-        for transcript in transcripts_iter {
-            transcripts.push(transcript?);
-        }
-        Ok(transcripts)
+        transcripts_iter
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(Error::from)
     }
 }
 
@@ -171,27 +145,66 @@ mod tests {
     use super::*;
     use crate::db::episode::Episode;
     use crate::db::show::Show;
+    use rusqlite::Connection;
     use tempfile::NamedTempFile;
 
-    fn create_test_db() -> (NamedTempFile, DbHandler) {
+    fn create_test_db() -> (NamedTempFile, Connection) {
         let file = NamedTempFile::new().unwrap();
-        let handler = DbHandler::new(file.path().to_str().unwrap()).unwrap();
-        handler.create_tables().unwrap();
-        (file, handler)
+        let conn = Connection::open(file.path()).unwrap();
+
+        // Create tables
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS shows (
+                id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
+                show_type TEXT NOT NULL
+            )",
+            [],
+        )
+        .unwrap();
+
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS episodes (
+                id INTEGER PRIMARY KEY,
+                show_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                season INTEGER NOT NULL,
+                episode_number INTEGER NOT NULL,
+                FOREIGN KEY (show_id) REFERENCES shows (id)
+            )",
+            [],
+        )
+        .unwrap();
+
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS transcripts (
+                id INTEGER PRIMARY KEY,
+                episode_id INTEGER NOT NULL,
+                line_id INTEGER NOT NULL,
+                time_start TEXT NOT NULL,
+                time_end TEXT NOT NULL,
+                text TEXT NOT NULL,
+                FOREIGN KEY (episode_id) REFERENCES episodes (id)
+            )",
+            [],
+        )
+        .unwrap();
+
+        (file, conn)
     }
 
-    fn create_test_show_and_episode(db: &DbHandler) -> Episode {
+    fn create_test_show_and_episode(conn: &Connection) -> Episode {
         let mut show = Show::new("Test Show".to_string(), "Anime".to_string());
-        show.insert(db).unwrap();
+        show.insert(conn).unwrap();
         let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
-        episode.insert(db).unwrap();
+        episode.insert(conn).unwrap();
         episode
     }
 
     #[test]
     fn test_insert_and_get_transcript() {
-        let (_file, db) = create_test_db();
-        let episode = create_test_show_and_episode(&db);
+        let (_file, conn) = create_test_db();
+        let episode = create_test_show_and_episode(&conn);
 
         let mut transcript = Transcript::new(
             episode.id.unwrap(),
@@ -200,19 +213,19 @@ mod tests {
             "00:00:05,000".to_string(),
             "Hello, world!".to_string(),
         );
-        transcript.insert(&db).unwrap();
+        transcript.insert(&conn).unwrap();
 
         assert!(transcript.id.is_some());
 
-        let retrieved_transcript = Transcript::get_by_id(&db, transcript.id.unwrap()).unwrap();
+        let retrieved_transcript = Transcript::get_by_id(&conn, transcript.id.unwrap()).unwrap();
         assert_eq!(retrieved_transcript.text, "Hello, world!");
         assert_eq!(retrieved_transcript.line_id, 1);
     }
 
     #[test]
     fn test_update_transcript() {
-        let (_file, db) = create_test_db();
-        let episode = create_test_show_and_episode(&db);
+        let (_file, conn) = create_test_db();
+        let episode = create_test_show_and_episode(&conn);
 
         let mut transcript = Transcript::new(
             episode.id.unwrap(),
@@ -221,19 +234,19 @@ mod tests {
             "00:00:05,000".to_string(),
             "Hello, world!".to_string(),
         );
-        transcript.insert(&db).unwrap();
+        transcript.insert(&conn).unwrap();
 
         transcript.text = "Updated text".to_string();
-        transcript.update(&db).unwrap();
+        transcript.update(&conn).unwrap();
 
-        let updated_transcript = Transcript::get_by_id(&db, transcript.id.unwrap()).unwrap();
+        let updated_transcript = Transcript::get_by_id(&conn, transcript.id.unwrap()).unwrap();
         assert_eq!(updated_transcript.text, "Updated text");
     }
 
     #[test]
     fn test_delete_transcript() {
-        let (_file, db) = create_test_db();
-        let episode = create_test_show_and_episode(&db);
+        let (_file, conn) = create_test_db();
+        let episode = create_test_show_and_episode(&conn);
 
         let mut transcript = Transcript::new(
             episode.id.unwrap(),
@@ -242,18 +255,18 @@ mod tests {
             "00:00:05,000".to_string(),
             "Hello, world!".to_string(),
         );
-        transcript.insert(&db).unwrap();
+        transcript.insert(&conn).unwrap();
 
-        transcript.delete(&db).unwrap();
+        transcript.delete(&conn).unwrap();
 
-        let result = Transcript::get_by_id(&db, transcript.id.unwrap());
+        let result = Transcript::get_by_id(&conn, transcript.id.unwrap());
         assert!(result.is_err());
     }
 
     #[test]
     fn test_get_all_for_episode() {
-        let (_file, db) = create_test_db();
-        let episode = create_test_show_and_episode(&db);
+        let (_file, conn) = create_test_db();
+        let episode = create_test_show_and_episode(&conn);
 
         let transcripts = vec![
             Transcript::new(
@@ -280,11 +293,11 @@ mod tests {
         ];
 
         for mut transcript in transcripts {
-            transcript.insert(&db).unwrap();
+            transcript.insert(&conn).unwrap();
         }
 
         let retrieved_transcripts =
-            Transcript::get_all_for_episode(&db, episode.id.unwrap()).unwrap();
+            Transcript::get_all_for_episode(&conn, episode.id.unwrap()).unwrap();
         assert_eq!(retrieved_transcripts.len(), 3);
         assert_eq!(retrieved_transcripts[0].line_id, 1);
         assert_eq!(retrieved_transcripts[1].line_id, 2);
@@ -293,8 +306,8 @@ mod tests {
 
     #[test]
     fn test_search_transcripts() {
-        let (_file, db) = create_test_db();
-        let episode = create_test_show_and_episode(&db);
+        let (_file, conn) = create_test_db();
+        let episode = create_test_show_and_episode(&conn);
 
         let transcripts = vec![
             Transcript::new(
@@ -321,38 +334,19 @@ mod tests {
         ];
 
         for mut transcript in transcripts {
-            transcript.insert(&db).unwrap();
+            transcript.insert(&conn).unwrap();
         }
 
-        let search_results = Transcript::search_by_text(&db, "world").unwrap();
+        let search_results = Transcript::search_by_text(&conn, "world").unwrap();
         assert_eq!(search_results.len(), 2);
         assert!(search_results.iter().any(|t| t.text == "Hello, world!"));
         assert!(search_results.iter().any(|t| t.text == "Goodbye, world!"));
     }
 
     #[test]
-    fn test_get_episode_for_transcript() {
-        let (_file, db) = create_test_db();
-        let episode = create_test_show_and_episode(&db);
-
-        let mut transcript = Transcript::new(
-            episode.id.unwrap(),
-            1,
-            "00:00:01,000".to_string(),
-            "00:00:05,000".to_string(),
-            "Hello, world!".to_string(),
-        );
-        transcript.insert(&db).unwrap();
-
-        let retrieved_episode = transcript.get_episode(&db).unwrap();
-        assert_eq!(retrieved_episode.id, episode.id);
-        assert_eq!(retrieved_episode.name, episode.name);
-    }
-
-    #[test]
     fn test_get_context() {
-        let (_file, db) = create_test_db();
-        let episode = create_test_show_and_episode(&db);
+        let (_file, conn) = create_test_db();
+        let episode = create_test_show_and_episode(&conn);
 
         let transcripts = vec![
             Transcript::new(
@@ -393,10 +387,10 @@ mod tests {
         ];
 
         for mut transcript in transcripts {
-            transcript.insert(&db).unwrap();
+            transcript.insert(&conn).unwrap();
         }
 
-        let context = Transcript::get_context(&db, episode.id.unwrap(), 3, 1).unwrap();
+        let context = Transcript::get_context(&conn, episode.id.unwrap(), 3, 1).unwrap();
         assert_eq!(context.len(), 3);
         assert_eq!(context[0].line_id, 2);
         assert_eq!(context[1].line_id, 3);

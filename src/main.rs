@@ -2,10 +2,10 @@
 1. Read all transcripts_raw files and add entries to sqlite database transcripts table following example.json
 2. Create a parser that tokenizes Japanese text.
 3. Create a reverse index by extracting all unique words from the transcripts_raw files storing them in a new
-table called words. Find the matching show_name, episode_number, and time_start for each word and store the
-found transcript_id belonging to those properties in an additional column in the words table as a foreign key.
-4. Create a search function that uses the parsed text and finds transcript lines that contain all parsed words
-using the reverse index.
+table called words. Create another table storing every word (1 each row), with the transcript_id in the second
+column as a foreign key to the transcripts table.
+4. Create a search function that uses parsed input text and finds transcript lines that contain all parsed
+words using the reverse index (match input words to words table -> transcript_id).
   4.1. Get the show_name, season, episode_number, line_id, & transcript_id of the parsed text.
   4.2. Using the show_name, season, episide_number, and line_id, get the text for 5 previous lines (if they
   exist) and 2 next lines. Output a json object with the following structure:
@@ -43,14 +43,16 @@ determening that. Return just the ids in your output.
 */
 
 mod db;
+mod error;
 mod srt_parser;
+
 use db::DbHandler;
-use rusqlite::Result;
+use error::Error;
 use srt_parser::{process_srt_directory, EpisodeNameMethod, EpisodeNumberMethod};
 use std::path::Path;
 use std::time::Instant;
 
-fn main() -> Result<()> {
+fn main() -> Result<(), Error> {
     let start_time = Instant::now();
 
     let mut db = DbHandler::new("transcripts.db")?;
@@ -72,17 +74,17 @@ fn main() -> Result<()> {
     let mut transcripts = Vec::new();
 
     for (show_name, show_episodes) in show_entries {
-        let show_id = (shows.len() + 1) as i64;
         shows.push((show_name.clone(), "Anime".to_string()));
+        let show_id = shows.len() as i64;
 
         for episode in show_episodes {
-            let episode_id = (episodes.len() + 1) as i64;
             episodes.push((
                 show_id,
                 episode.episode_name.clone(),
                 1, // Assuming all episodes are in season 1
                 episode.episode_number as i32,
             ));
+            let episode_id = episodes.len() as i64;
 
             for subtitle in episode.content.0.iter() {
                 transcripts.push((
@@ -97,15 +99,24 @@ fn main() -> Result<()> {
     }
 
     // Perform batch insertions
-    db.batch_insert_shows(&shows)?;
-    db.batch_insert_episodes(&episodes)?;
+    db.insert_shows(&shows)?;
+    println!("Shows inserted successfully.");
 
-    let output_csv = true; // hard-coded for now
-    db.batch_insert_transcripts(&transcripts, output_csv)?;
+    let episode_ids = db.insert_episodes(&episodes)?;
+    println!("Episodes inserted successfully.");
+
+    let transcript_ids = db.insert_transcripts(&transcripts)?;
+    println!("Transcripts inserted successfully.");
+
+    // Create reverse index
+    db.create_reverse_index("parsed_transcripts.csv")?;
+    println!("Reverse index created successfully.");
+
+    // Example of using complex search
+    // let results = db.complex_search("一番")?;
+    // println!("{:?}", results);
 
     let duration = start_time.elapsed();
-    println!("All data has been inserted into the database.");
     println!("Total execution time: {:?}", duration);
-
     Ok(())
 }
