@@ -113,8 +113,8 @@ fn main() -> Result<(), Error> {
     println!("Reverse index created successfully.");
 
     // Example of using complex search
-    // let results = db.complex_search("一番")?;
-    // println!("{:?}", results);
+    let results = db.search_word_with_context("一番")?;
+    println!("{:?}", results);
 
     let duration = start_time.elapsed();
     println!("Total execution time: {:?}", duration);
