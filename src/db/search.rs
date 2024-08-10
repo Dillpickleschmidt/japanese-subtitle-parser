@@ -11,8 +11,6 @@ use std::{
     io::{BufWriter, Write},
 };
 
-use super::transcript;
-
 pub fn find_transcripts_with_word(conn: &Connection, word: &str) -> Result<Vec<String>, Error> {
     let word_entry = Word::get_by_word(conn, word)?;
     let transcripts = word_entry.get_transcripts(conn)?;

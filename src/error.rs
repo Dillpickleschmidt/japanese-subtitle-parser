@@ -2,7 +2,6 @@ use csv;
 use serde_json;
 use std::error::Error as StdError;
 use std::fmt;
-use std::result;
 
 #[derive(Debug)]
 pub enum Error {
@@ -64,8 +63,6 @@ impl From<serde_json::Error> for Error {
         Error::Json(err)
     }
 }
-
-pub type Result<T> = result::Result<T, Error>;
 
 impl Error {
     pub fn not_found(message: &str) -> Self {

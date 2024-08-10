@@ -68,13 +68,6 @@ fn main() -> Result<(), Error> {
             .map(|show| show.episodes.len())
             .sum::<usize>()
     );
-    println!(
-        "Shows: {:?}",
-        show_entries
-            .iter()
-            .map(|show| &show.name)
-            .collect::<Vec<_>>()
-    );
 
     // Prepare data for batch insertion
     let mut shows = Vec::new();
@@ -120,13 +113,8 @@ fn main() -> Result<(), Error> {
     db.create_reverse_index("parsed_transcripts.csv")?;
     println!("Reverse index created successfully.");
 
-    // let search_results = db.find_transcripts_with_word("一番")?;
-    // println!("{:?}", search_results);
-
     // Example of using complex search
     let results = db.search_word_with_context("一番")?;
-
-    // db.print_episode_contents(4)?;
 
     let duration = start_time.elapsed();
     println!("Total execution time: {:?}", duration);

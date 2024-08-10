@@ -147,12 +147,6 @@ impl Subtitles {
             // Extract and trim subtitle text (Group 4)
             let text = cap[4].trim().to_string();
 
-            // Debug output - consider removing in production
-            // println!("Number: {}", number);
-            // println!("Start time: {:?}", start_time);
-            // println!("End time: {:?}", end_time);
-            // println!("Text: {}", text);
-
             // Create and add new Subtitle to the collection
             subtitles.push(Subtitle {
                 number,
