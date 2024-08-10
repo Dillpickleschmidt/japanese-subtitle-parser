@@ -4,15 +4,15 @@ use rusqlite::{params, Connection};
 
 #[derive(Debug)]
 pub struct Word {
-    pub id: Option<i64>,
+    pub id: Option<i32>,
     pub word: String,
     pub reading: Option<String>,
 }
 
 #[derive(Debug)]
 pub struct WordOccurrence {
-    pub word_id: i64,
-    pub transcript_id: i64,
+    pub word_id: i32,
+    pub transcript_id: i32,
 }
 
 impl Word {
@@ -29,7 +29,8 @@ impl Word {
             "INSERT INTO words (word, reading) VALUES (?1, ?2)",
             params![self.word, self.reading],
         )?;
-        self.id = Some(conn.last_insert_rowid());
+        // Convert the last inserted row id to i32 and assign it to the word's id field
+        self.id = Some(conn.last_insert_rowid().try_into().unwrap());
         Ok(())
     }
 
@@ -46,7 +47,7 @@ impl Word {
         Ok(())
     }
 
-    pub fn get_by_id(conn: &Connection, id: i64) -> Result<Word, Error> {
+    pub fn get_by_id(conn: &Connection, id: i32) -> Result<Word, Error> {
         let mut stmt = conn.prepare("SELECT id, word, reading FROM words WHERE id = ?1")?;
         stmt.query_row(params![id], |row| {
             Ok(Word {
@@ -112,7 +113,7 @@ impl Word {
 }
 
 impl WordOccurrence {
-    pub fn new(word_id: i64, transcript_id: i64) -> Self {
+    pub fn new(word_id: i32, transcript_id: i32) -> Self {
         WordOccurrence {
             word_id,
             transcript_id,
@@ -135,7 +136,7 @@ impl WordOccurrence {
         Ok(())
     }
 
-    pub fn get_by_word_id(conn: &Connection, word_id: i64) -> Result<Vec<WordOccurrence>, Error> {
+    pub fn get_by_word_id(conn: &Connection, word_id: i32) -> Result<Vec<WordOccurrence>, Error> {
         let mut stmt =
             conn.prepare("SELECT word_id, transcript_id FROM word_occurrences WHERE word_id = ?1")?;
         let occurrences_iter = stmt.query_map(params![word_id], |row| {

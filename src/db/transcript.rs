@@ -3,8 +3,8 @@ use rusqlite::{params, Connection};
 
 #[derive(Debug)]
 pub struct Transcript {
-    pub id: Option<i64>,
-    pub episode_id: i64,
+    pub id: Option<i32>,
+    pub episode_id: i32,
     pub line_id: i32,
     pub time_start: String,
     pub time_end: String,
@@ -13,7 +13,7 @@ pub struct Transcript {
 
 impl Transcript {
     pub fn new(
-        episode_id: i64,
+        episode_id: i32,
         line_id: i32,
         time_start: String,
         time_end: String,
@@ -34,7 +34,8 @@ impl Transcript {
             "INSERT OR IGNORE INTO transcripts (episode_id, line_id, time_start, time_end, text) VALUES (?1, ?2, ?3, ?4, ?5)",
             params![self.episode_id, self.line_id, self.time_start, self.time_end, self.text],
         )?;
-        self.id = Some(conn.last_insert_rowid());
+        // Convert the last inserted row id to i32 and assign it to the transcript's id field
+        self.id = Some(conn.last_insert_rowid().try_into().unwrap());
         Ok(())
     }
 
@@ -51,7 +52,7 @@ impl Transcript {
         Ok(())
     }
 
-    pub fn get_by_id(conn: &Connection, id: i64) -> Result<Transcript, Error> {
+    pub fn get_by_id(conn: &Connection, id: i32) -> Result<Transcript, Error> {
         let mut stmt = conn.prepare("SELECT id, episode_id, line_id, time_start, time_end, text FROM transcripts WHERE id = ?1")?;
         let transcript = stmt.query_row(params![id], |row| {
             Ok(Transcript {
@@ -68,9 +69,27 @@ impl Transcript {
 
     pub fn get_all_for_episode(
         conn: &Connection,
-        episode_id: i64,
+        episode_id: i32,
     ) -> Result<Vec<Transcript>, Error> {
         let mut stmt = conn.prepare("SELECT id, episode_id, line_id, time_start, time_end, text FROM transcripts WHERE episode_id = ?1 ORDER BY line_id")?;
+        let transcripts_iter = stmt.query_map(params![episode_id], |row| {
+            Ok(Transcript {
+                id: Some(row.get(0)?),
+                episode_id: row.get(1)?,
+                line_id: row.get(2)?,
+                time_start: row.get(3)?,
+                time_end: row.get(4)?,
+                text: row.get(5)?,
+            })
+        })?;
+
+        transcripts_iter
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(Error::from)
+    }
+
+    pub fn get_by_episode_id(conn: &Connection, episode_id: i32) -> Result<Vec<Transcript>, Error> {
+        let mut stmt = conn.prepare("SELECT id, episode_id, line_id, time_start, time_end, text FROM transcripts WHERE episode_id = ?1")?;
         let transcripts_iter = stmt.query_map(params![episode_id], |row| {
             Ok(Transcript {
                 id: Some(row.get(0)?),
@@ -107,7 +126,7 @@ impl Transcript {
 
     pub fn get_context(
         conn: &Connection,
-        episode_id: i64,
+        episode_id: i32,
         line_id: i32,
         context_lines: i32,
     ) -> Result<Vec<Transcript>, Error> {

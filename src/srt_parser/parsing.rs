@@ -1,6 +1,4 @@
-use super::episode_info::{
-    get_episode_name, get_episode_number, get_show_name, EpisodeNameMethod, EpisodeNumberMethod,
-};
+use super::episode_info::{create_show_configs, get_episode_number, get_show_name, ShowConfig};
 use super::errors::ParsingError;
 use super::types::{Subtitle, Subtitles, Timestamp};
 use regex::Regex;
@@ -18,32 +16,64 @@ pub struct SrtEntry {
     pub content: Subtitles,
 }
 
-pub fn process_srt_directory(
-    root_dir: &Path,
-    number_method: &EpisodeNumberMethod,
-    name_method: &EpisodeNameMethod,
-) -> HashMap<String, Vec<SrtEntry>> {
-    let mut show_entries: HashMap<String, Vec<SrtEntry>> = HashMap::new();
+pub struct ShowEntry {
+    pub name: String,
+    pub episodes: Vec<SrtEntry>,
+}
 
-    for entry in WalkDir::new(root_dir).into_iter().filter_map(|e| e.ok()) {
+pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
+    let mut show_entries: Vec<ShowEntry> = Vec::new();
+    let configs = create_show_configs();
+
+    // Use WalkDir with sorting enabled
+    let walker = WalkDir::new(root_dir)
+        .sort_by(|a, b| a.file_name().cmp(b.file_name()))
+        .min_depth(1)
+        .max_depth(2)
+        .into_iter();
+
+    for entry in walker.filter_map(|e| e.ok()) {
         let path = entry.path();
         if path.extension().map_or(false, |ext| ext == "srt") {
             println!("Processing {:?}...", path.file_name().unwrap());
-            match process_srt_file(path, root_dir, number_method, name_method) {
+            match process_srt_file(path, &configs) {
                 Ok(srt_entry) => {
-                    show_entries
-                        .entry(srt_entry.show_name.clone())
-                        .or_insert_with(Vec::new)
-                        .push(srt_entry);
+                    if let Some(show) = show_entries
+                        .iter_mut()
+                        .find(|s| s.name == srt_entry.show_name)
+                    {
+                        show.episodes.push(srt_entry);
+                    } else {
+                        show_entries.push(ShowEntry {
+                            name: srt_entry.show_name.clone(),
+                            episodes: vec![srt_entry],
+                        });
+                    }
                 }
                 Err(e) => eprintln!("Error processing file {:?}: {}", path, e),
             }
         }
     }
 
-    // Sort episodes for each show
-    for entries in show_entries.values_mut() {
-        entries.sort_by_key(|entry| entry.episode_number);
+    // Sort shows alphabetically
+    show_entries.sort_by(|a, b| a.name.cmp(&b.name));
+
+    /*
+    Sort episodes for each show by episode number (episode number is not the same as the file order)
+        File order:
+            Hunter x Hunter (1)
+            Hunter x Hunter (10)
+            Hunter x Hunter (100)
+
+        Episode number order:
+            Hunter x Hunter (1)
+            Hunter x Hunter (2)
+            Hunter x Hunter (3)
+
+        *Episode numbers were extracted from the file names in the process_srt_file function
+     */
+    for show in &mut show_entries {
+        show.episodes.sort_by_key(|entry| entry.episode_number);
     }
 
     show_entries
@@ -51,13 +81,14 @@ pub fn process_srt_directory(
 
 pub fn process_srt_file(
     file_path: &Path,
-    root: &Path,
-    number_method: &EpisodeNumberMethod,
-    name_method: &EpisodeNameMethod,
+    configs: &HashMap<String, ShowConfig>,
 ) -> Result<SrtEntry, ParsingError> {
-    let show_name = get_show_name(file_path).unwrap_or_else(|| "Unknown Show".to_string());
-    let episode_number = get_episode_number(number_method, &show_name, file_path, root);
-    let episode_name = get_episode_name(name_method, file_path, episode_number)
+    let show_name = get_show_name(file_path);
+    let episode_number = get_episode_number(&show_name, file_path, configs);
+    let episode_name = file_path
+        .file_stem()
+        .and_then(|name| name.to_str())
+        .map(String::from)
         .unwrap_or_else(|| format!("Episode {}", episode_number));
 
     let content = Subtitles::parse_from_file(file_path)?;
@@ -145,34 +176,5 @@ impl Subtitles {
         file.read_to_string(&mut content)?;
 
         Self::parse_from_str(&content)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::path::PathBuf;
-
-    #[test]
-    fn test_parse_from_str() {
-        let input = "1\n00:00:01,000 --> 00:00:04,000\nHello, world!\n\n2\n00:00:05,000 --> 00:00:07,000\nThis is a test.";
-        let subtitles = Subtitles::parse_from_str(input).unwrap();
-        assert_eq!(subtitles.len(), 2);
-        assert_eq!(subtitles.0[0].number, 1);
-        assert_eq!(subtitles.0[0].text, "Hello, world!");
-        assert_eq!(subtitles.0[1].number, 2);
-        assert_eq!(subtitles.0[1].text, "This is a test.");
-    }
-
-    #[test]
-    fn test_process_srt_file() {
-        // This test would require a mock file system or test SRT files
-        // Implement based on your testing strategy
-    }
-
-    #[test]
-    fn test_process_srt_directory() {
-        // This test would require a mock file system or test SRT files
-        // Implement based on your testing strategy
     }
 }

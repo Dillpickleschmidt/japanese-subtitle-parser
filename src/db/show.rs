@@ -3,7 +3,7 @@ use rusqlite::{params, Connection};
 
 #[derive(Debug)]
 pub struct Show {
-    pub id: Option<i64>,
+    pub id: Option<i32>,
     pub name: String,
     pub show_type: String,
 }
@@ -22,7 +22,8 @@ impl Show {
             "INSERT OR IGNORE INTO shows (name, show_type) VALUES (?1, ?2)",
             params![self.name, self.show_type],
         )?;
-        self.id = Some(conn.last_insert_rowid());
+        // Convert the last inserted row id to i32 and assign it to the show's id field
+        self.id = Some(conn.last_insert_rowid().try_into().unwrap());
         Ok(())
     }
 
@@ -39,7 +40,7 @@ impl Show {
         Ok(())
     }
 
-    pub fn get_by_id(conn: &Connection, id: i64) -> Result<Show, Error> {
+    pub fn get_by_id(conn: &Connection, id: i32) -> Result<Show, Error> {
         let mut stmt = conn.prepare("SELECT id, name, show_type FROM shows WHERE id = ?1")?;
         let show = stmt.query_row(params![id], |row| {
             Ok(Show {

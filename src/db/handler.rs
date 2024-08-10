@@ -78,8 +78,8 @@ impl DbHandler {
     /// Inserts multiple episodes into the database
     pub fn insert_episodes(
         &mut self,
-        episodes: &[(i64, String, i32, i32)],
-    ) -> Result<Vec<i64>, Error> {
+        episodes: &[(i32, String, i32, i32)],
+    ) -> Result<Vec<i32>, Error> {
         let tx = self.conn.transaction()?;
         let mut inserted_ids = Vec::with_capacity(episodes.len());
 
@@ -96,8 +96,8 @@ impl DbHandler {
     /// Inserts multiple transcripts into the database
     pub fn insert_transcripts(
         &mut self,
-        transcripts: &[(i64, i32, String, String, String)],
-    ) -> Result<Vec<i64>, Error> {
+        transcripts: &[(i32, i32, String, String, String)],
+    ) -> Result<Vec<i32>, Error> {
         let tx = self.conn.transaction()?;
         let mut inserted_ids = Vec::with_capacity(transcripts.len());
 
@@ -113,9 +113,23 @@ impl DbHandler {
             inserted_ids.push(transcript.id.unwrap());
         }
 
+        let output_csv = true; // hard coded for now
+        if output_csv {
+            let mut count = 0;
+            let mut wtr = csv::Writer::from_path("transcripts.csv")?;
+            for &(_, _, _, _, ref text) in transcripts {
+                count += 1;
+                for line in text.split('\n') {
+                    wtr.write_record(&[count.to_string(), line.to_string()])?;
+                }
+            }
+            wtr.flush()?;
+        }
+
         tx.commit()?;
         Ok(inserted_ids)
     }
+
     /// Creates a reverse index from a CSV file
     pub fn create_reverse_index(&mut self, csv_path: &str) -> Result<(), Error> {
         reverse_index::create_reverse_index(&mut self.conn, csv_path)
@@ -129,6 +143,11 @@ impl DbHandler {
     /// Performs a search for transcripts containing a specific keyword with context
     pub fn search_word_with_context(&self, keyword: &str) -> Result<JsonValue, Error> {
         search::search_word_with_context(&self.conn, keyword)
+    }
+
+    // Print the contents of an episode
+    pub fn print_episode_contents(&self, show_id: i32) -> Result<(), Error> {
+        search::print_episode_contents(&self.conn, show_id)
     }
 
     pub fn get_connection(&self) -> &Connection {
@@ -151,7 +170,7 @@ impl std::fmt::Display for DbHandler {
             "word_occurrences",
         ];
         for table in &tables {
-            let count: i64 = self
+            let count: i32 = self
                 .conn
                 .query_row(&format!("SELECT COUNT(*) FROM {}", table), [], |row| {
                     row.get(0)

@@ -5,8 +5,8 @@ use rusqlite::{params, Connection};
 /// Represents an episode of a TV show in the database
 #[derive(Debug)]
 pub struct Episode {
-    pub id: Option<i64>,
-    pub show_id: i64,
+    pub id: Option<i32>,
+    pub show_id: i32,
     pub name: String,
     pub season: i32,
     pub episode_number: i32,
@@ -14,7 +14,7 @@ pub struct Episode {
 
 impl Episode {
     /// Creates a new Episode instance
-    pub fn new(show_id: i64, name: String, season: i32, episode_number: i32) -> Self {
+    pub fn new(show_id: i32, name: String, season: i32, episode_number: i32) -> Self {
         Episode {
             id: None,
             show_id,
@@ -30,7 +30,8 @@ impl Episode {
             "INSERT OR IGNORE INTO episodes (show_id, name, season, episode_number) VALUES (?1, ?2, ?3, ?4)",
             params![self.show_id, self.name, self.season, self.episode_number],
         )?;
-        self.id = Some(conn.last_insert_rowid());
+        // Convert the last inserted row id to i32 and assign it to the episode's id field
+        self.id = Some(conn.last_insert_rowid().try_into().unwrap());
         Ok(())
     }
 
@@ -50,7 +51,7 @@ impl Episode {
     }
 
     /// Retrieves an episode from the database by ID
-    pub fn get_by_id(conn: &Connection, id: i64) -> Result<Episode, Error> {
+    pub fn get_by_id(conn: &Connection, id: i32) -> Result<Episode, Error> {
         let mut stmt = conn.prepare(
             "SELECT id, show_id, name, season, episode_number FROM episodes WHERE id = ?1",
         )?;
@@ -67,7 +68,7 @@ impl Episode {
     }
 
     /// Retrieves all episodes for a specific show
-    pub fn get_all_for_show(conn: &Connection, show_id: i64) -> Result<Vec<Episode>, Error> {
+    pub fn get_all_for_show(conn: &Connection, show_id: i32) -> Result<Vec<Episode>, Error> {
         let mut stmt = conn.prepare("SELECT id, show_id, name, season, episode_number FROM episodes WHERE show_id = ?1 ORDER BY season, episode_number")?;
         let episodes_iter = stmt.query_map(params![show_id], |row| {
             Ok(Episode {

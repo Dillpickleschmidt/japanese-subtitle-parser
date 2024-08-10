@@ -48,7 +48,7 @@ mod srt_parser;
 
 use db::DbHandler;
 use error::Error;
-use srt_parser::{process_srt_directory, EpisodeNameMethod, EpisodeNumberMethod};
+use srt_parser::process_srt_directory;
 use std::path::Path;
 use std::time::Instant;
 
@@ -59,13 +59,21 @@ fn main() -> Result<(), Error> {
     db.create_tables()?;
 
     let root_dir = Path::new("data/transcripts_raw");
-    let number_method = EpisodeNumberMethod::FromFileOrder;
-    let name_method = EpisodeNameMethod::FromEpisodeNumber;
 
-    let show_entries = process_srt_directory(root_dir, &number_method, &name_method);
+    let show_entries = process_srt_directory(root_dir);
     println!(
         "Processed {} entries.",
-        show_entries.values().flatten().count()
+        show_entries
+            .iter()
+            .map(|show| show.episodes.len())
+            .sum::<usize>()
+    );
+    println!(
+        "Shows: {:?}",
+        show_entries
+            .iter()
+            .map(|show| &show.name)
+            .collect::<Vec<_>>()
     );
 
     // Prepare data for batch insertion
@@ -73,18 +81,18 @@ fn main() -> Result<(), Error> {
     let mut episodes = Vec::new();
     let mut transcripts = Vec::new();
 
-    for (show_name, show_episodes) in show_entries {
-        shows.push((show_name.clone(), "Anime".to_string()));
-        let show_id = shows.len() as i64;
+    for (show_id, show) in show_entries.iter().enumerate() {
+        let show_id = (show_id + 1) as i32;
+        shows.push((show.name.clone(), "Anime".to_string()));
 
-        for episode in show_episodes {
+        for episode in &show.episodes {
+            let episode_id = (episodes.len() + 1) as i32;
             episodes.push((
                 show_id,
                 episode.episode_name.clone(),
                 1, // Assuming all episodes are in season 1
                 episode.episode_number as i32,
             ));
-            let episode_id = episodes.len() as i64;
 
             for subtitle in episode.content.0.iter() {
                 transcripts.push((
@@ -112,9 +120,13 @@ fn main() -> Result<(), Error> {
     db.create_reverse_index("parsed_transcripts.csv")?;
     println!("Reverse index created successfully.");
 
+    // let search_results = db.find_transcripts_with_word("一番")?;
+    // println!("{:?}", search_results);
+
     // Example of using complex search
     let results = db.search_word_with_context("一番")?;
-    println!("{:?}", results);
+
+    // db.print_episode_contents(4)?;
 
     let duration = start_time.elapsed();
     println!("Total execution time: {:?}", duration);
