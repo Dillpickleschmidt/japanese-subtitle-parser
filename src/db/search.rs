@@ -21,8 +21,6 @@ pub fn search_word_with_context(conn: &Connection, keyword: &str) -> Result<Json
     let word_entry = Word::get_by_word(conn, keyword)?;
     let transcripts = word_entry.get_transcripts(conn)?;
 
-    let mut results = Vec::new();
-    // Decided to use a HashMap since ordering doesn't really matter in the end
     let mut show_map: HashMap<i32, JsonValue> = HashMap::new();
 
     for transcript in transcripts {
@@ -31,35 +29,32 @@ pub fn search_word_with_context(conn: &Connection, keyword: &str) -> Result<Json
 
         let show_entry = show_map.entry(show.id.unwrap()).or_insert_with(|| {
             json!({
-                "show_name": show.name,
-                "show_type": "Anime",
-                "episodes": []
+                "show": show.name,
+                "instances": []
             })
         });
 
         let context = get_context(conn, &episode, transcript.line_id)?;
 
-        let episodes = show_entry["episodes"].as_array_mut().unwrap();
-        let episode_entry = episodes
+        let instances = show_entry["instances"].as_array_mut().unwrap();
+        let instance_entry = instances
             .iter_mut()
-            .find(|e| e["episode_number"] == episode.episode_number);
+            .find(|i| i["episode"] == episode.episode_number);
 
-        if let Some(episode_entry) = episode_entry {
-            episode_entry["keyword_instances"]
+        if let Some(instance_entry) = instance_entry {
+            instance_entry["lines"]
                 .as_array_mut()
                 .unwrap()
-                .push(context);
+                .extend(context);
         } else {
-            episodes.push(json!({
-                "episode_name": format!("Episode {:03}", episode.episode_number),
-                "season": episode.season,
-                "episode_number": episode.episode_number,
-                "keyword_instances": [context]
+            instances.push(json!({
+                "episode": episode.episode_number,
+                "lines": context
             }));
         }
     }
 
-    results.extend(show_map.into_values());
+    let results: Vec<JsonValue> = show_map.into_values().collect();
 
     let final_json = json!({
         "keyword": keyword,
@@ -69,47 +64,27 @@ pub fn search_word_with_context(conn: &Connection, keyword: &str) -> Result<Json
     // Write to file
     let file = File::create("search_results.json")?;
     let mut writer = BufWriter::new(file);
-    serde_json::to_writer_pretty(&mut writer, &final_json)?;
+    serde_json::to_writer(&mut writer, &final_json)?;
     writer.flush()?;
 
     Ok(final_json)
 }
 
-fn get_context(conn: &Connection, episode: &Episode, line_id: i32) -> Result<JsonValue, Error> {
+fn get_context(
+    conn: &Connection,
+    episode: &Episode,
+    line_id: i32,
+) -> Result<Vec<JsonValue>, Error> {
     let episode_id = episode.id.unwrap();
     let transcripts = Transcript::get_context(conn, episode_id, line_id, 2)?;
 
-    let target_index = transcripts
-        .iter()
-        .position(|t| t.line_id == line_id)
-        .unwrap();
-
-    let context_before = transcripts[target_index.saturating_sub(2)..target_index]
-        .iter()
-        .map(transcript_to_json)
-        .collect::<Vec<JsonValue>>();
-
-    let target_line = transcript_to_json(&transcripts[target_index]);
-
-    let context_after = transcripts
-        [target_index + 1..std::cmp::min(target_index + 3, transcripts.len())]
-        .iter()
-        .map(transcript_to_json)
-        .collect::<Vec<JsonValue>>();
-
-    Ok(json!({
-        "context_before": context_before,
-        "target_line": target_line,
-        "context_after": context_after
-    }))
+    Ok(transcripts.iter().map(transcript_to_json).collect())
 }
 
 fn transcript_to_json(t: &Transcript) -> JsonValue {
     json!({
-        "line_id": t.line_id,
-        "text": t.text,
-        "time_start": t.time_start,
-        "time_end": t.time_end
+        "id": t.line_id,
+        "text": t.text
     })
 }
 

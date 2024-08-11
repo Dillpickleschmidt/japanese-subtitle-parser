@@ -103,18 +103,18 @@ fn main() -> Result<(), Error> {
     db.insert_shows(&shows)?;
     println!("Shows inserted successfully.");
 
-    let episode_ids = db.insert_episodes(&episodes)?;
+    db.insert_episodes(&episodes)?;
     println!("Episodes inserted successfully.");
 
-    let transcript_ids = db.insert_transcripts(&transcripts)?;
+    db.insert_transcripts(&transcripts)?;
     println!("Transcripts inserted successfully.");
 
     // Create reverse index
     db.create_reverse_index("parsed_transcripts.csv")?;
     println!("Reverse index created successfully.");
 
-    // Example of using complex search
-    let results = db.search_word_with_context("一番")?;
+    // Get transcripts with context
+    db.search_word_with_context("一番")?;
 
     let duration = start_time.elapsed();
     println!("Total execution time: {:?}", duration);
