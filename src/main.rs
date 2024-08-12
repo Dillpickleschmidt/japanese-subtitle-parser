@@ -114,7 +114,7 @@ fn main() -> Result<(), Error> {
     println!("Reverse index created successfully.");
 
     // Get transcripts with context
-    db.search_word_with_context("一番")?;
+    db.search_word_with_context("飲む")?;
 
     let duration = start_time.elapsed();
     println!("Total execution time: {:?}", duration);
