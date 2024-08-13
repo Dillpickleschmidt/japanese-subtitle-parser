@@ -5,6 +5,28 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufReader;
 
+trait GetWord {
+    fn get_word(&self) -> String;
+    fn get_reading(&self) -> String;
+}
+
+impl GetWord for csv::StringRecord {
+    fn get_word(&self) -> String {
+        // Fetch the word, prioritizing the 5th record if it's not "-1", then the 1st, or fallback to an empty string
+        return self
+            .get(5)
+            .filter(|&s| s != "-1") // Only use the 5th record if it's not "-1"
+            .or_else(|| self.get(1))
+            .unwrap_or("")
+            .to_string();
+    }
+
+    fn get_reading(&self) -> String {
+        // Fetch the reading or fallback to an empty string
+        return self.get(2).unwrap_or("").to_string();
+    }
+}
+
 pub fn create_reverse_index(conn: &mut Connection, csv_path: &str) -> Result<(), Error> {
     // Open the CSV file
     let file = File::open(csv_path)?;
