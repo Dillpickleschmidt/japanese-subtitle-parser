@@ -46,8 +46,8 @@ pub fn create_reverse_index(conn: &mut Connection, csv_path: &str) -> Result<(),
         // Handle potential CSV parsing errors
         let record = record.map_err(|e| Error::InvalidInput(format!("CSV error: {}", e)))?;
 
-        // Ensure each record has at least 3 fields
-        if record.len() < 3 {
+        // Ensure each record has at least 5 fields
+        if record.len() < 5 {
             return Err(Error::InvalidInput(format!(
                 "Invalid record at line {}: insufficient fields",
                 index + 2 // Add 2 to account for 0-indexing and header row
@@ -63,14 +63,14 @@ pub fn create_reverse_index(conn: &mut Connection, csv_path: &str) -> Result<(),
             ))
         })?;
 
+        let word = record.get_word();
+        let reading = record.get_reading();
+
         // Insert the word into the hash map, or update the existing entry
         // The key is a tuple of (word, reading)
         // The value is a Vec of transcript IDs where this word appears
         word_map
-            .entry((
-                record.get(1).unwrap_or("").to_string(), // word
-                record.get(2).unwrap_or("").to_string(), // reading
-            ))
+            .entry((word, reading))
             .or_insert_with(Vec::new)
             .push(transcript_id);
     }
