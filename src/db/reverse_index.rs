@@ -24,56 +24,107 @@ trait GetWord {
     ) -> String;
 }
 
+/// Implementation of the GetWord trait for csv::StringRecord.
+///
+/// This implementation provides methods to retrieve words and readings from a database
+/// based on information in a CSV record. It uses a caching mechanism to improve performance
+/// for repeated lookups.
+///
+/// The CSV structure is expected to be:
+/// Transcript Number, Word, Reading, Seq, Conjugation Number, Truetext
+///
+/// Process for get_word:
+/// 1. Attempts to use Truetext (index 5), falling back to Word (index 1) if Truetext is "-1"
+/// 2. Checks the word cache for a previously retrieved result
+/// 3. If not in cache, queries the database:
+///    - Uses a conjugation-specific query if Conjugation Number (index 4) is present
+///    - Otherwise, uses a non-conjugation query with Seq (index 3)
+/// 4. Falls back to the original word from the CSV if the database query fails
+/// 5. Caches the result for future use
+///
+/// Process for get_reading:
+/// 1. Uses Seq (index 3) to identify the reading
+/// 2. Checks the reading cache for a previously retrieved result
+/// 3. If not in cache, queries the database using Seq
+/// 4. Falls back to the original Reading (index 2) from the CSV if the database query fails
+/// 5. Caches the result for future use
+///
+/// Both methods use prepared SQL statements for efficient database queries and
+/// implement fallback strategies to ensure a result is always returned.
 impl GetWord for csv::StringRecord {
     fn get_word<'a>(
         &self,
         statements: &mut WordStatements<'a>,
         word_cache: &mut HashMap<String, String>,
     ) -> String {
+        // Get the target word from Truetext (index 5) if it's not "-1", otherwise use Word (index 1)
         let target_column = self
             .get(5)
             .filter(|&s| s != "-1")
             .or_else(|| self.get(1))
             .unwrap_or("");
-        let conj_id = self.get(4).filter(|&s| s != "-1");
-        let seq = self.get(6).unwrap_or("");
 
+        // Get the conjugation ID from Conjugation Number (index 4) if it's not "-1"
+        let conj_id = self.get(4).filter(|&s| s != "-1");
+
+        // Get the sequence number from Seq (index 3)
+        let seq = self.get(3).unwrap_or("");
+
+        // Check if the word is already in the cache
         if let Some(cached_word) = word_cache.get(target_column) {
             return cached_word.clone();
         }
 
+        // Query the database based on whether we have a conjugation ID or not
         let result = if let Some(id) = conj_id {
+            // Use the conjugation-specific query
             statements
                 .get_word_conj
                 .query_row(params![target_column, id], |row| row.get::<_, String>(0))
         } else {
+            // Use the non-conjugation query
             statements
                 .get_word_no_conj
                 .query_row(params![target_column, seq], |row| row.get::<_, String>(0))
         };
 
+        // If the query fails, fall back to the original word from the CSV
         let word = result.unwrap_or_else(|_| target_column.to_string());
+
+        // Cache the result for future use
         word_cache.insert(target_column.to_string(), word.clone());
+
         word
     }
 
+    /// Retrieves the reading from the database or cache based on the CSV record
     fn get_reading<'a>(
         &self,
         statements: &mut WordStatements<'a>,
         reading_cache: &mut HashMap<String, String>,
     ) -> String {
-        let seq = self.get(6).unwrap_or("");
+        // Get the sequence number from Seq (index 3)
+        let seq = self.get(3).unwrap_or("");
 
+        // Check if the reading is already in the cache
         if let Some(cached_reading) = reading_cache.get(seq) {
             return cached_reading.clone();
         }
 
+        // Query the database for the reading
         let result = statements
             .get_reading
-            .query_row(params![seq], |row| row.get::<_, String>("text"));
+            .query_row(params![seq], |row| row.get::<_, String>(0));
 
-        let reading = result.unwrap_or_else(|_| self.get(2).unwrap_or("").to_string());
+        // If the query fails, fall back to the original reading from Reading (index 2)
+        let reading = match result {
+            Ok(r) => r,
+            Err(_) => self.get(2).unwrap_or("").to_string(), // Fallback to original reading
+        };
+
+        // Cache the result for future use
         reading_cache.insert(seq.to_string(), reading.clone());
+
         reading
     }
 }
@@ -98,7 +149,14 @@ pub fn create_reverse_index(
             WHERE csr.text = ?1 AND c.seq = ?2
         ",
         )?,
-        get_reading: jmdict_conn.prepare("SELECT text FROM kana_text WHERE seq = ?1")?,
+        get_reading: jmdict_conn.prepare(
+            "
+            SELECT kt.text
+            FROM conjugation c
+            JOIN kana_text kt ON kt.seq = c.\"from\"
+            WHERE c.seq = ?1
+        ",
+        )?,
     };
 
     let file = File::open(csv_path)?;
@@ -176,11 +234,17 @@ fn batch_insert_words_and_occurrences(
 }
 
 fn create_jmdict_indexes(jmdict_conn: &mut Connection) -> Result<(), Error> {
+    // Indexes for conj_source_reading table
     jmdict_conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_conj_source_reading_text ON conj_source_reading(text)",
         [],
     )?;
-    jmdict_conn.execute("CREATE INDEX IF NOT EXISTS idx_conj_source_reading_conj_id ON conj_source_reading(conj_id)", [])?;
+    jmdict_conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_conj_source_reading_conj_id ON conj_source_reading(conj_id)",
+        [],
+    )?;
+
+    // Indexes for conjugation table
     jmdict_conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_conjugation_id ON conjugation(id)",
         [],
@@ -190,9 +254,17 @@ fn create_jmdict_indexes(jmdict_conn: &mut Connection) -> Result<(), Error> {
         [],
     )?;
     jmdict_conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_conjugation_from ON conjugation(\"from\")",
+        [],
+    )?;
+
+    // Indexes for kana_text table
+    jmdict_conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_kana_text_seq ON kana_text(seq)",
         [],
     )?;
+
+    // Indexes for kanji_text table
     jmdict_conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_kanji_text_text ON kanji_text(text)",
         [],
@@ -201,6 +273,7 @@ fn create_jmdict_indexes(jmdict_conn: &mut Connection) -> Result<(), Error> {
         "CREATE INDEX IF NOT EXISTS idx_kanji_text_seq ON kanji_text(seq)",
         [],
     )?;
+
     Ok(())
 }
 
