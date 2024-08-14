@@ -2,6 +2,7 @@ use crate::db::episode::Episode;
 use crate::db::show::Show;
 use crate::db::transcript::Transcript;
 use crate::db::word::Word;
+use crate::db::DbHandler;
 use crate::error::Error;
 use rusqlite::Connection;
 use serde_json::{json, Value as JsonValue};
@@ -9,7 +10,11 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufWriter;
 
-pub fn search_word_with_context(conn: &Connection, keyword: &str) -> Result<JsonValue, Error> {
+pub fn search_word_with_context(
+    conn: &Connection,
+    keyword: &str,
+    jmdict_db: DbHandler,
+) -> Result<JsonValue, Error> {
     let transcripts = get_transcripts_for_word(conn, keyword)?;
     let results = build_results(conn, &transcripts)?;
     let final_json = create_final_json(keyword, results);

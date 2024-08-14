@@ -4,3 +4,6 @@
 /.vscode
 /transcripts.db
 /transcripts.csv
+/parsed_transcripts.csv
+/jmdict.sqlite
+/search_results.json

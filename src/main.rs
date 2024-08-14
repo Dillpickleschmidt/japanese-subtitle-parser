@@ -56,6 +56,7 @@ fn main() -> Result<(), Error> {
     let start_time = Instant::now();
 
     let mut db = DbHandler::new("transcripts.db")?;
+    let mut jmdict = DbHandler::new("jmdict.sqlite")?;
     db.create_tables()?;
 
     let root_dir = Path::new("data/transcripts_raw");
@@ -110,11 +111,11 @@ fn main() -> Result<(), Error> {
     println!("Transcripts inserted successfully.");
 
     // Create reverse index
-    db.create_reverse_index("parsed_transcripts.csv")?;
+    db.create_reverse_index("parsed_transcripts.csv", &mut jmdict)?;
     println!("Reverse index created successfully.");
 
     // Get transcripts with context
-    db.search_word_with_context("飲む")?;
+    db.search_word_with_context("見える", jmdict)?;
 
     let duration = start_time.elapsed();
     println!("Total execution time: {:?}", duration);

@@ -9,7 +9,7 @@ use serde_json::Value as JsonValue;
 
 /// DbHandler struct that wraps a SQLite connection
 pub struct DbHandler {
-    conn: Connection,
+    pub conn: Connection,
 }
 
 impl DbHandler {
@@ -130,9 +130,13 @@ impl DbHandler {
         Ok(inserted_ids)
     }
 
-    /// Creates a reverse index from a CSV file
-    pub fn create_reverse_index(&mut self, csv_path: &str) -> Result<(), Error> {
-        reverse_index::create_reverse_index(&mut self.conn, csv_path)
+    /// Creates a reverse index from a CSV file using the JMDict database for lookups
+    pub fn create_reverse_index(
+        &mut self,
+        csv_path: &str,
+        jmdict_db: &mut DbHandler,
+    ) -> Result<(), Error> {
+        reverse_index::create_reverse_index(&mut self.conn, csv_path, &mut jmdict_db.conn)
     }
 
     /// Finds transcripts containing a specific word
@@ -141,20 +145,17 @@ impl DbHandler {
     }
 
     /// Performs a search for transcripts containing a specific keyword with context
-    pub fn search_word_with_context(&self, keyword: &str) -> Result<JsonValue, Error> {
-        search::search_word_with_context(&self.conn, keyword)
+    pub fn search_word_with_context(
+        &self,
+        keyword: &str,
+        jmdict_db: DbHandler,
+    ) -> Result<JsonValue, Error> {
+        search::search_word_with_context(&self.conn, keyword, jmdict_db)
     }
 
     // Print the contents of an episode
     pub fn print_episode_contents(&self, show_id: i32) -> Result<(), Error> {
         search::print_episode_contents(&self.conn, show_id)
-    }
-
-    pub fn get_connection(&self) -> &Connection {
-        &self.conn
-    }
-    pub fn get_connection_mut(&mut self) -> &mut Connection {
-        &mut self.conn
     }
 }
 

@@ -154,7 +154,7 @@ mod tests {
     }
 
     fn create_test_show(handler: &DbHandler) -> Show {
-        let conn = handler.get_connection();
+        let conn = &handler.conn;
         let mut show = Show::new("Test Show".to_string(), "Anime".to_string());
         show.insert(&conn).unwrap();
         show
@@ -163,7 +163,7 @@ mod tests {
     #[test]
     fn test_insert_and_get_episode() {
         let (_file, handler) = create_test_db();
-        let conn = handler.get_connection();
+        let conn = &handler.conn;
         let show = create_test_show(&handler);
 
         let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
@@ -180,7 +180,7 @@ mod tests {
     #[test]
     fn test_update_episode() {
         let (_file, handler) = create_test_db();
-        let conn = handler.get_connection();
+        let conn = &handler.conn;
         let show = create_test_show(&handler);
 
         let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
@@ -196,7 +196,7 @@ mod tests {
     #[test]
     fn test_delete_episode() {
         let (_file, handler) = create_test_db();
-        let conn = handler.get_connection();
+        let conn = &handler.conn;
         let show = create_test_show(&handler);
 
         let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
@@ -211,7 +211,7 @@ mod tests {
     #[test]
     fn test_get_all_for_show() {
         let (_file, handler) = create_test_db();
-        let conn = handler.get_connection();
+        let conn = &handler.conn;
         let show = create_test_show(&handler);
 
         let episodes = vec![
@@ -234,7 +234,7 @@ mod tests {
     #[test]
     fn test_search_episodes() {
         let (_file, handler) = create_test_db();
-        let conn = handler.get_connection();
+        let conn = &handler.conn;
         let show = create_test_show(&handler);
 
         let episodes = vec![
@@ -258,7 +258,7 @@ mod tests {
     #[test]
     fn test_get_show_for_episode() {
         let (_file, handler) = create_test_db();
-        let conn = handler.get_connection();
+        let conn = &handler.conn;
         let show = create_test_show(&handler);
 
         let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
