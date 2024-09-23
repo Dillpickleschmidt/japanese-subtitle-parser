@@ -7,6 +7,7 @@ import {
   CheckboxControl,
   CheckboxLabel,
 } from "./components/ui/checkbox";
+import { Copy } from "lucide-solid";
 
 export default function Search() {
   const [value, setValue] = createSignal("");
@@ -14,6 +15,7 @@ export default function Search() {
     Array<{ id: number; name: string; checked: boolean }>
   >([]);
   const [searchResults, setSearchResults] = createSignal("");
+  const [isCopied, setIsCopied] = createSignal(false);
 
   // Fetch shows when component mounts
   createEffect(async () => {
@@ -53,6 +55,19 @@ export default function Search() {
     );
   };
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(searchResults()).then(
+      () => {
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+        // You can add a notification here if you want to inform the user
+      },
+      (err) => {
+        console.error("Could not copy text: ", err);
+      }
+    );
+  };
+
   return (
     <div class="relative px-6 py-12 min-h-screen text-lg">
       <h1 class="text-3xl 2xl:text-4xl font-bold mt-12 text-center">
@@ -79,7 +94,25 @@ export default function Search() {
               Submit
             </Button>
           </form>
-          <div class="rounded-sm min-h-[600px] bg-neutral-600/10 border border-muted mt-6 p-4 overflow-auto">
+          <div class="relative rounded-sm min-h-[600px] bg-neutral-600/10 border border-muted mt-6 p-4 overflow-auto">
+            <Button
+              onClick={copyToClipboard}
+              size="sm"
+              variant="outline"
+              class={`absolute top-2 right-2 ${
+                isCopied() ? "text-muted-foreground" : ""
+              }`}
+              disabled={isCopied()}
+            >
+              {isCopied() ? (
+                "Copied!"
+              ) : (
+                <>
+                  Copy
+                  <Copy size={14} class="ml-1" />
+                </>
+              )}
+            </Button>
             {searchResults()}
           </div>
         </div>

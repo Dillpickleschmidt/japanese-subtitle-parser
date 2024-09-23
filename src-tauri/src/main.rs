@@ -127,7 +127,6 @@ fn search_word_with_context(
     enabled_show_ids: Vec<i32>,
     database: State<TranscriptDatabase>,
 ) -> Result<String, String> {
-    println!("Searching for word: {}", word);
     let db = database.0.lock().unwrap();
     db.search_word_with_context(&word, &enabled_show_ids)
         .map(|results| results.to_string())
