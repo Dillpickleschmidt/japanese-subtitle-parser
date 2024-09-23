@@ -1,4 +1,6 @@
-use super::episode_info::{create_show_configs, get_episode_number, get_show_name, ShowConfig};
+use super::episode_info::{
+    create_show_configs, get_episode_number, get_season_number, get_show_name, ShowConfig,
+};
 use super::errors::ParsingError;
 use super::types::{Subtitle, Subtitles, Timestamp};
 use regex::Regex;
@@ -11,6 +13,7 @@ use walkdir::WalkDir;
 
 pub struct SrtEntry {
     pub show_name: String,
+    pub season: i32,
     pub episode_name: String,
     pub episode_number: i32,
     pub content: Subtitles,
@@ -23,6 +26,7 @@ pub struct ShowEntry {
 
 pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
     let mut show_entries: Vec<ShowEntry> = Vec::new();
+    // Create configurations for specific shows for extracting data from file names
     let configs = create_show_configs();
 
     // Use WalkDir with sorting enabled
@@ -36,14 +40,18 @@ pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
         let path = entry.path();
         if path.extension().map_or(false, |ext| ext == "srt") {
             println!("Processing {:?}...", path.file_name().unwrap());
+            // Process each SRT file
             match process_srt_file(path, &configs) {
                 Ok(srt_entry) => {
+                    // Check if we've already encountered this show
                     if let Some(show) = show_entries
                         .iter_mut()
                         .find(|s| s.name == srt_entry.show_name)
                     {
+                        // If so, add this episode to the existing show entry
                         show.episodes.push(srt_entry);
                     } else {
+                        // If not, create a new show entry with this episode
                         show_entries.push(ShowEntry {
                             name: srt_entry.show_name.clone(),
                             episodes: vec![srt_entry],
@@ -84,6 +92,7 @@ pub fn process_srt_file(
     configs: &HashMap<String, ShowConfig>,
 ) -> Result<SrtEntry, ParsingError> {
     let show_name = get_show_name(file_path);
+    let season = get_season_number(file_path, configs);
     let episode_number = get_episode_number(&show_name, file_path, configs);
     let episode_name = file_path
         .file_stem()
@@ -95,6 +104,7 @@ pub fn process_srt_file(
 
     Ok(SrtEntry {
         show_name,
+        season,
         episode_name,
         episode_number,
         content,
@@ -117,17 +127,17 @@ impl Subtitles {
 
         // Define regex pattern for parsing SRT format
         // Detailed explanation of the regex pattern:
-        // r"(\d+)\n                     - Group 1: Matches the subtitle number (one or more digits) followed by a newline
-        //   (\d{2}:\d{2}:\d{2},\d{3})   - Group 2: Matches the start time (HH:MM:SS,mmm format)
-        //   -->                         - Matches the arrow separator between timestamps
-        //   (\d{2}:\d{2}:\d{2},\d{3})   - Group 3: Matches the end time (HH:MM:SS,mmm format)
-        //   \n                          - Matches the newline after the timestamp line
-        //   ((?s:.*?)                   - Group 4: Starts the subtitle text capture
-        //     (?s:.*?)                    - Non-greedy match of any characters, including newlines (s flag)
-        //   (?:\n\n|$))                 - End of Group 4: Matches either two newlines or the end of the string
-        //                                 This allows for multi-line subtitles and handles the last subtitle"
+        // r"(\d+)\s*\n                    - Group 1: Matches the subtitle number (one or more digits) followed by optional whitespace and a newline
+        //   \s*(\d{2}:\d{2}:\d{2},\d{3})  - Group 2: Matches the start time (HH:MM:SS,mmm format), allowing leading whitespace
+        //   \s*-->\s*                     - Matches the arrow separator between timestamps, allowing surrounding whitespace
+        //   (\d{2}:\d{2}:\d{2},\d{3})\s*  - Group 3: Matches the end time (HH:MM:SS,mmm format), allowing trailing whitespace
+        //   \n                            - Matches the newline after the timestamp line
+        //   ((?s:.*?)                     - Group 4: Starts the subtitle text capture
+        //     (?s:.*?)                      - Non-greedy match of any characters, including newlines (s flag)
+        //   (?:\n\s*\n|$))                - End of Group 4: Matches either two newlines (allowing whitespace between) or the end of the string
+        //                                   This allows for multi-line subtitles, handles the last subtitle, and accommodates extra whitespace"
         let re = Regex::new(
-            r"(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})\n((?s:.*?)(?:\n\n|$))",
+        r"(\d+)\n(\d{2}:\d{2}:\d{2},\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2},\d{3})\s*\n((?s:.*?)(?:\n\n|$))",
         )
         .map_err(|_| ParsingError::MalformedSubtitle)?;
 

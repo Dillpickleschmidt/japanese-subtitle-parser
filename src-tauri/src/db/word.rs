@@ -60,6 +60,7 @@ impl Word {
     }
 
     pub fn get_by_word(conn: &Connection, word_text: &str) -> Result<Word, Error> {
+        println!("Searching for word: {}", word_text);
         let mut stmt = conn.prepare("SELECT id, word, reading FROM words WHERE word = ?1")?;
         stmt.query_row(params![word_text], |row| {
             Ok(Word {
@@ -86,16 +87,32 @@ impl Word {
             .map_err(Error::from)
     }
 
-    pub fn get_transcripts(&self, conn: &Connection) -> Result<Vec<Transcript>, Error> {
-        let mut stmt = conn.prepare(
-            "
-            SELECT t.id, t.episode_id, t.line_id, t.time_start, t.time_end, t.text
+    pub fn get_transcripts(
+        &self,
+        conn: &Connection,
+        show_ids: &[i32],
+    ) -> Result<Vec<Transcript>, Error> {
+        let placeholders = show_ids
+            .iter()
+            .enumerate()
+            .map(|(i, _)| format!("?{}", i + 2))
+            .collect::<Vec<String>>()
+            .join(", ");
+        let query = format!(
+            "SELECT DISTINCT t.id, t.episode_id, t.line_id, t.time_start, t.time_end, t.text
             FROM transcripts t
             JOIN word_occurrences wo ON t.id = wo.transcript_id
-            WHERE wo.word_id = ?1
-        ",
-        )?;
-        let transcripts_iter = stmt.query_map(params![self.id], |row| {
+            JOIN episodes e ON t.episode_id = e.id
+            WHERE wo.word_id = ?1 AND e.show_id IN ({})",
+            placeholders
+        );
+
+        let mut stmt = conn.prepare(&query)?;
+
+        let mut params: Vec<&dyn rusqlite::ToSql> = vec![&self.id];
+        params.extend(show_ids.iter().map(|id| id as &dyn rusqlite::ToSql));
+
+        let transcripts_iter = stmt.query_map(rusqlite::params_from_iter(params), |row| {
             Ok(Transcript {
                 id: Some(row.get(0)?),
                 episode_id: row.get(1)?,
@@ -284,7 +301,12 @@ mod tests {
         assert_eq!(occurrences.len(), 1);
         assert_eq!(occurrences[0].transcript_id, transcript.id.unwrap());
 
-        let transcripts = word.get_transcripts(&conn).unwrap();
+        // Get the show ID from the transcript's episode
+        let episode = Episode::get_by_id(&conn, transcript.episode_id).unwrap();
+        let show_id = episode.show_id;
+
+        // Use the show ID in the get_transcripts call
+        let transcripts = word.get_transcripts(&conn, &[show_id]).unwrap();
         assert_eq!(transcripts.len(), 1);
         assert_eq!(transcripts[0].id, transcript.id);
     }

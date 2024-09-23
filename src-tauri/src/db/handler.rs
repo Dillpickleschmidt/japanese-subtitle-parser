@@ -64,6 +64,15 @@ impl DbHandler {
         Ok(())
     }
 
+    pub fn get_show_id_name_pairs(&mut self) -> Result<Vec<(i32, String)>, Error> {
+        let shows = Show::get_all(&self.conn)?;
+        let show_id_name_pairs = shows
+            .iter()
+            .filter_map(|show| show.id.map(|id| (id, show.name.clone())))
+            .collect();
+        Ok(show_id_name_pairs)
+    }
+
     /// Inserts a new show into the database
     pub fn insert_shows(&mut self, shows: &[(String, String)]) -> Result<(), Error> {
         let tx = self.conn.transaction()?;
@@ -139,23 +148,26 @@ impl DbHandler {
         reverse_index::create_reverse_index(&mut self.conn, csv_path, &mut jmdict_db.conn)
     }
 
-    /// Finds transcripts containing a specific word
-    pub fn find_transcripts_with_word(&self, word: &str) -> Result<Vec<String>, Error> {
-        search::find_transcripts_with_word(&self.conn, word)
-    }
-
-    /// Performs a search for transcripts containing a specific keyword with context
+    /// Performs a search for transcripts containing a specific keyword with context, filtered by shows
     pub fn search_word_with_context(
         &self,
         keyword: &str,
-        jmdict_db: DbHandler,
+        shows: &[i32],
     ) -> Result<JsonValue, Error> {
-        search::search_word_with_context(&self.conn, keyword, jmdict_db)
+        search::search_word_with_context(&self.conn, keyword, shows)
     }
 
     // Print the contents of an episode
     pub fn print_episode_contents(&self, show_id: i32) -> Result<(), Error> {
         search::print_episode_contents(&self.conn, show_id)
+    }
+}
+
+impl Default for DbHandler {
+    fn default() -> Self {
+        DbHandler {
+            conn: Connection::open("example.db").unwrap(),
+        }
     }
 }
 
