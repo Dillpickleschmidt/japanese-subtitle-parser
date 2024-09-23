@@ -1,8 +1,14 @@
 ![Application Image](./src-tauri/data/readme/image.png)
 
-# Rust + Solid via Tauri
+# Purpose
 
-This project makes use of Rust for fast and efficient transcript processing, and Typescript + SolidJs for the frontend. It uses an sqlite database for storage.
+Find all dialogue lines containing a given keyword, filtered by show. Also retrieves surrounding lines for context.
+
+<sub>\*The number of surrounding context lines can be modified easily.</sub>
+
+## Rust + Solid via Tauri
+
+This project makes use of Rust for fast transcript processing, and Typescript + SolidJs for the frontend. It uses a local sqlite database for storage.
 
 ## Getting Started
 
@@ -30,7 +36,21 @@ Transcript file names must contain seasons and episodes formatted like such:
   ('S' followed by any number of digits and 'E' followed by any number of digits; the file names can have any surrounding text you want)
 - ShowName.S03E134.EpisodeName would be fine :)
 
-There's some limited support for other formats but they require exceptions. See episode_info.rs and show_configs.rs files to add more.
+The folder names are used for extracting show names. Here's the expected folder structure:
+
+```
+transcripts/
+├── Inuyasha/
+│   ├── Inuyasha.S01E001.srt
+│   └── Inuyasha.S01E002.srt
+├── Chainsaw Man/
+│   ├── Chainsaw Man.S01E01.srt
+│   └── Chainsaw Man.S01E02.srt
+└── [other shows]/
+    └── ...
+```
+
+There's some limited support for other formats but you'd have to specify the format for each show. See `episode_info.rs` and `show_configs.rs` files to add more.
 
 ## License
 
