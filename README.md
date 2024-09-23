@@ -22,6 +22,16 @@ More detailed setup instructions are provided in the application UI. Please refe
 
 - [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
 
+## Additional Notes
+
+Transcript file names must contain seasons and episodes formatted like such:
+
+- S01E01
+  ('S' followed by any number of digits and 'E' followed by any number of digits; the file names can have any surrounding text you want)
+- ShowName.S03E134.EpisodeName would be fine :)
+
+There's some limited support for other formats but they require exceptions. See episode_info.rs and show_configs.rs files to add more.
+
 ## License
 
 [MIT](LICENSE)
