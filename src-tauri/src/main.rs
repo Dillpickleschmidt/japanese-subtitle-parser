@@ -8,50 +8,93 @@ mod srt_parser;
 use db::DbHandler;
 use error::Error;
 use srt_parser::process_srt_directory as _process_srt_directory;
+use std::fs;
 use std::path::Path;
 use std::sync::Mutex;
-// use std::time::Instant;
+use tauri::Manager;
 use tauri::State;
 
 struct TranscriptDatabase(Mutex<DbHandler>);
 struct JmdictDatabase(Mutex<DbHandler>);
+struct TranscriptsRawPath(std::path::PathBuf);
 
 fn main() -> Result<(), Error> {
-    // let start_time = Instant::now();
-
-    // Initialize databases
-    let transcript_db = TranscriptDatabase(Mutex::new(DbHandler::new("transcripts.db")?));
-    let jmdict_db = JmdictDatabase(Mutex::new(DbHandler::new("jmdict.sqlite")?));
-
-    // Create tables in the transcript database
-    transcript_db.0.lock().unwrap().create_tables()?;
-
-    println!("Databases initialized successfully.");
-
     tauri::Builder::default()
-        .manage(transcript_db)
-        .manage(jmdict_db)
+        .setup(|app| {
+            let path_resolver = app.path_resolver();
+
+            // Resolve paths for resources
+            let transcripts_raw_path = path_resolver
+                .resolve_resource("data/transcripts_raw")
+                .expect("failed to resolve transcripts_raw directory");
+
+            let jmdict_path = path_resolver
+                .resolve_resource("jmdict.sqlite")
+                .expect("failed to resolve jmdict.sqlite");
+
+            let transcripts_db_path = path_resolver
+                .resolve_resource("transcripts.db")
+                .expect("failed to resolve transcripts.db");
+
+            // Check if transcripts.db exists in resources
+            let transcripts_db_exists = transcripts_db_path.exists();
+
+            // Initialize databases with resolved paths
+            let transcript_db = if transcripts_db_exists {
+                TranscriptDatabase(Mutex::new(DbHandler::new(
+                    transcripts_db_path.to_str().unwrap(),
+                )?))
+            } else {
+                // If transcripts.db doesn't exist in resources, create a new one in the app's data directory
+                let app_data_dir = app
+                    .path_resolver()
+                    .app_data_dir()
+                    .expect("failed to get app data dir");
+                fs::create_dir_all(&app_data_dir)?;
+                let new_transcripts_db_path = app_data_dir.join("transcripts.db");
+                TranscriptDatabase(Mutex::new(DbHandler::new(
+                    new_transcripts_db_path.to_str().unwrap(),
+                )?))
+            };
+
+            let jmdict_db =
+                JmdictDatabase(Mutex::new(DbHandler::new(jmdict_path.to_str().unwrap())?));
+
+            // Create tables in the transcript database if it's newly created
+            if !transcripts_db_exists {
+                transcript_db.0.lock().unwrap().create_tables()?;
+            }
+
+            println!("Databases initialized successfully.");
+
+            // Store the paths in the app's managed state for later use
+            app.manage(TranscriptsRawPath(transcripts_raw_path));
+            app.manage(transcript_db);
+            app.manage(jmdict_db);
+
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             process_srt_directory,
             create_reverse_index,
             get_all_shows,
-            search_word_with_context
+            search_word_with_context,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
-    // let duration = start_time.elapsed();
-    // println!("Total execution time: {:?}", duration);
     Ok(())
 }
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn process_srt_directory(root_dir: String, database: State<TranscriptDatabase>) {
+fn process_srt_directory(app_handle: tauri::AppHandle, database: State<TranscriptDatabase>) {
+    let transcripts_raw_path = app_handle.state::<TranscriptsRawPath>();
+    let root_dir = transcripts_raw_path.0.to_str().unwrap();
+
     println!("Processing SRT files in {}...", root_dir);
     let mut db = database.0.lock().unwrap();
-    let root_dir = Path::new(&root_dir);
-    let show_entries = _process_srt_directory(root_dir);
+    let show_entries = _process_srt_directory(Path::new(root_dir));
     println!(
         "Processed {} entries.",
         show_entries
