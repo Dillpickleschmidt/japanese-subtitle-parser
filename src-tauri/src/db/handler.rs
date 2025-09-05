@@ -48,9 +48,9 @@ impl DbHandler {
             );
             CREATE TABLE IF NOT EXISTS words (
                 id INTEGER PRIMARY KEY, 
-                word TEXT NOT NULL, 
+                word TEXT NOT NULL UNIQUE, 
                 reading TEXT,
-                UNIQUE(word, reading)
+                pos TEXT NOT NULL
             );
             CREATE TABLE IF NOT EXISTS word_occurrences (
                 word_id INTEGER, 
@@ -59,6 +59,20 @@ impl DbHandler {
                 FOREIGN KEY(transcript_id) REFERENCES transcripts(id),
                 UNIQUE(word_id, transcript_id)
             );
+            CREATE TABLE IF NOT EXISTS jlpt_levels (
+                word TEXT PRIMARY KEY,
+                level INTEGER NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS episode_jlpt_stats (
+                episode_id INTEGER PRIMARY KEY,
+                n5_pct REAL,
+                n4_pct REAL,
+                n3_pct REAL,
+                n2_pct REAL,
+                n1_pct REAL,
+                FOREIGN KEY(episode_id) REFERENCES episodes(id)
+            );
+            CREATE INDEX IF NOT EXISTS idx_n4_pct ON episode_jlpt_stats(n4_pct);
         ";
         self.conn.execute_batch(sql)?;
         Ok(())
@@ -122,30 +136,14 @@ impl DbHandler {
             inserted_ids.push(transcript.id.unwrap());
         }
 
-        let output_csv = true; // hard coded for now
-        if output_csv {
-            let mut count = 0;
-            let mut wtr = csv::Writer::from_path("transcripts.csv")?;
-            for &(_, _, _, _, ref text) in transcripts {
-                count += 1;
-                for line in text.split('\n') {
-                    wtr.write_record(&[count.to_string(), line.to_string()])?;
-                }
-            }
-            wtr.flush()?;
-        }
 
         tx.commit()?;
         Ok(inserted_ids)
     }
 
-    /// Creates a reverse index from a CSV file using the JMDict database for lookups
-    pub fn create_reverse_index(
-        &mut self,
-        csv_path: &str,
-        jmdict_db: &mut DbHandler,
-    ) -> Result<(), Error> {
-        reverse_index::create_reverse_index(&mut self.conn, csv_path, &mut jmdict_db.conn)
+    /// Creates a reverse index using kagome for Japanese morphological analysis
+    pub fn create_reverse_index(&mut self) -> Result<(), Error> {
+        reverse_index::create_reverse_index(&mut self.conn)
     }
 
     /// Performs a search for transcripts containing a specific keyword with context, filtered by shows
@@ -157,9 +155,130 @@ impl DbHandler {
         search::search_word_with_context(&self.conn, keyword, shows)
     }
 
-    // Print the contents of an episode
-    pub fn print_episode_contents(&self, show_id: i32) -> Result<(), Error> {
-        search::print_episode_contents(&self.conn, show_id)
+
+    /// Imports JLPT word levels from a CSV file
+    pub fn import_jlpt_csv(&mut self, path: &str) -> Result<(), Error> {
+        use std::fs::File;
+        use std::io::{BufRead, BufReader};
+
+        let file = File::open(path)?;
+        let reader = BufReader::new(file);
+        
+        let tx = self.conn.transaction()?;
+        
+        for line in reader.lines() {
+            let line = line?;
+            if line.trim().is_empty() || line.starts_with("word,") {
+                continue; // Skip empty lines and header
+            }
+            
+            let parts: Vec<&str> = line.split(',').collect();
+            if parts.len() >= 2 {
+                let word = parts[0].trim();
+                let level: i32 = parts[1].trim().parse()
+                    .map_err(|_| Error::Other(format!("Invalid level in line: {}", line)))?;
+                
+                tx.execute(
+                    "INSERT OR REPLACE INTO jlpt_levels (word, level) VALUES (?, ?)",
+                    [word, &level.to_string()],
+                )?;
+            }
+        }
+        
+        tx.commit()?;
+        Ok(())
+    }
+
+    /// Computes JLPT statistics for all episodes
+    pub fn compute_jlpt_stats(&mut self) -> Result<(), Error> {
+        let tx = self.conn.transaction()?;
+        
+        // Clear existing stats
+        tx.execute("DELETE FROM episode_jlpt_stats", [])?;
+        
+        // Get all episodes
+        let mut stmt = tx.prepare("SELECT id FROM episodes")?;
+        let episode_rows = stmt.query_map([], |row| Ok(row.get::<_, i32>(0)?))?
+            .collect::<Result<Vec<_>, _>>()?;
+        drop(stmt);
+        
+        for episode_id in episode_rows {
+            // Count words by JLPT level for this episode
+            let mut level_counts = [0; 6]; // index 0 unused, 1-5 for N1-N5
+            let mut total_words = 0;
+            
+            let mut word_stmt = tx.prepare("
+                SELECT jl.level, COUNT(*) as count
+                FROM transcripts t
+                JOIN word_occurrences wo ON wo.transcript_id = t.id
+                JOIN words w ON w.id = wo.word_id
+                JOIN jlpt_levels jl ON jl.word = w.word
+                WHERE t.episode_id = ?
+                GROUP BY jl.level
+            ")?;
+            
+            let word_rows = word_stmt.query_map([episode_id], |row| {
+                Ok((row.get::<_, i32>(0)?, row.get::<_, i32>(1)?))
+            })?.collect::<Result<Vec<_>, _>>()?;
+            drop(word_stmt);
+            
+            for (level, count) in word_rows {
+                if level >= 1 && level <= 5 {
+                    level_counts[level as usize] = count;
+                    total_words += count;
+                }
+            }
+            
+            if total_words > 0 {
+                let n5_pct = (level_counts[5] + level_counts[4] + level_counts[3] + level_counts[2] + level_counts[1]) as f64 / total_words as f64 * 100.0;
+                let n4_pct = (level_counts[4] + level_counts[3] + level_counts[2] + level_counts[1]) as f64 / total_words as f64 * 100.0;
+                let n3_pct = (level_counts[3] + level_counts[2] + level_counts[1]) as f64 / total_words as f64 * 100.0;
+                let n2_pct = (level_counts[2] + level_counts[1]) as f64 / total_words as f64 * 100.0;
+                let n1_pct = level_counts[1] as f64 / total_words as f64 * 100.0;
+                
+                tx.execute(
+                    "INSERT INTO episode_jlpt_stats (episode_id, n5_pct, n4_pct, n3_pct, n2_pct, n1_pct) VALUES (?, ?, ?, ?, ?, ?)",
+                    [episode_id.to_string(), n5_pct.to_string(), n4_pct.to_string(), n3_pct.to_string(), n2_pct.to_string(), n1_pct.to_string()],
+                )?;
+            }
+        }
+        
+        tx.commit()?;
+        Ok(())
+    }
+
+    /// Gets episodes where at least min_pct% of words are at min_level or easier
+    pub fn get_episodes_by_jlpt(&self, min_level: u8, min_pct: f64) -> Result<Vec<(i32, String, i32, i32, f64)>, Error> {
+        let column = match min_level {
+            5 => "n5_pct",
+            4 => "n4_pct", 
+            3 => "n3_pct",
+            2 => "n2_pct",
+            1 => "n1_pct",
+            _ => return Err(Error::Other("Invalid JLPT level. Use 1-5.".to_string())),
+        };
+        
+        let sql = format!(
+            "SELECT e.id, e.name, e.season, e.episode_number, ejs.{}
+             FROM episodes e
+             JOIN episode_jlpt_stats ejs ON ejs.episode_id = e.id
+             WHERE ejs.{} >= ?
+             ORDER BY ejs.{} DESC",
+            column, column, column
+        );
+        
+        let mut stmt = self.conn.prepare(&sql)?;
+        let rows = stmt.query_map([min_pct], |row| {
+            Ok((
+                row.get::<_, i32>(0)?,      // episode_id
+                row.get::<_, String>(1)?,   // episode_name  
+                row.get::<_, i32>(2)?,      // season
+                row.get::<_, i32>(3)?,      // episode_number
+                row.get::<_, f64>(4)?,      // percentage
+            ))
+        })?;
+        
+        rows.collect::<Result<Vec<_>, _>>().map_err(Error::from)
     }
 }
 
@@ -181,6 +300,8 @@ impl std::fmt::Display for DbHandler {
             "transcripts",
             "words",
             "word_occurrences",
+            "jlpt_levels",
+            "episode_jlpt_stats",
         ];
         for table in &tables {
             let count: i32 = self

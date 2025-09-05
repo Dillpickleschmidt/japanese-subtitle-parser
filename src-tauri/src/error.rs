@@ -1,4 +1,3 @@
-use csv;
 use serde_json;
 use std::error::Error as StdError;
 use std::fmt;
@@ -7,7 +6,6 @@ use std::fmt;
 pub enum Error {
     Io(std::io::Error),
     Database(rusqlite::Error),
-    Csv(csv::Error),
     Json(serde_json::Error),
     NotFound(String),
     InvalidInput(String),
@@ -19,7 +17,6 @@ impl fmt::Display for Error {
         match self {
             Error::Io(err) => write!(f, "IO error: {}", err),
             Error::Database(err) => write!(f, "Database error: {}", err),
-            Error::Csv(err) => write!(f, "CSV error: {}", err),
             Error::Json(err) => write!(f, "JSON error: {}", err),
             Error::NotFound(msg) => write!(f, "Not found: {}", msg),
             Error::InvalidInput(msg) => write!(f, "Invalid input: {}", msg),
@@ -33,7 +30,6 @@ impl StdError for Error {
         match self {
             Error::Io(err) => Some(err),
             Error::Database(err) => Some(err),
-            Error::Csv(err) => Some(err),
             Error::Json(err) => Some(err),
             _ => None,
         }
@@ -52,11 +48,6 @@ impl From<rusqlite::Error> for Error {
     }
 }
 
-impl From<csv::Error> for Error {
-    fn from(err: csv::Error) -> Self {
-        Error::Csv(err)
-    }
-}
 
 impl From<serde_json::Error> for Error {
     fn from(err: serde_json::Error) -> Self {
@@ -95,9 +86,6 @@ mod tests {
         let err = Error::Io(io_err);
         assert_eq!(err.to_string(), "IO error: file not found");
 
-        let csv_err = csv::Error::from(io::Error::new(io::ErrorKind::Other, "CSV error"));
-        let err = Error::Csv(csv_err);
-        assert_eq!(err.to_string(), "CSV error: CSV error");
 
         let json_err = serde_json::from_str::<serde_json::Value>("invalid json").unwrap_err();
         let err = Error::Json(json_err);
@@ -120,9 +108,6 @@ mod tests {
         let err: Error = db_err.into();
         assert!(matches!(err, Error::Database(_)));
 
-        let csv_err = csv::Error::from(io::Error::new(io::ErrorKind::Other, "CSV error"));
-        let err: Error = csv_err.into();
-        assert!(matches!(err, Error::Csv(_)));
 
         // Updated JSON error conversion test
         let json_err = serde_json::from_str::<serde_json::Value>("invalid json").unwrap_err();

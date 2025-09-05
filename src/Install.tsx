@@ -7,9 +7,50 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "./components/ui/button";
 import { invoke } from "@tauri-apps/api/tauri";
+import { open } from "@tauri-apps/api/dialog";
 
 export default function Install() {
   const [expandedItem, setExpandedItem] = createSignal(["item-0"]);
+  const [selectedDirectory, setSelectedDirectory] = createSignal<string>("");
+  const [isProcessing, setIsProcessing] = createSignal(false);
+
+  const selectDirectory = async () => {
+    try {
+      const selected = await open({
+        directory: true,
+        multiple: false,
+        title: "Select Subtitle Directory",
+      });
+
+      if (selected && typeof selected === "string") {
+        setSelectedDirectory(selected);
+      }
+    } catch (error) {
+      console.error("Error selecting directory:", error);
+    }
+  };
+
+  const processSubtitles = async () => {
+    if (!selectedDirectory()) {
+      alert("Please select a directory first!");
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const result = await invoke("process_srt_directory", {
+        rootDir: selectedDirectory(),
+      });
+      console.log("Process result:", result);
+      alert("Processing completed successfully!");
+    } catch (error) {
+      console.error("Error processing SRT files:", error);
+      alert(`Error: ${error}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <div class="relative 2xl:px-32 xl:px-12 px-6 py-12 h-screen flex flex-col items-center text-lg">
       <h1 class="text-3xl 2xl:text-4xl font-bold">Installation Steps</h1>
@@ -35,7 +76,7 @@ export default function Install() {
           </AccordionItem>
           <AccordionItem value="item-1">
             <AccordionTrigger>
-              <span class="font-semibold text-lg">Step 1- Install Ichiran</span>
+              <span class="font-semibold text-lg">Step 1- Install Kagome</span>
             </AccordionTrigger>
             <AccordionContent class="text-base">
               Follow the installation instructions from the{" "}
@@ -54,30 +95,23 @@ export default function Install() {
               <span class="text-lg font-semibold">Step 2- Parse Subtitles</span>
             </AccordionTrigger>
             <AccordionContent class="text-base">
-              Use Ichiran to parse every transcript file that you have. This may
-              take a while.
+              Parse subtitle files and create the database. This process uses
+              kagome for Japanese morphological analysis and may take a while
+              depending on the number of files.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
             <AccordionTrigger>
-              <span class="text-lg font-semibold">Step 3- Copy Database</span>
+              <span class="text-lg font-semibold">Step 3- Create Indexes</span>
             </AccordionTrigger>
             <AccordionContent class="text-base">
-              Copy the Ichiran postgres database to sqlite so that it can be
-              used by the search engine.
+              Create reverse indexes to enable fast word searching across all
+              subtitle files.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-4">
             <AccordionTrigger>
-              <span class="text-lg font-semibold">Step 4- Create Indexes</span>
-            </AccordionTrigger>
-            <AccordionContent class="text-base">
-              Create indexes so you can search the database quickly.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-5">
-            <AccordionTrigger>
-              <span class="text-lg font-semibold">Step 5- Start Searching</span>
+              <span class="text-lg font-semibold">Step 4- Start Searching</span>
             </AccordionTrigger>
           </AccordionItem>
         </Accordion>
@@ -127,64 +161,37 @@ export default function Install() {
                 </li>
               </ol>
               <p>
-                TLDR {"->"} Organize transcript files, send them to Ichiran,
-                parse in Ichiran, put the words in database, then search at your
-                convenience.
+                TLDR {"->"} Organize subtitle files, parse them with kagome,
+                store words in database, then search at your convenience.
               </p>
             </div>
           )}
           {expandedItem().includes("item-1") && (
             <div class="space-y-3">
               <h1 class="text-center font-extrabold text-xl pb-4">
-                Install Ichiran
+                Install Kagome
               </h1>
               <p>
-                Ichiran is the Japanese text parser. It tokenizes Japanese text
-                (splitting up unique words), and gives us a number pointing to
-                the ID of the unconjugated version for each word in the JMDict
-                dictionary (which gets installed with Ichiran). This lets you
-                not have to worry about conjugations when searching.
+                Kagome is a fast Japanese morphological analyzer written in Go.
+                It tokenizes Japanese text (splitting up unique words) and
+                provides readings for each word. This eliminates the need for
+                complex external dependencies.
               </p>
               <p>
-                There are other Japanese text parsers out there, but Ichiran
-                outperforms everything else in terms of quality. You can test it
-                out on{" "}
-                <a
-                  href="https://ichi.moe/"
-                  target="_blank"
-                  class="text-sky-500 hover:cursor-pointer hover:underline"
-                >
-                  Ichi.Moe
-                </a>
-                .
+                First, make sure you have Go installed on your system. Then
+                install kagome:
               </p>
-              <p>
-                Follow the installation process{" "}
-                <a
-                  href="https://readevalprint.tumblr.com/post/639359547843215360/ichiranhome-2021-the-ultimate-guide"
-                  target="_blank"
-                  class="text-sky-500 hover:cursor-pointer hover:underline"
-                >
-                  here
-                </a>
-                . It's a little complicated, but it's critical for the search
-                engine to work. Run the test suite, and if everything passes,
-                move on to the next step.
+              <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md font-mono text-sm">
+                go install github.com/ikawaha/kagome/v2@latest
+              </div>
+              <p class="mt-2">Verify the installation by running:</p>
+              <div class="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md font-mono text-sm">
+                kagome --help
+              </div>
+              <p class="mt-2">
+                If you see the help output, kagome is installed correctly and
+                ready to use.
               </p>
-              <ol class="list-decimal list-inside">
-                {/* <li>
-                  Download the .pgdump file from the{" "}
-                  <a
-                    href="https://github.com/tshatrov/ichiran/releases"
-                    target="_blank"
-                    class="text-sky-500 hover:cursor-pointer hover:underline"
-                  >
-                    latest release of Ichiran
-                  </a>
-                  . This is a database backup file that we're going to restore
-                </li>
-                <li>Test 2</li> */}
-              </ol>
             </div>
           )}
           {expandedItem().includes("item-2") && (
@@ -193,24 +200,8 @@ export default function Install() {
                 Parse Subtitles
               </h1>
               <p>
-                The next step is to add a custom LISP script for batch parsing
-                subtitle files.
-              </p>
-              <p>
-                We're not going to use the Ichiran CLI tool since it's limited
-                to a single core and we have a lot of files to parse. Instead,
-                we're going to run Ichiran directly with a custom LISP script
-                that comes with this project.
-              </p>
-              <p>
-                Find the directory ~/quicklisp/local-projects
-                (%USERPROFILE%\quicklisp\local-projects on Windows). You should
-                see the ichiran folder there. Paste the reverse-index-ichiran
-                folder included in this project next to it.
-              </p>
-              <p>
-                Find the subtitles you want place them in a folder. Each show
-                should have its own folder within. For example:
+                Place your subtitle files in the appropriate folder structure.
+                Each show should have its own folder with subtitle files inside:
               </p>
               <div class="ml-3">
                 TranscriptsFolder
@@ -234,48 +225,38 @@ export default function Install() {
                 </div>
               </div>
               <p class="!mt-4">
-                Select the root, source directory of your transcripts. Select
-                the destination directory where you want to save the
-                transcripts.csv file (this should be in the
-                reverse-index-ichiran folder). Then, press the "Parse" button.
+                Select your subtitle directory and click "Parse Subtitles" to
+                process all files. This will automatically use kagome to analyze
+                the Japanese text and extract words.
               </p>
-              <div class="flex justify-center gap-6 py-4">
-                <Button variant="outline">Select Source</Button>
-                <Button variant="outline">Select Destination</Button>
+
+              {selectedDirectory() && (
+                <div class="mt-3 p-3 bg-green-100 dark:bg-green-900 rounded-md">
+                  <strong>Selected Directory:</strong>
+                  <br />
+                  <span class="font-mono text-sm">{selectedDirectory()}</span>
+                </div>
+              )}
+
+              <div class="flex justify-center gap-4 py-4">
+                <Button variant="outline" onClick={selectDirectory}>
+                  Select Directory
+                </Button>
                 <Button
                   variant="outline"
-                  onClick={async () => {
-                    try {
-                      const result = await invoke("process_srt_directory", {
-                        rootDir: "data/transcripts_raw",
-                      });
-                      console.log("Process result:", result);
-                      // Handle successful result (e.g., show a success message)
-                    } catch (error) {
-                      console.error("Error processing SRT files:", error);
-                      // Handle error (e.g., show an error message to the user)
-                    }
-                  }}
+                  onClick={processSubtitles}
+                  disabled={!selectedDirectory() || isProcessing()}
                 >
-                  Parse
+                  {isProcessing() ? "Processing..." : "Parse Subtitles"}
                 </Button>
               </div>
               <p>
-                Open your terminal and cd into the reverse-index-ichiran folder.
-                Then, run the following commands in your terminal:
+                This process may take a while depending on the number of
+                subtitle files.
               </p>
-              <ol class="list-decimal list-inside space-y-2 ml-3">
-                <li class="!-mt-1">
-                  sbcl --dynamic-space-size 32768 # Set this to some value less
-                  than the total amount of RAM that you have in MB.
-                </li>
-                <li>(load "ichiran-file-processor.lisp")</li>
-                <li>(ichiran-file-processor:main "transcripts.csv")</li>
-              </ol>
-              <p>This may take a while.</p>
             </div>
           )}
-          {expandedItem().includes("item-4") && (
+          {expandedItem().includes("item-3") && (
             <div class="space-y-3">
               <h1 class="text-center font-extrabold text-xl pb-4">
                 Create Reverse Index
@@ -286,7 +267,16 @@ export default function Install() {
               </p>
               <Button
                 variant="outline"
-                onClick={() => invoke("create_reverse_index")}
+                onClick={async () => {
+                  try {
+                    const result = await invoke("create_reverse_index");
+                    console.log("Index result:", result);
+                    alert("Reverse index created successfully!");
+                  } catch (error) {
+                    console.error("Error creating reverse index:", error);
+                    alert(`Error: ${error}`);
+                  }
+                }}
               >
                 Create Reverse Index
               </Button>

@@ -3,74 +3,37 @@
 
 mod db;
 mod error;
+mod kagome;
 mod srt_parser;
 
 use db::DbHandler;
 use error::Error;
 use srt_parser::process_srt_directory as _process_srt_directory;
-use std::fs;
 use std::path::Path;
 use std::sync::Mutex;
 use tauri::Manager;
 use tauri::State;
 
 struct TranscriptDatabase(Mutex<DbHandler>);
-struct JmdictDatabase(Mutex<DbHandler>);
-struct TranscriptsRawPath(std::path::PathBuf);
 
 fn main() -> Result<(), Error> {
     tauri::Builder::default()
         .setup(|app| {
-            let path_resolver = app.path_resolver();
+            // Create transcripts.db in the src-tauri directory
+            let current_dir = std::env::current_dir()
+                .expect("failed to get current directory");
+            let transcripts_db_path = current_dir.join("transcripts.db");
+            let transcript_db = TranscriptDatabase(Mutex::new(DbHandler::new(
+                transcripts_db_path.to_str().unwrap(),
+            )?));
 
-            // Resolve paths for resources
-            let transcripts_raw_path = path_resolver
-                .resolve_resource("data/transcripts_raw")
-                .expect("failed to resolve transcripts_raw directory");
-
-            let jmdict_path = path_resolver
-                .resolve_resource("jmdict.sqlite")
-                .expect("failed to resolve jmdict.sqlite");
-
-            let transcripts_db_path = path_resolver
-                .resolve_resource("transcripts.db")
-                .expect("failed to resolve transcripts.db");
-
-            // Check if transcripts.db exists in resources
-            let transcripts_db_exists = transcripts_db_path.exists();
-
-            // Initialize databases with resolved paths
-            let transcript_db = if transcripts_db_exists {
-                TranscriptDatabase(Mutex::new(DbHandler::new(
-                    transcripts_db_path.to_str().unwrap(),
-                )?))
-            } else {
-                // If transcripts.db doesn't exist in resources, create a new one in the app's data directory
-                let app_data_dir = app
-                    .path_resolver()
-                    .app_data_dir()
-                    .expect("failed to get app data dir");
-                fs::create_dir_all(&app_data_dir)?;
-                let new_transcripts_db_path = app_data_dir.join("transcripts.db");
-                TranscriptDatabase(Mutex::new(DbHandler::new(
-                    new_transcripts_db_path.to_str().unwrap(),
-                )?))
-            };
-
-            let jmdict_db =
-                JmdictDatabase(Mutex::new(DbHandler::new(jmdict_path.to_str().unwrap())?));
-
-            // Create tables in the transcript database if it's newly created
-            if !transcripts_db_exists {
-                transcript_db.0.lock().unwrap().create_tables()?;
-            }
+            // Create tables in the transcript database
+            transcript_db.0.lock().unwrap().create_tables()?;
 
             println!("Databases initialized successfully.");
 
-            // Store the paths in the app's managed state for later use
-            app.manage(TranscriptsRawPath(transcripts_raw_path));
+            // Store the database in the app's managed state for later use
             app.manage(transcript_db);
-            app.manage(jmdict_db);
 
             Ok(())
         })
@@ -88,13 +51,11 @@ fn main() -> Result<(), Error> {
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn process_srt_directory(app_handle: tauri::AppHandle, database: State<TranscriptDatabase>) {
-    let transcripts_raw_path = app_handle.state::<TranscriptsRawPath>();
-    let root_dir = transcripts_raw_path.0.to_str().unwrap();
+fn process_srt_directory(root_dir: String, database: State<TranscriptDatabase>) -> Result<String, String> {
 
     println!("Processing SRT files in {}...", root_dir);
-    let mut db = database.0.lock().unwrap();
-    let show_entries = _process_srt_directory(Path::new(root_dir));
+    let mut db = database.0.lock().map_err(|e| format!("Database lock error: {}", e))?;
+    let show_entries = _process_srt_directory(Path::new(&root_dir));
     println!(
         "Processed {} entries.",
         show_entries
@@ -134,26 +95,23 @@ fn process_srt_directory(app_handle: tauri::AppHandle, database: State<Transcrip
     }
 
     // Perform batch insertions
-    db.insert_shows(&shows).unwrap();
+    db.insert_shows(&shows).map_err(|e| format!("Failed to insert shows: {}", e))?;
     println!("Shows inserted successfully.");
 
-    db.insert_episodes(&episodes).unwrap();
+    db.insert_episodes(&episodes).map_err(|e| format!("Failed to insert episodes: {}", e))?;
     println!("Episodes inserted successfully.");
 
-    db.insert_transcripts(&transcripts).unwrap();
+    db.insert_transcripts(&transcripts).map_err(|e| format!("Failed to insert transcripts: {}", e))?;
     println!("Transcripts inserted successfully.");
+    
+    Ok("Processing completed successfully!".to_string())
 }
 
 #[tauri::command]
-fn create_reverse_index(
-    transcript_db: State<TranscriptDatabase>,
-    jmdict_db: State<JmdictDatabase>,
-) {
-    let mut db = transcript_db.0.lock().unwrap();
-    let mut jmdict = jmdict_db.0.lock().unwrap();
-    db.create_reverse_index("parsed_transcripts.csv", &mut jmdict)
-        .unwrap();
-    println!("Reverse index created successfully.");
+fn create_reverse_index(transcript_db: State<TranscriptDatabase>) -> Result<String, String> {
+    let mut db = transcript_db.0.lock().map_err(|e| format!("Database lock error: {}", e))?;
+    db.create_reverse_index().map_err(|e| format!("Failed to create reverse index: {}", e))?;
+    Ok("Reverse index created successfully!".to_string())
 }
 
 #[tauri::command]

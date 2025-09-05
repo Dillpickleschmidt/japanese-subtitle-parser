@@ -8,21 +8,32 @@ Find all dialogue lines containing a given keyword, filtered by show. Also retri
 
 ## Rust + Solid via Tauri
 
-This project makes use of Rust for fast transcript processing, and Typescript + SolidJs for the frontend. It uses a local sqlite database for storage.
+This project makes use of Rust for fast transcript processing and Typescript + SolidJs for the frontend. It uses a local SQLite database for storage and [kagome](https://github.com/ikawaha/kagome) for Japanese morphological analysis.
+
+## Prerequisites
+
+- [Go](https://golang.org/dl/) (required for kagome)
+- [kagome](https://github.com/ikawaha/kagome): `go install github.com/ikawaha/kagome/v2@latest`
 
 ## Getting Started
 
 To start the development server, run:
 
 ```bash
-cargo tauri dev
+npm install
+npm run tauri dev
 ```
 
-The general idea is that you parse the transcript files and write them to a csv. That csv is read by [ichiran](https://github.com/tshatrov/ichiran) using a custom script for parallel processing. That is output to another csv which this program finally reads and writes to a local sqlite database, creating reverse indexes for extremely fast word searches.
+The application processes Japanese subtitle files directly using kagome for morphological analysis. Simply:
 
-After that, you can just search for whatever word you want and it'll give you instant results.
+1. Select your subtitle directory (containing .srt files organized by show)
+2. Click "Parse Subtitles" to process files and extract words 
+3. Click "Create Reverse Index" to build search indexes
+4. Search for any Japanese word to find all occurrences with context
 
-More detailed setup instructions are provided in the application UI. Please refer to the app for specific configuration steps and troubleshooting tips.
+The app creates reverse indexes for extremely fast word searches across all your subtitle files.
+
+More detailed setup instructions are provided in the application UI.
 
 ## Recommended IDE Setup
 

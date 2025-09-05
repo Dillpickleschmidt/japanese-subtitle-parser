@@ -136,13 +136,3 @@ fn write_json_to_file(json: &JsonValue, filename: &str) -> Result<(), Error> {
     Ok(())
 }
 
-/// Prints the contents of a specific episode, including all transcript lines
-pub fn print_episode_contents(conn: &Connection, episode_id: i32) -> Result<(), Error> {
-    let transcripts = Transcript::get_by_episode_id(conn, episode_id)?;
-    for t in transcripts {
-        println!("{}: {}", t.time_start, t.text);
-    }
-    let episode = Episode::get_by_id(conn, episode_id)?;
-    println!("Episode name: {}", episode.name);
-    Ok(())
-}

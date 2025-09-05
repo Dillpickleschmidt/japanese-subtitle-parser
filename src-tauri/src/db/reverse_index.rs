@@ -1,201 +1,18 @@
 use crate::error::Error;
-use csv;
-use rusqlite::{params, Connection, Statement, Transaction};
+use crate::kagome::extract_words_from_transcripts;
+use rusqlite::{params, Connection, Transaction};
 use std::collections::{HashMap, HashSet};
-use std::fs::File;
-use std::io::BufReader;
 
-struct WordStatements<'a> {
-    get_word_conj: Statement<'a>,
-    get_word_no_conj: Statement<'a>,
-    get_reading: Statement<'a>,
-}
+pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
+    println!("Creating reverse index using kagome...");
+    
+    // Get all transcript data from the database
+    let transcript_data = get_all_transcript_data(conn)?;
+    println!("Retrieved {} transcripts from database", transcript_data.len());
 
-trait GetWord {
-    fn get_word<'a>(
-        &self,
-        statements: &mut WordStatements<'a>,
-        word_cache: &mut HashMap<String, String>,
-    ) -> String;
-    fn get_reading<'a>(
-        &self,
-        statements: &mut WordStatements<'a>,
-        reading_cache: &mut HashMap<String, String>,
-    ) -> String;
-}
-
-/// Implementation of the GetWord trait for csv::StringRecord.
-///
-/// This implementation provides methods to retrieve words and readings from a database
-/// based on information in a CSV record. It uses a caching mechanism to improve performance
-/// for repeated lookups.
-///
-/// The CSV structure is expected to be:
-/// Transcript Number, Word, Reading, Seq, Conjugation Number, Truetext
-///
-/// Process for get_word:
-/// 1. Attempts to use Truetext (index 5), falling back to Word (index 1) if Truetext is "-1"
-/// 2. Checks the word cache for a previously retrieved result
-/// 3. If not in cache, queries the database:
-///    - Uses a conjugation-specific query if Conjugation Number (index 4) is present
-///    - Otherwise, uses a non-conjugation query with Seq (index 3)
-/// 4. Falls back to the original word from the CSV if the database query fails
-/// 5. Caches the result for future use
-///
-/// Process for get_reading:
-/// 1. Uses Seq (index 3) to identify the reading
-/// 2. Checks the reading cache for a previously retrieved result
-/// 3. If not in cache, queries the database using Seq
-/// 4. Falls back to the original Reading (index 2) from the CSV if the database query fails
-/// 5. Caches the result for future use
-///
-/// Both methods use prepared SQL statements for efficient database queries and
-/// implement fallback strategies to ensure a result is always returned.
-impl GetWord for csv::StringRecord {
-    fn get_word<'a>(
-        &self,
-        statements: &mut WordStatements<'a>,
-        word_cache: &mut HashMap<String, String>,
-    ) -> String {
-        // Get the target word from Truetext (index 5) if it's not "-1", otherwise use Word (index 1)
-        let target_column = self
-            .get(5)
-            .filter(|&s| s != "-1")
-            .or_else(|| self.get(1))
-            .unwrap_or("");
-
-        // Get the conjugation ID from Conjugation Number (index 4) if it's not "-1"
-        let conj_id = self.get(4).filter(|&s| s != "-1");
-
-        // Get the sequence number from Seq (index 3)
-        let seq = self.get(3).unwrap_or("");
-
-        // Check if the word is already in the cache
-        if let Some(cached_word) = word_cache.get(target_column) {
-            return cached_word.clone();
-        }
-
-        // Query the database based on whether we have a conjugation ID or not
-        let result = if let Some(id) = conj_id {
-            // Use the conjugation-specific query
-            statements
-                .get_word_conj
-                .query_row(params![target_column, id], |row| row.get::<_, String>(0))
-        } else {
-            // Use the non-conjugation query
-            statements
-                .get_word_no_conj
-                .query_row(params![target_column, seq], |row| row.get::<_, String>(0))
-        };
-
-        // If the query fails, fall back to the original word from the CSV
-        let word = result.unwrap_or_else(|_| target_column.to_string());
-
-        // Cache the result for future use
-        word_cache.insert(target_column.to_string(), word.clone());
-
-        word
-    }
-
-    /// Retrieves the reading from the database or cache based on the CSV record
-    fn get_reading<'a>(
-        &self,
-        statements: &mut WordStatements<'a>,
-        reading_cache: &mut HashMap<String, String>,
-    ) -> String {
-        // Get the sequence number from Seq (index 3)
-        let seq = self.get(3).unwrap_or("");
-
-        // Check if the reading is already in the cache
-        if let Some(cached_reading) = reading_cache.get(seq) {
-            return cached_reading.clone();
-        }
-
-        // Query the database for the reading
-        let result = statements
-            .get_reading
-            .query_row(params![seq], |row| row.get::<_, String>(0));
-
-        // If the query fails, fall back to the original reading from Reading (index 2)
-        let reading = match result {
-            Ok(r) => r,
-            Err(_) => self.get(2).unwrap_or("").to_string(), // Fallback to original reading
-        };
-
-        // Cache the result for future use
-        reading_cache.insert(seq.to_string(), reading.clone());
-
-        reading
-    }
-}
-
-pub fn create_reverse_index(
-    conn: &mut Connection,
-    csv_path: &str,
-    jmdict_conn: &mut Connection,
-) -> Result<(), Error> {
-    // Create indexes on the JMDict database
-    create_jmdict_indexes(jmdict_conn)?;
-
-    let mut statements = WordStatements {
-        get_word_conj: jmdict_conn.prepare(
-            "SELECT source_text FROM conj_source_reading WHERE text = ?1 AND conj_id = ?2",
-        )?,
-        get_word_no_conj: jmdict_conn.prepare(
-            "
-            SELECT csr.source_text 
-            FROM conj_source_reading csr
-            JOIN conjugation c ON csr.conj_id = c.id
-            WHERE csr.text = ?1 AND c.seq = ?2
-        ",
-        )?,
-        get_reading: jmdict_conn.prepare(
-            "
-            SELECT kt.text
-            FROM conjugation c
-            JOIN kana_text kt ON kt.seq = c.\"from\"
-            WHERE c.seq = ?1
-        ",
-        )?,
-    };
-
-    let file = File::open(csv_path)?;
-    let reader = BufReader::new(file);
-    let mut csv_reader = csv::ReaderBuilder::new()
-        .has_headers(true)
-        .from_reader(reader);
-
-    let mut word_cache = HashMap::new();
-    let mut reading_cache = HashMap::new();
-    let mut word_map: HashMap<(String, String), HashSet<i64>> = HashMap::new();
-
-    for (index, result) in csv_reader.records().enumerate() {
-        let record = result
-            .map_err(|e| Error::InvalidInput(format!("CSV error at line {}: {}", index + 2, e)))?;
-
-        if record.len() < 5 {
-            return Err(Error::InvalidInput(format!(
-                "Invalid record at line {}: insufficient fields",
-                index + 2
-            )));
-        }
-
-        let transcript_id: i64 = record.get(0).unwrap_or("").parse().map_err(|e| {
-            Error::InvalidInput(format!(
-                "Invalid transcript_id at line {}: {}",
-                index + 2,
-                e
-            ))
-        })?;
-
-        let word = record.get_word(&mut statements, &mut word_cache);
-        let reading = record.get_reading(&mut statements, &mut reading_cache);
-
-        word_map
-            .entry((word, reading))
-            .or_insert_with(HashSet::new)
-            .insert(transcript_id);
-    }
+    // Process transcripts with kagome to extract words
+    let word_map = extract_words_from_transcripts(&transcript_data)?;
+    println!("Extracted {} unique words from transcripts", word_map.len());
 
     // Create indexes on the main database
     create_main_indexes(conn)?;
@@ -204,26 +21,49 @@ pub fn create_reverse_index(
     let tx = conn.transaction()?;
     batch_insert_words_and_occurrences(&tx, word_map)?;
     tx.commit()?;
-
+    
+    println!("Reverse index created successfully!");
+    
+    // Import JLPT levels and compute stats if CSV file exists
+    process_jlpt_data(conn)?;
+    
     Ok(())
+}
+
+fn get_all_transcript_data(conn: &Connection) -> Result<Vec<(i64, String)>, Error> {
+    let mut stmt = conn.prepare("SELECT id, text FROM transcripts")?;
+    let transcript_iter = stmt.query_map([], |row| {
+        let id: i64 = row.get(0)?;
+        let text: String = row.get(1)?;
+        Ok((id, text))
+    })?;
+
+    let mut transcripts = Vec::new();
+    for transcript in transcript_iter {
+        transcripts.push(transcript?);
+    }
+
+    Ok(transcripts)
 }
 
 fn batch_insert_words_and_occurrences(
     tx: &Transaction,
-    word_map: HashMap<(String, String), HashSet<i64>>,
+    word_map: HashMap<(String, String, Vec<String>), HashSet<i64>>,
 ) -> Result<(), Error> {
     let mut stmt_word =
-        tx.prepare("INSERT OR IGNORE INTO words (word, reading) VALUES (?1, ?2)")?;
+        tx.prepare("INSERT OR IGNORE INTO words (word, reading, pos) VALUES (?1, ?2, ?3)")?;
     let mut stmt_get_word_id =
-        tx.prepare("SELECT id FROM words WHERE word = ?1 AND reading = ?2")?;
+        tx.prepare("SELECT id FROM words WHERE word = ?1")?;
     let mut stmt_occurrence = tx.prepare(
         "INSERT OR IGNORE INTO word_occurrences (word_id, transcript_id) VALUES (?1, ?2)",
     )?;
 
-    for ((word, reading), transcript_ids) in word_map {
-        stmt_word.execute(params![&word, &reading])?;
+    for ((word, reading, pos), transcript_ids) in word_map {
+        let pos_json = serde_json::to_string(&pos)
+            .map_err(|e| Error::Other(format!("Failed to serialize POS: {}", e)))?;
+        stmt_word.execute(params![&word, &reading, &pos_json])?;
         let word_id: i64 =
-            stmt_get_word_id.query_row(params![&word, &reading], |row| row.get(0))?;
+            stmt_get_word_id.query_row(params![&word], |row| row.get(0))?;
 
         for &transcript_id in &transcript_ids {
             stmt_occurrence.execute(params![word_id, transcript_id])?;
@@ -233,49 +73,6 @@ fn batch_insert_words_and_occurrences(
     Ok(())
 }
 
-fn create_jmdict_indexes(jmdict_conn: &mut Connection) -> Result<(), Error> {
-    // Indexes for conj_source_reading table
-    jmdict_conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_conj_source_reading_text ON conj_source_reading(text)",
-        [],
-    )?;
-    jmdict_conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_conj_source_reading_conj_id ON conj_source_reading(conj_id)",
-        [],
-    )?;
-
-    // Indexes for conjugation table
-    jmdict_conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_conjugation_id ON conjugation(id)",
-        [],
-    )?;
-    jmdict_conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_conjugation_seq ON conjugation(seq)",
-        [],
-    )?;
-    jmdict_conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_conjugation_from ON conjugation(\"from\")",
-        [],
-    )?;
-
-    // Indexes for kana_text table
-    jmdict_conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_kana_text_seq ON kana_text(seq)",
-        [],
-    )?;
-
-    // Indexes for kanji_text table
-    jmdict_conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_kanji_text_text ON kanji_text(text)",
-        [],
-    )?;
-    jmdict_conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_kanji_text_seq ON kanji_text(seq)",
-        [],
-    )?;
-
-    Ok(())
-}
 
 fn create_main_indexes(conn: &mut Connection) -> Result<(), Error> {
     conn.execute(
@@ -287,5 +84,194 @@ fn create_main_indexes(conn: &mut Connection) -> Result<(), Error> {
         [],
     )?;
     conn.execute("CREATE INDEX IF NOT EXISTS idx_word_occurrences_transcript_id ON word_occurrences(transcript_id)", [])?;
+    Ok(())
+}
+
+fn process_jlpt_data(conn: &mut Connection) -> Result<(), Error> {
+    use std::fs::File;
+    use std::io::{BufRead, BufReader};
+    
+    if !std::path::Path::new("jlpt_levels.csv").exists() {
+        println!("JLPT levels CSV not found, skipping JLPT processing");
+        return Ok(());
+    }
+    
+    println!("Processing JLPT data...");
+    let tx = conn.transaction()?;
+    
+    // Import CSV
+    let reader = BufReader::new(File::open("jlpt_levels.csv")?);
+    for line in reader.lines() {
+        let line = line?;
+        if line.trim().is_empty() || line.starts_with("word,") { continue; }
+        
+        if let Some((word, level)) = line.split_once(',') {
+            let level: i32 = level.trim().parse().unwrap_or(0);
+            if level >= 1 && level <= 5 {
+                tx.execute("INSERT OR REPLACE INTO jlpt_levels (word, level) VALUES (?, ?)", 
+                          [word.trim(), &level.to_string()])?;
+            }
+        }
+    }
+    
+    // Compute stats  
+    tx.execute("DELETE FROM episode_jlpt_stats", [])?;
+    tx.execute("
+        INSERT INTO episode_jlpt_stats (episode_id, n5_pct, n4_pct, n3_pct, n2_pct, n1_pct)
+        SELECT 
+            e.id,
+            100.0 * SUM(CASE WHEN jl.level = 5 THEN 1.0 ELSE 0 END) / COUNT(w.id) as n5_pct,
+            100.0 * SUM(CASE WHEN jl.level >= 4 THEN 1.0 ELSE 0 END) / COUNT(w.id) as n4_pct,
+            100.0 * SUM(CASE WHEN jl.level >= 3 THEN 1.0 ELSE 0 END) / COUNT(w.id) as n3_pct,
+            100.0 * SUM(CASE WHEN jl.level >= 2 THEN 1.0 ELSE 0 END) / COUNT(w.id) as n2_pct,
+            100.0 * SUM(CASE WHEN jl.level >= 1 THEN 1.0 ELSE 0 END) / COUNT(w.id) as n1_pct
+        FROM episodes e
+        JOIN transcripts t ON t.episode_id = e.id
+        JOIN word_occurrences wo ON wo.transcript_id = t.id
+        JOIN words w ON w.id = wo.word_id
+        LEFT JOIN jlpt_levels jl ON jl.word = w.word
+        WHERE NOT (
+            -- Proper nouns
+            (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '固有名詞')
+            -- Fillers, others, interjections
+            OR JSON_EXTRACT(w.pos, '$[0]') IN ('フィラー', 'その他')
+            OR (JSON_EXTRACT(w.pos, '$[0]') = '感動詞' AND JSON_EXTRACT(w.pos, '$[1]') = '間投')
+            -- Numbers
+            OR (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '数')
+        )
+        GROUP BY e.id
+    ", [])?;
+    
+    tx.commit()?;
+    println!("JLPT processing completed!");
+    
+    // Debug: Show filtering and distribution info
+    debug_jlpt_filtering(conn)?;
+    
+    Ok(())
+}
+
+fn debug_jlpt_filtering(conn: &Connection) -> Result<(), Error> {
+    println!("\n=== JLPT Filtering Debug Info ===");
+    
+    // Total words before filtering
+    let total_words: i32 = conn.query_row(
+        "SELECT COUNT(*) FROM words",
+        [],
+        |row| row.get(0)
+    )?;
+    println!("Total words in database: {}", total_words);
+    
+    // Words after POS filtering  
+    let filtered_words: i32 = conn.query_row(
+        "SELECT COUNT(*) FROM words w 
+         WHERE NOT (
+             (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '固有名詞')
+             OR JSON_EXTRACT(w.pos, '$[0]') IN ('フィラー', 'その他')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '感動詞' AND JSON_EXTRACT(w.pos, '$[1]') = '間投')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '数')
+         )",
+        [],
+        |row| row.get(0)
+    )?;
+    println!("Words after POS filtering: {} ({:.1}%)", 
+             filtered_words, 
+             filtered_words as f64 / total_words as f64 * 100.0);
+    
+    // Words with JLPT levels
+    let jlpt_words: i32 = conn.query_row(
+        "SELECT COUNT(*) FROM words w 
+         JOIN jlpt_levels jl ON jl.word = w.word
+         WHERE NOT (
+             (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '固有名詞')
+             OR JSON_EXTRACT(w.pos, '$[0]') IN ('フィラー', 'その他')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '感動詞' AND JSON_EXTRACT(w.pos, '$[1]') = '間投')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '数')
+         )",
+        [],
+        |row| row.get(0)
+    )?;
+    println!("Words with JLPT levels (after filtering): {} ({:.1}%)", 
+             jlpt_words,
+             jlpt_words as f64 / filtered_words as f64 * 100.0);
+    
+    // JLPT level distribution
+    println!("\nJLPT Level Distribution:");
+    let mut stmt = conn.prepare(
+        "SELECT jl.level, COUNT(*) as count
+         FROM words w 
+         JOIN jlpt_levels jl ON jl.word = w.word
+         WHERE NOT (
+             (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '固有名詞')
+             OR JSON_EXTRACT(w.pos, '$[0]') IN ('フィラー', 'その他')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '感動詞' AND JSON_EXTRACT(w.pos, '$[1]') = '間投')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '数')
+         )
+         GROUP BY jl.level ORDER BY jl.level DESC"
+    )?;
+    
+    let level_rows = stmt.query_map([], |row| {
+        Ok((row.get::<_, i32>(0)?, row.get::<_, i32>(1)?))
+    })?;
+    
+    for row in level_rows {
+        let (level, count) = row?;
+        println!("  N{}: {} words ({:.1}%)", 
+                level, 
+                count, 
+                count as f64 / jlpt_words as f64 * 100.0);
+    }
+    
+    // Sample words that don't have JLPT levels
+    println!("\nSample words WITHOUT JLPT levels (after filtering):");
+    let mut sample_stmt = conn.prepare(
+        "SELECT w.word, JSON_EXTRACT(w.pos, '$[0]') as pos1, JSON_EXTRACT(w.pos, '$[1]') as pos2
+         FROM words w 
+         LEFT JOIN jlpt_levels jl ON jl.word = w.word
+         WHERE jl.word IS NULL
+         AND NOT (
+             (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '固有名詞')
+             OR JSON_EXTRACT(w.pos, '$[0]') IN ('フィラー', 'その他')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '感動詞' AND JSON_EXTRACT(w.pos, '$[1]') = '間投')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '数')
+         )
+         LIMIT 20"
+    )?;
+    
+    let sample_rows = sample_stmt.query_map([], |row| {
+        Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?, row.get::<_, String>(2)?))
+    })?;
+    
+    for row in sample_rows {
+        let (word, pos1, pos2) = row?;
+        println!("  {} ({}, {})", word, pos1, pos2);
+    }
+    
+    // POS category breakdown for words without JLPT levels
+    println!("\nPOS breakdown of words WITHOUT JLPT levels (after filtering):");
+    let mut pos_stmt = conn.prepare(
+        "SELECT JSON_EXTRACT(w.pos, '$[0]') as pos1, COUNT(*) as count
+         FROM words w 
+         LEFT JOIN jlpt_levels jl ON jl.word = w.word
+         WHERE jl.word IS NULL
+         AND NOT (
+             (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '固有名詞')
+             OR JSON_EXTRACT(w.pos, '$[0]') IN ('フィラー', 'その他')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '感動詞' AND JSON_EXTRACT(w.pos, '$[1]') = '間投')
+             OR (JSON_EXTRACT(w.pos, '$[0]') = '名詞' AND JSON_EXTRACT(w.pos, '$[1]') = '数')
+         )
+         GROUP BY pos1 ORDER BY count DESC LIMIT 10"
+    )?;
+    
+    let pos_rows = pos_stmt.query_map([], |row| {
+        Ok((row.get::<_, String>(0)?, row.get::<_, i32>(1)?))
+    })?;
+    
+    for row in pos_rows {
+        let (pos, count) = row?;
+        println!("  {}: {} words", pos, count);
+    }
+    
+    println!("=== End Debug Info ===\n");
     Ok(())
 }

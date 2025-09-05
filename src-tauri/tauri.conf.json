@@ -20,7 +20,14 @@
         "center": true
       },
       "fs": {
-        "scope": ["$RESOURCE/*", "$RESOURCE/data/transcripts_raw/*"]
+        "all": false,
+        "readDir": true,
+        "readFile": true,
+        "scope": ["**"]
+      },
+      "dialog": {
+        "all": false,
+        "open": true
       }
     },
     "windows": [
@@ -37,11 +44,7 @@
       "active": true,
       "targets": "all",
       "identifier": "com.japanese-subtitle-search.app",
-      "resources": [
-        "data/transcripts_raw/**/*",
-        "jmdict.sqlite",
-        "transcripts.db"
-      ],
+      "resources": [],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
