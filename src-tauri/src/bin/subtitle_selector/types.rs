@@ -27,15 +27,12 @@ pub struct SubtitleCandidate {
     pub is_cc: bool,
     pub format: String,
     pub is_zip: bool,
-    pub source_zip_url: Option<String>,
 }
 
 #[derive(Debug, Clone)]
 pub struct CurrentChoice {
     pub original_source: String,
-    pub source_type: SourceType,
     pub format: String,
-    pub is_zip: bool,
 }
 
 pub type SelectionMap = HashMap<i32, SubtitleCandidate>;
