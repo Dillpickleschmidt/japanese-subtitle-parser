@@ -48,7 +48,6 @@ impl From<rusqlite::Error> for Error {
     }
 }
 
-
 impl From<serde_json::Error> for Error {
     fn from(err: serde_json::Error) -> Self {
         Error::Json(err)
@@ -86,7 +85,6 @@ mod tests {
         let err = Error::Io(io_err);
         assert_eq!(err.to_string(), "IO error: file not found");
 
-
         let json_err = serde_json::from_str::<serde_json::Value>("invalid json").unwrap_err();
         let err = Error::Json(json_err);
         assert!(err.to_string().starts_with("JSON error: "));
@@ -107,7 +105,6 @@ mod tests {
         );
         let err: Error = db_err.into();
         assert!(matches!(err, Error::Database(_)));
-
 
         // Updated JSON error conversion test
         let json_err = serde_json::from_str::<serde_json::Value>("invalid json").unwrap_err();

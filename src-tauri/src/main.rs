@@ -20,8 +20,7 @@ fn main() -> Result<(), Error> {
     tauri::Builder::default()
         .setup(|app| {
             // Create transcripts.db in the src-tauri directory
-            let current_dir = std::env::current_dir()
-                .expect("failed to get current directory");
+            let current_dir = std::env::current_dir().expect("failed to get current directory");
             let transcripts_db_path = current_dir.join("transcripts.db");
             let transcript_db = TranscriptDatabase(Mutex::new(DbHandler::new(
                 transcripts_db_path.to_str().unwrap(),
@@ -51,10 +50,15 @@ fn main() -> Result<(), Error> {
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn process_srt_directory(root_dir: String, database: State<TranscriptDatabase>) -> Result<String, String> {
-
+fn process_srt_directory(
+    root_dir: String,
+    database: State<TranscriptDatabase>,
+) -> Result<String, String> {
     println!("Processing SRT files in {}...", root_dir);
-    let mut db = database.0.lock().map_err(|e| format!("Database lock error: {}", e))?;
+    let mut db = database
+        .0
+        .lock()
+        .map_err(|e| format!("Database lock error: {}", e))?;
     let show_entries = _process_srt_directory(Path::new(&root_dir));
     println!(
         "Processed {} entries.",
@@ -79,7 +83,7 @@ fn process_srt_directory(root_dir: String, database: State<TranscriptDatabase>) 
                 show_id,
                 episode.episode_name.clone(),
                 episode.season,
-                episode.episode_number as i32,
+                episode.episode_number,
             ));
 
             for subtitle in episode.content.0.iter() {
@@ -95,22 +99,29 @@ fn process_srt_directory(root_dir: String, database: State<TranscriptDatabase>) 
     }
 
     // Perform batch insertions
-    db.insert_shows(&shows).map_err(|e| format!("Failed to insert shows: {}", e))?;
+    db.insert_shows(&shows)
+        .map_err(|e| format!("Failed to insert shows: {}", e))?;
     println!("Shows inserted successfully.");
 
-    db.insert_episodes(&episodes).map_err(|e| format!("Failed to insert episodes: {}", e))?;
+    db.insert_episodes(&episodes)
+        .map_err(|e| format!("Failed to insert episodes: {}", e))?;
     println!("Episodes inserted successfully.");
 
-    db.insert_transcripts(&transcripts).map_err(|e| format!("Failed to insert transcripts: {}", e))?;
+    db.insert_transcripts(&transcripts)
+        .map_err(|e| format!("Failed to insert transcripts: {}", e))?;
     println!("Transcripts inserted successfully.");
-    
+
     Ok("Processing completed successfully!".to_string())
 }
 
 #[tauri::command]
 fn create_reverse_index(transcript_db: State<TranscriptDatabase>) -> Result<String, String> {
-    let mut db = transcript_db.0.lock().map_err(|e| format!("Database lock error: {}", e))?;
-    db.create_reverse_index().map_err(|e| format!("Failed to create reverse index: {}", e))?;
+    let mut db = transcript_db
+        .0
+        .lock()
+        .map_err(|e| format!("Database lock error: {}", e))?;
+    db.create_reverse_index()
+        .map_err(|e| format!("Failed to create reverse index: {}", e))?;
     Ok("Reverse index created successfully!".to_string())
 }
 

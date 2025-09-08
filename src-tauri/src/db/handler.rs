@@ -136,7 +136,6 @@ impl DbHandler {
             inserted_ids.push(transcript.id.unwrap());
         }
 
-
         tx.commit()?;
         Ok(inserted_ids)
     }
@@ -155,7 +154,6 @@ impl DbHandler {
         search::search_word_with_context(&self.conn, keyword, shows)
     }
 
-
     /// Imports JLPT word levels from a CSV file
     pub fn import_jlpt_csv(&mut self, path: &str) -> Result<(), Error> {
         use std::fs::File;
@@ -163,28 +161,30 @@ impl DbHandler {
 
         let file = File::open(path)?;
         let reader = BufReader::new(file);
-        
+
         let tx = self.conn.transaction()?;
-        
+
         for line in reader.lines() {
             let line = line?;
             if line.trim().is_empty() || line.starts_with("word,") {
                 continue; // Skip empty lines and header
             }
-            
+
             let parts: Vec<&str> = line.split(',').collect();
             if parts.len() >= 2 {
                 let word = parts[0].trim();
-                let level: i32 = parts[1].trim().parse()
+                let level: i32 = parts[1]
+                    .trim()
+                    .parse()
                     .map_err(|_| Error::Other(format!("Invalid level in line: {}", line)))?;
-                
+
                 tx.execute(
                     "INSERT OR REPLACE INTO jlpt_levels (word, level) VALUES (?, ?)",
                     [word, &level.to_string()],
                 )?;
             }
         }
-        
+
         tx.commit()?;
         Ok(())
     }
@@ -192,22 +192,24 @@ impl DbHandler {
     /// Computes JLPT statistics for all episodes
     pub fn compute_jlpt_stats(&mut self) -> Result<(), Error> {
         let tx = self.conn.transaction()?;
-        
+
         // Clear existing stats
         tx.execute("DELETE FROM episode_jlpt_stats", [])?;
-        
+
         // Get all episodes
         let mut stmt = tx.prepare("SELECT id FROM episodes")?;
-        let episode_rows = stmt.query_map([], |row| Ok(row.get::<_, i32>(0)?))?
+        let episode_rows = stmt
+            .query_map([], |row| Ok(row.get::<_, i32>(0)?))?
             .collect::<Result<Vec<_>, _>>()?;
         drop(stmt);
-        
+
         for episode_id in episode_rows {
             // Count words by JLPT level for this episode
             let mut level_counts = [0; 6]; // index 0 unused, 1-5 for N1-N5
             let mut total_words = 0;
-            
-            let mut word_stmt = tx.prepare("
+
+            let mut word_stmt = tx.prepare(
+                "
                 SELECT jl.level, COUNT(*) as count
                 FROM transcripts t
                 JOIN word_occurrences wo ON wo.transcript_id = t.id
@@ -215,49 +217,68 @@ impl DbHandler {
                 JOIN jlpt_levels jl ON jl.word = w.word
                 WHERE t.episode_id = ?
                 GROUP BY jl.level
-            ")?;
-            
-            let word_rows = word_stmt.query_map([episode_id], |row| {
-                Ok((row.get::<_, i32>(0)?, row.get::<_, i32>(1)?))
-            })?.collect::<Result<Vec<_>, _>>()?;
+            ",
+            )?;
+
+            let word_rows = word_stmt
+                .query_map([episode_id], |row| {
+                    Ok((row.get::<_, i32>(0)?, row.get::<_, i32>(1)?))
+                })?
+                .collect::<Result<Vec<_>, _>>()?;
             drop(word_stmt);
-            
+
             for (level, count) in word_rows {
                 if level >= 1 && level <= 5 {
                     level_counts[level as usize] = count;
                     total_words += count;
                 }
             }
-            
+
             if total_words > 0 {
-                let n5_pct = (level_counts[5] + level_counts[4] + level_counts[3] + level_counts[2] + level_counts[1]) as f64 / total_words as f64 * 100.0;
-                let n4_pct = (level_counts[4] + level_counts[3] + level_counts[2] + level_counts[1]) as f64 / total_words as f64 * 100.0;
-                let n3_pct = (level_counts[3] + level_counts[2] + level_counts[1]) as f64 / total_words as f64 * 100.0;
-                let n2_pct = (level_counts[2] + level_counts[1]) as f64 / total_words as f64 * 100.0;
+                let n5_pct = (level_counts[5]
+                    + level_counts[4]
+                    + level_counts[3]
+                    + level_counts[2]
+                    + level_counts[1]) as f64
+                    / total_words as f64
+                    * 100.0;
+                let n4_pct = (level_counts[4] + level_counts[3] + level_counts[2] + level_counts[1])
+                    as f64
+                    / total_words as f64
+                    * 100.0;
+                let n3_pct = (level_counts[3] + level_counts[2] + level_counts[1]) as f64
+                    / total_words as f64
+                    * 100.0;
+                let n2_pct =
+                    (level_counts[2] + level_counts[1]) as f64 / total_words as f64 * 100.0;
                 let n1_pct = level_counts[1] as f64 / total_words as f64 * 100.0;
-                
+
                 tx.execute(
                     "INSERT INTO episode_jlpt_stats (episode_id, n5_pct, n4_pct, n3_pct, n2_pct, n1_pct) VALUES (?, ?, ?, ?, ?, ?)",
                     [episode_id.to_string(), n5_pct.to_string(), n4_pct.to_string(), n3_pct.to_string(), n2_pct.to_string(), n1_pct.to_string()],
                 )?;
             }
         }
-        
+
         tx.commit()?;
         Ok(())
     }
 
     /// Gets episodes where at least min_pct% of words are at min_level or easier
-    pub fn get_episodes_by_jlpt(&self, min_level: u8, min_pct: f64) -> Result<Vec<(i32, String, i32, i32, f64)>, Error> {
+    pub fn get_episodes_by_jlpt(
+        &self,
+        min_level: u8,
+        min_pct: f64,
+    ) -> Result<Vec<(i32, String, i32, i32, f64)>, Error> {
         let column = match min_level {
             5 => "n5_pct",
-            4 => "n4_pct", 
+            4 => "n4_pct",
             3 => "n3_pct",
             2 => "n2_pct",
             1 => "n1_pct",
             _ => return Err(Error::Other("Invalid JLPT level. Use 1-5.".to_string())),
         };
-        
+
         let sql = format!(
             "SELECT e.id, e.name, e.season, e.episode_number, ejs.{}
              FROM episodes e
@@ -266,18 +287,18 @@ impl DbHandler {
              ORDER BY ejs.{} DESC",
             column, column, column
         );
-        
+
         let mut stmt = self.conn.prepare(&sql)?;
         let rows = stmt.query_map([min_pct], |row| {
             Ok((
-                row.get::<_, i32>(0)?,      // episode_id
-                row.get::<_, String>(1)?,   // episode_name  
-                row.get::<_, i32>(2)?,      // season
-                row.get::<_, i32>(3)?,      // episode_number
-                row.get::<_, f64>(4)?,      // percentage
+                row.get::<_, i32>(0)?,    // episode_id
+                row.get::<_, String>(1)?, // episode_name
+                row.get::<_, i32>(2)?,    // season
+                row.get::<_, i32>(3)?,    // episode_number
+                row.get::<_, f64>(4)?,    // percentage
             ))
         })?;
-        
+
         rows.collect::<Result<Vec<_>, _>>().map_err(Error::from)
     }
 }

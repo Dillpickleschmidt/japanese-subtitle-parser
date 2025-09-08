@@ -135,4 +135,3 @@ fn write_json_to_file(json: &JsonValue, filename: &str) -> Result<(), Error> {
     serde_json::to_writer(writer, json)?;
     Ok(())
 }
-
