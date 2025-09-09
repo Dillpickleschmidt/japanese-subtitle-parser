@@ -1,9 +1,9 @@
 // db.rs
 mod episode;
-mod handler;
-mod reverse_index;
+mod transcript_database;
 mod search;
 mod show;
 mod transcript;
 mod word;
-pub use self::handler::DbHandler;
+pub mod grammar_pattern;
+pub use self::transcript_database::DbHandler;

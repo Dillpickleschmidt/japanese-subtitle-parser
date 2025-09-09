@@ -1,10 +1,9 @@
+use crate::analysis::japanese_analyzer;
 use crate::db::episode::Episode;
-use crate::db::reverse_index;
 use crate::db::search;
 use crate::db::show::Show;
-use crate::db::transcript::Transcript;
 use crate::error::Error;
-use rusqlite::Connection;
+use rusqlite::{params, Connection};
 use serde_json::Value as JsonValue;
 
 /// DbHandler struct that wraps a SQLite connection
@@ -16,6 +15,18 @@ impl DbHandler {
     /// Creates a new DbHandler with a connection to the specified database file
     pub fn new(path: &str) -> Result<Self, Error> {
         let conn = Connection::open(path)?;
+
+        // Configure database for optimal performance
+        conn.execute_batch(
+            "
+            PRAGMA journal_mode = WAL;
+            PRAGMA synchronous = NORMAL; 
+            PRAGMA cache_size = 10000;
+            PRAGMA temp_store = MEMORY;
+            PRAGMA mmap_size = 268435456;
+        ",
+        )?;
+
         Ok(Self { conn })
     }
 
@@ -40,8 +51,8 @@ impl DbHandler {
                 id INTEGER PRIMARY KEY, 
                 episode_id INTEGER,
                 line_id INTEGER, 
-                time_start TEXT, 
-                time_end TEXT, 
+                time_start INTEGER, 
+                time_end INTEGER, 
                 text TEXT NOT NULL,
                 UNIQUE(episode_id, line_id, time_start, time_end, text),
                 FOREIGN KEY(episode_id) REFERENCES episodes(id)
@@ -59,6 +70,23 @@ impl DbHandler {
                 FOREIGN KEY(transcript_id) REFERENCES transcripts(id),
                 UNIQUE(word_id, transcript_id)
             );
+            -- Normalized word frequency and statistics table
+            CREATE TABLE IF NOT EXISTS word_stats (
+                word_id INTEGER PRIMARY KEY,
+                total_occurrences INTEGER NOT NULL DEFAULT 0,
+                episode_count INTEGER NOT NULL DEFAULT 0,
+                frequency_rank INTEGER,
+                FOREIGN KEY(word_id) REFERENCES words(id)
+            );
+            -- Episode-word occurrence counts for quick lookups
+            CREATE TABLE IF NOT EXISTS word_episodes (
+                word_id INTEGER,
+                episode_id INTEGER,
+                occurrence_count INTEGER NOT NULL DEFAULT 0,
+                PRIMARY KEY (word_id, episode_id),
+                FOREIGN KEY(word_id) REFERENCES words(id),
+                FOREIGN KEY(episode_id) REFERENCES episodes(id)
+            );
             CREATE TABLE IF NOT EXISTS jlpt_levels (
                 word TEXT PRIMARY KEY,
                 level INTEGER NOT NULL
@@ -72,7 +100,80 @@ impl DbHandler {
                 n1_pct REAL,
                 FOREIGN KEY(episode_id) REFERENCES episodes(id)
             );
-            CREATE INDEX IF NOT EXISTS idx_n4_pct ON episode_jlpt_stats(n4_pct);
+            -- Simplified grammar patterns - just unique pattern definitions
+            CREATE TABLE IF NOT EXISTS grammar_patterns (
+                id INTEGER PRIMARY KEY,
+                pattern_name TEXT NOT NULL UNIQUE     -- 'te_form', 'past_tense', etc.
+            );
+            -- Grammar pattern occurrences linked to specific transcripts
+            CREATE TABLE IF NOT EXISTS grammar_pattern_occurrences (
+                pattern_id INTEGER,
+                transcript_id INTEGER,
+                confidence REAL,
+                PRIMARY KEY (pattern_id, transcript_id),
+                FOREIGN KEY (pattern_id) REFERENCES grammar_patterns(id),
+                FOREIGN KEY (transcript_id) REFERENCES transcripts(id)
+            );
+            -- Comprehensive indexing strategy for fast searches and queries
+            
+            -- Episode and transcript indexes
+            CREATE INDEX IF NOT EXISTS idx_episodes_show_id ON episodes(show_id);
+            CREATE INDEX IF NOT EXISTS idx_transcripts_episode_id ON transcripts(episode_id);
+            CREATE INDEX IF NOT EXISTS idx_transcripts_episode_line ON transcripts(episode_id, line_id);
+            
+            -- Word search indexes (critical for performance)
+            CREATE INDEX IF NOT EXISTS idx_words_word ON words(word);
+            CREATE INDEX IF NOT EXISTS idx_words_reading ON words(reading);
+            CREATE INDEX IF NOT EXISTS idx_word_occurrences_word_id ON word_occurrences(word_id);
+            CREATE INDEX IF NOT EXISTS idx_word_occurrences_transcript_id ON word_occurrences(transcript_id);
+            CREATE INDEX IF NOT EXISTS idx_word_occurrences_composite ON word_occurrences(word_id, transcript_id);
+            
+            -- Word statistics indexes for ranking and frequency queries
+            CREATE INDEX IF NOT EXISTS idx_word_stats_total_occurrences ON word_stats(total_occurrences DESC);
+            CREATE INDEX IF NOT EXISTS idx_word_stats_episode_count ON word_stats(episode_count DESC);
+            CREATE INDEX IF NOT EXISTS idx_word_stats_frequency_rank ON word_stats(frequency_rank);
+            CREATE INDEX IF NOT EXISTS idx_word_episodes_word_id ON word_episodes(word_id);
+            CREATE INDEX IF NOT EXISTS idx_word_episodes_episode_id ON word_episodes(episode_id);
+            CREATE INDEX IF NOT EXISTS idx_word_episodes_count ON word_episodes(occurrence_count DESC);
+            
+            -- JLPT stats indexes for filtering and sorting
+            CREATE INDEX IF NOT EXISTS idx_jlpt_levels_word ON jlpt_levels(word);
+            CREATE INDEX IF NOT EXISTS idx_jlpt_levels_level ON jlpt_levels(level);
+            CREATE INDEX IF NOT EXISTS idx_episode_jlpt_n5 ON episode_jlpt_stats(n5_pct DESC);
+            CREATE INDEX IF NOT EXISTS idx_episode_jlpt_n4 ON episode_jlpt_stats(n4_pct DESC);
+            CREATE INDEX IF NOT EXISTS idx_episode_jlpt_n3 ON episode_jlpt_stats(n3_pct DESC);
+            CREATE INDEX IF NOT EXISTS idx_episode_jlpt_n2 ON episode_jlpt_stats(n2_pct DESC);
+            CREATE INDEX IF NOT EXISTS idx_episode_jlpt_n1 ON episode_jlpt_stats(n1_pct DESC);
+            
+            -- Grammar pattern indexes
+            CREATE INDEX IF NOT EXISTS idx_grammar_patterns_name ON grammar_patterns(pattern_name);
+            CREATE INDEX IF NOT EXISTS idx_grammar_pattern_occurrences_pattern_id ON grammar_pattern_occurrences(pattern_id);
+            CREATE INDEX IF NOT EXISTS idx_grammar_pattern_occurrences_transcript_id ON grammar_pattern_occurrences(transcript_id);
+            
+            -- Full-text search for transcripts (most important for search performance)
+            CREATE VIRTUAL TABLE IF NOT EXISTS transcripts_fts USING fts5(
+                content='transcripts',
+                content_rowid='id',
+                episode_id UNINDEXED,
+                text,
+                tokenize='porter'
+            );
+            
+            -- Triggers to keep FTS table in sync
+            CREATE TRIGGER IF NOT EXISTS transcripts_fts_insert AFTER INSERT ON transcripts
+            BEGIN
+                INSERT INTO transcripts_fts(rowid, episode_id, text) VALUES (NEW.id, NEW.episode_id, NEW.text);
+            END;
+            
+            CREATE TRIGGER IF NOT EXISTS transcripts_fts_delete AFTER DELETE ON transcripts
+            BEGIN
+                DELETE FROM transcripts_fts WHERE rowid = OLD.id;
+            END;
+            
+            CREATE TRIGGER IF NOT EXISTS transcripts_fts_update AFTER UPDATE ON transcripts
+            BEGIN
+                UPDATE transcripts_fts SET episode_id = NEW.episode_id, text = NEW.text WHERE rowid = NEW.id;
+            END;
         ";
         self.conn.execute_batch(sql)?;
         Ok(())
@@ -116,25 +217,47 @@ impl DbHandler {
         Ok(inserted_ids)
     }
 
-    /// Inserts multiple transcripts into the database
+    /// Inserts multiple transcripts into the database using batch prepared statements
     pub fn insert_transcripts(
         &mut self,
-        transcripts: &[(i32, i32, String, String, String)],
+        transcripts: &[(i32, i32, i64, i64, String)],
     ) -> Result<Vec<i32>, Error> {
         let tx = self.conn.transaction()?;
+
+        // Temporarily disable FTS triggers for bulk insert performance
+        tx.execute("DROP TRIGGER IF EXISTS transcripts_fts_insert", [])?;
+
+        // Prepare statement once for all inserts
+        let mut stmt = tx.prepare(
+            "INSERT OR IGNORE INTO transcripts (episode_id, line_id, time_start, time_end, text) 
+             VALUES (?1, ?2, ?3, ?4, ?5)",
+        )?;
+
         let mut inserted_ids = Vec::with_capacity(transcripts.len());
 
-        for &(episode_id, line_id, ref time_start, ref time_end, ref text) in transcripts {
-            let mut transcript = Transcript::new(
-                episode_id,
-                line_id,
-                time_start.clone(),
-                time_end.clone(),
-                text.clone(),
-            );
-            transcript.insert(&tx)?;
-            inserted_ids.push(transcript.id.unwrap());
+        // Batch insert without creating intermediate objects
+        for &(episode_id, line_id, time_start, time_end, ref text) in transcripts {
+            stmt.execute(params![episode_id, line_id, time_start, time_end, text])?;
+            let row_id = tx.last_insert_rowid() as i32;
+            inserted_ids.push(row_id);
         }
+
+        drop(stmt); // Release statement before recreating trigger
+
+        // Recreate FTS trigger
+        tx.execute(
+            "CREATE TRIGGER IF NOT EXISTS transcripts_fts_insert AFTER INSERT ON transcripts
+             BEGIN
+                 INSERT INTO transcripts_fts(rowid, episode_id, text) VALUES (NEW.id, NEW.episode_id, NEW.text);
+             END", 
+            []
+        )?;
+
+        // Bulk rebuild FTS table for all inserted transcripts
+        tx.execute(
+            "INSERT INTO transcripts_fts(transcripts_fts) VALUES('rebuild')",
+            [],
+        )?;
 
         tx.commit()?;
         Ok(inserted_ids)
@@ -142,7 +265,7 @@ impl DbHandler {
 
     /// Creates a reverse index using kagome for Japanese morphological analysis
     pub fn create_reverse_index(&mut self) -> Result<(), Error> {
-        reverse_index::create_reverse_index(&mut self.conn)
+        japanese_analyzer::create_reverse_index(&mut self.conn)
     }
 
     /// Performs a search for transcripts containing a specific keyword with context, filtered by shows
@@ -155,6 +278,7 @@ impl DbHandler {
     }
 
     /// Imports JLPT word levels from a CSV file
+    #[allow(dead_code)]
     pub fn import_jlpt_csv(&mut self, path: &str) -> Result<(), Error> {
         use std::fs::File;
         use std::io::{BufRead, BufReader};
@@ -190,6 +314,7 @@ impl DbHandler {
     }
 
     /// Computes JLPT statistics for all episodes
+    #[allow(dead_code)]
     pub fn compute_jlpt_stats(&mut self) -> Result<(), Error> {
         let tx = self.conn.transaction()?;
 
@@ -265,6 +390,7 @@ impl DbHandler {
     }
 
     /// Gets episodes where at least min_pct% of words are at min_level or easier
+    #[allow(dead_code)]
     pub fn get_episodes_by_jlpt(
         &self,
         min_level: u8,

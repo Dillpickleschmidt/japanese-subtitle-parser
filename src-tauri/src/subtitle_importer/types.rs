@@ -36,30 +36,53 @@ impl Timestamp {
             self.hours, self.minutes, self.seconds, self.milliseconds
         )
     }
+
+    pub fn to_milliseconds(&self) -> i64 {
+        ((self.hours * 3600 + self.minutes * 60 + self.seconds) * 1000 + self.milliseconds) as i64
+    }
 }
 
 impl FromStr for Timestamp {
     type Err = ParsingError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let parts: Vec<&str> = s.split(&[':', ',']).collect();
-        if parts.len() != 4 {
+        // Parse without creating intermediate Vec allocation
+        let mut parts = s.split(&[':', ',']);
+
+        let hours = parts
+            .next()
+            .ok_or(ParsingError::InvalidTimestamp)?
+            .parse()
+            .map_err(|_| ParsingError::InvalidTimestamp)?;
+
+        let minutes = parts
+            .next()
+            .ok_or(ParsingError::InvalidTimestamp)?
+            .parse()
+            .map_err(|_| ParsingError::InvalidTimestamp)?;
+
+        let seconds = parts
+            .next()
+            .ok_or(ParsingError::InvalidTimestamp)?
+            .parse()
+            .map_err(|_| ParsingError::InvalidTimestamp)?;
+
+        let milliseconds = parts
+            .next()
+            .ok_or(ParsingError::InvalidTimestamp)?
+            .parse()
+            .map_err(|_| ParsingError::InvalidTimestamp)?;
+
+        // Ensure no extra parts
+        if parts.next().is_some() {
             return Err(ParsingError::InvalidTimestamp);
         }
 
         Ok(Timestamp {
-            hours: parts[0]
-                .parse()
-                .map_err(|_| ParsingError::InvalidTimestamp)?,
-            minutes: parts[1]
-                .parse()
-                .map_err(|_| ParsingError::InvalidTimestamp)?,
-            seconds: parts[2]
-                .parse()
-                .map_err(|_| ParsingError::InvalidTimestamp)?,
-            milliseconds: parts[3]
-                .parse()
-                .map_err(|_| ParsingError::InvalidTimestamp)?,
+            hours,
+            minutes,
+            seconds,
+            milliseconds,
         })
     }
 }

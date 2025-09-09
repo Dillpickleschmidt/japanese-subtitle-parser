@@ -8,6 +8,7 @@ pub struct Show {
     pub show_type: String,
 }
 
+#[allow(dead_code)]
 impl Show {
     pub fn new(name: String, show_type: String) -> Self {
         Show {

@@ -3,7 +3,6 @@ use super::episode_info::{
 };
 use super::errors::ParsingError;
 use super::types::{Subtitle, Subtitles, Timestamp};
-use regex::Regex;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
@@ -26,6 +25,7 @@ pub struct ShowEntry {
 
 pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
     let mut show_entries: Vec<ShowEntry> = Vec::new();
+    let mut show_name_to_index: HashMap<String, usize> = HashMap::new();
     // Create configurations for specific shows for extracting data from file names
     let configs = create_show_configs();
 
@@ -43,15 +43,14 @@ pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
             // Process each SRT file
             match process_srt_file(path, &configs) {
                 Ok(srt_entry) => {
-                    // Check if we've already encountered this show
-                    if let Some(show) = show_entries
-                        .iter_mut()
-                        .find(|s| s.name == srt_entry.show_name)
-                    {
+                    // Check if we've already encountered this show using HashMap lookup
+                    if let Some(&show_index) = show_name_to_index.get(&srt_entry.show_name) {
                         // If so, add this episode to the existing show entry
-                        show.episodes.push(srt_entry);
+                        show_entries[show_index].episodes.push(srt_entry);
                     } else {
                         // If not, create a new show entry with this episode
+                        let show_index = show_entries.len();
+                        show_name_to_index.insert(srt_entry.show_name.clone(), show_index);
                         show_entries.push(ShowEntry {
                             name: srt_entry.show_name.clone(),
                             episodes: vec![srt_entry],
@@ -123,47 +122,93 @@ impl Subtitles {
     /// * `Result<Self, ParsingError>` - Parsed subtitles or an error
     pub fn parse_from_str(input: &str) -> Result<Self, ParsingError> {
         // Remove BOM if present and normalize line endings
-        let input = input.trim_start_matches('\u{feff}').replace('\r', "");
+        let input = input.trim_start_matches('\u{feff}');
 
-        // Define regex pattern for parsing SRT format
-        // Detailed explanation of the regex pattern:
-        // r"(\d+)\s*\n                    - Group 1: Matches the subtitle number (one or more digits) followed by optional whitespace and a newline
-        //   \s*(\d{2}:\d{2}:\d{2},\d{3})  - Group 2: Matches the start time (HH:MM:SS,mmm format), allowing leading whitespace
-        //   \s*-->\s*                     - Matches the arrow separator between timestamps, allowing surrounding whitespace
-        //   (\d{2}:\d{2}:\d{2},\d{3})\s*  - Group 3: Matches the end time (HH:MM:SS,mmm format), allowing trailing whitespace
-        //   \n                            - Matches the newline after the timestamp line
-        //   ((?s:.*?)                     - Group 4: Starts the subtitle text capture
-        //     (?s:.*?)                      - Non-greedy match of any characters, including newlines (s flag)
-        //   (?:\n\s*\n|$))                - End of Group 4: Matches either two newlines (allowing whitespace between) or the end of the string
-        //                                   This allows for multi-line subtitles, handles the last subtitle, and accommodates extra whitespace"
-        let re = Regex::new(
-        r"(\d+)\n(\d{2}:\d{2}:\d{2},\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2},\d{3})\s*\n((?s:.*?)(?:\n\n|$))",
-        )
-        .map_err(|_| ParsingError::MalformedSubtitle)?;
+        // Only allocate new string if we actually need to replace \r characters
+        let input = if input.contains('\r') {
+            std::borrow::Cow::Owned(input.replace('\r', ""))
+        } else {
+            std::borrow::Cow::Borrowed(input)
+        };
 
-        let mut subtitles = Vec::new();
+        // Better capacity estimate: ~400 subtitles per typical 24min episode
+        let estimated_capacity = input.len() / 90; // More accurate based on actual SRT structure
+        let mut subtitles = Vec::with_capacity(estimated_capacity);
 
-        // Iterate over each regex match in the input
-        for cap in re.captures_iter(&input) {
-            // Parse subtitle number (Group 1)
-            let number = cap[1].parse().map_err(|_| ParsingError::InvalidNumber)?;
+        // State machine parser - much faster than regex for structured text
+        #[derive(Debug)]
+        enum ParseState {
+            ExpectingNumber,
+            ExpectingTimestamp,
+            ReadingText,
+        }
 
-            // Parse start timestamp (Group 2)
-            let start_time = Timestamp::from_str(&cap[2])?;
+        let mut state = ParseState::ExpectingNumber;
+        let mut current_number = 0;
+        let mut current_start_time = None;
+        let mut current_end_time = None;
+        let mut text_lines = Vec::new();
 
-            // Parse end timestamp (Group 3)
-            let end_time = Timestamp::from_str(&cap[3])?;
+        for line in input.lines() {
+            let line = line.trim();
 
-            // Extract and trim subtitle text (Group 4)
-            let text = cap[4].trim().to_string();
+            match state {
+                ParseState::ExpectingNumber => {
+                    if line.is_empty() {
+                        continue; // Skip empty lines between entries
+                    }
+                    current_number = line.parse().map_err(|_| ParsingError::InvalidNumber)?;
+                    state = ParseState::ExpectingTimestamp;
+                }
 
-            // Create and add new Subtitle to the collection
-            subtitles.push(Subtitle {
-                number,
-                start_time,
-                end_time,
-                text,
-            });
+                ParseState::ExpectingTimestamp => {
+                    // Parse timestamp line: "00:00:03,003 --> 00:00:04,921"
+                    if let Some(arrow_pos) = line.find(" --> ") {
+                        let start_str = line[..arrow_pos].trim();
+                        let end_str = line[arrow_pos + 5..].trim();
+
+                        current_start_time = Some(Timestamp::from_str(start_str)?);
+                        current_end_time = Some(Timestamp::from_str(end_str)?);
+                        state = ParseState::ReadingText;
+                        text_lines.clear();
+                    } else {
+                        return Err(ParsingError::MalformedSubtitle);
+                    }
+                }
+
+                ParseState::ReadingText => {
+                    if line.is_empty() {
+                        // End of current subtitle - create and add it
+                        if let (Some(start_time), Some(end_time)) =
+                            (current_start_time.take(), current_end_time.take())
+                        {
+                            let text = text_lines.join("\n");
+                            subtitles.push(Subtitle {
+                                number: current_number,
+                                start_time,
+                                end_time,
+                                text,
+                            });
+                        }
+                        state = ParseState::ExpectingNumber;
+                    } else {
+                        text_lines.push(line);
+                    }
+                }
+            }
+        }
+
+        // Handle final subtitle if file doesn't end with empty line
+        if matches!(state, ParseState::ReadingText) {
+            if let (Some(start_time), Some(end_time)) = (current_start_time, current_end_time) {
+                let text = text_lines.join("\n");
+                subtitles.push(Subtitle {
+                    number: current_number,
+                    start_time,
+                    end_time,
+                    text,
+                });
+            }
         }
 
         // Check if any subtitles were parsed

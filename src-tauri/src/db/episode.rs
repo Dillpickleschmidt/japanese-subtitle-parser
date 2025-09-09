@@ -12,6 +12,7 @@ pub struct Episode {
     pub episode_number: i32,
 }
 
+#[allow(dead_code)]
 impl Episode {
     /// Creates a new Episode instance
     pub fn new(show_id: i32, name: String, season: i32, episode_number: i32) -> Self {

@@ -7,8 +7,6 @@ pub enum Error {
     Io(std::io::Error),
     Database(rusqlite::Error),
     Json(serde_json::Error),
-    NotFound(String),
-    InvalidInput(String),
     Other(String),
 }
 
@@ -18,8 +16,6 @@ impl fmt::Display for Error {
             Error::Io(err) => write!(f, "IO error: {}", err),
             Error::Database(err) => write!(f, "Database error: {}", err),
             Error::Json(err) => write!(f, "JSON error: {}", err),
-            Error::NotFound(msg) => write!(f, "Not found: {}", msg),
-            Error::InvalidInput(msg) => write!(f, "Invalid input: {}", msg),
             Error::Other(msg) => write!(f, "Error: {}", msg),
         }
     }
@@ -54,19 +50,6 @@ impl From<serde_json::Error> for Error {
     }
 }
 
-impl Error {
-    pub fn not_found(message: &str) -> Self {
-        Error::NotFound(message.to_string())
-    }
-
-    pub fn invalid_input(message: &str) -> Self {
-        Error::InvalidInput(message.to_string())
-    }
-
-    pub fn other(message: &str) -> Self {
-        Error::Other(message.to_string())
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -75,12 +58,6 @@ mod tests {
 
     #[test]
     fn test_error_display() {
-        let err = Error::NotFound("User 123".to_string());
-        assert_eq!(err.to_string(), "Not found: User 123");
-
-        let err = Error::InvalidInput("Invalid email".to_string());
-        assert_eq!(err.to_string(), "Invalid input: Invalid email");
-
         let io_err = io::Error::new(io::ErrorKind::NotFound, "file not found");
         let err = Error::Io(io_err);
         assert_eq!(err.to_string(), "IO error: file not found");
@@ -88,6 +65,9 @@ mod tests {
         let json_err = serde_json::from_str::<serde_json::Value>("invalid json").unwrap_err();
         let err = Error::Json(json_err);
         assert!(err.to_string().starts_with("JSON error: "));
+
+        let err = Error::Other("Something went wrong".to_string());
+        assert_eq!(err.to_string(), "Error: Something went wrong");
     }
 
     #[test]
@@ -106,21 +86,8 @@ mod tests {
         let err: Error = db_err.into();
         assert!(matches!(err, Error::Database(_)));
 
-        // Updated JSON error conversion test
         let json_err = serde_json::from_str::<serde_json::Value>("invalid json").unwrap_err();
         let err: Error = json_err.into();
         assert!(matches!(err, Error::Json(_)));
-    }
-
-    #[test]
-    fn test_error_helper_functions() {
-        let err = Error::not_found("User 123");
-        assert_eq!(err.to_string(), "Not found: User 123");
-
-        let err = Error::invalid_input("Email must not be empty");
-        assert_eq!(err.to_string(), "Invalid input: Email must not be empty");
-
-        let err = Error::other("Unexpected error occurred");
-        assert_eq!(err.to_string(), "Error: Unexpected error occurred");
     }
 }

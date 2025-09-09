@@ -1,28 +1,117 @@
+use crate::analysis::unified_analyzer::UnifiedAnalyzer;
 use crate::error::Error;
-use crate::kagome::extract_words_from_transcripts;
 use rusqlite::{params, Connection, Transaction};
 use std::collections::{HashMap, HashSet};
+use std::sync::LazyLock;
+
+// Pre-serialized common POS patterns for performance
+static POS_CACHE: LazyLock<HashMap<Vec<String>, String>> = LazyLock::new(|| {
+    let common_patterns = vec![
+        vec!["名詞".to_string(), "一般".to_string()],
+        vec!["動詞".to_string(), "自立".to_string()],
+        vec!["動詞".to_string(), "非自立".to_string()],
+        vec!["形容詞".to_string(), "自立".to_string()],
+        vec!["副詞".to_string(), "一般".to_string()],
+        vec!["助詞".to_string(), "格助詞".to_string()],
+        vec!["助詞".to_string(), "係助詞".to_string()],
+        vec!["助動詞".to_string()],
+        vec!["記号".to_string(), "句点".to_string()],
+        vec!["記号".to_string(), "読点".to_string()],
+    ];
+
+    common_patterns
+        .into_iter()
+        .map(|pos| {
+            let serialized = serde_json::to_string(&pos).unwrap();
+            (pos, serialized)
+        })
+        .collect()
+});
 
 pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
-    println!("Creating reverse index using kagome...");
+    println!("Creating reverse index and analyzing grammar patterns...");
 
-    // Get all transcript data from the database
-    let transcript_data = get_all_transcript_data(conn)?;
+    // Create unified analyzer and process in streaming mode
+    let analyzer = UnifiedAnalyzer::new();
+    let analysis_results = analyzer.process_transcripts_streaming_collect(conn, 1000)?;
+
+    // Start transaction for database operations
+    let tx = conn.transaction()?;
+
+    // Create indexes first (they benefit from being in the same transaction)
+    create_main_indexes_tx(&tx)?;
+
+    // Combine all unique words from analysis results
+    println!("Combining all unique words...");
+    let mut all_words = HashMap::new();
+
+    for results in analysis_results.iter() {
+        for (word_key, transcript_ids) in &results.words {
+            all_words
+                .entry((
+                    word_key.base_form.clone(),
+                    word_key.reading.clone(),
+                    word_key.pos.clone(),
+                ))
+                .or_insert_with(HashSet::new)
+                .extend(transcript_ids);
+        }
+    }
+
     println!(
-        "Retrieved {} transcripts from database",
-        transcript_data.len()
+        "Extracted {} unique words from transcripts",
+        all_words.len()
     );
 
-    // Process transcripts with kagome to extract words
-    let word_map = extract_words_from_transcripts(&transcript_data)?;
-    println!("Extracted {} unique words from transcripts", word_map.len());
+    // Apply reading corrections to all words at once
+    println!("Correcting base form readings...");
+    let unique_base_forms: Vec<&str> = all_words
+        .keys()
+        .map(|(base_form, _, _)| base_form.as_str())
+        .collect();
+    let reading_corrections =
+        crate::analysis::morphology::get_base_form_readings(&unique_base_forms)?;
 
-    // Create indexes on the main database
-    create_main_indexes(conn)?;
+    // Apply corrections to all words
+    let mut corrected_words = HashMap::new();
+    for ((base_form, old_reading, pos), transcript_ids) in all_words {
+        let final_reading = reading_corrections
+            .get(base_form.as_str())
+            .cloned()
+            .unwrap_or(old_reading);
+        corrected_words.insert((base_form, final_reading, pos), transcript_ids);
+    }
 
-    // Batch insert into the database
-    let tx = conn.transaction()?;
-    batch_insert_words_and_occurrences(&tx, word_map)?;
+    println!(
+        "Applied reading corrections to {} words",
+        corrected_words.len()
+    );
+
+    // Single database insert for all words
+    batch_insert_words_and_occurrences(&tx, &corrected_words)?;
+
+    // Process grammar patterns from all batches inside the transaction
+    println!("Processing grammar patterns...");
+    let mut total_pattern_occurrences = 0;
+    for results in analysis_results {
+        for (_episode_id, collector) in results.grammar_patterns {
+            let occurrences = collector.into_occurrences(&tx)?;
+            if !occurrences.is_empty() {
+                use crate::db::grammar_pattern::GrammarPatternOccurrence;
+                GrammarPatternOccurrence::batch_insert(&occurrences, &tx)?;
+                total_pattern_occurrences += occurrences.len();
+            }
+        }
+    }
+    println!(
+        "Total pattern occurrences inserted: {}",
+        total_pattern_occurrences
+    );
+
+    // Compute statistics immediately after inserts
+    compute_word_statistics(&tx)?;
+
+    // Single commit for all operations
     tx.commit()?;
 
     println!("Reverse index created successfully!");
@@ -33,25 +122,9 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
     Ok(())
 }
 
-fn get_all_transcript_data(conn: &Connection) -> Result<Vec<(i64, String)>, Error> {
-    let mut stmt = conn.prepare("SELECT id, text FROM transcripts")?;
-    let transcript_iter = stmt.query_map([], |row| {
-        let id: i64 = row.get(0)?;
-        let text: String = row.get(1)?;
-        Ok((id, text))
-    })?;
-
-    let mut transcripts = Vec::new();
-    for transcript in transcript_iter {
-        transcripts.push(transcript?);
-    }
-
-    Ok(transcripts)
-}
-
 fn batch_insert_words_and_occurrences(
     tx: &Transaction,
-    word_map: HashMap<(String, String, Vec<String>), HashSet<i64>>,
+    word_map: &HashMap<(String, String, Vec<String>), HashSet<i64>>,
 ) -> Result<(), Error> {
     let mut stmt_word =
         tx.prepare("INSERT OR IGNORE INTO words (word, reading, pos) VALUES (?1, ?2, ?3)")?;
@@ -61,12 +134,19 @@ fn batch_insert_words_and_occurrences(
     )?;
 
     for ((word, reading, pos), transcript_ids) in word_map {
-        let pos_json = serde_json::to_string(&pos)
-            .map_err(|e| Error::Other(format!("Failed to serialize POS: {}", e)))?;
-        stmt_word.execute(params![&word, &reading, &pos_json])?;
-        let word_id: i64 = stmt_get_word_id.query_row(params![&word], |row| row.get(0))?;
+        // Use cached POS serialization if available, otherwise serialize on demand
+        let pos_json_owned;
+        let pos_json = if let Some(cached) = POS_CACHE.get(pos) {
+            cached.as_str()
+        } else {
+            pos_json_owned = serde_json::to_string(pos).unwrap();
+            &pos_json_owned
+        };
 
-        for &transcript_id in &transcript_ids {
+        stmt_word.execute(params![word, reading, &pos_json])?;
+        let word_id: i64 = stmt_get_word_id.query_row(params![word], |row| row.get(0))?;
+
+        for &transcript_id in transcript_ids {
             stmt_occurrence.execute(params![word_id, transcript_id])?;
         }
     }
@@ -74,16 +154,151 @@ fn batch_insert_words_and_occurrences(
     Ok(())
 }
 
-fn create_main_indexes(conn: &mut Connection) -> Result<(), Error> {
-    conn.execute(
+fn compute_word_statistics(tx: &Transaction) -> Result<(), Error> {
+    println!("Computing word statistics...");
+
+    // Check if this is a fresh database or an update
+    let existing_stats: i64 = tx
+        .query_row("SELECT COUNT(*) FROM word_stats", [], |row| row.get(0))
+        .unwrap_or(0);
+
+    if existing_stats == 0 {
+        // Fresh database - use bulk insert approach
+        compute_word_statistics_bulk(tx)
+    } else {
+        // Incremental update - only update what changed
+        compute_word_statistics_incremental(tx)
+    }
+}
+
+fn compute_word_statistics_bulk(tx: &Transaction) -> Result<(), Error> {
+    // Clear existing statistics (should be empty for fresh DB)
+    tx.execute("DELETE FROM word_stats", [])?;
+    tx.execute("DELETE FROM word_episodes", [])?;
+
+    // Populate word_stats table with occurrence counts and episode counts
+    tx.execute(
+        "
+        INSERT INTO word_stats (word_id, total_occurrences, episode_count)
+        SELECT 
+            w.id,
+            COUNT(wo.transcript_id) as total_occurrences,
+            COUNT(DISTINCT t.episode_id) as episode_count
+        FROM words w
+        LEFT JOIN word_occurrences wo ON wo.word_id = w.id
+        LEFT JOIN transcripts t ON t.id = wo.transcript_id
+        GROUP BY w.id
+    ",
+        [],
+    )?;
+
+    // Populate word_episodes table with per-episode occurrence counts
+    tx.execute(
+        "
+        INSERT INTO word_episodes (word_id, episode_id, occurrence_count)
+        SELECT 
+            wo.word_id,
+            t.episode_id,
+            COUNT(*) as occurrence_count
+        FROM word_occurrences wo
+        JOIN transcripts t ON t.id = wo.transcript_id
+        GROUP BY wo.word_id, t.episode_id
+    ",
+        [],
+    )?;
+
+    // Compute frequency ranks using window function (100x faster than correlated subquery)
+    tx.execute(
+        "
+        WITH ranked AS (
+            SELECT word_id,
+                   ROW_NUMBER() OVER (ORDER BY total_occurrences DESC) as rank
+            FROM word_stats
+        )
+        UPDATE word_stats
+        SET frequency_rank = (
+            SELECT rank FROM ranked WHERE ranked.word_id = word_stats.word_id
+        )
+    ",
+        [],
+    )?;
+
+    println!("Word statistics computed successfully (bulk)!");
+    Ok(())
+}
+
+fn compute_word_statistics_incremental(tx: &Transaction) -> Result<(), Error> {
+    // For incremental updates, we need to:
+    // 1. Find words that are new (not in word_stats)
+    // 2. Update statistics for new words only
+    // 3. Recalculate frequency ranks efficiently
+
+    // Insert stats for new words only
+    tx.execute(
+        "
+        INSERT OR IGNORE INTO word_stats (word_id, total_occurrences, episode_count)
+        SELECT 
+            w.id,
+            COUNT(wo.transcript_id) as total_occurrences,
+            COUNT(DISTINCT t.episode_id) as episode_count
+        FROM words w
+        LEFT JOIN word_occurrences wo ON wo.word_id = w.id
+        LEFT JOIN transcripts t ON t.id = wo.transcript_id
+        LEFT JOIN word_stats ws ON ws.word_id = w.id
+        WHERE ws.word_id IS NULL
+        GROUP BY w.id
+    ",
+        [],
+    )?;
+
+    // Insert episode stats for new words only
+    tx.execute(
+        "
+        INSERT OR IGNORE INTO word_episodes (word_id, episode_id, occurrence_count)
+        SELECT 
+            wo.word_id,
+            t.episode_id,
+            COUNT(*) as occurrence_count
+        FROM word_occurrences wo
+        JOIN transcripts t ON t.id = wo.transcript_id
+        LEFT JOIN word_episodes we ON we.word_id = wo.word_id AND we.episode_id = t.episode_id
+        WHERE we.word_id IS NULL
+        GROUP BY wo.word_id, t.episode_id
+    ",
+        [],
+    )?;
+
+    // Update frequency ranks using window function (much more efficient)
+    tx.execute(
+        "
+        WITH ranked AS (
+            SELECT word_id,
+                   ROW_NUMBER() OVER (ORDER BY total_occurrences DESC) as rank
+            FROM word_stats
+        )
+        UPDATE word_stats
+        SET frequency_rank = (
+            SELECT rank FROM ranked WHERE ranked.word_id = word_stats.word_id
+        )
+        WHERE frequency_rank IS NULL
+    ",
+        [],
+    )?;
+
+    println!("Word statistics updated successfully (incremental)!");
+    Ok(())
+}
+
+fn create_main_indexes_tx(tx: &Transaction) -> Result<(), Error> {
+    tx.execute(
         "CREATE INDEX IF NOT EXISTS idx_words_word_reading ON words(word, reading)",
         [],
     )?;
-    conn.execute(
+    tx.execute(
         "CREATE INDEX IF NOT EXISTS idx_word_occurrences_word_id ON word_occurrences(word_id)",
         [],
     )?;
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_word_occurrences_transcript_id ON word_occurrences(transcript_id)", [])?;
+    tx.execute("CREATE INDEX IF NOT EXISTS idx_word_occurrences_transcript_id ON word_occurrences(transcript_id)", [])?;
     Ok(())
 }
 

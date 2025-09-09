@@ -15,6 +15,7 @@ pub struct WordOccurrence {
     pub transcript_id: i32,
 }
 
+#[allow(dead_code)]
 impl Word {
     pub fn new(word: String, reading: Option<String>) -> Self {
         Word {
@@ -60,7 +61,6 @@ impl Word {
     }
 
     pub fn get_by_word(conn: &Connection, word_text: &str) -> Result<Word, Error> {
-        println!("Searching for word: {}", word_text);
         let mut stmt = conn.prepare("SELECT id, word, reading FROM words WHERE word = ?1")?;
         stmt.query_row(params![word_text], |row| {
             Ok(Word {
@@ -92,27 +92,77 @@ impl Word {
         conn: &Connection,
         show_ids: &[i32],
     ) -> Result<Vec<Transcript>, Error> {
-        let placeholders = show_ids
-            .iter()
-            .enumerate()
-            .map(|(i, _)| format!("?{}", i + 2))
-            .collect::<Vec<String>>()
-            .join(", ");
-        let query = format!(
+        if show_ids.is_empty() {
+            return Ok(Vec::new());
+        }
+
+        // For small number of show_ids, use direct IN clause for better performance
+        if show_ids.len() <= 10 {
+            let placeholders = show_ids.iter().map(|_| "?").collect::<Vec<_>>().join(",");
+            let query = format!(
+                "SELECT DISTINCT t.id, t.episode_id, t.line_id, t.time_start, t.time_end, t.text
+                FROM transcripts t
+                JOIN word_occurrences wo ON t.id = wo.transcript_id
+                JOIN episodes e ON t.episode_id = e.id
+                WHERE wo.word_id = ?1 AND e.show_id IN ({})",
+                placeholders
+            );
+
+            let mut stmt = conn.prepare(&query)?;
+            let mut params: Vec<&dyn rusqlite::ToSql> = vec![&self.id];
+            params.extend(show_ids.iter().map(|id| id as &dyn rusqlite::ToSql));
+
+            let transcripts_iter = stmt.query_map(rusqlite::params_from_iter(params), |row| {
+                Ok(Transcript {
+                    id: Some(row.get(0)?),
+                    episode_id: row.get(1)?,
+                    line_id: row.get(2)?,
+                    time_start: row.get(3)?,
+                    time_end: row.get(4)?,
+                    text: row.get(5)?,
+                })
+            })?;
+
+            transcripts_iter
+                .collect::<Result<Vec<_>, _>>()
+                .map_err(Error::from)
+        } else {
+            // For large number of show_ids, use a temporary table approach
+            self.get_transcripts_large_set(conn, show_ids)
+        }
+    }
+
+    fn get_transcripts_large_set(
+        &self,
+        conn: &Connection,
+        show_ids: &[i32],
+    ) -> Result<Vec<Transcript>, Error> {
+        let tx = conn.unchecked_transaction()?;
+
+        // Create temporary table for show_ids
+        tx.execute(
+            "CREATE TEMP TABLE temp_show_ids (show_id INTEGER PRIMARY KEY)",
+            [],
+        )?;
+
+        // Batch insert show_ids
+        let mut stmt = tx.prepare("INSERT INTO temp_show_ids (show_id) VALUES (?)")?;
+        for &show_id in show_ids {
+            stmt.execute([show_id])?;
+        }
+        drop(stmt);
+
+        // Execute optimized query
+        let mut stmt = tx.prepare(
             "SELECT DISTINCT t.id, t.episode_id, t.line_id, t.time_start, t.time_end, t.text
             FROM transcripts t
             JOIN word_occurrences wo ON t.id = wo.transcript_id
             JOIN episodes e ON t.episode_id = e.id
-            WHERE wo.word_id = ?1 AND e.show_id IN ({})",
-            placeholders
-        );
+            JOIN temp_show_ids tsi ON e.show_id = tsi.show_id
+            WHERE wo.word_id = ?1",
+        )?;
 
-        let mut stmt = conn.prepare(&query)?;
-
-        let mut params: Vec<&dyn rusqlite::ToSql> = vec![&self.id];
-        params.extend(show_ids.iter().map(|id| id as &dyn rusqlite::ToSql));
-
-        let transcripts_iter = stmt.query_map(rusqlite::params_from_iter(params), |row| {
+        let transcripts_iter = stmt.query_map([&self.id], |row| {
             Ok(Transcript {
                 id: Some(row.get(0)?),
                 episode_id: row.get(1)?,
@@ -123,12 +173,18 @@ impl Word {
             })
         })?;
 
-        transcripts_iter
-            .collect::<Result<Vec<_>, _>>()
-            .map_err(Error::from)
+        let results = transcripts_iter.collect::<Result<Vec<_>, _>>()?;
+        drop(stmt); // Explicitly drop the statement before committing
+
+        // Clean up temp table
+        tx.execute("DROP TABLE temp_show_ids", [])?;
+        tx.commit()?;
+
+        Ok(results)
     }
 }
 
+#[allow(dead_code)]
 impl WordOccurrence {
     pub fn new(word_id: i32, transcript_id: i32) -> Self {
         WordOccurrence {

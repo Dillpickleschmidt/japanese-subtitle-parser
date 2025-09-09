@@ -38,7 +38,7 @@ export default function Install() {
 
     setIsProcessing(true);
     try {
-      const result = await invoke("process_srt_directory", {
+      const result = await invoke("import_subtitles_from_directory", {
         rootDir: selectedDirectory(),
       });
       console.log("Process result:", result);
@@ -269,7 +269,7 @@ export default function Install() {
                 variant="outline"
                 onClick={async () => {
                   try {
-                    const result = await invoke("create_reverse_index");
+                    const result = await invoke("analyze_japanese_transcripts");
                     console.log("Index result:", result);
                     alert("Reverse index created successfully!");
                   } catch (error) {

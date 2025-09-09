@@ -6,8 +6,6 @@ use crate::error::Error;
 use rusqlite::Connection;
 use serde_json::{json, Value as JsonValue};
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::BufWriter;
 
 /// Searches for a keyword in the transcripts of specified shows and returns the results with surrounding transcripts for context
 pub fn search_word_with_context(
@@ -18,7 +16,6 @@ pub fn search_word_with_context(
     let transcripts = get_transcripts_for_word(conn, keyword, shows)?;
     let results = build_results(conn, &transcripts)?;
     let final_json = create_final_json(keyword, results);
-    write_json_to_file(&final_json, "search_results.json")?;
     Ok(final_json)
 }
 
@@ -126,12 +123,4 @@ fn create_final_json(keyword: &str, results: Vec<JsonValue>) -> JsonValue {
         "keyword": keyword,
         "results": results
     })
-}
-
-/// Writes the JSON search results to a file
-fn write_json_to_file(json: &JsonValue, filename: &str) -> Result<(), Error> {
-    let file = File::create(filename)?;
-    let writer = BufWriter::new(file);
-    serde_json::to_writer(writer, json)?;
-    Ok(())
 }

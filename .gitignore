@@ -4,8 +4,8 @@ dist
 /src-tauri/data/transcripts_raw
 /src-tauri/data/transcripts_json
 /.vscode
-/src-tauri/transcripts.db
+/src-tauri/transcripts.db*
 /src-tauri/transcripts.csv
 /src-tauri/parsed_transcripts.csv
-/src-tauri/jmdict.sqlite
+/src-tauri/jmdict.sqlite*
 /src-tauri/search_results.json

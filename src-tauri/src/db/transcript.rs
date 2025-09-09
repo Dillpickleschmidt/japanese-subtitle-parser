@@ -11,6 +11,7 @@ pub struct Transcript {
     pub text: String,
 }
 
+#[allow(dead_code)]
 impl Transcript {
     pub fn new(
         episode_id: i32,

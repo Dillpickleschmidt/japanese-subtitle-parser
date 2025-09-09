@@ -1,5 +1,5 @@
-use crate::srt_parser::episode_info::extractors::*;
-use crate::srt_parser::episode_info::ShowConfig;
+use crate::subtitle_importer::episode_info::extractors::*;
+use crate::subtitle_importer::episode_info::ShowConfig;
 use std::collections::HashMap;
 
 // Function to create show configurations
