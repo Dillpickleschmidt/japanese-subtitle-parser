@@ -7,6 +7,9 @@ mod error;
 mod grammar;
 mod subtitle_importer;
 
+#[cfg(test)]
+mod test_utils;
+
 use db::DbHandler;
 use error::Error;
 use std::path::Path;

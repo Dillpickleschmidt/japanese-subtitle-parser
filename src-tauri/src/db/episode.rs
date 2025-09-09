@@ -1,6 +1,8 @@
-use crate::db::show::Show;
 use crate::error::Error;
 use rusqlite::{params, Connection};
+
+#[cfg(test)]
+use crate::db::show::Show;
 
 /// Represents an episode of a TV show in the database
 #[derive(Debug)]
@@ -12,7 +14,6 @@ pub struct Episode {
     pub episode_number: i32,
 }
 
-#[allow(dead_code)]
 impl Episode {
     /// Creates a new Episode instance
     pub fn new(show_id: i32, name: String, season: i32, episode_number: i32) -> Self {
@@ -32,11 +33,12 @@ impl Episode {
             params![self.show_id, self.name, self.season, self.episode_number],
         )?;
         // Convert the last inserted row id to i32 and assign it to the episode's id field
-        self.id = Some(conn.last_insert_rowid().try_into().unwrap());
+        crate::db::model::set_id_from_last_insert(&mut self.id, conn);
         Ok(())
     }
 
     /// Updates the episode in the database
+    #[cfg(test)]
     pub fn update(&self, conn: &Connection) -> Result<(), Error> {
         conn.execute(
             "UPDATE episodes SET show_id = ?1, name = ?2, season = ?3, episode_number = ?4 WHERE id = ?5",
@@ -46,6 +48,7 @@ impl Episode {
     }
 
     /// Deletes the episode from the database
+    #[cfg(test)]
     pub fn delete(&self, conn: &Connection) -> Result<(), Error> {
         conn.execute("DELETE FROM episodes WHERE id = ?1", params![self.id])?;
         Ok(())
@@ -69,6 +72,7 @@ impl Episode {
     }
 
     /// Retrieves all episodes for a specific show
+    #[cfg(test)]
     pub fn get_all_for_show(conn: &Connection, show_id: i32) -> Result<Vec<Episode>, Error> {
         let mut stmt = conn.prepare("SELECT id, show_id, name, season, episode_number FROM episodes WHERE show_id = ?1 ORDER BY season, episode_number")?;
         let episodes_iter = stmt.query_map(params![show_id], |row| {
@@ -89,6 +93,7 @@ impl Episode {
     }
 
     /// Searches for episodes by name
+    #[cfg(test)]
     pub fn search_by_name(conn: &Connection, search_term: &str) -> Result<Vec<Episode>, Error> {
         let mut stmt = conn.prepare(
             "SELECT id, show_id, name, season, episode_number FROM episodes WHERE name LIKE ?1",
@@ -110,31 +115,8 @@ impl Episode {
         Ok(episodes)
     }
 
-    /// Retrieves an episode from the database by show_id, season, and episode_number
-    pub fn get_by_show_season_episode(
-        conn: &Connection,
-        show_id: i64,
-        season: i32,
-        episode_number: i32,
-    ) -> Result<Episode, Error> {
-        let mut stmt = conn.prepare(
-            "SELECT id, show_id, name, season, episode_number 
-             FROM episodes 
-             WHERE show_id = ?1 AND season = ?2 AND episode_number = ?3",
-        )?;
-        let episode = stmt.query_row(params![show_id, season, episode_number], |row| {
-            Ok(Episode {
-                id: Some(row.get(0)?),
-                show_id: row.get(1)?,
-                name: row.get(2)?,
-                season: row.get(3)?,
-                episode_number: row.get(4)?,
-            })
-        })?;
-        Ok(episode)
-    }
-
     /// Gets the associated Show for this Episode
+    #[cfg(test)]
     pub fn get_show(&self, conn: &Connection) -> Result<Show, Error> {
         Show::get_by_id(conn, self.show_id)
     }
@@ -143,29 +125,13 @@ impl Episode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::db::show::Show;
-    use crate::db::DbHandler;
-    use tempfile::NamedTempFile;
-
-    fn create_test_db() -> (NamedTempFile, DbHandler) {
-        let file = NamedTempFile::new().unwrap();
-        let handler = DbHandler::new(file.path().to_str().unwrap()).unwrap();
-        handler.create_tables().unwrap();
-        (file, handler)
-    }
-
-    fn create_test_show(handler: &DbHandler) -> Show {
-        let conn = &handler.conn;
-        let mut show = Show::new("Test Show".to_string(), "Anime".to_string());
-        show.insert(&conn).unwrap();
-        show
-    }
+    use crate::test_utils::{create_test_db, create_test_show};
 
     #[test]
     fn test_insert_and_get_episode() {
         let (_file, handler) = create_test_db();
         let conn = &handler.conn;
-        let show = create_test_show(&handler);
+        let show = create_test_show(&handler, "Test Show", "Anime");
 
         let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
         episode.insert(&conn).unwrap();
@@ -182,7 +148,7 @@ mod tests {
     fn test_update_episode() {
         let (_file, handler) = create_test_db();
         let conn = &handler.conn;
-        let show = create_test_show(&handler);
+        let show = create_test_show(&handler, "Test Show", "Anime");
 
         let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
         episode.insert(&conn).unwrap();
@@ -198,7 +164,7 @@ mod tests {
     fn test_delete_episode() {
         let (_file, handler) = create_test_db();
         let conn = &handler.conn;
-        let show = create_test_show(&handler);
+        let show = create_test_show(&handler, "Test Show", "Anime");
 
         let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
         episode.insert(&conn).unwrap();
@@ -213,7 +179,7 @@ mod tests {
     fn test_get_all_for_show() {
         let (_file, handler) = create_test_db();
         let conn = &handler.conn;
-        let show = create_test_show(&handler);
+        let show = create_test_show(&handler, "Test Show", "Anime");
 
         let episodes = vec![
             Episode::new(show.id.unwrap(), "Episode 1".to_string(), 1, 1),
@@ -236,7 +202,7 @@ mod tests {
     fn test_search_episodes() {
         let (_file, handler) = create_test_db();
         let conn = &handler.conn;
-        let show = create_test_show(&handler);
+        let show = create_test_show(&handler, "Test Show", "Anime");
 
         let episodes = vec![
             Episode::new(show.id.unwrap(), "Pilot Episode".to_string(), 1, 1),
@@ -260,7 +226,7 @@ mod tests {
     fn test_get_show_for_episode() {
         let (_file, handler) = create_test_db();
         let conn = &handler.conn;
-        let show = create_test_show(&handler);
+        let show = create_test_show(&handler, "Test Show", "Anime");
 
         let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
         episode.insert(&conn).unwrap();

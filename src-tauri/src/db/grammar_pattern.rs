@@ -1,10 +1,11 @@
 use crate::error::Error;
 use rusqlite::Connection;
-use serde_json::{json, Value as JsonValue};
 
 #[derive(Debug, Clone)]
 pub struct GrammarPattern {
+    #[allow(dead_code)] // Used in database operations
     pub id: Option<i32>,
+    #[allow(dead_code)] // Used in database operations
     pub pattern_name: String, // 'te_form', 'past_tense', etc.
 }
 
@@ -15,8 +16,8 @@ pub struct GrammarPatternOccurrence {
     pub confidence: f64,
 }
 
-#[allow(dead_code)]
 impl GrammarPattern {
+    #[cfg(test)]
     pub fn new(pattern_name: String) -> Self {
         Self {
             id: None,
@@ -24,6 +25,7 @@ impl GrammarPattern {
         }
     }
 
+    #[cfg(test)]
     pub fn insert(&mut self, conn: &Connection) -> Result<(), Error> {
         let mut stmt = conn
             .prepare_cached("INSERT OR IGNORE INTO grammar_patterns (pattern_name) VALUES (?)")?;
@@ -55,7 +57,6 @@ impl GrammarPattern {
     }
 }
 
-#[allow(dead_code)]
 impl GrammarPatternOccurrence {
     pub fn new(pattern_id: i32, transcript_id: i64, confidence: f64) -> Self {
         Self {
@@ -63,14 +64,6 @@ impl GrammarPatternOccurrence {
             transcript_id,
             confidence,
         }
-    }
-
-    pub fn insert(&self, conn: &Connection) -> Result<(), Error> {
-        conn.execute(
-            "INSERT OR IGNORE INTO grammar_pattern_occurrences (pattern_id, transcript_id, confidence) VALUES (?, ?, ?)",
-            [&self.pattern_id.to_string(), &self.transcript_id.to_string(), &self.confidence.to_string()]
-        )?;
-        Ok(())
     }
 
     /// Batch insert occurrences efficiently
@@ -90,86 +83,6 @@ impl GrammarPatternOccurrence {
             ])?;
         }
 
-        Ok(())
-    }
-
-    /// Get patterns for a specific episode with occurrence counts and examples
-    pub fn get_by_episode(conn: &Connection, episode_id: i32) -> Result<JsonValue, Error> {
-        let mut stmt = conn.prepare_cached(
-            "SELECT gp.pattern_name, 
-                    COUNT(gpo.transcript_id) as occurrence_count,
-                    AVG(gpo.confidence) as avg_confidence
-             FROM grammar_patterns gp
-             JOIN grammar_pattern_occurrences gpo ON gp.id = gpo.pattern_id
-             JOIN transcripts t ON gpo.transcript_id = t.id
-             WHERE t.episode_id = ?
-             GROUP BY gp.id, gp.pattern_name
-             ORDER BY occurrence_count DESC",
-        )?;
-
-        let mut patterns = Vec::new();
-        let rows = stmt.query_map([episode_id], |row| {
-            Ok(json!({
-                "pattern_name": row.get::<_, String>(0)?,
-                "count": row.get::<_, i64>(1)?,
-                "confidence": row.get::<_, f64>(2)?
-            }))
-        })?;
-
-        for row in rows {
-            patterns.push(row?);
-        }
-
-        Ok(json!({
-            "episode_id": episode_id,
-            "patterns": patterns
-        }))
-    }
-
-    /// Get examples (transcript text) for a specific pattern in an episode
-    pub fn get_examples(
-        conn: &Connection,
-        pattern_name: &str,
-        episode_id: i32,
-        limit: Option<usize>,
-    ) -> Result<Vec<String>, Error> {
-        let limit_clause = if let Some(limit) = limit {
-            format!("LIMIT {}", limit)
-        } else {
-            String::new()
-        };
-
-        let query = format!(
-            "SELECT t.text 
-             FROM transcripts t
-             JOIN grammar_pattern_occurrences gpo ON t.id = gpo.transcript_id
-             JOIN grammar_patterns gp ON gpo.pattern_id = gp.id
-             WHERE gp.pattern_name = ? AND t.episode_id = ?
-             ORDER BY gpo.confidence DESC
-             {}",
-            limit_clause
-        );
-
-        let mut stmt = conn.prepare_cached(&query)?;
-        let examples_iter = stmt.query_map([pattern_name, &episode_id.to_string()], |row| {
-            Ok(row.get::<_, String>(0)?)
-        })?;
-
-        let mut examples = Vec::new();
-        for example in examples_iter {
-            examples.push(example?);
-        }
-
-        Ok(examples)
-    }
-
-    /// Delete occurrences for a specific episode (useful for reprocessing)
-    pub fn delete_by_episode(conn: &Connection, episode_id: i32) -> Result<(), Error> {
-        conn.execute(
-            "DELETE FROM grammar_pattern_occurrences 
-             WHERE transcript_id IN (SELECT id FROM transcripts WHERE episode_id = ?)",
-            [episode_id],
-        )?;
         Ok(())
     }
 }
@@ -278,4 +191,3 @@ mod tests {
         assert_eq!(occurrences[1].transcript_id, 2);
     }
 }
-

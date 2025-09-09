@@ -5,80 +5,95 @@ use rusqlite::{params, Connection};
 #[derive(Debug)]
 pub struct Word {
     pub id: Option<i32>,
+    #[allow(dead_code)] // Used in database operations
     pub word: String,
+    #[allow(dead_code)] // Used in database operations
     pub reading: Option<String>,
+    #[allow(dead_code)] // Used in database operations
+    pub pos: String,
 }
 
+#[cfg(test)]
 #[derive(Debug)]
 pub struct WordOccurrence {
     pub word_id: i32,
     pub transcript_id: i32,
 }
 
-#[allow(dead_code)]
 impl Word {
-    pub fn new(word: String, reading: Option<String>) -> Self {
+    #[cfg(test)]
+    pub fn new(word: String, reading: Option<String>, pos: String) -> Self {
         Word {
             id: None,
             word,
             reading,
+            pos,
         }
     }
 
+    #[cfg(test)]
     pub fn insert(&mut self, conn: &Connection) -> Result<(), Error> {
         conn.execute(
-            "INSERT INTO words (word, reading) VALUES (?1, ?2)",
-            params![self.word, self.reading],
+            "INSERT INTO words (word, reading, pos) VALUES (?1, ?2, ?3)",
+            params![self.word, self.reading, self.pos],
         )?;
         // Convert the last inserted row id to i32 and assign it to the word's id field
-        self.id = Some(conn.last_insert_rowid().try_into().unwrap());
+        crate::db::model::set_id_from_last_insert(&mut self.id, conn);
         Ok(())
     }
 
+    #[cfg(test)]
     pub fn update(&self, conn: &Connection) -> Result<(), Error> {
         conn.execute(
-            "UPDATE words SET word = ?1, reading = ?2 WHERE id = ?3",
-            params![self.word, self.reading, self.id],
+            "UPDATE words SET word = ?1, reading = ?2, pos = ?3 WHERE id = ?4",
+            params![self.word, self.reading, self.pos, self.id],
         )?;
         Ok(())
     }
 
+    #[cfg(test)]
     pub fn delete(&self, conn: &Connection) -> Result<(), Error> {
         conn.execute("DELETE FROM words WHERE id = ?1", params![self.id])?;
         Ok(())
     }
 
+    #[cfg(test)]
     pub fn get_by_id(conn: &Connection, id: i32) -> Result<Word, Error> {
-        let mut stmt = conn.prepare("SELECT id, word, reading FROM words WHERE id = ?1")?;
+        let mut stmt = conn.prepare("SELECT id, word, reading, pos FROM words WHERE id = ?1")?;
         stmt.query_row(params![id], |row| {
             Ok(Word {
                 id: Some(row.get(0)?),
                 word: row.get(1)?,
                 reading: row.get(2)?,
+                pos: row.get(3)?,
             })
         })
         .map_err(Error::from)
     }
 
     pub fn get_by_word(conn: &Connection, word_text: &str) -> Result<Word, Error> {
-        let mut stmt = conn.prepare("SELECT id, word, reading FROM words WHERE word = ?1")?;
+        let mut stmt = conn.prepare("SELECT id, word, reading, pos FROM words WHERE word = ?1")?;
         stmt.query_row(params![word_text], |row| {
             Ok(Word {
                 id: Some(row.get(0)?),
                 word: row.get(1)?,
                 reading: row.get(2)?,
+                pos: row.get(3)?,
             })
         })
         .map_err(Error::from)
     }
 
+    #[cfg(test)]
     pub fn search_by_text(conn: &Connection, search_term: &str) -> Result<Vec<Word>, Error> {
-        let mut stmt = conn.prepare("SELECT id, word, reading FROM words WHERE word LIKE ?1")?;
+        let mut stmt =
+            conn.prepare("SELECT id, word, reading, pos FROM words WHERE word LIKE ?1")?;
         let words_iter = stmt.query_map(params![format!("%{}%", search_term)], |row| {
             Ok(Word {
                 id: Some(row.get(0)?),
                 word: row.get(1)?,
                 reading: row.get(2)?,
+                pos: row.get(3)?,
             })
         })?;
 
@@ -184,7 +199,7 @@ impl Word {
     }
 }
 
-#[allow(dead_code)]
+#[cfg(test)]
 impl WordOccurrence {
     pub fn new(word_id: i32, transcript_id: i32) -> Self {
         WordOccurrence {
@@ -228,115 +243,72 @@ impl WordOccurrence {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::db::episode::Episode;
-    use crate::db::show::Show;
-    use crate::db::transcript::Transcript;
-    use rusqlite::Connection;
-    use tempfile::NamedTempFile;
-
-    fn create_test_db() -> (NamedTempFile, Connection) {
-        let file = NamedTempFile::new().unwrap();
-        let conn = Connection::open(file.path()).unwrap();
-
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS words (
-                id INTEGER PRIMARY KEY,
-                word TEXT NOT NULL,
-                reading TEXT
-            )",
-            [],
-        )
-        .unwrap();
-
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS word_occurrences (
-                word_id INTEGER NOT NULL,
-                transcript_id INTEGER NOT NULL,
-                PRIMARY KEY (word_id, transcript_id),
-                FOREIGN KEY (word_id) REFERENCES words (id),
-                FOREIGN KEY (transcript_id) REFERENCES transcripts (id)
-            )",
-            [],
-        )
-        .unwrap();
-
-        // Create other necessary tables (shows, episodes, transcripts) here...
-
-        (file, conn)
-    }
-
-    fn create_test_transcript(conn: &Connection) -> Transcript {
-        let mut show = Show::new("Test Show".to_string(), "Anime".to_string());
-        show.insert(conn).unwrap();
-        let mut episode = Episode::new(show.id.unwrap(), "Test Episode".to_string(), 1, 1);
-        episode.insert(conn).unwrap();
-        let mut transcript = Transcript::new(
-            episode.id.unwrap(),
-            1,
-            "00:00:01,000".to_string(),
-            "00:00:05,000".to_string(),
-            "Hello, world!".to_string(),
-        );
-        transcript.insert(conn).unwrap();
-        transcript
-    }
+    use crate::test_utils::{create_test_db, create_test_hierarchy};
 
     #[test]
     fn test_insert_and_get_word() {
-        let (_file, conn) = create_test_db();
+        let (_file, handler) = create_test_db();
 
-        let mut word = Word::new("hello".to_string(), Some("こんにちは".to_string()));
-        word.insert(&conn).unwrap();
+        let mut word = Word::new(
+            "hello".to_string(),
+            Some("こんにちは".to_string()),
+            "noun".to_string(),
+        );
+        word.insert(&handler.conn).unwrap();
 
         assert!(word.id.is_some());
 
-        let retrieved_word = Word::get_by_id(&conn, word.id.unwrap()).unwrap();
+        let retrieved_word = Word::get_by_id(&handler.conn, word.id.unwrap()).unwrap();
         assert_eq!(retrieved_word.word, "hello");
         assert_eq!(retrieved_word.reading, Some("こんにちは".to_string()));
     }
 
     #[test]
     fn test_update_word() {
-        let (_file, conn) = create_test_db();
+        let (_file, handler) = create_test_db();
 
-        let mut word = Word::new("hello".to_string(), Some("こんにちは".to_string()));
-        word.insert(&conn).unwrap();
+        let mut word = Word::new(
+            "hello".to_string(),
+            Some("こんにちは".to_string()),
+            "noun".to_string(),
+        );
+        word.insert(&handler.conn).unwrap();
 
         word.reading = Some("ハロー".to_string());
-        word.update(&conn).unwrap();
+        word.update(&handler.conn).unwrap();
 
-        let updated_word = Word::get_by_id(&conn, word.id.unwrap()).unwrap();
+        let updated_word = Word::get_by_id(&handler.conn, word.id.unwrap()).unwrap();
         assert_eq!(updated_word.reading, Some("ハロー".to_string()));
     }
 
     #[test]
     fn test_delete_word() {
-        let (_file, conn) = create_test_db();
+        let (_file, handler) = create_test_db();
 
-        let mut word = Word::new("hello".to_string(), None);
-        word.insert(&conn).unwrap();
+        let mut word = Word::new("hello".to_string(), None, "noun".to_string());
+        word.insert(&handler.conn).unwrap();
 
-        word.delete(&conn).unwrap();
+        word.delete(&handler.conn).unwrap();
 
-        let result = Word::get_by_id(&conn, word.id.unwrap());
+        let result = Word::get_by_id(&handler.conn, word.id.unwrap());
         assert!(result.is_err());
     }
 
     #[test]
     fn test_search_words() {
-        let (_file, conn) = create_test_db();
+        let (_file, handler) = create_test_db();
 
         let words = vec![
-            Word::new("hello".to_string(), None),
-            Word::new("world".to_string(), None),
-            Word::new("help".to_string(), None),
+            Word::new("hello".to_string(), None, "noun".to_string()),
+            Word::new("world".to_string(), None, "noun".to_string()),
+            Word::new("help".to_string(), None, "noun".to_string()),
         ];
 
         for mut word in words {
-            word.insert(&conn).unwrap();
+            word.insert(&handler.conn).unwrap();
         }
 
-        let search_results = Word::search_by_text(&conn, "hel").unwrap();
+        let search_results = Word::search_by_text(&handler.conn, "hel").unwrap();
         assert_eq!(search_results.len(), 2);
         assert!(search_results.iter().any(|w| w.word == "hello"));
         assert!(search_results.iter().any(|w| w.word == "help"));
@@ -344,25 +316,23 @@ mod tests {
 
     #[test]
     fn test_word_occurrences() {
-        let (_file, conn) = create_test_db();
-        let transcript = create_test_transcript(&conn);
+        let (_file, handler) = create_test_db();
+        let (show, _episode, transcript) = create_test_hierarchy(&handler);
 
-        let mut word = Word::new("hello".to_string(), None);
-        word.insert(&conn).unwrap();
+        let mut word = Word::new("hello".to_string(), None, "noun".to_string());
+        word.insert(&handler.conn).unwrap();
 
         let occurrence = WordOccurrence::new(word.id.unwrap(), transcript.id.unwrap());
-        occurrence.insert(&conn).unwrap();
+        occurrence.insert(&handler.conn).unwrap();
 
-        let occurrences = WordOccurrence::get_by_word_id(&conn, word.id.unwrap()).unwrap();
+        let occurrences = WordOccurrence::get_by_word_id(&handler.conn, word.id.unwrap()).unwrap();
         assert_eq!(occurrences.len(), 1);
         assert_eq!(occurrences[0].transcript_id, transcript.id.unwrap());
 
-        // Get the show ID from the transcript's episode
-        let episode = Episode::get_by_id(&conn, transcript.episode_id).unwrap();
-        let show_id = episode.show_id;
-
         // Use the show ID in the get_transcripts call
-        let transcripts = word.get_transcripts(&conn, &[show_id]).unwrap();
+        let transcripts = word
+            .get_transcripts(&handler.conn, &[show.id.unwrap()])
+            .unwrap();
         assert_eq!(transcripts.len(), 1);
         assert_eq!(transcripts[0].id, transcript.id);
     }
