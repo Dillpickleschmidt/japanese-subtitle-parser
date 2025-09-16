@@ -26,10 +26,9 @@ pub fn create_test_episode(
     handler: &DbHandler,
     show: &Show,
     name: &str,
-    season: i32,
-    episode_number: i32,
+    episode_number: Option<i32>,
 ) -> Episode {
-    let mut episode = Episode::new(show.id.unwrap(), name.to_string(), season, episode_number);
+    let mut episode = Episode::new(show.id.unwrap(), name.to_string(), episode_number);
     episode.insert(&handler.conn).unwrap();
     episode
 }
@@ -57,7 +56,7 @@ pub fn create_test_transcript(
 /// Creates a complete test data hierarchy: show -> episode -> transcript
 pub fn create_test_hierarchy(handler: &DbHandler) -> (Show, Episode, Transcript) {
     let show = create_test_show(handler, "Test Show", "Anime");
-    let episode = create_test_episode(handler, &show, "Test Episode", 1, 1);
+    let episode = create_test_episode(handler, &show, "Test Episode", Some(1));
     let transcript = create_test_transcript(
         handler,
         &episode,

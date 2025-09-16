@@ -1,6 +1,4 @@
-use super::episode_info::{
-    create_show_configs, get_episode_number, get_season_number, get_show_name, ShowConfig,
-};
+use super::episode_info::{create_show_configs, get_episode_number, get_show_name, ShowConfig};
 use super::errors::ParsingError;
 use super::types::{Subtitle, Subtitles, Timestamp};
 use std::collections::HashMap;
@@ -12,9 +10,8 @@ use walkdir::WalkDir;
 
 pub struct SrtEntry {
     pub show_name: String,
-    pub season: i32,
     pub episode_name: String,
-    pub episode_number: i32,
+    pub episode_number: Option<i32>,
     pub content: Subtitles,
 }
 
@@ -80,7 +77,8 @@ pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
         *Episode numbers were extracted from the file names in the process_srt_file function
      */
     for show in &mut show_entries {
-        show.episodes.sort_by_key(|entry| entry.episode_number);
+        show.episodes
+            .sort_by_key(|entry| entry.episode_number.unwrap_or(i32::MAX));
     }
 
     show_entries
@@ -91,19 +89,20 @@ pub fn process_srt_file(
     configs: &HashMap<String, ShowConfig>,
 ) -> Result<SrtEntry, ParsingError> {
     let show_name = get_show_name(file_path);
-    let season = get_season_number(file_path, configs);
     let episode_number = get_episode_number(&show_name, file_path, configs);
     let episode_name = file_path
         .file_stem()
         .and_then(|name| name.to_str())
         .map(String::from)
-        .unwrap_or_else(|| format!("Episode {}", episode_number));
+        .unwrap_or_else(|| match episode_number {
+            Some(num) => format!("Episode {}", num),
+            None => "Movie".to_string(),
+        });
 
     let content = Subtitles::parse_from_file(file_path)?;
 
     Ok(SrtEntry {
         show_name,
-        season,
         episode_name,
         episode_number,
         content,

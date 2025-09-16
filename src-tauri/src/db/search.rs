@@ -50,7 +50,7 @@ fn build_results(conn: &Connection, transcripts: &[Transcript]) -> Result<Vec<Js
     Ok(show_map.into_values().collect())
 }
 
-/// Adds a new instance of the word occurrence to the JSON show entry, including context and season information
+/// Adds a new instance of the word occurrence to the JSON show entry, including context information
 fn add_instance_to_show(
     show_entry: &mut JsonValue,
     conn: &Connection,
@@ -61,9 +61,13 @@ fn add_instance_to_show(
     let instances = show_entry["instances"].as_array_mut().unwrap();
 
     // Check if an entry for this episode already exists
+    let episode_json_value = match episode.episode_number {
+        Some(num) => json!(num),
+        None => json!(null),
+    };
     if let Some(instance_entry) = instances
         .iter_mut()
-        .find(|i| i["season"] == episode.season && i["episode"] == episode.episode_number)
+        .find(|i| i["episode"] == episode_json_value)
     {
         // If the episode entry exists, extend its "lines" array with the new context
         let lines = instance_entry["lines"].as_array_mut().unwrap();
@@ -80,8 +84,7 @@ fn add_instance_to_show(
     } else {
         // If no entry for this episode exists, create a new one
         instances.push(json!({
-            "season": episode.season,
-            "episode": episode.episode_number,
+            "episode": episode_json_value,
             "lines": context
         }));
     }
@@ -89,7 +92,7 @@ fn add_instance_to_show(
     // Sort lines by id to maintain order
     if let Some(instance_entry) = instances
         .iter_mut()
-        .find(|i| i["season"] == episode.season && i["episode"] == episode.episode_number)
+        .find(|i| i["episode"] == episode_json_value)
     {
         let lines = instance_entry["lines"].as_array_mut().unwrap();
         lines.sort_by(|a, b| a["id"].as_i64().unwrap().cmp(&b["id"].as_i64().unwrap()));

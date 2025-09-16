@@ -159,7 +159,7 @@ mod tests {
     fn test_insert_and_get_transcript() {
         let (_file, handler) = create_test_db();
         let show = create_test_show(&handler, "Test Show", "Anime");
-        let episode = create_test_episode(&handler, &show, "Test Episode", 1, 1);
+        let episode = create_test_episode(&handler, &show, "Test Episode", Some(1));
 
         let mut transcript = Transcript::new(
             episode.id.unwrap(),
@@ -182,7 +182,7 @@ mod tests {
     fn test_update_transcript() {
         let (_file, handler) = create_test_db();
         let show = create_test_show(&handler, "Test Show", "Anime");
-        let episode = create_test_episode(&handler, &show, "Test Episode", 1, 1);
+        let episode = create_test_episode(&handler, &show, "Test Episode", Some(1));
 
         let mut transcript = Transcript::new(
             episode.id.unwrap(),
@@ -205,7 +205,7 @@ mod tests {
     fn test_delete_transcript() {
         let (_file, handler) = create_test_db();
         let show = create_test_show(&handler, "Test Show", "Anime");
-        let episode = create_test_episode(&handler, &show, "Test Episode", 1, 1);
+        let episode = create_test_episode(&handler, &show, "Test Episode", Some(1));
 
         let mut transcript = Transcript::new(
             episode.id.unwrap(),
@@ -226,7 +226,7 @@ mod tests {
     fn test_get_all_for_episode() {
         let (_file, handler) = create_test_db();
         let show = create_test_show(&handler, "Test Show", "Anime");
-        let episode = create_test_episode(&handler, &show, "Test Episode", 1, 1);
+        let episode = create_test_episode(&handler, &show, "Test Episode", Some(1));
 
         let transcripts = vec![
             Transcript::new(
@@ -268,7 +268,7 @@ mod tests {
     fn test_search_transcripts() {
         let (_file, handler) = create_test_db();
         let show = create_test_show(&handler, "Test Show", "Anime");
-        let episode = create_test_episode(&handler, &show, "Test Episode", 1, 1);
+        let episode = create_test_episode(&handler, &show, "Test Episode", Some(1));
 
         let transcripts = vec![
             Transcript::new(
@@ -308,7 +308,7 @@ mod tests {
     fn test_get_context() {
         let (_file, handler) = create_test_db();
         let show = create_test_show(&handler, "Test Show", "Anime");
-        let episode = create_test_episode(&handler, &show, "Test Episode", 1, 1);
+        let episode = create_test_episode(&handler, &show, "Test Episode", Some(1));
 
         let transcripts = vec![
             Transcript::new(

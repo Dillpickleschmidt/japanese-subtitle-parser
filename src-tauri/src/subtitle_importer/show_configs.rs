@@ -6,12 +6,11 @@ use std::collections::HashMap;
 pub fn create_show_configs() -> HashMap<String, ShowConfig> {
     let mut configs = HashMap::new();
 
-    // Add default configuration
+    // Add default configuration for EXX format
     configs.insert(
         "".to_string(),
         ShowConfig {
-            episode_number_extractor: extract_episode_from_sxx_exx(),
-            season_number_extractor: extract_season_from_sxx_exx(),
+            episode_number_extractor: extract_episode_from_exx(),
         },
     );
 
@@ -19,8 +18,6 @@ pub fn create_show_configs() -> HashMap<String, ShowConfig> {
         "Hunter x Hunter".to_string(),
         ShowConfig {
             episode_number_extractor: extract_from_parentheses(),
-            // Set all to season 1
-            season_number_extractor: Box::new(|_| "1".to_string()),
         },
     );
 

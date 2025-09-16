@@ -100,7 +100,6 @@ fn import_subtitles_from_directory(
             episodes.push((
                 show_id,
                 episode.episode_name.clone(),
-                episode.season,
                 episode.episode_number,
             ));
 

@@ -38,7 +38,8 @@ impl Timestamp {
     }
 
     pub fn to_milliseconds(&self) -> i64 {
-        ((self.hours * 3600 + self.minutes * 60 + self.seconds) * 1000 + self.milliseconds) as i64
+        (self.hours as i64 * 3600 + self.minutes as i64 * 60 + self.seconds as i64) * 1000
+            + self.milliseconds as i64
     }
 }
 

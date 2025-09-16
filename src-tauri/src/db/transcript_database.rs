@@ -39,12 +39,11 @@ impl DbHandler {
                 show_type TEXT NOT NULL
             );
             CREATE TABLE IF NOT EXISTS episodes (
-                id INTEGER PRIMARY KEY, 
+                id INTEGER PRIMARY KEY,
                 show_id INTEGER,
-                name TEXT NOT NULL, 
-                season INTEGER, 
+                name TEXT NOT NULL,
                 episode_number INTEGER,
-                UNIQUE(show_id, season, episode_number),
+                UNIQUE(show_id, episode_number),
                 FOREIGN KEY(show_id) REFERENCES shows(id)
             );
             CREATE TABLE IF NOT EXISTS transcripts (
@@ -202,13 +201,13 @@ impl DbHandler {
     /// Inserts multiple episodes into the database
     pub fn insert_episodes(
         &mut self,
-        episodes: &[(i32, String, i32, i32)],
+        episodes: &[(i32, String, Option<i32>)],
     ) -> Result<Vec<i32>, Error> {
         let tx = self.conn.transaction()?;
         let mut inserted_ids = Vec::with_capacity(episodes.len());
 
-        for &(show_id, ref name, season, episode_number) in episodes {
-            let mut episode = Episode::new(show_id, name.clone(), season, episode_number);
+        for &(show_id, ref name, episode_number) in episodes {
+            let mut episode = Episode::new(show_id, name.clone(), episode_number);
             episode.insert(&tx)?;
             inserted_ids.push(episode.id.unwrap());
         }
