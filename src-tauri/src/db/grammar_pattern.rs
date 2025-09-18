@@ -66,21 +66,28 @@ impl GrammarPatternOccurrence {
         }
     }
 
-    /// Batch insert occurrences efficiently
-    pub fn batch_insert(
+    /// Optimized bulk insert using VALUES clauses (like word insertion)
+    pub fn bulk_insert_optimized(
         occurrences: &[GrammarPatternOccurrence],
         conn: &Connection,
     ) -> Result<(), Error> {
-        let mut stmt = conn.prepare_cached(
-            "INSERT OR IGNORE INTO grammar_pattern_occurrences (pattern_id, transcript_id, confidence) VALUES (?, ?, ?)"
-        )?;
+        const CHUNK_SIZE: usize = 1000;
 
-        for occurrence in occurrences {
-            stmt.execute([
-                &occurrence.pattern_id.to_string(),
-                &occurrence.transcript_id.to_string(),
-                &occurrence.confidence.to_string(),
-            ])?;
+        for chunk in occurrences.chunks(CHUNK_SIZE) {
+            let placeholders: Vec<String> = chunk.iter().map(|_| "(?, ?, ?)".to_string()).collect();
+            let sql = format!(
+                "INSERT OR IGNORE INTO grammar_pattern_occurrences (pattern_id, transcript_id, confidence) VALUES {}",
+                placeholders.join(", ")
+            );
+
+            let mut params = Vec::with_capacity(chunk.len() * 3);
+            for occurrence in chunk {
+                params.push(occurrence.pattern_id.to_string());
+                params.push(occurrence.transcript_id.to_string());
+                params.push(occurrence.confidence.to_string());
+            }
+
+            conn.execute(&sql, rusqlite::params_from_iter(params))?;
         }
 
         Ok(())
@@ -90,7 +97,7 @@ impl GrammarPatternOccurrence {
 /// Helper struct to collect grammar pattern occurrences during analysis
 #[derive(Debug)]
 pub struct GrammarPatternCollector {
-    occurrences: Vec<(String, i64, f64)>, // (pattern_name, transcript_id, confidence)
+    pub occurrences: Vec<(String, i64, f64)>, // (pattern_name, transcript_id, confidence)
 }
 
 impl GrammarPatternCollector {
@@ -103,26 +110,6 @@ impl GrammarPatternCollector {
     pub fn add_pattern(&mut self, pattern_name: String, transcript_id: i64, confidence: f64) {
         self.occurrences
             .push((pattern_name, transcript_id, confidence));
-    }
-
-    /// Convert collected data into GrammarPatternOccurrence structs
-    pub fn into_occurrences(
-        self,
-        conn: &Connection,
-    ) -> Result<Vec<GrammarPatternOccurrence>, Error> {
-        let mut result = Vec::new();
-
-        for (pattern_name, transcript_id, confidence) in self.occurrences {
-            // Get or create pattern ID
-            let pattern_id = GrammarPattern::get_or_create_pattern_id(conn, &pattern_name)?;
-            result.push(GrammarPatternOccurrence::new(
-                pattern_id,
-                transcript_id,
-                confidence,
-            ));
-        }
-
-        Ok(result)
     }
 }
 

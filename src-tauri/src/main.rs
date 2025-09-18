@@ -63,6 +63,7 @@ fn import_subtitles_from_directory(
         .0
         .lock()
         .map_err(|e| format!("Database lock error: {}", e))?;
+
     let show_entries = parse_subtitles_from_directory(Path::new(&root_dir));
     println!(
         "Processed {} entries.",
@@ -72,40 +73,36 @@ fn import_subtitles_from_directory(
             .sum::<usize>()
     );
 
-    // Prepare data for batch insertion with pre-allocation
-    let total_episodes: usize = show_entries.iter().map(|show| show.episodes.len()).sum();
-    let total_transcripts: usize = show_entries
-        .iter()
-        .map(|show| {
-            show.episodes
-                .iter()
-                .map(|ep| ep.content.0.len())
-                .sum::<usize>()
-        })
-        .sum();
-
+    // Prepare show data for batch insertion
     let mut shows = Vec::with_capacity(show_entries.len());
-    let mut episodes = Vec::with_capacity(total_episodes);
-    let mut transcripts = Vec::with_capacity(total_transcripts);
-
-    // Cache the constant string to avoid repeated allocations
     let anime_type = "Anime".to_string();
 
-    for (show_id, show) in show_entries.iter().enumerate() {
-        let show_id = (show_id + 1) as i32;
+    for show in &show_entries {
         shows.push((show.name.clone(), anime_type.clone()));
+    }
+
+    // Prepare all data for batch processing
+    let total_episodes = show_entries.iter().map(|s| s.episodes.len()).sum();
+    let mut all_episodes = Vec::with_capacity(total_episodes);
+    let mut all_transcripts = Vec::new();
+
+    for (show_index, show) in show_entries.iter().enumerate() {
+        let show_id = (show_index + 1) as i32;
 
         for episode in &show.episodes {
-            let episode_id = (episodes.len() + 1) as i32;
-            episodes.push((
+            let episode_index = all_episodes.len();
+
+            // Add episode data
+            all_episodes.push((
                 show_id,
                 episode.episode_name.clone(),
                 episode.episode_number,
             ));
 
-            for subtitle in episode.content.0.iter() {
-                transcripts.push((
-                    episode_id,
+            // Add transcript data with episode index for later mapping
+            for subtitle in &episode.content.0 {
+                all_transcripts.push((
+                    episode_index, // We'll map this to episode_id later
                     subtitle.number as i32,
                     subtitle.start_time.to_milliseconds(),
                     subtitle.end_time.to_milliseconds(),
@@ -115,18 +112,52 @@ fn import_subtitles_from_directory(
         }
     }
 
-    // Perform batch insertions
+    // Insert all shows and episodes
     db.insert_shows(&shows)
         .map_err(|e| format!("Failed to insert shows: {}", e))?;
     println!("Shows inserted successfully.");
 
-    db.insert_episodes(&episodes)
+    let episode_ids = db
+        .insert_episodes(&all_episodes)
         .map_err(|e| format!("Failed to insert episodes: {}", e))?;
     println!("Episodes inserted successfully.");
 
-    db.insert_transcripts(&transcripts)
-        .map_err(|e| format!("Failed to insert transcripts: {}", e))?;
-    println!("Transcripts inserted successfully.");
+    // No need to delete - using INSERT OR IGNORE with unique constraint
+
+    // Convert transcripts to final format with actual episode IDs
+    let final_transcripts: Vec<_> = all_transcripts
+        .into_iter()
+        .map(|(episode_index, line_id, time_start, time_end, text)| {
+            (
+                episode_ids[episode_index],
+                line_id,
+                time_start,
+                time_end,
+                text,
+            )
+        })
+        .collect();
+
+    // Process transcripts in batches for progress logging
+    const BATCH_SIZE: usize = 50000;
+    let total_transcripts = final_transcripts.len();
+
+    for (batch_index, chunk) in final_transcripts.chunks(BATCH_SIZE).enumerate() {
+        let start = batch_index * BATCH_SIZE;
+        let end = std::cmp::min(start + BATCH_SIZE, total_transcripts);
+
+        println!(
+            "Processing transcripts {}-{} of {}",
+            start + 1,
+            end,
+            total_transcripts
+        );
+
+        db.insert_transcripts(chunk)
+            .map_err(|e| format!("Failed to insert transcript batch: {}", e))?;
+    }
+
+    println!("All shows and episodes processed successfully.");
 
     Ok("Processing completed successfully!".to_string())
 }

@@ -64,11 +64,9 @@ impl Show {
             })
         })?;
 
-        let mut shows = Vec::new();
-        for show in shows_iter {
-            shows.push(show?);
-        }
-        Ok(shows)
+        shows_iter
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(Error::from)
     }
 
     #[cfg(test)]
@@ -82,11 +80,9 @@ impl Show {
             })
         })?;
 
-        let mut shows = Vec::new();
-        for show in shows_iter {
-            shows.push(show?);
-        }
-        Ok(shows)
+        shows_iter
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(Error::from)
     }
 }
 

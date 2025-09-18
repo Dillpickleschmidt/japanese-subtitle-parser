@@ -17,12 +17,7 @@ serde_json = { version = "1.0", features = ["preserve_order"] }
 regex = "1.10.5"
 rusqlite = { version = "0.32.1", features = ["bundled"] }
 walkdir = "2"
-# Removed: rayon (parallelization removed as requested)
-# Removed: tokio (async not used in current codebase)
-# Removed: reqwest (HTTP requests not used)  
-# Removed: clap (CLI args not used in Tauri app)
-# Removed: csv (CSV handling done with simple line parsing)
-# Removed: zip (not used in current implementation)
+reqwest = { version = "0.11", features = ["blocking", "json"] }
 tempfile = "3.12.0"
 
 [dev-dependencies]

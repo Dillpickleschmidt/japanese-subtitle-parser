@@ -15,10 +15,8 @@ pub enum TokenMatcher {
         conjugation_form: Option<&'static str>,
         base_form: Option<&'static str>,
     },
-    // Removed unused variants: Adjective, Adverb
     /// Match exact surface form
     Surface(&'static str),
-    // Removed unused Pos variant
     /// Match anything (wildcard)
     Any,
     /// Custom matching with predefined types
@@ -64,7 +62,6 @@ pub struct GrammarPattern {
     pub name: &'static str,
     pub tokens: Vec<TokenMatcher>,
     pub priority: u8, // Higher = more specific/important
-                      // Removed unused description field
 }
 
 /// Generic pattern matching engine
@@ -80,7 +77,6 @@ pub struct PatternMatch<T> {
     pub result: T,
     pub confidence: f32,
     pub pattern_name: &'static str,
-    // Removed unused fields: matched_tokens, start_position
     pub end_position: usize, // Used for sorting by length preference
 }
 

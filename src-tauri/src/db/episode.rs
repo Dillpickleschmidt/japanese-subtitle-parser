@@ -80,11 +80,9 @@ impl Episode {
             })
         })?;
 
-        let mut episodes = Vec::new();
-        for episode in episodes_iter {
-            episodes.push(episode?);
-        }
-        Ok(episodes)
+        episodes_iter
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(Error::from)
     }
 
     /// Searches for episodes by name
@@ -101,11 +99,9 @@ impl Episode {
             })
         })?;
 
-        let mut episodes = Vec::new();
-        for episode in episodes_iter {
-            episodes.push(episode?);
-        }
-        Ok(episodes)
+        episodes_iter
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(Error::from)
     }
 
     /// Gets the associated Show for this Episode
