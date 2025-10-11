@@ -166,15 +166,12 @@ mod tests {
 
     #[test]
     fn test_pattern_collector() {
-        let conn = create_test_db();
-
         let mut collector = GrammarPatternCollector::new();
         collector.add_pattern("te_form".to_string(), 1, 8.0);
-        collector.add_pattern("te_form".to_string(), 2, 7.0);
+        collector.add_pattern("past_tense".to_string(), 2, 7.5);
 
-        let occurrences = collector.into_occurrences(&conn).unwrap();
-        assert_eq!(occurrences.len(), 2);
-        assert_eq!(occurrences[0].transcript_id, 1);
-        assert_eq!(occurrences[1].transcript_id, 2);
+        assert_eq!(collector.occurrences.len(), 2);
+        assert_eq!(collector.occurrences[0], ("te_form".to_string(), 1, 8.0));
+        assert_eq!(collector.occurrences[1], ("past_tense".to_string(), 2, 7.5));
     }
 }

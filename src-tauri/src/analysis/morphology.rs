@@ -101,22 +101,25 @@ pub fn get_base_form_readings(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::analysis::kagome_server::KagomeServer;
 
     #[test]
     fn test_process_text_with_kagome() {
         let text = "私は猫が好きです。";
-        let result = process_text_with_kagome(text);
 
-        match result {
-            Ok(tokens) => {
-                assert!(!tokens.is_empty());
-                for token_array in tokens {
-                    for token in token_array {
-                        println!("{}: {} ({})", token.surface, token.base_form, token.reading);
-                    }
-                }
-            }
-            Err(e) => println!("Test failed (kagome may not be installed): {}", e),
+        let server = KagomeServer::start().unwrap();
+        let batch = vec![(1i64, 1i32, text.to_string())];
+        let token_arrays = process_batch_with_kagome_server(&batch, &server).unwrap();
+
+        assert_eq!(token_arrays.len(), 1);
+        assert!(!token_arrays[0].is_empty());
+
+        // Verify tokens have required fields
+        for token in &token_arrays[0] {
+            assert!(!token.surface.is_empty());
+            assert!(!token.base_form.is_empty());
         }
+
+        server.shutdown().unwrap();
     }
 }
