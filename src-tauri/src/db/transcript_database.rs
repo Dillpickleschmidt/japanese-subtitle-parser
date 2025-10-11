@@ -85,7 +85,8 @@ impl DbHandler {
             -- Simplified grammar patterns - just unique pattern definitions
             CREATE TABLE IF NOT EXISTS grammar_patterns (
                 id INTEGER PRIMARY KEY,
-                pattern_name TEXT NOT NULL UNIQUE     -- 'te_form', 'past_tense', etc.
+                pattern_name TEXT NOT NULL UNIQUE,     -- 'te_form', 'past_tense', etc.
+                jlpt_level TEXT NOT NULL               -- 'n5', 'n4', 'n3', 'n2', 'n1'
             );
             -- Grammar pattern occurrences linked to specific transcripts
             CREATE TABLE IF NOT EXISTS grammar_pattern_occurrences (

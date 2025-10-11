@@ -2,59 +2,33 @@ use crate::error::Error;
 use rusqlite::Connection;
 
 #[derive(Debug, Clone)]
-pub struct GrammarPattern {
-    #[allow(dead_code)] // Used in database operations
-    pub id: Option<i32>,
-    #[allow(dead_code)] // Used in database operations
-    pub pattern_name: String, // 'te_form', 'past_tense', etc.
-}
-
-#[derive(Debug, Clone)]
 pub struct GrammarPatternOccurrence {
     pub pattern_id: i32,
     pub transcript_id: i64,
     pub confidence: f64,
 }
 
-impl GrammarPattern {
-    #[cfg(test)]
-    pub fn new(pattern_name: String) -> Self {
-        Self {
-            id: None,
-            pattern_name,
-        }
+/// Get existing pattern ID or create new pattern and return its ID
+pub fn get_or_create_pattern_id(
+    conn: &Connection,
+    pattern_name: &str,
+    jlpt_level: &str,
+) -> Result<i32, Error> {
+    // Try to get existing pattern
+    if let Ok(id) = conn.query_row(
+        "SELECT id FROM grammar_patterns WHERE pattern_name = ?",
+        [pattern_name],
+        |row| row.get::<_, i32>(0),
+    ) {
+        return Ok(id);
     }
 
-    #[cfg(test)]
-    pub fn insert(&mut self, conn: &Connection) -> Result<(), Error> {
-        let mut stmt = conn
-            .prepare_cached("INSERT OR IGNORE INTO grammar_patterns (pattern_name) VALUES (?)")?;
-
-        stmt.execute([&self.pattern_name])?;
-
-        // Get the pattern ID (whether it was just inserted or already existed)
-        self.id = Some(Self::get_or_create_pattern_id(conn, &self.pattern_name)?);
-        Ok(())
-    }
-
-    /// Get existing pattern ID or create new pattern and return its ID
-    pub fn get_or_create_pattern_id(conn: &Connection, pattern_name: &str) -> Result<i32, Error> {
-        // Try to get existing pattern
-        if let Ok(id) = conn.query_row(
-            "SELECT id FROM grammar_patterns WHERE pattern_name = ?",
-            [pattern_name],
-            |row| row.get::<_, i32>(0),
-        ) {
-            return Ok(id);
-        }
-
-        // Create new pattern
-        conn.execute(
-            "INSERT INTO grammar_patterns (pattern_name) VALUES (?)",
-            [pattern_name],
-        )?;
-        Ok(conn.last_insert_rowid() as i32)
-    }
+    // Create new pattern
+    conn.execute(
+        "INSERT INTO grammar_patterns (pattern_name, jlpt_level) VALUES (?, ?)",
+        [pattern_name, jlpt_level],
+    )?;
+    Ok(conn.last_insert_rowid() as i32)
 }
 
 impl GrammarPatternOccurrence {
@@ -126,7 +100,8 @@ mod tests {
             "
             CREATE TABLE grammar_patterns (
                 id INTEGER PRIMARY KEY,
-                pattern_name TEXT NOT NULL UNIQUE
+                pattern_name TEXT NOT NULL UNIQUE,
+                jlpt_level TEXT NOT NULL
             );
             CREATE TABLE grammar_pattern_occurrences (
                 pattern_id INTEGER,
@@ -154,14 +129,17 @@ mod tests {
     fn test_grammar_pattern_insert() {
         let conn = create_test_db();
 
-        let mut pattern = GrammarPattern::new("te_form".to_string());
-        pattern.insert(&conn).unwrap();
+        // Test creating a new pattern
+        let id1 = get_or_create_pattern_id(&conn, "te_form", "n5").unwrap();
+        assert!(id1 > 0);
 
-        assert!(pattern.id.is_some());
+        // Test that getting the same pattern returns the same ID
+        let id2 = get_or_create_pattern_id(&conn, "te_form", "n5").unwrap();
+        assert_eq!(id1, id2);
 
-        // Test that we can get the pattern ID
-        let id = GrammarPattern::get_or_create_pattern_id(&conn, "te_form").unwrap();
-        assert_eq!(pattern.id.unwrap(), id);
+        // Test creating a different pattern
+        let id3 = get_or_create_pattern_id(&conn, "past_tense", "n5").unwrap();
+        assert_ne!(id1, id3);
     }
 
     #[test]

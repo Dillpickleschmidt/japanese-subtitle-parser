@@ -179,7 +179,12 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
     // Pre-resolve all pattern IDs once (instead of per-occurrence lookup)
     let mut pattern_id_cache = std::collections::HashMap::new();
     for pattern_name in pattern_names {
-        let pattern_id = crate::db::grammar_pattern::GrammarPattern::get_or_create_pattern_id(&tx, &pattern_name)?;
+        let jlpt_level = crate::grammar::patterns::get_jlpt_level(&pattern_name);
+        let pattern_id = crate::db::grammar_pattern::get_or_create_pattern_id(
+            &tx,
+            &pattern_name,
+            jlpt_level,
+        )?;
         pattern_id_cache.insert(pattern_name, pattern_id);
     }
 
@@ -188,7 +193,11 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         .into_iter()
         .map(|(pattern_name, transcript_id, confidence)| {
             let pattern_id = pattern_id_cache[&pattern_name];
-            crate::db::grammar_pattern::GrammarPatternOccurrence::new(pattern_id, transcript_id, confidence)
+            crate::db::grammar_pattern::GrammarPatternOccurrence::new(
+                pattern_id,
+                transcript_id,
+                confidence,
+            )
         })
         .collect();
 
@@ -196,7 +205,10 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
 
     // Single optimized bulk insert for all grammar patterns
     if !final_occurrences.is_empty() {
-        crate::db::grammar_pattern::GrammarPatternOccurrence::bulk_insert_optimized(&final_occurrences, &tx)?;
+        crate::db::grammar_pattern::GrammarPatternOccurrence::bulk_insert_optimized(
+            &final_occurrences,
+            &tx,
+        )?;
     }
 
     // Insert all accumulated words at once
@@ -314,7 +326,7 @@ fn process_jlpt_data(conn: &mut Connection) -> Result<(), Error> {
 
         if let Some((word, level)) = line.split_once(',') {
             let level: i32 = level.trim().parse().unwrap_or(0);
-            if level >= 1 && level <= 5 {
+            if (1..=5).contains(&level) {
                 tx.execute(
                     "INSERT OR REPLACE INTO jlpt_levels (word, level) VALUES (?, ?)",
                     [word.trim(), &level.to_string()],

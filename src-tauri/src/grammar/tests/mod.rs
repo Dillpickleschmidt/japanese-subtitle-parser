@@ -4,7 +4,7 @@ mod te_forms;
 
 use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::{process_batch_with_kagome_server, KagomeToken};
-use crate::grammar::create_genki_pattern_matcher;
+use crate::grammar::create_pattern_matcher;
 use crate::grammar::pattern_matcher::PatternMatch;
 use crate::grammar::types::ConjugationPattern;
 use std::sync::{LazyLock, Mutex};
@@ -24,7 +24,7 @@ pub fn tokenize_sentence(text: &str) -> Vec<KagomeToken> {
 
 /// Detect grammar patterns in a token sequence
 pub fn detect_patterns(tokens: &[KagomeToken]) -> Vec<PatternMatch<ConjugationPattern>> {
-    let matcher = create_genki_pattern_matcher();
+    let matcher = create_pattern_matcher();
     matcher.match_tokens(tokens)
 }
 

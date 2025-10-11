@@ -50,7 +50,7 @@ impl KagomeServer {
             }
 
             // Try to connect
-            if client.get(&format!("{}/", base_url)).send().is_ok() {
+            if client.get(format!("{}/", base_url)).send().is_ok() {
                 break;
             }
 
@@ -79,7 +79,7 @@ impl KagomeServer {
 
         let response = self
             .client
-            .put(&format!("{}/tokenize", self.base_url))
+            .put(format!("{}/tokenize", self.base_url))
             .json(&request)
             .send()
             .map_err(|e| Error::Other(format!("Failed to send request to Kagome server: {}", e)))?;
@@ -146,7 +146,7 @@ impl KagomeServer {
 
         let response = self
             .client
-            .put(&format!("{}/tokenize", self.base_url))
+            .put(format!("{}/tokenize", self.base_url))
             .json(&request)
             .send()
             .map_err(|e| Error::Other(format!("Failed to send request to Kagome server: {}", e)))?;

@@ -3,14 +3,14 @@ use crate::analysis::morphology::{process_batch_with_kagome_server, KagomeToken}
 use crate::db::grammar_pattern::GrammarPatternCollector;
 use crate::error::Error;
 use crate::grammar::{
-    create_genki_pattern_matcher, pattern_matcher::PatternMatcher, types::ConjugationPattern,
+    create_pattern_matcher, pattern_matcher::PatternMatcher, types::ConjugationPattern,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::{LazyLock, Mutex};
 
 // Static pattern matcher - created once and reused for all transcripts
-static GENKI_MATCHER: LazyLock<PatternMatcher<ConjugationPattern>> =
-    LazyLock::new(|| create_genki_pattern_matcher());
+static PATTERN_MATCHER: LazyLock<PatternMatcher<ConjugationPattern>> =
+    LazyLock::new(|| create_pattern_matcher());
 
 // POS tag interning cache for memory efficiency
 static POS_CACHE: LazyLock<Mutex<HashMap<Vec<String>, Vec<String>>>> =
@@ -150,9 +150,9 @@ impl UnifiedAnalyzer {
         transcript_id: i64,
     ) {
         // Use static pattern matcher - created once, reused for all transcripts
-        let genki_matches = GENKI_MATCHER.match_tokens(tokens);
+        let pattern_matches = PATTERN_MATCHER.match_tokens(tokens);
 
-        for pattern_match in genki_matches {
+        for pattern_match in pattern_matches {
             // Simply add the pattern occurrence with transcript ID
             collector.add_pattern(
                 pattern_match.pattern_name.to_string(),
