@@ -8,13 +8,11 @@ pub struct GrammarPatternOccurrence {
     pub confidence: f64,
 }
 
-/// Get existing pattern ID or create new pattern and return its ID
 pub fn get_or_create_pattern_id(
     conn: &Connection,
     pattern_name: &str,
     jlpt_level: &str,
 ) -> Result<i32, Error> {
-    // Try to get existing pattern
     if let Ok(id) = conn.query_row(
         "SELECT id FROM grammar_patterns WHERE pattern_name = ?",
         [pattern_name],
@@ -23,7 +21,6 @@ pub fn get_or_create_pattern_id(
         return Ok(id);
     }
 
-    // Create new pattern
     conn.execute(
         "INSERT INTO grammar_patterns (pattern_name, jlpt_level) VALUES (?, ?)",
         [pattern_name, jlpt_level],
@@ -40,7 +37,6 @@ impl GrammarPatternOccurrence {
         }
     }
 
-    /// Optimized bulk insert using VALUES clauses (like word insertion)
     pub fn bulk_insert_optimized(
         occurrences: &[GrammarPatternOccurrence],
         conn: &Connection,
@@ -68,7 +64,6 @@ impl GrammarPatternOccurrence {
     }
 }
 
-/// Helper struct to collect grammar pattern occurrences during analysis
 #[derive(Debug)]
 pub struct GrammarPatternCollector {
     pub occurrences: Vec<(String, i64, f64)>, // (pattern_name, transcript_id, confidence)

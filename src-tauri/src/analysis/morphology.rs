@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct KagomeToken {
-    // Only keep essential fields for production use
     #[serde(default)]
     pub id: u32,
     #[serde(default)]
@@ -24,13 +23,10 @@ pub struct KagomeToken {
     pub features: Vec<String>,
 }
 
-/// Process text with Kagome using a server instance with transcript boundary tracking
-/// This is more efficient for batch processing as it avoids spawning multiple processes
 pub fn process_batch_with_kagome_server(
     batch: &[(i64, i32, String)],
     server: &KagomeServer,
 ) -> Result<Vec<Vec<KagomeToken>>, Error> {
-    // Combine all transcript texts and track boundaries
     let mut combined_text = String::new();
     let mut boundaries = Vec::new();
 
@@ -40,11 +36,9 @@ pub fn process_batch_with_kagome_server(
         let end = combined_text.len() as u32;
         boundaries.push((start, end));
 
-        // Add separator (except for last item)
         combined_text.push('\n');
     }
 
-    // Remove trailing newline
     if combined_text.ends_with('\n') {
         combined_text.pop();
     }
@@ -52,8 +46,6 @@ pub fn process_batch_with_kagome_server(
     server.tokenize(&combined_text, &boundaries)
 }
 
-/// Get correct base form readings for a list of words using Kagome server
-/// This function batches words into chunks and uses position-based boundaries for reliable parsing
 pub fn get_base_form_readings(
     base_forms: &[&str],
     server: &KagomeServer,
@@ -66,7 +58,6 @@ pub fn get_base_form_readings(
 
     let mut reading_map = HashMap::new();
 
-    // Process in chunks to avoid overwhelming Kagome
     const CHUNK_SIZE: usize = 5000;
     let total_chunks = (base_forms.len() + CHUNK_SIZE - 1) / CHUNK_SIZE;
 
@@ -78,17 +69,13 @@ pub fn get_base_form_readings(
             chunk.len()
         );
 
-        // Build simple newline-separated text for dictionary lookups
         let combined_text = chunk.join("\n");
 
-        // Use normal mode for dictionary readings (not search segmentation)
         let token_arrays = server.tokenize_normal_mode(&combined_text)?;
 
-        // Map results back to original base forms for this chunk
         for (i, &base_form) in chunk.iter().enumerate() {
             if let Some(tokens) = token_arrays.get(i) {
                 if let Some(first_token) = tokens.first() {
-                    // Use the reading from the dictionary form analysis
                     reading_map.insert(base_form.to_string(), first_token.reading.clone());
                 }
             }
@@ -114,7 +101,6 @@ mod tests {
         assert_eq!(token_arrays.len(), 1);
         assert!(!token_arrays[0].is_empty());
 
-        // Verify tokens have required fields
         for token in &token_arrays[0] {
             assert!(!token.surface.is_empty());
             assert!(!token.base_form.is_empty());

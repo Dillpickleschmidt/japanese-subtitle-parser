@@ -5,7 +5,6 @@ use rusqlite::{Connection, Transaction};
 use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 
-// Pre-serialized common POS patterns for performance
 static POS_CACHE: LazyLock<HashMap<Vec<String>, String>> = LazyLock::new(|| {
     let common_patterns = vec![
         vec!["名詞".to_string(), "一般".to_string()],
@@ -32,14 +31,11 @@ static POS_CACHE: LazyLock<HashMap<Vec<String>, String>> = LazyLock::new(|| {
 pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
     println!("Creating reverse index and analyzing grammar patterns...");
 
-    // Start Kagome server for efficient processing
     let server = KagomeServer::start()?;
 
-    // Single pass: process transcripts and collect unique words
     println!("Processing transcripts and analyzing grammar patterns...");
     let analyzer = UnifiedAnalyzer::new();
 
-    // Get transcript count before starting transaction
     let total_transcripts: i64 =
         conn.query_row("SELECT COUNT(*) FROM transcripts", [], |row| row.get(0))?;
     println!(
@@ -47,12 +43,10 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         total_transcripts
     );
 
-    // Process all transcripts in a single pass
     let batch_size = 1000;
     let mut all_words = HashMap::new(); // Store raw words first (no corrections yet)
     let mut all_grammar_patterns = HashMap::new();
 
-    // Process transcripts using a prepared statement iterator
     let mut stmt =
         conn.prepare("SELECT id, episode_id, text FROM transcripts ORDER BY episode_id, line_id")?;
     let transcript_iter = stmt.query_map([], |row| {
@@ -75,10 +69,8 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
             batch_count += 1;
             println!("Processing batch {}/{}", batch_count, total_batches);
 
-            // Process this batch using the existing analyzer
             let results = analyzer.analyze_batch(&batch, &server)?;
 
-            // Accumulate words WITHOUT corrections (raw from tokenizer)
             for (word_key, transcript_ids) in results.words {
                 all_words
                     .entry((word_key.base_form, word_key.reading, word_key.pos))
@@ -86,7 +78,6 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
                     .extend(transcript_ids);
             }
 
-            // Accumulate grammar patterns
             for (episode_id, collector) in results.grammar_patterns {
                 all_grammar_patterns
                     .entry(episode_id)
@@ -98,14 +89,12 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         }
     }
 
-    // Process final batch
     if !batch.is_empty() {
         batch_count += 1;
         println!("Processing final batch {}/{}", batch_count, total_batches);
 
         let results = analyzer.analyze_batch(&batch, &server)?;
 
-        // Accumulate words WITHOUT corrections
         for (word_key, transcript_ids) in results.words {
             all_words
                 .entry((word_key.base_form, word_key.reading, word_key.pos))
@@ -113,7 +102,6 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
                 .extend(transcript_ids);
         }
 
-        // Accumulate final batch grammar patterns
         for (episode_id, collector) in results.grammar_patterns {
             all_grammar_patterns
                 .entry(episode_id)
@@ -122,27 +110,22 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         }
     }
 
-    // Drop the statement to release the connection borrow
     drop(stmt);
 
-    // NOW apply reading corrections to the collected words
     println!(
         "Applying reading corrections to {} unique words...",
         all_words.len()
     );
 
-    // Collect unique base forms for reading correction
     let unique_base_forms: HashSet<String> = all_words
         .keys()
         .map(|(base_form, _, _)| base_form.clone())
         .collect();
 
-    // Get reading corrections using the same server for consistency and performance
     let base_forms_vec: Vec<&str> = unique_base_forms.iter().map(|s| s.as_str()).collect();
     let reading_corrections =
         crate::analysis::morphology::get_base_form_readings(&base_forms_vec, &server)?;
 
-    // Apply corrections to create final word map
     let mut all_corrected_words = HashMap::new();
     for ((base_form, reading, pos), transcript_ids) in all_words {
         let final_reading = reading_corrections
@@ -156,17 +139,13 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
             .extend(transcript_ids);
     }
 
-    // Start transaction for database operations
     let tx = conn.transaction()?;
 
-    // Create indexes first (they benefit from being in the same transaction)
     create_main_indexes_tx(&tx)?;
 
-    // Optimize grammar pattern insertion by collecting all occurrences first
     let mut all_pattern_occurrences = Vec::new();
     let mut pattern_names = std::collections::HashSet::new();
 
-    // First pass: collect all unique pattern names and raw occurrences
     for (_episode_id, collectors) in all_grammar_patterns {
         for collector in collectors {
             for (pattern_name, transcript_id, confidence) in collector.occurrences {
@@ -176,7 +155,6 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         }
     }
 
-    // Pre-resolve all pattern IDs once (instead of per-occurrence lookup)
     let mut pattern_id_cache = std::collections::HashMap::new();
     for pattern_name in pattern_names {
         let jlpt_level = crate::grammar::patterns::get_jlpt_level(&pattern_name);
@@ -188,7 +166,6 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         pattern_id_cache.insert(pattern_name, pattern_id);
     }
 
-    // Convert to final format with cached pattern IDs
     let final_occurrences: Vec<_> = all_pattern_occurrences
         .into_iter()
         .map(|(pattern_name, transcript_id, confidence)| {
@@ -203,7 +180,6 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
 
     let total_pattern_occurrences = final_occurrences.len();
 
-    // Single optimized bulk insert for all grammar patterns
     if !final_occurrences.is_empty() {
         crate::db::grammar_pattern::GrammarPatternOccurrence::bulk_insert_optimized(
             &final_occurrences,
@@ -211,7 +187,6 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         )?;
     }
 
-    // Insert all accumulated words at once
     batch_insert_words_and_occurrences(&tx, &all_corrected_words)?;
 
     println!(
@@ -219,15 +194,12 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         total_pattern_occurrences
     );
 
-    // Single commit for all operations
     tx.commit()?;
 
-    // Shutdown Kagome server
     server.shutdown()?;
 
     println!("Reverse index created successfully!");
 
-    // Import JLPT levels and compute stats if CSV file exists
     process_jlpt_data(conn)?;
 
     Ok(())
@@ -237,7 +209,6 @@ fn batch_insert_words_and_occurrences(
     tx: &Transaction,
     word_map: &HashMap<(String, String, Vec<String>), HashSet<i64>>,
 ) -> Result<(), Error> {
-    // First, batch insert all words using VALUES clauses
     let word_keys: Vec<_> = word_map.keys().collect();
     for chunk in word_keys.chunks(1000) {
         let placeholders: Vec<String> = chunk.iter().map(|_| "(?, ?, ?)".to_string()).collect();
@@ -248,7 +219,6 @@ fn batch_insert_words_and_occurrences(
 
         let mut params = Vec::new();
         for (word, reading, pos) in chunk {
-            // Use cached POS serialization if available, otherwise serialize on demand
             let pos_json = if let Some(cached) = POS_CACHE.get(pos) {
                 cached.as_str()
             } else {
@@ -263,13 +233,11 @@ fn batch_insert_words_and_occurrences(
         tx.execute(&sql, rusqlite::params_from_iter(params))?;
     }
 
-    // Then, batch insert occurrences for each word
     let mut stmt_get_word_id = tx.prepare("SELECT id FROM words WHERE word = ?")?;
 
     for ((word, _, _), transcript_ids) in word_map {
         let word_id: i64 = stmt_get_word_id.query_row([word], |row| row.get(0))?;
 
-        // Batch insert occurrences for this word using VALUES clauses
         let transcript_vec: Vec<_> = transcript_ids.iter().collect();
         for chunk in transcript_vec.chunks(1000) {
             let placeholders: Vec<String> = chunk.iter().map(|_| "(?, ?)".to_string()).collect();
@@ -316,7 +284,6 @@ fn process_jlpt_data(conn: &mut Connection) -> Result<(), Error> {
     println!("Processing JLPT data...");
     let tx = conn.transaction()?;
 
-    // Import CSV
     let reader = BufReader::new(File::open("jlpt_levels.csv")?);
     for line in reader.lines() {
         let line = line?;
@@ -335,7 +302,6 @@ fn process_jlpt_data(conn: &mut Connection) -> Result<(), Error> {
         }
     }
 
-    // Compute stats
     tx.execute("DELETE FROM episode_jlpt_stats", [])?;
     tx.execute(
         "
@@ -369,7 +335,6 @@ fn process_jlpt_data(conn: &mut Connection) -> Result<(), Error> {
     tx.commit()?;
     println!("JLPT processing completed!");
 
-    // Debug: Show filtering and distribution info
     debug_jlpt_filtering(conn)?;
 
     Ok(())
@@ -447,7 +412,6 @@ fn debug_jlpt_filtering(conn: &Connection) -> Result<(), Error> {
         );
     }
 
-    // Sample words that don't have JLPT levels
     println!("\nSample words WITHOUT JLPT levels (after filtering):");
     let mut sample_stmt = conn.prepare(
         "SELECT w.word, JSON_EXTRACT(w.pos, '$[0]') as pos1, JSON_EXTRACT(w.pos, '$[1]') as pos2
@@ -476,7 +440,6 @@ fn debug_jlpt_filtering(conn: &Connection) -> Result<(), Error> {
         println!("  {} ({}, {})", word, pos1, pos2);
     }
 
-    // POS category breakdown for words without JLPT levels
     println!("\nPOS breakdown of words WITHOUT JLPT levels (after filtering):");
     let mut pos_stmt = conn.prepare(
         "SELECT JSON_EXTRACT(w.pos, '$[0]') as pos1, COUNT(*) as count

@@ -23,10 +23,8 @@ pub struct ShowEntry {
 pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
     let mut show_entries: Vec<ShowEntry> = Vec::new();
     let mut show_name_to_index: HashMap<String, usize> = HashMap::new();
-    // Create configurations for specific shows for extracting data from file names
     let configs = create_show_configs();
 
-    // Use WalkDir with sorting enabled
     let walker = WalkDir::new(root_dir)
         .sort_by(|a, b| a.file_name().cmp(b.file_name()))
         .min_depth(1)
@@ -37,15 +35,11 @@ pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
         let path = entry.path();
         if path.extension().map_or(false, |ext| ext == "srt") {
             println!("Processing {:?}...", path.file_name().unwrap());
-            // Process each SRT file
             match process_srt_file(path, &configs) {
                 Ok(srt_entry) => {
-                    // Check if we've already encountered this show using HashMap lookup
                     if let Some(&show_index) = show_name_to_index.get(&srt_entry.show_name) {
-                        // If so, add this episode to the existing show entry
                         show_entries[show_index].episodes.push(srt_entry);
                     } else {
-                        // If not, create a new show entry with this episode
                         let show_index = show_entries.len();
                         show_name_to_index.insert(srt_entry.show_name.clone(), show_index);
                         show_entries.push(ShowEntry {
@@ -59,7 +53,6 @@ pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
         }
     }
 
-    // Sort shows alphabetically
     show_entries.sort_by(|a, b| a.name.cmp(&b.name));
 
     /*
@@ -110,31 +103,18 @@ pub fn process_srt_file(
 }
 
 impl Subtitles {
-    /// Parses a string containing SRT formatted subtitles into a `Subtitles` struct.
-    ///
-    /// # Arguments
-    ///
-    /// * `input` - A string slice containing the SRT formatted subtitles
-    ///
-    /// # Returns
-    ///
-    /// * `Result<Self, ParsingError>` - Parsed subtitles or an error
     pub fn parse_from_str(input: &str) -> Result<Self, ParsingError> {
-        // Remove BOM if present and normalize line endings
         let input = input.trim_start_matches('\u{feff}');
 
-        // Only allocate new string if we actually need to replace \r characters
         let input = if input.contains('\r') {
             std::borrow::Cow::Owned(input.replace('\r', ""))
         } else {
             std::borrow::Cow::Borrowed(input)
         };
 
-        // Better capacity estimate: ~400 subtitles per typical 24min episode
-        let estimated_capacity = input.len() / 90; // More accurate based on actual SRT structure
+        let estimated_capacity = input.len() / 90;
         let mut subtitles = Vec::with_capacity(estimated_capacity);
 
-        // State machine parser - much faster than regex for structured text
         #[derive(Debug)]
         enum ParseState {
             ExpectingNumber,
@@ -154,14 +134,13 @@ impl Subtitles {
             match state {
                 ParseState::ExpectingNumber => {
                     if line.is_empty() {
-                        continue; // Skip empty lines between entries
+                        continue;
                     }
                     current_number = line.parse().map_err(|_| ParsingError::InvalidNumber)?;
                     state = ParseState::ExpectingTimestamp;
                 }
 
                 ParseState::ExpectingTimestamp => {
-                    // Parse timestamp line: "00:00:03,003 --> 00:00:04,921"
                     if let Some(arrow_pos) = line.find(" --> ") {
                         let start_str = line[..arrow_pos].trim();
                         let end_str = line[arrow_pos + 5..].trim();
@@ -177,7 +156,6 @@ impl Subtitles {
 
                 ParseState::ReadingText => {
                     if line.is_empty() {
-                        // End of current subtitle - create and add it
                         if let (Some(start_time), Some(end_time)) =
                             (current_start_time.take(), current_end_time.take())
                         {
@@ -197,7 +175,6 @@ impl Subtitles {
             }
         }
 
-        // Handle final subtitle if file doesn't end with empty line
         if matches!(state, ParseState::ReadingText) {
             if let (Some(start_time), Some(end_time)) = (current_start_time, current_end_time) {
                 let text = text_lines.join("\n");
@@ -210,7 +187,6 @@ impl Subtitles {
             }
         }
 
-        // Check if any subtitles were parsed
         if subtitles.is_empty() {
             Err(ParsingError::MalformedSubtitle)
         } else {
