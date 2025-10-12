@@ -28,7 +28,8 @@ pub fn tokenize_sentence(text: &str) -> Vec<KagomeToken> {
 /// Detect grammar patterns in a token sequence
 pub fn detect_patterns(tokens: &[KagomeToken]) -> Vec<PatternMatch<ConjugationPattern>> {
     let matcher = create_pattern_matcher();
-    matcher.match_tokens(tokens)
+    let (matches, _auxiliary_indices) = matcher.match_tokens(tokens);
+    matches
 }
 
 /// Check if a specific pattern was detected

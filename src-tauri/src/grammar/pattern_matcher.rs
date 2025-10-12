@@ -23,6 +23,16 @@ pub enum TokenMatcher {
     Custom(CustomMatcher),
 }
 
+/// Category of grammar pattern for filtering and vocabulary extraction
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PatternCategory {
+    /// Basic conjugation forms - detected but not stored as grammar patterns
+    /// Used for vocabulary consolidation (skip auxiliary tokens)
+    Conjugation,
+    /// Actual grammatical constructions - stored as grammar patterns
+    Construction,
+}
+
 /// Predefined custom matchers to avoid function pointer comparison issues
 #[derive(Debug, Clone, PartialEq)]
 pub enum CustomMatcher {
@@ -116,6 +126,7 @@ pub struct GrammarPattern {
     pub name: &'static str,
     pub tokens: Vec<TokenMatcher>,
     pub priority: u8, // Higher = more specific/important
+    pub category: PatternCategory,
 }
 
 /// Generic pattern matching engine
@@ -131,6 +142,7 @@ pub struct PatternMatch<T> {
     pub result: T,
     pub confidence: f32,
     pub pattern_name: &'static str,
+    pub category: PatternCategory,
     /// 0-indexed character position where pattern starts (NOT a byte offset)
     /// To extract text in Rust, convert to byte position first using char_indices()
     pub start_char: u32,
@@ -153,14 +165,27 @@ impl<T> PatternMatcher<T> {
 
 impl<T: Clone> PatternMatcher<T> {
     /// Match patterns against tokens, returning all matches sorted by confidence
-    pub fn match_tokens(&self, tokens: &[KagomeToken]) -> Vec<PatternMatch<T>> {
+    /// Also returns a set of token indices that are auxiliary (for vocabulary consolidation)
+    pub fn match_tokens(
+        &self,
+        tokens: &[KagomeToken],
+    ) -> (Vec<PatternMatch<T>>, std::collections::HashSet<usize>) {
+        use std::collections::HashSet;
+
         let mut matches = Vec::new();
+        let mut auxiliary_indices = HashSet::new();
 
         for start_pos in 0..tokens.len() {
             for (pattern, result) in &self.patterns {
                 if let Some(match_result) =
                     self.match_pattern_at(pattern, tokens, start_pos, result)
                 {
+                    // Mark auxiliary tokens (all except the first token in the pattern)
+                    let pattern_len = pattern.tokens.len();
+                    for offset in 1..pattern_len {
+                        auxiliary_indices.insert(start_pos + offset);
+                    }
+
                     matches.push(match_result);
                 }
             }
@@ -175,7 +200,7 @@ impl<T: Clone> PatternMatcher<T> {
             // Prefer longer matches
         });
 
-        matches
+        (matches, auxiliary_indices)
     }
 
     fn match_pattern_at(
@@ -214,6 +239,7 @@ impl<T: Clone> PatternMatcher<T> {
             result: result.clone(),
             confidence,
             pattern_name: pattern.name,
+            category: pattern.category,
             start_char,
             end_char,
         })

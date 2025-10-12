@@ -3,7 +3,9 @@ use crate::analysis::morphology::{process_batch_with_kagome_server, KagomeToken}
 use crate::db::grammar_pattern::GrammarPatternCollector;
 use crate::error::Error;
 use crate::grammar::{
-    create_pattern_matcher, pattern_matcher::PatternMatcher, types::ConjugationPattern,
+    create_pattern_matcher,
+    pattern_matcher::{PatternCategory, PatternMatcher},
+    types::ConjugationPattern,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::{LazyLock, Mutex};
@@ -89,13 +91,21 @@ impl UnifiedAnalyzer {
         for (line_idx, &(transcript_id, episode_id, _)) in batch.iter().enumerate() {
             if let Some(tokens) = token_arrays.get(line_idx) {
                 if !tokens.is_empty() {
-                    self.extract_words_from_tokens(tokens, transcript_id, &mut words);
-
+                    // Analyze grammar patterns first to get auxiliary token indices
                     let collector = grammar_collectors
                         .entry(episode_id)
                         .or_insert_with(GrammarPatternCollector::new);
 
-                    self.analyze_grammar_patterns(tokens, collector, transcript_id);
+                    let auxiliary_indices =
+                        self.analyze_grammar_patterns(tokens, collector, transcript_id);
+
+                    // Extract vocabulary, skipping auxiliary tokens
+                    self.extract_words_from_tokens(
+                        tokens,
+                        &auxiliary_indices,
+                        transcript_id,
+                        &mut words,
+                    );
                 }
             }
         }
@@ -109,10 +119,16 @@ impl UnifiedAnalyzer {
     fn extract_words_from_tokens(
         &self,
         tokens: &[KagomeToken],
+        auxiliary_indices: &HashSet<usize>,
         transcript_id: i64,
         word_map: &mut HashMap<WordKey, HashSet<i64>>,
     ) {
-        for token in tokens {
+        for (i, token) in tokens.iter().enumerate() {
+            // Skip auxiliary tokens (parts of conjugations/constructions)
+            if auxiliary_indices.contains(&i) {
+                continue;
+            }
+
             if self.is_content_word(token) {
                 let key = WordKey::from_token(token);
 
@@ -129,18 +145,23 @@ impl UnifiedAnalyzer {
         tokens: &[KagomeToken],
         collector: &mut GrammarPatternCollector,
         transcript_id: i64,
-    ) {
-        let pattern_matches = PATTERN_MATCHER.match_tokens(tokens);
+    ) -> HashSet<usize> {
+        let (pattern_matches, auxiliary_indices) = PATTERN_MATCHER.match_tokens(tokens);
 
+        // Only store Construction patterns (skip basic Conjugation patterns)
         for pattern_match in pattern_matches {
-            collector.add_pattern(
-                pattern_match.pattern_name.to_string(),
-                transcript_id,
-                pattern_match.confidence.into(),
-                pattern_match.start_char,
-                pattern_match.end_char,
-            );
+            if pattern_match.category == PatternCategory::Construction {
+                collector.add_pattern(
+                    pattern_match.pattern_name.to_string(),
+                    transcript_id,
+                    pattern_match.confidence.into(),
+                    pattern_match.start_char,
+                    pattern_match.end_char,
+                );
+            }
         }
+
+        auxiliary_indices
     }
 
     fn is_content_word(&self, token: &KagomeToken) -> bool {
