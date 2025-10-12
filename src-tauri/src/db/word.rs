@@ -216,14 +216,6 @@ impl WordOccurrence {
         Ok(())
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<(), Error> {
-        conn.execute(
-            "DELETE FROM word_occurrences WHERE word_id = ?1 AND transcript_id = ?2",
-            params![self.word_id, self.transcript_id],
-        )?;
-        Ok(())
-    }
-
     pub fn get_by_word_id(conn: &Connection, word_id: i32) -> Result<Vec<WordOccurrence>, Error> {
         let mut stmt =
             conn.prepare("SELECT word_id, transcript_id FROM word_occurrences WHERE word_id = ?1")?;

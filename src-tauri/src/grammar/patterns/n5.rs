@@ -9,8 +9,8 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             GrammarPattern {
                 name: "te_iru",
                 tokens: vec![
-                    TokenMatcher::verb_with_form("連用形"),
-                    TokenMatcher::Surface("て"),
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::TeDeForm),
                     TokenMatcher::specific_verb("いる"),
                 ],
                 priority: 10,
@@ -22,13 +22,39 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             GrammarPattern {
                 name: "te_request",
                 tokens: vec![
-                    TokenMatcher::verb_with_form("連用形"),
-                    TokenMatcher::Surface("て"),
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::TeDeForm),
                     TokenMatcher::specific_verb("くださる"),
                 ],
                 priority: 10,
             },
             ConjugationPattern::TeRequest,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "te_kudasai",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::TeDeForm),
+                    TokenMatcher::Surface("ください"),
+                ],
+                priority: 10,
+            },
+            ConjugationPattern::TeKudasai,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "te_kara",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::TeDeForm),
+                    TokenMatcher::Surface("から"),
+                ],
+                priority: 9,
+            },
+            ConjugationPattern::TeKara,
             "n5",
         ),
         (
@@ -126,6 +152,235 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 priority: 4,
             },
             ConjugationPattern::Past,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "mashou",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("連用形"),
+                    TokenMatcher::Custom(CustomMatcher::MashouForm),
+                ],
+                priority: 6,
+            },
+            ConjugationPattern::Mashou,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "ta_koto_ga_aru",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
+                    TokenMatcher::Surface("こと"),
+                    TokenMatcher::Surface("が"),
+                    TokenMatcher::specific_verb("ある"),
+                ],
+                priority: 11,
+            },
+            ConjugationPattern::TaKotoGaAru,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "te_mo_ii",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::TeDeForm),
+                    TokenMatcher::Surface("も"),
+                    TokenMatcher::Custom(CustomMatcher::IiForm),
+                ],
+                priority: 11,
+            },
+            ConjugationPattern::TeMoIi,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "te_wa_ikenai",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::TeDeForm),
+                    TokenMatcher::Surface("は"),
+                    TokenMatcher::Custom(CustomMatcher::IkenaiForm),
+                ],
+                priority: 11,
+            },
+            ConjugationPattern::TeWaIkenai,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "naide_kudasai",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("未然形"),
+                    TokenMatcher::Surface("ない"),
+                    TokenMatcher::Surface("で"),
+                    TokenMatcher::Surface("ください"),
+                ],
+                priority: 11,
+            },
+            ConjugationPattern::NaideKudasai,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "masen_ka",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("連用形"),
+                    TokenMatcher::Custom(CustomMatcher::MasenForm),
+                    TokenMatcher::Surface("ん"),
+                    TokenMatcher::Surface("か"),
+                ],
+                priority: 7,
+            },
+            ConjugationPattern::MasenKa,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "mashou_ka",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("連用形"),
+                    TokenMatcher::Custom(CustomMatcher::MashouForm),
+                    TokenMatcher::Surface("う"),
+                    TokenMatcher::Surface("か"),
+                ],
+                priority: 8,
+            },
+            ConjugationPattern::MashouKa,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "sugiru",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::SugiruStem),
+                    TokenMatcher::specific_verb("すぎる"),
+                ],
+                priority: 6,
+            },
+            ConjugationPattern::Sugiru,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "tsumori_desu",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("基本形"),
+                    TokenMatcher::Surface("つもり"),
+                    TokenMatcher::Surface("です"),
+                ],
+                priority: 9,
+            },
+            ConjugationPattern::TsumoriDesu,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "hou_ga_ii",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
+                    TokenMatcher::Surface("ほう"),
+                    TokenMatcher::Surface("が"),
+                    TokenMatcher::Custom(CustomMatcher::IiForm),
+                ],
+                priority: 11,
+            },
+            ConjugationPattern::HouGaIi,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "nakucha_ikenai",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("未然形"),
+                    TokenMatcher::Surface("なく"),
+                    TokenMatcher::Surface("ちゃ"),
+                    TokenMatcher::Custom(CustomMatcher::IkenaiForm),
+                ],
+                priority: 10,
+            },
+            ConjugationPattern::NakuchaIkenai,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "deshou",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::DeshouForm),
+                    TokenMatcher::Surface("う"),
+                ],
+                priority: 5,
+            },
+            ConjugationPattern::Deshou,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "mada_te_imasen",
+                tokens: vec![
+                    TokenMatcher::Surface("まだ"),
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::TeDeForm),
+                    TokenMatcher::Surface("い"),
+                    TokenMatcher::Custom(CustomMatcher::MasenForm),
+                    TokenMatcher::Surface("ん"),
+                ],
+                priority: 12,
+            },
+            ConjugationPattern::MadaTeImasen,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "n_desu",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::NDesuForm),
+                    TokenMatcher::Surface("です"),
+                ],
+                priority: 5,
+            },
+            ConjugationPattern::NDesu,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "node",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("基本形"),
+                    TokenMatcher::Surface("ので"),
+                ],
+                priority: 5,
+            },
+            ConjugationPattern::Node,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "ni_iku",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("連用形"),
+                    TokenMatcher::Surface("に"),
+                    TokenMatcher::specific_verb("行く"),
+                ],
+                priority: 8,
+            },
+            ConjugationPattern::NiIku,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "mae_ni",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("基本形"),
+                    TokenMatcher::Surface("前"),
+                    TokenMatcher::Surface("に"),
+                ],
+                priority: 7,
+            },
+            ConjugationPattern::MaeNi,
             "n5",
         ),
     ]

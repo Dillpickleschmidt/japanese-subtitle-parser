@@ -1,6 +1,5 @@
-mod complex_patterns;
-mod conjugations;
-mod te_forms;
+mod n4_patterns;
+mod n5_patterns;
 
 use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::{process_batch_with_kagome_server, KagomeToken};

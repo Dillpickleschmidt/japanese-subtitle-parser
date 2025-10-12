@@ -50,10 +50,42 @@ pub enum CustomMatcher {
     PastAuxiliary,
     /// Match て or で (te-form particle)
     TeParticle,
+    /// Match て or で as either surface or particle
+    TeDeForm,
     /// Match verb in 連用形 or 連用タ接続 (for flexible patterns)
     FlexibleVerbForm,
     /// Match specific verb forms for must patterns
     MustPattern,
+    /// Match いい or 良い (good/okay)
+    IiForm,
+    /// Match いけない or いけません (must not)
+    IkenaiForm,
+    /// Match ましょ + う (let's/shall we)
+    MashouForm,
+    /// Match ませ + ん (polite negative)
+    MasenForm,
+    /// Match imperative forms (命令形, 命令ｒｏ, 命令ｉ)
+    ImperativeForm,
+    /// Match たり particle (並立助詞)
+    TariParticle,
+    /// Match でしょう (probably)
+    DeshouForm,
+    /// Match ん or の before です (explanatory)
+    NDesuForm,
+    /// Match よかった (was good/glad)
+    YokattaForm,
+    /// Match た from たい + がる
+    TagaruForm,
+    /// Match いい in といい context (can be verb いう or adj いい)
+    ToIiForm,
+    /// Match し particle (接続助詞)
+    ShiParticle,
+    /// Match verb 連用形 or adjective stem (for すぎる pattern)
+    SugiruStem,
+    /// Match verb 連用形 or adjective stem (for そう appearance)
+    SouAppearanceStem,
+    /// Match plain form verb or adjective (for そうだ hearsay)
+    SouHearsayStem,
 }
 
 /// Represents a complete grammar pattern
@@ -87,8 +119,6 @@ impl<T> PatternMatcher<T> {
         }
     }
 
-    // Removed unused add_pattern method - patterns are added via add_patterns() during initialization
-
     pub fn add_patterns(&mut self, patterns: Vec<(GrammarPattern, T)>) {
         self.patterns.extend(patterns);
     }
@@ -120,8 +150,6 @@ impl<T: Clone> PatternMatcher<T> {
 
         matches
     }
-
-    // Unused methods removed: best_match(), matches_for_result()
 
     fn match_pattern_at(
         &self,
@@ -233,12 +261,13 @@ impl<T: Clone> PatternMatcher<T> {
                             && (token.base_form == "させる" || token.base_form == "せる")
                     }
                     CustomMatcher::TaraForm => {
-                        token.surface == "たら"
+                        (token.surface == "たら" || token.surface == "だら")
                             && (token
                                 .pos
                                 .first()
                                 .map_or(false, |pos| pos == AUXILIARY_VERB_POS)
-                                || token.base_form == "た")
+                                || token.base_form == "た"
+                                || token.base_form == "だ")
                     }
                     CustomMatcher::PastAuxiliary => {
                         (token.surface == "た" || token.surface == "だ")
@@ -250,6 +279,10 @@ impl<T: Clone> PatternMatcher<T> {
                                 || token.base_form == "だ")
                     }
                     CustomMatcher::TeParticle => token.surface == "て" || token.surface == "で",
+                    CustomMatcher::TeDeForm => {
+                        // Match both Surface("て"/"で") and Particle("で")
+                        token.surface == "て" || token.surface == "で"
+                    }
                     CustomMatcher::FlexibleVerbForm => {
                         if !token.pos.first().map_or(false, |pos| pos == VERB_POS) {
                             false
@@ -262,6 +295,127 @@ impl<T: Clone> PatternMatcher<T> {
                         token.surface == "なら"
                             || token.surface == "いけ"
                             || token.surface == "だめ"
+                    }
+                    CustomMatcher::IiForm => {
+                        (token.surface == "いい" || token.surface == "良い")
+                            && (token.base_form == "いい" || token.base_form == "良い")
+                    }
+                    CustomMatcher::IkenaiForm => {
+                        token.surface == "いけ"
+                            || token.surface == "いけない"
+                            || token.surface == "いけません"
+                    }
+                    CustomMatcher::MashouForm => {
+                        token.surface == "ましょう"
+                            || (token.surface == "ましょ" && token.base_form == "ます")
+                    }
+                    CustomMatcher::MasenForm => {
+                        (token.surface == "ませ" && token.base_form == "ます")
+                            || token.surface == "ません"
+                    }
+                    CustomMatcher::ImperativeForm => {
+                        if !token.pos.first().map_or(false, |pos| pos == VERB_POS) {
+                            false
+                        } else {
+                            let form = token.features.get(5);
+                            form.map_or(false, |f| {
+                                f == "命令形" || f == "命令ｒｏ" || f == "命令ｉ" || f == "命令ｅ"
+                            })
+                        }
+                    }
+                    CustomMatcher::TariParticle => {
+                        (token.surface == "たり" || token.surface == "だり")
+                            && token.pos.first().map_or(false, |pos| pos == "助詞")
+                            && token.pos.get(1).map_or(false, |pos| pos == "並立助詞")
+                    }
+                    CustomMatcher::DeshouForm => {
+                        (token.surface == "でしょう" || token.surface == "だろう")
+                            || (token.surface == "でしょ" && token.base_form == "です")
+                            || (token.surface == "だろ" && token.base_form == "だ")
+                    }
+                    CustomMatcher::NDesuForm => {
+                        (token.surface == "ん" || token.surface == "の")
+                            && token.pos.first().map_or(false, |pos| pos == "名詞")
+                    }
+                    CustomMatcher::YokattaForm => {
+                        (token.surface == "よかっ" || token.surface == "良かっ")
+                            && (token.base_form == "よい"
+                                || token.base_form == "良い"
+                                || token.base_form == "いい")
+                    }
+                    CustomMatcher::TagaruForm => {
+                        token.surface == "た"
+                            && token.base_form == "たい"
+                            && token
+                                .pos
+                                .first()
+                                .map_or(false, |pos| pos == AUXILIARY_VERB_POS)
+                    }
+                    CustomMatcher::ToIiForm => {
+                        // Can be either the verb いう (to say) or adjective いい (good)
+                        (token.surface == "いい" && token.base_form == "いう")
+                            || (token.surface == "いい" && token.base_form == "いい")
+                            || (token.surface == "良い" && token.base_form == "良い")
+                    }
+                    CustomMatcher::ShiParticle => {
+                        token.surface == "し"
+                            && token.pos.first().map_or(false, |pos| pos == "助詞")
+                            && token.pos.get(1).map_or(false, |pos| pos == "接続助詞")
+                    }
+                    CustomMatcher::SugiruStem => {
+                        // Match verb 連用形 OR adjective stem for すぎる pattern
+                        if token.pos.first().map_or(false, |pos| pos == VERB_POS) {
+                            // Verb: match 連用形
+                            let form = token.features.get(5);
+                            form.map_or(false, |f| f == RENYOU_FORM)
+                        } else if token.pos.first().map_or(false, |pos| pos == ADJECTIVE_POS) {
+                            // i-adjective: match ガル接続 form (connects to がる/すぎる)
+                            let form = token.features.get(5);
+                            form.map_or(false, |f| f == "ガル接続")
+                        } else if token.pos.first().map_or(false, |pos| pos == "名詞") {
+                            // na-adjective: often tagged as 名詞/形容動詞語幹
+                            token.pos.get(1).map_or(false, |pos| pos == "形容動詞語幹")
+                        } else {
+                            false
+                        }
+                    }
+                    CustomMatcher::SouAppearanceStem => {
+                        // Match verb 連用形 OR adjective stem for そう (appearance) pattern
+                        // Same logic as SugiruStem - both use the same forms
+                        if token.pos.first().map_or(false, |pos| pos == VERB_POS) {
+                            // Verb: match 連用形
+                            let form = token.features.get(5);
+                            form.map_or(false, |f| f == RENYOU_FORM)
+                        } else if token.pos.first().map_or(false, |pos| pos == ADJECTIVE_POS) {
+                            // i-adjective: match ガル接続 form
+                            let form = token.features.get(5);
+                            form.map_or(false, |f| f == "ガル接続")
+                        } else if token.pos.first().map_or(false, |pos| pos == "名詞") {
+                            // na-adjective: often tagged as 名詞/形容動詞語幹
+                            token.pos.get(1).map_or(false, |pos| pos == "形容動詞語幹")
+                        } else {
+                            false
+                        }
+                    }
+                    CustomMatcher::SouHearsayStem => {
+                        // Match plain/dictionary form verb or adjective for そうだ (hearsay)
+                        if token.pos.first().map_or(false, |pos| pos == VERB_POS) {
+                            // Verb: match 基本形
+                            let form = token.features.get(5);
+                            form.map_or(false, |f| f == "基本形")
+                        } else if token.pos.first().map_or(false, |pos| pos == ADJECTIVE_POS) {
+                            // i-adjective: match 基本形 (e.g., 高い)
+                            let form = token.features.get(5);
+                            form.map_or(false, |f| f == "基本形")
+                        } else if token.pos.first().map_or(false, |pos| pos == "形容動詞") {
+                            // na-adjective: match 基本形 or 語幹
+                            true
+                        } else if token.pos.first().map_or(false, |pos| pos == "名詞") {
+                            // na-adjective stem: tagged as 名詞/形容動詞語幹
+                            token.pos.get(1).map_or(false, |pos| pos == "形容動詞語幹")
+                        } else {
+                            false
+                        }
                     }
                 };
 
@@ -283,8 +437,6 @@ impl<T> Default for PatternMatcher<T> {
 
 // Helper functions for common token matchers
 impl TokenMatcher {
-    // Removed unused verb() method
-
     pub fn verb_with_form(form: &'static str) -> Self {
         TokenMatcher::Verb {
             conjugation_form: Some(form),
