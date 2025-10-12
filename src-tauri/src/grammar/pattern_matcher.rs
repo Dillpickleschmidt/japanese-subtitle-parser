@@ -125,8 +125,12 @@ pub struct PatternMatch<T> {
     pub result: T,
     pub confidence: f32,
     pub pattern_name: &'static str,
-    pub start_char: u32, // Character start position in original text
-    pub end_char: u32,   // Character end position in original text
+    /// 0-indexed character position where pattern starts (NOT a byte offset)
+    /// To extract text in Rust, convert to byte position first using char_indices()
+    pub start_char: u32,
+    /// 0-indexed character position where pattern ends (NOT a byte offset)
+    /// To extract text in Rust, convert to byte position first using char_indices()
+    pub end_char: u32,
 }
 
 impl<T> PatternMatcher<T> {
@@ -146,7 +150,6 @@ impl<T: Clone> PatternMatcher<T> {
     pub fn match_tokens(&self, tokens: &[KagomeToken]) -> Vec<PatternMatch<T>> {
         let mut matches = Vec::new();
 
-        // Try to match each pattern at each position
         for start_pos in 0..tokens.len() {
             for (pattern, result) in &self.patterns {
                 if let Some(match_result) =

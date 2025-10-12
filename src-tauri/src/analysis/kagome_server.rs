@@ -101,6 +101,17 @@ impl KagomeServer {
             .map(|_| Vec::with_capacity(15))
             .collect();
 
+        // Convert byte boundaries to character boundaries for proper offset adjustment
+        // Kagome returns character offsets, but our boundaries are byte positions
+        let char_boundaries: Vec<(u32, u32)> = transcript_boundaries
+            .iter()
+            .map(|(byte_start, byte_end)| {
+                let char_start = text[..*byte_start as usize].chars().count() as u32;
+                let char_end = text[..*byte_end as usize].chars().count() as u32;
+                (char_start, char_end)
+            })
+            .collect();
+
         let mut current_transcript = 0;
 
         for token in response_data.tokens {
@@ -108,15 +119,23 @@ impl KagomeServer {
                 continue;
             }
 
-            while current_transcript < transcript_boundaries.len() - 1 {
-                let (_, end) = transcript_boundaries[current_transcript];
-                if token.start < end {
+            // Find which transcript this token belongs to based on character position
+            while current_transcript < char_boundaries.len() - 1 {
+                let (_, char_end) = char_boundaries[current_transcript];
+                if token.start < char_end {
                     break;
                 }
                 current_transcript += 1;
             }
 
-            token_arrays[current_transcript].push(token);
+            // Adjust token character offsets to be relative to the individual transcript
+            // instead of the combined text buffer
+            let (char_start, _) = char_boundaries[current_transcript];
+            let mut adjusted_token = token;
+            adjusted_token.start -= char_start;
+            adjusted_token.end -= char_start;
+
+            token_arrays[current_transcript].push(adjusted_token);
         }
 
         Ok(token_arrays)

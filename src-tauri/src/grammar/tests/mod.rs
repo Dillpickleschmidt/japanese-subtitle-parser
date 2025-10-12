@@ -1,3 +1,4 @@
+mod integration;
 mod n1_patterns;
 mod n2_patterns;
 mod n3_patterns;
