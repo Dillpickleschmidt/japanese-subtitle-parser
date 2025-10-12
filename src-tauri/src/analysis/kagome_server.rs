@@ -112,28 +112,42 @@ impl KagomeServer {
             })
             .collect();
 
-        let mut current_transcript = 0;
-
         for token in response_data.tokens {
-            if token.surface == "\n" {
+            if token.surface.trim().is_empty() {
                 continue;
             }
 
-            // Find which transcript this token belongs to based on character position
-            while current_transcript < char_boundaries.len() - 1 {
-                let (_, char_end) = char_boundaries[current_transcript];
-                if token.start < char_end {
-                    break;
+            // Find which transcript this token belongs to by checking both start and end boundaries
+            let transcript_idx = char_boundaries
+                .iter()
+                .position(|(start, end)| token.start >= *start && token.start < *end);
+
+            let current_transcript = match transcript_idx {
+                Some(idx) => idx,
+                None => {
+                    eprintln!(
+                        "WARNING: Token '{}' at position {}-{} doesn't fit in any transcript boundary",
+                        token.surface, token.start, token.end
+                    );
+                    continue; // Skip this token
                 }
-                current_transcript += 1;
-            }
+            };
+
+            let (char_start, _) = char_boundaries[current_transcript];
 
             // Adjust token character offsets to be relative to the individual transcript
-            // instead of the combined text buffer
-            let (char_start, _) = char_boundaries[current_transcript];
+            let token_start = token.start;
+            let token_end = token.end;
+
             let mut adjusted_token = token;
-            adjusted_token.start -= char_start;
-            adjusted_token.end -= char_start;
+            adjusted_token.start = token_start.checked_sub(char_start).expect(&format!(
+                "Overflow subtracting start: token.start={} < char_start={}",
+                token_start, char_start
+            ));
+            adjusted_token.end = token_end.checked_sub(char_start).expect(&format!(
+                "Overflow subtracting end: token.end={} < char_start={}",
+                token_end, char_start
+            ));
 
             token_arrays[current_transcript].push(adjusted_token);
         }
@@ -141,10 +155,7 @@ impl KagomeServer {
         Ok(token_arrays)
     }
 
-    pub fn tokenize_normal_mode(
-        &self,
-        text: &str,
-    ) -> Result<Vec<Vec<KagomeToken>>, Error> {
+    pub fn tokenize_normal_mode(&self, text: &str) -> Result<Vec<Vec<KagomeToken>>, Error> {
         let request = TokenizeRequest {
             sentence: text.to_string(),
             mode: "normal".to_string(),
@@ -215,4 +226,3 @@ impl Drop for KagomeServer {
         let _ = self.process.kill();
     }
 }
-

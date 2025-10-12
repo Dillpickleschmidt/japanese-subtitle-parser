@@ -143,6 +143,8 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
 
     create_main_indexes_tx(&tx)?;
 
+    println!("Processing grammar pattern occurrences...");
+
     let mut all_pattern_occurrences = Vec::new();
     let mut pattern_names = std::collections::HashSet::new();
 
@@ -161,6 +163,41 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
                 ));
             }
         }
+    }
+
+    // Show a preview of pattern matches
+    if !all_pattern_occurrences.is_empty() {
+        println!("\nSample grammar pattern matches:");
+        let sample_size = 3.min(all_pattern_occurrences.len());
+
+        for i in 0..sample_size {
+            let (pattern_name, transcript_id, _confidence, start_char, end_char) =
+                &all_pattern_occurrences[i];
+
+            // Query transcript text
+            if let Ok(text) = tx.query_row(
+                "SELECT text FROM transcripts WHERE id = ?",
+                [transcript_id],
+                |row| row.get::<_, String>(0)
+            ) {
+                // Convert character positions to byte positions
+                let byte_start = text.char_indices()
+                    .nth(*start_char as usize)
+                    .map(|(pos, _)| pos)
+                    .unwrap_or(0);
+                let byte_end = text.char_indices()
+                    .nth(*end_char as usize)
+                    .map(|(pos, _)| pos)
+                    .unwrap_or(text.len());
+
+                let matched_text = &text[byte_start..byte_end];
+                println!(
+                    "  - Pattern: {}, Transcript ID: {}\n    Matched text: \"{}\"",
+                    pattern_name, transcript_id, matched_text
+                );
+            }
+        }
+        println!();
     }
 
     let mut pattern_id_cache = std::collections::HashMap::new();
@@ -190,6 +227,7 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
     let total_pattern_occurrences = final_occurrences.len();
 
     if !final_occurrences.is_empty() {
+        println!("Inserting {} grammar pattern occurrences...", total_pattern_occurrences);
         crate::db::grammar_pattern::GrammarPatternOccurrence::bulk_insert_optimized(
             &final_occurrences,
             &tx,
