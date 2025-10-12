@@ -541,21 +541,6 @@ fn test_to_wa_ie() {
 }
 
 #[test]
-fn test_mono_wo() {
-    let sentence = "聞けばよかったものを";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "mono_wo"),
-        "Expected mono_wo pattern not detected in '{}'",
-        sentence
-    );
-}
-
-#[test]
 fn test_you_ga() {
     let sentence = "雨が降ろうが行く";
     let tokens = tokenize_sentence(sentence);
@@ -673,21 +658,6 @@ fn test_ni_taenai() {
     assert!(
         has_pattern(&patterns, "ni_taenai"),
         "Expected ni_taenai pattern not detected in '{}'",
-        sentence
-    );
-}
-
-#[test]
-fn test_tokoro_wo() {
-    let sentence = "忙しいところを来てくれた";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "tokoro_wo"),
-        "Expected tokoro_wo pattern not detected in '{}'",
         sentence
     );
 }
@@ -830,7 +800,8 @@ fn test_ni_hikikae() {
 // ========== Phase 5: Evaluative/Emphatic Patterns (12 patterns, 13 tests) ==========
 
 #[test]
-fn test_ikan() {
+fn test_ikan_de() {
+    // Test: Noun + いかん + で
     let sentence = "結果いかんで決まる";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
@@ -838,8 +809,96 @@ fn test_ikan() {
     print_debug(sentence, &tokens, &patterns);
 
     assert!(
-        has_pattern(&patterns, "ikan"),
-        "Expected ikan pattern not detected in '{}'",
+        has_pattern(&patterns, "ikan_de"),
+        "Expected ikan_de pattern not detected in '{}'",
+        sentence
+    );
+}
+
+#[test]
+fn test_ikan_no_da() {
+    // Test: Noun + の + いかん + だ (sentence-final)
+    let sentence = "君の努力のいかんだ";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        has_pattern(&patterns, "ikan_no_da"),
+        "Expected ikan_no_da pattern not detected in '{}'",
+        sentence
+    );
+}
+
+#[test]
+fn test_ikan_niyotte() {
+    // Test: Noun + いかん + によって
+    let sentence = "態度いかんによって変わる";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        has_pattern(&patterns, "ikan_niyotte"),
+        "Expected ikan_niyotte pattern not detected in '{}'",
+        sentence
+    );
+}
+
+#[test]
+fn test_ikan_shidai() {
+    // Test: Noun + いかん + 次第
+    let sentence = "気分いかん次第で決める";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        has_pattern(&patterns, "ikan_shidai"),
+        "Expected ikan_shidai pattern not detected in '{}'",
+        sentence
+    );
+}
+
+#[test]
+fn test_ikan_false_positive_prohibition() {
+    // Negative test: ちゃいかん (must not) should NOT match ikan patterns
+    let sentence = "入っちゃいかん";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    // Should NOT match any ikan patterns (they all require specific particles after いかん)
+    assert!(
+        !has_pattern(&patterns, "ikan_de")
+            && !has_pattern(&patterns, "ikan_da")
+            && !has_pattern(&patterns, "ikan_niyotte")
+            && !has_pattern(&patterns, "ikan_shidai"),
+        "ikan pattern should not match prohibition 'ちゃいかん' in '{}'",
+        sentence
+    );
+}
+
+#[test]
+fn test_ikan_false_positive_exclamation() {
+    // Negative test: Exclamation いかん! should NOT match
+    let sentence = "いかん！逃げろ！";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    // Should NOT match any ikan patterns
+    assert!(
+        !has_pattern(&patterns, "ikan_de")
+            && !has_pattern(&patterns, "ikan_da")
+            && !has_pattern(&patterns, "ikan_niyotte")
+            && !has_pattern(&patterns, "ikan_shidai"),
+        "ikan pattern should not match exclamation 'いかん!' in '{}'",
         sentence
     );
 }
@@ -1099,4 +1158,3 @@ fn test_ha_oroka() {
         sentence
     );
 }
-

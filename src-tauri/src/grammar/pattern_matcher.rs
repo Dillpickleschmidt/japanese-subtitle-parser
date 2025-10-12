@@ -102,6 +102,12 @@ pub enum CustomMatcher {
     NiKansuruForm,
     /// Match 初めて as adverb (for て初めて pattern)
     HajimeteAdverb,
+    /// Match および or 及び as conjunction (not verb)
+    OyobiConjunction,
+    /// Match noun (名詞)
+    Noun,
+    /// Match dependent noun もの (名詞/非自立) for mono_no pattern
+    DependentNounMono,
 }
 
 /// Represents a complete grammar pattern
@@ -490,6 +496,22 @@ impl<T: Clone> PatternMatcher<T> {
                         // Match 初めて as adverb (for て初めて pattern)
                         token.surface == "初めて"
                             && token.pos.first().is_some_and(|pos| pos == "副詞")
+                    }
+                    CustomMatcher::OyobiConjunction => {
+                        // Match および or 及び as conjunction, not verb
+                        (token.surface == "および" || token.surface == "及び")
+                            && token.pos.first().is_some_and(|pos| pos == "接続詞")
+                    }
+                    CustomMatcher::Noun => {
+                        // Match noun (名詞) - any type of noun
+                        token.pos.first().is_some_and(|pos| pos == "名詞")
+                    }
+                    CustomMatcher::DependentNounMono => {
+                        // Match dependent noun もの (名詞/非自立) for mono_no pattern
+                        // Distinguishes from general noun もの (名詞/一般) in compounds like もののけ
+                        token.surface == "もの"
+                            && token.pos.first().is_some_and(|pos| pos == "名詞")
+                            && token.pos.get(1).is_some_and(|pos| pos == "非自立")
                     }
                 };
 

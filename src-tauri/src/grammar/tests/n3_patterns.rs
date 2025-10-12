@@ -176,8 +176,8 @@ fn test_ta_mono_da_desu() {
     print_debug(sentence, &tokens, &patterns);
 
     assert!(
-        has_pattern(&patterns, "ta_mono_da"),
-        "Expected ta_mono_da pattern not detected in '{}' (です form - tests Any matcher)",
+        has_pattern(&patterns, "ta_mono_desu"),
+        "Expected ta_mono_desu pattern not detected in '{}' (です form)",
         sentence
     );
 }
@@ -491,17 +491,52 @@ fn test_ppoi_negative_case() {
 }
 
 #[test]
-fn test_kiri_negative() {
-    // Test that きり as a standalone adverb doesn't false-match
-    let sentence = "きりがない"; // きり here means "no end/limit", not the particle
+fn test_kiri_negative_kirigana() {
+    // Test that きりが無い (no end/limit) doesn't match - particle じゃ before きり
+    let sentence = "これじゃきりがない"; // じゃ is particle, not noun/past-aux
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
     print_debug(sentence, &tokens, &patterns);
 
-    // This might still match due to Any + きり, which is acceptable
-    // Main goal is to document the edge case
-    // In real usage, context would disambiguate
+    // No kiri pattern should match because じゃ is a particle
+    assert!(
+        !has_pattern(&patterns, "kiri_past") && !has_pattern(&patterns, "kiri_noun"),
+        "kiri patterns should not match '{}' (particle before きり, not grammar pattern)",
+        sentence
+    );
+}
+
+#[test]
+fn test_kiri_past_verb() {
+    // Test: Verb past auxiliary + きり
+    let sentence = "行ったきり帰ってこない"; // た (past aux) + きり
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        has_pattern(&patterns, "kiri_past"),
+        "Expected kiri_past pattern not detected in '{}' (past auxiliary + きり)",
+        sentence
+    );
+}
+
+#[test]
+fn test_kiri_noun_counter() {
+    // Test: Noun (counter) + きり
+    let sentence = "二人きりで話す"; // 二人 (noun/counter) + きり
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        has_pattern(&patterns, "kiri_noun"),
+        "Expected kiri_noun pattern not detected in '{}' (noun/counter + きり)",
+        sentence
+    );
 }
 
 // Batch 3: Adverbs, suffixes, and particles
@@ -642,7 +677,7 @@ fn test_ni_yotte_case() {
 }
 
 #[test]
-fn test_kiri_past_verb() {
+fn test_kiri_past_simple() {
     let sentence = "会ったきり"; // Past verb + きり
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
@@ -650,23 +685,23 @@ fn test_kiri_past_verb() {
     print_debug(sentence, &tokens, &patterns);
 
     assert!(
-        has_pattern(&patterns, "kiri"),
-        "Expected kiri pattern not detected in '{}' (past verb)",
+        has_pattern(&patterns, "kiri_past"),
+        "Expected kiri_past pattern not detected in '{}' (past verb)",
         sentence
     );
 }
 
 #[test]
-fn test_kiri_noun() {
-    let sentence = "これきり"; // Noun + きり
+fn test_kiri_pronoun() {
+    let sentence = "これきり"; // Pronoun (noun) + きり
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
     print_debug(sentence, &tokens, &patterns);
 
     assert!(
-        has_pattern(&patterns, "kiri"),
-        "Expected kiri pattern not detected in '{}' (noun)",
+        has_pattern(&patterns, "kiri_noun"),
+        "Expected kiri_noun pattern not detected in '{}' (pronoun/noun)",
         sentence
     );
 }
@@ -774,21 +809,6 @@ fn test_oite_variant2() {
     assert!(
         has_pattern(&patterns, "oite_split") || has_pattern(&patterns, "oite_compound"),
         "Expected oite pattern not detected in '{}' (において)",
-        sentence
-    );
-}
-
-#[test]
-fn test_hodo_extent() {
-    let sentence = "死ぬほど疲れた一日だった"; // Verb + ほど with complete sentence
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "hodo"),
-        "Expected hodo pattern not detected in '{}'",
         sentence
     );
 }

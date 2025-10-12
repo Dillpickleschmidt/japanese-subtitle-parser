@@ -1,4 +1,4 @@
-use crate::grammar::pattern_matcher::{GrammarPattern, TokenMatcher};
+use crate::grammar::pattern_matcher::{CustomMatcher, GrammarPattern, TokenMatcher};
 use crate::grammar::types::ConjugationPattern;
 
 /// JLPT N1 level grammar patterns (advanced forms)
@@ -77,7 +77,10 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "beku",
-                tokens: vec![TokenMatcher::verb_with_form("基本形"), TokenMatcher::Surface("べく")],
+                tokens: vec![
+                    TokenMatcher::verb_with_form("基本形"),
+                    TokenMatcher::Surface("べく"),
+                ],
                 priority: 7,
             },
             ConjugationPattern::Beku,
@@ -115,7 +118,10 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "nari",
-                tokens: vec![TokenMatcher::verb_with_form("基本形"), TokenMatcher::Surface("なり")],
+                tokens: vec![
+                    TokenMatcher::verb_with_form("基本形"),
+                    TokenMatcher::Surface("なり"),
+                ],
                 priority: 7,
             },
             ConjugationPattern::Nari,
@@ -250,10 +256,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "naradewa",
-                tokens: vec![
-                    TokenMatcher::Any,
-                    TokenMatcher::Surface("ならでは"),
-                ],
+                tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("ならでは")],
                 priority: 7,
             },
             ConjugationPattern::Naradewa,
@@ -456,21 +459,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::ToWaIe,
             "n1",
         ),
-        // ものを: If only/I wish (verb/adjective + ものを)
-        // Examples: 聞けばよかったものを
-        (
-            GrammarPattern {
-                name: "mono_wo",
-                tokens: vec![
-                    TokenMatcher::Any,
-                    TokenMatcher::Surface("もの"),
-                    TokenMatcher::Surface("を"),
-                ],
-                priority: 7,
-            },
-            ConjugationPattern::MonoWo,
-            "n1",
-        ),
         // ようが: No matter/even if (verb volitional + が)
         // Examples: 雨が降ろうが行く
         (
@@ -604,21 +592,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 priority: 9,
             },
             ConjugationPattern::NiTaenai,
-            "n1",
-        ),
-        // ところを: Although/in spite of (noun/verb + ところ + を)
-        // Examples: 忙しいところを来てくれた
-        (
-            GrammarPattern {
-                name: "tokoro_wo",
-                tokens: vec![
-                    TokenMatcher::Any,
-                    TokenMatcher::Surface("ところ"),
-                    TokenMatcher::Surface("を"),
-                ],
-                priority: 7,
-            },
-            ConjugationPattern::TokoroWo,
             "n1",
         ),
         // にそくして: In accordance with (noun + に + 即し + て)
@@ -772,14 +745,206 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::NiHikikae,
             "n1",
         ),
-        // Phase 5: Evaluative/Emphatic Patterns (12 patterns)
-        // いかん: Depending on (noun + いかん)
-        // Examples: 結果いかんで決まる
+        // Phase 5: Evaluative/Emphatic Patterns (26 patterns)
+        // いかん: Depending on (noun + (の) + いかん + particle/copula)
+        // Structure: Noun + (の) + 如何 + で(は) / によって(は) / だ / である / 次第
+        // Examples: 結果いかんで決まる, 努力のいかんだ, 態度いかんによっては
+        // Note: Requires specific particles/copulas after いかん to disambiguate from:
+        // - Prohibition: ちゃいかん/てはいかん (must not) - covered by te_wa_ikenai
+        // - Exclamations: いかん! (Oh no!)
+        // - Fixed phrases: わけにはいかん, 納得がいかん
+
+        // Group 1: WITHOUT の (7 patterns)
         (
             GrammarPattern {
-                name: "ikan",
-                tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("いかん")],
-                priority: 6,
+                name: "ikan_de",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("で"),
+                ],
+                priority: 9,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_deha",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("で"),
+                    TokenMatcher::Surface("は"),
+                ],
+                priority: 10,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_niyotte",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("によって"),
+                ],
+                priority: 9,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_niyotteha",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("によって"),
+                    TokenMatcher::Surface("は"),
+                ],
+                priority: 10,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_da",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("だ"),
+                ],
+                priority: 9,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_dearu",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("である"),
+                ],
+                priority: 9,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_shidai",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("次第"),
+                ],
+                priority: 9,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        // Group 2: WITH の (7 patterns)
+        (
+            GrammarPattern {
+                name: "ikan_no_de",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("の"),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("で"),
+                ],
+                priority: 10,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_no_deha",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("の"),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("で"),
+                    TokenMatcher::Surface("は"),
+                ],
+                priority: 11,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_no_niyotte",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("の"),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("によって"),
+                ],
+                priority: 10,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_no_niyotteha",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("の"),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("によって"),
+                    TokenMatcher::Surface("は"),
+                ],
+                priority: 11,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_no_da",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("の"),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("だ"),
+                ],
+                priority: 10,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_no_dearu",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("の"),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("である"),
+                ],
+                priority: 10,
+            },
+            ConjugationPattern::Ikan,
+            "n1",
+        ),
+        (
+            GrammarPattern {
+                name: "ikan_no_shidai",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("の"),
+                    TokenMatcher::Surface("いかん"),
+                    TokenMatcher::Surface("次第"),
+                ],
+                priority: 10,
             },
             ConjugationPattern::Ikan,
             "n1",

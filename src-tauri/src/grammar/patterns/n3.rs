@@ -110,10 +110,24 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 tokens: vec![
                     TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
                     TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
-                    TokenMatcher::Any, // もの or mono (tagged as noun)
-                    TokenMatcher::Any, // だ or です
+                    TokenMatcher::Surface("もの"),
+                    TokenMatcher::Surface("だ"),
                 ],
-                priority: 8, // Lower priority since it uses Any matchers
+                priority: 10, // Higher priority now that it's more specific
+            },
+            ConjugationPattern::TaMonoDa,
+            "n3",
+        ),
+        (
+            GrammarPattern {
+                name: "ta_mono_desu",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
+                    TokenMatcher::Surface("もの"),
+                    TokenMatcher::Surface("です"),
+                ],
+                priority: 10,
             },
             ConjugationPattern::TaMonoDa,
             "n3",
@@ -347,11 +361,28 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::NiYotte,
             "n3",
         ),
+        // kiri: きり (only/since) - matches after past auxiliary or noun
+        // Naturally excludes particles (じゃ, は, たら) before きり
         (
             GrammarPattern {
-                name: "kiri",
-                tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("きり")],
-                priority: 5,
+                name: "kiri_past",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
+                    TokenMatcher::Surface("きり"),
+                ],
+                priority: 7,
+            },
+            ConjugationPattern::Kiri,
+            "n3",
+        ),
+        (
+            GrammarPattern {
+                name: "kiri_noun",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Surface("きり"),
+                ],
+                priority: 6,
             },
             ConjugationPattern::Kiri,
             "n3",
@@ -425,15 +456,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 priority: 7,
             },
             ConjugationPattern::Oite,
-            "n3",
-        ),
-        (
-            GrammarPattern {
-                name: "hodo",
-                tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("ほど")],
-                priority: 5,
-            },
-            ConjugationPattern::Hodo,
             "n3",
         ),
         (

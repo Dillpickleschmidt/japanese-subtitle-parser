@@ -425,6 +425,22 @@ fn test_ta_ue_de() {
 }
 
 #[test]
+fn test_ta_ue_de_negative() {
+    // Test that physical location "on" doesn't match
+    let sentence = "体の上で戦ってる";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        !has_pattern(&patterns, "ta_ue_de"),
+        "ta_ue_de pattern should not match '{}' (physical location, not 'after doing')",
+        sentence
+    );
+}
+
+#[test]
 fn test_ni_ataru_kana() {
     let sentence = "社長にあたる人物";
     let tokens = tokenize_sentence(sentence);
@@ -525,23 +541,39 @@ fn test_oyobi_kanji() {
     print_debug(sentence, &tokens, &patterns);
 
     assert!(
-        has_pattern(&patterns, "oyobi_kanji"),
-        "Expected oyobi_kanji pattern not detected in '{}'",
+        has_pattern(&patterns, "oyobi"),
+        "Expected oyobi pattern not detected in '{}' (kanji)",
         sentence
     );
 }
 
 #[test]
-fn test_katawara_kanji() {
-    let sentence = "仕事の傍ら勉強する";
+fn test_oyobi_hiragana() {
+    let sentence = "販売および賭博";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
     print_debug(sentence, &tokens, &patterns);
 
     assert!(
-        has_pattern(&patterns, "katawara_kanji"),
-        "Expected katawara_kanji pattern not detected in '{}'",
+        has_pattern(&patterns, "oyobi"),
+        "Expected oyobi pattern not detected in '{}' (hiragana)",
+        sentence
+    );
+}
+
+#[test]
+fn test_oyobi_negative_verb() {
+    // Test that verb form 及ぶ does NOT match
+    let sentence = "礼には及びません";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        !has_pattern(&patterns, "oyobi"),
+        "oyobi pattern should not match '{}' (verb form 及ぶ, not conjunction)",
         sentence
     );
 }
@@ -592,7 +624,8 @@ fn test_ippou_dewa() {
 }
 
 #[test]
-fn test_mono_no() {
+fn test_mono_no_compound() {
+    // Test: Verb + ものの (Kagome treats as single particle token)
     let sentence = "頑張ったものの失敗した";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
@@ -601,7 +634,23 @@ fn test_mono_no() {
 
     assert!(
         has_pattern(&patterns, "mono_no"),
-        "Expected mono_no pattern not detected in '{}'",
+        "Expected mono_no pattern not detected in '{}' (compound particle)",
+        sentence
+    );
+}
+
+#[test]
+fn test_mono_no_split() {
+    // Test: Adjective/Noun + もの + の (Kagome splits into two tokens)
+    let sentence = "高いものの品質が良い";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        has_pattern(&patterns, "mono_no_split"),
+        "Expected mono_no_split pattern not detected in '{}' (split tokens)",
         sentence
     );
 }
@@ -988,14 +1037,18 @@ fn test_wake_desu_negative() {
 }
 
 #[test]
-fn test_mono_no_negative() {
-    // Test that もの as a standalone noun doesn't match
-    let sentence = "もの を食べる";
+fn test_mono_no_negative_mononoke() {
+    // Test that もののけ (monster) doesn't match as ものの grammar pattern
+    let sentence = "もののけが現れた";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
     print_debug(sentence, &tokens, &patterns);
 
-    // This might still match due to Any + もの, which is acceptable
-    // Main goal is to document the edge case
+    // Kagome should tokenize もののけ as a different token, not splitting it
+    assert!(
+        !has_pattern(&patterns, "mono_no") && !has_pattern(&patterns, "mono_no_split"),
+        "mono_no patterns should not match '{}' (compound word もののけ)",
+        sentence
+    );
 }

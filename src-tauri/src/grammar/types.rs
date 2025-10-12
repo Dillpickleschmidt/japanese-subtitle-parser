@@ -91,7 +91,6 @@ pub enum ConjugationPattern {
     Ppoi,        // ppoi - ish/like
     Sudeni,      // sudeni - already (adverb)
     Oite,        // oite/ni oite - at/in
-    Hodo,        // hodo - extent/degree
     Tsui,        // tsui - accidentally/unintentionally (adverb)
     Furi,        // furi - pretend
     Mama,        // mama - as is/remain
@@ -162,7 +161,6 @@ pub enum ConjugationPattern {
     Noboru,             // noboru - amount to/reach
     Gatera,             // gatera - while/on the occasion of
     Oyobi,              // oyobi - and/as well as
-    Katawara,           // katawara - while/besides
     SeiKa,              // sei ka - perhaps because
     Yueni,              // yueni - therefore/because
     IppouDewa,          // ippou dewa - on the other hand
@@ -218,7 +216,6 @@ pub enum ConjugationPattern {
     TaTokoroDe,         // ta tokoro de - even if
     DeAre,              // de are - whether/even if
     ToWaIe,             // to wa ie - although/even though
-    MonoWo,             // mono wo - if only/I wish
     YouGa,              // you ga - no matter/even if
     NaiMadeMo,          // nai made mo - even if not
     NagaraMo,           // nagara mo - while/though
@@ -227,7 +224,6 @@ pub enum ConjugationPattern {
     ToIedomo,           // to iedomo - even though/although
     TomoNaruto,         // tomo naruto - when it comes to
     NiTaenai,           // ni taenai - cannot bear/unbearable
-    TokoroWo,           // tokoro wo - although/in spite of
     NiSokushite,        // ni sokushite - in accordance with
     ToAimatte,          // to aimatte - combined with
     WoYosoni,           // wo yosoni - in spite of/ignoring

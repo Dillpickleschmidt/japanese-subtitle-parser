@@ -1,4 +1,4 @@
-use crate::grammar::pattern_matcher::{GrammarPattern, TokenMatcher};
+use crate::grammar::pattern_matcher::{CustomMatcher, GrammarPattern, TokenMatcher};
 use crate::grammar::types::ConjugationPattern;
 
 /// JLPT N2 level grammar patterns (upper intermediate forms)
@@ -313,15 +313,17 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::YoriShikataGanai,
             "n2",
         ),
+        // ta_ue_de: After doing X - requires verb past tense (連用形/連用タ接続 + た)
         (
             GrammarPattern {
                 name: "ta_ue_de",
                 tokens: vec![
-                    TokenMatcher::Any, // Verb past form
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm), // 連用形 or 連用タ接続
+                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),    // た or だ
                     TokenMatcher::Surface("上"),
                     TokenMatcher::Surface("で"),
                 ],
-                priority: 7,
+                priority: 9, // Higher priority due to more specific match
             },
             ConjugationPattern::TaUeDe,
             "n2",
@@ -418,48 +420,18 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Gatera,
             "n2",
         ),
+        // oyobi: Conjunction "and/as well as" - uses POS tagging to distinguish from verb 及ぶ
         (
             GrammarPattern {
                 name: "oyobi",
                 tokens: vec![
                     TokenMatcher::Any,
-                    TokenMatcher::Surface("および"),
+                    TokenMatcher::Custom(CustomMatcher::OyobiConjunction),
                     TokenMatcher::Any,
                 ],
                 priority: 7,
             },
             ConjugationPattern::Oyobi,
-            "n2",
-        ),
-        (
-            GrammarPattern {
-                name: "oyobi_kanji",
-                tokens: vec![
-                    TokenMatcher::Any,
-                    TokenMatcher::Surface("及び"),
-                    TokenMatcher::Any,
-                ],
-                priority: 7,
-            },
-            ConjugationPattern::Oyobi,
-            "n2",
-        ),
-        (
-            GrammarPattern {
-                name: "katawara_kanji",
-                tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("傍ら")],
-                priority: 6,
-            },
-            ConjugationPattern::Katawara,
-            "n2",
-        ),
-        (
-            GrammarPattern {
-                name: "katawara_kana",
-                tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("かたわら")],
-                priority: 6,
-            },
-            ConjugationPattern::Katawara,
             "n2",
         ),
         (
@@ -503,10 +475,26 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::IppouDewa,
             "n2",
         ),
+        // mono_no: ものの (although) - Kagome tokenizes differently based on context
+        // After verbs: Single particle token "ものの" (助詞/接続助詞)
         (
             GrammarPattern {
                 name: "mono_no",
-                tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("ものの")],
+                tokens: vec![TokenMatcher::Surface("ものの")],
+                priority: 6,
+            },
+            ConjugationPattern::MonoNo,
+            "n2",
+        ),
+        // After adj/nouns: Split as dependent noun "もの" + "の"
+        // Uses DependentNounMono to distinguish grammar pattern (名詞/非自立) from compounds (名詞/一般)
+        (
+            GrammarPattern {
+                name: "mono_no_split",
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::DependentNounMono),
+                    TokenMatcher::Surface("の"),
+                ],
                 priority: 6,
             },
             ConjugationPattern::MonoNo,
