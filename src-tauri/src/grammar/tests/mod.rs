@@ -1,3 +1,5 @@
+mod n1_patterns;
+mod n2_patterns;
 mod n3_patterns;
 mod n4_patterns;
 mod n5_patterns;

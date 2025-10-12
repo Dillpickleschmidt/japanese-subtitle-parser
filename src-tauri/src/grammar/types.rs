@@ -130,4 +130,123 @@ pub enum ConjugationPattern {
     NiChigainai, // ni chigainai - must be/no doubt
     Nakanaka,    // nakanaka - quite/not easily (adverb)
     TaBakari,    // ta bakari - just did
+    // N2 patterns
+    Toutei,             // toutei - cannot possibly (adverb)
+    Yoppodo,            // yoppodo - very/considerably (adverb)
+    Iyoiyo,             // iyoiyo - finally/at last (adverb)
+    Sekkaku,            // sekkaku - with trouble/specially (adverb)
+    Yamuoezu,           // yamuoezu - unavoidably (adverb)
+    Yappari,            // yappari - as expected/after all (adverb)
+    Narubeku,           // narubeku - as much as possible (adverb)
+    Tashika,            // tashika - if I remember correctly (adverb)
+    ManIchi,            // man'ichi - by any chance (adverb)
+    Nanishiro,          // nanishiro - at any rate/after all (adverb)
+    SoreniShitemo,      // sore ni shitemo - nevertheless/even so
+    Tachimachi,         // tachimachi - at once/in no time (adverb)
+    Sasugani,           // sasugani - as expected/even (adverb)
+    Itsunomanika,       // itsu no ma ni ka - before one knows
+    Aete,               // aete - dare to/purposely (adverb)
+    Semete,             // semete - at least (adverb)
+    Nantoittemo,        // nanto ittemo - after all/no matter what
+    RouNi,              // roku ni - properly/well (adverb)
+    Kaneru,             // kaneru - cannot/unable to
+    Kanenai,            // kanenai - might/could possibly
+    Tamaranai,          // tamaranai - unbearable/can't help
+    NaideSumu,          // naide sumu - can get by without
+    KaraNaru,           // kara naru - consist of
+    YoriShikataGanai,   // yori shikata ga nai - cannot help but
+    TaUeDe,             // ta ue de - after doing
+    NiAtaru,            // ni ataru - correspond to/be equivalent
+    Gotoshi,            // gotoshi - like/as if
+    Tsuujite,           // tsuujite - through/throughout
+    Noboru,             // noboru - amount to/reach
+    Gatera,             // gatera - while/on the occasion of
+    Oyobi,              // oyobi - and/as well as
+    Katawara,           // katawara - while/besides
+    SeiKa,              // sei ka - perhaps because
+    Yueni,              // yueni - therefore/because
+    IppouDewa,          // ippou dewa - on the other hand
+    MonoNo,             // mono no - although/though
+    KuseNi,             // kuse ni - and yet/even though
+    KaketeHa,           // kakete ha - when it comes to
+    ItaruMade,          // itaru made - up to/as far as
+    IgaiNo,             // igai no - other than/except
+    BaIiNoni,           // ba ii noni - if only/I wish
+    WakeDesu,           // wake desu - it is that/the fact is
+    YouNaKiGaSuru,      // you na ki ga suru - feel like/have a feeling
+    NiKiWoTsukeru,      // ni ki wo tsukeru - be careful of
+    BetsuniNai,         // betsuni~nai - not particularly
+    WakeNiwaIkanai,     // wake niwa ikanai - cannot afford to
+    DewaNaiDarouKa,     // dewa nai darou ka - isn't it that
+    ToIuWakeDewaNai,    // to iu wake dewa nai - it doesn't mean that
+    NiKoshitaKotoWaNai, // ni koshita koto wa nai - nothing is better than
+    Sashitsukaenai,     // sashitsukaenai - no problem/no objection
+    NaiWakeNiwaIkanai,  // nai wake niwa ikanai - cannot not do/must
+    ToIttemo,           // to ittemo - even though I say/although
+    GaKiNiNaru,         // ga ki ni naru - worry about/be concerned
+    OmouYouni,          // omou you ni - as one wishes
+    MonoDesukara,       // mono desukara - because/since
+    // N1 patterns
+    Meku,               // meku - show signs of/like
+    Mamire,             // mamire - covered with/smeared with
+    Zukume,             // zukume - entirely/nothing but
+    Ppanashi,           // ppanashi - leaving as is
+    Kiwamaru,           // kiwamaru - extremely
+    Beku,               // beku - in order to/for
+    Bekarazu,           // bekarazu - must not/should not
+    Majiki,             // majiki - should not/unworthy
+    Nari,               // nari - as soon as
+    YaInaya,            // ya inaya - as soon as
+    GaHayaiKa,          // ga hayai ka - as soon as
+    GaSaigo,            // ga saigo - once ~ forever
+    Gotoki,             // gotoki - like/such as
+    WoKawakiriNi,       // wo kawakiri ni - starting with
+    WoMotte,            // wo motte - with/by means of
+    Nakushiteha,        // nakushiteha - without
+    Nashini,            // nashini - without
+    Naradewa,           // naradewa - unique to
+    NiTaru,             // ni taru - worth/deserve
+    Toatte,             // toatte - because/being
+    Katagata,           // katagata - while/also to
+    WoKagiriNi,         // wo kagiri ni - as the last time
+    WoHete,             // wo hete - through/via
+    WoOshite,           // wo oshite - in spite of
+    WoFumaete,          // wo fumaete - based on
+    TeYamanai,          // te yamanai - never cease
+    ToOmoikiya,         // to omoikiya - contrary to expectations
+    ToAreba,            // to areba - if it's the case
+    TaTokoroDe,         // ta tokoro de - even if
+    DeAre,              // de are - whether/even if
+    ToWaIe,             // to wa ie - although/even though
+    MonoWo,             // mono wo - if only/I wish
+    YouGa,              // you ga - no matter/even if
+    NaiMadeMo,          // nai made mo - even if not
+    NagaraMo,           // nagara mo - while/though
+    DewaArumaishi,      // dewa arumaishi - it's not like
+    ToShitaTokoroDe,    // to shita tokoro de - even if
+    ToIedomo,           // to iedomo - even though/although
+    TomoNaruto,         // tomo naruto - when it comes to
+    NiTaenai,           // ni taenai - cannot bear/unbearable
+    TokoroWo,           // tokoro wo - although/in spite of
+    NiSokushite,        // ni sokushite - in accordance with
+    ToAimatte,          // to aimatte - combined with
+    WoYosoni,           // wo yosoni - in spite of/ignoring
+    TemoSashitsukaenai, // temo sashitsukaenai - it's okay to
+    WoKinjienai,        // wo kinjienai - cannot help but
+    WoYoginakusareru,   // wo yoginakusareru - be forced to
+    TeKaratoiumono,     // te karatoiumono - since/ever since
+    NimoMashite,        // nimo mashite - more than/even more
+    NiHikikae,          // ni hikikae - in contrast to
+    Ikan,               // ikan - depending on
+    Taritomo,           // taritomo - even/not even
+    KiraiGaAru,         // kirai ga aru - tend to/have tendency
+    ShimatsuDa,         // shimatsu da - end up/come to
+    Warini,             // warini - considering/for
+    KaiMoNaku,          // kai mo naku - despite efforts/in vain
+    DakeMashi,          // dake mashi - at least/better than
+    NaideWaSumanai,     // naide wa sumanai - cannot get away with
+    KotoNashini,        // koto nashini - without
+    DeSura,             // de sura - even
+    Nagarani,           // nagarani - while remaining/as
+    HaOroka,            // ha oroka - let alone/not to mention
 }
