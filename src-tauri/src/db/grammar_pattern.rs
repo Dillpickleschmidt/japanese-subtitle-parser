@@ -6,6 +6,8 @@ pub struct GrammarPatternOccurrence {
     pub pattern_id: i32,
     pub transcript_id: i64,
     pub confidence: f64,
+    pub start_char: u32,
+    pub end_char: u32,
 }
 
 pub fn get_or_create_pattern_id(
@@ -29,11 +31,19 @@ pub fn get_or_create_pattern_id(
 }
 
 impl GrammarPatternOccurrence {
-    pub fn new(pattern_id: i32, transcript_id: i64, confidence: f64) -> Self {
+    pub fn new(
+        pattern_id: i32,
+        transcript_id: i64,
+        confidence: f64,
+        start_char: u32,
+        end_char: u32,
+    ) -> Self {
         Self {
             pattern_id,
             transcript_id,
             confidence,
+            start_char,
+            end_char,
         }
     }
 
@@ -44,17 +54,22 @@ impl GrammarPatternOccurrence {
         const CHUNK_SIZE: usize = 1000;
 
         for chunk in occurrences.chunks(CHUNK_SIZE) {
-            let placeholders: Vec<String> = chunk.iter().map(|_| "(?, ?, ?)".to_string()).collect();
+            let placeholders: Vec<String> = chunk
+                .iter()
+                .map(|_| "(?, ?, ?, ?, ?)".to_string())
+                .collect();
             let sql = format!(
-                "INSERT OR IGNORE INTO grammar_pattern_occurrences (pattern_id, transcript_id, confidence) VALUES {}",
+                "INSERT OR IGNORE INTO grammar_pattern_occurrences (pattern_id, transcript_id, confidence, start_char, end_char) VALUES {}",
                 placeholders.join(", ")
             );
 
-            let mut params = Vec::with_capacity(chunk.len() * 3);
+            let mut params = Vec::with_capacity(chunk.len() * 5);
             for occurrence in chunk {
                 params.push(occurrence.pattern_id.to_string());
                 params.push(occurrence.transcript_id.to_string());
                 params.push(occurrence.confidence.to_string());
+                params.push(occurrence.start_char.to_string());
+                params.push(occurrence.end_char.to_string());
             }
 
             conn.execute(&sql, rusqlite::params_from_iter(params))?;
@@ -66,7 +81,7 @@ impl GrammarPatternOccurrence {
 
 #[derive(Debug)]
 pub struct GrammarPatternCollector {
-    pub occurrences: Vec<(String, i64, f64)>, // (pattern_name, transcript_id, confidence)
+    pub occurrences: Vec<(String, i64, f64, u32, u32)>, // (pattern_name, transcript_id, confidence, start_char, end_char)
 }
 
 impl GrammarPatternCollector {
@@ -76,9 +91,21 @@ impl GrammarPatternCollector {
         }
     }
 
-    pub fn add_pattern(&mut self, pattern_name: String, transcript_id: i64, confidence: f64) {
-        self.occurrences
-            .push((pattern_name, transcript_id, confidence));
+    pub fn add_pattern(
+        &mut self,
+        pattern_name: String,
+        transcript_id: i64,
+        confidence: f64,
+        start_char: u32,
+        end_char: u32,
+    ) {
+        self.occurrences.push((
+            pattern_name,
+            transcript_id,
+            confidence,
+            start_char,
+            end_char,
+        ));
     }
 }
 
@@ -102,6 +129,8 @@ mod tests {
                 pattern_id INTEGER,
                 transcript_id INTEGER,
                 confidence REAL,
+                start_char INTEGER,
+                end_char INTEGER,
                 PRIMARY KEY (pattern_id, transcript_id),
                 FOREIGN KEY (pattern_id) REFERENCES grammar_patterns(id)
             );
@@ -140,11 +169,17 @@ mod tests {
     #[test]
     fn test_pattern_collector() {
         let mut collector = GrammarPatternCollector::new();
-        collector.add_pattern("te_form".to_string(), 1, 8.0);
-        collector.add_pattern("past_tense".to_string(), 2, 7.5);
+        collector.add_pattern("te_form".to_string(), 1, 8.0, 0, 10);
+        collector.add_pattern("past_tense".to_string(), 2, 7.5, 5, 15);
 
         assert_eq!(collector.occurrences.len(), 2);
-        assert_eq!(collector.occurrences[0], ("te_form".to_string(), 1, 8.0));
-        assert_eq!(collector.occurrences[1], ("past_tense".to_string(), 2, 7.5));
+        assert_eq!(
+            collector.occurrences[0],
+            ("te_form".to_string(), 1, 8.0, 0, 10)
+        );
+        assert_eq!(
+            collector.occurrences[1],
+            ("past_tense".to_string(), 2, 7.5, 5, 15)
+        );
     }
 }

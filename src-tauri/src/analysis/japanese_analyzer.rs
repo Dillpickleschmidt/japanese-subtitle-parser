@@ -148,9 +148,17 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
 
     for (_episode_id, collectors) in all_grammar_patterns {
         for collector in collectors {
-            for (pattern_name, transcript_id, confidence) in collector.occurrences {
+            for (pattern_name, transcript_id, confidence, start_char, end_char) in
+                collector.occurrences
+            {
                 pattern_names.insert(pattern_name.clone());
-                all_pattern_occurrences.push((pattern_name, transcript_id, confidence));
+                all_pattern_occurrences.push((
+                    pattern_name,
+                    transcript_id,
+                    confidence,
+                    start_char,
+                    end_char,
+                ));
             }
         }
     }
@@ -158,24 +166,25 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
     let mut pattern_id_cache = std::collections::HashMap::new();
     for pattern_name in pattern_names {
         let jlpt_level = crate::grammar::patterns::get_jlpt_level(&pattern_name);
-        let pattern_id = crate::db::grammar_pattern::get_or_create_pattern_id(
-            &tx,
-            &pattern_name,
-            jlpt_level,
-        )?;
+        let pattern_id =
+            crate::db::grammar_pattern::get_or_create_pattern_id(&tx, &pattern_name, jlpt_level)?;
         pattern_id_cache.insert(pattern_name, pattern_id);
     }
 
     let final_occurrences: Vec<_> = all_pattern_occurrences
         .into_iter()
-        .map(|(pattern_name, transcript_id, confidence)| {
-            let pattern_id = pattern_id_cache[&pattern_name];
-            crate::db::grammar_pattern::GrammarPatternOccurrence::new(
-                pattern_id,
-                transcript_id,
-                confidence,
-            )
-        })
+        .map(
+            |(pattern_name, transcript_id, confidence, start_char, end_char)| {
+                let pattern_id = pattern_id_cache[&pattern_name];
+                crate::db::grammar_pattern::GrammarPatternOccurrence::new(
+                    pattern_id,
+                    transcript_id,
+                    confidence,
+                    start_char,
+                    end_char,
+                )
+            },
+        )
         .collect();
 
     let total_pattern_occurrences = final_occurrences.len();

@@ -137,6 +137,8 @@ impl UnifiedAnalyzer {
                 pattern_match.pattern_name.to_string(),
                 transcript_id,
                 pattern_match.confidence.into(),
+                pattern_match.start_char,
+                pattern_match.end_char,
             );
         }
     }

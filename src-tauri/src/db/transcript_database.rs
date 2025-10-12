@@ -93,6 +93,8 @@ impl DbHandler {
                 pattern_id INTEGER,
                 transcript_id INTEGER,
                 confidence REAL,
+                start_char INTEGER,
+                end_char INTEGER,
                 PRIMARY KEY (pattern_id, transcript_id),
                 FOREIGN KEY (pattern_id) REFERENCES grammar_patterns(id),
                 FOREIGN KEY (transcript_id) REFERENCES transcripts(id)

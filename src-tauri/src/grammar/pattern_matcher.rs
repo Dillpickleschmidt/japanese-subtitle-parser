@@ -125,7 +125,8 @@ pub struct PatternMatch<T> {
     pub result: T,
     pub confidence: f32,
     pub pattern_name: &'static str,
-    pub end_position: usize, // Used for sorting by length preference
+    pub start_char: u32, // Character start position in original text
+    pub end_char: u32,   // Character end position in original text
 }
 
 impl<T> PatternMatcher<T> {
@@ -156,12 +157,13 @@ impl<T: Clone> PatternMatcher<T> {
             }
         }
 
-        // Sort by confidence (descending), then by priority (descending)
+        // Sort by confidence (descending), then by character length (descending)
         matches.sort_by(|a, b| {
             b.confidence
                 .partial_cmp(&a.confidence)
                 .unwrap()
-                .then(b.end_position.cmp(&a.end_position)) // Prefer longer matches
+                .then((b.end_char - b.start_char).cmp(&(a.end_char - a.start_char)))
+            // Prefer longer matches
         });
 
         matches
@@ -195,11 +197,16 @@ impl<T: Clone> PatternMatcher<T> {
         let confidence =
             (pattern.priority as f32) + (specificity_score / pattern.tokens.len() as f32);
 
+        // Calculate character ranges from matched tokens
+        let start_char = tokens[start].start;
+        let end_char = tokens[start + pattern.tokens.len() - 1].end;
+
         Some(PatternMatch {
             result: result.clone(),
             confidence,
             pattern_name: pattern.name,
-            end_position: start + pattern.tokens.len() - 1,
+            start_char,
+            end_char,
         })
     }
 
