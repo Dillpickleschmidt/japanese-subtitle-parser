@@ -39,8 +39,8 @@ pub fn get_jlpt_level(pattern_name: &str) -> &'static str {
     // Combine all patterns to create a lookup
     let all_patterns: Vec<_> = n5::get_patterns()
         .into_iter()
-        .chain(n4::get_patterns().into_iter())
-        .chain(n3::get_patterns().into_iter())
+        .chain(n4::get_patterns())
+        .chain(n3::get_patterns())
         .collect();
 
     for (grammar_pattern, _conjugation_pattern, jlpt_level) in all_patterns {
