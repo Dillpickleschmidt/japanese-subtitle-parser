@@ -86,6 +86,24 @@ pub enum CustomMatcher {
     SouAppearanceStem,
     /// Match plain form verb or adjective (for そうだ hearsay)
     SouHearsayStem,
+    /// Match まい (negative volition)
+    MaiForm,
+    /// Match っぽい suffix
+    PpoiForm,
+    /// Match adverb (副詞) POS tag
+    AdverbForm,
+    /// Match 的 suffix
+    TekiSuffix,
+    /// Match たて suffix
+    TateSuffix,
+    /// Match ぐらい or くらい (about/approximately)
+    GuraiForm,
+    /// Match おいて or において (at/in)
+    OiteForm,
+    /// Match に関する or に関して (regarding/about)
+    NiKansuruForm,
+    /// Match 初めて as adverb (for て初めて pattern)
+    HajimeteAdverb,
 }
 
 /// Represents a complete grammar pattern
@@ -416,6 +434,58 @@ impl<T: Clone> PatternMatcher<T> {
                         } else {
                             false
                         }
+                    }
+                    CustomMatcher::MaiForm => {
+                        // Match まい (negative volition) - can attach to verb dict form or 未然形
+                        token.surface == "まい"
+                            && token
+                                .pos
+                                .first()
+                                .map_or(false, |pos| pos == AUXILIARY_VERB_POS)
+                    }
+                    CustomMatcher::PpoiForm => {
+                        // Match っぽい suffix - can be split, together, or as part of compound
+                        (token.surface == "っぽい"
+                            || token.surface == "ぽい"
+                            || token.surface.ends_with("っぽい"))
+                            && token
+                                .pos
+                                .first()
+                                .map_or(false, |pos| pos == "接尾辞" || pos == "形容詞")
+                    }
+                    CustomMatcher::AdverbForm => {
+                        // Match adverb POS tag (副詞)
+                        token.pos.first().map_or(false, |pos| pos == "副詞")
+                    }
+                    CustomMatcher::TekiSuffix => {
+                        // Match 的 suffix (ish/like) - tagged as 名詞/接尾/形容動詞語幹
+                        token.surface == "的"
+                            && token.pos.first().map_or(false, |pos| pos == "名詞")
+                            && token.pos.get(1).map_or(false, |pos| pos == "接尾")
+                    }
+                    CustomMatcher::TateSuffix => {
+                        // Match たて suffix (freshly/just done) - tagged as 名詞/接尾
+                        token.surface == "たて"
+                            && token.pos.first().map_or(false, |pos| pos == "名詞")
+                            && token.pos.get(1).map_or(false, |pos| pos == "接尾")
+                    }
+                    CustomMatcher::GuraiForm => {
+                        // Match ぐらい or くらい (about/approximately)
+                        token.surface == "ぐらい" || token.surface == "くらい"
+                    }
+                    CustomMatcher::OiteForm => {
+                        // Match において (single compound token) or おい (from おく verb in て-form)
+                        token.surface == "において"
+                            || (token.surface == "おい" && token.base_form == "おく")
+                    }
+                    CustomMatcher::NiKansuruForm => {
+                        // Match に関する or に関して (regarding/about)
+                        token.surface == "に関する" || token.surface == "に関して"
+                    }
+                    CustomMatcher::HajimeteAdverb => {
+                        // Match 初めて as adverb (for て初めて pattern)
+                        token.surface == "初めて"
+                            && token.pos.first().map_or(false, |pos| pos == "副詞")
                     }
                 };
 

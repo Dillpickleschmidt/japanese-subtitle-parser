@@ -1,3 +1,4 @@
+mod n3;
 mod n4;
 mod n5;
 
@@ -16,6 +17,9 @@ pub fn create_pattern_matcher() -> PatternMatcher<ConjugationPattern> {
 
     // N4 patterns (intermediate)
     all_patterns.extend(n4::get_patterns());
+
+    // N3 patterns (intermediate-advanced)
+    all_patterns.extend(n3::get_patterns());
 
     // Convert to the format expected by PatternMatcher (without jlpt_level string)
     let matcher_patterns: Vec<_> = all_patterns
@@ -36,6 +40,7 @@ pub fn get_jlpt_level(pattern_name: &str) -> &'static str {
     let all_patterns: Vec<_> = n5::get_patterns()
         .into_iter()
         .chain(n4::get_patterns().into_iter())
+        .chain(n3::get_patterns().into_iter())
         .collect();
 
     for (grammar_pattern, _conjugation_pattern, jlpt_level) in all_patterns {

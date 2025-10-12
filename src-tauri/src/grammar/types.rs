@@ -77,4 +77,57 @@ pub enum ConjugationPattern {
     SouDesuHearsay,    // sou desu - I heard that (hearsay)
     KamoShirenai,      // kamo shirenai - might/maybe
     Mitai,             // mitai - looks like/seems
+    // N3 patterns
+    YouNiSuru,   // you ni suru - try to/make sure to
+    Masaka,      // masaka - surely not (adverb)
+    Hajimeru,    // hajimeru - begin to
+    Rashii,      // rashii - seems like/typical
+    Gurai,       // gurai/kurai - about/approximately
+    NiYoruTo,    // ni yoru to - according to
+    Mushiro,     // mushiro - rather (adverb)
+    Toshite,     // toshite - as/in the role of
+    Bakari,      // bakari - only/nothing but
+    Suginai,     // suginai - no more than
+    Ppoi,        // ppoi - ish/like
+    Sudeni,      // sudeni - already (adverb)
+    Oite,        // oite/ni oite - at/in
+    Hodo,        // hodo - extent/degree
+    Tsui,        // tsui - accidentally/unintentionally (adverb)
+    Furi,        // furi - pretend
+    Mama,        // mama - as is/remain
+    TameNi,      // tame ni - in order to/for
+    NaiUchiNi,   // nai uchi ni - before/while not
+    ToShitara,   // to shitara - if we assume
+    TsumorideDe, // tsumori de - with intention of
+    NiKansuru,   // ni kansuru - regarding/about
+    Doushitemo,  // doushitemo - no matter what (adverb)
+    ToTomoni,    // to tomo ni - together with/as
+    Kiri,        // kiri - only/since
+    NiYotte,     // ni yotte - depending on/by
+    YouNi,       // you ni - so that/in order to (without suru/naru)
+    TeHajimete,  // te hajimete - for the first time after
+    Gachi,       // gachi - tend to
+    Zu,          // zu - without doing
+    YouNiNaru,   // you ni naru - come to/become
+    Seizei,      // seizei - at most/at best (adverb)
+    WoHajime,    // wo hajime - beginning with
+    BaHodo,      // ba hodo - the more ~ the more
+    Tate,        // tate - freshly/just done
+    Douyara,     // douyara - apparently/it seems (adverb)
+    Kaette,      // kaette - on the contrary (adverb)
+    SaeBa,       // sae ba - if only/as long as
+    Koso,        // koso - emphasis particle
+    Sarani,      // sarani - furthermore (adverb)
+    Kawari,      // kawari - instead of/in place of
+    Mai,         // mai - will not/intention not to
+    Wazawaza,    // wazawaza - expressly/going out of one's way (adverb)
+    Kagiru,      // kagiru - limited to/best
+    OkageDe,     // okage de - thanks to
+    Sae,         // sae - even
+    TaMonoDa,    // ta mono da - used to
+    Teki,        // teki - ish/like suffix
+    Ittai,       // ittai - on earth/what (adverb)
+    NiChigainai, // ni chigainai - must be/no doubt
+    Nakanaka,    // nakanaka - quite/not easily (adverb)
+    TaBakari,    // ta bakari - just did
 }
