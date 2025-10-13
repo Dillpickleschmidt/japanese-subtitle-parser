@@ -1,4 +1,4 @@
-use crate::grammar::matchers::{
+use crate::matchers::{
     CausativeFormMatcher, DependentNounMonoMatcher, DeshouFormMatcher, FlexibleVerbFormMatcher,
     GuraiFormMatcher, HajimeteAdverbMatcher, IiFormMatcher, IkenaiFormMatcher,
     ImperativeFormMatcher, MaiFormMatcher, MasenFormMatcher, MashouFormMatcher, MustPatternMatcher,
@@ -10,7 +10,7 @@ use crate::grammar::matchers::{
     TaraFormMatcher, TariParticleMatcher, TateSuffixMatcher, TeDeFormMatcher, TeParticleMatcher,
     TekiSuffixMatcher, ToIiFormMatcher, TokenMatcherLogic, YokattaFormMatcher,
 };
-use crate::grammar::types::KagomeToken;
+use crate::types::KagomeToken;
 
 /// Represents a single token matching criterion
 #[derive(Debug, Clone)]

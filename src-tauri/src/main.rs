@@ -4,11 +4,13 @@
 mod analysis;
 mod db;
 mod error;
-mod grammar;
 mod subtitle_importer;
 
 #[cfg(test)]
 mod test_utils;
+
+#[cfg(test)]
+mod tests;
 
 use db::DbHandler;
 use error::Error;

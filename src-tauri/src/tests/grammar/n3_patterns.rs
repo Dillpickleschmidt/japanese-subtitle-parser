@@ -814,6 +814,36 @@ fn test_oite_variant2() {
 }
 
 #[test]
+fn test_oite_variant3() {
+    let sentence = "この世界において"; // この + 世界 + において
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        has_pattern(&patterns, "oite_split") || has_pattern(&patterns, "oite_compound"),
+        "Expected oite pattern not detected in '{}' (において)",
+        sentence
+    );
+}
+
+#[test]
+fn test_oite_full_sentence() {
+    let sentence = "この世界において ウソは武器だ"; // Full sentence with において
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        has_pattern(&patterns, "oite_split") || has_pattern(&patterns, "oite_compound"),
+        "Expected oite pattern not detected in '{}' (において)",
+        sentence
+    );
+}
+
+#[test]
 fn test_tsumori_de() {
     let sentence = "買うつもりで来た"; // Verb + つもりで
     let tokens = tokenize_sentence(sentence);

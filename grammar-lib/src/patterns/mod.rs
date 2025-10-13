@@ -4,8 +4,8 @@ mod n3;
 mod n4;
 mod n5;
 
-use crate::grammar::pattern_matcher::PatternMatcher;
-use crate::grammar::types::ConjugationPattern;
+use crate::pattern_matcher::PatternMatcher;
+use crate::types::ConjugationPattern;
 
 /// Create a pattern matcher configured with all JLPT grammar patterns
 pub fn create_pattern_matcher() -> PatternMatcher<ConjugationPattern> {
@@ -44,7 +44,7 @@ pub fn create_pattern_matcher() -> PatternMatcher<ConjugationPattern> {
 
 /// Get all patterns from all JLPT levels (for internal use by registry)
 pub(crate) fn get_all_patterns() -> Vec<(
-    crate::grammar::pattern_matcher::GrammarPattern,
+    crate::pattern_matcher::GrammarPattern,
     ConjugationPattern,
     &'static str,
 )> {
@@ -59,5 +59,5 @@ pub(crate) fn get_all_patterns() -> Vec<(
 
 /// Get the JLPT level for a given pattern name
 pub fn get_jlpt_level(pattern_name: &str) -> &'static str {
-    crate::grammar::pattern_registry::get_jlpt_level(pattern_name)
+    crate::pattern_registry::get_jlpt_level(pattern_name)
 }

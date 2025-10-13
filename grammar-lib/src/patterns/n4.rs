@@ -1,7 +1,7 @@
-use crate::grammar::pattern_matcher::{
+use crate::pattern_matcher::{
     CustomMatcher, GrammarPattern, PatternCategory, TokenMatcher,
 };
-use crate::grammar::types::ConjugationPattern;
+use crate::types::ConjugationPattern;
 
 /// JLPT N4 level grammar patterns (intermediate forms)
 pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)> {

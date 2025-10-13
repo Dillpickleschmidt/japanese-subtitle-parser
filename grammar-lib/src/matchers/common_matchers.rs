@@ -1,5 +1,5 @@
 use super::TokenMatcherLogic;
-use crate::grammar::types::KagomeToken;
+use crate::types::KagomeToken;
 
 /// Match verb in 連用形 or 連用タ接続 (for flexible patterns)
 #[derive(Debug)]

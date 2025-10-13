@@ -1,8 +1,6 @@
 use crate::analysis::kagome_server::KagomeServer;
 use crate::error::Error;
-
-// Re-export KagomeToken from grammar module for backwards compatibility
-pub use crate::grammar::types::KagomeToken;
+use grammar_lib::types::KagomeToken;
 
 pub fn process_batch_with_kagome_server(
     batch: &[(i64, i32, String)],

@@ -1,5 +1,5 @@
-use crate::analysis::morphology::KagomeToken;
 use crate::error::Error;
+use grammar_lib::types::KagomeToken;
 use serde::{Deserialize, Serialize};
 use std::process::{Child, Command, Stdio};
 use std::thread;

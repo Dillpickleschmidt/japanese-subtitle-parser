@@ -12,7 +12,7 @@ pub use n3_matchers::*;
 pub use n4_matchers::*;
 pub use n5_matchers::*;
 
-use crate::grammar::types::KagomeToken;
+use crate::types::KagomeToken;
 use std::fmt::Debug;
 
 /// Trait for token matching logic

@@ -6,6 +6,3 @@ pub mod types;
 
 // Most pattern_matcher types are now only used internally
 pub use patterns::create_pattern_matcher;
-
-#[cfg(test)]
-mod tests;

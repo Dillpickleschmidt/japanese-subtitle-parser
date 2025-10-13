@@ -178,14 +178,16 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
             if let Ok(text) = tx.query_row(
                 "SELECT text FROM transcripts WHERE id = ?",
                 [transcript_id],
-                |row| row.get::<_, String>(0)
+                |row| row.get::<_, String>(0),
             ) {
                 // Convert character positions to byte positions
-                let byte_start = text.char_indices()
+                let byte_start = text
+                    .char_indices()
                     .nth(*start_char as usize)
                     .map(|(pos, _)| pos)
                     .unwrap_or(0);
-                let byte_end = text.char_indices()
+                let byte_end = text
+                    .char_indices()
                     .nth(*end_char as usize)
                     .map(|(pos, _)| pos)
                     .unwrap_or(text.len());
@@ -202,7 +204,7 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
 
     let mut pattern_id_cache = std::collections::HashMap::new();
     for pattern_name in pattern_names {
-        let jlpt_level = crate::grammar::patterns::get_jlpt_level(&pattern_name);
+        let jlpt_level = grammar_lib::patterns::get_jlpt_level(&pattern_name);
         let pattern_id =
             crate::db::grammar_pattern::get_or_create_pattern_id(&tx, &pattern_name, jlpt_level)?;
         pattern_id_cache.insert(pattern_name, pattern_id);
@@ -227,7 +229,10 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
     let total_pattern_occurrences = final_occurrences.len();
 
     if !final_occurrences.is_empty() {
-        println!("Inserting {} grammar pattern occurrences...", total_pattern_occurrences);
+        println!(
+            "Inserting {} grammar pattern occurrences...",
+            total_pattern_occurrences
+        );
         crate::db::grammar_pattern::GrammarPatternOccurrence::bulk_insert_optimized(
             &final_occurrences,
             &tx,

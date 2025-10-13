@@ -19,11 +19,10 @@ impl PatternRegistry {
         let mut metadata = HashMap::new();
 
         // Collect patterns from all JLPT levels via the patterns module
-        let all_patterns = crate::grammar::patterns::get_all_patterns();
+        let all_patterns = crate::patterns::get_all_patterns();
 
         for (grammar_pattern, _conjugation_pattern, jlpt_level) in all_patterns {
             metadata.insert(grammar_pattern.name, PatternMetadata { jlpt_level });
-
         }
 
         Self { metadata }
@@ -70,6 +69,5 @@ mod tests {
         // Test N3 patterns
         assert_eq!(get_jlpt_level("rashii"), "n3");
         assert_eq!(get_jlpt_level("you_ni_naru"), "n3");
- 
-   }
+    }
 }

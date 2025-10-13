@@ -6,10 +6,10 @@ mod n4_patterns;
 mod n5_patterns;
 
 use crate::analysis::kagome_server::KagomeServer;
-use crate::analysis::morphology::{process_batch_with_kagome_server, KagomeToken};
-use crate::grammar::create_pattern_matcher;
-use crate::grammar::pattern_matcher::PatternMatch;
-use crate::grammar::types::ConjugationPattern;
+use crate::analysis::morphology::process_batch_with_kagome_server;
+use grammar_lib::create_pattern_matcher;
+use grammar_lib::pattern_matcher::PatternMatch;
+use grammar_lib::types::{ConjugationPattern, KagomeToken};
 use std::sync::{LazyLock, Mutex};
 
 /// Shared Kagome server for all tests (avoids port conflicts)
@@ -53,8 +53,8 @@ pub fn print_debug(
             String::new()
         };
         println!(
-            "  surface='{}' base='{}' pos={}{}",
-            token.surface, token.base_form, pos_str, features
+            "  surface='{}' base='{}' pos={} start={} end={}{}",
+            token.surface, token.base_form, pos_str, token.start, token.end, features
         );
     }
     println!("Patterns detected:");
@@ -62,7 +62,10 @@ pub fn print_debug(
         println!("  (none)");
     } else {
         for m in matches {
-            println!("  {} (confidence: {:.1})", m.pattern_name, m.confidence);
+            println!(
+                "  {} (confidence: {:.1}) [start_char={}, end_char={}]",
+                m.pattern_name, m.confidence, m.start_char, m.end_char
+            );
         }
     }
 }

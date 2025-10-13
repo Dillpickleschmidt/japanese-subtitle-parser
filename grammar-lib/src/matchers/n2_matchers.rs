@@ -1,5 +1,5 @@
 use super::TokenMatcherLogic;
-use crate::grammar::types::KagomeToken;
+use crate::types::KagomeToken;
 
 // ========== Formal Expressions ==========
 

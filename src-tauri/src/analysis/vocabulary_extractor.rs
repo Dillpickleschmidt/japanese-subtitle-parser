@@ -1,4 +1,4 @@
-use crate::analysis::morphology::KagomeToken;
+use grammar_lib::types::KagomeToken;
 use std::collections::{HashMap, HashSet};
 use std::sync::{LazyLock, Mutex};
 

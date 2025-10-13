@@ -19,9 +19,11 @@ rusqlite = { version = "0.32.1", features = ["bundled"] }
 walkdir = "2"
 reqwest = { version = "0.11", features = ["blocking", "json"] }
 tempfile = "3.12.0"
+grammar-lib = { path = "../grammar-lib" }
 
 [dev-dependencies]
 tempfile = "3.12.0"
+grammar-lib = { path = "../grammar-lib" }
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

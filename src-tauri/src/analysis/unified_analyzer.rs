@@ -1,14 +1,14 @@
 use crate::analysis::kagome_server::KagomeServer;
-use crate::analysis::morphology::{process_batch_with_kagome_server, KagomeToken};
+use crate::analysis::morphology::process_batch_with_kagome_server;
 use crate::analysis::vocabulary_extractor::{
     KagomeVocabularyExtractor, VocabularyExtractor, WordKey,
 };
 use crate::db::grammar_pattern::GrammarPatternCollector;
 use crate::error::Error;
-use crate::grammar::{
+use grammar_lib::{
     create_pattern_matcher,
     pattern_matcher::{PatternCategory, PatternMatcher},
-    types::ConjugationPattern,
+    types::{ConjugationPattern, KagomeToken},
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
