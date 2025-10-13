@@ -42,23 +42,22 @@ pub fn create_pattern_matcher() -> PatternMatcher<ConjugationPattern> {
     matcher
 }
 
+/// Get all patterns from all JLPT levels (for internal use by registry)
+pub(crate) fn get_all_patterns() -> Vec<(
+    crate::grammar::pattern_matcher::GrammarPattern,
+    ConjugationPattern,
+    &'static str,
+)> {
+    let mut all_patterns = Vec::new();
+    all_patterns.extend(n5::get_patterns());
+    all_patterns.extend(n4::get_patterns());
+    all_patterns.extend(n3::get_patterns());
+    all_patterns.extend(n2::get_patterns());
+    all_patterns.extend(n1::get_patterns());
+    all_patterns
+}
+
 /// Get the JLPT level for a given pattern name
 pub fn get_jlpt_level(pattern_name: &str) -> &'static str {
-    // Combine all patterns to create a lookup
-    let all_patterns: Vec<_> = n5::get_patterns()
-        .into_iter()
-        .chain(n4::get_patterns())
-        .chain(n3::get_patterns())
-        .chain(n2::get_patterns())
-        .chain(n1::get_patterns())
-        .collect();
-
-    for (grammar_pattern, _conjugation_pattern, jlpt_level) in all_patterns {
-        if grammar_pattern.name == pattern_name {
-            return jlpt_level;
-        }
-    }
-
-    // Default to n5 if not found (shouldn't happen)
-    "n5"
+    crate::grammar::pattern_registry::get_jlpt_level(pattern_name)
 }

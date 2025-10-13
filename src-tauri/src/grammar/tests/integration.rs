@@ -1,7 +1,7 @@
 use super::*;
 
-/// Integration tests for grammar pattern matching with natural sentences
-/// These tests verify that patterns work correctly together in realistic usage
+// Integration tests for grammar pattern matching with natural sentences.
+// These tests verify that patterns work correctly together in realistic usage.
 
 /// Helper: Convert character position to byte position in a string
 fn char_pos_to_byte_pos(s: &str, char_pos: usize) -> usize {
@@ -287,15 +287,15 @@ fn test_te_mo_ii_overlap() {
 }
 
 #[test]
-fn test_potential_passive_ambiguity() {
-    // Ichidan verb られる is ambiguous
+fn test_potential_or_passive_detection() {
+    // Ichidan verb られる is ambiguous - should detect at least one
     let sentence = "食べられる";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
     print_debug(sentence, &tokens, &patterns);
 
-    // Both should be detected for ichidan verbs
+    // At least one should be detected for ichidan verbs
     let has_potential = has_pattern(&patterns, "potential");
     let has_passive = has_pattern(&patterns, "passive");
 
@@ -595,7 +595,7 @@ fn test_character_range_extract_text() {
         let pattern = patterns
             .iter()
             .find(|p| p.pattern_name == pattern_name)
-            .expect(&format!("{} pattern should be detected", pattern_name));
+            .unwrap_or_else(|| panic!("{} pattern should be detected", pattern_name));
 
         let start = pattern.start_char as usize;
         let end = pattern.end_char as usize;

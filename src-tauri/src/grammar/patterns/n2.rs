@@ -6,7 +6,6 @@ use crate::grammar::types::ConjugationPattern;
 /// JLPT N2 level grammar patterns (upper intermediate forms)
 pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)> {
     vec![
-        // Phase 1: Adverbs & Standalone Expressions (18 patterns)
         (
             GrammarPattern {
                 name: "toutei",
@@ -47,7 +46,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Sekkaku,
             "n2",
         ),
-        // yamuoezu: Kagome tokenizes as verb やむをえる + ず
+        // Tokenizes as: verb やむをえる + ず
         (
             GrammarPattern {
                 name: "yamuoezu_verb",
@@ -151,7 +150,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Tachimachi,
             "n2",
         ),
-        // sasugani: Kagome tokenizes as さすが + に
+        // Tokenizes as: さすが + に
         (
             GrammarPattern {
                 name: "sasugani_split",
@@ -202,7 +201,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Semete,
             "n2",
         ),
-        // nantoittemo: Kagome tokenizes kanji version as 何+と+いっ+て+も, kana as なんと(adverb)+いっ+て+も
+        // Tokenizes as: 何+と+いっ+て+も (kanji) or なんと+いっ+て+も (kana)
         (
             GrammarPattern {
                 name: "nantoittemo_split_kanji",
@@ -244,7 +243,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::RouNi,
             "n2",
         ),
-        // Phase 2: Verb Suffixes & Auxiliaries (11 patterns)
         (
             GrammarPattern {
                 name: "kaneru",
@@ -282,7 +280,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Tamaranai,
             "n2",
         ),
-        // naide_sumu: Kagome tokenizes ないで as ない + で
+        // Tokenizes as: ない + で
         (
             GrammarPattern {
                 name: "naide_sumu_split",
@@ -344,23 +342,22 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::YoriShikataGanai,
             "n2",
         ),
-        // ta_ue_de: After doing X - requires verb past tense (連用形/連用タ接続 + た)
         (
             GrammarPattern {
                 name: "ta_ue_de",
                 tokens: vec![
-                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm), // 連用形 or 連用タ接続
-                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),    // た or だ
+                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
+                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
                     TokenMatcher::Surface("上"),
                     TokenMatcher::Surface("で"),
                 ],
-                priority: 9, // Higher priority due to more specific match
+                priority: 9,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::TaUeDe,
             "n2",
         ),
-        // ni_ataru: Kagome tokenizes as compound particles にあたる/に当たる
+        // Tokenizes as compound: にあたる / に当たる
         (
             GrammarPattern {
                 name: "ni_ataru_compound",
@@ -401,7 +398,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Gotoshi,
             "n2",
         ),
-        // tsuujite: Kagome tokenizes as verb 通じる/つうじる + て
+        // Tokenizes as: verb 通じる/つうじる + て
         (
             GrammarPattern {
                 name: "tsuujite_verb_kanji",
@@ -444,8 +441,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Noboru,
             "n2",
         ),
-        // Phase 3: Particle Patterns & Conjunctions (11 patterns)
-        // gatera: Kagome tokenizes as が + てら
+        // Tokenizes as: が + てら
         (
             GrammarPattern {
                 name: "gatera_split",
@@ -460,7 +456,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Gatera,
             "n2",
         ),
-        // oyobi: Conjunction "and/as well as" - uses POS tagging to distinguish from verb 及ぶ
         (
             GrammarPattern {
                 name: "oyobi",
@@ -489,7 +484,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::SeiKa,
             "n2",
         ),
-        // yueni: Kagome tokenizes as ゆえ + に
+        // Tokenizes as: ゆえ + に
         (
             GrammarPattern {
                 name: "yueni_split",
@@ -504,7 +499,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Yueni,
             "n2",
         ),
-        // ippou_dewa: Kagome tokenizes では as で + は
+        // Tokenizes as: で + は
         (
             GrammarPattern {
                 name: "ippou_dewa_split",
@@ -519,8 +514,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::IppouDewa,
             "n2",
         ),
-        // mono_no: ものの (although) - Kagome tokenizes differently based on context
-        // After verbs: Single particle token "ものの" (助詞/接続助詞)
         (
             GrammarPattern {
                 name: "mono_no",
@@ -531,8 +524,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::MonoNo,
             "n2",
         ),
-        // After adj/nouns: Split as dependent noun "もの" + "の"
-        // Uses DependentNounMono to distinguish grammar pattern (名詞/非自立) from compounds (名詞/一般)
         (
             GrammarPattern {
                 name: "mono_no_split",
@@ -546,7 +537,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::MonoNo,
             "n2",
         ),
-        // kuse_ni: Kagome tokenizes as くせ + に
+        // Tokenizes as: くせ + に
         (
             GrammarPattern {
                 name: "kuse_ni_split",
@@ -561,7 +552,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::KuseNi,
             "n2",
         ),
-        // kaketeha: Kagome tokenizes as compound particle にかけて + は
+        // Tokenizes as compound: にかけて + は
         (
             GrammarPattern {
                 name: "kaketeha_compound",
@@ -648,7 +639,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::IgaiNo,
             "n2",
         ),
-        // Phase 4: Fixed Expressions (20 patterns)
         (
             GrammarPattern {
                 name: "ba_ii_noni",

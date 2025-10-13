@@ -6,7 +6,6 @@ use crate::grammar::types::ConjugationPattern;
 /// JLPT N1 level grammar patterns (advanced forms)
 pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)> {
     vec![
-        // Phase 1: Suffix Patterns (9 patterns)
         // めく: Shows signs of, appears to be (suffix to noun/verb stem)
         // Examples: 謎めく (mysterious), 春めく (spring-like), 皮肉めく (ironic)
         // Note: Kagome may tokenize as single verb (春めく) or split (謎 + めく)
@@ -124,7 +123,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Majiki,
             "n1",
         ),
-        // Phase 2: Simple Fixed Expressions (20 patterns)
         // なり: As soon as (verb + なり)
         (
             GrammarPattern {
@@ -406,7 +404,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::TeYamanai,
             "n1",
         ),
-        // Phase 3: Conditional/Concessive Patterns (12 patterns)
         // と思いきや: Contrary to expectations (verb/adjective + と + 思い + き + や)
         // Examples: 勝つと思いきや負けた, 簡単だと思いきや難しい
         // Kagome splits as: と + 思い (verb) + き (auxiliary) + や (particle)
@@ -601,7 +598,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::ToIedomo,
             "n1",
         ),
-        // Phase 4: Complex Multi-Word Expressions (12 patterns)
         // ともなると: When it comes to (noun + と + も + なる + と)
         // Examples: プロともなると違う
         (
@@ -797,7 +793,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::NiHikikae,
             "n1",
         ),
-        // Phase 5: Evaluative/Emphatic Patterns (26 patterns)
         // いかん: Depending on (noun + (の) + いかん + particle/copula)
         // Structure: Noun + (の) + 如何 + で(は) / によって(は) / だ / である / 次第
         // Examples: 結果いかんで決まる, 努力のいかんだ, 態度いかんによっては

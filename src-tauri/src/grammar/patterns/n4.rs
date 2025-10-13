@@ -671,14 +671,14 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Surface("そう"),
                     TokenMatcher::Surface("です"),
                 ],
-                priority: 9, // Higher priority than basic hearsay
+                priority: 9,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::SouDesuHearsay,
             "n4",
         ),
         // Kamo shirenai patterns (might/maybe)
-        // Note: かもしれない is tokenized as: かも + しれ (未然形) + ない
+        // Tokenizes as: かも + しれ (未然形) + ない
         (
             GrammarPattern {
                 name: "kamo_shirenai",
@@ -694,7 +694,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::KamoShirenai,
             "n4",
         ),
-        // Note: かもしれません is tokenized as: かも + しれ (未然形) + ませ + ん
+        // Tokenizes as: かも + しれ (未然形) + ませ + ん
         (
             GrammarPattern {
                 name: "kamo_shiremasen",
@@ -721,7 +721,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::specific_verb("しれる"),
                     TokenMatcher::Surface("ない"),
                 ],
-                priority: 7, // Lower priority than verb pattern
+                priority: 7,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::KamoShirenai,
@@ -737,7 +737,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Surface("ませ"),
                     TokenMatcher::Surface("ん"),
                 ],
-                priority: 7, // Lower priority than verb pattern
+                priority: 7,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::KamoShirenai,
@@ -764,7 +764,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Any, // Match any i-adj, na-adj, or noun
                     TokenMatcher::Surface("みたい"),
                 ],
-                priority: 5, // Lower priority than verb pattern
+                priority: 5,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::Mitai,

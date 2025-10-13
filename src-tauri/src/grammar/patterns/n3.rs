@@ -6,7 +6,6 @@ use crate::grammar::types::ConjugationPattern;
 /// JLPT N3 level grammar patterns (intermediate forms)
 pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)> {
     vec![
-        // Batch 1: Core verb attachment patterns
         (
             GrammarPattern {
                 name: "hajimeru",
@@ -123,7 +122,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Surface("もの"),
                     TokenMatcher::Surface("だ"),
                 ],
-                priority: 10, // Higher priority now that it's more specific
+                priority: 10,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::TaMonoDa,
@@ -159,7 +158,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::NiChigainai,
             "n3",
         ),
-        // Batch 2: Noun attachment & conditional patterns
         (
             GrammarPattern {
                 name: "mama",
@@ -218,7 +216,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             GrammarPattern {
                 name: "ppoi_compound",
                 tokens: vec![TokenMatcher::Custom(CustomMatcher::PpoiForm)],
-                priority: 5, // Lower priority than split version
+                priority: 5,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::Ppoi,
@@ -297,13 +295,12 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Surface("よう"),
                     TokenMatcher::Surface("に"),
                 ],
-                priority: 7, // Lower than you_ni_suru/naru so those match first
+                priority: 7,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::YouNi,
             "n3",
         ),
-        // Batch 3: Adverbs, suffixes, and particle patterns
         (
             GrammarPattern {
                 name: "masaka",
@@ -383,18 +380,13 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "ni_yotte",
-                tokens: vec![
-                    TokenMatcher::Any,
-                    TokenMatcher::Surface("によって"), // Tokenizes as single particle
-                ],
+                tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("によって")],
                 priority: 7,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::NiYotte,
             "n3",
         ),
-        // kiri: きり (only/since) - matches after past auxiliary or noun
-        // Naturally excludes particles (じゃ, は, たら) before きり
         (
             GrammarPattern {
                 name: "kiri_past",
@@ -421,7 +413,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::Kiri,
             "n3",
         ),
-        // Batch 4: Additional intermediate patterns
         (
             GrammarPattern {
                 name: "gurai",
@@ -588,7 +579,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::BaHodo,
             "n3",
         ),
-        // Batch 5: Final N3 patterns (adverbs, particles, advanced forms)
         (
             GrammarPattern {
                 name: "douyara",

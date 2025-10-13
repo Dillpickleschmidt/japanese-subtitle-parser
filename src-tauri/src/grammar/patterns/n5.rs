@@ -71,7 +71,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Custom(CustomMatcher::TeParticle),
                 ],
                 priority: 3,
-                category: PatternCategory::Conjugation, // Basic form
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::TeForm,
             "n5",
@@ -85,7 +85,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Custom(CustomMatcher::TaiForm),
                 ],
                 priority: 5,
-                category: PatternCategory::Conjugation, // Basic desire form
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::TaiForm,
             "n5",
@@ -99,7 +99,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Surface("た"),
                 ],
                 priority: 6,
-                category: PatternCategory::Conjugation, // Basic desire past form
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::TakattaForm,
             "n5",
@@ -113,7 +113,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Surface("ない"),
                 ],
                 priority: 6,
-                category: PatternCategory::Conjugation, // Basic desire negative form
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::TakunaiForm,
             "n5",
@@ -124,7 +124,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 name: "dictionary_form",
                 tokens: vec![TokenMatcher::verb_with_form("基本形")],
                 priority: 1,
-                category: PatternCategory::Conjugation, // Basic dictionary form
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::Dictionary,
             "n5",
@@ -137,7 +137,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Surface("ます"),
                 ],
                 priority: 4,
-                category: PatternCategory::Conjugation, // Basic polite form
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::MasuForm,
             "n5",
@@ -150,7 +150,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Surface("ない"),
                 ],
                 priority: 4,
-                category: PatternCategory::Conjugation, // Basic negative form
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::Negative,
             "n5",
@@ -163,7 +163,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
                 ],
                 priority: 4,
-                category: PatternCategory::Conjugation, // Basic past form
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::Past,
             "n5",
@@ -176,7 +176,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Custom(CustomMatcher::MashouForm),
                 ],
                 priority: 6,
-                category: PatternCategory::Conjugation, // Basic volitional form
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::Mashou,
             "n5",

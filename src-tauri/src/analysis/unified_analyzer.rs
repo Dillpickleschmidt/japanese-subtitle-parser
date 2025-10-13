@@ -1,5 +1,8 @@
 use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::{process_batch_with_kagome_server, KagomeToken};
+use crate::analysis::vocabulary_extractor::{
+    KagomeVocabularyExtractor, VocabularyExtractor, WordKey,
+};
 use crate::db::grammar_pattern::GrammarPatternCollector;
 use crate::error::Error;
 use crate::grammar::{
@@ -8,62 +11,14 @@ use crate::grammar::{
     types::ConjugationPattern,
 };
 use std::collections::{HashMap, HashSet};
-use std::sync::{LazyLock, Mutex};
+use std::sync::LazyLock;
 
 static PATTERN_MATCHER: LazyLock<PatternMatcher<ConjugationPattern>> =
     LazyLock::new(|| create_pattern_matcher());
 
-static POS_CACHE: LazyLock<Mutex<HashMap<Vec<String>, Vec<String>>>> =
-    LazyLock::new(|| Mutex::new(HashMap::new()));
-static BASE_FORM_CACHE: LazyLock<Mutex<HashMap<String, String>>> =
-    LazyLock::new(|| Mutex::new(HashMap::new()));
-static READING_CACHE: LazyLock<Mutex<HashMap<String, String>>> =
-    LazyLock::new(|| Mutex::new(HashMap::new()));
-
-fn intern_pos_tags(pos: &[String]) -> Vec<String> {
-    let mut cache = POS_CACHE.lock().unwrap();
-
-    if let Some(cached) = cache.get(pos) {
-        return cached.clone();
-    }
-
-    let owned_pos = pos.to_vec();
-    let cached_pos = owned_pos.clone();
-    cache.insert(owned_pos, cached_pos.clone());
-    cached_pos
+pub struct UnifiedAnalyzer {
+    extractor: KagomeVocabularyExtractor,
 }
-
-fn intern_string(s: &str, cache: &LazyLock<Mutex<HashMap<String, String>>>) -> String {
-    let mut intern_cache = cache.lock().unwrap();
-
-    if let Some(cached) = intern_cache.get(s) {
-        return cached.clone();
-    }
-
-    let owned = s.to_string();
-    intern_cache.insert(owned.clone(), owned.clone());
-    owned
-}
-
-/// Efficient hash-friendly key for word deduplication with string interning
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct WordKey {
-    pub base_form: String,
-    pub reading: String,
-    pub pos: Vec<String>,
-}
-
-impl WordKey {
-    pub fn from_token(token: &KagomeToken) -> Self {
-        Self {
-            base_form: intern_string(&token.base_form, &BASE_FORM_CACHE),
-            reading: intern_string(&token.reading, &READING_CACHE),
-            pos: intern_pos_tags(&token.pos),
-        }
-    }
-}
-
-pub struct UnifiedAnalyzer;
 
 #[derive(Debug)]
 pub struct UnifiedAnalysisResult {
@@ -73,7 +28,9 @@ pub struct UnifiedAnalysisResult {
 
 impl UnifiedAnalyzer {
     pub fn new() -> Self {
-        UnifiedAnalyzer
+        UnifiedAnalyzer {
+            extractor: KagomeVocabularyExtractor::new(),
+        }
     }
 
     pub fn analyze_batch(
@@ -100,12 +57,8 @@ impl UnifiedAnalyzer {
                         self.analyze_grammar_patterns(tokens, collector, transcript_id);
 
                     // Extract vocabulary, skipping auxiliary tokens
-                    self.extract_words_from_tokens(
-                        tokens,
-                        &auxiliary_indices,
-                        transcript_id,
-                        &mut words,
-                    );
+                    self.extractor
+                        .extract(tokens, &auxiliary_indices, transcript_id, &mut words);
                 }
             }
         }
@@ -114,30 +67,6 @@ impl UnifiedAnalyzer {
             words,
             grammar_patterns: grammar_collectors,
         })
-    }
-
-    fn extract_words_from_tokens(
-        &self,
-        tokens: &[KagomeToken],
-        auxiliary_indices: &HashSet<usize>,
-        transcript_id: i64,
-        word_map: &mut HashMap<WordKey, HashSet<i64>>,
-    ) {
-        for (i, token) in tokens.iter().enumerate() {
-            // Skip auxiliary tokens (parts of conjugations/constructions)
-            if auxiliary_indices.contains(&i) {
-                continue;
-            }
-
-            if self.is_content_word(token) {
-                let key = WordKey::from_token(token);
-
-                word_map
-                    .entry(key)
-                    .or_insert_with(HashSet::new)
-                    .insert(transcript_id);
-            }
-        }
     }
 
     fn analyze_grammar_patterns(
@@ -162,21 +91,6 @@ impl UnifiedAnalyzer {
         }
 
         auxiliary_indices
-    }
-
-    fn is_content_word(&self, token: &KagomeToken) -> bool {
-        if token.pos.is_empty() {
-            return false;
-        }
-
-        let pos = &token.pos[0];
-
-        // Filter out symbols/punctuation completely
-        if pos == "記号" {
-            return false;
-        }
-
-        matches!(pos.as_str(), "名詞" | "動詞" | "形容詞" | "副詞" | "感動詞")
     }
 }
 
