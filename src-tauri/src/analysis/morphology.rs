@@ -1,27 +1,8 @@
 use crate::analysis::kagome_server::KagomeServer;
 use crate::error::Error;
-use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct KagomeToken {
-    #[serde(default)]
-    pub id: u32,
-    #[serde(default)]
-    pub start: u32,
-    #[serde(default)]
-    pub end: u32,
-    #[serde(default)]
-    pub surface: String,
-    #[serde(default)]
-    pub class: String,
-    pub pos: Vec<String>,
-    pub base_form: String,
-    pub reading: String,
-    #[serde(default)]
-    pub pronunciation: String,
-    #[serde(default)]
-    pub features: Vec<String>,
-}
+// Re-export KagomeToken from grammar module for backwards compatibility
+pub use crate::grammar::types::KagomeToken;
 
 pub fn process_batch_with_kagome_server(
     batch: &[(i64, i32, String)],

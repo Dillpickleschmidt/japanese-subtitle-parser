@@ -1,5 +1,5 @@
 use super::TokenMatcherLogic;
-use crate::analysis::morphology::KagomeToken;
+use crate::grammar::types::KagomeToken;
 
 // ========== Suffixes ==========
 

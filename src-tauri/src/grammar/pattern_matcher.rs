@@ -1,17 +1,16 @@
-use crate::analysis::morphology::KagomeToken;
 use crate::grammar::matchers::{
     CausativeFormMatcher, DependentNounMonoMatcher, DeshouFormMatcher, FlexibleVerbFormMatcher,
     GuraiFormMatcher, HajimeteAdverbMatcher, IiFormMatcher, IkenaiFormMatcher,
     ImperativeFormMatcher, MaiFormMatcher, MasenFormMatcher, MashouFormMatcher, MustPatternMatcher,
     NDesuFormMatcher, NakattaFormMatcher, NakereFormMatcher, NakuFormMatcher, NiKansuruFormMatcher,
     NonNaruMizenMatcher, NonPotentialMizenMatcher, NounMatcher, OiteFormMatcher,
-    OyobiConjunctionMatcher,
-    PastAuxiliaryMatcher, PpoiFormMatcher, RareruFormMatcher, SaseFormMatcher, ShiParticleMatcher,
-    SouAppearanceStemMatcher, SouHearsayStemMatcher, SugiruStemMatcher, TagaruFormMatcher,
-    TaiFormMatcher, TakattaFormMatcher, TakuFormMatcher, TaraFormMatcher, TariParticleMatcher,
-    TateSuffixMatcher, TeDeFormMatcher, TeParticleMatcher, TekiSuffixMatcher, ToIiFormMatcher,
-    TokenMatcherLogic, YokattaFormMatcher,
+    OyobiConjunctionMatcher, PastAuxiliaryMatcher, PpoiFormMatcher, RareruFormMatcher,
+    SaseFormMatcher, ShiParticleMatcher, SouAppearanceStemMatcher, SouHearsayStemMatcher,
+    SugiruStemMatcher, TagaruFormMatcher, TaiFormMatcher, TakattaFormMatcher, TakuFormMatcher,
+    TaraFormMatcher, TariParticleMatcher, TateSuffixMatcher, TeDeFormMatcher, TeParticleMatcher,
+    TekiSuffixMatcher, ToIiFormMatcher, TokenMatcherLogic, YokattaFormMatcher,
 };
+use crate::grammar::types::KagomeToken;
 
 /// Represents a single token matching criterion
 #[derive(Debug, Clone)]
