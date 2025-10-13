@@ -133,6 +133,75 @@ impl TokenMatcherLogic for MustPatternMatcher {
     }
 }
 
+/// Natural verbs ending in れる (not potential forms)
+const NATURAL_RERU_VERBS: &[&str] = &[
+    "くれる",
+    "入れる",
+    "切れる",
+    "晴れる",
+    "慣れる",
+    "汚れる",
+    "疲れる",
+    "腫れる",
+    "暮れる",
+    "揺れる",
+    "枯れる",
+    "破れる",
+    "触れる",
+];
+
+/// Match 未然形 verbs that are NOT potential forms (excludes れる/られる base forms)
+#[derive(Debug)]
+pub struct NonPotentialMizenMatcher;
+
+impl TokenMatcherLogic for NonPotentialMizenMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        // Must be verb in 未然形
+        if token.pos.first().is_none_or(|pos| pos != "動詞") {
+            return false;
+        }
+
+        let form = token.features.get(5);
+        if form.is_none_or(|f| f != "未然形") {
+            return false;
+        }
+
+        // Always exclude られる endings (always potential for ichidan verbs)
+        if token.base_form.ends_with("られる") {
+            return false;
+        }
+
+        // For れる endings: allow if in whitelist, exclude otherwise
+        if token.base_form.ends_with("れる") {
+            return NATURAL_RERU_VERBS.contains(&token.base_form.as_str());
+        }
+
+        // All other verbs are allowed
+        true
+    }
+}
+
+/// Match 未然形 verbs excluding なる (for shika_nai pattern)
+#[derive(Debug)]
+pub struct NonNaruMizenMatcher;
+
+impl TokenMatcherLogic for NonNaruMizenMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        // Must be verb in 未然形
+        if token.pos.first().is_none_or(|pos| pos != "動詞") {
+            return false;
+        }
+
+        let form = token.features.get(5);
+        if form.is_none_or(|f| f != "未然形") {
+            return false;
+        }
+
+        // Exclude なる (become) - "しかならない" doesn't make semantic sense
+        token.base_form != "なる"
+    }
+}
+
 // ========== Desire and Past Forms ==========
 
 /// Match よかっ or 良かっ (was good/glad)

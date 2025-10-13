@@ -420,6 +420,36 @@ fn test_naide_detection() {
 }
 
 #[test]
+fn test_naide_exception_verb_kureru() {
+    let sentence = "くれないで"; // くれる is natural verb ending in れる, not potential
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        has_pattern(&patterns, "naide"),
+        "Expected naide pattern not detected in '{}' (exception verb)",
+        sentence
+    );
+}
+
+#[test]
+fn test_naide_potential_form_rejection() {
+    let sentence = "帰れないで"; // 帰れる is potential form, should NOT match naide
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        !has_pattern(&patterns, "naide"),
+        "naide should NOT match potential form '{}', but was detected",
+        sentence
+    );
+}
+
+#[test]
 fn test_nakute_mo_ii_detection() {
     let sentence = "食べなくてもいい";
     let tokens = tokenize_sentence(sentence);
@@ -568,6 +598,21 @@ fn test_shika_nai_detection() {
     assert!(
         has_pattern(&patterns, "shika_nai"),
         "Expected shika_nai pattern not detected in '{}'",
+        sentence
+    );
+}
+
+#[test]
+fn test_shika_nai_naru_rejection() {
+    let sentence = "しかならない"; // なる doesn't make sense with しか, should NOT match
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    print_debug(sentence, &tokens, &patterns);
+
+    assert!(
+        !has_pattern(&patterns, "shika_nai"),
+        "shika_nai should NOT match '{}' (なる exclusion), but was detected",
         sentence
     );
 }

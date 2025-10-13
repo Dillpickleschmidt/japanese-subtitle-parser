@@ -1,3 +1,4 @@
+mod diagnostic_pattern_issues;
 mod integration;
 mod n1_patterns;
 mod n2_patterns;

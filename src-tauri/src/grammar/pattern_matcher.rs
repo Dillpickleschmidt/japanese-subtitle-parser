@@ -4,12 +4,13 @@ use crate::grammar::matchers::{
     GuraiFormMatcher, HajimeteAdverbMatcher, IiFormMatcher, IkenaiFormMatcher,
     ImperativeFormMatcher, MaiFormMatcher, MasenFormMatcher, MashouFormMatcher, MustPatternMatcher,
     NDesuFormMatcher, NakattaFormMatcher, NakereFormMatcher, NakuFormMatcher, NiKansuruFormMatcher,
-    NounMatcher, OiteFormMatcher, OyobiConjunctionMatcher, PastAuxiliaryMatcher, PpoiFormMatcher,
-    RareruFormMatcher, SaseFormMatcher, ShiParticleMatcher, SouAppearanceStemMatcher,
-    SouHearsayStemMatcher, SugiruStemMatcher, TagaruFormMatcher, TaiFormMatcher,
-    TakattaFormMatcher, TakuFormMatcher, TaraFormMatcher, TariParticleMatcher, TateSuffixMatcher,
-    TeDeFormMatcher, TeParticleMatcher, TekiSuffixMatcher, ToIiFormMatcher, TokenMatcherLogic,
-    YokattaFormMatcher,
+    NonNaruMizenMatcher, NonPotentialMizenMatcher, NounMatcher, OiteFormMatcher,
+    OyobiConjunctionMatcher,
+    PastAuxiliaryMatcher, PpoiFormMatcher, RareruFormMatcher, SaseFormMatcher, ShiParticleMatcher,
+    SouAppearanceStemMatcher, SouHearsayStemMatcher, SugiruStemMatcher, TagaruFormMatcher,
+    TaiFormMatcher, TakattaFormMatcher, TakuFormMatcher, TaraFormMatcher, TariParticleMatcher,
+    TateSuffixMatcher, TeDeFormMatcher, TeParticleMatcher, TekiSuffixMatcher, ToIiFormMatcher,
+    TokenMatcherLogic, YokattaFormMatcher,
 };
 
 /// Represents a single token matching criterion
@@ -71,6 +72,10 @@ pub enum CustomMatcher {
     FlexibleVerbForm,
     /// Match specific verb forms for must patterns
     MustPattern,
+    /// Match 未然形 verbs that are NOT potential forms (excludes れる/られる)
+    NonPotentialMizen,
+    /// Match 未然形 verbs excluding なる (for shika_nai pattern)
+    NonNaruMizen,
     /// Match いい or 良い (good/okay)
     IiForm,
     /// Match いけない or いけません (must not)
@@ -308,6 +313,8 @@ impl<T: Clone> PatternMatcher<T> {
                     CustomMatcher::TeDeForm => TeDeFormMatcher.matches(token),
                     CustomMatcher::FlexibleVerbForm => FlexibleVerbFormMatcher.matches(token),
                     CustomMatcher::MustPattern => MustPatternMatcher.matches(token),
+                    CustomMatcher::NonPotentialMizen => NonPotentialMizenMatcher.matches(token),
+                    CustomMatcher::NonNaruMizen => NonNaruMizenMatcher.matches(token),
                     CustomMatcher::IiForm => IiFormMatcher.matches(token),
                     CustomMatcher::IkenaiForm => IkenaiFormMatcher.matches(token),
                     CustomMatcher::MashouForm => MashouFormMatcher.matches(token),

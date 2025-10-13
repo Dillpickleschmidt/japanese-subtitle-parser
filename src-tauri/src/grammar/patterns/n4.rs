@@ -190,8 +190,9 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Custom(CustomMatcher::NakereForm),
                     TokenMatcher::Surface("ば"),
                     TokenMatcher::Custom(CustomMatcher::MustPattern),
+                    TokenMatcher::Surface("ない"),
                 ],
-                priority: 9,
+                priority: 10,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::Must,
@@ -375,7 +376,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             GrammarPattern {
                 name: "naide",
                 tokens: vec![
-                    TokenMatcher::verb_with_form("未然形"),
+                    TokenMatcher::Custom(CustomMatcher::NonPotentialMizen),
                     TokenMatcher::Surface("ない"),
                     TokenMatcher::Surface("で"),
                 ],
@@ -519,7 +520,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 name: "shika_nai",
                 tokens: vec![
                     TokenMatcher::Surface("しか"),
-                    TokenMatcher::verb_with_form("未然形"),
+                    TokenMatcher::Custom(CustomMatcher::NonNaruMizen),
                     TokenMatcher::Surface("ない"),
                 ],
                 priority: 8,
