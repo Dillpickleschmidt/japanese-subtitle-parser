@@ -64,6 +64,9 @@ pub enum TokenMatcher {
         max: usize,
         stop_at_punctuation: bool,
     },
+    /// Optional matcher - inner matcher is tried, but pattern continues if it doesn't match.
+    /// If inner matcher succeeds, position advances. If it fails, position stays same (pattern skips it).
+    Optional(Box<TokenMatcher>),
 }
 
 // ============================================================================
@@ -284,6 +287,17 @@ impl<T: Clone> PatternMatcher<T> {
                         start,
                         result,
                     );
+                }
+
+                TokenMatcher::Optional(inner) => {
+                    // Try to match optional, but don't fail if it doesn't match
+                    let (matches, score) = self.token_matches(inner, &tokens[current_pos]);
+                    if matches {
+                        prev_surface = Some(&tokens[current_pos].surface);
+                        specificity_score += score;
+                        current_pos += 1;
+                    }
+                    // If doesn't match, continue without advancing (pattern skips it)
                 }
 
                 _ => {
@@ -526,6 +540,11 @@ impl<T: Clone> PatternMatcher<T> {
             TokenMatcher::Wildcard { .. } => {
                 // Wildcards don't match individual tokens, handled in match_pattern_at
                 (false, 0.0)
+            }
+
+            TokenMatcher::Optional(inner) => {
+                // Optional delegates to the inner matcher
+                self.token_matches(inner, token)
             }
         }
     }

@@ -315,14 +315,54 @@ fn test_n_desu_detection() {
     assert_pattern_selected(&patterns, &tokens, "n_desu");
 }
 
-#[test]
-fn test_node_detection() {
-    let sentence = "雨が降っているので傘を持っていく";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-    assert_has_pattern(&patterns, "node");
-    assert_pattern_range(&patterns, "node", 2, 9); // 降っているので
-    assert_pattern_selected(&patterns, &tokens, "node");
+// Node pattern with different preceding word types - grouped
+
+mod node_tests {
+    use super::*;
+
+    #[test]
+    fn verb_form() {
+        let sentence = "雨が降っているので傘を持っていく";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        assert_has_pattern(&patterns, "node_verb");
+        assert_pattern_range(&patterns, "node_verb", 2, 9); // 降っているので
+        assert_pattern_selected(&patterns, &tokens, "node_verb");
+    }
+
+    #[test]
+    fn i_adjective_form() {
+        let sentence = "寒いので家にいる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        assert_has_pattern(&patterns, "node_adjective");
+        assert_pattern_range(&patterns, "node_adjective", 0, 4); // 寒いので
+        assert_pattern_selected(&patterns, &tokens, "node_adjective");
+    }
+
+    #[test]
+    fn na_adjective_form() {
+        let sentence = "静かなので勉強できる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        assert_has_pattern(&patterns, "node_nominal");
+        assert_pattern_range(&patterns, "node_nominal", 0, 5); // 静かなので
+        assert_pattern_selected(&patterns, &tokens, "node_nominal");
+    }
+
+    #[test]
+    fn noun_form() {
+        let sentence = "雨なので行けない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        assert_has_pattern(&patterns, "node_nominal");
+        assert_pattern_range(&patterns, "node_nominal", 0, 4); // 雨なので
+        assert_pattern_selected(&patterns, &tokens, "node_nominal");
+    }
 }
 
 #[test]

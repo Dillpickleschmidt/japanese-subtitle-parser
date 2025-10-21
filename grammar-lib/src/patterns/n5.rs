@@ -377,14 +377,44 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::NDesu,
             "n5",
         ),
+        // Node pattern: multiple variations to handle verbs, adjectives, and nominals
         (
             GrammarPattern {
-                name: "node",
+                name: "node_verb",
                 tokens: vec![
+                    TokenMatcher::Optional(Box::new(TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm))),
+                    TokenMatcher::Optional(Box::new(TokenMatcher::Custom(CustomMatcher::TeDeForm))),
                     TokenMatcher::verb_with_form("基本形"),
                     TokenMatcher::Surface("ので"),
                 ],
+                priority: 6,
+                category: PatternCategory::Construction,
+            },
+            ConjugationPattern::Node,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "node_adjective",
+                tokens: vec![
+                    TokenMatcher::Adjective { base_form: None },
+                    TokenMatcher::Surface("ので"),
+                ],
                 priority: 5,
+                category: PatternCategory::Construction,
+            },
+            ConjugationPattern::Node,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "node_nominal",
+                tokens: vec![
+                    TokenMatcher::Any,
+                    TokenMatcher::Surface("な"),
+                    TokenMatcher::Surface("ので"),
+                ],
+                priority: 4,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::Node,
