@@ -2,34 +2,9 @@ use crate::matchers::matches as matcher_matches;
 pub use crate::matchers::CustomMatcher;
 use crate::types::KagomeToken;
 
-#[derive(Debug, Clone)]
-pub enum TokenMatcher {
-    Verb {
-        conjugation_form: Option<&'static str>,
-        base_form: Option<&'static str>,
-    },
-    Surface(&'static str),
-    Any,
-    Custom(CustomMatcher),
-}
-
-/// Category of grammar pattern for filtering and vocabulary extraction
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PatternCategory {
-    /// Basic conjugation forms - detected but not stored as grammar patterns
-    /// Used for vocabulary consolidation (skip auxiliary tokens)
-    Conjugation,
-    /// Actual grammatical constructions - stored as grammar patterns
-    Construction,
-}
-
-#[derive(Debug, Clone)]
-pub struct GrammarPattern {
-    pub name: &'static str,
-    pub tokens: Vec<TokenMatcher>,
-    pub priority: u8, // Higher = more specific/important
-    pub category: PatternCategory,
-}
+// ============================================================================
+// PUBLIC TYPES
+// ============================================================================
 
 #[derive(Debug)]
 pub struct PatternMatcher<T> {
@@ -50,6 +25,39 @@ pub struct PatternMatch<T> {
     /// To extract text in Rust, convert to byte position first using char_indices()
     pub end_char: u32,
 }
+
+#[derive(Debug, Clone)]
+pub struct GrammarPattern {
+    pub name: &'static str,
+    pub tokens: Vec<TokenMatcher>,
+    pub priority: u8, // Higher = more specific/important
+    pub category: PatternCategory,
+}
+
+/// Category of grammar pattern for filtering and vocabulary extraction
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PatternCategory {
+    /// Basic conjugation forms - detected but not stored as grammar patterns
+    /// Used for vocabulary consolidation (skip auxiliary tokens)
+    Conjugation,
+    /// Actual grammatical constructions - stored as grammar patterns
+    Construction,
+}
+
+#[derive(Debug, Clone)]
+pub enum TokenMatcher {
+    Verb {
+        conjugation_form: Option<&'static str>,
+        base_form: Option<&'static str>,
+    },
+    Surface(&'static str),
+    Any,
+    Custom(CustomMatcher),
+}
+
+// ============================================================================
+// PUBLIC API - Pattern matching and filtering
+// ============================================================================
 
 impl<T> PatternMatcher<T> {
     pub fn new() -> Self {
@@ -90,6 +98,9 @@ impl<T: Clone> PatternMatcher<T> {
                 }
             }
         }
+
+        // Extend construction patterns to include adjacent auxiliary verbs
+        Self::extend_with_auxiliary_verbs(&mut matches, tokens);
 
         // Sort by confidence (descending), then by character length (descending)
         matches.sort_by(|a, b| {
@@ -155,7 +166,9 @@ impl<T: Clone> PatternMatcher<T> {
                     return false;
                 }
 
-                pattern_tokens.iter().all(|token_idx| selected_tokens.contains(token_idx))
+                pattern_tokens
+                    .iter()
+                    .all(|token_idx| selected_tokens.contains(token_idx))
             });
 
             if !is_redundant {
@@ -171,6 +184,54 @@ impl<T: Clone> PatternMatcher<T> {
             .collect()
     }
 
+    // ========================================================================
+    // PRIVATE HELPER METHODS
+    // ========================================================================
+
+    /// Extends construction patterns ending with verbs to include following auxiliary verbs
+    /// e.g., te_iru (1,6) followed by ます (6,8) becomes (1,8)
+    fn extend_with_auxiliary_verbs(matches: &mut [PatternMatch<T>], tokens: &[KagomeToken]) {
+        for construction in matches {
+            if construction.category != PatternCategory::Construction {
+                continue;
+            }
+
+            // Find the token that ends this construction pattern
+            let last_token_idx = tokens.iter().rposition(|t| t.end == construction.end_char);
+
+            // Skip if not ending with a verb (動詞)
+            if last_token_idx
+                .is_none_or(|idx| tokens[idx].pos.first().is_none_or(|pos| pos != "動詞"))
+            {
+                continue;
+            }
+
+            // Find the next token (potential auxiliary verb)
+            let next_token_idx = tokens.iter().position(|t| t.start == construction.end_char);
+
+            if let Some(idx) = next_token_idx {
+                // Extend through consecutive auxiliary verbs
+                let mut extend_to = construction.end_char;
+                let mut current_idx = idx;
+
+                while current_idx < tokens.len()
+                    && tokens[current_idx]
+                        .pos
+                        .first()
+                        .is_some_and(|pos| pos == "助動詞")
+                {
+                    extend_to = tokens[current_idx].end;
+                    current_idx += 1;
+                }
+
+                if extend_to > construction.end_char {
+                    construction.end_char = extend_to;
+                }
+            }
+        }
+    }
+
+    /// Try to match a pattern at a specific position in the token stream
     fn match_pattern_at(
         &self,
         pattern: &GrammarPattern,
@@ -200,8 +261,11 @@ impl<T: Clone> PatternMatcher<T> {
             (pattern.priority as f32) + (specificity_score / pattern.tokens.len() as f32);
 
         // Calculate character ranges from matched tokens
-        let start_char = tokens[start].start;
+        let mut start_char = tokens[start].start;
         let end_char = tokens[start + pattern.tokens.len() - 1].end;
+
+        // Always extend to include preceding サ変接続 noun if first token is する verb
+        start_char = extend_for_preceding_suru_noun(tokens, start, start_char);
 
         Some(PatternMatch {
             result: result.clone(),
@@ -213,6 +277,7 @@ impl<T: Clone> PatternMatcher<T> {
         })
     }
 
+    /// Check if a token matcher matches a given token, returning match status and specificity score
     fn token_matches(&self, matcher: &TokenMatcher, token: &KagomeToken) -> (bool, f32) {
         match matcher {
             TokenMatcher::Verb {
@@ -264,6 +329,10 @@ impl<T: Clone> PatternMatcher<T> {
     }
 }
 
+// ============================================================================
+// UTILITY IMPLEMENTATIONS
+// ============================================================================
+
 impl<T> Default for PatternMatcher<T> {
     fn default() -> Self {
         Self::new()
@@ -284,4 +353,24 @@ impl TokenMatcher {
             base_form: Some(base_form),
         }
     }
+}
+
+// ============================================================================
+// PRIVATE HELPERS - utility functions
+// ============================================================================
+
+/// Extends start_char to include preceding サ変接続 noun if pattern starts with する verb
+fn extend_for_preceding_suru_noun(
+    tokens: &[KagomeToken],
+    start_idx: usize,
+    mut start_char: u32,
+) -> u32 {
+    if tokens[start_idx].base_form == "する" && start_idx > 0 {
+        let prev_token = &tokens[start_idx - 1];
+        // Check if previous token is サ変接続 noun
+        if prev_token.pos.get(1).is_some_and(|p| p == "サ変接続") {
+            start_char = prev_token.start;
+        }
+    }
+    start_char
 }
