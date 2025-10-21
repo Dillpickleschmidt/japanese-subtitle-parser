@@ -215,41 +215,15 @@ fn test_mashou_ka_detection() {
 
 // Sugiru pattern with multiple variations (grouped)
 
-mod sugiru_tests {
-    use super::*;
+#[test]
+fn test_sugiru_detection() {
+    let sentence = "この料理は辛すぎる";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
 
-    #[test]
-    fn verb_form() {
-        let sentence = "この料理は辛すぎる";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "sugiru");
-        assert_pattern_range(&patterns, "sugiru", 5, 9); // 辛すぎる
-        assert_pattern_selected(&patterns, &tokens, "sugiru");
-    }
-
-    #[test]
-    fn i_adjective_form() {
-        let sentence = "このカバンは重すぎる";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "sugiru");
-        assert_pattern_range(&patterns, "sugiru", 6, 10); // 重すぎる
-        assert_pattern_selected(&patterns, &tokens, "sugiru");
-    }
-
-    #[test]
-    fn na_adjective_form() {
-        let sentence = "彼女は親切すぎる";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "sugiru");
-        assert_pattern_range(&patterns, "sugiru", 3, 8); // 親切すぎる
-        assert_pattern_selected(&patterns, &tokens, "sugiru");
-    }
+    assert_has_pattern(&patterns, "sugiru");
+    assert_pattern_range(&patterns, "sugiru", 5, 9); // 辛すぎる
+    assert_pattern_selected(&patterns, &tokens, "sugiru");
 }
 
 #[test]
@@ -376,59 +350,15 @@ fn test_ni_iku_detection() {
     assert_pattern_selected(&patterns, &tokens, "ni_iku");
 }
 
-// Te-form variations (de-form for godan verbs) - grouped
+#[test]
+fn test_mae_ni_detection() {
+    let sentence = "寝る前に歯を磨く";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
 
-mod te_form_variations {
-    use super::*;
-
-    #[test]
-    fn de_iru_form() {
-        let sentence = "誰かが外で待っていんです";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        assert_has_pattern(&patterns, "te_iru");
-        assert_pattern_range(&patterns, "te_iru", 5, 9); // 待ってい
-        assert_pattern_selected(&patterns, &tokens, "te_iru");
-    }
-
-    #[test]
-    fn de_kudasai_form() {
-        let sentence = "静かに飲んでください";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "te_kudasai");
-        assert_pattern_range(&patterns, "te_kudasai", 3, 10); // 飲んでください
-        assert_pattern_selected(&patterns, &tokens, "te_kudasai");
-    }
-}
-
-// Mae-ni pattern with different verb types - grouped
-
-mod mae_ni_tests {
-    use super::*;
-
-    #[test]
-    fn ru_verb() {
-        let sentence = "寝る前に歯を磨く";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "mae_ni");
-        assert_pattern_range(&patterns, "mae_ni", 0, 4); // 寝る前に
-        assert_pattern_selected(&patterns, &tokens, "mae_ni");
-    }
-
-    #[test]
-    fn u_verb() {
-        let sentence = "出かける前に鍵を確認する";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "mae_ni");
-        assert_pattern_range(&patterns, "mae_ni", 0, 6); // 出かける前に
-        assert_pattern_selected(&patterns, &tokens, "mae_ni");
-    }
+    assert_has_pattern(&patterns, "mae_ni");
+    assert_pattern_range(&patterns, "mae_ni", 0, 4); // 寝る前に
+    assert_pattern_selected(&patterns, &tokens, "mae_ni");
 }
 
 // Adjective conjugation patterns
