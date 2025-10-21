@@ -115,6 +115,8 @@ pub enum CustomMatcher {
     VerbWithBaseSuffix(&'static str),
     /// Match nouns where base_form ends with a specific suffix (e.g., base_form ends with "まみれ")
     NounWithBaseSuffix(&'static str),
+    /// Match words that can precede でしょう (verbs, adjectives, nouns, auxiliaries)
+    DeshouPreceding,
 }
 
 /// Centralized matching logic for all custom matchers
@@ -144,6 +146,7 @@ pub fn matches(matcher: &CustomMatcher, token: &KagomeToken) -> bool {
         CustomMatcher::ImperativeForm => ImperativeFormMatcher.matches(token),
         CustomMatcher::TariParticle => TariParticleMatcher.matches(token),
         CustomMatcher::DeshouForm => DeshouFormMatcher.matches(token),
+        CustomMatcher::DeshouPreceding => DeshouPrecedingMatcher.matches(token),
         CustomMatcher::NDesuForm => NDesuFormMatcher.matches(token),
         CustomMatcher::YokattaForm => YokattaFormMatcher.matches(token),
         CustomMatcher::TagaruForm => TagaruFormMatcher.matches(token),

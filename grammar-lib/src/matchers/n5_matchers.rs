@@ -151,6 +151,18 @@ impl TokenMatcherLogic for DeshouFormMatcher {
     }
 }
 
+/// Match words that can precede でしょう (verbs, adjectives, nouns, auxiliaries)
+#[derive(Debug)]
+pub struct DeshouPrecedingMatcher;
+
+impl TokenMatcherLogic for DeshouPrecedingMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        token.pos.first().is_some_and(|pos| {
+            pos == "動詞" || pos == "形容詞" || pos == "名詞" || pos == "助動詞"
+        })
+    }
+}
+
 /// Match ん or の before です (explanatory)
 #[derive(Debug)]
 pub struct NDesuFormMatcher;

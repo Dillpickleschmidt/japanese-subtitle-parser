@@ -332,6 +332,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             GrammarPattern {
                 name: "deshou",
                 tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::DeshouPreceding),
                     TokenMatcher::Custom(CustomMatcher::DeshouForm),
                     TokenMatcher::Surface("う"),
                 ],

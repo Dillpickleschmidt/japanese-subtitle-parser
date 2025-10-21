@@ -309,7 +309,7 @@ fn test_n_desu_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
     assert_has_pattern(&patterns, "n_desu");
-    assert_pattern_range(&patterns, "n_desu", 4, 10); // 遅れたんです
+    assert_pattern_range(&patterns, "n_desu", 7, 10); // んです
     assert_pattern_selected(&patterns, &tokens, "n_desu");
 }
 
@@ -355,7 +355,7 @@ mod te_form_variations {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
         assert_has_pattern(&patterns, "te_iru");
-        assert_pattern_range(&patterns, "te_iru", 4, 10); // 待っていんです
+        assert_pattern_range(&patterns, "te_iru", 5, 9); // 待ってい
         assert_pattern_selected(&patterns, &tokens, "te_iru");
     }
 
