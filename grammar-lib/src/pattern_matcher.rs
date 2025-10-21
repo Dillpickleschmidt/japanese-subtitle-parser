@@ -103,6 +103,74 @@ impl<T: Clone> PatternMatcher<T> {
         (matches, auxiliary_indices)
     }
 
+    /// Select non-redundant patterns using token-set containment
+    /// Filters out patterns whose token-set is completely contained in a higher-confidence pattern
+    /// This matches the behavior of selectAndLayerGrammarPatterns in the TypeScript extension
+    pub fn select_non_redundant_patterns(
+        matches: &[PatternMatch<T>],
+        tokens: &[KagomeToken],
+    ) -> Vec<PatternMatch<T>> {
+        use std::collections::HashSet;
+
+        if matches.is_empty() || tokens.is_empty() {
+            return Vec::new();
+        }
+
+        // Build token-set for each pattern
+        let pattern_token_sets: Vec<HashSet<usize>> = matches
+            .iter()
+            .map(|pattern| {
+                let mut token_set = HashSet::new();
+                for (token_idx, token) in tokens.iter().enumerate() {
+                    // Check if token overlaps with pattern character range
+                    if pattern.start_char < token.end && pattern.end_char > token.start {
+                        token_set.insert(token_idx);
+                    }
+                }
+                token_set
+            })
+            .collect();
+
+        // Sort matches by confidence (descending)
+        let mut indexed_matches: Vec<(usize, &PatternMatch<T>)> =
+            matches.iter().enumerate().collect();
+        indexed_matches.sort_by(|a, b| {
+            b.1.confidence
+                .partial_cmp(&a.1.confidence)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+
+        // Filter patterns: keep those not contained in higher-confidence patterns
+        let mut selected_indices = Vec::new();
+
+        for (orig_idx, _pattern) in &indexed_matches {
+            let pattern_tokens = &pattern_token_sets[*orig_idx];
+
+            // Check if this pattern's token-set is contained in any already-selected pattern
+            let is_redundant = selected_indices.iter().any(|selected_idx: &usize| {
+                let selected_tokens = &pattern_token_sets[*selected_idx];
+
+                // Check if pattern_tokens ⊆ selected_tokens
+                if pattern_tokens.len() > selected_tokens.len() {
+                    return false;
+                }
+
+                pattern_tokens.iter().all(|token_idx| selected_tokens.contains(token_idx))
+            });
+
+            if !is_redundant {
+                selected_indices.push(*orig_idx);
+            }
+        }
+
+        // Return selected patterns in original order
+        selected_indices.sort();
+        selected_indices
+            .iter()
+            .map(|idx| matches[*idx].clone())
+            .collect()
+    }
+
     fn match_pattern_at(
         &self,
         pattern: &GrammarPattern,

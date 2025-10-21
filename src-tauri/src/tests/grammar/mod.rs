@@ -8,7 +8,7 @@ mod n5_patterns;
 use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::process_batch_with_kagome_server;
 use grammar_lib::create_pattern_matcher;
-use grammar_lib::PatternMatch;
+use grammar_lib::{PatternMatch, PatternMatcher};
 use grammar_lib::types::{ConjugationPattern, KagomeToken};
 use std::sync::{LazyLock, Mutex};
 
@@ -60,6 +60,21 @@ pub fn assert_has_pattern(
     assert!(
         has_pattern(matches, pattern_name),
         "Pattern '{}' not found",
+        pattern_name
+    );
+}
+
+/// Assert that a pattern would be selected (not filtered as redundant)
+/// Uses the same logic as selectAndLayerGrammarPatterns in the TypeScript extension
+pub fn assert_pattern_selected(
+    matches: &[PatternMatch<ConjugationPattern>],
+    tokens: &[KagomeToken],
+    pattern_name: &str,
+) {
+    let selected = PatternMatcher::select_non_redundant_patterns(matches, tokens);
+    assert!(
+        selected.iter().any(|p| p.pattern_name == pattern_name),
+        "Pattern '{}' exists but was filtered as redundant",
         pattern_name
     );
 }
