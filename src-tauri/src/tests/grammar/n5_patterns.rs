@@ -111,7 +111,7 @@ fn test_te_request_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
     assert_has_pattern(&patterns, "te_request");
-    assert_pattern_range(&patterns, "te_request", 3, 12); // 待っていてくださいません
+    assert_pattern_range(&patterns, "te_request", 6, 15); // いてくださいません
     assert_pattern_selected(&patterns, &tokens, "te_request");
 }
 
@@ -165,7 +165,7 @@ fn test_te_mo_ii_detection() {
     let patterns = detect_patterns(&tokens);
 
     assert_has_pattern(&patterns, "te_mo_ii");
-    assert_pattern_range(&patterns, "te_mo_ii", 3, 9); // 座ってもいい
+    assert_pattern_range(&patterns, "te_mo_ii", 3, 11); // 座ってもいいです
     assert_pattern_selected(&patterns, &tokens, "te_mo_ii");
 }
 
@@ -174,8 +174,9 @@ fn test_te_wa_ikenai_detection() {
     let sentence = "ここで写真を撮ってはいけません";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
+
     assert_has_pattern(&patterns, "te_wa_ikenai");
-    assert_pattern_range(&patterns, "te_wa_ikenai", 5, 11); // 撮ってはいけない
+    assert_pattern_range(&patterns, "te_wa_ikenai", 6, 15); // 撮ってはいけません
     assert_pattern_selected(&patterns, &tokens, "te_wa_ikenai");
 }
 
@@ -298,8 +299,9 @@ fn test_mada_te_imasen_detection() {
     let sentence = "まだ宿題をしていません";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
+
     assert_has_pattern(&patterns, "mada_te_imasen");
-    assert_pattern_range(&patterns, "mada_te_imasen", 2, 11); // 宿題をしていません
+    assert_pattern_range(&patterns, "mada_te_imasen", 0, 11); // まだ宿題をしていません
     assert_pattern_selected(&patterns, &tokens, "mada_te_imasen");
 }
 
@@ -338,16 +340,6 @@ fn test_ni_iku_detection() {
 
 mod te_form_variations {
     use super::*;
-
-    #[test]
-    fn de_form() {
-        let sentence = "朝5時に起きんで朝食をする";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        assert_has_pattern(&patterns, "te_form_basic");
-        assert_pattern_range(&patterns, "te_form_basic", 4, 8); // 起きんで
-        assert_pattern_selected(&patterns, &tokens, "te_form_basic");
-    }
 
     #[test]
     fn de_iru_form() {

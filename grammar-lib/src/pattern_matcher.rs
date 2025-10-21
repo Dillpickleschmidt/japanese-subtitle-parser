@@ -56,6 +56,14 @@ pub enum TokenMatcher {
     Surface(&'static str),
     Any,
     Custom(CustomMatcher),
+    /// Wildcard matcher - skips min to max tokens with optional stop conditions.
+    /// NOTE: Only one wildcard per pattern is currently supported.
+    /// When wildcard is encountered, remaining pattern is matched and result is returned immediately.
+    Wildcard {
+        min: usize,
+        max: usize,
+        stop_at_punctuation: bool,
+    },
 }
 
 // ============================================================================
@@ -243,32 +251,87 @@ impl<T: Clone> PatternMatcher<T> {
         start: usize,
         result: &T,
     ) -> Option<PatternMatch<T>> {
-        if start + pattern.tokens.len() > tokens.len() {
+        if start >= tokens.len() {
             return None;
         }
 
         let mut specificity_score = 0.0;
+        let mut current_pos = start;
+        let mut prev_surface: Option<&str> = None;
 
         for (i, matcher) in pattern.tokens.iter().enumerate() {
-            let token = &tokens[start + i];
-            let (matches, score) = self.token_matches(matcher, token);
-
-            if !matches {
+            if current_pos >= tokens.len() {
                 return None;
             }
 
-            specificity_score += score;
+            match matcher {
+                TokenMatcher::Wildcard {
+                    min,
+                    max,
+                    stop_at_punctuation,
+                } => {
+                    // Delegate to wildcard-specific matching logic
+                    return self.match_with_wildcard(
+                        pattern,
+                        tokens,
+                        i,
+                        current_pos,
+                        prev_surface,
+                        specificity_score,
+                        *min,
+                        *max,
+                        *stop_at_punctuation,
+                        start,
+                        result,
+                    );
+                }
+
+                _ => {
+                    // Regular token matching
+                    let token = &tokens[current_pos];
+                    let (matches, score) = self.token_matches(matcher, token);
+
+                    if !matches {
+                        return None;
+                    }
+
+                    prev_surface = Some(&token.surface);
+                    specificity_score += score;
+                    current_pos += 1;
+                }
+            }
         }
 
-        // Calculate confidence based on pattern priority and specificity
+        self.finalize_match(
+            pattern,
+            result,
+            tokens,
+            start,
+            current_pos,
+            specificity_score,
+        )
+    }
+
+    /// Helper to finalize a successful match
+    fn finalize_match(
+        &self,
+        pattern: &GrammarPattern,
+        result: &T,
+        tokens: &[KagomeToken],
+        start: usize,
+        end_pos: usize,
+        specificity_score: f32,
+    ) -> Option<PatternMatch<T>> {
+        if end_pos == 0 || start >= tokens.len() {
+            return None;
+        }
+
         let confidence =
             (pattern.priority as f32) + (specificity_score / pattern.tokens.len() as f32);
 
-        // Calculate character ranges from matched tokens
         let mut start_char = tokens[start].start;
-        let end_char = tokens[start + pattern.tokens.len() - 1].end;
+        let end_char = tokens[end_pos - 1].end;
 
-        // Always extend to include preceding サ変接続 noun if first token is する verb
         start_char = extend_for_preceding_suru_noun(tokens, start, start_char);
 
         Some(PatternMatch {
@@ -279,6 +342,114 @@ impl<T: Clone> PatternMatcher<T> {
             start_char,
             end_char,
         })
+    }
+
+    /// Handle wildcard matching - tries skipping min to max tokens with stop conditions
+    /// Returns the finalized match if successful, or None if wildcard didn't match
+    fn match_with_wildcard(
+        &self,
+        pattern: &GrammarPattern,
+        tokens: &[KagomeToken],
+        wildcard_index: usize,
+        current_pos: usize,
+        prev_surface: Option<&str>,
+        specificity_score: f32,
+        min: usize,
+        max: usize,
+        stop_at_punctuation: bool,
+        start: usize,
+        result: &T,
+    ) -> Option<PatternMatch<T>> {
+        let mut matched = false;
+        let mut final_pos = current_pos;
+        let mut updated_score = specificity_score;
+
+        for skip_count in min..=max {
+            let check_pos = current_pos + skip_count;
+
+            if check_pos >= tokens.len() {
+                break;
+            }
+
+            // Check tokens in wildcard range for stop conditions
+            let mut should_stop = false;
+            for offset in 0..skip_count {
+                let wildcard_token = &tokens[current_pos + offset];
+
+                // Stop at punctuation if requested
+                if stop_at_punctuation && wildcard_token.pos.first().is_some_and(|p| p == "記号")
+                {
+                    should_stop = true;
+                    break;
+                }
+
+                // Stop if we encounter same surface as previous matcher
+                if let Some(prev) = prev_surface {
+                    if wildcard_token.surface == prev {
+                        should_stop = true;
+                        break;
+                    }
+                }
+            }
+
+            if should_stop {
+                break;
+            }
+
+            // Collect remaining matchers after wildcard
+            let remaining_matchers: Vec<_> =
+                pattern.tokens.iter().skip(wildcard_index + 1).collect();
+
+            // Try matching rest of pattern from check_pos
+            if let Some(end_pos) =
+                self.match_remaining_pattern_with_pos(&remaining_matchers, tokens, check_pos)
+            {
+                final_pos = end_pos;
+                updated_score += 0.5 * skip_count as f32; // Lower score for more skips
+                matched = true;
+                break;
+            }
+        }
+
+        if !matched {
+            return None;
+        }
+
+        self.finalize_match(pattern, result, tokens, start, final_pos, updated_score)
+    }
+
+    /// Helper to match remaining tokens after wildcard and return the end position
+    fn match_remaining_pattern_with_pos(
+        &self,
+        remaining: &[&TokenMatcher],
+        tokens: &[KagomeToken],
+        start_pos: usize,
+    ) -> Option<usize> {
+        let mut pos = start_pos;
+
+        for matcher in remaining {
+            if pos >= tokens.len() {
+                return if remaining.len() == 0 {
+                    Some(pos)
+                } else {
+                    None
+                };
+            }
+
+            // Don't support nested wildcards
+            if matches!(matcher, TokenMatcher::Wildcard { .. }) {
+                return None;
+            }
+
+            let (matches, _) = self.token_matches(matcher, &tokens[pos]);
+            if !matches {
+                return None;
+            }
+
+            pos += 1;
+        }
+
+        Some(pos)
     }
 
     /// Check if a token matcher matches a given token, returning match status and specificity score
@@ -351,6 +522,11 @@ impl<T: Clone> PatternMatcher<T> {
                     (false, 0.0)
                 }
             }
+
+            TokenMatcher::Wildcard { .. } => {
+                // Wildcards don't match individual tokens, handled in match_pattern_at
+                (false, 0.0)
+            }
         }
     }
 }
@@ -376,6 +552,13 @@ impl TokenMatcher {
     pub fn specific_verb(base_form: &'static str) -> Self {
         TokenMatcher::Verb {
             conjugation_form: None,
+            base_form: Some(base_form),
+        }
+    }
+
+    pub fn specific_verb_with_form(base_form: &'static str, form: &'static str) -> Self {
+        TokenMatcher::Verb {
+            conjugation_form: Some(form),
             base_form: Some(base_form),
         }
     }

@@ -25,7 +25,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 tokens: vec![
                     TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
                     TokenMatcher::Custom(CustomMatcher::TeDeForm),
-                    TokenMatcher::specific_verb("くださる"),
+                    TokenMatcher::specific_verb_with_form("くださる", "連用形"),
                 ],
                 priority: 10,
                 category: PatternCategory::Construction,
@@ -347,9 +347,14 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 name: "mada_te_imasen",
                 tokens: vec![
                     TokenMatcher::Surface("まだ"),
+                    TokenMatcher::Wildcard {
+                        min: 0,
+                        max: 5,
+                        stop_at_punctuation: true,
+                    },
                     TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
                     TokenMatcher::Custom(CustomMatcher::TeDeForm),
-                    TokenMatcher::Surface("い"),
+                    TokenMatcher::specific_verb("いる"),
                     TokenMatcher::Custom(CustomMatcher::MasenForm),
                     TokenMatcher::Surface("ん"),
                 ],
