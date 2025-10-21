@@ -240,26 +240,6 @@ impl TokenMatcherLogic for ToIiFormMatcher {
 
 // ========== Appearance and Hearsay ==========
 
-/// Match verb 連用形 or adjective stem (for そう appearance pattern)
-#[derive(Debug)]
-pub struct SouAppearanceStemMatcher;
-
-impl TokenMatcherLogic for SouAppearanceStemMatcher {
-    fn matches(&self, token: &KagomeToken) -> bool {
-        if token.pos.first().is_some_and(|pos| pos == "動詞") {
-            let form = token.features.get(5);
-            form.is_some_and(|f| f == "連用形")
-        } else if token.pos.first().is_some_and(|pos| pos == "形容詞") {
-            let form = token.features.get(5);
-            form.is_some_and(|f| f == "ガル接続")
-        } else if token.pos.first().is_some_and(|pos| pos == "名詞") {
-            token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
-        } else {
-            false
-        }
-    }
-}
-
 /// Match plain/dictionary form verb or adjective (for そうだ hearsay pattern)
 #[derive(Debug)]
 pub struct SouHearsayStemMatcher;

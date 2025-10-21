@@ -37,16 +37,6 @@ impl TokenMatcherLogic for TakattaFormMatcher {
 
 // ========== Te-Form Particles ==========
 
-/// Match て or で (te-form particle)
-#[derive(Debug)]
-pub struct TeParticleMatcher;
-
-impl TokenMatcherLogic for TeParticleMatcher {
-    fn matches(&self, token: &KagomeToken) -> bool {
-        token.surface == "て" || token.surface == "で"
-    }
-}
-
 /// Match て or で (te-form, either surface or particle)
 #[derive(Debug)]
 pub struct TeDeFormMatcher;

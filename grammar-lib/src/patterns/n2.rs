@@ -1,6 +1,5 @@
-use crate::pattern_matcher::{
-    CustomMatcher, GrammarPattern, PatternCategory, TokenMatcher,
-};
+use crate::pattern_components::*;
+use crate::pattern_matcher::{CustomMatcher, GrammarPattern, PatternCategory, TokenMatcher};
 use crate::types::ConjugationPattern;
 
 /// JLPT N2 level grammar patterns (upper intermediate forms)
@@ -50,10 +49,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "yamuoezu_verb",
-                tokens: vec![
-                    TokenMatcher::specific_verb("やむをえる"),
-                    TokenMatcher::Surface("ず"),
-                ],
+                tokens: yamuoezu_verb(),
                 priority: 7,
                 category: PatternCategory::Construction,
             },
@@ -246,10 +242,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "kaneru",
-                tokens: vec![
-                    TokenMatcher::verb_with_form("連用形"),
-                    TokenMatcher::specific_verb("かねる"),
-                ],
+                tokens: kaneru(),
                 priority: 7,
                 category: PatternCategory::Construction,
             },
@@ -345,12 +338,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "ta_ue_de",
-                tokens: vec![
-                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
-                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
-                    TokenMatcher::Surface("上"),
-                    TokenMatcher::Surface("で"),
-                ],
+                tokens: ta_ue_de(),
                 priority: 9,
                 category: PatternCategory::Construction,
             },

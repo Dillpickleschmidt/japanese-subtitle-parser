@@ -1,6 +1,5 @@
-use crate::pattern_matcher::{
-    CustomMatcher, GrammarPattern, PatternCategory, TokenMatcher,
-};
+use crate::pattern_components::*;
+use crate::pattern_matcher::{CustomMatcher, GrammarPattern, PatternCategory, TokenMatcher};
 use crate::types::ConjugationPattern;
 
 /// JLPT N3 level grammar patterns (intermediate forms)
@@ -9,10 +8,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "hajimeru",
-                tokens: vec![
-                    TokenMatcher::verb_with_form("連用形"),
-                    TokenMatcher::specific_verb("始める"),
-                ],
+                tokens: hajimeru(),
                 priority: 7,
                 category: PatternCategory::Construction,
             },
@@ -32,12 +28,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "you_ni_naru",
-                tokens: vec![
-                    TokenMatcher::verb_with_form("基本形"),
-                    TokenMatcher::Surface("よう"),
-                    TokenMatcher::Surface("に"),
-                    TokenMatcher::specific_verb("なる"),
-                ],
+                tokens: you_ni_naru(),
                 priority: 10,
                 category: PatternCategory::Construction,
             },
@@ -47,12 +38,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "you_ni_suru",
-                tokens: vec![
-                    TokenMatcher::verb_with_form("基本形"),
-                    TokenMatcher::Surface("よう"),
-                    TokenMatcher::Surface("に"),
-                    TokenMatcher::specific_verb("する"),
-                ],
+                tokens: you_ni_suru(),
                 priority: 10,
                 category: PatternCategory::Construction,
             },
@@ -62,11 +48,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "tame_ni",
-                tokens: vec![
-                    TokenMatcher::verb_with_form("基本形"),
-                    TokenMatcher::Surface("ため"),
-                    TokenMatcher::Surface("に"),
-                ],
+                tokens: tame_ni(),
                 priority: 8,
                 category: PatternCategory::Construction,
             },
@@ -76,10 +58,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "zu",
-                tokens: vec![
-                    TokenMatcher::verb_with_form("未然形"),
-                    TokenMatcher::Surface("ず"),
-                ],
+                tokens: zu(),
                 priority: 6,
                 category: PatternCategory::Construction,
             },
@@ -102,11 +81,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "ta_bakari",
-                tokens: vec![
-                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
-                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
-                    TokenMatcher::Surface("ばかり"),
-                ],
+                tokens: ta_bakari(),
                 priority: 9,
                 category: PatternCategory::Construction,
             },
@@ -116,12 +91,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "ta_mono_da",
-                tokens: vec![
-                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
-                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
-                    TokenMatcher::Surface("もの"),
-                    TokenMatcher::Surface("だ"),
-                ],
+                tokens: ta_mono_da(),
                 priority: 10,
                 category: PatternCategory::Construction,
             },
@@ -131,12 +101,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "ta_mono_desu",
-                tokens: vec![
-                    TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
-                    TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
-                    TokenMatcher::Surface("もの"),
-                    TokenMatcher::Surface("です"),
-                ],
+                tokens: ta_mono_desu(),
                 priority: 10,
                 category: PatternCategory::Construction,
             },
@@ -187,12 +152,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         (
             GrammarPattern {
                 name: "nai_uchi_ni",
-                tokens: vec![
-                    TokenMatcher::verb_with_form("未然形"),
-                    TokenMatcher::Surface("ない"),
-                    TokenMatcher::Surface("うち"),
-                    TokenMatcher::Surface("に"),
-                ],
+                tokens: nai_uchi_ni(),
                 priority: 10,
                 category: PatternCategory::Construction,
             },

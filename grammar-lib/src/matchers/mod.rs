@@ -47,8 +47,6 @@ pub enum CustomMatcher {
     TaraForm,
     /// Match だ or た (past auxiliary)
     PastAuxiliary,
-    /// Match て or で (te-form particle)
-    TeParticle,
     /// Match て or で as either surface or particle
     TeDeForm,
     /// Match verb in 連用形 or 連用タ接続 (for flexible patterns)
@@ -83,10 +81,8 @@ pub enum CustomMatcher {
     ToIiForm,
     /// Match し particle (接続助詞)
     ShiParticle,
-    /// Match verb 連用形 or adjective stem (for すぎる pattern)
+    /// Match verb 連用形 or adjective stem (for すぎる and そう appearance patterns)
     SugiruStem,
-    /// Match verb 連用形 or adjective stem (for そう appearance)
-    SouAppearanceStem,
     /// Match plain form verb or adjective (for そうだ hearsay)
     SouHearsayStem,
     /// Match まい (negative volition)
@@ -133,7 +129,6 @@ pub fn matches(matcher: &CustomMatcher, token: &KagomeToken) -> bool {
         CustomMatcher::CausativeForm => CausativeFormMatcher.matches(token),
         CustomMatcher::TaraForm => TaraFormMatcher.matches(token),
         CustomMatcher::PastAuxiliary => PastAuxiliaryMatcher.matches(token),
-        CustomMatcher::TeParticle => TeParticleMatcher.matches(token),
         CustomMatcher::TeDeForm => TeDeFormMatcher.matches(token),
         CustomMatcher::FlexibleVerbForm => FlexibleVerbFormMatcher.matches(token),
         CustomMatcher::MustPattern => MustPatternMatcher.matches(token),
@@ -153,7 +148,6 @@ pub fn matches(matcher: &CustomMatcher, token: &KagomeToken) -> bool {
         CustomMatcher::ToIiForm => ToIiFormMatcher.matches(token),
         CustomMatcher::ShiParticle => ShiParticleMatcher.matches(token),
         CustomMatcher::SugiruStem => SugiruStemMatcher.matches(token),
-        CustomMatcher::SouAppearanceStem => SouAppearanceStemMatcher.matches(token),
         CustomMatcher::SouHearsayStem => SouHearsayStemMatcher.matches(token),
         CustomMatcher::MaiForm => MaiFormMatcher.matches(token),
         CustomMatcher::PpoiForm => PpoiFormMatcher.matches(token),
