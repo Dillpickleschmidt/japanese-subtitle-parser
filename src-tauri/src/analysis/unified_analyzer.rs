@@ -7,7 +7,7 @@ use crate::db::grammar_pattern::GrammarPatternCollector;
 use crate::error::Error;
 use grammar_lib::{
     create_pattern_matcher,
-    pattern_matcher::{PatternCategory, PatternMatcher},
+    PatternCategory, PatternMatcher,
     types::{ConjugationPattern, KagomeToken},
 };
 use std::collections::{HashMap, HashSet};

@@ -1,13 +1,11 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-/// Metadata about a grammar pattern
 #[derive(Debug, Clone)]
 pub struct PatternMetadata {
     pub jlpt_level: &'static str,
 }
 
-/// Central registry for grammar pattern metadata
 #[derive(Debug)]
 pub struct PatternRegistry {
     metadata: HashMap<&'static str, PatternMetadata>,
@@ -18,7 +16,6 @@ impl PatternRegistry {
     fn build() -> Self {
         let mut metadata = HashMap::new();
 
-        // Collect patterns from all JLPT levels via the patterns module
         let all_patterns = crate::patterns::get_all_patterns();
 
         for (grammar_pattern, _conjugation_pattern, jlpt_level) in all_patterns {
@@ -37,10 +34,9 @@ impl PatternRegistry {
     }
 }
 
-/// Global pattern registry instance
 pub static PATTERN_REGISTRY: LazyLock<PatternRegistry> = LazyLock::new(PatternRegistry::build);
 
-/// Get the JLPT level for a pattern name (convenience function)
+/// Convenience function to get JLPT level for a pattern name
 pub fn get_jlpt_level(pattern_name: &str) -> &'static str {
     PATTERN_REGISTRY.get_jlpt_level(pattern_name)
 }

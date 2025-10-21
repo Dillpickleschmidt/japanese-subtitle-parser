@@ -204,7 +204,7 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
 
     let mut pattern_id_cache = std::collections::HashMap::new();
     for pattern_name in pattern_names {
-        let jlpt_level = grammar_lib::patterns::get_jlpt_level(&pattern_name);
+        let jlpt_level = grammar_lib::get_jlpt_level(&pattern_name);
         let pattern_id =
             crate::db::grammar_pattern::get_or_create_pattern_id(&tx, &pattern_name, jlpt_level)?;
         pattern_id_cache.insert(pattern_name, pattern_id);

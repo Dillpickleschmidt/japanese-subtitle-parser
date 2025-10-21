@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 use grammar_lib::create_pattern_matcher;
-use grammar_lib::pattern_matcher::PatternCategory;
+use grammar_lib::PatternCategory;
 use grammar_lib::types::KagomeToken;
 
 /// Grammar match result for JavaScript

@@ -8,7 +8,7 @@ mod n5_patterns;
 use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::process_batch_with_kagome_server;
 use grammar_lib::create_pattern_matcher;
-use grammar_lib::pattern_matcher::PatternMatch;
+use grammar_lib::PatternMatch;
 use grammar_lib::types::{ConjugationPattern, KagomeToken};
 use std::sync::{LazyLock, Mutex};
 
@@ -37,6 +37,57 @@ pub fn has_pattern(matches: &[PatternMatch<ConjugationPattern>], pattern_name: &
     matches.iter().any(|m| m.pattern_name == pattern_name)
 }
 
+/// Helper: Convert character position to byte position in a string
+pub fn char_pos_to_byte_pos(s: &str, char_pos: usize) -> usize {
+    s.char_indices()
+        .nth(char_pos)
+        .map(|(byte_pos, _)| byte_pos)
+        .unwrap_or(s.len())
+}
+
+/// Get the text span covered by a pattern in the sentence
+pub fn pattern_text(sentence: &str, pattern: &PatternMatch<ConjugationPattern>) -> String {
+    let start_byte = char_pos_to_byte_pos(sentence, pattern.start_char as usize);
+    let end_byte = char_pos_to_byte_pos(sentence, pattern.end_char as usize);
+    sentence[start_byte..end_byte].to_string()
+}
+
+/// Assert that a pattern was detected
+pub fn assert_has_pattern(
+    matches: &[PatternMatch<ConjugationPattern>],
+    pattern_name: &str,
+) {
+    assert!(
+        has_pattern(matches, pattern_name),
+        "Pattern '{}' not found",
+        pattern_name
+    );
+}
+
+/// Assert that a pattern is at the expected character range
+pub fn assert_pattern_range(
+    matches: &[PatternMatch<ConjugationPattern>],
+    pattern_name: &str,
+    expected_start: u32,
+    expected_end: u32,
+) {
+    let pattern = matches
+        .iter()
+        .find(|p| p.pattern_name == pattern_name)
+        .unwrap_or_else(|| panic!("Pattern '{}' not found", pattern_name));
+
+    assert_eq!(
+        pattern.start_char, expected_start,
+        "Pattern '{}': expected start {}, got {}",
+        pattern_name, expected_start, pattern.start_char
+    );
+    assert_eq!(
+        pattern.end_char, expected_end,
+        "Pattern '{}': expected end {}, got {}",
+        pattern_name, expected_end, pattern.end_char
+    );
+}
+
 /// Print debug information about tokenization and pattern detection
 pub fn print_debug(
     sentence: &str,
@@ -62,9 +113,10 @@ pub fn print_debug(
         println!("  (none)");
     } else {
         for m in matches {
+            let text = pattern_text(sentence, m);
             println!(
-                "  {} (confidence: {:.1}) [start_char={}, end_char={}]",
-                m.pattern_name, m.confidence, m.start_char, m.end_char
+                "  {} (confidence: {:.1}) [chars {}-{}] = '{}'",
+                m.pattern_name, m.confidence, m.start_char, m.end_char, text
             );
         }
     }

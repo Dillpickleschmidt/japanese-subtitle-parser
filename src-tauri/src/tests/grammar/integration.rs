@@ -3,14 +3,6 @@ use super::*;
 // Integration tests for grammar pattern matching with natural sentences.
 // These tests verify that patterns work correctly together in realistic usage.
 
-/// Helper: Convert character position to byte position in a string
-fn char_pos_to_byte_pos(s: &str, char_pos: usize) -> usize {
-    s.char_indices()
-        .nth(char_pos)
-        .map(|(byte_pos, _)| byte_pos)
-        .unwrap_or(s.len())
-}
-
 // ========== Multi-Pattern Natural Sentences ==========
 
 #[test]

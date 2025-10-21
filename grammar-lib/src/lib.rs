@@ -1,8 +1,15 @@
-pub mod matchers;
-pub mod pattern_matcher;
-pub mod pattern_registry;
-pub mod patterns;
+// Internal implementation modules
+mod matchers;
+mod pattern_matcher;
+mod pattern_registry;
+mod patterns;
+
+// Public API
 pub mod types;
 
-// Most pattern_matcher types are now only used internally
+// Re-export the main entry point
 pub use patterns::create_pattern_matcher;
+
+// Re-export types needed by consumers
+pub use pattern_matcher::{PatternCategory, PatternMatch, PatternMatcher};
+pub use pattern_registry::get_jlpt_level;

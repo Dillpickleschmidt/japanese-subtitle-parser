@@ -1,32 +1,62 @@
-use crate::pattern_matcher::{
-    CustomMatcher, GrammarPattern, PatternCategory, TokenMatcher,
-};
+use crate::pattern_matcher::{CustomMatcher, GrammarPattern, PatternCategory, TokenMatcher};
 use crate::types::ConjugationPattern;
 
 /// JLPT N1 level grammar patterns (advanced forms)
 pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)> {
     vec![
-        // めく: Shows signs of, appears to be (suffix to noun/verb stem)
-        // Examples: 謎めく (mysterious), 春めく (spring-like), 皮肉めく (ironic)
-        // Note: Kagome may tokenize as single verb (春めく) or split (謎 + めく)
-        // We match the split version; compound versions recognized as single verbs won't match
+        // めく (split): Shows signs of (謎めく - mysterious)
+        // Structures: Noun + めく/めいて/めいた/めいている
         (
             GrammarPattern {
                 name: "meku",
-                tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("めく")],
+                tokens: vec![
+                    TokenMatcher::Custom(CustomMatcher::Noun),
+                    TokenMatcher::Verb {
+                        conjugation_form: None,
+                        base_form: Some("めく"),
+                    },
+                ],
                 priority: 6,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::Meku,
             "n1",
         ),
-        // まみれ: Covered with, smeared with (suffix to noun)
-        // Examples: 血まみれ (covered in blood), 泥まみれ (covered in mud)
+        // めく (compound): Single-token compounds (春めく - spring-like)
+        // Structures: Noun[Season] + めく/めいてきた/めいている (single token)
+        (
+            GrammarPattern {
+                name: "meku_compound",
+                tokens: vec![TokenMatcher::Custom(CustomMatcher::VerbWithBaseSuffix(
+                    "めく",
+                ))],
+                priority: 5,
+                category: PatternCategory::Construction,
+            },
+            ConjugationPattern::Meku,
+            "n1",
+        ),
+        // まみれ (split): Covered with, smeared with (血まみれ - covered in blood)
+        // Structures: Noun + まみれ/まみれの/まみれになって
         (
             GrammarPattern {
                 name: "mamire",
                 tokens: vec![TokenMatcher::Any, TokenMatcher::Surface("まみれ")],
                 priority: 6,
+                category: PatternCategory::Construction,
+            },
+            ConjugationPattern::Mamire,
+            "n1",
+        ),
+        // まみれ (compound): Single-token compounds (泥まみれ - covered in mud)
+        // Structures: Noun[+まみれ] as single token
+        (
+            GrammarPattern {
+                name: "mamire_compound",
+                tokens: vec![TokenMatcher::Custom(CustomMatcher::NounWithBaseSuffix(
+                    "まみれ",
+                ))],
+                priority: 5,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::Mamire,

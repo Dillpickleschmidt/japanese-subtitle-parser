@@ -2,39 +2,85 @@ use super::*;
 
 // ========== Phase 1: Suffix Patterns (9 patterns, ~18 tests) ==========
 
-#[test]
-fn test_meku() {
-    // Use 皮肉めく which should split as 皮肉 + めく
-    let sentence = "皮肉めく発言をした";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
+mod meku_tests {
+    use super::*;
 
-    print_debug(sentence, &tokens, &patterns);
+    #[test]
+    fn basic_form() {
+        let sentence = "皮肉めく発言をした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
 
-    assert!(
-        has_pattern(&patterns, "meku"),
-        "Expected meku pattern not detected in '{}'",
-        sentence
-    );
+        assert_has_pattern(&patterns, "meku");
+        assert_pattern_range(&patterns, "meku", 0, 4);
+    }
+
+    #[test]
+    fn te_form() {
+        let sentence = "冗談めいて言った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "meku");
+    }
+
+    #[test]
+    fn ta_form_modifying_noun() {
+        let sentence = "謎めいた雰囲気がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "meku");
+    }
+
+    #[test]
+    fn progressive_form() {
+        let sentence = "冬めいている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "meku");
+    }
+
+    #[test]
+    fn te_kita_form() {
+        let sentence = "春めいてきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "meku_compound");
+    }
 }
 
-#[test]
-fn test_mamire() {
-    // Note: Common compounds like 血まみれ/泥まみれ are single tokens
-    // This pattern matches less common combinations that split
-    let sentence = "油まみれの手で触った";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
+mod mamire_tests {
+    use super::*;
 
-    print_debug(sentence, &tokens, &patterns);
+    #[test]
+    fn basic_noun_form() {
+        let sentence = "服泥まみれじゃん";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
 
-    // If this doesn't split either, we may need to accept that
-    // Kagome treats most X+まみれ as compounds
-    assert!(
-        has_pattern(&patterns, "mamire"),
-        "Expected mamire pattern not detected in '{}'",
-        sentence
-    );
+        assert_has_pattern(&patterns, "mamire_compound");
+    }
+
+    #[test]
+    fn with_no_particle() {
+        let sentence = "泥まみれの服を洗濯機に入れる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "mamire_compound");
+    }
+
+    #[test]
+    fn with_ninatte_form() {
+        let sentence = "犬が血まみれになっていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "mamire_compound");
+    }
 }
 
 #[test]
