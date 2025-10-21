@@ -50,6 +50,9 @@ pub enum TokenMatcher {
         conjugation_form: Option<&'static str>,
         base_form: Option<&'static str>,
     },
+    Adjective {
+        base_form: Option<&'static str>,
+    },
     Surface(&'static str),
     Any,
     Custom(CustomMatcher),
@@ -188,30 +191,31 @@ impl<T: Clone> PatternMatcher<T> {
     // PRIVATE HELPER METHODS
     // ========================================================================
 
-    /// Extends construction patterns ending with verbs to include following auxiliary verbs
+    /// Extends all patterns ending with verbs or adjectives to include following auxiliary verbs
     /// e.g., te_iru (1,6) followed by ます (6,8) becomes (1,8)
+    /// e.g., adjective (4,7) followed by です (7,9) becomes (4,9)
     fn extend_with_auxiliary_verbs(matches: &mut [PatternMatch<T>], tokens: &[KagomeToken]) {
-        for construction in matches {
-            if construction.category != PatternCategory::Construction {
-                continue;
-            }
+        for pattern in matches {
+            // Skip if pattern doesn't contain any verb or adjective
+            let has_verb_or_adjective = tokens.iter().any(|token| {
+                token.start >= pattern.start_char
+                    && token.end <= pattern.end_char
+                    && (token.pos.first().is_some_and(|pos| pos == "動詞")
+                        || token.pos.first().is_some_and(|pos| pos == "形容詞")
+                        || (token.pos.first().is_some_and(|pos| pos == "名詞")
+                            && token.pos.get(1).is_some_and(|sub| sub == "形容動詞語幹")))
+            });
 
-            // Find the token that ends this construction pattern
-            let last_token_idx = tokens.iter().rposition(|t| t.end == construction.end_char);
-
-            // Skip if not ending with a verb (動詞)
-            if last_token_idx
-                .is_none_or(|idx| tokens[idx].pos.first().is_none_or(|pos| pos != "動詞"))
-            {
+            if !has_verb_or_adjective {
                 continue;
             }
 
             // Find the next token (potential auxiliary verb)
-            let next_token_idx = tokens.iter().position(|t| t.start == construction.end_char);
+            let next_token_idx = tokens.iter().position(|t| t.start == pattern.end_char);
 
             if let Some(idx) = next_token_idx {
                 // Extend through consecutive auxiliary verbs
-                let mut extend_to = construction.end_char;
+                let mut extend_to = pattern.end_char;
                 let mut current_idx = idx;
 
                 while current_idx < tokens.len()
@@ -224,8 +228,8 @@ impl<T: Clone> PatternMatcher<T> {
                     current_idx += 1;
                 }
 
-                if extend_to > construction.end_char {
-                    construction.end_char = extend_to;
+                if extend_to > pattern.end_char {
+                    pattern.end_char = extend_to;
                 }
             }
         }
@@ -307,6 +311,28 @@ impl<T: Clone> PatternMatcher<T> {
                 (true, score)
             }
 
+            TokenMatcher::Adjective { base_form } => {
+                // Match both i-adjectives (形容詞) and na-adjectives (名詞/形容動詞語幹)
+                let is_i_adjective = token.pos.first().is_some_and(|pos| pos == "形容詞");
+                let is_na_adjective = token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.pos.get(1).is_some_and(|sub| sub == "形容動詞語幹");
+
+                if !is_i_adjective && !is_na_adjective {
+                    return (false, 0.0);
+                }
+
+                let mut score = 1.0; // Base score for matching POS
+
+                if let Some(expected_base) = base_form {
+                    if &token.base_form != expected_base {
+                        return (false, 0.0);
+                    }
+                    score += 3.0; // High score for specific adjective
+                }
+
+                (true, score)
+            }
+
             TokenMatcher::Surface(expected) => {
                 if token.surface == *expected {
                     (true, 3.0) // High score for exact surface match
@@ -350,6 +376,12 @@ impl TokenMatcher {
     pub fn specific_verb(base_form: &'static str) -> Self {
         TokenMatcher::Verb {
             conjugation_form: None,
+            base_form: Some(base_form),
+        }
+    }
+
+    pub fn specific_adjective(base_form: &'static str) -> Self {
+        TokenMatcher::Adjective {
             base_form: Some(base_form),
         }
     }

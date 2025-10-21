@@ -398,3 +398,63 @@ mod mae_ni_tests {
         assert_pattern_selected(&patterns, &tokens, "mae_ni");
     }
 }
+
+// Adjective conjugation patterns
+mod adjective_patterns {
+    use super::*;
+
+    #[test]
+    fn test_i_adjective_plain() {
+        let sentence = "新しい本を買った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adjective");
+        assert_pattern_range(&patterns, "adjective", 0, 3); // 新しい
+        assert_pattern_selected(&patterns, &tokens, "adjective");
+    }
+
+    #[test]
+    fn test_i_adjective_desu() {
+        let sentence = "この本は面白いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adjective");
+        assert_pattern_range(&patterns, "adjective", 4, 9); // 面白いです
+        assert_pattern_selected(&patterns, &tokens, "adjective");
+    }
+
+    #[test]
+    fn test_i_adjective_past_desu() {
+        let sentence = "昨日は寒かったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adjective_past");
+        assert_pattern_range(&patterns, "adjective_past", 3, 9); // 寒かったです
+        assert_pattern_selected(&patterns, &tokens, "adjective_past");
+    }
+
+    #[test]
+    fn test_na_adjective_plain() {
+        let sentence = "親切な人です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adjective");
+        assert_pattern_range(&patterns, "adjective", 0, 3); // 親切な
+        assert_pattern_selected(&patterns, &tokens, "adjective");
+    }
+
+    #[test]
+    fn test_na_adjective_desu() {
+        let sentence = "彼女は親切です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adjective");
+        assert_pattern_range(&patterns, "adjective", 3, 7); // 親切です
+        assert_pattern_selected(&patterns, &tokens, "adjective");
+    }
+}

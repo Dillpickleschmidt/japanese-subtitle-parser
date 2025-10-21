@@ -1,6 +1,4 @@
-use crate::pattern_matcher::{
-    CustomMatcher, GrammarPattern, PatternCategory, TokenMatcher,
-};
+use crate::pattern_matcher::{CustomMatcher, GrammarPattern, PatternCategory, TokenMatcher};
 use crate::types::ConjugationPattern;
 
 /// JLPT N5 level grammar patterns (fundamental forms)
@@ -412,6 +410,30 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::MaeNi,
+            "n5",
+        ),
+        // Adjective conjugation patterns
+        (
+            GrammarPattern {
+                name: "adjective",
+                tokens: vec![TokenMatcher::Adjective { base_form: None }],
+                priority: 1,
+                category: PatternCategory::Conjugation,
+            },
+            ConjugationPattern::Dictionary,
+            "n5",
+        ),
+        (
+            GrammarPattern {
+                name: "adjective_past",
+                tokens: vec![
+                    TokenMatcher::Adjective { base_form: None },
+                    TokenMatcher::Surface("た"),
+                ],
+                priority: 2,
+                category: PatternCategory::Conjugation,
+            },
+            ConjugationPattern::Dictionary,
             "n5",
         ),
     ]
