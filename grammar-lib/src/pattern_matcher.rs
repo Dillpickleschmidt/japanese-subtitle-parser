@@ -59,10 +59,11 @@ pub enum TokenMatcher {
     /// Wildcard matcher - skips min to max tokens with optional stop conditions.
     /// NOTE: Only one wildcard per pattern is currently supported.
     /// When wildcard is encountered, remaining pattern is matched and result is returned immediately.
+    /// stop_conditions: matchers to check - if any match, stop advancing the wildcard
     Wildcard {
         min: usize,
         max: usize,
-        stop_at_punctuation: bool,
+        stop_conditions: Vec<TokenMatcher>,
     },
     /// Optional matcher - inner matcher is tried, but pattern continues if it doesn't match.
     /// If inner matcher succeeds, position advances. If it fails, position stays same (pattern skips it).
@@ -271,7 +272,7 @@ impl<T: Clone> PatternMatcher<T> {
                 TokenMatcher::Wildcard {
                     min,
                     max,
-                    stop_at_punctuation,
+                    stop_conditions,
                 } => {
                     // Delegate to wildcard-specific matching logic
                     return self.match_with_wildcard(
@@ -282,7 +283,7 @@ impl<T: Clone> PatternMatcher<T> {
                         specificity_score,
                         *min,
                         *max,
-                        *stop_at_punctuation,
+                        stop_conditions.clone(),
                         start,
                         result,
                     );
@@ -366,7 +367,7 @@ impl<T: Clone> PatternMatcher<T> {
         specificity_score: f32,
         min: usize,
         max: usize,
-        stop_at_punctuation: bool,
+        stop_conditions: Vec<TokenMatcher>,
         start: usize,
         result: &T,
     ) -> Option<PatternMatch<T>> {
@@ -386,10 +387,22 @@ impl<T: Clone> PatternMatcher<T> {
             for offset in 0..skip_count {
                 let wildcard_token = &tokens[current_pos + offset];
 
-                // Stop at punctuation if requested
-                if stop_at_punctuation && wildcard_token.pos.first().is_some_and(|p| p == "記号")
-                {
+                // Always stop at punctuation (sentence/clause boundary)
+                if wildcard_token.pos.first().is_some_and(|pos| pos == "記号") {
                     should_stop = true;
+                    break;
+                }
+
+                // Check if any stop condition matches this token
+                for stop_condition in &stop_conditions {
+                    let (matches, _score) = self.token_matches(stop_condition, wildcard_token);
+                    if matches {
+                        should_stop = true;
+                        break;
+                    }
+                }
+
+                if should_stop {
                     break;
                 }
             }
@@ -431,7 +444,7 @@ impl<T: Clone> PatternMatcher<T> {
 
         for matcher in remaining {
             if pos >= tokens.len() {
-                return if remaining.len() == 0 {
+                return if remaining.is_empty() {
                     Some(pos)
                 } else {
                     None

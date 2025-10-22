@@ -124,68 +124,126 @@ mod tari_tests {
 // N4 conditional patterns
 #[test]
 fn test_ba_conditional_detection() {
-    let sentence = "食べれば";
+    let sentence = "食べれば元気になる";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "ba_conditional"),
-        "Expected ba_conditional pattern not detected in '{}'",
-        sentence
-    );
+    assert_has_pattern(&patterns, "ba_conditional");
+    assert_pattern_range(&patterns, "ba_conditional", 0, 4); // 食べれば
+    assert_pattern_selected(&patterns, &tokens, "ba_conditional");
 }
 
 #[test]
 fn test_tara_conditional_detection() {
-    let sentence = "食べたら";
+    let sentence = "食べたら美味しかった";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "tara_conditional"),
-        "Expected tara_conditional pattern not detected in '{}'",
-        sentence
-    );
+    assert_has_pattern(&patterns, "tara_conditional");
+    assert_pattern_range(&patterns, "tara_conditional", 0, 4); // 食べたら
+    assert_pattern_selected(&patterns, &tokens, "tara_conditional");
 }
 
-// N4 causative/passive patterns
-#[test]
-fn test_potential_detection() {
-    let sentence = "食べられる";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
+// N4 potential patterns
+mod potential_tests {
+    use super::*;
 
-    print_debug(sentence, &tokens, &patterns);
+    #[test]
+    fn test_potential_ichidan() {
+        let sentence = "魚が食べられるようになった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
 
-    assert!(
-        has_pattern(&patterns, "potential"),
-        "Expected potential pattern not detected in '{}'",
-        sentence
-    );
+        assert_has_pattern(&patterns, "potential_ga_ichidan");
+        assert_pattern_range(&patterns, "potential_ga_ichidan", 1, 7); // が食べられる
+        assert_pattern_selected(&patterns, &tokens, "potential_ga_ichidan");
+    }
+
+    #[test]
+    fn test_potential_godan() {
+        let sentence = "水が飲める";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "potential_ga_verb");
+        assert_pattern_range(&patterns, "potential_ga_verb", 1, 5); // が飲める
+        assert_pattern_selected(&patterns, &tokens, "potential_ga_verb");
+    }
 }
 
-#[test]
-fn test_passive_detection() {
-    let sentence = "食べられる";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
+// N4 passive patterns
+mod passive_tests {
+    use super::*;
 
-    print_debug(sentence, &tokens, &patterns);
+    #[test]
+    fn test_passive_ichidan_dictionary() {
+        let sentence = "先生に褒められる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
 
-    // Note: られる can be both potential and passive
-    // We expect at least one of them to be detected
-    let has_potential_or_passive =
-        has_pattern(&patterns, "potential") || has_pattern(&patterns, "passive");
+        assert_has_pattern(&patterns, "passive_ichidan");
+        assert_pattern_range(&patterns, "passive_ichidan", 3, 8); // 褒められる
+        assert_pattern_selected(&patterns, &tokens, "passive_ichidan");
+    }
 
-    assert!(
-        has_potential_or_passive,
-        "Expected potential or passive pattern not detected in '{}'",
-        sentence
-    );
+    #[test]
+    fn test_passive_godan_dictionary() {
+        let sentence = "ビールが飲まれる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "passive_godan");
+        assert_pattern_range(&patterns, "passive_godan", 4, 8); // 飲まれる
+        assert_pattern_selected(&patterns, &tokens, "passive_godan");
+    }
+
+    #[test]
+    fn test_passive_ichidan_past_tense() {
+        let sentence = "学生が先生に褒められた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        print_debug(sentence, &tokens, &patterns);
+
+        assert_has_pattern(&patterns, "passive_ichidan");
+        assert_pattern_range(&patterns, "passive_ichidan", 6, 11); // 褒められた
+        assert_pattern_selected(&patterns, &tokens, "passive_ichidan");
+    }
+
+    #[test]
+    fn test_passive_godan_past_tense() {
+        let sentence = "ビールが飲まれた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "passive_godan");
+        assert_pattern_range(&patterns, "passive_godan", 4, 8); // 飲まれた
+        assert_pattern_selected(&patterns, &tokens, "passive_godan");
+    }
+
+    #[test]
+    fn test_passive_ichidan_te_iru() {
+        let sentence = "先生に褒められている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "passive_ichidan");
+        assert_pattern_range(&patterns, "passive_ichidan", 3, 7); // 褒められ
+        assert_pattern_selected(&patterns, &tokens, "passive_ichidan");
+    }
+
+    #[test]
+    fn test_passive_godan_te_iru() {
+        let sentence = "猫に追われている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        print_debug(sentence, &tokens, &patterns);
+
+        assert_has_pattern(&patterns, "passive_godan");
+        assert_pattern_range(&patterns, "passive_godan", 2, 5); // 追われ
+        assert_pattern_selected(&patterns, &tokens, "passive_godan");
+    }
 }
 
 #[test]
@@ -895,25 +953,6 @@ fn test_te_yokatta_de_variation() {
         has_pattern(&patterns, "te_yokatta"),
         "Expected te_yokatta pattern not detected in '{}' (de-form variation)",
         sentence
-    );
-}
-
-#[test]
-fn test_potential_passive_ambiguity() {
-    let sentence = "食べられる"; // Ichidan: can be both potential AND passive
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
-
-    // Both patterns should be detected since られる is ambiguous for ichidan verbs
-    let has_potential = has_pattern(&patterns, "potential");
-    let has_passive = has_pattern(&patterns, "passive");
-
-    assert!(
-        has_potential && has_passive,
-        "Expected BOTH potential and passive patterns to be detected in '{}' (ambiguous ichidan), but got potential={}, passive={}",
-        sentence, has_potential, has_passive
     );
 }
 

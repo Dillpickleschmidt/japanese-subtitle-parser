@@ -70,8 +70,8 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         // Causative/Passive forms
         (
             GrammarPattern {
-                name: "potential",
-                tokens: potential(),
+                name: "potential_godan",
+                tokens: potential_godan(),
                 priority: 5,
                 category: PatternCategory::Construction,
             },
@@ -80,12 +80,42 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         ),
         (
             GrammarPattern {
-                name: "passive",
-                tokens: passive(),
+                name: "passive_ichidan",
+                tokens: passive_ichidan(),
                 priority: 4,
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::Passive,
+            "n4",
+        ),
+        (
+            GrammarPattern {
+                name: "passive_godan",
+                tokens: passive_godan(),
+                priority: 4,
+                category: PatternCategory::Construction,
+            },
+            ConjugationPattern::Passive,
+            "n4",
+        ),
+        (
+            GrammarPattern {
+                name: "potential_ga_verb",
+                tokens: potential_ga_verb(),
+                priority: 6,
+                category: PatternCategory::Construction,
+            },
+            ConjugationPattern::Potential,
+            "n4",
+        ),
+        (
+            GrammarPattern {
+                name: "potential_ga_ichidan",
+                tokens: potential_ga_ichidan(),
+                priority: 6,
+                category: PatternCategory::Construction,
+            },
+            ConjugationPattern::Potential,
             "n4",
         ),
         (

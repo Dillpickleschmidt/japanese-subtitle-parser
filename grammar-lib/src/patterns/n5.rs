@@ -265,7 +265,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                     TokenMatcher::Wildcard {
                         min: 0,
                         max: 5,
-                        stop_at_punctuation: true,
+                        stop_conditions: vec![],
                     },
                     TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm),
                     TokenMatcher::Custom(CustomMatcher::TeDeForm),

@@ -302,18 +302,26 @@ pub fn nara_conditional() -> Vec<TokenMatcher> {
 // Voice & mood (N4+)
 
 /// Potential form: Verb未然形 + れる/られる (can do)
-pub fn potential() -> Vec<TokenMatcher> {
+pub fn potential_godan() -> Vec<TokenMatcher> {
     vec![
-        TokenMatcher::verb_with_form("未然形"),
+        TokenMatcher::Custom(CustomMatcher::GodanMizen),
+        TokenMatcher::Custom(CustomMatcher::EruForm),
+    ]
+}
+
+/// Passive form (ichidan): Verb未然形 + られる (is done by)
+pub fn passive_ichidan() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Custom(CustomMatcher::IchidanMizen),
         TokenMatcher::Custom(CustomMatcher::RareruForm),
     ]
 }
 
-/// Passive form: Verb未然形 + れる/られる (is done by)
-pub fn passive() -> Vec<TokenMatcher> {
+/// Passive form (godan): Verb未然形 + れる (is done by)
+pub fn passive_godan() -> Vec<TokenMatcher> {
     vec![
-        TokenMatcher::verb_with_form("未然形"),
-        TokenMatcher::Custom(CustomMatcher::RareruForm),
+        TokenMatcher::Custom(CustomMatcher::GodanMizen),
+        TokenMatcher::Custom(CustomMatcher::ReruForm),
     ]
 }
 
@@ -391,11 +399,53 @@ pub fn tari_suru() -> Vec<TokenMatcher> {
         vec![TokenMatcher::Wildcard {
             min: 0,
             max: 15,
-            stop_at_punctuation: true,
+            stop_conditions: vec![],
         }],
         vec![TokenMatcher::Custom(CustomMatcher::TariParticle)],
         vec![TokenMatcher::specific_verb("する")],
     ])
+}
+
+/// Potential (lexicalized godan): が particle + [optional modifiers] + ichidan verb
+/// Examples: 水が飲める (can drink water), 空が見えない (can't see the sky)
+pub fn potential_ga_verb() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Surface("が"),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 2,
+            stop_conditions: vec![
+                TokenMatcher::Verb {
+                    conjugation_form: None,
+                    base_form: None,
+                },
+                TokenMatcher::Custom(CustomMatcher::Particle),
+            ],
+        },
+        TokenMatcher::Custom(CustomMatcher::GaPotentialVerb),
+    ]
+}
+
+/// Potential (ichidan with が particle): が + [optional modifiers] + Verb未然形 + られる
+/// Examples: 魚が食べられる (can eat fish), 空が見える (can see sky)
+/// More specific than bare potential_ichidan - requires が as evidence
+pub fn potential_ga_ichidan() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Surface("が"),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 2,
+            stop_conditions: vec![
+                TokenMatcher::Verb {
+                    conjugation_form: None,
+                    base_form: None,
+                },
+                TokenMatcher::Custom(CustomMatcher::Particle),
+            ],
+        },
+        TokenMatcher::Custom(CustomMatcher::IchidanMizen),
+        TokenMatcher::Custom(CustomMatcher::RareruForm),
+    ]
 }
 
 /// Volitional alternative: Verb未然ウ接続 + う (let's/I will)

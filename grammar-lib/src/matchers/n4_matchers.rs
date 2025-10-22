@@ -3,14 +3,63 @@ use crate::types::KagomeToken;
 
 // ========== Potential and Causative Forms ==========
 
-/// Match られる or れる (potential/passive)
+/// Match ichidan verb in 未然形 (e.g. 食べ from 食べる)
+#[derive(Debug)]
+pub struct IchidanMizenMatcher;
+
+impl TokenMatcherLogic for IchidanMizenMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        token.pos.first().is_some_and(|pos| pos == "動詞")
+            && token.features.get(4).is_some_and(|f| f == "一段")
+            && token.features.get(5).is_some_and(|f| f == "未然形")
+    }
+}
+
+/// Match godan verb in 未然形 (e.g. 飲ま from 飲む)
+#[derive(Debug)]
+pub struct GodanMizenMatcher;
+
+impl TokenMatcherLogic for GodanMizenMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        token.pos.first().is_some_and(|pos| pos == "動詞")
+            && token.features.get(4).is_some_and(|f| f.starts_with("五段"))
+            && token.features.get(5).is_some_and(|f| f == "未然形")
+    }
+}
+
+/// Match られる or れる (ichidan potential/passive)
 #[derive(Debug)]
 pub struct RareruFormMatcher;
 
 impl TokenMatcherLogic for RareruFormMatcher {
     fn matches(&self, token: &KagomeToken) -> bool {
-        (token.surface == "られる" || token.surface == "れる")
-            && (token.base_form == "られる" || token.base_form == "れる")
+        (token.base_form == "られる" || token.base_form == "れる")
+            && token.pos.first().is_some_and(|s| s == "動詞")
+            && token.pos.get(1).is_some_and(|s| s == "接尾")
+    }
+}
+
+/// Match れる (godan passive)
+#[derive(Debug)]
+pub struct ReruFormMatcher;
+
+impl TokenMatcherLogic for ReruFormMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        token.base_form == "れる"
+            && token.pos.first().is_some_and(|s| s == "動詞")
+            && token.pos.get(1).is_some_and(|s| s == "接尾")
+    }
+}
+
+/// Match える (godan potential)
+#[derive(Debug)]
+pub struct EruFormMatcher;
+
+impl TokenMatcherLogic for EruFormMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        token.base_form == "える"
+            && token.pos.first().is_some_and(|s| s == "動詞")
+            && token.pos.get(1).is_some_and(|s| s == "接尾")
     }
 }
 
@@ -259,5 +308,19 @@ impl TokenMatcherLogic for SouHearsayStemMatcher {
         } else {
             false
         }
+    }
+}
+
+// ========== Potential Forms ==========
+
+/// Match ichidan verb in any form following a が particle (lexicalized potential)
+/// Examples: 飲める (can drink), 見える (can see), 読めない (can't read)
+#[derive(Debug)]
+pub struct GaPotentialVerbMatcher;
+
+impl TokenMatcherLogic for GaPotentialVerbMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        token.pos.first().is_some_and(|pos| pos == "動詞")
+            && token.features.get(4).is_some_and(|f| f == "一段")
     }
 }

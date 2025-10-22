@@ -288,12 +288,12 @@ fn test_potential_or_passive_detection() {
     print_debug(sentence, &tokens, &patterns);
 
     // At least one should be detected for ichidan verbs
-    let has_potential = has_pattern(&patterns, "potential");
-    let has_passive = has_pattern(&patterns, "passive");
+    let has_potential = has_pattern(&patterns, "potential_ichidan");
+    let has_passive = has_pattern(&patterns, "passive_ichidan");
 
     assert!(
         has_potential || has_passive,
-        "Expected potential or passive pattern in '{}'",
+        "Expected potential_ichidan or passive_ichidan pattern in '{}'",
         sentence
     );
 }

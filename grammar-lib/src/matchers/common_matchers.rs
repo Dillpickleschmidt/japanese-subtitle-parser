@@ -15,3 +15,14 @@ impl TokenMatcherLogic for FlexibleVerbFormMatcher {
         }
     }
 }
+
+/// Match any particle (助詞)
+/// Matches: が、を、に、へ、から、まで、より、で、も、など
+#[derive(Debug)]
+pub struct ParticleMatcher;
+
+impl TokenMatcherLogic for ParticleMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        token.pos.first().is_some_and(|pos| pos == "助詞")
+    }
+}

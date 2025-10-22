@@ -59,7 +59,8 @@ mod tests {
         assert_eq!(get_jlpt_level("masu_form"), "n5");
 
         // Test N4 patterns
-        assert_eq!(get_jlpt_level("potential"), "n4");
+        assert_eq!(get_jlpt_level("potential_ga_ichidan"), "n4");
+        assert_eq!(get_jlpt_level("potential_godan"), "n4");
         assert_eq!(get_jlpt_level("causative"), "n4");
 
         // Test N3 patterns

@@ -39,8 +39,16 @@ pub enum CustomMatcher {
     NakuForm,
     /// Match させ from させる
     SaseForm,
-    /// Match られる or れる (potential/passive)
+    /// Match ichidan verb in 未然形
+    IchidanMizen,
+    /// Match godan verb in 未然形
+    GodanMizen,
+    /// Match られる or れる (ichidan potential/passive)
     RareruForm,
+    /// Match れる (godan passive)
+    ReruForm,
+    /// Match える (godan potential)
+    EruForm,
     /// Match させる or せる (causative)
     CausativeForm,
     /// Match たら (conditional)
@@ -113,6 +121,10 @@ pub enum CustomMatcher {
     NounWithBaseSuffix(&'static str),
     /// Match words that can precede でしょう (verbs, adjectives, nouns, auxiliaries)
     DeshouPreceding,
+    /// Match ichidan verb following が particle (potential construction)
+    GaPotentialVerb,
+    /// Match any particle (助詞)
+    Particle,
 }
 
 /// Centralized matching logic for all custom matchers
@@ -125,7 +137,11 @@ pub fn matches(matcher: &CustomMatcher, token: &KagomeToken) -> bool {
         CustomMatcher::NakereForm => NakereFormMatcher.matches(token),
         CustomMatcher::NakuForm => NakuFormMatcher.matches(token),
         CustomMatcher::SaseForm => SaseFormMatcher.matches(token),
+        CustomMatcher::IchidanMizen => IchidanMizenMatcher.matches(token),
+        CustomMatcher::GodanMizen => GodanMizenMatcher.matches(token),
         CustomMatcher::RareruForm => RareruFormMatcher.matches(token),
+        CustomMatcher::ReruForm => ReruFormMatcher.matches(token),
+        CustomMatcher::EruForm => EruFormMatcher.matches(token),
         CustomMatcher::CausativeForm => CausativeFormMatcher.matches(token),
         CustomMatcher::TaraForm => TaraFormMatcher.matches(token),
         CustomMatcher::PastAuxiliary => PastAuxiliaryMatcher.matches(token),
@@ -170,6 +186,8 @@ pub fn matches(matcher: &CustomMatcher, token: &KagomeToken) -> bool {
                 && token.base_form.ends_with(suffix)
                 && token.base_form != *suffix
         }
+        CustomMatcher::GaPotentialVerb => GaPotentialVerbMatcher.matches(token),
+        CustomMatcher::Particle => ParticleMatcher.matches(token),
     }
 }
 
