@@ -8,8 +8,8 @@ mod n5_patterns;
 use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::process_batch_with_kagome_server;
 use grammar_lib::create_pattern_matcher;
-use grammar_lib::{PatternMatch, PatternMatcher};
 use grammar_lib::types::{ConjugationPattern, KagomeToken};
+use grammar_lib::{PatternMatch, PatternMatcher};
 use std::sync::{LazyLock, Mutex};
 
 /// Shared Kagome server for all tests (avoids port conflicts)
@@ -53,10 +53,7 @@ pub fn pattern_text(sentence: &str, pattern: &PatternMatch<ConjugationPattern>) 
 }
 
 /// Assert that a pattern was detected
-pub fn assert_has_pattern(
-    matches: &[PatternMatch<ConjugationPattern>],
-    pattern_name: &str,
-) {
+pub fn assert_has_pattern(matches: &[PatternMatch<ConjugationPattern>], pattern_name: &str) {
     assert!(
         has_pattern(matches, pattern_name),
         "Pattern '{}' not found",

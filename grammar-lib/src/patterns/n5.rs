@@ -130,19 +130,6 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         ),
         (
             GrammarPattern {
-                name: "mashou",
-                tokens: vec![
-                    TokenMatcher::verb_with_form("連用形"),
-                    TokenMatcher::Custom(CustomMatcher::MashouForm),
-                ],
-                priority: 6,
-                category: PatternCategory::Conjugation,
-            },
-            ConjugationPattern::Mashou,
-            "n5",
-        ),
-        (
-            GrammarPattern {
                 name: "ta_koto_ga_aru",
                 tokens: ta_koto_ga_aru(),
                 priority: 11,

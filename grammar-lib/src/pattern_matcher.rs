@@ -156,13 +156,14 @@ impl<T: Clone> PatternMatcher<T> {
             })
             .collect();
 
-        // Sort matches by confidence (descending)
+        // Sort matches by confidence (descending), then by length (descending)
         let mut indexed_matches: Vec<(usize, &PatternMatch<T>)> =
             matches.iter().enumerate().collect();
         indexed_matches.sort_by(|a, b| {
             b.1.confidence
                 .partial_cmp(&a.1.confidence)
                 .unwrap_or(std::cmp::Ordering::Equal)
+                .then((b.1.end_char - b.1.start_char).cmp(&(a.1.end_char - a.1.start_char)))
         });
 
         // Filter patterns: keep those not contained in higher-confidence patterns
@@ -260,7 +261,6 @@ impl<T: Clone> PatternMatcher<T> {
 
         let mut specificity_score = 0.0;
         let mut current_pos = start;
-        let mut prev_surface: Option<&str> = None;
 
         for (i, matcher) in pattern.tokens.iter().enumerate() {
             if current_pos >= tokens.len() {
@@ -279,7 +279,6 @@ impl<T: Clone> PatternMatcher<T> {
                         tokens,
                         i,
                         current_pos,
-                        prev_surface,
                         specificity_score,
                         *min,
                         *max,
@@ -293,7 +292,6 @@ impl<T: Clone> PatternMatcher<T> {
                     // Try to match optional, but don't fail if it doesn't match
                     let (matches, score) = self.token_matches(inner, &tokens[current_pos]);
                     if matches {
-                        prev_surface = Some(&tokens[current_pos].surface);
                         specificity_score += score;
                         current_pos += 1;
                     }
@@ -309,7 +307,6 @@ impl<T: Clone> PatternMatcher<T> {
                         return None;
                     }
 
-                    prev_surface = Some(&token.surface);
                     specificity_score += score;
                     current_pos += 1;
                 }
@@ -366,7 +363,6 @@ impl<T: Clone> PatternMatcher<T> {
         tokens: &[KagomeToken],
         wildcard_index: usize,
         current_pos: usize,
-        prev_surface: Option<&str>,
         specificity_score: f32,
         min: usize,
         max: usize,
@@ -395,14 +391,6 @@ impl<T: Clone> PatternMatcher<T> {
                 {
                     should_stop = true;
                     break;
-                }
-
-                // Stop if we encounter same surface as previous matcher
-                if let Some(prev) = prev_surface {
-                    if wildcard_token.surface == prev {
-                        should_stop = true;
-                        break;
-                    }
                 }
             }
 

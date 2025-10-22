@@ -98,7 +98,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::CausativePassive,
             "n4",
         ),
-        // Other N4 patterns
+        // Volitional patterns (plain and polite forms)
         (
             GrammarPattern {
                 name: "volitional",
@@ -107,6 +107,19 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 category: PatternCategory::Construction,
             },
             ConjugationPattern::Volitional,
+            "n4",
+        ),
+        (
+            GrammarPattern {
+                name: "mashou",
+                tokens: vec![
+                    TokenMatcher::verb_with_form("連用形"),
+                    TokenMatcher::Custom(CustomMatcher::MashouForm),
+                ],
+                priority: 6,
+                category: PatternCategory::Conjugation,
+            },
+            ConjugationPattern::Mashou,
             "n4",
         ),
         (

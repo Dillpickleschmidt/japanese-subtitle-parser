@@ -379,6 +379,11 @@ pub fn tari_form() -> Vec<TokenMatcher> {
     concat(vec![
         vec![TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm)],
         vec![TokenMatcher::Custom(CustomMatcher::TariParticle)],
+        vec![TokenMatcher::Wildcard {
+            min: 0,
+            max: 15,
+            stop_at_punctuation: true,
+        }],
         vec![TokenMatcher::specific_verb("する")],
     ])
 }

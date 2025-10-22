@@ -2,109 +2,123 @@ use super::*;
 
 // N4 conjugation patterns
 #[test]
-fn test_past_negative_detection() {
-    let sentence = "食べなかった";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "past_negative"),
-        "Expected past_negative pattern not detected in '{}'",
-        sentence
-    );
-}
-
-#[test]
-fn test_volitional_detection() {
-    let sentence = "食べよう";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "volitional"),
-        "Expected volitional pattern not detected in '{}'",
-        sentence
-    );
-}
-
-#[test]
 fn test_imperative_detection() {
-    let sentence = "食べろ";
+    let sentence = "早く食べろ";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "imperative"),
-        "Expected imperative pattern not detected in '{}'",
-        sentence
-    );
+    assert_has_pattern(&patterns, "imperative");
+    assert_pattern_range(&patterns, "imperative", 2, 5); // 食べろ
+    assert_pattern_selected(&patterns, &tokens, "imperative");
 }
 
 #[test]
 fn test_nagara_detection() {
-    let sentence = "食べながら";
+    let sentence = "テレビを見ながら夕食を食べる";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "nagara"),
-        "Expected nagara pattern not detected in '{}'",
-        sentence
-    );
+    assert_has_pattern(&patterns, "nagara");
+    assert_pattern_range(&patterns, "nagara", 4, 8); // 見ながら
+    assert_pattern_selected(&patterns, &tokens, "nagara");
 }
 
 // N4 te-form patterns
 #[test]
 fn test_te_miru_detection() {
-    let sentence = "食べてみる";
+    let sentence = "新しい料理を食べてみる";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "te_miru"),
-        "Expected te_miru pattern not detected in '{}'",
-        sentence
-    );
+    assert_has_pattern(&patterns, "te_miru");
+    assert_pattern_range(&patterns, "te_miru", 6, 11); // 食べてみる
+    assert_pattern_selected(&patterns, &tokens, "te_miru");
 }
 
 #[test]
 fn test_te_shimau_detection() {
-    let sentence = "食べてしまう";
+    let sentence = "子どもが全部食べてしまった";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
-    assert!(
-        has_pattern(&patterns, "te_shimau"),
-        "Expected te_shimau pattern not detected in '{}'",
-        sentence
-    );
+    assert_has_pattern(&patterns, "te_shimau");
+    assert_pattern_range(&patterns, "te_shimau", 6, 13); // 食べてしまった
+    assert_pattern_selected(&patterns, &tokens, "te_shimau");
 }
 
-#[test]
-fn test_tari_form_detection() {
-    let sentence = "食べたりする";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
+// Tari form patterns (lists non-sequential actions: V-tari V-tari ... suru)
+mod tari_tests {
+    use super::*;
 
-    print_debug(sentence, &tokens, &patterns);
+    #[test]
+    fn test_tari_form_single_past() {
+        // Single tari with implied other activities (past tense)
+        let sentence = "昔あそこの池で泳いだりした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
 
-    assert!(
-        has_pattern(&patterns, "tari_form"),
-        "Expected tari_form pattern not detected in '{}'",
-        sentence
-    );
+        print_debug(sentence, &tokens, &patterns);
+
+        assert_has_pattern(&patterns, "tari_form");
+        assert_pattern_range(&patterns, "tari_form", 7, 13); // 泳いだりした (泳い starts at char 7)
+        assert_pattern_selected(&patterns, &tokens, "tari_form");
+    }
+
+    #[test]
+    fn test_tari_form_double_past() {
+        // Multiple tari construction (standard usage, past tense)
+        let sentence = "飲み会で食べたり飲んだりした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        print_debug(sentence, &tokens, &patterns);
+
+        assert_has_pattern(&patterns, "tari_form");
+        assert_pattern_range(&patterns, "tari_form", 4, 14); // 食べたり飲んだりした
+        assert_pattern_selected(&patterns, &tokens, "tari_form");
+    }
+
+    #[test]
+    fn test_tari_form_triple() {
+        // Three different actions with tari (showing variety)
+        let sentence = "休みの日は家でテレビを見たり寝たり本を読んだりする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        print_debug(sentence, &tokens, &patterns);
+
+        assert_has_pattern(&patterns, "tari_form");
+        assert_pattern_range(&patterns, "tari_form", 11, 25); // 見たり寝たり本を読んだりする
+        assert_pattern_selected(&patterns, &tokens, "tari_form");
+    }
+
+    #[test]
+    fn test_tari_form_with_suru_verb() {
+        // Suru verb as one of the tari items (勉強したり)
+        let sentence = "勉強したり運動したりする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        print_debug(sentence, &tokens, &patterns);
+
+        assert_has_pattern(&patterns, "tari_form");
+        assert_pattern_range(&patterns, "tari_form", 0, 12); // 勉強したり運動したりする
+        assert_pattern_selected(&patterns, &tokens, "tari_form");
+    }
+
+    #[test]
+    fn test_tari_dari_variation() {
+        // Using だり instead of たり (phonetic variant with certain verbs)
+        let sentence = "本を読んだり映画を見たりする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        print_debug(sentence, &tokens, &patterns);
+
+        assert_has_pattern(&patterns, "tari_form");
+        assert_pattern_range(&patterns, "tari_form", 2, 14); // 読んだり映画を見たりする
+        assert_pattern_selected(&patterns, &tokens, "tari_form");
+    }
 }
 
 // N4 conditional patterns

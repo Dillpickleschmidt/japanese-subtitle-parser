@@ -46,6 +46,17 @@ fn test_past_tense_detection() {
     assert_pattern_selected(&patterns, &tokens, "past_tense");
 }
 
+#[test]
+fn test_past_negative_detection() {
+    let sentence = "昨日は学校に行かなかった";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "past_negative");
+    assert_pattern_range(&patterns, "past_negative", 6, 12); // 行かなかった
+    assert_pattern_selected(&patterns, &tokens, "past_negative");
+}
+
 // Tai-form patterns (N5)
 
 #[test]
@@ -137,14 +148,30 @@ fn test_te_kara_detection() {
     assert_pattern_selected(&patterns, &tokens, "te_kara");
 }
 
-#[test]
-fn test_mashou_detection() {
-    let sentence = "一緒に昼ごはんを食べましょう";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-    assert_has_pattern(&patterns, "mashou");
-    assert_pattern_range(&patterns, "mashou", 8, 14); // 食べましょう
-    assert_pattern_selected(&patterns, &tokens, "mashou");
+mod volitional_tests {
+    use super::*;
+
+    #[test]
+    fn test_volitional_plain_form() {
+        let sentence = "明日一緒に行こう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "volitional");
+        assert_pattern_range(&patterns, "volitional", 5, 8); // 行こう
+        assert_pattern_selected(&patterns, &tokens, "volitional");
+    }
+
+    #[test]
+    fn test_volitional_polite_form() {
+        let sentence = "一緒に昼ごはんを食べましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "mashou");
+        assert_pattern_range(&patterns, "mashou", 8, 14); // 食べましょう
+        assert_pattern_selected(&patterns, &tokens, "mashou");
+    }
 }
 
 #[test]
