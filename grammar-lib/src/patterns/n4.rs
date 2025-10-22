@@ -28,8 +28,18 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         ),
         (
             GrammarPattern {
-                name: "tari_form",
-                tokens: tari_form(),
+                name: "tari_suru_single",
+                tokens: tari_suru_single(),
+                priority: 8,
+                category: PatternCategory::Construction,
+            },
+            ConjugationPattern::TariForm,
+            "n4",
+        ),
+        (
+            GrammarPattern {
+                name: "tari_suru",
+                tokens: tari_suru(),
                 priority: 8,
                 category: PatternCategory::Construction,
             },

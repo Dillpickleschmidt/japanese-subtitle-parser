@@ -395,8 +395,8 @@ fn test_tari_form_overlap() {
     print_debug(sentence, &tokens, &patterns);
 
     assert!(
-        has_pattern(&patterns, "tari_form"),
-        "Expected tari_form pattern in '{}'",
+        has_pattern(&patterns, "tari_suru"),
+        "Expected tari_suru pattern in '{}'",
         sentence
     );
     // Note: たり is a particle, not the past tense auxiliary verb た

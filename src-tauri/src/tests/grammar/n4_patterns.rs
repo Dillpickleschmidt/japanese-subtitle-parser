@@ -59,9 +59,9 @@ mod tari_tests {
 
         print_debug(sentence, &tokens, &patterns);
 
-        assert_has_pattern(&patterns, "tari_form");
-        assert_pattern_range(&patterns, "tari_form", 7, 13); // 泳いだりした (泳い starts at char 7)
-        assert_pattern_selected(&patterns, &tokens, "tari_form");
+        assert_has_pattern(&patterns, "tari_suru_single");
+        assert_pattern_range(&patterns, "tari_suru_single", 7, 13); // 泳いだりした (泳い starts at char 7)
+        assert_pattern_selected(&patterns, &tokens, "tari_suru_single");
     }
 
     #[test]
@@ -73,9 +73,9 @@ mod tari_tests {
 
         print_debug(sentence, &tokens, &patterns);
 
-        assert_has_pattern(&patterns, "tari_form");
-        assert_pattern_range(&patterns, "tari_form", 4, 14); // 食べたり飲んだりした
-        assert_pattern_selected(&patterns, &tokens, "tari_form");
+        assert_has_pattern(&patterns, "tari_suru");
+        assert_pattern_range(&patterns, "tari_suru", 4, 14); // 食べたり飲んだりした
+        assert_pattern_selected(&patterns, &tokens, "tari_suru");
     }
 
     #[test]
@@ -87,9 +87,9 @@ mod tari_tests {
 
         print_debug(sentence, &tokens, &patterns);
 
-        assert_has_pattern(&patterns, "tari_form");
-        assert_pattern_range(&patterns, "tari_form", 11, 25); // 見たり寝たり本を読んだりする
-        assert_pattern_selected(&patterns, &tokens, "tari_form");
+        assert_has_pattern(&patterns, "tari_suru");
+        assert_pattern_range(&patterns, "tari_suru", 11, 25); // 見たり寝たり本を読んだりする
+        assert_pattern_selected(&patterns, &tokens, "tari_suru");
     }
 
     #[test]
@@ -101,9 +101,9 @@ mod tari_tests {
 
         print_debug(sentence, &tokens, &patterns);
 
-        assert_has_pattern(&patterns, "tari_form");
-        assert_pattern_range(&patterns, "tari_form", 0, 12); // 勉強したり運動したりする
-        assert_pattern_selected(&patterns, &tokens, "tari_form");
+        assert_has_pattern(&patterns, "tari_suru");
+        assert_pattern_range(&patterns, "tari_suru", 0, 12); // 勉強したり運動したりする
+        assert_pattern_selected(&patterns, &tokens, "tari_suru");
     }
 
     #[test]
@@ -115,9 +115,9 @@ mod tari_tests {
 
         print_debug(sentence, &tokens, &patterns);
 
-        assert_has_pattern(&patterns, "tari_form");
-        assert_pattern_range(&patterns, "tari_form", 2, 14); // 読んだり映画を見たりする
-        assert_pattern_selected(&patterns, &tokens, "tari_form");
+        assert_has_pattern(&patterns, "tari_suru");
+        assert_pattern_range(&patterns, "tari_suru", 2, 14); // 読んだり映画を見たりする
+        assert_pattern_selected(&patterns, &tokens, "tari_suru");
     }
 }
 
@@ -762,8 +762,8 @@ fn test_tari_form_godan() {
     print_debug(sentence, &tokens, &patterns);
 
     assert!(
-        has_pattern(&patterns, "tari_form"),
-        "Expected tari_form pattern not detected in '{}' (godan verb with 連用タ接続)",
+        has_pattern(&patterns, "tari_suru_single"),
+        "Expected tari_suru_single pattern not detected in '{}' (godan verb with 連用タ接続)",
         sentence
     );
 }

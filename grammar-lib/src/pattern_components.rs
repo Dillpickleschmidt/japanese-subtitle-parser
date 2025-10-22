@@ -374,8 +374,17 @@ pub fn nasai() -> Vec<TokenMatcher> {
     ])
 }
 
-/// Tari-form: Verb + たり + する (among other things)
-pub fn tari_form() -> Vec<TokenMatcher> {
+/// Tari-suru (single): Verb + たり/だり + する (single action with implied alternatives, past tense)
+pub fn tari_suru_single() -> Vec<TokenMatcher> {
+    concat(vec![
+        vec![TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm)],
+        vec![TokenMatcher::Custom(CustomMatcher::TariParticle)],
+        vec![TokenMatcher::specific_verb("する")],
+    ])
+}
+
+/// Tari-suru (multiple): Verb + たり + ... + たり + する (listing multiple alternative actions)
+pub fn tari_suru() -> Vec<TokenMatcher> {
     concat(vec![
         vec![TokenMatcher::Custom(CustomMatcher::FlexibleVerbForm)],
         vec![TokenMatcher::Custom(CustomMatcher::TariParticle)],
@@ -384,6 +393,7 @@ pub fn tari_form() -> Vec<TokenMatcher> {
             max: 15,
             stop_at_punctuation: true,
         }],
+        vec![TokenMatcher::Custom(CustomMatcher::TariParticle)],
         vec![TokenMatcher::specific_verb("する")],
     ])
 }
