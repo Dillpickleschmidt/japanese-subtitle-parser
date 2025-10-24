@@ -247,6 +247,32 @@ pub fn masu_ending() -> Vec<TokenMatcher> {
     ]
 }
 
+/// Polite negative: Verb連用形 + ませ + ん (polite negative)
+pub fn polite_negative_ending() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::verb_with_form("連用形"),
+        TokenMatcher::Custom(CustomMatcher::MasenForm),
+        TokenMatcher::Surface("ん"),
+    ]
+}
+
+/// Polite past: Verb連用形 + まし + た (polite past tense)
+pub fn polite_past_ending() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::verb_with_form("連用形"),
+        TokenMatcher::Custom(CustomMatcher::MashiForm),
+        TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
+    ]
+}
+
+/// Deshita: でし + た (copula polite past - was/were)
+pub fn deshita() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Custom(CustomMatcher::DeshiForm),
+        TokenMatcher::Custom(CustomMatcher::PastAuxiliary),
+    ]
+}
+
 /// Negative: Verb未然形 + ない
 pub fn negative_ending() -> Vec<TokenMatcher> {
     vec![

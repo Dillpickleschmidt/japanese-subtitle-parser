@@ -120,6 +120,40 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
         ),
         (
             GrammarPattern {
+                name: "polite_negative",
+                tokens: polite_negative_ending(),
+                priority: 4,
+                category: PatternCategory::Conjugation,
+            },
+            ConjugationPattern::PoliteNegative,
+            "n5",
+        ),
+        // Polite past: ました (did - polite)
+        // Structures: Verb連用形 + ました
+        (
+            GrammarPattern {
+                name: "polite_past",
+                tokens: polite_past_ending(),
+                priority: 4,
+                category: PatternCategory::Conjugation,
+            },
+            ConjugationPattern::PolitePast,
+            "n5",
+        ),
+        // Deshita: でした (was/were - polite copula past)
+        // Structures: でした
+        (
+            GrammarPattern {
+                name: "deshita",
+                tokens: deshita(),
+                priority: 4,
+                category: PatternCategory::Conjugation,
+            },
+            ConjugationPattern::Deshita,
+            "n5",
+        ),
+        (
+            GrammarPattern {
                 name: "past_tense",
                 tokens: ta_form(),
                 priority: 4,

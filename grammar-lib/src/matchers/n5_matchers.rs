@@ -69,6 +69,26 @@ impl TokenMatcherLogic for MasenFormMatcher {
     }
 }
 
+/// Match まし (polite past stem)
+#[derive(Debug)]
+pub struct MashiFormMatcher;
+
+impl TokenMatcherLogic for MashiFormMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        token.surface == "まし" && token.base_form == "ます"
+    }
+}
+
+/// Match でし (copula past stem)
+#[derive(Debug)]
+pub struct DeshiFormMatcher;
+
+impl TokenMatcherLogic for DeshiFormMatcher {
+    fn matches(&self, token: &KagomeToken) -> bool {
+        token.surface == "でし" && token.base_form == "です"
+    }
+}
+
 // ========== Adjectives and Expressions ==========
 
 /// Match いい or 良い (good/okay)

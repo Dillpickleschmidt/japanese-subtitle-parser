@@ -73,6 +73,10 @@ pub enum CustomMatcher {
     MashouForm,
     /// Match ませ + ん (polite negative)
     MasenForm,
+    /// Match まし (polite past stem)
+    MashiForm,
+    /// Match でし (copula past stem)
+    DeshiForm,
     /// Match imperative forms (命令形, 命令ｒｏ, 命令ｉ)
     ImperativeForm,
     /// Match たり particle (並立助詞)
@@ -154,6 +158,8 @@ pub fn matches(matcher: &CustomMatcher, token: &KagomeToken) -> bool {
         CustomMatcher::IkenaiForm => IkenaiFormMatcher.matches(token),
         CustomMatcher::MashouForm => MashouFormMatcher.matches(token),
         CustomMatcher::MasenForm => MasenFormMatcher.matches(token),
+        CustomMatcher::MashiForm => MashiFormMatcher.matches(token),
+        CustomMatcher::DeshiForm => DeshiFormMatcher.matches(token),
         CustomMatcher::ImperativeForm => ImperativeFormMatcher.matches(token),
         CustomMatcher::TariParticle => TariParticleMatcher.matches(token),
         CustomMatcher::DeshouForm => DeshouFormMatcher.matches(token),

@@ -27,6 +27,9 @@ pub struct KagomeToken {
 pub enum ConjugationPattern {
     Dictionary,
     MasuForm,
+    PoliteNegative,    // masen - polite negative
+    PolitePast,        // mashita - polite past
+    Deshita,           // deshita - copula polite past (was/were)
     Past,
     Negative,
     PastNegative,

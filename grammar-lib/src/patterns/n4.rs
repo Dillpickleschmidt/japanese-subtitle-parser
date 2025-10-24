@@ -144,7 +144,7 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
                 name: "volitional",
                 tokens: volitional_u_form(),
                 priority: 6,
-                category: PatternCategory::Construction,
+                category: PatternCategory::Conjugation,
             },
             ConjugationPattern::Volitional,
             "n4",

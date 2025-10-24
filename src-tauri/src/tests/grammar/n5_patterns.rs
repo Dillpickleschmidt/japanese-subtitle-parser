@@ -25,6 +25,39 @@ fn test_masu_form_detection() {
 }
 
 #[test]
+fn test_polite_negative_detection() {
+    let sentence = "今日は行きません";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "polite_negative");
+    assert_pattern_range(&patterns, "polite_negative", 3, 8); // 行きません
+    assert_pattern_selected(&patterns, &tokens, "polite_negative");
+}
+
+#[test]
+fn test_polite_past_detection() {
+    let sentence = "昨日映画を見ました";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "polite_past");
+    assert_pattern_range(&patterns, "polite_past", 5, 9); // 見ました
+    assert_pattern_selected(&patterns, &tokens, "polite_past");
+}
+
+#[test]
+fn test_deshita_detection() {
+    let sentence = "昨日は月曜日でしたよ";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "deshita");
+    assert_pattern_range(&patterns, "deshita", 6, 9); // でした
+    assert_pattern_selected(&patterns, &tokens, "deshita");
+}
+
+#[test]
 fn test_negative_detection() {
     let sentence = "今日は行かない";
     let tokens = tokenize_sentence(sentence);
@@ -226,6 +259,22 @@ fn test_masen_ka_detection() {
 
     assert_has_pattern(&patterns, "masen_ka");
     assert_pattern_range(&patterns, "masen_ka", 5, 11); // 飲みませんか
+    assert_pattern_selected(&patterns, &tokens, "masen_ka");
+}
+
+#[test]
+fn test_masen_ka_with_location() {
+    let sentence = "図書館で勉強しませんか";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Both patterns should be detected
+    assert_has_pattern(&patterns, "masen_ka");
+    assert_pattern_range(&patterns, "masen_ka", 4, 11); // 勉強しませんか
+
+    assert_has_pattern(&patterns, "polite_negative");
+    assert_pattern_range(&patterns, "polite_negative", 4, 10); // 勉強しません
+
     assert_pattern_selected(&patterns, &tokens, "masen_ka");
 }
 
