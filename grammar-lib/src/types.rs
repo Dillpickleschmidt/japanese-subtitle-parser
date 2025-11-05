@@ -101,6 +101,7 @@ pub enum ConjugationPattern {
     Noni,              // noni - despite/although
     KotoNiNaru,        // koto ni naru - it has been decided that
     NiIku,             // ni iku - go to do
+    ONiNaru,           // o ni naru - honorific form (お〜になる)
     SouDesuAppearance, // sou desu - looks like (appearance)
     SouDesuHearsay,    // sou desu - I heard that (hearsay)
     KamoShirenai,      // kamo shirenai - might/maybe

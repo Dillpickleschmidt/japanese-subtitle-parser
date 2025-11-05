@@ -811,6 +811,15 @@ pub fn ni_iku() -> Vec<TokenMatcher> {
     ])
 }
 
+/// O-ni-naru: NounWithOPrefix + に + なる (honorific form: お〜になる)
+pub fn o_ni_naru() -> Vec<TokenMatcher> {
+    concat(vec![
+        vec![TokenMatcher::Custom(CustomMatcher::NounWithOPrefix)],
+        vec![TokenMatcher::Surface("に")],
+        vec![TokenMatcher::specific_verb("なる")],
+    ])
+}
+
 /// Mae-ni: Verb基本形 + 前 + に (before doing)
 pub fn mae_ni() -> Vec<TokenMatcher> {
     concat(vec![

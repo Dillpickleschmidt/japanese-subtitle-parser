@@ -117,6 +117,8 @@ pub enum CustomMatcher {
     OyobiConjunction,
     /// Match noun (名詞)
     Noun,
+    /// Match noun with base_form starting with お (honorific prefix)
+    NounWithOPrefix,
     /// Match dependent noun もの (名詞/非自立) for mono_no pattern
     DependentNounMono,
     /// Match verbs where base_form ends with a specific suffix (e.g., base_form ends with "めく")
@@ -181,6 +183,10 @@ pub fn matches(matcher: &CustomMatcher, token: &KagomeToken) -> bool {
         CustomMatcher::HajimeteAdverb => HajimeteAdverbMatcher.matches(token),
         CustomMatcher::OyobiConjunction => OyobiConjunctionMatcher.matches(token),
         CustomMatcher::Noun => NounMatcher.matches(token),
+        CustomMatcher::NounWithOPrefix => {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.base_form.starts_with("お")
+        }
         CustomMatcher::DependentNounMono => DependentNounMonoMatcher.matches(token),
         CustomMatcher::VerbWithBaseSuffix(suffix) => {
             token.pos.first().is_some_and(|pos| pos == "動詞")

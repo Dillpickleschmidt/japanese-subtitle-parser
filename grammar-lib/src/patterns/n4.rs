@@ -542,6 +542,16 @@ pub fn get_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)>
             ConjugationPattern::KotoNiNaru,
             "n4",
         ),
+        (
+            GrammarPattern {
+                name: "o_ni_naru",
+                tokens: o_ni_naru(),
+                priority: 8,
+                category: PatternCategory::Construction,
+            },
+            ConjugationPattern::ONiNaru,
+            "n4",
+        ),
         // Sou desu patterns
         (
             GrammarPattern {

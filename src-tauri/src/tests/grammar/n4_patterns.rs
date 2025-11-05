@@ -1262,3 +1262,13 @@ fn test_sou_desu_ka_rejection() {
         patterns.iter().map(|p| p.pattern_name).collect::<Vec<_>>()
     );
 }
+
+#[test]
+fn test_o_ni_naru_detection() {
+    let sentence = "部長は新しい社員をお迎えになりました";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "o_ni_naru");
+    assert_pattern_range(&patterns, "o_ni_naru", 9, 18); // お迎えになりました
+}
