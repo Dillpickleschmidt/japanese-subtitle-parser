@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
-use grammar_lib::create_pattern_matcher;
 use grammar_lib::PatternCategory;
+use grammar_lib::create_pattern_matcher;
 use grammar_lib::types::KagomeToken;
 
 /// Grammar match result for JavaScript
@@ -45,7 +45,7 @@ pub fn analyze_batch(token_arrays_js: JsValue) -> Result<JsValue, JsValue> {
                     PatternCategory::Construction => "Construction".to_string(),
                     PatternCategory::Conjugation => "Conjugation".to_string(),
                 },
-                conjugation_pattern: format!("{:?}", m.result),
+                conjugation_pattern: m.pattern_name.to_string(),
             })
             .collect();
 
@@ -76,7 +76,7 @@ pub fn analyze_single(tokens_js: JsValue) -> Result<JsValue, JsValue> {
                 PatternCategory::Construction => "Construction".to_string(),
                 PatternCategory::Conjugation => "Conjugation".to_string(),
             },
-            conjugation_pattern: format!("{:?}", m.result),
+            conjugation_pattern: m.pattern_name.to_string(),
         })
         .collect();
 

@@ -1,4 +1,4 @@
-use grammar_lib::types::{ConjugationPattern, KagomeToken};
+use grammar_lib::types::KagomeToken;
 use grammar_lib::{create_pattern_matcher, PatternCategory};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
@@ -11,12 +11,6 @@ struct GrammarMatch {
     start_char: u32,
     end_char: u32,
     category: String, // "Construction" or "Conjugation"
-    conjugation_pattern: String,
-}
-
-/// Convert ConjugationPattern enum to string representation
-fn conjugation_to_string(pattern: &ConjugationPattern) -> String {
-    format!("{:?}", pattern)
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -44,7 +38,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 PatternCategory::Construction => "Construction".to_string(),
                 PatternCategory::Conjugation => "Conjugation".to_string(),
             },
-            conjugation_pattern: conjugation_to_string(&m.result),
         })
         .collect();
 

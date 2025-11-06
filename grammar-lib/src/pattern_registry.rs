@@ -18,7 +18,7 @@ impl PatternRegistry {
 
         let all_patterns = crate::patterns::get_all_patterns();
 
-        for (grammar_pattern, _conjugation_pattern, jlpt_level) in all_patterns {
+        for (grammar_pattern, jlpt_level) in all_patterns {
             metadata.insert(grammar_pattern.name, PatternMetadata { jlpt_level });
         }
 

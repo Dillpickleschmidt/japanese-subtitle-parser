@@ -8,12 +8,12 @@ use crate::error::Error;
 use grammar_lib::{
     create_pattern_matcher,
     PatternCategory, PatternMatcher,
-    types::{ConjugationPattern, KagomeToken},
+    types::KagomeToken,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 
-static PATTERN_MATCHER: LazyLock<PatternMatcher<ConjugationPattern>> =
+static PATTERN_MATCHER: LazyLock<PatternMatcher> =
     LazyLock::new(|| create_pattern_matcher());
 
 pub struct UnifiedAnalyzer {

@@ -7,14 +7,12 @@ use crate::types::KagomeToken;
 // ============================================================================
 
 #[derive(Debug)]
-pub struct PatternMatcher<T> {
-    patterns: Vec<(GrammarPattern, T)>,
+pub struct PatternMatcher {
+    patterns: Vec<GrammarPattern>,
 }
 
 #[derive(Debug, Clone)]
-pub struct PatternMatch<T> {
-    #[allow(dead_code)]
-    pub result: T,
+pub struct PatternMatch {
     pub confidence: f32,
     pub pattern_name: &'static str,
     pub category: PatternCategory,
@@ -75,35 +73,33 @@ pub enum TokenMatcher {
 // PUBLIC API - Pattern matching and filtering
 // ============================================================================
 
-impl<T> PatternMatcher<T> {
+impl PatternMatcher {
     pub fn new() -> Self {
         Self {
             patterns: Vec::new(),
         }
     }
 
-    pub fn add_patterns(&mut self, patterns: Vec<(GrammarPattern, T)>) {
+    pub fn add_patterns(&mut self, patterns: Vec<GrammarPattern>) {
         self.patterns.extend(patterns);
     }
 }
 
-impl<T: Clone> PatternMatcher<T> {
+impl PatternMatcher {
     /// Match patterns against tokens, returning all matches sorted by confidence
     /// Also returns a set of token indices that are auxiliary (for vocabulary consolidation)
     pub fn match_tokens(
         &self,
         tokens: &[KagomeToken],
-    ) -> (Vec<PatternMatch<T>>, std::collections::HashSet<usize>) {
+    ) -> (Vec<PatternMatch>, std::collections::HashSet<usize>) {
         use std::collections::HashSet;
 
         let mut matches = Vec::new();
         let mut auxiliary_indices = HashSet::new();
 
         for start_pos in 0..tokens.len() {
-            for (pattern, result) in &self.patterns {
-                if let Some(match_result) =
-                    self.match_pattern_at(pattern, tokens, start_pos, result)
-                {
+            for pattern in &self.patterns {
+                if let Some(match_result) = self.match_pattern_at(pattern, tokens, start_pos) {
                     // Mark auxiliary tokens (all except the first token in the pattern)
                     let pattern_len = pattern.tokens.len();
                     for offset in 1..pattern_len {
@@ -134,9 +130,9 @@ impl<T: Clone> PatternMatcher<T> {
     /// Filters out patterns whose token-set is completely contained in a higher-confidence pattern
     /// This matches the behavior of selectAndLayerGrammarPatterns in the TypeScript extension
     pub fn select_non_redundant_patterns(
-        matches: &[PatternMatch<T>],
+        matches: &[PatternMatch],
         tokens: &[KagomeToken],
-    ) -> Vec<PatternMatch<T>> {
+    ) -> Vec<PatternMatch> {
         use std::collections::HashSet;
 
         if matches.is_empty() || tokens.is_empty() {
@@ -159,8 +155,7 @@ impl<T: Clone> PatternMatcher<T> {
             .collect();
 
         // Sort matches by confidence (descending), then by length (descending)
-        let mut indexed_matches: Vec<(usize, &PatternMatch<T>)> =
-            matches.iter().enumerate().collect();
+        let mut indexed_matches: Vec<(usize, &PatternMatch)> = matches.iter().enumerate().collect();
         indexed_matches.sort_by(|a, b| {
             b.1.confidence
                 .partial_cmp(&a.1.confidence)
@@ -208,7 +203,7 @@ impl<T: Clone> PatternMatcher<T> {
     /// Extends all patterns ending with verbs or adjectives to include following auxiliary verbs
     /// e.g., te_iru (1,6) followed by ます (6,8) becomes (1,8)
     /// e.g., adjective (4,7) followed by です (7,9) becomes (4,9)
-    fn extend_with_auxiliary_verbs(matches: &mut [PatternMatch<T>], tokens: &[KagomeToken]) {
+    fn extend_with_auxiliary_verbs(matches: &mut [PatternMatch], tokens: &[KagomeToken]) {
         for pattern in matches {
             // Skip if pattern doesn't contain any verb or adjective
             let has_verb_or_adjective = tokens.iter().any(|token| {
@@ -255,8 +250,7 @@ impl<T: Clone> PatternMatcher<T> {
         pattern: &GrammarPattern,
         tokens: &[KagomeToken],
         start: usize,
-        result: &T,
-    ) -> Option<PatternMatch<T>> {
+    ) -> Option<PatternMatch> {
         if start >= tokens.len() {
             return None;
         }
@@ -286,7 +280,6 @@ impl<T: Clone> PatternMatcher<T> {
                         *max,
                         stop_conditions.clone(),
                         start,
-                        result,
                     );
                 }
 
@@ -315,26 +308,18 @@ impl<T: Clone> PatternMatcher<T> {
             }
         }
 
-        self.finalize_match(
-            pattern,
-            result,
-            tokens,
-            start,
-            current_pos,
-            specificity_score,
-        )
+        self.finalize_match(pattern, tokens, start, current_pos, specificity_score)
     }
 
     /// Helper to finalize a successful match
     fn finalize_match(
         &self,
         pattern: &GrammarPattern,
-        result: &T,
         tokens: &[KagomeToken],
         start: usize,
         end_pos: usize,
         specificity_score: f32,
-    ) -> Option<PatternMatch<T>> {
+    ) -> Option<PatternMatch> {
         if end_pos == 0 || start >= tokens.len() {
             return None;
         }
@@ -348,7 +333,6 @@ impl<T: Clone> PatternMatcher<T> {
         start_char = extend_for_preceding_suru_noun(tokens, start, start_char);
 
         Some(PatternMatch {
-            result: result.clone(),
             confidence,
             pattern_name: pattern.name,
             category: pattern.category,
@@ -370,8 +354,7 @@ impl<T: Clone> PatternMatcher<T> {
         max: usize,
         stop_conditions: Vec<TokenMatcher>,
         start: usize,
-        result: &T,
-    ) -> Option<PatternMatch<T>> {
+    ) -> Option<PatternMatch> {
         let mut matched = false;
         let mut final_pos = current_pos;
         let mut updated_score = specificity_score;
@@ -431,7 +414,7 @@ impl<T: Clone> PatternMatcher<T> {
             return None;
         }
 
-        self.finalize_match(pattern, result, tokens, start, final_pos, updated_score)
+        self.finalize_match(pattern, tokens, start, final_pos, updated_score)
     }
 
     /// Helper to match remaining tokens after wildcard and return the end position
@@ -556,7 +539,7 @@ impl<T: Clone> PatternMatcher<T> {
 // UTILITY IMPLEMENTATIONS
 // ============================================================================
 
-impl<T> Default for PatternMatcher<T> {
+impl Default for PatternMatcher {
     fn default() -> Self {
         Self::new()
     }

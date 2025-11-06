@@ -4,7 +4,6 @@ use crate::matchers::n3::*;
 use crate::matchers::n4::*;
 use crate::matchers::n5::*;
 use crate::pattern_matcher::{GrammarPattern, PatternCategory, PatternMatcher};
-use crate::types::ConjugationPattern;
 
 macro_rules! declare_patterns {
     (
@@ -14,8 +13,7 @@ macro_rules! declare_patterns {
                 matcher_fn: $matcher_fn:path,
                 priority: $priority:expr,
                 category: $category:path,
-                jlpt: $jlpt:expr,
-                conjugation: $conj:path $(,)?
+                jlpt: $jlpt:expr $(,)?
             }
         ),* $(,)?
     ) => {
@@ -37,12 +35,6 @@ macro_rules! declare_patterns {
                 }
             }
 
-            pub fn conjugation_pattern(&self) -> ConjugationPattern {
-                match self {
-                    $(Pattern::$variant => $conj,)*
-                }
-            }
-
             pub fn all() -> Vec<Pattern> {
                 vec![$(Pattern::$variant,)*]
             }
@@ -58,7 +50,6 @@ declare_patterns! {
         priority: 1,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Dictionary,
     },
     MasuForm {
         name: "masu_form",
@@ -66,7 +57,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::MasuForm,
     },
     ShortNegative {
         name: "short_negative",
@@ -74,7 +64,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Negative,
     },
     PoliteNegative {
         name: "polite_negative",
@@ -82,7 +71,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::PoliteNegative,
     },
     PastTense {
         name: "past_tense",
@@ -90,7 +78,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Past,
     },
     ShortPastNegative {
         name: "short_past_negative",
@@ -98,7 +85,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::PastNegative,
     },
     PolitePast {
         name: "polite_past",
@@ -106,7 +92,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::PolitePast,
     },
     Deshita {
         name: "deshita",
@@ -114,7 +99,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Deshita,
     },
     TaiForm {
         name: "tai_form",
@@ -122,7 +106,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TaiForm,
     },
     TakunaiForm {
         name: "takunai_form",
@@ -130,7 +113,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TakunaiForm,
     },
     TakattaForm {
         name: "takatta_form",
@@ -138,7 +120,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TakattaForm,
     },
     TeForm {
         name: "te_form",
@@ -146,7 +127,6 @@ declare_patterns! {
         priority: 3,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TeForm,
     },
     TeIru {
         name: "te_iru",
@@ -154,7 +134,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TeIru,
     },
     TeKara {
         name: "te_kara",
@@ -162,7 +141,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TeKara,
     },
     TeKudasai {
         name: "te_kudasai",
@@ -170,7 +148,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TeKudasai,
     },
     TeMoIi {
         name: "te_mo_ii",
@@ -178,7 +155,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TeMoIi,
     },
     TeWaIkenai {
         name: "te_wa_ikenai",
@@ -186,7 +162,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TeWaIkenai,
     },
     NaideKudasai {
         name: "naide_kudasai",
@@ -194,7 +169,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::NaideKudasai,
     },
     MasenKa {
         name: "masen_ka",
@@ -202,7 +176,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::MasenKa,
     },
     PoliteVolitional {
         name: "polite_volitional",
@@ -210,7 +183,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::PoliteVolitional,
     },
     MashouKa {
         name: "mashou_ka",
@@ -218,7 +190,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::MashouKa,
     },
     TaKotoGaAru {
         name: "ta_koto_ga_aru",
@@ -226,7 +197,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TaKotoGaAru,
     },
     Sugiru {
         name: "sugiru",
@@ -234,7 +204,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Sugiru,
     },
     TsumoriDesu {
         name: "tsumori_desu",
@@ -242,7 +211,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::TsumoriDesu,
     },
     HouGaIi {
         name: "hou_ga_ii",
@@ -250,7 +218,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::HouGaIi,
     },
     Deshou {
         name: "deshou",
@@ -258,7 +225,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Deshou,
     },
     MadaTeImasen {
         name: "mada_te_imasen",
@@ -266,7 +232,6 @@ declare_patterns! {
         priority: 12,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::MadaTeImasen,
     },
     NDesu {
         name: "n_desu",
@@ -274,7 +239,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::NDesu,
     },
     NodeVerb {
         name: "node_verb",
@@ -282,7 +246,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Node,
     },
     NodeAdjective {
         name: "node_adjective",
@@ -290,7 +253,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Node,
     },
     NodeNominal {
         name: "node_nominal",
@@ -298,7 +260,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Node,
     },
     NiIku {
         name: "ni_iku",
@@ -306,7 +267,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::NiIku,
     },
     MaeNi {
         name: "mae_ni",
@@ -314,7 +274,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n5",
-        conjugation: ConjugationPattern::MaeNi,
     },
     Adjective {
         name: "adjective",
@@ -322,7 +281,6 @@ declare_patterns! {
         priority: 1,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Dictionary,
     },
     AdjectivePast {
         name: "adjective_past",
@@ -330,7 +288,6 @@ declare_patterns! {
         priority: 2,
         category: PatternCategory::Conjugation,
         jlpt: "n5",
-        conjugation: ConjugationPattern::Dictionary,
     },
 
     // ========== N4 PATTERNS (62 total) ==========
@@ -340,7 +297,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeMiru,
     },
     TeShimau {
         name: "te_shimau",
@@ -348,7 +304,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeShimau,
     },
     TeAru {
         name: "te_aru",
@@ -356,7 +311,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeAru,
     },
     TeKureru {
         name: "te_kureru",
@@ -364,7 +318,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeKureru,
     },
     TeKudasaru {
         name: "te_kudasaru",
@@ -372,7 +325,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeKudasaru,
     },
     TeAgeru {
         name: "te_ageru",
@@ -380,7 +332,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeAgeru,
     },
     TeOku {
         name: "te_oku",
@@ -388,7 +339,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeOku,
     },
     TeMorau {
         name: "te_morau",
@@ -396,7 +346,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeMorau,
     },
     TeMo {
         name: "te_mo",
@@ -404,7 +353,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeMo,
     },
     TeSumimasen {
         name: "te_sumimasen",
@@ -412,7 +360,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeSumimasen,
     },
     TeKureteArigatou {
         name: "te_kurete_arigatou",
@@ -420,7 +367,6 @@ declare_patterns! {
         priority: 13,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeKureteArigatou,
     },
     TeYokatta {
         name: "te_yokatta",
@@ -428,7 +374,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeYokatta,
     },
     TeItadakemasenKa {
         name: "te_itadakemasen_ka",
@@ -436,7 +381,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TeItadakemasenKa,
     },
     TariSuruSingle {
         name: "tari_suru_single",
@@ -444,7 +388,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TariForm,
     },
     TariSuru {
         name: "tari_suru",
@@ -452,7 +395,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TariForm,
     },
     BaConditional {
         name: "ba_conditional",
@@ -460,7 +402,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::BaConditional,
     },
     TaraConditional {
         name: "tara_conditional",
@@ -468,7 +409,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TaraConditional,
     },
     TaraDou {
         name: "tara_dou",
@@ -476,7 +416,6 @@ declare_patterns! {
         priority: 12,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::TaraDou,
     },
     BaYokatta {
         name: "ba_yokatta",
@@ -484,7 +423,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::BaYokatta,
     },
     PotentialGodan {
         name: "potential_godan",
@@ -492,7 +430,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Potential,
     },
     PotentialGaVerb {
         name: "potential_ga_verb",
@@ -500,7 +437,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Potential,
     },
     PotentialGaIchidan {
         name: "potential_ga_ichidan",
@@ -508,7 +444,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Potential,
     },
     PassiveIchidan {
         name: "passive_ichidan",
@@ -516,7 +451,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Passive,
     },
     PassiveGodan {
         name: "passive_godan",
@@ -524,7 +458,6 @@ declare_patterns! {
         priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Passive,
     },
     Causative {
         name: "causative",
@@ -532,7 +465,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Causative,
     },
     CausativePassive {
         name: "causative_passive",
@@ -540,7 +472,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::CausativePassive,
     },
     ShortVolitional {
         name: "short_volitional",
@@ -548,7 +479,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Conjugation,
         jlpt: "n4",
-        conjugation: ConjugationPattern::ShortVolitional,
     },
     Imperative {
         name: "imperative",
@@ -556,7 +486,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Imperative,
     },
     Nagara {
         name: "nagara",
@@ -564,7 +493,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Nagara,
     },
     NakuchaIkenai {
         name: "nakucha_ikenai",
@@ -572,7 +500,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::NakuchaIkenai,
     },
     MustNakereba {
         name: "must_nakereba",
@@ -580,7 +507,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Must,
     },
     MustNakuteWa {
         name: "must_nakute_wa",
@@ -588,7 +514,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Must,
     },
     Naide {
         name: "naide",
@@ -596,7 +521,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Naide,
     },
     NakuteMoIi {
         name: "nakute_mo_ii",
@@ -604,7 +528,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::NakuteMoIi,
     },
     HazuDesu {
         name: "hazu_desu",
@@ -612,7 +535,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::HazuDesu,
     },
     Tagaru {
         name: "tagaru",
@@ -620,7 +542,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Tagaru,
     },
     Yasui {
         name: "yasui",
@@ -628,7 +549,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Yasui,
     },
     Nikui {
         name: "nikui",
@@ -636,7 +556,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Nikui,
     },
     Nasai {
         name: "nasai",
@@ -644,7 +563,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Nasai,
     },
     GaHoshii {
         name: "ga_hoshii",
@@ -652,7 +570,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::GaHoshii,
     },
     ShikaNai {
         name: "shika_nai",
@@ -660,7 +577,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::ShikaNai,
     },
     ToIu {
         name: "to_iu",
@@ -668,7 +584,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::ToIu,
     },
     DictionaryTo {
         name: "dictionary_to",
@@ -676,7 +591,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::DictionaryTo,
     },
     ToIi {
         name: "to_ii",
@@ -684,7 +598,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::ToIi,
     },
     KotoNiSuru {
         name: "koto_ni_suru",
@@ -692,7 +605,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::KotoNiSuru,
     },
     KotoNiNaru {
         name: "koto_ni_naru",
@@ -700,7 +612,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::KotoNiNaru,
     },
     Noni {
         name: "noni",
@@ -708,7 +619,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Noni,
     },
     Nara {
         name: "nara",
@@ -716,7 +626,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Nara,
     },
     Shi {
         name: "shi",
@@ -724,7 +633,6 @@ declare_patterns! {
         priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Shi,
     },
     KaDouKa {
         name: "ka_dou_ka",
@@ -732,7 +640,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::KaDouKa,
     },
     Mitai {
         name: "mitai",
@@ -740,7 +647,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Mitai,
     },
     MitaiAdjNoun {
         name: "mitai_adj_noun",
@@ -748,7 +654,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::Mitai,
     },
     KamoShirenai {
         name: "kamo_shirenai",
@@ -756,7 +661,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::KamoShirenai,
     },
     KamoShirenaiAdjNoun {
         name: "kamo_shirenai_adj_noun",
@@ -764,7 +668,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::KamoShirenai,
     },
     KamoShiremasen {
         name: "kamo_shiremasen",
@@ -772,7 +675,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::KamoShirenai,
     },
     KamoShiremasenAdjNoun {
         name: "kamo_shiremasen_adj_noun",
@@ -780,7 +682,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::KamoShirenai,
     },
     ONiNaru {
         name: "o_ni_naru",
@@ -788,7 +689,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::ONiNaru,
     },
     SouDesuAppearance {
         name: "sou_desu_appearance",
@@ -796,7 +696,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::SouDesuAppearance,
     },
     SouDesuHearsay {
         name: "sou_desu_hearsay",
@@ -804,7 +703,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::SouDesuHearsay,
     },
     SouDesuHearsayNa {
         name: "sou_desu_hearsay_na",
@@ -812,7 +710,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n4",
-        conjugation: ConjugationPattern::SouDesuHearsay,
     },
 
     // ========== N3 PATTERNS (60 total) ==========
@@ -822,7 +719,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Hajimeru,
     },
     WoHajime {
         name: "wo_hajime",
@@ -830,7 +726,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::WoHajime,
     },
     Rashii {
         name: "rashii",
@@ -838,7 +733,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Rashii,
     },
     YouNiNaru {
         name: "you_ni_naru",
@@ -846,7 +740,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::YouNiNaru,
     },
     YouNiSuru {
         name: "you_ni_suru",
@@ -854,7 +747,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::YouNiSuru,
     },
     YouNiStandalone {
         name: "you_ni_standalone",
@@ -862,7 +754,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::YouNi,
     },
     TameNi {
         name: "tame_ni",
@@ -870,7 +761,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::TameNi,
     },
     Zu {
         name: "zu",
@@ -878,7 +768,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Zu,
     },
     Gachi {
         name: "gachi",
@@ -886,7 +775,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Gachi,
     },
     PpoiSplit {
         name: "ppoi_split",
@@ -894,7 +782,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Ppoi,
     },
     PpoiCompound {
         name: "ppoi_compound",
@@ -902,7 +789,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Ppoi,
     },
     TaBakari {
         name: "ta_bakari",
@@ -910,7 +796,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::TaBakari,
     },
     TaMonoDa {
         name: "ta_mono_da",
@@ -918,7 +803,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::TaMonoDa,
     },
     TaMonoDesu {
         name: "ta_mono_desu",
@@ -926,7 +810,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::TaMonoDa,
     },
     NiChigainai {
         name: "ni_chigainai",
@@ -934,7 +817,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::NiChigainai,
     },
     Mama {
         name: "mama",
@@ -942,7 +824,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Mama,
     },
     Furi {
         name: "furi",
@@ -950,7 +831,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Furi,
     },
     NaiUchiNi {
         name: "nai_uchi_ni",
@@ -958,7 +838,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::NaiUchiNi,
     },
     ToShitara {
         name: "to_shitara",
@@ -966,7 +845,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::ToShitara,
     },
     TsumorideDe {
         name: "tsumori_de",
@@ -974,7 +852,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::TsumorideDe,
     },
     Bakari {
         name: "bakari",
@@ -982,7 +859,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Bakari,
     },
     KiriPast {
         name: "kiri_past",
@@ -990,7 +866,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Kiri,
     },
     KiriNoun {
         name: "kiri_noun",
@@ -998,7 +873,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Kiri,
     },
     Kawari {
         name: "kawari",
@@ -1006,7 +880,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Kawari,
     },
     OkageDe {
         name: "okage_de",
@@ -1014,7 +887,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::OkageDe,
     },
     Sae {
         name: "sae",
@@ -1022,7 +894,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Sae,
     },
     SaeBa {
         name: "sae_ba",
@@ -1030,7 +901,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::SaeBa,
     },
     Koso {
         name: "koso",
@@ -1038,7 +908,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Koso,
     },
     Masaka {
         name: "masaka",
@@ -1046,7 +915,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Masaka,
     },
     Mushiro {
         name: "mushiro",
@@ -1054,7 +922,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Mushiro,
     },
     Sudeni {
         name: "sudeni",
@@ -1062,7 +929,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Sudeni,
     },
     Tsui {
         name: "tsui",
@@ -1070,7 +936,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Tsui,
     },
     Doushitemo {
         name: "doushitemo",
@@ -1078,7 +943,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Doushitemo,
     },
     Seizei {
         name: "seizei",
@@ -1086,7 +950,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Seizei,
     },
     Douyara {
         name: "douyara",
@@ -1094,7 +957,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Douyara,
     },
     Kaette {
         name: "kaette",
@@ -1102,7 +964,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Kaette,
     },
     Sarani {
         name: "sarani",
@@ -1110,7 +971,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Sarani,
     },
     Wazawaza {
         name: "wazawaza",
@@ -1118,7 +978,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Wazawaza,
     },
     Nakanaka {
         name: "nakanaka",
@@ -1126,7 +985,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Nakanaka,
     },
     Ittai {
         name: "ittai",
@@ -1134,7 +992,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Ittai,
     },
     // Suffixes (2)
     TekiSuffix {
@@ -1143,7 +1000,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Teki,
     },
     TateSuffix {
         name: "tate_suffix",
@@ -1151,7 +1007,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Tate,
     },
     NiYotte {
         name: "ni_yotte",
@@ -1159,7 +1014,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::NiYotte,
     },
     NiYoruTo {
         name: "ni_yoru_to",
@@ -1167,7 +1021,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::NiYoruTo,
     },
     OiteCompound {
         name: "oite_compound",
@@ -1175,7 +1028,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Oite,
     },
     OiteSplit {
         name: "oite_split",
@@ -1183,7 +1035,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Oite,
     },
     Toshite {
         name: "toshite",
@@ -1191,7 +1042,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Toshite,
     },
     NiKansuru {
         name: "ni_kansuru",
@@ -1199,7 +1049,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::NiKansuru,
     },
     // No More Than (1)
     Suginai {
@@ -1208,7 +1057,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Suginai,
     },
     ToTomoni {
         name: "to_tomoni",
@@ -1216,7 +1064,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::ToTomoni,
     },
     TeHajimete {
         name: "te_hajimete",
@@ -1224,7 +1071,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::TeHajimete,
     },
     Gurai {
         name: "gurai",
@@ -1232,7 +1078,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Gurai,
     },
     BaHodo {
         name: "ba_hodo",
@@ -1240,7 +1085,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::BaHodo,
     },
     // Limitation (2)
     Kagiru {
@@ -1249,7 +1093,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Kagiru,
     },
     Mai {
         name: "mai",
@@ -1257,7 +1100,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n3",
-        conjugation: ConjugationPattern::Mai,
     },
 
     // ========== N2 PATTERNS (70 total) ==========
@@ -1268,7 +1110,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Toutei,
     },
     Yoppodo {
         name: "yoppodo",
@@ -1276,7 +1117,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Yoppodo,
     },
     Iyoiyo {
         name: "iyoiyo",
@@ -1284,7 +1124,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Iyoiyo,
     },
     Sekkaku {
         name: "sekkaku",
@@ -1292,7 +1131,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Sekkaku,
     },
     Yappari {
         name: "yappari",
@@ -1300,7 +1138,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Yappari,
     },
     Narubeku {
         name: "narubeku",
@@ -1308,7 +1145,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Narubeku,
     },
     Tashika {
         name: "tashika",
@@ -1316,7 +1152,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Tashika,
     },
     ManIchiKanji {
         name: "man_ichi",
@@ -1324,7 +1159,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::ManIchi,
     },
     ManIchiKana {
         name: "man_ichi_kana",
@@ -1332,7 +1166,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::ManIchi,
     },
     NanishiroKanji {
         name: "nanishiro_kanji",
@@ -1340,7 +1173,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Nanishiro,
     },
     NanishiroKana {
         name: "nanishiro_kana",
@@ -1348,7 +1180,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Nanishiro,
     },
     SoreniShitemo {
         name: "sorenishitemo",
@@ -1356,7 +1187,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::SoreniShitemo,
     },
     Tachimachi {
         name: "tachimachi",
@@ -1364,7 +1194,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Tachimachi,
     },
     ItsunoManikaKanji {
         name: "itsunomanika_split",
@@ -1372,7 +1201,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Itsunomanika,
     },
     ItsunoManikaKana {
         name: "itsunomanika",
@@ -1380,7 +1208,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Itsunomanika,
     },
     Aete {
         name: "aete",
@@ -1388,7 +1215,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Aete,
     },
     Semete {
         name: "semete",
@@ -1396,7 +1222,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Semete,
     },
     // Unavoidably/Properly (3)
     YamouezuVerb {
@@ -1405,7 +1230,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Yamuoezu,
     },
     RouNi {
         name: "rou_ni",
@@ -1413,7 +1237,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::RouNi,
     },
     SasuganiSplit {
         name: "sasugani_split",
@@ -1421,7 +1244,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Sasugani,
     },
     // After All (2)
     NantottemmoKanji {
@@ -1430,7 +1252,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Nantoittemo,
     },
     NantottemmoKana {
         name: "nantoittemo_adverb_split",
@@ -1438,7 +1259,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Nantoittemo,
     },
     // Ability/Impossibility (3)
     Kaneru {
@@ -1447,7 +1267,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Kaneru,
     },
     Kanenai {
         name: "kanenai",
@@ -1455,7 +1274,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Kanenai,
     },
     Tamaranai {
         name: "tamaranai",
@@ -1463,7 +1281,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Tamaranai,
     },
     // Without/Consist Of (3)
     NaideSumu {
@@ -1472,7 +1289,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::NaideSumu,
     },
     KaraNaru {
         name: "kara_naru",
@@ -1480,7 +1296,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::KaraNaru,
     },
     YoriShikataGanaiKanji {
         name: "yori_shikata_ganai",
@@ -1488,7 +1303,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::YoriShikataGanai,
     },
     YoriShikataGanaiKana {
         name: "yori_shikata_ganai_kana",
@@ -1496,7 +1310,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::YoriShikataGanai,
     },
     // After Doing (1)
     TaUeDe {
@@ -1505,7 +1318,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::TaUeDe,
     },
     // Correspond To (2)
     NiAtaruCompound {
@@ -1514,7 +1326,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::NiAtaru,
     },
     NiAtaruKanji {
         name: "ni_ataru_compound_kanji",
@@ -1522,7 +1333,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::NiAtaru,
     },
     // Like/Through (3)
     // GotoshiKana {
@@ -1531,7 +1341,6 @@ declare_patterns! {
     //     priority: 6,
     //     category: PatternCategory::Construction,
     //     jlpt: "n2",
-    //     conjugation: ConjugationPattern::Gotoshi,
     // },
     GotoshiKanji {
         name: "gotoshi_kanji",
@@ -1539,7 +1348,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Gotoshi,
     },
     TsuujiteVerbKanji {
         name: "tsuujite_verb_kanji",
@@ -1547,7 +1355,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Tsuujite,
     },
     // TsuujiteVerbKana {
     //     name: "tsuujite_verb_kana",
@@ -1555,7 +1362,6 @@ declare_patterns! {
     //     priority: 7,
     //     category: PatternCategory::Construction,
     //     jlpt: "n2",
-    //     conjugation: ConjugationPattern::Tsuujite,
     // },
     // Amount To (1)
     Noboru {
@@ -1564,7 +1370,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Noboru,
     },
     // While/And (2)
     GateraSplit {
@@ -1573,7 +1378,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Gatera,
     },
     Oyobi {
         name: "oyobi",
@@ -1581,7 +1385,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Oyobi,
     },
     // Perhaps Because/Therefore (2)
     SeiKa {
@@ -1590,7 +1393,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::SeiKa,
     },
     YueniSplit {
         name: "yueni_split",
@@ -1598,7 +1400,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Yueni,
     },
     IppouDewaSplit {
         name: "ippou_dewa_split",
@@ -1606,7 +1407,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::IppouDewa,
     },
     MonoNo {
         name: "mono_no",
@@ -1614,7 +1414,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::MonoNo,
     },
     MonoNoSplit {
         name: "mono_no_split",
@@ -1622,7 +1421,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::MonoNo,
     },
     KuseNiSplit {
         name: "kuse_ni_split",
@@ -1630,7 +1428,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::KuseNi,
     },
     KaketeHaCompound {
         name: "kaketeha_compound",
@@ -1638,7 +1435,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::KaketeHa,
     },
     ItaruMadeKana {
         name: "itaru_made",
@@ -1646,7 +1442,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::ItaruMade,
     },
     ItaruMadeKanji {
         name: "itaru_made_kanji",
@@ -1654,7 +1449,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::ItaruMade,
     },
     NiItaruMadeKana {
         name: "ni_itaru_made",
@@ -1662,7 +1456,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::ItaruMade,
     },
     NiItaruMadeKanji {
         name: "ni_itaru_made_kanji",
@@ -1670,7 +1463,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::ItaruMade,
     },
     IgaiNo {
         name: "igai_no",
@@ -1678,7 +1470,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::IgaiNo,
     },
     BaIiNoni {
         name: "ba_ii_noni",
@@ -1686,7 +1477,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::BaIiNoni,
     },
     BaYoiNoniSplit {
         name: "ba_yoi_noni_split",
@@ -1694,7 +1484,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::BaIiNoni,
     },
     WakeDesu {
         name: "wake_desu",
@@ -1702,7 +1491,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::WakeDesu,
     },
     WakeDa {
         name: "wake_da",
@@ -1710,7 +1498,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::WakeDesu,
     },
     YouNaKiGaSuru {
         name: "you_na_ki_ga_suru",
@@ -1718,7 +1505,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::YouNaKiGaSuru,
     },
     NiKiWoTsukeru {
         name: "ni_ki_wo_tsukeru",
@@ -1726,7 +1512,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::NiKiWoTsukeru,
     },
     BetsuniNaiSplit {
         name: "betsuni_nai_split",
@@ -1734,7 +1519,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::BetsuniNai,
     },
     WakeNiwaIkanaiShort {
         name: "wake_niwa_ikanai_short",
@@ -1742,7 +1526,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::WakeNiwaIkanai,
     },
     NaiWakeNiwaIkanaiShort {
         name: "nai_wake_niwa_ikanai_short",
@@ -1750,7 +1533,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::NaiWakeNiwaIkanai,
     },
     DewaNaiDarouKaFullSplit {
         name: "dewa_nai_darou_ka_full_split",
@@ -1758,7 +1540,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::DewaNaiDarouKa,
     },
     ToIuWakeDewaNaiCompound {
         name: "to_iu_wake_dewa_nai_compound",
@@ -1766,7 +1547,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::ToIuWakeDewaNai,
     },
     NiKoshitaKotoWaNai {
         name: "ni_koshita_koto_wa_nai",
@@ -1774,7 +1554,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::NiKoshitaKotoWaNai,
     },
     SashitsukaenaiKana {
         name: "sashitsukaenai",
@@ -1782,7 +1561,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Sashitsukaenai,
     },
     SashitsukaenaiKanji {
         name: "sashitsukaenai_kanji",
@@ -1790,7 +1568,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::Sashitsukaenai,
     },
     ToIttemKanji {
         name: "to_ittemo",
@@ -1798,7 +1575,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::ToIttemo,
     },
     ToIttemKana {
         name: "to_ittemo_kana",
@@ -1806,7 +1582,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::ToIttemo,
     },
     GaKiNiNaru {
         name: "ga_ki_ni_naru",
@@ -1814,7 +1589,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::GaKiNiNaru,
     },
     OmouYouNi {
         name: "omou_you_ni",
@@ -1822,7 +1596,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::OmouYouni,
     },
     MonoDesukara {
         name: "mono_desukara",
@@ -1830,7 +1603,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::MonoDesukara,
     },
     MonoDakara {
         name: "mono_dakara",
@@ -1838,7 +1610,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n2",
-        conjugation: ConjugationPattern::MonoDesukara,
     },
 
     // ========== N1 PATTERNS (107 total) ==========
@@ -1848,7 +1619,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Meku,
     },
     MekuCompound {
         name: "meku_compound",
@@ -1856,7 +1626,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Meku,
     },
     Mamire {
         name: "mamire",
@@ -1864,7 +1633,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Mamire,
     },
     MamireCompound {
         name: "mamire_compound",
@@ -1872,7 +1640,6 @@ declare_patterns! {
         priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Mamire,
     },
     Zukume {
         name: "zukume",
@@ -1880,7 +1647,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Zukume,
     },
     Ppanashi {
         name: "ppanashi",
@@ -1888,7 +1654,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Ppanashi,
     },
     Kiwamaru {
         name: "kiwamaru",
@@ -1896,7 +1661,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Kiwamaru,
     },
     Kiwamarinai {
         name: "kiwamarinai",
@@ -1904,7 +1668,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Kiwamaru,
     },
     Beku {
         name: "beku",
@@ -1912,7 +1675,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Beku,
     },
     Bekarazu {
         name: "bekarazu",
@@ -1920,7 +1682,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Bekarazu,
     },
     Majiki {
         name: "majiki",
@@ -1928,7 +1689,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Majiki,
     },
     Nari {
         name: "nari",
@@ -1936,7 +1696,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Nari,
     },
     YaInaya {
         name: "ya_inaya",
@@ -1944,7 +1703,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::YaInaya,
     },
     YaInayaSingle {
         name: "ya_inaya_single",
@@ -1952,7 +1710,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::YaInaya,
     },
     GaHayaiKa {
         name: "ga_hayai_ka",
@@ -1960,7 +1717,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::GaHayaiKa,
     },
     GaSaigo {
         name: "ga_saigo",
@@ -1968,7 +1724,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::GaSaigo,
     },
     Gotoki {
         name: "gotoki",
@@ -1976,7 +1731,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Gotoki,
     },
     WoKawakiriNi {
         name: "wo_kawakiri_ni",
@@ -1984,7 +1738,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::WoKawakiriNi,
     },
     WoMotte {
         name: "wo_motte",
@@ -1992,7 +1745,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::WoMotte,
     },
     Nakushiteha {
         name: "nakushiteha",
@@ -2000,7 +1752,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Nakushiteha,
     },
     Nashini {
         name: "nashini",
@@ -2008,7 +1759,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Nashini,
     },
     Naradewa {
         name: "naradewa",
@@ -2016,7 +1766,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Naradewa,
     },
     NiTaru {
         name: "ni_taru",
@@ -2024,7 +1773,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::NiTaru,
     },
     Toatte {
         name: "toatte",
@@ -2032,7 +1780,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Toatte,
     },
     Katagata {
         name: "katagata",
@@ -2040,7 +1787,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Katagata,
     },
     WoKagiriNi {
         name: "wo_kagiri_ni",
@@ -2048,7 +1794,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::WoKagiriNi,
     },
     WoHete {
         name: "wo_hete",
@@ -2056,7 +1801,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::WoHete,
     },
     WoOshite {
         name: "wo_oshite",
@@ -2064,7 +1808,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::WoOshite,
     },
     WoFumaete {
         name: "wo_fumaete",
@@ -2072,7 +1815,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::WoFumaete,
     },
     TeYamanai {
         name: "te_yamanai",
@@ -2080,7 +1822,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::TeYamanai,
     },
     ToOmoikiya {
         name: "to_omoikiya",
@@ -2088,7 +1829,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::ToOmoikiya,
     },
     ToAreba {
         name: "to_areba",
@@ -2096,7 +1836,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::ToAreba,
     },
     TaTokoroDe {
         name: "ta_tokoro_de",
@@ -2104,7 +1843,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::TaTokoroDe,
     },
     DeAre {
         name: "de_are",
@@ -2112,7 +1850,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::DeAre,
     },
     ToWaIe {
         name: "to_wa_ie",
@@ -2120,7 +1857,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::ToWaIe,
     },
     YouGa {
         name: "you_ga",
@@ -2128,7 +1864,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::YouGa,
     },
     NaiMadeMo {
         name: "nai_made_mo",
@@ -2136,7 +1871,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::NaiMadeMo,
     },
     NagaraMo {
         name: "nagara_mo",
@@ -2144,7 +1878,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::NagaraMo,
     },
     DewaArumaishi {
         name: "dewa_arumaishi",
@@ -2152,7 +1885,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::DewaArumaishi,
     },
     ToShitaTokoroDe {
         name: "to_shita_tokoro_de",
@@ -2160,7 +1892,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::ToShitaTokoroDe,
     },
     ToIedomo {
         name: "to_iedomo",
@@ -2168,7 +1899,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::ToIedomo,
     },
     TomoNaruto {
         name: "tomo_naruto",
@@ -2176,7 +1906,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::TomoNaruto,
     },
     NiTaenai {
         name: "ni_taenai",
@@ -2184,7 +1913,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::NiTaenai,
     },
     NiSokushite {
         name: "ni_sokushite",
@@ -2192,7 +1920,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::NiSokushite,
     },
     ToAimatte {
         name: "to_aimatte",
@@ -2200,7 +1927,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::ToAimatte,
     },
     WoYosoni {
         name: "wo_yosoni",
@@ -2208,7 +1934,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::WoYosoni,
     },
     TemoSashitsukaenai {
         name: "temo_sashitsukaenai",
@@ -2216,7 +1941,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::TemoSashitsukaenai,
     },
     WoKinjienai {
         name: "wo_kinjienai",
@@ -2224,7 +1948,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::WoKinjienai,
     },
     WoYoginakusareru {
         name: "wo_yoginakusareru",
@@ -2232,7 +1955,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::WoYoginakusareru,
     },
     TeKaratoiumono {
         name: "te_karatoiumono",
@@ -2240,7 +1962,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::TeKaratoiumono,
     },
     NimoMashite {
         name: "nimo_mashite",
@@ -2248,7 +1969,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::NimoMashite,
     },
     NiHikikae {
         name: "ni_hikikae",
@@ -2256,7 +1976,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::NiHikikae,
     },
     IkanDe {
         name: "ikan_de",
@@ -2264,7 +1983,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Ikan,
     },
     IkanNiyotte {
         name: "ikan_niyotte",
@@ -2272,7 +1990,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Ikan,
     },
     IkanShidai {
         name: "ikan_shidai",
@@ -2280,7 +1997,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Ikan,
     },
     IkanNoDa {
         name: "ikan_no_da",
@@ -2288,7 +2004,6 @@ declare_patterns! {
         priority: 11,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Ikan,
     },
     Taritomo {
         name: "taritomo",
@@ -2296,7 +2011,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Taritomo,
     },
     KiraiGaAru {
         name: "kirai_ga_aru",
@@ -2304,7 +2018,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::KiraiGaAru,
     },
     ShimatsuDa {
         name: "shimatsu_da",
@@ -2312,7 +2025,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::ShimatsuDa,
     },
     ShimatsuDatta {
         name: "shimatsu_datta",
@@ -2320,7 +2032,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::ShimatsuDa,
     },
     Warini {
         name: "warini",
@@ -2328,7 +2039,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Warini,
     },
     Wariniha {
         name: "wariniha",
@@ -2336,7 +2046,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Warini,
     },
     Sura {
         name: "sura",
@@ -2344,7 +2053,6 @@ declare_patterns! {
         priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::DeSura,
     },
     DeSura {
         name: "de_sura",
@@ -2352,7 +2060,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::DeSura,
     },
     KotoNashini {
         name: "koto_nashini",
@@ -2360,7 +2067,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::KotoNashini,
     },
     KaiMoNaku {
         name: "kai_mo_naku",
@@ -2368,7 +2074,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::KaiMoNaku,
     },
     DakeMashi {
         name: "dake_mashi",
@@ -2376,7 +2081,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::DakeMashi,
     },
     NaideWaSumanai {
         name: "naide_wa_sumanai",
@@ -2384,7 +2088,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::NaideWaSumanai,
     },
     NagaraniUmare {
         name: "nagarani_umare",
@@ -2392,7 +2095,6 @@ declare_patterns! {
         priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Nagarani,
     },
     NagaraniUmareShite {
         name: "nagarani_umare_shite",
@@ -2400,7 +2102,6 @@ declare_patterns! {
         priority: 10,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Nagarani,
     },
     NagaraniSplit {
         name: "nagarani_split",
@@ -2408,7 +2109,6 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Nagarani,
     },
     NagaraniShite {
         name: "nagarani_shite",
@@ -2416,7 +2116,6 @@ declare_patterns! {
         priority: 8,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::Nagarani,
     },
     HaOroka {
         name: "ha_oroka",
@@ -2424,16 +2123,15 @@ declare_patterns! {
         priority: 7,
         category: PatternCategory::Construction,
         jlpt: "n1",
-        conjugation: ConjugationPattern::HaOroka,
     },
 }
 
-pub fn create_pattern_matcher() -> PatternMatcher<ConjugationPattern> {
+pub fn create_pattern_matcher() -> PatternMatcher {
     let mut matcher = PatternMatcher::new();
 
     let matcher_patterns: Vec<_> = Pattern::all()
         .into_iter()
-        .map(|p| (p.grammar_pattern(), p.conjugation_pattern()))
+        .map(|p| p.grammar_pattern())
         .collect();
 
     matcher.add_patterns(matcher_patterns);
@@ -2441,15 +2139,9 @@ pub fn create_pattern_matcher() -> PatternMatcher<ConjugationPattern> {
     matcher
 }
 
-pub fn get_all_patterns() -> Vec<(GrammarPattern, ConjugationPattern, &'static str)> {
+pub fn get_all_patterns() -> Vec<(GrammarPattern, &'static str)> {
     Pattern::all()
         .into_iter()
-        .map(|p| {
-            (
-                p.grammar_pattern(),
-                p.conjugation_pattern(),
-                p.grammar_pattern().jlpt_level,
-            )
-        })
+        .map(|p| (p.grammar_pattern(), p.grammar_pattern().jlpt_level))
         .collect()
 }

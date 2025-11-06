@@ -8,7 +8,7 @@ mod n5_patterns;
 use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::process_batch_with_kagome_server;
 use grammar_lib::create_pattern_matcher;
-use grammar_lib::types::{ConjugationPattern, KagomeToken};
+use grammar_lib::types::KagomeToken;
 use grammar_lib::{PatternMatch, PatternMatcher};
 use std::sync::{LazyLock, Mutex};
 
@@ -26,14 +26,14 @@ pub fn tokenize_sentence(text: &str) -> Vec<KagomeToken> {
 }
 
 /// Detect grammar patterns in a token sequence
-pub fn detect_patterns(tokens: &[KagomeToken]) -> Vec<PatternMatch<ConjugationPattern>> {
+pub fn detect_patterns(tokens: &[KagomeToken]) -> Vec<PatternMatch> {
     let matcher = create_pattern_matcher();
     let (matches, _auxiliary_indices) = matcher.match_tokens(tokens);
     matches
 }
 
 /// Check if a specific pattern was detected
-pub fn has_pattern(matches: &[PatternMatch<ConjugationPattern>], pattern_name: &str) -> bool {
+pub fn has_pattern(matches: &[PatternMatch], pattern_name: &str) -> bool {
     matches.iter().any(|m| m.pattern_name == pattern_name)
 }
 
@@ -46,14 +46,14 @@ pub fn char_pos_to_byte_pos(s: &str, char_pos: usize) -> usize {
 }
 
 /// Get the text span covered by a pattern in the sentence
-pub fn pattern_text(sentence: &str, pattern: &PatternMatch<ConjugationPattern>) -> String {
+pub fn pattern_text(sentence: &str, pattern: &PatternMatch) -> String {
     let start_byte = char_pos_to_byte_pos(sentence, pattern.start_char as usize);
     let end_byte = char_pos_to_byte_pos(sentence, pattern.end_char as usize);
     sentence[start_byte..end_byte].to_string()
 }
 
 /// Assert that a pattern was detected
-pub fn assert_has_pattern(matches: &[PatternMatch<ConjugationPattern>], pattern_name: &str) {
+pub fn assert_has_pattern(matches: &[PatternMatch], pattern_name: &str) {
     assert!(
         has_pattern(matches, pattern_name),
         "Pattern '{}' not found",
@@ -64,7 +64,7 @@ pub fn assert_has_pattern(matches: &[PatternMatch<ConjugationPattern>], pattern_
 /// Assert that a pattern would be selected (not filtered as redundant)
 /// Uses the same logic as selectAndLayerGrammarPatterns in the TypeScript extension
 pub fn assert_pattern_selected(
-    matches: &[PatternMatch<ConjugationPattern>],
+    matches: &[PatternMatch],
     tokens: &[KagomeToken],
     pattern_name: &str,
 ) {
@@ -78,7 +78,7 @@ pub fn assert_pattern_selected(
 
 /// Assert that a pattern is at the expected character range
 pub fn assert_pattern_range(
-    matches: &[PatternMatch<ConjugationPattern>],
+    matches: &[PatternMatch],
     pattern_name: &str,
     expected_start: u32,
     expected_end: u32,
@@ -104,7 +104,7 @@ pub fn assert_pattern_range(
 pub fn print_debug(
     sentence: &str,
     tokens: &[KagomeToken],
-    matches: &[PatternMatch<ConjugationPattern>],
+    matches: &[PatternMatch],
 ) {
     println!("\n=== Sentence: {} ===", sentence);
     println!("Tokens:");
