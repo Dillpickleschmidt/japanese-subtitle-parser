@@ -6,6 +6,7 @@ mod patterns;
 
 // Public API
 pub mod types;
+pub mod vocabulary;
 
 // Re-export the main entry point
 pub use patterns::create_pattern_matcher;
@@ -13,3 +14,4 @@ pub use patterns::create_pattern_matcher;
 // Re-export types needed by consumers
 pub use pattern_matcher::{PatternCategory, PatternMatch, PatternMatcher};
 pub use pattern_registry::get_jlpt_level;
+pub use vocabulary::{extract_vocabulary, VocabWord};

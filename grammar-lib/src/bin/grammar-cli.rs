@@ -1,9 +1,9 @@
 use grammar_lib::types::KagomeToken;
-use grammar_lib::{create_pattern_matcher, PatternCategory};
+use grammar_lib::{create_pattern_matcher, extract_vocabulary, PatternCategory, VocabWord};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
-/// Output format matching the WASM GrammarMatch interface
+/// Output format for grammar patterns
 #[derive(Debug, Serialize, Deserialize)]
 struct GrammarMatch {
     pattern_name: String,
@@ -13,7 +13,17 @@ struct GrammarMatch {
     category: String, // "Construction" or "Conjugation"
 }
 
+/// Combined output format when --with-vocabulary flag is used
+#[derive(Debug, Serialize, Deserialize)]
+struct AnalysisWithVocabulary {
+    grammar_patterns: Vec<GrammarMatch>,
+    vocabulary: Vec<VocabWord>,
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Check for --with-vocabulary flag
+    let with_vocabulary = std::env::args().any(|arg| arg == "--with-vocabulary");
+
     // Read JSON tokens from stdin
     let mut input = String::new();
     io::stdin().read_to_string(&mut input)?;
@@ -24,10 +34,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matcher = create_pattern_matcher();
 
     // Match patterns against tokens
-    let (pattern_matches, _auxiliary_indices) = matcher.match_tokens(&tokens);
+    let (pattern_matches, auxiliary_indices) = matcher.match_tokens(&tokens);
 
-    // Convert to output format
-    let output: Vec<GrammarMatch> = pattern_matches
+    // Convert grammar patterns to output format
+    let grammar_output: Vec<GrammarMatch> = pattern_matches
         .into_iter()
         .map(|m| GrammarMatch {
             pattern_name: m.pattern_name.to_string(),
@@ -42,7 +52,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .collect();
 
     // Output JSON to stdout
-    println!("{}", serde_json::to_string(&output)?);
+    if with_vocabulary {
+        let vocabulary = extract_vocabulary(&tokens, &auxiliary_indices);
+        let combined_output = AnalysisWithVocabulary {
+            grammar_patterns: grammar_output,
+            vocabulary,
+        };
+        println!("{}", serde_json::to_string(&combined_output)?);
+    } else {
+        println!("{}", serde_json::to_string(&grammar_output)?);
+    }
 
     Ok(())
 }

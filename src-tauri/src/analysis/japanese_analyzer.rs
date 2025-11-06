@@ -1,5 +1,5 @@
 use crate::analysis::kagome_server::KagomeServer;
-use crate::analysis::unified_analyzer::UnifiedAnalyzer;
+use crate::analysis::unified_analyzer::analyze_batch;
 use crate::error::Error;
 use rusqlite::{Connection, Transaction};
 use std::collections::{HashMap, HashSet};
@@ -34,7 +34,6 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
     let server = KagomeServer::start()?;
 
     println!("Processing transcripts and analyzing grammar patterns...");
-    let analyzer = UnifiedAnalyzer::new();
 
     let total_transcripts: i64 =
         conn.query_row("SELECT COUNT(*) FROM transcripts", [], |row| row.get(0))?;
@@ -69,7 +68,7 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
             batch_count += 1;
             println!("Processing batch {}/{}", batch_count, total_batches);
 
-            let results = analyzer.analyze_batch(&batch, &server)?;
+            let results = analyze_batch(&batch, &server)?;
 
             for (word_key, transcript_ids) in results.words {
                 all_words
@@ -93,7 +92,7 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         batch_count += 1;
         println!("Processing final batch {}/{}", batch_count, total_batches);
 
-        let results = analyzer.analyze_batch(&batch, &server)?;
+        let results = analyze_batch(&batch, &server)?;
 
         for (word_key, transcript_ids) in results.words {
             all_words
