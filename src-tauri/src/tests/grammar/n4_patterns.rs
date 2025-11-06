@@ -1,6 +1,18 @@
 use super::*;
 
-// N4 conjugation patterns
+// N4 Grammar Patterns - Ordered by Learning Progression
+
+#[test]
+fn test_short_volitional_detection() {
+    let sentence = "明日一緒に行こう";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "short_volitional");
+    assert_pattern_range(&patterns, "short_volitional", 5, 8); // 行こう
+    assert_pattern_selected(&patterns, &tokens, "short_volitional");
+}
+
 #[test]
 fn test_imperative_detection() {
     let sentence = "早く食べろ";
@@ -46,6 +58,17 @@ fn test_te_shimau_detection() {
     assert_pattern_selected(&patterns, &tokens, "te_shimau");
 }
 
+#[test]
+fn test_te_kudasaru_detection() {
+    let sentence = "ここで待っていてくださいませんか";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "te_kudasaru");
+    assert_pattern_range(&patterns, "te_kudasaru", 6, 15); // いてくださいません
+    assert_pattern_selected(&patterns, &tokens, "te_kudasaru");
+}
+
 // Tari form patterns (lists non-sequential actions: V-tari V-tari ... suru)
 mod tari_tests {
     use super::*;
@@ -56,8 +79,6 @@ mod tari_tests {
         let sentence = "昔あそこの池で泳いだりした";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-
-        print_debug(sentence, &tokens, &patterns);
 
         assert_has_pattern(&patterns, "tari_suru_single");
         assert_pattern_range(&patterns, "tari_suru_single", 7, 13); // 泳いだりした (泳い starts at char 7)
@@ -71,8 +92,6 @@ mod tari_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        print_debug(sentence, &tokens, &patterns);
-
         assert_has_pattern(&patterns, "tari_suru");
         assert_pattern_range(&patterns, "tari_suru", 4, 14); // 食べたり飲んだりした
         assert_pattern_selected(&patterns, &tokens, "tari_suru");
@@ -84,8 +103,6 @@ mod tari_tests {
         let sentence = "休みの日は家でテレビを見たり寝たり本を読んだりする";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-
-        print_debug(sentence, &tokens, &patterns);
 
         assert_has_pattern(&patterns, "tari_suru");
         assert_pattern_range(&patterns, "tari_suru", 11, 25); // 見たり寝たり本を読んだりする
@@ -99,8 +116,6 @@ mod tari_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        print_debug(sentence, &tokens, &patterns);
-
         assert_has_pattern(&patterns, "tari_suru");
         assert_pattern_range(&patterns, "tari_suru", 0, 12); // 勉強したり運動したりする
         assert_pattern_selected(&patterns, &tokens, "tari_suru");
@@ -112,8 +127,6 @@ mod tari_tests {
         let sentence = "本を読んだり映画を見たりする";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-
-        print_debug(sentence, &tokens, &patterns);
 
         assert_has_pattern(&patterns, "tari_suru");
         assert_pattern_range(&patterns, "tari_suru", 2, 14); // 読んだり映画を見たりする
@@ -203,8 +216,6 @@ mod passive_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        print_debug(sentence, &tokens, &patterns);
-
         assert_has_pattern(&patterns, "passive_ichidan");
         assert_pattern_range(&patterns, "passive_ichidan", 6, 11); // 褒められた
         assert_pattern_selected(&patterns, &tokens, "passive_ichidan");
@@ -238,8 +249,6 @@ mod passive_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        print_debug(sentence, &tokens, &patterns);
-
         assert_has_pattern(&patterns, "passive_godan");
         assert_pattern_range(&patterns, "passive_godan", 2, 5); // 追われ
         assert_pattern_selected(&patterns, &tokens, "passive_godan");
@@ -251,8 +260,6 @@ fn test_causative_detection() {
     let sentence = "食べさせる";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "causative"),
@@ -267,8 +274,6 @@ fn test_causative_passive_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "causative_passive"),
         "Expected causative_passive pattern not detected in '{}'",
@@ -278,12 +283,20 @@ fn test_causative_passive_detection() {
 
 // N4 must patterns
 #[test]
+fn test_nakucha_ikenai_detection() {
+    let sentence = "早く帰らなくちゃいけない";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+    assert_has_pattern(&patterns, "nakucha_ikenai");
+    assert_pattern_range(&patterns, "nakucha_ikenai", 2, 12); // 帰らなくちゃいけない
+    assert_pattern_selected(&patterns, &tokens, "nakucha_ikenai");
+}
+
+#[test]
 fn test_must_nakereba_detection() {
     let sentence = "食べなければならない";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "must_nakereba"),
@@ -297,8 +310,6 @@ fn test_must_nakute_wa_detection() {
     let sentence = "食べなくてはいけない";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "must_nakute_wa"),
@@ -314,8 +325,6 @@ fn test_te_aru_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "te_aru"),
         "Expected te_aru pattern not detected in '{}'",
@@ -328,8 +337,6 @@ fn test_te_kureru_detection() {
     let sentence = "食べてくれる";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "te_kureru"),
@@ -344,8 +351,6 @@ fn test_te_ageru_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "te_ageru"),
         "Expected te_ageru pattern not detected in '{}'",
@@ -358,8 +363,6 @@ fn test_te_oku_detection() {
     let sentence = "食べておく";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "te_oku"),
@@ -375,8 +378,6 @@ fn test_yasui_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "yasui"),
         "Expected yasui pattern not detected in '{}'",
@@ -389,8 +390,6 @@ fn test_nikui_detection() {
     let sentence = "食べにくい";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "nikui"),
@@ -406,8 +405,6 @@ fn test_te_morau_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "te_morau"),
         "Expected te_morau pattern not detected in '{}'",
@@ -420,8 +417,6 @@ fn test_te_sumimasen_detection() {
     let sentence = "食べてすみません";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "te_sumimasen"),
@@ -436,8 +431,6 @@ fn test_te_kurete_arigatou_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "te_kurete_arigatou"),
         "Expected te_kurete_arigatou pattern not detected in '{}'",
@@ -451,8 +444,6 @@ fn test_te_yokatta_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "te_yokatta"),
         "Expected te_yokatta pattern not detected in '{}'",
@@ -465,8 +456,6 @@ fn test_te_mo_detection() {
     let sentence = "食べても";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "te_mo"),
@@ -482,8 +471,6 @@ fn test_naide_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "naide"),
         "Expected naide pattern not detected in '{}'",
@@ -496,8 +483,6 @@ fn test_naide_exception_verb_kureru() {
     let sentence = "くれないで"; // くれる is natural verb ending in れる, not potential
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "naide"),
@@ -512,8 +497,6 @@ fn test_naide_potential_form_rejection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         !has_pattern(&patterns, "naide"),
         "naide should NOT match potential form '{}', but was detected",
@@ -527,8 +510,6 @@ fn test_nakute_mo_ii_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "nakute_mo_ii"),
         "Expected nakute_mo_ii pattern not detected in '{}'",
@@ -541,8 +522,6 @@ fn test_ba_yokatta_detection() {
     let sentence = "食べればよかった";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "ba_yokatta"),
@@ -558,8 +537,6 @@ fn test_nasai_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "nasai"),
         "Expected nasai pattern not detected in '{}'",
@@ -572,8 +549,6 @@ fn test_hazu_desu_detection() {
     let sentence = "食べるはずです";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "hazu_desu"),
@@ -588,8 +563,6 @@ fn test_tagaru_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "tagaru"),
         "Expected tagaru pattern not detected in '{}'",
@@ -602,8 +575,6 @@ fn test_te_itadakemasen_ka_detection() {
     let sentence = "食べていただく";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "te_itadakemasen_ka"),
@@ -619,8 +590,6 @@ fn test_tara_dou_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "tara_dou"),
         "Expected tara_dou pattern not detected in '{}'",
@@ -634,8 +603,6 @@ fn test_to_ii_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "to_ii"),
         "Expected to_ii pattern not detected in '{}'",
@@ -648,8 +615,6 @@ fn test_ga_hoshii_detection() {
     let sentence = "食べ物がほしい";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "ga_hoshii"),
@@ -665,8 +630,6 @@ fn test_shika_nai_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "shika_nai"),
         "Expected shika_nai pattern not detected in '{}'",
@@ -679,8 +642,6 @@ fn test_shika_nai_naru_rejection() {
     let sentence = "しかならない"; // なる doesn't make sense with しか, should NOT match
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         !has_pattern(&patterns, "shika_nai"),
@@ -695,8 +656,6 @@ fn test_to_iu_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "to_iu"),
         "Expected to_iu pattern not detected in '{}'",
@@ -709,8 +668,6 @@ fn test_dictionary_to_detection() {
     let sentence = "食べると";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "dictionary_to"),
@@ -725,8 +682,6 @@ fn test_nara_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "nara"),
         "Expected nara pattern not detected in '{}'",
@@ -739,8 +694,6 @@ fn test_shi_detection() {
     let sentence = "美味しいし";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "shi"),
@@ -755,8 +708,6 @@ fn test_ka_dou_ka_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "ka_dou_ka"),
         "Expected ka_dou_ka pattern not detected in '{}'",
@@ -769,8 +720,6 @@ fn test_koto_ni_suru_detection() {
     let sentence = "食べることにする";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "koto_ni_suru"),
@@ -785,8 +734,6 @@ fn test_noni_detection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "noni"),
         "Expected noni pattern not detected in '{}'",
@@ -799,8 +746,6 @@ fn test_koto_ni_naru_detection() {
     let sentence = "行くことになる";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "koto_ni_naru"),
@@ -817,8 +762,6 @@ fn test_tari_form_godan() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "tari_suru_single"),
         "Expected tari_suru_single pattern not detected in '{}' (godan verb with 連用タ接続)",
@@ -831,8 +774,6 @@ fn test_tara_dou_precedence() {
     let sentence = "飲んだらどうですか"; // Should match tara_dou (priority 12), not just tara_conditional (priority 7)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     // Both should match, but tara_dou should be first due to higher priority
     assert!(
@@ -862,8 +803,6 @@ fn test_te_mo_without_ii() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "te_mo"),
         "Expected te_mo pattern not detected in '{}'",
@@ -883,8 +822,6 @@ fn test_te_mo_ii_precedence() {
     let sentence = "飲んでもいい"; // Should match both te_mo and te_mo_ii, but te_mo_ii should be first
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     // Both should match
     assert!(
@@ -917,8 +854,6 @@ fn test_te_miru_de_variation() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "te_miru"),
         "Expected te_miru pattern not detected in '{}' (de-form variation)",
@@ -932,8 +867,6 @@ fn test_te_oku_de_variation() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "te_oku"),
         "Expected te_oku pattern not detected in '{}' (de-form variation)",
@@ -946,8 +879,6 @@ fn test_te_yokatta_de_variation() {
     let sentence = "飲んでよかった"; // Godan verb with んで
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "te_yokatta"),
@@ -963,8 +894,6 @@ fn test_sou_desu_appearance_verb() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "sou_desu_appearance"),
         "Expected sou_desu_appearance pattern not detected in '{}' (verb)",
@@ -977,8 +906,6 @@ fn test_sou_desu_appearance_i_adjective() {
     let sentence = "高そうです"; // Looks expensive (appearance, i-adjective)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "sou_desu_appearance"),
@@ -993,8 +920,6 @@ fn test_sou_desu_appearance_na_adjective() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "sou_desu_appearance"),
         "Expected sou_desu_appearance pattern not detected in '{}' (na-adjective)",
@@ -1007,8 +932,6 @@ fn test_sou_desu_hearsay_verb() {
     let sentence = "食べるそうです"; // I heard they will eat (hearsay)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "sou_desu_hearsay"),
@@ -1023,8 +946,6 @@ fn test_sou_desu_hearsay_i_adjective() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "sou_desu_hearsay"),
         "Expected sou_desu_hearsay pattern not detected in '{}' (i-adjective)",
@@ -1037,8 +958,6 @@ fn test_sou_desu_hearsay_na_adjective() {
     let sentence = "静かだそうです"; // I heard it's quiet (hearsay, na-adjective)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     // Na-adjectives use a special pattern with だ between stem and そう
     assert!(
@@ -1055,8 +974,6 @@ fn test_kamo_shirenai_verb() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "kamo_shirenai"),
         "Expected kamo_shirenai pattern not detected in '{}' (verb)",
@@ -1069,8 +986,6 @@ fn test_kamo_shiremasen_verb() {
     let sentence = "食べるかもしれません"; // Might eat (polite)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "kamo_shiremasen"),
@@ -1086,8 +1001,6 @@ fn test_kamo_shirenai_i_adjective() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "kamo_shirenai_adj_noun"),
         "Expected kamo_shirenai_adj_noun pattern not detected in '{}' (i-adjective)",
@@ -1101,8 +1014,6 @@ fn test_kamo_shirenai_na_adjective() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "kamo_shirenai_adj_noun"),
         "Expected kamo_shirenai_adj_noun pattern not detected in '{}' (na-adjective)",
@@ -1115,8 +1026,6 @@ fn test_kamo_shirenai_noun() {
     let sentence = "雨かもしれない"; // Might be rain (noun)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "kamo_shirenai_adj_noun"),
@@ -1132,8 +1041,6 @@ fn test_mitai_verb() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "mitai"),
         "Expected mitai pattern not detected in '{}' (verb)",
@@ -1146,8 +1053,6 @@ fn test_mitai_i_adjective() {
     let sentence = "高いみたい"; // Looks expensive (i-adjective)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "mitai_adj_noun"),
@@ -1162,8 +1067,6 @@ fn test_mitai_na_adjective() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     assert!(
         has_pattern(&patterns, "mitai_adj_noun"),
         "Expected mitai_adj_noun pattern not detected in '{}' (na-adjective)",
@@ -1176,8 +1079,6 @@ fn test_mitai_noun() {
     let sentence = "雨みたい"; // Looks like rain (noun)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     assert!(
         has_pattern(&patterns, "mitai_adj_noun"),
@@ -1192,8 +1093,6 @@ fn test_sou_desu_agreement_rejection() {
     let sentence = "そうです"; // "That's right" (agreement, NOT grammar pattern)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     // Should NOT match any sou_desu patterns - this is standalone agreement
     assert!(
@@ -1212,8 +1111,6 @@ fn test_sou_desu_hai_rejection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     // Should NOT match any sou_desu patterns
     assert!(
         !has_pattern(&patterns, "sou_desu_appearance")
@@ -1231,8 +1128,6 @@ fn test_sou_desu_ne_rejection() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    print_debug(sentence, &tokens, &patterns);
-
     // Should NOT match any sou_desu patterns - ends with ね, not です
     assert!(
         !has_pattern(&patterns, "sou_desu_appearance")
@@ -1249,8 +1144,6 @@ fn test_sou_desu_ka_rejection() {
     let sentence = "そうですか"; // "Is that so?" (question)
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    print_debug(sentence, &tokens, &patterns);
 
     // Should NOT match any sou_desu patterns - ends with か, not です
     assert!(

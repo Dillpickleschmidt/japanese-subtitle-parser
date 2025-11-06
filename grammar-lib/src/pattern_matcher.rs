@@ -1,5 +1,5 @@
-use crate::matchers::matches as matcher_matches;
-pub use crate::matchers::CustomMatcher;
+use std::sync::Arc;
+
 use crate::types::KagomeToken;
 
 // ============================================================================
@@ -32,6 +32,7 @@ pub struct GrammarPattern {
     pub tokens: Vec<TokenMatcher>,
     pub priority: u8, // Higher = more specific/important
     pub category: PatternCategory,
+    pub jlpt_level: &'static str,
 }
 
 /// Category of grammar pattern for filtering and vocabulary extraction
@@ -55,7 +56,7 @@ pub enum TokenMatcher {
     },
     Surface(&'static str),
     Any,
-    Custom(CustomMatcher),
+    Custom(Arc<dyn crate::matchers::Matcher>),
     /// Wildcard matcher - skips min to max tokens with optional stop conditions.
     /// NOTE: Only one wildcard per pattern is currently supported.
     /// When wildcard is encountered, remaining pattern is matched and result is returned immediately.
@@ -529,8 +530,8 @@ impl<T: Clone> PatternMatcher<T> {
 
             TokenMatcher::Any => (true, 0.5), // Low score since it matches anything
 
-            TokenMatcher::Custom(custom_matcher) => {
-                let matches = matcher_matches(custom_matcher, token);
+            TokenMatcher::Custom(matcher) => {
+                let matches = matcher.matches(token);
                 if matches {
                     (true, 2.0) // Medium-high score for custom logic
                 } else {

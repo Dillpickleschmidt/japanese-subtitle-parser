@@ -27,9 +27,9 @@ pub struct KagomeToken {
 pub enum ConjugationPattern {
     Dictionary,
     MasuForm,
-    PoliteNegative,    // masen - polite negative
-    PolitePast,        // mashita - polite past
-    Deshita,           // deshita - copula polite past (was/were)
+    PoliteNegative,
+    PolitePast,
+    Deshita,
     Past,
     Negative,
     PastNegative,
@@ -44,10 +44,10 @@ pub enum ConjugationPattern {
     Passive,
     Causative,
     CausativePassive,
-    Volitional,
+    ShortVolitional,
     Imperative,
     TeIru,
-    TeRequest,
+    TeKudasaru,
     TeShimau,
     TeMiru,
     Nagara,
@@ -57,7 +57,7 @@ pub enum ConjugationPattern {
     MaeNi,             // mae ni - before
     TeKara,            // te kara - after doing
     TaKotoGaAru,       // ta koto ga aru - have done before
-    Mashou,            // mashou - let's/shall we
+    PoliteVolitional,  // mashou - let's/shall we (polite volitional)
     TeMoIi,            // te mo ii - may/it's okay to
     TeWaIkenai,        // te wa ikenai - must not
     Sugiru,            // sugiru - too much
@@ -102,6 +102,7 @@ pub enum ConjugationPattern {
     KotoNiNaru,        // koto ni naru - it has been decided that
     NiIku,             // ni iku - go to do
     ONiNaru,           // o ni naru - honorific form (お〜になる)
+    XWaYDesu,          // x wa y desu - X は Y です copula construction
     SouDesuAppearance, // sou desu - looks like (appearance)
     SouDesuHearsay,    // sou desu - I heard that (hearsay)
     KamoShirenai,      // kamo shirenai - might/maybe

@@ -50,21 +50,4 @@ mod tests {
         let _registry = &*PATTERN_REGISTRY;
         // Just verify it initializes without panicking
     }
-
-    #[test]
-    fn test_get_jlpt_level_known_patterns() {
-        // Test N5 patterns
-        assert_eq!(get_jlpt_level("te_iru"), "n5");
-        assert_eq!(get_jlpt_level("tai_form"), "n5");
-        assert_eq!(get_jlpt_level("masu_form"), "n5");
-
-        // Test N4 patterns
-        assert_eq!(get_jlpt_level("potential_ga_ichidan"), "n4");
-        assert_eq!(get_jlpt_level("potential_godan"), "n4");
-        assert_eq!(get_jlpt_level("causative"), "n4");
-
-        // Test N3 patterns
-        assert_eq!(get_jlpt_level("rashii"), "n3");
-        assert_eq!(get_jlpt_level("you_ni_naru"), "n3");
-    }
 }

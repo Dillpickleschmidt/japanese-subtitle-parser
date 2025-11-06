@@ -25,17 +25,6 @@ fn test_masu_form_detection() {
 }
 
 #[test]
-fn test_polite_negative_detection() {
-    let sentence = "今日は行きません";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-
-    assert_has_pattern(&patterns, "polite_negative");
-    assert_pattern_range(&patterns, "polite_negative", 3, 8); // 行きません
-    assert_pattern_selected(&patterns, &tokens, "polite_negative");
-}
-
-#[test]
 fn test_polite_past_detection() {
     let sentence = "昨日映画を見ました";
     let tokens = tokenize_sentence(sentence);
@@ -58,14 +47,25 @@ fn test_deshita_detection() {
 }
 
 #[test]
-fn test_negative_detection() {
+fn test_short_negative_detection() {
     let sentence = "今日は行かない";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    assert_has_pattern(&patterns, "negative");
-    assert_pattern_range(&patterns, "negative", 3, 7); // 行かない
-    assert_pattern_selected(&patterns, &tokens, "negative");
+    assert_has_pattern(&patterns, "short_negative");
+    assert_pattern_range(&patterns, "short_negative", 3, 7); // 行かない
+    assert_pattern_selected(&patterns, &tokens, "short_negative");
+}
+
+#[test]
+fn test_polite_negative_detection() {
+    let sentence = "今日は行きません";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "polite_negative");
+    assert_pattern_range(&patterns, "polite_negative", 3, 8); // 行きません
+    assert_pattern_selected(&patterns, &tokens, "polite_negative");
 }
 
 #[test]
@@ -80,17 +80,15 @@ fn test_past_tense_detection() {
 }
 
 #[test]
-fn test_past_negative_detection() {
+fn test_short_past_negative_detection() {
     let sentence = "昨日は学校に行かなかった";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    assert_has_pattern(&patterns, "past_negative");
-    assert_pattern_range(&patterns, "past_negative", 6, 12); // 行かなかった
-    assert_pattern_selected(&patterns, &tokens, "past_negative");
+    assert_has_pattern(&patterns, "short_past_negative");
+    assert_pattern_range(&patterns, "short_past_negative", 6, 12); // 行かなかった
+    assert_pattern_selected(&patterns, &tokens, "short_past_negative");
 }
-
-// Tai-form patterns (N5)
 
 #[test]
 fn test_tai_form_detection() {
@@ -125,17 +123,15 @@ fn test_takunai_form_detection() {
     assert_pattern_selected(&patterns, &tokens, "takunai_form");
 }
 
-// Te-form patterns (N5)
-
 #[test]
-fn test_basic_te_form_detection() {
+fn test_te_form_detection() {
     let sentence = "朝ごはんを食べて学校に行く";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    assert_has_pattern(&patterns, "te_form_basic");
-    assert_pattern_range(&patterns, "te_form_basic", 5, 8); // 食べて
-    assert_pattern_selected(&patterns, &tokens, "te_form_basic");
+    assert_has_pattern(&patterns, "te_form");
+    assert_pattern_range(&patterns, "te_form", 5, 8); // 食べて
+    assert_pattern_selected(&patterns, &tokens, "te_form");
 }
 
 #[test]
@@ -150,13 +146,14 @@ fn test_te_iru_detection() {
 }
 
 #[test]
-fn test_te_request_detection() {
-    let sentence = "ここで待っていてくださいませんか";
+fn test_te_kara_detection() {
+    let sentence = "宿題をしてから遊ぶ";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-    assert_has_pattern(&patterns, "te_request");
-    assert_pattern_range(&patterns, "te_request", 6, 15); // いてくださいません
-    assert_pattern_selected(&patterns, &tokens, "te_request");
+
+    assert_has_pattern(&patterns, "te_kara");
+    assert_pattern_range(&patterns, "te_kara", 3, 7); // してから
+    assert_pattern_selected(&patterns, &tokens, "te_kara");
 }
 
 #[test]
@@ -171,51 +168,14 @@ fn test_te_kudasai_detection() {
 }
 
 #[test]
-fn test_te_kara_detection() {
-    let sentence = "宿題をしてから遊ぶ";
+fn test_naide_kudasai_detection() {
+    let sentence = "触らないでください";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    assert_has_pattern(&patterns, "te_kara");
-    assert_pattern_range(&patterns, "te_kara", 3, 7); // してから
-    assert_pattern_selected(&patterns, &tokens, "te_kara");
-}
-
-mod volitional_tests {
-    use super::*;
-
-    #[test]
-    fn test_volitional_plain_form() {
-        let sentence = "明日一緒に行こう";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "volitional");
-        assert_pattern_range(&patterns, "volitional", 5, 8); // 行こう
-        assert_pattern_selected(&patterns, &tokens, "volitional");
-    }
-
-    #[test]
-    fn test_volitional_polite_form() {
-        let sentence = "一緒に昼ごはんを食べましょう";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "mashou");
-        assert_pattern_range(&patterns, "mashou", 8, 14); // 食べましょう
-        assert_pattern_selected(&patterns, &tokens, "mashou");
-    }
-}
-
-#[test]
-fn test_ta_koto_ga_aru_detection() {
-    let sentence = "富士山に登ったことがある";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-
-    assert_has_pattern(&patterns, "ta_koto_ga_aru");
-    assert_pattern_range(&patterns, "ta_koto_ga_aru", 4, 12); // 登ったことがある
-    assert_pattern_selected(&patterns, &tokens, "ta_koto_ga_aru");
+    assert_has_pattern(&patterns, "naide_kudasai");
+    assert_pattern_range(&patterns, "naide_kudasai", 0, 9); // 触らないでください
+    assert_pattern_selected(&patterns, &tokens, "naide_kudasai");
 }
 
 #[test]
@@ -241,14 +201,14 @@ fn test_te_wa_ikenai_detection() {
 }
 
 #[test]
-fn test_naide_kudasai_detection() {
-    let sentence = "触らないでください";
+fn test_ta_koto_ga_aru_detection() {
+    let sentence = "富士山に登ったことがある";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    assert_has_pattern(&patterns, "naide_kudasai");
-    assert_pattern_range(&patterns, "naide_kudasai", 0, 9); // 触らないでください
-    assert_pattern_selected(&patterns, &tokens, "naide_kudasai");
+    assert_has_pattern(&patterns, "ta_koto_ga_aru");
+    assert_pattern_range(&patterns, "ta_koto_ga_aru", 4, 12); // 登ったことがある
+    assert_pattern_selected(&patterns, &tokens, "ta_koto_ga_aru");
 }
 
 #[test]
@@ -289,7 +249,27 @@ fn test_mashou_ka_detection() {
     assert_pattern_selected(&patterns, &tokens, "mashou_ka");
 }
 
-// Sugiru pattern with multiple variations (grouped)
+#[test]
+fn test_polite_volitional_detection() {
+    let sentence = "一緒に昼ごはんを食べましょう";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "polite_volitional");
+    assert_pattern_range(&patterns, "polite_volitional", 8, 14); // 食べましょう
+    assert_pattern_selected(&patterns, &tokens, "polite_volitional");
+}
+
+#[test]
+fn test_hou_ga_ii_detection() {
+    let sentence = "早く寝たほうがいい";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "hou_ga_ii");
+    assert_pattern_range(&patterns, "hou_ga_ii", 2, 9); // 寝たほうがいい
+    assert_pattern_selected(&patterns, &tokens, "hou_ga_ii");
+}
 
 #[test]
 fn test_sugiru_detection() {
@@ -311,27 +291,6 @@ fn test_tsumori_desu_detection() {
     assert_has_pattern(&patterns, "tsumori_desu");
     assert_pattern_range(&patterns, "tsumori_desu", 5, 12); // 行くつもりです
     assert_pattern_selected(&patterns, &tokens, "tsumori_desu");
-}
-
-#[test]
-fn test_hou_ga_ii_detection() {
-    let sentence = "早く寝たほうがいい";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-
-    assert_has_pattern(&patterns, "hou_ga_ii");
-    assert_pattern_range(&patterns, "hou_ga_ii", 2, 9); // 寝たほうがいい
-    assert_pattern_selected(&patterns, &tokens, "hou_ga_ii");
-}
-
-#[test]
-fn test_nakucha_ikenai_detection() {
-    let sentence = "早く帰らなくちゃいけない";
-    let tokens = tokenize_sentence(sentence);
-    let patterns = detect_patterns(&tokens);
-    assert_has_pattern(&patterns, "nakucha_ikenai");
-    assert_pattern_range(&patterns, "nakucha_ikenai", 2, 12); // 帰らなくちゃいけない
-    assert_pattern_selected(&patterns, &tokens, "nakucha_ikenai");
 }
 
 #[test]
@@ -375,8 +334,6 @@ mod node_tests {
         let sentence = "雨が降っているので傘を持っていく";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        assert_has_pattern(&patterns, "node_verb");
         assert_pattern_range(&patterns, "node_verb", 2, 9); // 降っているので
         assert_pattern_selected(&patterns, &tokens, "node_verb");
     }
@@ -386,8 +343,6 @@ mod node_tests {
         let sentence = "寒いので家にいる";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        assert_has_pattern(&patterns, "node_adjective");
         assert_pattern_range(&patterns, "node_adjective", 0, 4); // 寒いので
         assert_pattern_selected(&patterns, &tokens, "node_adjective");
     }
@@ -397,8 +352,6 @@ mod node_tests {
         let sentence = "静かなので勉強できる";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        assert_has_pattern(&patterns, "node_nominal");
         assert_pattern_range(&patterns, "node_nominal", 0, 5); // 静かなので
         assert_pattern_selected(&patterns, &tokens, "node_nominal");
     }
@@ -408,8 +361,6 @@ mod node_tests {
         let sentence = "雨なので行けない";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        assert_has_pattern(&patterns, "node_nominal");
         assert_pattern_range(&patterns, "node_nominal", 0, 4); // 雨なので
         assert_pattern_selected(&patterns, &tokens, "node_nominal");
     }
@@ -496,3 +447,65 @@ mod adjective_patterns {
         assert_pattern_selected(&patterns, &tokens, "adjective");
     }
 }
+
+// // X は Y です patterns - copula constructions
+// mod x_wa_y_desu_tests {
+//     use super::*;
+//
+//     // Noun は Noun です (polite)
+//     #[test]
+//     fn test_noun_wa_noun_desu() {
+//         let sentence = "私は学生です";
+//         let tokens = tokenize_sentence(sentence);
+//         let patterns = detect_patterns(&tokens);
+//
+//         print_debug(sentence, &tokens, &patterns);
+//
+//         assert_has_pattern(&patterns, "x_wa_y_desu");
+//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 6); // 私は学生です
+//     }
+//
+//     // Noun は Noun だ (plain)
+//     #[test]
+//     fn test_noun_wa_noun_da() {
+//         let sentence = "私は学生だ";
+//         let tokens = tokenize_sentence(sentence);
+//         let patterns = detect_patterns(&tokens);
+//
+//         assert_has_pattern(&patterns, "x_wa_y_desu");
+//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 5); // 私は学生だ
+//     }
+//
+//     // Noun は Noun だった (past)
+//     #[test]
+//     fn test_noun_wa_noun_datta() {
+//         let sentence = "私は学生だった";
+//         let tokens = tokenize_sentence(sentence);
+//         let patterns = detect_patterns(&tokens);
+//
+//         assert_has_pattern(&patterns, "x_wa_y_desu");
+//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 7); // 私は学生だった
+//     }
+//
+//     // Demonstrative は Noun です
+//     #[test]
+//     fn test_demonstrative_wa_noun_desu() {
+//         let sentence = "これは本です";
+//         let tokens = tokenize_sentence(sentence);
+//         let patterns = detect_patterns(&tokens);
+//
+//         assert_has_pattern(&patterns, "x_wa_y_desu");
+//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 6); // これは本です
+//     }
+//
+//     // Question word は Noun です
+//     #[test]
+//     fn test_question_wa_noun_desu() {
+//         let sentence = "何は猫ですか";
+//         let tokens = tokenize_sentence(sentence);
+//         let patterns = detect_patterns(&tokens);
+//
+//         assert_has_pattern(&patterns, "x_wa_y_desu");
+//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 5); // 何は猫です (excludes か)
+//     }
+// }

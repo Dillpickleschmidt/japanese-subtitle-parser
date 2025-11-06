@@ -2,7 +2,6 @@
 mod matchers;
 mod pattern_matcher;
 mod pattern_registry;
-mod pattern_components;
 mod patterns;
 
 // Public API
