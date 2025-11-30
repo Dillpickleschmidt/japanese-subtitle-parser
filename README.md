@@ -20,14 +20,14 @@ This project makes use of Rust for fast transcript processing and Typescript + S
 To start the development server, run:
 
 ```bash
-npm install
-npm run tauri dev
+bun install
+bun run tauri dev
 ```
 
 The application processes Japanese subtitle files directly using kagome for morphological analysis. Simply:
 
 1. Select your subtitle directory (containing .srt files organized by show)
-2. Click "Parse Subtitles" to process files and extract words 
+2. Click "Parse Subtitles" to process files and extract words
 3. Click "Create Reverse Index" to build search indexes
 4. Search for any Japanese word to find all occurrences with context
 
@@ -65,4 +65,4 @@ There's some limited support for other formats but you'd have to specify the for
 
 ## License
 
-[MIT](LICENSE)
+TODO
