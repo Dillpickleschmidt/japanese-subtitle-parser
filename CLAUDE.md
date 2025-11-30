@@ -28,6 +28,16 @@ Tauri 2.0 desktop app for Japanese subtitle search with grammar pattern detectio
 - **`src-tauri/`** - Tauri backend
 - **`src/`** - SolidJS frontend
 
+## Grammar Pattern Development Workflow
+
+**Test-first approach:**
+
+1. **Add tests** in `src-tauri/src/tests/grammar/nX_patterns.rs` with `print_debug` calls to see tokenization, testing a minimal but appropriately diverse range of scenarios, letting the user examine and adjust them before continuing. Don't test self-obvious things for the sake of testing. Use realistic, sophisticated sentences like those found in subtitles, not overly basic examples like "私の本".
+2. **Claude implements logic** in `grammar-lib/` based on the debug output showing token structure
+3. **Remove `print_debug`** once tests pass
+
+This ensures patterns are built from actual tokenization data rather than assumptions.
+
 ## Grammar Pattern Implementation
 
 When implementing patterns to pass failing tests, modify these files in `grammar-lib/src/`:
