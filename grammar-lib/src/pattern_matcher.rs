@@ -126,16 +126,44 @@ impl PatternMatcher {
         (matches, auxiliary_indices)
     }
 
-    /// Select non-redundant patterns using token-set containment
-    /// Filters out patterns whose token-set is completely contained in a higher-confidence pattern
-    /// This matches the behavior of selectAndLayerGrammarPatterns in the TypeScript extension
-    pub fn select_non_redundant_patterns(
+    /// Select best matches when patterns overlap using token-set containment
+    /// When one pattern's tokens are fully contained in a higher-confidence pattern, the smaller one is not selected
+    /// Construction and Conjugation patterns are selected independently (no cross-category comparison)
+    pub fn select_best_matches(
         matches: &[PatternMatch],
+        tokens: &[KagomeToken],
+    ) -> Vec<PatternMatch> {
+        if matches.is_empty() || tokens.is_empty() {
+            return Vec::new();
+        }
+
+        // Partition by category - filter each independently
+        let constructions: Vec<_> = matches
+            .iter()
+            .filter(|m| m.category == PatternCategory::Construction)
+            .collect();
+        let conjugations: Vec<_> = matches
+            .iter()
+            .filter(|m| m.category == PatternCategory::Conjugation)
+            .collect();
+
+        let mut selected = Self::select_best_within_category(&constructions, tokens);
+        selected.extend(Self::select_best_within_category(&conjugations, tokens));
+
+        // Return in original order by sorting on start position
+        selected.sort_by_key(|p| p.start_char);
+        selected
+    }
+
+    /// Select best matches within a single category
+    /// Keeps patterns whose token-set is not fully contained in a higher-confidence pattern
+    fn select_best_within_category(
+        matches: &[&PatternMatch],
         tokens: &[KagomeToken],
     ) -> Vec<PatternMatch> {
         use std::collections::HashSet;
 
-        if matches.is_empty() || tokens.is_empty() {
+        if matches.is_empty() {
             return Vec::new();
         }
 
@@ -155,7 +183,8 @@ impl PatternMatcher {
             .collect();
 
         // Sort matches by confidence (descending), then by length (descending)
-        let mut indexed_matches: Vec<(usize, &PatternMatch)> = matches.iter().enumerate().collect();
+        let mut indexed_matches: Vec<(usize, &&PatternMatch)> =
+            matches.iter().enumerate().collect();
         indexed_matches.sort_by(|a, b| {
             b.1.confidence
                 .partial_cmp(&a.1.confidence)
@@ -188,11 +217,10 @@ impl PatternMatcher {
             }
         }
 
-        // Return selected patterns in original order
-        selected_indices.sort();
+        // Return selected patterns
         selected_indices
             .iter()
-            .map(|idx| matches[*idx].clone())
+            .map(|idx| (*matches[*idx]).clone())
             .collect()
     }
 
@@ -259,17 +287,13 @@ impl PatternMatcher {
         let mut current_pos = start;
 
         for (i, matcher) in pattern.tokens.iter().enumerate() {
-            if current_pos >= tokens.len() {
-                return None;
-            }
-
             match matcher {
                 TokenMatcher::Wildcard {
                     min,
                     max,
                     stop_conditions,
                 } => {
-                    // Delegate to wildcard-specific matching logic
+                    // Wildcard handles its own bounds checking
                     return self.match_with_wildcard(
                         pattern,
                         tokens,
@@ -284,17 +308,23 @@ impl PatternMatcher {
                 }
 
                 TokenMatcher::Optional(inner) => {
-                    // Try to match optional, but don't fail if it doesn't match
-                    let (matches, score) = self.token_matches(inner, &tokens[current_pos]);
-                    if matches {
-                        specificity_score += score;
-                        current_pos += 1;
+                    // Optional succeeds even at end of tokens (nothing to match = skip)
+                    if current_pos < tokens.len() {
+                        let (matches, score) = self.token_matches(inner, &tokens[current_pos]);
+                        if matches {
+                            specificity_score += score;
+                            current_pos += 1;
+                        }
                     }
-                    // If doesn't match, continue without advancing (pattern skips it)
+                    // At end of tokens or no match: continue without advancing
                 }
 
                 _ => {
-                    // Regular token matching
+                    // Regular matchers require a token to exist
+                    if current_pos >= tokens.len() {
+                        return None;
+                    }
+
                     let token = &tokens[current_pos];
                     let (matches, score) = self.token_matches(matcher, token);
 

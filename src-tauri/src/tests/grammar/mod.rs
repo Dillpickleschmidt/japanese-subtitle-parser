@@ -9,7 +9,7 @@ use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::process_batch_with_kagome_server;
 use grammar_lib::create_pattern_matcher;
 use grammar_lib::types::KagomeToken;
-use grammar_lib::{PatternMatch, PatternMatcher};
+use grammar_lib::{PatternCategory, PatternMatch, PatternMatcher};
 use std::sync::{LazyLock, Mutex};
 
 /// Shared Kagome server for all tests (avoids port conflicts)
@@ -61,17 +61,42 @@ pub fn assert_has_pattern(matches: &[PatternMatch], pattern_name: &str) {
     );
 }
 
-/// Assert that a pattern would be selected (not filtered as redundant)
-/// Uses the same logic as selectAndLayerGrammarPatterns in the TypeScript extension
+/// Check if pattern is selected as a Construction (chosen as best match)
+fn is_construction_selected(
+    matches: &[PatternMatch],
+    tokens: &[KagomeToken],
+    pattern_name: &str,
+) -> bool {
+    let selected = PatternMatcher::select_best_matches(matches, tokens);
+    selected
+        .iter()
+        .any(|p| p.pattern_name == pattern_name && p.category == PatternCategory::Construction)
+}
+
+/// Check if pattern is selected as a Conjugation (chosen as best match)
+fn is_conjugation_selected(
+    matches: &[PatternMatch],
+    tokens: &[KagomeToken],
+    pattern_name: &str,
+) -> bool {
+    let selected = PatternMatcher::select_best_matches(matches, tokens);
+    selected
+        .iter()
+        .any(|p| p.pattern_name == pattern_name && p.category == PatternCategory::Conjugation)
+}
+
+/// Assert that a pattern would be selected as best match
+/// Checks both Construction and Conjugation categories independently
 pub fn assert_pattern_selected(
     matches: &[PatternMatch],
     tokens: &[KagomeToken],
     pattern_name: &str,
 ) {
-    let selected = PatternMatcher::select_non_redundant_patterns(matches, tokens);
+    let in_construction = is_construction_selected(matches, tokens, pattern_name);
+    let in_conjugation = is_conjugation_selected(matches, tokens, pattern_name);
     assert!(
-        selected.iter().any(|p| p.pattern_name == pattern_name),
-        "Pattern '{}' exists but was filtered as redundant",
+        in_construction || in_conjugation,
+        "Pattern '{}' exists but was not selected as best match in either category",
         pattern_name
     );
 }
