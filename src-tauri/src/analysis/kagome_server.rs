@@ -5,7 +5,7 @@ use std::process::{Child, Command, Stdio};
 use std::thread;
 use std::time::Duration;
 
-const KAGOME_PATH: &str = "/home/dylank/go/bin/kagome";
+const KAGOME_PATH: &str = "kagome";
 const SERVER_PORT: u16 = 6061;
 
 #[derive(Serialize)]

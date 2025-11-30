@@ -1,5 +1,5 @@
 [package]
-name = "japanese-subtitle-search"
+name = "japanese-subtitle-parser"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
@@ -7,19 +7,29 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "japanese_subtitle_parser_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
 [build-dependencies]
-tauri-build = { version = "1", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "window-center", "shell-open", "dialog-open", "fs-read-dir", "fs-read-file"] }
+tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order"] }
 regex = "1.10.5"
-rusqlite = { version = "0.32.1", features = ["bundled"] }
+rusqlite = { version = "0.37.0", features = ["bundled"] }
 walkdir = "2"
-reqwest = { version = "0.11", features = ["blocking", "json"] }
+reqwest = { version = "0.12", features = ["blocking", "json"] }
 tempfile = "3.12.0"
 grammar-lib = { path = "../grammar-lib" }
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
 
 [dev-dependencies]
 tempfile = "3.12.0"

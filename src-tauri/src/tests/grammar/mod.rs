@@ -101,11 +101,7 @@ pub fn assert_pattern_range(
 }
 
 /// Print debug information about tokenization and pattern detection
-pub fn print_debug(
-    sentence: &str,
-    tokens: &[KagomeToken],
-    matches: &[PatternMatch],
-) {
+pub fn print_debug(sentence: &str, tokens: &[KagomeToken], matches: &[PatternMatch]) {
     println!("\n=== Sentence: {} ===", sentence);
     println!("Tokens:");
     for token in tokens {

@@ -1,62 +1,35 @@
 {
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "japanese-subtitle-parser",
+  "version": "0.1.0",
+  "identifier": "com.dylank.japanese-subtitle-parser",
   "build": {
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist"
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
   },
-  "package": {
-    "productName": "japanese-subtitle-search",
-    "version": "0.1.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
-      },
-      "window": {
-        "center": true
-      },
-      "fs": {
-        "all": false,
-        "readDir": true,
-        "readFile": true,
-        "scope": ["**"]
-      },
-      "dialog": {
-        "all": false,
-        "open": true
-      }
-    },
+  "app": {
     "windows": [
       {
-        "title": "japanese-subtitle-search",
-        "width": 1400,
-        "height": 900
+        "title": "japanese-subtitle-parser",
+        "width": 800,
+        "height": 600
       }
     ],
     "security": {
       "csp": null
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "com.japanese-subtitle-search.app",
-      "resources": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "windows": {
-        "wix": {
-          "language": "ja-JP"
-        }
-      }
     }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
   }
 }

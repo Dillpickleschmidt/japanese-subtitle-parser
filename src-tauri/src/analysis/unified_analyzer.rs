@@ -3,15 +3,13 @@ use crate::analysis::morphology::process_batch_with_kagome_server;
 use crate::db::grammar_pattern::GrammarPatternCollector;
 use crate::error::Error;
 use grammar_lib::{
-    create_pattern_matcher, extract_vocabulary,
-    PatternCategory, PatternMatcher, VocabWord,
-    types::KagomeToken,
+    create_pattern_matcher, extract_vocabulary, types::KagomeToken, PatternCategory,
+    PatternMatcher, VocabWord,
 };
 use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 
-static PATTERN_MATCHER: LazyLock<PatternMatcher> =
-    LazyLock::new(|| create_pattern_matcher());
+static PATTERN_MATCHER: LazyLock<PatternMatcher> = LazyLock::new(|| create_pattern_matcher());
 
 #[derive(Debug)]
 pub struct UnifiedAnalysisResult {
@@ -27,7 +25,8 @@ pub fn analyze_batch(
     let token_arrays = process_batch_with_kagome_server(batch, server)?;
 
     let estimated_word_capacity = (batch.len() * 18) * 10 / 7;
-    let mut words: HashMap<VocabWord, HashSet<i64>> = HashMap::with_capacity(estimated_word_capacity);
+    let mut words: HashMap<VocabWord, HashSet<i64>> =
+        HashMap::with_capacity(estimated_word_capacity);
     let estimated_episodes = (batch.len() / 20).max(1);
     let mut grammar_collectors = HashMap::with_capacity(estimated_episodes);
 
@@ -39,8 +38,7 @@ pub fn analyze_batch(
                     .entry(episode_id)
                     .or_insert_with(GrammarPatternCollector::new);
 
-                let auxiliary_indices =
-                    analyze_grammar_patterns(tokens, collector, transcript_id);
+                let auxiliary_indices = analyze_grammar_patterns(tokens, collector, transcript_id);
 
                 // Extract vocabulary, skipping auxiliary tokens
                 let vocab_words = extract_vocabulary(tokens, &auxiliary_indices);

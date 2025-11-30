@@ -49,7 +49,6 @@ impl From<serde_json::Error> for Error {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

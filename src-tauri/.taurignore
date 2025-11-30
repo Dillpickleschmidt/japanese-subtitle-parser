@@ -1,3 +1,5 @@
 transcripts.db
+transcripts.db-shm
+transcripts.db-wal
 transcripts.csv
 search_results.json

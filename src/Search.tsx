@@ -1,6 +1,6 @@
 import { TextField, TextFieldRoot } from "@/components/ui/textfield";
 import { createEffect, createSignal, For } from "solid-js";
-import { invoke } from "@tauri-apps/api/tauri";
+import { invoke } from "@tauri-apps/api/core";
 import { Button } from "./components/ui/button";
 import {
   Checkbox,
