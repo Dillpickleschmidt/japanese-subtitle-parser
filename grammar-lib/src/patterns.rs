@@ -289,6 +289,13 @@ declare_patterns! {
         category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
+    XWaYDesu {
+        name: "x_wa_y_desu",
+        matcher_fn: x_wa_y_desu,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
 
     // ========== N4 PATTERNS (62 total) ==========
     TeMiru {

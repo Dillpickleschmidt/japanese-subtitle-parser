@@ -63,6 +63,32 @@ pub fn nakatta_form() -> TokenMatcher {
     TokenMatcher::Custom(Arc::new(NakattaFormMatcher))
 }
 
+/// Match copula forms: です, だ, だった, でした
+/// Used in: x_wa_y_desu
+pub fn copula_matcher() -> TokenMatcher {
+    #[derive(Debug)]
+    struct CopulaMatcher;
+    impl Matcher for CopulaMatcher {
+        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+            // Match です (auxiliary verb)
+            if token.surface == "です" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // Match だ (auxiliary verb or particle in some analyses)
+            if token.surface == "だ" && token.base_form == "だ" {
+                return true;
+            }
+            // Match だっ (past form stem of だ, followed by た)
+            if token.surface == "だっ" && token.base_form == "だ" {
+                return true;
+            }
+            false
+        }
+    }
+    TokenMatcher::Custom(Arc::new(CopulaMatcher))
+}
+
 // ========== N5 Pattern Functions ==========
 
 pub fn dictionary_form() -> Vec<TokenMatcher> {
@@ -380,5 +406,19 @@ pub fn adjective_past() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Adjective { base_form: None },
         TokenMatcher::Surface("た"),
+    ]
+}
+
+// ========== Copula Constructions ==========
+
+// XはYです: Basic copula construction (私は学生です)
+// Structures: Noun/Pronoun + は + Noun + です/だ/だった
+pub fn x_wa_y_desu() -> Vec<TokenMatcher> {
+    vec![
+        super::noun_matcher(), // X (noun, pronoun, demonstrative - all are 名詞)
+        TokenMatcher::Surface("は"),
+        super::noun_matcher(), // Y (noun)
+        copula_matcher(),      // です/だ/だっ
+        TokenMatcher::Optional(Box::new(TokenMatcher::Surface("た"))), // た for だった
     ]
 }

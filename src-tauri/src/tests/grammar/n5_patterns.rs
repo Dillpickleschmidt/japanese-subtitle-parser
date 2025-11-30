@@ -448,64 +448,62 @@ mod adjective_patterns {
     }
 }
 
-// // X は Y です patterns - copula constructions
-// mod x_wa_y_desu_tests {
-//     use super::*;
-//
-//     // Noun は Noun です (polite)
-//     #[test]
-//     fn test_noun_wa_noun_desu() {
-//         let sentence = "私は学生です";
-//         let tokens = tokenize_sentence(sentence);
-//         let patterns = detect_patterns(&tokens);
-//
-//         print_debug(sentence, &tokens, &patterns);
-//
-//         assert_has_pattern(&patterns, "x_wa_y_desu");
-//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 6); // 私は学生です
-//     }
-//
-//     // Noun は Noun だ (plain)
-//     #[test]
-//     fn test_noun_wa_noun_da() {
-//         let sentence = "私は学生だ";
-//         let tokens = tokenize_sentence(sentence);
-//         let patterns = detect_patterns(&tokens);
-//
-//         assert_has_pattern(&patterns, "x_wa_y_desu");
-//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 5); // 私は学生だ
-//     }
-//
-//     // Noun は Noun だった (past)
-//     #[test]
-//     fn test_noun_wa_noun_datta() {
-//         let sentence = "私は学生だった";
-//         let tokens = tokenize_sentence(sentence);
-//         let patterns = detect_patterns(&tokens);
-//
-//         assert_has_pattern(&patterns, "x_wa_y_desu");
-//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 7); // 私は学生だった
-//     }
-//
-//     // Demonstrative は Noun です
-//     #[test]
-//     fn test_demonstrative_wa_noun_desu() {
-//         let sentence = "これは本です";
-//         let tokens = tokenize_sentence(sentence);
-//         let patterns = detect_patterns(&tokens);
-//
-//         assert_has_pattern(&patterns, "x_wa_y_desu");
-//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 6); // これは本です
-//     }
-//
-//     // Question word は Noun です
-//     #[test]
-//     fn test_question_wa_noun_desu() {
-//         let sentence = "何は猫ですか";
-//         let tokens = tokenize_sentence(sentence);
-//         let patterns = detect_patterns(&tokens);
-//
-//         assert_has_pattern(&patterns, "x_wa_y_desu");
-//         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 5); // 何は猫です (excludes か)
-//     }
-// }
+// X は Y です patterns - copula constructions
+mod x_wa_y_desu_tests {
+    use super::*;
+
+    // Noun は Noun です (polite)
+    #[test]
+    fn test_noun_wa_noun_desu() {
+        let sentence = "私は学生です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "x_wa_y_desu");
+        assert_pattern_range(&patterns, "x_wa_y_desu", 0, 6); // 私は学生です
+    }
+
+    // Noun は Noun だ (plain)
+    #[test]
+    fn test_noun_wa_noun_da() {
+        let sentence = "私は学生だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "x_wa_y_desu");
+        assert_pattern_range(&patterns, "x_wa_y_desu", 0, 5); // 私は学生だ
+    }
+
+    // Noun は Noun だった (past)
+    #[test]
+    fn test_noun_wa_noun_datta() {
+        let sentence = "私は学生だった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "x_wa_y_desu");
+        assert_pattern_range(&patterns, "x_wa_y_desu", 0, 7); // 私は学生だった
+    }
+
+    // Demonstrative は Noun です
+    #[test]
+    fn test_demonstrative_wa_noun_desu() {
+        let sentence = "これは本です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "x_wa_y_desu");
+        assert_pattern_range(&patterns, "x_wa_y_desu", 0, 6); // これは本です
+    }
+
+    // Question word は Noun です
+    #[test]
+    fn test_question_wa_noun_desu() {
+        let sentence = "何は猫ですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "x_wa_y_desu");
+        assert_pattern_range(&patterns, "x_wa_y_desu", 0, 5); // 何は猫です (excludes か)
+    }
+}
