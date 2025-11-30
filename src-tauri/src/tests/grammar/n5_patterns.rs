@@ -507,3 +507,29 @@ mod x_wa_y_desu_tests {
         assert_pattern_range(&patterns, "x_wa_y_desu", 0, 5); // 何は猫です (excludes か)
     }
 }
+
+// か particle ending (sentence-final question marker)
+mod ka_particle_ending_tests {
+    use super::*;
+
+    #[test]
+    fn test_question_ka() {
+        let sentence = "何ですか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ka_particle_ending");
+        assert_pattern_range(&patterns, "ka_particle_ending", 3, 5); // か？
+        assert_pattern_selected(&patterns, &tokens, "ka_particle_ending");
+    }
+
+    #[test]
+    fn test_embedded_ka_not_matched() {
+        let sentence = "行くかどうかわからない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Mid-sentence か should NOT match (no punctuation after)
+        assert!(!has_pattern(&patterns, "ka_particle_ending"));
+    }
+}

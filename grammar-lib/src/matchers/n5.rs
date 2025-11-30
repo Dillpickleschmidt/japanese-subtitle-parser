@@ -409,6 +409,30 @@ pub fn adjective_past() -> Vec<TokenMatcher> {
     ]
 }
 
+// ========== Question Particle ==========
+
+// か + punctuation: Sentence-final question marker (何ですか？)
+pub fn ka_particle_ending() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+            token.surface == "か" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+    #[derive(Debug)]
+    struct PunctuationMatcher;
+    impl Matcher for PunctuationMatcher {
+        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "記号")
+        }
+    }
+    vec![
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(PunctuationMatcher)),
+    ]
+}
+
 // ========== Copula Constructions ==========
 
 // XはYです: Basic copula construction (私は学生です)

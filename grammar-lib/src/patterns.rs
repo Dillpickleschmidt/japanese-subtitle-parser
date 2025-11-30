@@ -296,6 +296,13 @@ declare_patterns! {
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
+    KaParticleEnding {
+        name: "ka_particle_ending",
+        matcher_fn: ka_particle_ending,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
 
     // ========== N4 PATTERNS (62 total) ==========
     TeMiru {
