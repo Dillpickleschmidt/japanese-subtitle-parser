@@ -1,6 +1,6 @@
 use crate::analysis::kagome_server::{KagomeServer, KagomeServerExt};
 use crate::error::Error;
-use grammar_lib::types::KagomeToken;
+use kagome_client::KagomeToken;
 
 pub fn process_batch_with_kagome_server(
     batch: &[(i64, i32, String)],

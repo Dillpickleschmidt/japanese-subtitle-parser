@@ -5,30 +5,34 @@ mod n3_patterns;
 mod n4_patterns;
 mod n5_patterns;
 
-use crate::analysis::kagome_server::{KagomeServer, KagomeServerExt};
-use crate::analysis::morphology::process_batch_with_kagome_server;
-use grammar_lib::{pattern_text, select_best_patterns, KagomeToken, PatternMatch};
+use crate::{pattern_text, select_best_patterns, PatternMatch};
+use kagome_client::{KagomeServer, KagomeToken};
 use std::sync::{LazyLock, Mutex};
+
+/// Default port for test Kagome server
+const TEST_SERVER_PORT: u16 = 6061;
 
 /// Shared Kagome server for all tests (avoids port conflicts)
 static KAGOME_SERVER: LazyLock<Mutex<KagomeServer>> = LazyLock::new(|| {
     // Pre-load heavy statics before starting server to avoid CPU contention during health checks
-    grammar_lib::initialize();
-    Mutex::new(KagomeServer::start_default().expect("Failed to start Kagome server for tests"))
+    crate::initialize();
+    Mutex::new(
+        KagomeServer::start(TEST_SERVER_PORT).expect("Failed to start Kagome server for tests"),
+    )
 });
 
 /// Tokenize a Japanese sentence using Kagome
 pub fn tokenize_sentence(text: &str) -> Vec<KagomeToken> {
     let server = KAGOME_SERVER.lock().unwrap();
-    let batch = vec![(1i64, 1i32, text.to_string())];
-    let result = process_batch_with_kagome_server(&batch, &server).unwrap();
-    result[0].clone()
+    server
+        .tokenize(text, "search")
+        .expect("Failed to tokenize text")
 }
 
 /// Detect grammar patterns in a token sequence
 pub fn detect_patterns(tokens: &[KagomeToken]) -> Vec<PatternMatch> {
     let text: String = tokens.iter().map(|t| t.surface.as_str()).collect();
-    let result = grammar_lib::analyze(&text, tokens);
+    let result = crate::analyze(&text, tokens);
     result.grammar_matches
 }
 

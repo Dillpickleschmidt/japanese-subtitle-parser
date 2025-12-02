@@ -107,7 +107,7 @@ fn tari_particle() -> TokenMatcher {
     #[derive(Debug)]
     struct TariParticleMatcher;
     impl super::Matcher for TariParticleMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             (token.surface == "たり" || token.surface == "だり")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "並立助詞")
@@ -146,7 +146,7 @@ fn tara_form() -> TokenMatcher {
     #[derive(Debug)]
     struct TaraFormMatcher;
     impl super::Matcher for TaraFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             (token.surface == "たら" || token.surface == "だら")
                 && (token.base_form == "た" || token.base_form == "だ")
         }
@@ -160,7 +160,7 @@ pub fn yokatta_form() -> TokenMatcher {
     #[derive(Debug)]
     struct YokattaFormMatcher;
     impl super::Matcher for YokattaFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             (token.surface == "よかっ" || token.surface == "良かっ")
                 && (token.base_form == "よい"
                     || token.base_form == "良い"
@@ -206,7 +206,7 @@ fn ichidan_mizen() -> TokenMatcher {
     #[derive(Debug)]
     struct IchidanMizenMatcher;
     impl super::Matcher for IchidanMizenMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(4).is_some_and(|f| f == "一段")
                 && token.features.get(5).is_some_and(|f| f == "未然形")
@@ -221,7 +221,7 @@ fn godan_mizen() -> TokenMatcher {
     #[derive(Debug)]
     struct GodanMizenMatcher;
     impl super::Matcher for GodanMizenMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(4).is_some_and(|f| f.starts_with("五段"))
                 && token.features.get(5).is_some_and(|f| f == "未然形")
@@ -236,7 +236,7 @@ fn rareru_form() -> TokenMatcher {
     #[derive(Debug)]
     struct RareruFormMatcher;
     impl super::Matcher for RareruFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             (token.base_form == "られる" || token.base_form == "れる")
                 && token.pos.first().is_some_and(|s| s == "動詞")
                 && token.pos.get(1).is_some_and(|s| s == "接尾")
@@ -251,7 +251,7 @@ fn reru_form() -> TokenMatcher {
     #[derive(Debug)]
     struct ReruFormMatcher;
     impl super::Matcher for ReruFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.base_form == "れる"
                 && token.pos.first().is_some_and(|s| s == "動詞")
                 && token.pos.get(1).is_some_and(|s| s == "接尾")
@@ -266,7 +266,7 @@ fn eru_form() -> TokenMatcher {
     #[derive(Debug)]
     struct EruFormMatcher;
     impl super::Matcher for EruFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.base_form == "える"
                 && token.pos.first().is_some_and(|s| s == "動詞")
                 && token.pos.get(1).is_some_and(|s| s == "接尾")
@@ -281,7 +281,7 @@ fn causative_form() -> TokenMatcher {
     #[derive(Debug)]
     struct CausativeFormMatcher;
     impl super::Matcher for CausativeFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             (token.surface == "させる" || token.surface == "せる")
                 && (token.base_form == "させる" || token.base_form == "せる")
         }
@@ -295,7 +295,7 @@ fn sase_form() -> TokenMatcher {
     #[derive(Debug)]
     struct SaseFormMatcher;
     impl super::Matcher for SaseFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.surface == "させ" && token.base_form == "させる"
         }
     }
@@ -308,7 +308,7 @@ fn ga_potential_verb() -> TokenMatcher {
     #[derive(Debug)]
     struct GaPotentialVerbMatcher;
     impl super::Matcher for GaPotentialVerbMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(4).is_some_and(|f| f == "一段")
         }
@@ -428,7 +428,7 @@ fn imperative_form() -> TokenMatcher {
     #[derive(Debug)]
     struct ImperativeFormMatcher;
     impl super::Matcher for ImperativeFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             if token.pos.first().is_none_or(|pos| pos != "動詞") {
                 false
             } else {
@@ -454,7 +454,7 @@ fn naku_form() -> TokenMatcher {
     #[derive(Debug)]
     struct NakuFormMatcher;
     impl super::Matcher for NakuFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.surface == "なく" && token.base_form == "ない"
         }
     }
@@ -467,7 +467,7 @@ fn nakere_form() -> TokenMatcher {
     #[derive(Debug)]
     struct NakereFormMatcher;
     impl super::Matcher for NakereFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.surface == "なけれ" && token.base_form == "ない"
         }
     }
@@ -529,7 +529,7 @@ fn non_potential_mizen() -> TokenMatcher {
     #[derive(Debug)]
     struct NonPotentialMizenMatcher;
     impl super::Matcher for NonPotentialMizenMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             // Must be verb in 未然形
             if token.pos.first().is_none_or(|pos| pos != "動詞") {
                 return false;
@@ -591,7 +591,7 @@ fn tagaru_form() -> TokenMatcher {
     #[derive(Debug)]
     struct TagaruFormMatcher;
     impl super::Matcher for TagaruFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.surface == "た"
                 && token.base_form == "たい"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
@@ -623,7 +623,7 @@ fn non_naru_mizen() -> TokenMatcher {
     #[derive(Debug)]
     struct NonNaruMizenMatcher;
     impl super::Matcher for NonNaruMizenMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             // Must be verb in 未然形
             if token.pos.first().is_none_or(|pos| pos != "動詞") {
                 return false;
@@ -668,7 +668,7 @@ fn to_ii_form() -> TokenMatcher {
     #[derive(Debug)]
     struct ToIiFormMatcher;
     impl super::Matcher for ToIiFormMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             (token.surface == "いい" && (token.base_form == "いう" || token.base_form == "いい"))
                 || (token.surface == "良い" && token.base_form == "良い")
         }
@@ -719,7 +719,7 @@ fn shi_particle() -> TokenMatcher {
     #[derive(Debug)]
     struct ShiParticleMatcher;
     impl super::Matcher for ShiParticleMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.surface == "し"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
@@ -800,7 +800,7 @@ fn noun_with_o_prefix() -> TokenMatcher {
     #[derive(Debug)]
     struct NounWithOPrefixMatcher;
     impl super::Matcher for NounWithOPrefixMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             token.pos.first().is_some_and(|pos| pos == "名詞")
                 && token.base_form.starts_with("お")
         }
@@ -824,7 +824,7 @@ fn sugiru_stem() -> TokenMatcher {
     #[derive(Debug)]
     struct SugiruStemMatcher;
     impl super::Matcher for SugiruStemMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             if token.pos.first().is_some_and(|pos| pos == "動詞") {
                 let form = token.features.get(5);
                 form.is_some_and(|f| f == "連用形")
@@ -847,7 +847,7 @@ fn sou_hearsay_stem() -> TokenMatcher {
     #[derive(Debug)]
     struct SouHearsayStemMatcher;
     impl super::Matcher for SouHearsayStemMatcher {
-        fn matches(&self, token: &crate::types::KagomeToken) -> bool {
+        fn matches(&self, token: &kagome_client::KagomeToken) -> bool {
             if token.pos.first().is_some_and(|pos| pos == "動詞") {
                 let form = token.features.get(5);
                 form.is_some_and(|f| f == "基本形")

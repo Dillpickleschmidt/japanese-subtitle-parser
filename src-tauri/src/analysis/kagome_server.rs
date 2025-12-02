@@ -1,5 +1,5 @@
 use crate::error::Error;
-use grammar_lib::KagomeToken;
+use kagome_client::KagomeToken;
 
 pub use kagome_client::KagomeServer;
 

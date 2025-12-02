@@ -1,5 +1,5 @@
 use crate::pattern_matcher::TokenMatcher;
-use crate::types::KagomeToken;
+use kagome_client::KagomeToken;
 use std::sync::Arc;
 
 /// Trait for token matching logic

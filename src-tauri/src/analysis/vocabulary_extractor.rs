@@ -1,4 +1,4 @@
-use grammar_lib::types::KagomeToken;
+use kagome_client::KagomeToken;
 use grammar_lib::VocabWord;
 use std::collections::{HashMap, HashSet};
 

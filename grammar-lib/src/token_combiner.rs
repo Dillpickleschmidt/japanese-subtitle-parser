@@ -1,5 +1,5 @@
 use crate::pattern_matcher::{PatternCategory, PatternMatch};
-use crate::types::KagomeToken;
+use kagome_client::KagomeToken;
 
 /// Combines tokens covered by Conjugation patterns into single tokens.
 /// For example: [拝み, たかっ, た] → [拝みたかった]

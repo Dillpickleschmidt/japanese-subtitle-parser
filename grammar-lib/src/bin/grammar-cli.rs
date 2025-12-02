@@ -1,4 +1,5 @@
-use grammar_lib::{extract_vocabulary, KagomeToken, PatternCategory, VocabWord};
+use grammar_lib::{extract_vocabulary, PatternCategory, VocabWord};
+use kagome_client::KagomeToken;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 

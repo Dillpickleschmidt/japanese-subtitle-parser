@@ -1,6 +1,5 @@
+use kagome_client::KagomeToken;
 use wasm_bindgen::prelude::*;
-
-use grammar_lib::KagomeToken;
 
 #[wasm_bindgen]
 pub fn init() {

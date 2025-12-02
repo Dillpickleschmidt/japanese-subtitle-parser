@@ -6,9 +6,6 @@ mod subtitle_importer;
 #[cfg(test)]
 mod test_utils;
 
-#[cfg(test)]
-mod tests;
-
 pub use error::Error;
 
 use db::DbHandler;

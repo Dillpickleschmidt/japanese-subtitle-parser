@@ -1,29 +1,8 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use crate::compounds::CompoundSpan;
 use crate::pattern_matcher::PatternMatch;
-
-/// Kagome token structure from morphological analysis
-#[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct KagomeToken {
-    #[serde(default)]
-    pub id: u32,
-    #[serde(default)]
-    pub start: u32,
-    #[serde(default)]
-    pub end: u32,
-    #[serde(default)]
-    pub surface: String,
-    #[serde(default)]
-    pub class: String,
-    pub pos: Vec<String>,
-    pub base_form: String,
-    pub reading: String,
-    #[serde(default)]
-    pub pronunciation: String,
-    #[serde(default)]
-    pub features: Vec<String>,
-}
+use kagome_client::KagomeToken;
 
 /// Result of unified text analysis
 #[derive(Debug, Clone, Serialize)]
