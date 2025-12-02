@@ -87,14 +87,11 @@ mod tests {
 
     #[test]
     fn test_build_compound_text() {
-        let tokens = vec![make_token("知り", "知る"), make_token("尽くし", "尽くす")];
+        let tokens = vec![
+            make_token("知り", "知る"),
+            make_token("尽くしていた", "尽くす"),
+        ];
         assert_eq!(build_compound_text(&tokens), "知り尽くす");
-    }
-
-    #[test]
-    fn test_build_compound_text_single() {
-        let tokens = vec![make_token("食べ", "食べる")];
-        assert_eq!(build_compound_text(&tokens), "食べる");
     }
 
     #[test]
@@ -104,7 +101,7 @@ mod tests {
         let tokens = vec![
             make_token("目", "目"),
             make_token("が", "が"),
-            make_token("覚め", "覚める"),
+            make_token("覚めていた", "覚める"),
         ];
         let spans = find_compound_spans(&tokens);
 

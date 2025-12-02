@@ -1,3 +1,4 @@
+mod compound_tests;
 mod integration;
 mod n1_patterns;
 mod n2_patterns;
