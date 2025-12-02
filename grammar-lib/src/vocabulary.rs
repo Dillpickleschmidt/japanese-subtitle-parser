@@ -37,27 +37,21 @@ impl VocabWord {
     }
 }
 
-/// Extract vocabulary from tokens, excluding auxiliary tokens that are part of grammar patterns
+/// Extract vocabulary from combined tokens.
+///
+/// With combined tokens (from `analyze()`), auxiliary tokens are already merged
+/// into their parent verbs, so no need to skip indices.
 ///
 /// # Arguments
-/// - `tokens`: The morphologically analyzed tokens
-/// - `auxiliary_indices`: Token indices that are auxiliary (parts of grammar constructions)
+/// - `tokens`: Combined tokens from `analyze()` result
 ///
 /// # Returns
-/// A vector of unique vocabulary words (deduplicated by position)
-pub fn extract_vocabulary(
-    tokens: &[KagomeToken],
-    auxiliary_indices: &HashSet<usize>,
-) -> Vec<VocabWord> {
+/// A vector of unique vocabulary words (deduplicated)
+pub fn extract_vocabulary(tokens: &[KagomeToken]) -> Vec<VocabWord> {
     let mut words = Vec::new();
     let mut seen = HashSet::new();
 
-    for (i, token) in tokens.iter().enumerate() {
-        // Skip auxiliary tokens (parts of conjugations/constructions)
-        if auxiliary_indices.contains(&i) {
-            continue;
-        }
-
+    for token in tokens {
         let word = VocabWord::from_token(token);
 
         // Skip if not a content word
@@ -104,13 +98,14 @@ mod tests {
     }
 
     #[test]
-    fn test_extract_vocabulary_skips_auxiliary() {
+    fn test_extract_vocabulary_from_combined_tokens() {
+        // With combined tokens, 見ていた becomes a single token
         let tokens = vec![
             KagomeToken {
                 id: 0,
                 start: 0,
-                end: 1,
-                surface: "見".to_string(),
+                end: 4,
+                surface: "見ていた".to_string(),
                 class: String::new(),
                 pos: vec!["動詞".to_string()],
                 base_form: "見る".to_string(),
@@ -120,25 +115,23 @@ mod tests {
             },
             KagomeToken {
                 id: 1,
-                start: 1,
-                end: 2,
-                surface: "て".to_string(),
+                start: 4,
+                end: 5,
+                surface: "猫".to_string(),
                 class: String::new(),
-                pos: vec!["助詞".to_string()],
-                base_form: "て".to_string(),
-                reading: "て".to_string(),
+                pos: vec!["名詞".to_string()],
+                base_form: "猫".to_string(),
+                reading: "ねこ".to_string(),
                 pronunciation: String::new(),
                 features: vec![],
             },
         ];
 
-        let mut auxiliary = HashSet::new();
-        auxiliary.insert(1); // Mark second token as auxiliary
+        let words = extract_vocabulary(&tokens);
 
-        let words = extract_vocabulary(&tokens, &auxiliary);
-
-        // Should only get the verb, not the particle
-        assert_eq!(words.len(), 1);
+        // Should get both the verb and noun
+        assert_eq!(words.len(), 2);
         assert_eq!(words[0].base_form, "見る");
+        assert_eq!(words[1].base_form, "猫");
     }
 }

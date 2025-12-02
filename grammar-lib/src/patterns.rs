@@ -303,6 +303,13 @@ declare_patterns! {
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
+    NoParticleModifier {
+        name: "no_particle_modifier",
+        matcher_fn: no_particle_modifier,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
 
     // ========== N4 PATTERNS (62 total) ==========
     TeMiru {

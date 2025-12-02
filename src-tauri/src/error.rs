@@ -49,6 +49,12 @@ impl From<serde_json::Error> for Error {
     }
 }
 
+impl From<kagome_client::KagomeError> for Error {
+    fn from(err: kagome_client::KagomeError) -> Self {
+        Error::Other(err.to_string())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

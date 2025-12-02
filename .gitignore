@@ -9,3 +9,4 @@ dist
 /src-tauri/parsed_transcripts.csv
 /src-tauri/jmdict.sqlite*
 /src-tauri/search_results.json
+grammar-lib/src/compounds.txt

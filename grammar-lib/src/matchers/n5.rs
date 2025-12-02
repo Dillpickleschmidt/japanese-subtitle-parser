@@ -409,7 +409,16 @@ pub fn adjective_past() -> Vec<TokenMatcher> {
     ]
 }
 
-// ========== Question Particle ==========
+// ========== Particle Patterns ==========
+
+// Noun + の + Noun: Possessive/attributive modifier (あいつの気持ち)
+pub fn no_particle_modifier() -> Vec<TokenMatcher> {
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("の"),
+        super::noun_matcher(),
+    ]
+}
 
 // か + punctuation: Sentence-final question marker (何ですか？)
 pub fn ka_particle_ending() -> Vec<TokenMatcher> {

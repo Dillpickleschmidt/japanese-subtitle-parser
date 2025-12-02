@@ -5,16 +5,16 @@ mod n3_patterns;
 mod n4_patterns;
 mod n5_patterns;
 
-use crate::analysis::kagome_server::KagomeServer;
+use crate::analysis::kagome_server::{KagomeServer, KagomeServerExt};
 use crate::analysis::morphology::process_batch_with_kagome_server;
-use grammar_lib::create_pattern_matcher;
-use grammar_lib::types::KagomeToken;
-use grammar_lib::{PatternCategory, PatternMatch, PatternMatcher};
+use grammar_lib::{pattern_text, select_best_patterns, KagomeToken, PatternMatch};
 use std::sync::{LazyLock, Mutex};
 
 /// Shared Kagome server for all tests (avoids port conflicts)
 static KAGOME_SERVER: LazyLock<Mutex<KagomeServer>> = LazyLock::new(|| {
-    Mutex::new(KagomeServer::start().expect("Failed to start Kagome server for tests"))
+    // Pre-load heavy statics before starting server to avoid CPU contention during health checks
+    grammar_lib::initialize();
+    Mutex::new(KagomeServer::start_default().expect("Failed to start Kagome server for tests"))
 });
 
 /// Tokenize a Japanese sentence using Kagome
@@ -27,29 +27,14 @@ pub fn tokenize_sentence(text: &str) -> Vec<KagomeToken> {
 
 /// Detect grammar patterns in a token sequence
 pub fn detect_patterns(tokens: &[KagomeToken]) -> Vec<PatternMatch> {
-    let matcher = create_pattern_matcher();
-    let (matches, _auxiliary_indices) = matcher.match_tokens(tokens);
-    matches
+    let text: String = tokens.iter().map(|t| t.surface.as_str()).collect();
+    let result = grammar_lib::analyze(&text, tokens);
+    result.grammar_matches
 }
 
 /// Check if a specific pattern was detected
 pub fn has_pattern(matches: &[PatternMatch], pattern_name: &str) -> bool {
     matches.iter().any(|m| m.pattern_name == pattern_name)
-}
-
-/// Helper: Convert character position to byte position in a string
-pub fn char_pos_to_byte_pos(s: &str, char_pos: usize) -> usize {
-    s.char_indices()
-        .nth(char_pos)
-        .map(|(byte_pos, _)| byte_pos)
-        .unwrap_or(s.len())
-}
-
-/// Get the text span covered by a pattern in the sentence
-pub fn pattern_text(sentence: &str, pattern: &PatternMatch) -> String {
-    let start_byte = char_pos_to_byte_pos(sentence, pattern.start_char as usize);
-    let end_byte = char_pos_to_byte_pos(sentence, pattern.end_char as usize);
-    sentence[start_byte..end_byte].to_string()
 }
 
 /// Assert that a pattern was detected
@@ -61,42 +46,13 @@ pub fn assert_has_pattern(matches: &[PatternMatch], pattern_name: &str) {
     );
 }
 
-/// Check if pattern is selected as a Construction (chosen as best match)
-fn is_construction_selected(
-    matches: &[PatternMatch],
-    tokens: &[KagomeToken],
-    pattern_name: &str,
-) -> bool {
-    let selected = PatternMatcher::select_best_matches(matches, tokens);
-    selected
-        .iter()
-        .any(|p| p.pattern_name == pattern_name && p.category == PatternCategory::Construction)
-}
-
-/// Check if pattern is selected as a Conjugation (chosen as best match)
-fn is_conjugation_selected(
-    matches: &[PatternMatch],
-    tokens: &[KagomeToken],
-    pattern_name: &str,
-) -> bool {
-    let selected = PatternMatcher::select_best_matches(matches, tokens);
-    selected
-        .iter()
-        .any(|p| p.pattern_name == pattern_name && p.category == PatternCategory::Conjugation)
-}
-
 /// Assert that a pattern would be selected as best match
-/// Checks both Construction and Conjugation categories independently
-pub fn assert_pattern_selected(
-    matches: &[PatternMatch],
-    tokens: &[KagomeToken],
-    pattern_name: &str,
-) {
-    let in_construction = is_construction_selected(matches, tokens, pattern_name);
-    let in_conjugation = is_conjugation_selected(matches, tokens, pattern_name);
+pub fn assert_pattern_selected(matches: &[PatternMatch], pattern_name: &str) {
+    let match_refs: Vec<&PatternMatch> = matches.iter().collect();
+    let selected = select_best_patterns(&match_refs);
     assert!(
-        in_construction || in_conjugation,
-        "Pattern '{}' exists but was not selected as best match in either category",
+        selected.iter().any(|p| p.pattern_name == pattern_name),
+        "Pattern '{}' exists but was not selected as best match",
         pattern_name
     );
 }

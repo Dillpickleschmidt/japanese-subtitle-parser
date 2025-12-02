@@ -10,7 +10,7 @@ fn test_short_volitional_detection() {
 
     assert_has_pattern(&patterns, "short_volitional");
     assert_pattern_range(&patterns, "short_volitional", 5, 8); // 行こう
-    assert_pattern_selected(&patterns, &tokens, "short_volitional");
+    assert_pattern_selected(&patterns, "short_volitional");
 }
 
 #[test]
@@ -21,7 +21,7 @@ fn test_imperative_detection() {
 
     assert_has_pattern(&patterns, "imperative");
     assert_pattern_range(&patterns, "imperative", 2, 5); // 食べろ
-    assert_pattern_selected(&patterns, &tokens, "imperative");
+    assert_pattern_selected(&patterns, "imperative");
 }
 
 #[test]
@@ -32,7 +32,7 @@ fn test_nagara_detection() {
 
     assert_has_pattern(&patterns, "nagara");
     assert_pattern_range(&patterns, "nagara", 4, 8); // 見ながら
-    assert_pattern_selected(&patterns, &tokens, "nagara");
+    assert_pattern_selected(&patterns, "nagara");
 }
 
 // N4 te-form patterns
@@ -44,7 +44,7 @@ fn test_te_miru_detection() {
 
     assert_has_pattern(&patterns, "te_miru");
     assert_pattern_range(&patterns, "te_miru", 6, 11); // 食べてみる
-    assert_pattern_selected(&patterns, &tokens, "te_miru");
+    assert_pattern_selected(&patterns, "te_miru");
 }
 
 #[test]
@@ -55,7 +55,7 @@ fn test_te_shimau_detection() {
 
     assert_has_pattern(&patterns, "te_shimau");
     assert_pattern_range(&patterns, "te_shimau", 6, 13); // 食べてしまった
-    assert_pattern_selected(&patterns, &tokens, "te_shimau");
+    assert_pattern_selected(&patterns, "te_shimau");
 }
 
 #[test]
@@ -66,7 +66,7 @@ fn test_te_kudasaru_detection() {
 
     assert_has_pattern(&patterns, "te_kudasaru");
     assert_pattern_range(&patterns, "te_kudasaru", 6, 15); // いてくださいません
-    assert_pattern_selected(&patterns, &tokens, "te_kudasaru");
+    assert_pattern_selected(&patterns, "te_kudasaru");
 }
 
 // Tari form patterns (lists non-sequential actions: V-tari V-tari ... suru)
@@ -82,7 +82,7 @@ mod tari_tests {
 
         assert_has_pattern(&patterns, "tari_suru_single");
         assert_pattern_range(&patterns, "tari_suru_single", 7, 13); // 泳いだりした (泳い starts at char 7)
-        assert_pattern_selected(&patterns, &tokens, "tari_suru_single");
+        assert_pattern_selected(&patterns, "tari_suru_single");
     }
 
     #[test]
@@ -94,7 +94,7 @@ mod tari_tests {
 
         assert_has_pattern(&patterns, "tari_suru");
         assert_pattern_range(&patterns, "tari_suru", 4, 14); // 食べたり飲んだりした
-        assert_pattern_selected(&patterns, &tokens, "tari_suru");
+        assert_pattern_selected(&patterns, "tari_suru");
     }
 
     #[test]
@@ -106,7 +106,7 @@ mod tari_tests {
 
         assert_has_pattern(&patterns, "tari_suru");
         assert_pattern_range(&patterns, "tari_suru", 11, 25); // 見たり寝たり本を読んだりする
-        assert_pattern_selected(&patterns, &tokens, "tari_suru");
+        assert_pattern_selected(&patterns, "tari_suru");
     }
 
     #[test]
@@ -118,7 +118,7 @@ mod tari_tests {
 
         assert_has_pattern(&patterns, "tari_suru");
         assert_pattern_range(&patterns, "tari_suru", 0, 12); // 勉強したり運動したりする
-        assert_pattern_selected(&patterns, &tokens, "tari_suru");
+        assert_pattern_selected(&patterns, "tari_suru");
     }
 
     #[test]
@@ -130,7 +130,7 @@ mod tari_tests {
 
         assert_has_pattern(&patterns, "tari_suru");
         assert_pattern_range(&patterns, "tari_suru", 2, 14); // 読んだり映画を見たりする
-        assert_pattern_selected(&patterns, &tokens, "tari_suru");
+        assert_pattern_selected(&patterns, "tari_suru");
     }
 }
 
@@ -143,7 +143,7 @@ fn test_ba_conditional_detection() {
 
     assert_has_pattern(&patterns, "ba_conditional");
     assert_pattern_range(&patterns, "ba_conditional", 0, 4); // 食べれば
-    assert_pattern_selected(&patterns, &tokens, "ba_conditional");
+    assert_pattern_selected(&patterns, "ba_conditional");
 }
 
 #[test]
@@ -154,7 +154,7 @@ fn test_tara_conditional_detection() {
 
     assert_has_pattern(&patterns, "tara_conditional");
     assert_pattern_range(&patterns, "tara_conditional", 0, 4); // 食べたら
-    assert_pattern_selected(&patterns, &tokens, "tara_conditional");
+    assert_pattern_selected(&patterns, "tara_conditional");
 }
 
 // N4 potential patterns
@@ -169,7 +169,7 @@ mod potential_tests {
 
         assert_has_pattern(&patterns, "potential_ga_ichidan");
         assert_pattern_range(&patterns, "potential_ga_ichidan", 1, 7); // が食べられる
-        assert_pattern_selected(&patterns, &tokens, "potential_ga_ichidan");
+        assert_pattern_selected(&patterns, "potential_ga_ichidan");
     }
 
     #[test]
@@ -180,7 +180,7 @@ mod potential_tests {
 
         assert_has_pattern(&patterns, "potential_ga_verb");
         assert_pattern_range(&patterns, "potential_ga_verb", 1, 5); // が飲める
-        assert_pattern_selected(&patterns, &tokens, "potential_ga_verb");
+        assert_pattern_selected(&patterns, "potential_ga_verb");
     }
 }
 
@@ -196,7 +196,7 @@ mod passive_tests {
 
         assert_has_pattern(&patterns, "passive_ichidan");
         assert_pattern_range(&patterns, "passive_ichidan", 3, 8); // 褒められる
-        assert_pattern_selected(&patterns, &tokens, "passive_ichidan");
+        assert_pattern_selected(&patterns, "passive_ichidan");
     }
 
     #[test]
@@ -207,7 +207,7 @@ mod passive_tests {
 
         assert_has_pattern(&patterns, "passive_godan");
         assert_pattern_range(&patterns, "passive_godan", 4, 8); // 飲まれる
-        assert_pattern_selected(&patterns, &tokens, "passive_godan");
+        assert_pattern_selected(&patterns, "passive_godan");
     }
 
     #[test]
@@ -218,7 +218,7 @@ mod passive_tests {
 
         assert_has_pattern(&patterns, "passive_ichidan");
         assert_pattern_range(&patterns, "passive_ichidan", 6, 11); // 褒められた
-        assert_pattern_selected(&patterns, &tokens, "passive_ichidan");
+        assert_pattern_selected(&patterns, "passive_ichidan");
     }
 
     #[test]
@@ -229,7 +229,7 @@ mod passive_tests {
 
         assert_has_pattern(&patterns, "passive_godan");
         assert_pattern_range(&patterns, "passive_godan", 4, 8); // 飲まれた
-        assert_pattern_selected(&patterns, &tokens, "passive_godan");
+        assert_pattern_selected(&patterns, "passive_godan");
     }
 
     #[test]
@@ -240,7 +240,7 @@ mod passive_tests {
 
         assert_has_pattern(&patterns, "passive_ichidan");
         assert_pattern_range(&patterns, "passive_ichidan", 3, 7); // 褒められ
-        assert_pattern_selected(&patterns, &tokens, "passive_ichidan");
+        assert_pattern_selected(&patterns, "passive_ichidan");
     }
 
     #[test]
@@ -251,7 +251,7 @@ mod passive_tests {
 
         assert_has_pattern(&patterns, "passive_godan");
         assert_pattern_range(&patterns, "passive_godan", 2, 5); // 追われ
-        assert_pattern_selected(&patterns, &tokens, "passive_godan");
+        assert_pattern_selected(&patterns, "passive_godan");
     }
 }
 
@@ -289,7 +289,7 @@ fn test_nakucha_ikenai_detection() {
     let patterns = detect_patterns(&tokens);
     assert_has_pattern(&patterns, "nakucha_ikenai");
     assert_pattern_range(&patterns, "nakucha_ikenai", 2, 12); // 帰らなくちゃいけない
-    assert_pattern_selected(&patterns, &tokens, "nakucha_ikenai");
+    assert_pattern_selected(&patterns, "nakucha_ikenai");
 }
 
 #[test]

@@ -1,108 +1,44 @@
 use crate::error::Error;
-use grammar_lib::types::KagomeToken;
-use serde::{Deserialize, Serialize};
-use std::process::{Child, Command, Stdio};
-use std::thread;
-use std::time::Duration;
+use grammar_lib::KagomeToken;
 
-const KAGOME_PATH: &str = "kagome";
+pub use kagome_client::KagomeServer;
+
 const SERVER_PORT: u16 = 6061;
 
-#[derive(Serialize)]
-struct TokenizeRequest {
-    sentence: String,
-    mode: String,
+/// Extension trait to add boundary-aware tokenization to KagomeServer
+pub trait KagomeServerExt {
+    fn start_default() -> Result<KagomeServer, Error>;
+    fn tokenize_with_boundaries(
+        &self,
+        text: &str,
+        transcript_boundaries: &[(u32, u32)],
+    ) -> Result<Vec<Vec<KagomeToken>>, Error>;
+    fn tokenize_by_newlines(&self, text: &str) -> Result<Vec<Vec<KagomeToken>>, Error>;
 }
 
-pub struct KagomeServer {
-    process: Child,
-    client: reqwest::blocking::Client,
-    base_url: String,
-}
-
-impl KagomeServer {
-    pub fn start() -> Result<Self, Error> {
-        println!("Starting Kagome server on port {}...", SERVER_PORT);
-
-        let process = Command::new(KAGOME_PATH)
-            .args(["server", "-http", &format!(":{}", SERVER_PORT)])
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .spawn()
-            .map_err(|e| Error::Other(format!("Failed to start Kagome server: {}", e)))?;
-
-        let client = reqwest::blocking::Client::builder()
-            .timeout(Duration::from_secs(30))
-            .build()
-            .map_err(|e| Error::Other(format!("Failed to create HTTP client: {}", e)))?;
-
-        let base_url = format!("http://localhost:{}", SERVER_PORT);
-
-        let mut attempts = 0;
-        loop {
-            if attempts >= 30 {
-                return Err(Error::Other(
-                    "Kagome server failed to start within 30 seconds".to_string(),
-                ));
-            }
-
-            if client.get(format!("{}/", base_url)).send().is_ok() {
-                break;
-            }
-
-            thread::sleep(Duration::from_secs(1));
-            attempts += 1;
-        }
-
-        println!("Kagome server started successfully");
-
-        Ok(KagomeServer {
-            process,
-            client,
-            base_url,
-        })
+impl KagomeServerExt for KagomeServer {
+    /// Start a Kagome server on the default port (6061).
+    fn start_default() -> Result<KagomeServer, Error> {
+        KagomeServer::start(SERVER_PORT).map_err(|e| Error::Other(e.to_string()))
     }
 
-    pub fn tokenize(
+    /// Tokenize text and split tokens by transcript boundaries.
+    /// Each boundary is a (byte_start, byte_end) pair.
+    fn tokenize_with_boundaries(
         &self,
         text: &str,
         transcript_boundaries: &[(u32, u32)],
     ) -> Result<Vec<Vec<KagomeToken>>, Error> {
-        let request = TokenizeRequest {
-            sentence: text.to_string(),
-            mode: "search".to_string(),
-        };
-
-        let response = self
-            .client
-            .put(format!("{}/tokenize", self.base_url))
-            .json(&request)
-            .send()
-            .map_err(|e| Error::Other(format!("Failed to send request to Kagome server: {}", e)))?;
-
-        if !response.status().is_success() {
-            return Err(Error::Other(format!(
-                "Kagome server returned error: {}",
-                response.status()
-            )));
-        }
-
-        #[derive(Deserialize)]
-        struct TokenizeResponse {
-            tokens: Vec<KagomeToken>,
-        }
-
-        let response_data: TokenizeResponse = response
-            .json()
-            .map_err(|e| Error::Other(format!("Failed to parse Kagome response: {}", e)))?;
+        let tokens = self
+            .tokenize(text, "search")
+            .map_err(|e| Error::Other(e.to_string()))?;
 
         let mut token_arrays: Vec<Vec<KagomeToken>> = transcript_boundaries
             .iter()
             .map(|_| Vec::with_capacity(15))
             .collect();
 
-        // Convert byte boundaries to character boundaries for proper offset adjustment
-        // Kagome returns character offsets, but our boundaries are byte positions
+        // Convert byte boundaries to character boundaries
         let char_boundaries: Vec<(u32, u32)> = transcript_boundaries
             .iter()
             .map(|(byte_start, byte_end)| {
@@ -112,12 +48,12 @@ impl KagomeServer {
             })
             .collect();
 
-        for token in response_data.tokens {
+        for token in tokens {
             if token.surface.trim().is_empty() {
                 continue;
             }
 
-            // Find which transcript this token belongs to by checking both start and end boundaries
+            // Find which transcript this token belongs to
             let transcript_idx = char_boundaries
                 .iter()
                 .position(|(start, end)| token.start >= *start && token.start < *end);
@@ -129,24 +65,21 @@ impl KagomeServer {
                         "WARNING: Token '{}' at position {}-{} doesn't fit in any transcript boundary",
                         token.surface, token.start, token.end
                     );
-                    continue; // Skip this token
+                    continue;
                 }
             };
 
             let (char_start, _) = char_boundaries[current_transcript];
 
-            // Adjust token character offsets to be relative to the individual transcript
-            let token_start = token.start;
-            let token_end = token.end;
-
+            // Adjust token offsets to be relative to individual transcript
             let mut adjusted_token = token;
-            adjusted_token.start = token_start.checked_sub(char_start).expect(&format!(
+            adjusted_token.start = adjusted_token.start.checked_sub(char_start).expect(&format!(
                 "Overflow subtracting start: token.start={} < char_start={}",
-                token_start, char_start
+                adjusted_token.start, char_start
             ));
-            adjusted_token.end = token_end.checked_sub(char_start).expect(&format!(
+            adjusted_token.end = adjusted_token.end.checked_sub(char_start).expect(&format!(
                 "Overflow subtracting end: token.end={} < char_start={}",
-                token_end, char_start
+                adjusted_token.end, char_start
             ));
 
             token_arrays[current_transcript].push(adjusted_token);
@@ -155,39 +88,16 @@ impl KagomeServer {
         Ok(token_arrays)
     }
 
-    pub fn tokenize_normal_mode(&self, text: &str) -> Result<Vec<Vec<KagomeToken>>, Error> {
-        let request = TokenizeRequest {
-            sentence: text.to_string(),
-            mode: "normal".to_string(),
-        };
-
-        let response = self
-            .client
-            .put(format!("{}/tokenize", self.base_url))
-            .json(&request)
-            .send()
-            .map_err(|e| Error::Other(format!("Failed to send request to Kagome server: {}", e)))?;
-
-        if !response.status().is_success() {
-            return Err(Error::Other(format!(
-                "Kagome server returned error: {}",
-                response.status()
-            )));
-        }
-
-        #[derive(Deserialize)]
-        struct TokenizeResponse {
-            tokens: Vec<KagomeToken>,
-        }
-
-        let response_data: TokenizeResponse = response
-            .json()
-            .map_err(|e| Error::Other(format!("Failed to parse Kagome response: {}", e)))?;
+    /// Tokenize text in normal mode and split by newlines.
+    fn tokenize_by_newlines(&self, text: &str) -> Result<Vec<Vec<KagomeToken>>, Error> {
+        let tokens = self
+            .tokenize(text, "normal")
+            .map_err(|e| Error::Other(e.to_string()))?;
 
         let mut token_arrays = Vec::new();
         let mut current_tokens = Vec::new();
 
-        for token in response_data.tokens {
+        for token in tokens {
             if token.surface == "\n" {
                 if !current_tokens.is_empty() {
                     token_arrays.push(current_tokens);
@@ -203,26 +113,5 @@ impl KagomeServer {
         }
 
         Ok(token_arrays)
-    }
-
-    pub fn shutdown(mut self) -> Result<(), Error> {
-        println!("Shutting down Kagome server...");
-
-        self.process
-            .kill()
-            .map_err(|e| Error::Other(format!("Failed to kill Kagome server: {}", e)))?;
-
-        self.process
-            .wait()
-            .map_err(|e| Error::Other(format!("Failed to wait for Kagome server: {}", e)))?;
-
-        println!("Kagome server shut down");
-        Ok(())
-    }
-}
-
-impl Drop for KagomeServer {
-    fn drop(&mut self) {
-        let _ = self.process.kill();
     }
 }

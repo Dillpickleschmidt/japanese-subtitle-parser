@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::types::KagomeToken;
+use serde::{Deserialize, Serialize};
 
 // ============================================================================
 // PUBLIC TYPES
@@ -11,7 +12,7 @@ pub struct PatternMatcher {
     patterns: Vec<GrammarPattern>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PatternMatch {
     pub confidence: f32,
     pub pattern_name: &'static str,
@@ -34,7 +35,7 @@ pub struct GrammarPattern {
 }
 
 /// Category of grammar pattern for filtering and vocabulary extraction
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PatternCategory {
     /// Basic conjugation forms - detected but not stored as grammar patterns
     /// Used for vocabulary consolidation (skip auxiliary tokens)
@@ -126,104 +127,6 @@ impl PatternMatcher {
         (matches, auxiliary_indices)
     }
 
-    /// Select best matches when patterns overlap using token-set containment
-    /// When one pattern's tokens are fully contained in a higher-confidence pattern, the smaller one is not selected
-    /// Construction and Conjugation patterns are selected independently (no cross-category comparison)
-    pub fn select_best_matches(
-        matches: &[PatternMatch],
-        tokens: &[KagomeToken],
-    ) -> Vec<PatternMatch> {
-        if matches.is_empty() || tokens.is_empty() {
-            return Vec::new();
-        }
-
-        // Partition by category - filter each independently
-        let constructions: Vec<_> = matches
-            .iter()
-            .filter(|m| m.category == PatternCategory::Construction)
-            .collect();
-        let conjugations: Vec<_> = matches
-            .iter()
-            .filter(|m| m.category == PatternCategory::Conjugation)
-            .collect();
-
-        let mut selected = Self::select_best_within_category(&constructions, tokens);
-        selected.extend(Self::select_best_within_category(&conjugations, tokens));
-
-        // Return in original order by sorting on start position
-        selected.sort_by_key(|p| p.start_char);
-        selected
-    }
-
-    /// Select best matches within a single category
-    /// Keeps patterns whose token-set is not fully contained in a higher-confidence pattern
-    fn select_best_within_category(
-        matches: &[&PatternMatch],
-        tokens: &[KagomeToken],
-    ) -> Vec<PatternMatch> {
-        use std::collections::HashSet;
-
-        if matches.is_empty() {
-            return Vec::new();
-        }
-
-        // Build token-set for each pattern
-        let pattern_token_sets: Vec<HashSet<usize>> = matches
-            .iter()
-            .map(|pattern| {
-                let mut token_set = HashSet::new();
-                for (token_idx, token) in tokens.iter().enumerate() {
-                    // Check if token overlaps with pattern character range
-                    if pattern.start_char < token.end && pattern.end_char > token.start {
-                        token_set.insert(token_idx);
-                    }
-                }
-                token_set
-            })
-            .collect();
-
-        // Sort matches by confidence (descending), then by length (descending)
-        let mut indexed_matches: Vec<(usize, &&PatternMatch)> =
-            matches.iter().enumerate().collect();
-        indexed_matches.sort_by(|a, b| {
-            b.1.confidence
-                .partial_cmp(&a.1.confidence)
-                .unwrap_or(std::cmp::Ordering::Equal)
-                .then((b.1.end_char - b.1.start_char).cmp(&(a.1.end_char - a.1.start_char)))
-        });
-
-        // Filter patterns: keep those not contained in higher-confidence patterns
-        let mut selected_indices = Vec::new();
-
-        for (orig_idx, _pattern) in &indexed_matches {
-            let pattern_tokens = &pattern_token_sets[*orig_idx];
-
-            // Check if this pattern's token-set is contained in any already-selected pattern
-            let is_redundant = selected_indices.iter().any(|selected_idx: &usize| {
-                let selected_tokens = &pattern_token_sets[*selected_idx];
-
-                // Check if pattern_tokens ⊆ selected_tokens
-                if pattern_tokens.len() > selected_tokens.len() {
-                    return false;
-                }
-
-                pattern_tokens
-                    .iter()
-                    .all(|token_idx| selected_tokens.contains(token_idx))
-            });
-
-            if !is_redundant {
-                selected_indices.push(*orig_idx);
-            }
-        }
-
-        // Return selected patterns
-        selected_indices
-            .iter()
-            .map(|idx| (*matches[*idx]).clone())
-            .collect()
-    }
-
     // ========================================================================
     // PRIVATE HELPER METHODS
     // ========================================================================
@@ -310,7 +213,7 @@ impl PatternMatcher {
                 TokenMatcher::Optional(inner) => {
                     // Optional succeeds even at end of tokens (nothing to match = skip)
                     if current_pos < tokens.len() {
-                        let (matches, score) = self.token_matches(inner, &tokens[current_pos]);
+                        let (matches, score) = Self::token_matches(inner, &tokens[current_pos]);
                         if matches {
                             specificity_score += score;
                             current_pos += 1;
@@ -326,7 +229,7 @@ impl PatternMatcher {
                     }
 
                     let token = &tokens[current_pos];
-                    let (matches, score) = self.token_matches(matcher, token);
+                    let (matches, score) = Self::token_matches(matcher, token);
 
                     if !matches {
                         return None;
@@ -373,6 +276,7 @@ impl PatternMatcher {
 
     /// Handle wildcard matching - tries skipping min to max tokens with stop conditions
     /// Returns the finalized match if successful, or None if wildcard didn't match
+    #[allow(clippy::too_many_arguments)]
     fn match_with_wildcard(
         &self,
         pattern: &GrammarPattern,
@@ -409,7 +313,7 @@ impl PatternMatcher {
 
                 // Check if any stop condition matches this token
                 for stop_condition in &stop_conditions {
-                    let (matches, _score) = self.token_matches(stop_condition, wildcard_token);
+                    let (matches, _score) = Self::token_matches(stop_condition, wildcard_token);
                     if matches {
                         should_stop = true;
                         break;
@@ -470,7 +374,7 @@ impl PatternMatcher {
                 return None;
             }
 
-            let (matches, _) = self.token_matches(matcher, &tokens[pos]);
+            let (matches, _) = Self::token_matches(matcher, &tokens[pos]);
             if !matches {
                 return None;
             }
@@ -482,7 +386,7 @@ impl PatternMatcher {
     }
 
     /// Check if a token matcher matches a given token, returning match status and specificity score
-    fn token_matches(&self, matcher: &TokenMatcher, token: &KagomeToken) -> (bool, f32) {
+    fn token_matches(matcher: &TokenMatcher, token: &KagomeToken) -> (bool, f32) {
         match matcher {
             TokenMatcher::Verb {
                 conjugation_form,
@@ -559,7 +463,7 @@ impl PatternMatcher {
 
             TokenMatcher::Optional(inner) => {
                 // Optional delegates to the inner matcher
-                self.token_matches(inner, token)
+                Self::token_matches(inner, token)
             }
         }
     }
@@ -593,12 +497,6 @@ impl TokenMatcher {
     pub fn specific_verb_with_form(base_form: &'static str, form: &'static str) -> Self {
         TokenMatcher::Verb {
             conjugation_form: Some(form),
-            base_form: Some(base_form),
-        }
-    }
-
-    pub fn specific_adjective(base_form: &'static str) -> Self {
-        TokenMatcher::Adjective {
             base_form: Some(base_form),
         }
     }

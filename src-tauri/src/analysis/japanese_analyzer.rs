@@ -1,4 +1,4 @@
-use crate::analysis::kagome_server::KagomeServer;
+use crate::analysis::kagome_server::{KagomeServer, KagomeServerExt};
 use crate::analysis::unified_analyzer::analyze_batch;
 use crate::error::Error;
 use rusqlite::{Connection, Transaction};
@@ -31,7 +31,7 @@ static POS_CACHE: LazyLock<HashMap<Vec<String>, String>> = LazyLock::new(|| {
 pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
     println!("Creating reverse index and analyzing grammar patterns...");
 
-    let server = KagomeServer::start()?;
+    let server = KagomeServer::start_default()?;
 
     println!("Processing transcripts and analyzing grammar patterns...");
 

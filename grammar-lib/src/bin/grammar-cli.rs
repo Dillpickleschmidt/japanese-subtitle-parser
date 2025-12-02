@@ -1,5 +1,4 @@
-use grammar_lib::types::KagomeToken;
-use grammar_lib::{create_pattern_matcher, extract_vocabulary, PatternCategory, VocabWord};
+use grammar_lib::{extract_vocabulary, KagomeToken, PatternCategory, VocabWord};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -30,14 +29,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let tokens: Vec<KagomeToken> = serde_json::from_str(&input)?;
 
-    // Create pattern matcher with all JLPT level patterns
-    let matcher = create_pattern_matcher();
+    // Reconstruct text from token surface forms (needed for analyze())
+    let text: String = tokens.iter().map(|t| t.surface.as_str()).collect();
 
-    // Match patterns against tokens
-    let (pattern_matches, auxiliary_indices) = matcher.match_tokens(&tokens);
+    // Use unified analyze() function
+    let result = grammar_lib::analyze(&text, &tokens);
 
     // Convert grammar patterns to output format
-    let grammar_output: Vec<GrammarMatch> = pattern_matches
+    let grammar_output: Vec<GrammarMatch> = result
+        .grammar_matches
         .into_iter()
         .map(|m| GrammarMatch {
             pattern_name: m.pattern_name.to_string(),
@@ -53,7 +53,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Output JSON to stdout
     if with_vocabulary {
-        let vocabulary = extract_vocabulary(&tokens, &auxiliary_indices);
+        // Extract vocabulary from combined tokens
+        let vocabulary = extract_vocabulary(&result.tokens);
         let combined_output = AnalysisWithVocabulary {
             grammar_patterns: grammar_output,
             vocabulary,

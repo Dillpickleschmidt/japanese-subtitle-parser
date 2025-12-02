@@ -1,4 +1,4 @@
-use crate::analysis::kagome_server::KagomeServer;
+use crate::analysis::kagome_server::{KagomeServer, KagomeServerExt};
 use crate::error::Error;
 use grammar_lib::types::KagomeToken;
 
@@ -22,7 +22,7 @@ pub fn process_batch_with_kagome_server(
         combined_text.pop();
     }
 
-    server.tokenize(&combined_text, &boundaries)
+    server.tokenize_with_boundaries(&combined_text, &boundaries)
 }
 
 pub fn get_base_form_readings(
@@ -50,7 +50,7 @@ pub fn get_base_form_readings(
 
         let combined_text = chunk.join("\n");
 
-        let token_arrays = server.tokenize_normal_mode(&combined_text)?;
+        let token_arrays = server.tokenize_by_newlines(&combined_text)?;
 
         for (i, &base_form) in chunk.iter().enumerate() {
             if let Some(tokens) = token_arrays.get(i) {
@@ -73,7 +73,7 @@ mod tests {
     fn test_process_text_with_kagome() {
         let text = "私は猫が好きです。";
 
-        let server = KagomeServer::start().unwrap();
+        let server = KagomeServer::start_default().unwrap();
         let batch = vec![(1i64, 1i32, text.to_string())];
         let token_arrays = process_batch_with_kagome_server(&batch, &server).unwrap();
 

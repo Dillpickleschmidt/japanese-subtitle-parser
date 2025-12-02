@@ -384,6 +384,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "compound-extractor"
+version = "0.1.0"
+dependencies = [
+ "kagome-client",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "concurrent-queue"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1795,8 +1804,8 @@ name = "japanese-subtitle-parser"
 version = "0.1.0"
 dependencies = [
  "grammar-lib",
+ "kagome-client",
  "regex",
- "reqwest",
  "rusqlite",
  "serde",
  "serde_json",
@@ -1884,6 +1893,16 @@ checksum = "5dea2b27dd239b2556ed7a25ba842fe47fd602e7fc7433c2a8d6106d4d9edd70"
 dependencies = [
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "kagome-client"
+version = "0.1.0"
+dependencies = [
+ "grammar-lib",
+ "reqwest",
+ "serde",
+ "thiserror 2.0.17",
 ]
 
 [[package]]

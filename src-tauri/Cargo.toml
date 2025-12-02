@@ -24,9 +24,9 @@ serde_json = { version = "1.0", features = ["preserve_order"] }
 regex = "1.10.5"
 rusqlite = { version = "0.37.0", features = ["bundled"] }
 walkdir = "2"
-reqwest = { version = "0.12", features = ["blocking", "json"] }
 tempfile = "3.12.0"
 grammar-lib = { path = "../grammar-lib" }
+kagome-client = { path = "../kagome-client" }
 tauri-plugin-shell = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"

@@ -2,14 +2,8 @@ use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::process_batch_with_kagome_server;
 use crate::db::grammar_pattern::GrammarPatternCollector;
 use crate::error::Error;
-use grammar_lib::{
-    create_pattern_matcher, extract_vocabulary, types::KagomeToken, PatternCategory,
-    PatternMatcher, VocabWord,
-};
+use grammar_lib::{extract_vocabulary, PatternCategory, VocabWord};
 use std::collections::{HashMap, HashSet};
-use std::sync::LazyLock;
-
-static PATTERN_MATCHER: LazyLock<PatternMatcher> = LazyLock::new(|| create_pattern_matcher());
 
 #[derive(Debug)]
 pub struct UnifiedAnalysisResult {
@@ -30,18 +24,31 @@ pub fn analyze_batch(
     let estimated_episodes = (batch.len() / 20).max(1);
     let mut grammar_collectors = HashMap::with_capacity(estimated_episodes);
 
-    for (line_idx, &(transcript_id, episode_id, _)) in batch.iter().enumerate() {
+    for (line_idx, &(transcript_id, episode_id, ref text)) in batch.iter().enumerate() {
         if let Some(tokens) = token_arrays.get(line_idx) {
             if !tokens.is_empty() {
-                // Analyze grammar patterns first to get auxiliary token indices
+                // Use unified analyze() function
+                let result = grammar_lib::analyze(text, tokens);
+
+                // Collect Construction patterns
                 let collector = grammar_collectors
                     .entry(episode_id)
                     .or_insert_with(GrammarPatternCollector::new);
 
-                let auxiliary_indices = analyze_grammar_patterns(tokens, collector, transcript_id);
+                for pattern_match in &result.grammar_matches {
+                    if pattern_match.category == PatternCategory::Construction {
+                        collector.add_pattern(
+                            pattern_match.pattern_name.to_string(),
+                            transcript_id,
+                            pattern_match.confidence.into(),
+                            pattern_match.start_char,
+                            pattern_match.end_char,
+                        );
+                    }
+                }
 
-                // Extract vocabulary, skipping auxiliary tokens
-                let vocab_words = extract_vocabulary(tokens, &auxiliary_indices);
+                // Extract vocabulary from combined tokens (no auxiliary indices needed)
+                let vocab_words = extract_vocabulary(&result.tokens);
                 for word in vocab_words {
                     words.entry(word).or_default().insert(transcript_id);
                 }
@@ -53,28 +60,4 @@ pub fn analyze_batch(
         words,
         grammar_patterns: grammar_collectors,
     })
-}
-
-/// Analyze grammar patterns in tokens and collect construction patterns
-fn analyze_grammar_patterns(
-    tokens: &[KagomeToken],
-    collector: &mut GrammarPatternCollector,
-    transcript_id: i64,
-) -> HashSet<usize> {
-    let (pattern_matches, auxiliary_indices) = PATTERN_MATCHER.match_tokens(tokens);
-
-    // Only store Construction patterns (skip basic Conjugation patterns)
-    for pattern_match in pattern_matches {
-        if pattern_match.category == PatternCategory::Construction {
-            collector.add_pattern(
-                pattern_match.pattern_name.to_string(),
-                transcript_id,
-                pattern_match.confidence.into(),
-                pattern_match.start_char,
-                pattern_match.end_char,
-            );
-        }
-    }
-
-    auxiliary_indices
 }

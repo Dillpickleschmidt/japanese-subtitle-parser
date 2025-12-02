@@ -3,6 +3,8 @@ members = [
     "src-tauri",
     "grammar-wasm",
     "grammar-lib",
+    "kagome-client",
+    "compound-extractor",
 ]
 resolver = "2"
 
