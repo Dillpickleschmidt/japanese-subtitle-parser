@@ -1,4 +1,4 @@
-use kagome_client::KagomeToken;
+use crate::KagomeToken;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 

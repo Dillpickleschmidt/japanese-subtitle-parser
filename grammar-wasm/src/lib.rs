@@ -1,4 +1,4 @@
-use kagome_client::KagomeToken;
+use grammar_lib::KagomeToken;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

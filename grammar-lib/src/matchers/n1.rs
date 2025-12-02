@@ -1,5 +1,5 @@
 use crate::pattern_matcher::TokenMatcher;
-use kagome_client::KagomeToken;
+use crate::KagomeToken;
 use std::sync::Arc;
 
 #[allow(unused_imports)]

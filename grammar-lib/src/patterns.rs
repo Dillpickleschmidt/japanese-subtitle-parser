@@ -132,7 +132,7 @@ declare_patterns! {
         name: "te_iru",
         matcher_fn: te_iru,
         priority: 10,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
     TeKara {

@@ -2,7 +2,7 @@ use crate::analysis::kagome_server::KagomeServer;
 use crate::analysis::morphology::process_batch_with_kagome_server;
 use crate::db::grammar_pattern::GrammarPatternCollector;
 use crate::error::Error;
-use grammar_lib::{extract_vocabulary, PatternCategory, VocabWord};
+use grammar_lib::{extract_vocabulary, KagomeToken, PatternCategory, VocabWord};
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]
@@ -27,8 +27,11 @@ pub fn analyze_batch(
     for (line_idx, &(transcript_id, episode_id, ref text)) in batch.iter().enumerate() {
         if let Some(tokens) = token_arrays.get(line_idx) {
             if !tokens.is_empty() {
+                // Convert kagome_client::KagomeToken -> grammar_lib::KagomeToken via serde
+                let tokens: Vec<KagomeToken> =
+                    serde_json::from_value(serde_json::to_value(tokens).unwrap()).unwrap();
                 // Use unified analyze() function
-                let result = grammar_lib::analyze(text, tokens);
+                let result = grammar_lib::analyze(text, &tokens);
 
                 // Collect Construction patterns
                 let collector = grammar_collectors

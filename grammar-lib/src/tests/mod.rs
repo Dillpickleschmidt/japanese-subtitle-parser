@@ -6,8 +6,8 @@ mod n3_patterns;
 mod n4_patterns;
 mod n5_patterns;
 
-use crate::{pattern_text, select_best_patterns, PatternMatch};
-use kagome_client::{KagomeServer, KagomeToken};
+use crate::{pattern_text, select_best_patterns, KagomeToken, PatternMatch};
+use kagome_client::KagomeServer;
 use std::sync::{LazyLock, Mutex};
 
 /// Default port for test Kagome server
@@ -25,9 +25,11 @@ static KAGOME_SERVER: LazyLock<Mutex<KagomeServer>> = LazyLock::new(|| {
 /// Tokenize a Japanese sentence using Kagome
 pub fn tokenize_sentence(text: &str) -> Vec<KagomeToken> {
     let server = KAGOME_SERVER.lock().unwrap();
-    server
+    let tokens = server
         .tokenize(text, "search")
-        .expect("Failed to tokenize text")
+        .expect("Failed to tokenize text");
+    // Convert kagome_client::KagomeToken -> crate::KagomeToken via serde
+    serde_json::from_value(serde_json::to_value(&tokens).unwrap()).unwrap()
 }
 
 /// Detect grammar patterns in a token sequence

@@ -17,11 +17,10 @@ pub use pattern_matcher::{PatternCategory, PatternMatch};
 pub use text_utils::{char_pos_to_byte_pos, pattern_text};
 pub use pattern_registry::get_jlpt_level;
 pub use token_combiner::{combine_conjugation_tokens, select_best_patterns};
-pub use types::AnalysisResult;
+pub use types::{AnalysisResult, KagomeToken};
 pub use vocabulary::{extract_vocabulary, VocabWord};
 
 // Internal helpers
-use kagome_client::KagomeToken;
 use patterns::create_pattern_matcher;
 
 /// Unified analysis function that combines tokens and detects compounds.

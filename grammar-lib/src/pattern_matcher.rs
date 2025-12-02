@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use kagome_client::KagomeToken;
+use crate::KagomeToken;
 use serde::{Deserialize, Serialize};
 
 // ============================================================================

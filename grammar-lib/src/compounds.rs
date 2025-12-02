@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 
 use serde::{Deserialize, Serialize};
 
-use kagome_client::KagomeToken;
+use crate::KagomeToken;
 
 /// Compound expression span (indices into combined tokens)
 #[derive(Debug, Clone, Serialize, Deserialize)]
