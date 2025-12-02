@@ -1,6 +1,6 @@
 node_modules
 dist
-/target
+target
 /src-tauri/data/transcripts_raw
 /src-tauri/data/transcripts_json
 /.vscode

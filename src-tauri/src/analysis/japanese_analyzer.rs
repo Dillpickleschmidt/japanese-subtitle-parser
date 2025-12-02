@@ -169,10 +169,9 @@ pub fn create_reverse_index(conn: &mut Connection) -> Result<(), Error> {
         println!("\nSample grammar pattern matches:");
         let sample_size = 3.min(all_pattern_occurrences.len());
 
-        for i in 0..sample_size {
-            let (pattern_name, transcript_id, _confidence, start_char, end_char) =
-                &all_pattern_occurrences[i];
-
+        for (pattern_name, transcript_id, _confidence, start_char, end_char) in
+            all_pattern_occurrences.iter().take(sample_size)
+        {
             // Query transcript text
             if let Ok(text) = tx.query_row(
                 "SELECT text FROM transcripts WHERE id = ?",

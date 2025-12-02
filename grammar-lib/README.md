@@ -8,6 +8,8 @@ Shared grammar pattern detection library for Japanese language learning.
 
 ```bash
 cd grammar-wasm
+wasm-pack build --target web --out-dir pkg
+# or possibly:
 ~/.cargo/bin/wasm-pack build --target web --out-dir pkg
 ```
 

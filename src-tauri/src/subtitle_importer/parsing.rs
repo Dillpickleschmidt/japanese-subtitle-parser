@@ -33,7 +33,7 @@ pub fn process_srt_directory(root_dir: &Path) -> Vec<ShowEntry> {
 
     for entry in walker.filter_map(|e| e.ok()) {
         let path = entry.path();
-        if path.extension().map_or(false, |ext| ext == "srt") {
+        if path.extension().is_some_and(|ext| ext == "srt") {
             println!("Processing {:?}...", path.file_name().unwrap());
             match process_srt_file(path, &configs) {
                 Ok(srt_entry) => {

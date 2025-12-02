@@ -1,4 +1,5 @@
 use super::errors::ParsingError;
+use std::fmt;
 use std::str::FromStr;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -30,16 +31,19 @@ impl Timestamp {
         }
     }
 
-    pub fn to_string(&self) -> String {
-        format!(
-            "{:02}:{:02}:{:02},{:03}",
-            self.hours, self.minutes, self.seconds, self.milliseconds
-        )
-    }
-
     pub fn to_milliseconds(&self) -> i64 {
         (self.hours as i64 * 3600 + self.minutes as i64 * 60 + self.seconds as i64) * 1000
             + self.milliseconds as i64
+    }
+}
+
+impl fmt::Display for Timestamp {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{:02}:{:02}:{:02},{:03}",
+            self.hours, self.minutes, self.seconds, self.milliseconds
+        )
     }
 }
 
@@ -97,14 +101,14 @@ impl Subtitle {
             text,
         }
     }
+}
 
-    pub fn to_string(&self) -> String {
-        format!(
+impl fmt::Display for Subtitle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
             "{}\n{} --> {}\n{}",
-            self.number,
-            self.start_time.to_string(),
-            self.end_time.to_string(),
-            self.text
+            self.number, self.start_time, self.end_time, self.text
         )
     }
 }
@@ -133,13 +137,17 @@ impl Subtitles {
     pub fn iter_mut(&mut self) -> std::slice::IterMut<'_, Subtitle> {
         self.0.iter_mut()
     }
+}
 
-    pub fn to_string(&self) -> String {
-        self.0
+impl fmt::Display for Subtitles {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let result = self
+            .0
             .iter()
             .map(|subtitle| subtitle.to_string())
             .collect::<Vec<String>>()
-            .join("\n\n")
+            .join("\n\n");
+        write!(f, "{}", result)
     }
 }
 

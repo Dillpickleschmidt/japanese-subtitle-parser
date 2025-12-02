@@ -274,7 +274,7 @@ impl DbHandler {
         // Get all episodes
         let mut stmt = tx.prepare("SELECT id FROM episodes")?;
         let episode_rows = stmt
-            .query_map([], |row| Ok(row.get::<_, i32>(0)?))?
+            .query_map([], |row| row.get::<_, i32>(0))?
             .collect::<Result<Vec<_>, _>>()?;
         drop(stmt);
 
@@ -303,7 +303,7 @@ impl DbHandler {
             drop(word_stmt);
 
             for (level, count) in word_rows {
-                if level >= 1 && level <= 5 {
+                if (1..=5).contains(&level) {
                     level_counts[level as usize] = count;
                     total_words += count;
                 }

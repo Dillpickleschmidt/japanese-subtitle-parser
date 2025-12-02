@@ -73,14 +73,25 @@ impl KagomeServerExt for KagomeServer {
 
             // Adjust token offsets to be relative to individual transcript
             let mut adjusted_token = token;
-            adjusted_token.start = adjusted_token.start.checked_sub(char_start).expect(&format!(
-                "Overflow subtracting start: token.start={} < char_start={}",
-                adjusted_token.start, char_start
-            ));
-            adjusted_token.end = adjusted_token.end.checked_sub(char_start).expect(&format!(
-                "Overflow subtracting end: token.end={} < char_start={}",
-                adjusted_token.end, char_start
-            ));
+            adjusted_token.start =
+                adjusted_token
+                    .start
+                    .checked_sub(char_start)
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "Overflow subtracting start: token.start={} < char_start={}",
+                            adjusted_token.start, char_start
+                        )
+                    });
+            adjusted_token.end = adjusted_token
+                .end
+                .checked_sub(char_start)
+                .unwrap_or_else(|| {
+                    panic!(
+                        "Overflow subtracting end: token.end={} < char_start={}",
+                        adjusted_token.end, char_start
+                    )
+                });
 
             token_arrays[current_transcript].push(adjusted_token);
         }

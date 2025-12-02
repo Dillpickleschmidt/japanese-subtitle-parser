@@ -38,7 +38,7 @@ pub fn get_base_form_readings(
     let mut reading_map = HashMap::new();
 
     const CHUNK_SIZE: usize = 5000;
-    let total_chunks = (base_forms.len() + CHUNK_SIZE - 1) / CHUNK_SIZE;
+    let total_chunks = base_forms.len().div_ceil(CHUNK_SIZE);
 
     for (chunk_idx, chunk) in base_forms.chunks(CHUNK_SIZE).enumerate() {
         println!(
