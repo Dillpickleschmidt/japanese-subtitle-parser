@@ -411,6 +411,21 @@ pub fn adjective_past() -> Vec<TokenMatcher> {
 
 // ========== Particle Patterns ==========
 
+// が (subject): Subject marker particle (雨が降る)
+// Matches が when used as case particle, excludes conjunction "but"
+pub fn ga_particle_subject() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct GaSubjectMatcher;
+    impl Matcher for GaSubjectMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(GaSubjectMatcher))]
+}
+
 // Noun + の + Noun: Possessive/attributive modifier (あいつの気持ち)
 pub fn no_particle_modifier() -> Vec<TokenMatcher> {
     vec![

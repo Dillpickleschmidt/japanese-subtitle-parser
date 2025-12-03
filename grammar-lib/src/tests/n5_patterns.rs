@@ -559,3 +559,87 @@ mod no_particle_modifier_tests {
         assert!(!has_pattern(&patterns, "no_particle_modifier"));
     }
 }
+
+// が particle subject marker
+mod ga_particle_subject_tests {
+    use super::*;
+
+    // === POSITIVE CASES (should match subject marker) ===
+    #[test]
+    fn subject_with_polite_verb() {
+        let sentence = "友達が来ました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ga_particle_subject");
+        assert_pattern_range(&patterns, "ga_particle_subject", 2, 3); // が
+    }
+
+    #[test]
+    fn embedded_clause_subject() {
+        let sentence = "友達が作った料理";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ga_particle_subject");
+        assert_pattern_range(&patterns, "ga_particle_subject", 2, 3); // が
+    }
+
+    #[test]
+    fn subject_with_adjective() {
+        let sentence = "彼女が好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ga_particle_subject");
+        assert_pattern_range(&patterns, "ga_particle_subject", 2, 3); // が
+    }
+
+    #[test]
+    fn subject_in_question() {
+        let sentence = "誰が来たの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ga_particle_subject");
+        assert_pattern_range(&patterns, "ga_particle_subject", 1, 2); // が
+    }
+
+    // === NEGATIVE CASES (conjunction "but" - should NOT match) ===
+
+    #[test]
+    fn conjunction_after_verb() {
+        // が as "but" after verb - first が should NOT match, second が SHOULD match
+        let sentence = "行きたいが、時間がない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should have exactly one match (時間が, not 行きたいが)
+        let ga_matches: Vec<_> = patterns
+            .iter()
+            .filter(|p| p.pattern_name == "ga_particle_subject")
+            .collect();
+        assert_eq!(ga_matches.len(), 1);
+        assert_eq!(ga_matches[0].start_char, 8); // 時間が position
+    }
+
+    #[test]
+    fn conjunction_after_adjective() {
+        let sentence = "難しいが、面白い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // This が is conjunction "but" - should NOT match
+        assert!(!has_pattern(&patterns, "ga_particle_subject"));
+    }
+
+    #[test]
+    fn conjunction_after_copula() {
+        let sentence = "学生だが、働いている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // This が is conjunction "but" - should NOT match
+        assert!(!has_pattern(&patterns, "ga_particle_subject"));
+    }
+}

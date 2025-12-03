@@ -303,6 +303,13 @@ declare_patterns! {
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
+    GaParticleSubject {
+        name: "ga_particle_subject",
+        matcher_fn: ga_particle_subject,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
     NoParticleModifier {
         name: "no_particle_modifier",
         matcher_fn: no_particle_modifier,
