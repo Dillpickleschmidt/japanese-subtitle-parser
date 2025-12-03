@@ -411,6 +411,61 @@ pub fn adjective_past() -> Vec<TokenMatcher> {
 
 // ========== Particle Patterns ==========
 
+// Question words to exclude from mo_also pattern
+const QUESTION_WORDS: &[&str] = &[
+    "誰", "何", "どこ", "いつ", "どれ", "どちら", "どの", "なぜ", "なん",
+];
+
+/// Match noun that is NOT a question word
+fn non_question_noun_matcher() -> TokenMatcher {
+    #[derive(Debug)]
+    struct NonQuestionNounMatcher;
+    impl Matcher for NonQuestionNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+                && !QUESTION_WORDS.contains(&token.base_form.as_str())
+        }
+    }
+    TokenMatcher::Custom(Arc::new(NonQuestionNounMatcher))
+}
+
+/// Match case particle (格助詞) like に, で, へ, と, etc.
+fn case_particle_matcher() -> TokenMatcher {
+    #[derive(Debug)]
+    struct CaseParticleMatcher;
+    impl Matcher for CaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(CaseParticleMatcher))
+}
+
+/// Match も as binding particle (係助詞)
+fn mo_particle_matcher() -> TokenMatcher {
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(MoParticleMatcher))
+}
+
+// も (also): Inclusive particle meaning also/too/as well (私も学生です)
+// Structures: Noun + も, Noun + Particle + も
+pub fn mo_also() -> Vec<TokenMatcher> {
+    vec![
+        non_question_noun_matcher(),
+        TokenMatcher::Optional(Box::new(case_particle_matcher())),
+        mo_particle_matcher(),
+    ]
+}
+
 // が (subject): Subject marker particle (雨が降る)
 // Matches が when used as case particle, excludes conjunction "but"
 pub fn ga_particle_subject() -> Vec<TokenMatcher> {
@@ -468,5 +523,37 @@ pub fn x_wa_y_desu() -> Vec<TokenMatcher> {
         super::noun_matcher(), // Y (noun)
         copula_matcher(),      // です/だ/だっ
         TokenMatcher::Optional(Box::new(TokenMatcher::Surface("た"))), // た for だった
+    ]
+}
+
+// Noun + じゃない: Casual negative copula (学生じゃない)
+pub fn negative_noun_janai() -> Vec<TokenMatcher> {
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("じゃ"),
+        TokenMatcher::Surface("ない"),
+    ]
+}
+
+// Noun + じゃありません: Polite negative copula (学生じゃありません)
+pub fn negative_noun_ja_arimasen() -> Vec<TokenMatcher> {
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("じゃ"),
+        TokenMatcher::Surface("あり"),
+        TokenMatcher::Surface("ませ"),
+        TokenMatcher::Surface("ん"),
+    ]
+}
+
+// Noun + ではありません: Formal negative copula (学生ではありません)
+pub fn negative_noun_dewa_arimasen() -> Vec<TokenMatcher> {
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("で"),
+        TokenMatcher::Surface("は"),
+        TokenMatcher::Surface("あり"),
+        TokenMatcher::Surface("ませ"),
+        TokenMatcher::Surface("ん"),
     ]
 }

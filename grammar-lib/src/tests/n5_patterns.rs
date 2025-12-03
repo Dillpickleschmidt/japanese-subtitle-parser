@@ -643,3 +643,150 @@ mod ga_particle_subject_tests {
         assert!(!has_pattern(&patterns, "ga_particle_subject"));
     }
 }
+
+// も particle "also"
+mod mo_also_tests {
+    use super::*;
+
+    // === POSITIVE CASES (should match "also/too") ===
+
+    #[test]
+    fn pronoun_also() {
+        let sentence = "私も学生です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "mo_also");
+        assert_pattern_range(&patterns, "mo_also", 0, 2); // 私も
+    }
+
+    #[test]
+    fn noun_also_multiple() {
+        let sentence = "猫も犬も好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should have two mo_also matches
+        let mo_matches: Vec<_> = patterns
+            .iter()
+            .filter(|p| p.pattern_name == "mo_also")
+            .collect();
+        assert_eq!(mo_matches.len(), 2);
+    }
+
+    #[test]
+    fn demonstrative_also() {
+        let sentence = "これも私の鞄です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "mo_also");
+        assert_pattern_range(&patterns, "mo_also", 0, 3); // これも
+    }
+
+    #[test]
+    fn noun_particle_also() {
+        // Noun + particle + も
+        let sentence = "東京にも行きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "mo_also");
+        assert_pattern_range(&patterns, "mo_also", 0, 4); // 東京にも
+    }
+
+    // === NEGATIVE CASES (should NOT match) ===
+
+    #[test]
+    fn question_dare_mo() {
+        let sentence = "誰も来ない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "mo_also"));
+    }
+
+    #[test]
+    fn question_nani_mo() {
+        let sentence = "何も食べない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "mo_also"));
+    }
+
+    #[test]
+    fn question_doko_mo() {
+        let sentence = "どこも行かない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "mo_also"));
+    }
+
+    #[test]
+    fn question_doko_ni_mo() {
+        // Question word + particle + も should NOT match
+        let sentence = "どこにも行かない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "mo_also"));
+    }
+
+    #[test]
+    fn te_form_mo() {
+        let sentence = "雨が降っても、バーベキューをします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT have mo_also (te_mo pattern handles this)
+        assert!(!has_pattern(&patterns, "mo_also"));
+    }
+}
+
+// negative noun patterns
+mod negative_noun_tests {
+    use super::*;
+
+    #[test]
+    fn janai_casual() {
+        let sentence = "学生じゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "negative_noun_janai");
+        assert_pattern_range(&patterns, "negative_noun_janai", 0, 6); // 学生じゃない
+    }
+
+    #[test]
+    fn ja_arimasen_polite() {
+        let sentence = "学生じゃありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "negative_noun_ja_arimasen");
+        assert_pattern_range(&patterns, "negative_noun_ja_arimasen", 0, 9); // 学生じゃありません
+    }
+
+    #[test]
+    fn dewa_arimasen_formal() {
+        let sentence = "学生ではありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "negative_noun_dewa_arimasen");
+        assert_pattern_range(&patterns, "negative_noun_dewa_arimasen", 0, 9); // 学生ではありません
+    }
+
+    #[test]
+    fn janai_question() {
+        // Question form - should still match the negative noun pattern
+        let sentence = "学生じゃないですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "negative_noun_janai");
+        assert_pattern_range(&patterns, "negative_noun_janai", 0, 6); // 学生じゃない
+    }
+}
