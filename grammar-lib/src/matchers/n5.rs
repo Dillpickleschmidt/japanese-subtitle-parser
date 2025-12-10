@@ -409,6 +409,58 @@ pub fn adjective_past() -> Vec<TokenMatcher> {
     ]
 }
 
+// ========== Adverb Patterns ==========
+
+// Pure adverb (とても, ゆっくり)
+pub fn adverb() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct AdverbMatcher;
+    impl Matcher for AdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(AdverbMatcher))]
+}
+
+// I-adjective adverbial form (早く, 速く)
+pub fn adverb_i_adj() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct IAdjectiveAdverbMatcher;
+    impl Matcher for IAdjectiveAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(IAdjectiveAdverbMatcher))]
+}
+
+// Na-adjective adverbial form (静かに, 簡単に)
+pub fn adverb_na_adj() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct NaAdjStemMatcher;
+    impl Matcher for NaAdjStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹")
+        }
+    }
+    #[derive(Debug)]
+    struct AdverbializingNiMatcher;
+    impl Matcher for AdverbializingNiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副詞化")
+        }
+    }
+    vec![
+        TokenMatcher::Custom(Arc::new(NaAdjStemMatcher)),
+        TokenMatcher::Custom(Arc::new(AdverbializingNiMatcher)),
+    ]
+}
+
 // ========== Particle Patterns ==========
 
 // Question words to exclude from mo_also pattern

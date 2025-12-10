@@ -345,6 +345,27 @@ declare_patterns! {
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
+    Adverb {
+        name: "adverb",
+        matcher_fn: adverb,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+    AdverbIAdj {
+        name: "adverb_i_adj",
+        matcher_fn: adverb_i_adj,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+    AdverbNaAdj {
+        name: "adverb_na_adj",
+        matcher_fn: adverb_na_adj,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
 
     // ========== N4 PATTERNS (62 total) ==========
     TeMiru {

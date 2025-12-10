@@ -790,3 +790,74 @@ mod negative_noun_tests {
         assert_pattern_range(&patterns, "negative_noun_janai", 0, 6); // 学生じゃない
     }
 }
+
+// adverb patterns
+mod adverb_tests {
+    use super::*;
+
+    // === Pure adverbs (副詞) ===
+
+    #[test]
+    fn test_pure_adverb_totemo() {
+        let sentence = "とても速い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adverb");
+        assert_pattern_range(&patterns, "adverb", 0, 3); // とても
+    }
+
+    #[test]
+    fn test_pure_adverb_yukkuri() {
+        let sentence = "ゆっくり歩く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adverb");
+        assert_pattern_range(&patterns, "adverb", 0, 4); // ゆっくり
+    }
+
+    // === I-adjective adverbial form (く form) ===
+
+    #[test]
+    fn test_i_adj_ku_form() {
+        let sentence = "早く起きる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adverb_i_adj");
+        assert_pattern_range(&patterns, "adverb_i_adj", 0, 2); // 早く
+    }
+
+    #[test]
+    fn test_i_adj_ku_form_hayaku() {
+        let sentence = "速く走る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adverb_i_adj");
+        assert_pattern_range(&patterns, "adverb_i_adj", 0, 2); // 速く
+    }
+
+    // === Na-adjective adverbial form (に form) ===
+
+    #[test]
+    fn test_na_adj_ni_form() {
+        let sentence = "静かに話す";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adverb_na_adj");
+        assert_pattern_range(&patterns, "adverb_na_adj", 0, 3); // 静かに
+    }
+
+    #[test]
+    fn test_na_adj_ni_form_kantan() {
+        let sentence = "簡単に解ける";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "adverb_na_adj");
+        assert_pattern_range(&patterns, "adverb_na_adj", 0, 3); // 簡単に
+    }
+}
