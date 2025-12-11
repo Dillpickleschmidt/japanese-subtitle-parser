@@ -1267,3 +1267,101 @@ mod ii_tests {
         assert_pattern_range(&patterns, "い-Adjective くなかった", 6, 12); // よくなかった
     }
 }
+
+// ========== が (But/However) ==========
+// Pattern: が (but/however - sentence connector showing contrast)
+// Data source: grammar_points_data.json["が"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + が
+//   standard[1]: い-Adjective + が
+//   standard[2]: な-Adjective + だ + が
+//   standard[3]: Noun + だ + が
+//   polite[0]: Verb (Polite) + が
+//   polite[1]: い-Adjective + です + が
+//   polite[2]: な-Adjective + です + が
+//   polite[3]: Noun + です + が
+
+mod ga_but_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_ga() {
+        let sentence = "毎日走るが、運動は嫌いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が");
+        assert_pattern_range(&patterns, "が", 2, 5); // 走るが
+    }
+
+    #[test]
+    fn test_i_adjective_ga() {
+        let sentence = "このカレーは辛いが、美味しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が");
+        assert_pattern_range(&patterns, "が", 6, 9); // 辛いが
+    }
+
+    #[test]
+    fn test_na_adjective_da_ga() {
+        let sentence = "車は便利だが、危ない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が");
+        assert_pattern_range(&patterns, "が", 4, 6); // だが
+    }
+
+    #[test]
+    fn test_noun_da_ga() {
+        let sentence = "お金は大切だが、時間も大切だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が");
+        assert_pattern_range(&patterns, "が", 5, 7); // だが
+    }
+
+    #[test]
+    fn test_verb_polite_ga() {
+        let sentence = "行きますが、遅れるかもしれません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が");
+        assert_pattern_range(&patterns, "が", 2, 5); // ますが
+    }
+
+    #[test]
+    fn test_i_adjective_desu_ga() {
+        let sentence = "高いですが、品質がいいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が");
+        assert_pattern_range(&patterns, "が", 2, 5); // ですが
+    }
+
+    #[test]
+    fn test_na_adjective_desu_ga() {
+        let sentence = "綺麗ですが、高すぎます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が");
+        assert_pattern_range(&patterns, "が", 2, 5); // ですが
+    }
+
+    #[test]
+    fn test_noun_desu_ga() {
+        let sentence = "学生ですが、働いています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が");
+        assert_pattern_range(&patterns, "が", 2, 5); // ですが
+    }
+}

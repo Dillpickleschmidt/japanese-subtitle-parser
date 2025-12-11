@@ -163,8 +163,52 @@ pub fn ka() -> Vec<TokenMatcher> {
 }
 
 // Pattern: が
+// Pattern: が (but/however - sentence connector)
+// Structures: Verb/Adjective/Noun + (だ/です) + が
 pub fn ga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match が particle (conjunction)
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match verb, i-adjective, or na-adjective/noun + da/desu/masu
+    #[derive(Debug)]
+    struct VerbOrAdjectiveMatcher;
+    impl Matcher for VerbOrAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb (any conjugation)
+            if token.pos.first().is_some_and(|p| p == "動詞") {
+                return true;
+            }
+
+            // い-Adjective
+            if token.pos.first().is_some_and(|p| p == "形容詞") {
+                return true;
+            }
+
+            // です, だ, or ます auxiliary verb
+            if token.pos.first().is_some_and(|p| p == "助動詞")
+                && (token.base_form == "です" || token.base_form == "だ" || token.base_form == "ます")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrAdjectiveMatcher)),
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+    ]
 }
 
 // Pattern: よ
