@@ -2229,3 +2229,70 @@ Both patterns follow the same structure and implementation approach, making them
 - **Estimated work**: ~215 hours @ 15 min/pattern
 
 **Session 28 complete. Ready for Session 29.**
+
+---
+
+## Session 29 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Verb + て+ B pattern implemented successfully
+**Patterns completed**: 67/924 (7.25%)
+**Time invested**: ~30 minutes
+
+### Accomplishments
+1. ✅ Implemented Verb + て+ B (sequential actions) pattern
+2. ✅ All 3 test variants passing with proper range assertions
+3. ✅ Handles intervening particles/objects between sequential verbs
+4. ✅ No test regressions - all 145 tests pass
+
+### Completed Patterns
+
+#### Verb + て+ B (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_te_then_verb (行って買い物をします)
+  - test_te_then_verb_past (買って食べた)
+  - test_multiple_te_sequence (起きて顔を洗って朝ごはんを食べた)
+- **Structure**: Verb[て/で] + (0-5 tokens wildcard) + Verb
+- **Technical notes**:
+  - Uses wildcard matcher to allow particles/objects between verbs
+  - Detects full sequential action construction
+  - Pattern extends automatically with auxiliary verbs (た, ます, etc.)
+  - Distinguishes from basic "Verb + て" by requiring following verb/action
+
+### Progress by JLPT Level
+- N5: 67/117 (57.26%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- Wildcard matcher allows flexible matching between te-form and next verb
+- Pattern range automatically extends to include auxiliary verbs
+- Multiple sequential te-forms in one sentence are all detected
+- SecondVerbMatcher simply checks for 動詞 POS to find following verb
+
+### Next Priority (N5 patterns)
+1. もう - already (time-related adverb)
+2. まだ - still/not yet (time-related adverb)
+3. Question word patterns (どう, いつ, どれ, etc.)
+4. More adjective patterns
+5. Particle patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 145 tests passing (142 previous + 3 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 67 (7.25%)
+- **Remaining**: 857 (92.75%)
+- **Estimated work**: ~214 hours @ 15 min/pattern
+
+**Session 29 complete. Ready for Session 30.**
