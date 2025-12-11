@@ -1,109 +1,81 @@
-# Grammar-lib Audit - Session 1
+# Grammar-lib Development Progress
 
-## Date: 2025-12-11
+## Session 1 - 2025-12-11
 
-## Audit Summary
-- Total patterns in patterns.rs: 924
-- Patterns complete (proper implementation): 0
-- Patterns needing implementation (placeholder logic): 924
-- Patterns skipped: 0
+### ✅ Session Summary
+**Status**: Initialization complete, first pattern implemented
+**Patterns completed**: 1/924 (0.11%)
+**Time invested**: ~90 minutes
 
-## By JLPT Level
-- N5: 0/117 complete (priority 1)
-- N4: 0/176 complete (priority 2)
-- N3: 0/217 complete (priority 3)
-- N2: 0/217 complete (priority 4)
-- N1: 0/184 complete (priority 5)
-- NT: 0/13 complete (priority 6)
+### Accomplishments
+1. ✅ Created feature_list.json tracking all 924 patterns
+2. ✅ Created init.sh environment validation script  
+3. ✅ Fixed critical bug in pattern_matcher.rs (NaN comparison)
+4. ✅ Implemented first complete pattern: たい (want to do)
+5. ✅ All 4 test variants passing for たい pattern
 
-## Current State
-This is a fresh project with:
-- ✓ 924 grammar pattern definitions in patterns.rs
-- ✓ Kagome tokenizer server running on port 6061
-- ✓ Test infrastructure in place (grammar-lib/src/tests/mod.rs)
-- ✗ No pattern-specific tests written yet
-- ✗ No pattern implementations in matchers/nX.rs files yet
+### Completed Patterns
 
-## Priority Work Queue
-All 924 patterns need test-first implementation following this workflow:
+#### たい (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_tai_form_non_past
+  - test_tai_form_negative_polite
+  - test_tai_form_past
+  - test_tai_form_past_negative
+- **Structure**: Verb[連用形] + たい/たく/たかった/たくなかった
+- **Handles**: Auxiliary verb extension (e.g., たくないです)
 
-### N5 Patterns (Priority 1 - 117 patterns)
-Starting with foundational patterns like:
-1. たい (want to do)
-2. ている① (progressive/resultative)
-3. も (also/too)
-4. て (te-form connector)
-5. たことがある (experience)
+### Progress by JLPT Level
+- N5: 1/117 (0.85%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
 
-### N4 Patterns (Priority 2 - 176 patterns)
-After N5 is complete, implement intermediate patterns.
+### Bug Fixes
+- **pattern_matcher.rs:122** - Fixed unwrap() panic on NaN values
+  - Changed: `.unwrap()` → `.unwrap_or(std::cmp::Ordering::Equal)`
+  - Impact: Prevents crashes when empty patterns return NaN confidence
 
-### N3-N1 Patterns (Priority 3-5)
-More advanced grammar patterns building on N5/N4 foundation.
+### Technical Discoveries
+- たい conjugations keep base_form="たい"
+- Verb conjugation form in features[5]
+- Automatic auxiliary verb extension (です, etc.)
+- Empty placeholder patterns create noise but are filtered by confidence
 
-## Implementation Strategy
+### Next Priority (N5 patterns)
+1. ている① - progressive/resultative (in REFERENCE_EXAMPLES.md)
+2. も - also/too (in REFERENCE_EXAMPLES.md)
+3. て - te-form connector
+4. たことがある - experience (in REFERENCE_EXAMPLES.md)
+5. から - because/from
+6. ので - because
 
-### Test-First Approach
-For each pattern:
-1. Review grammar_points_data.json for structure variants
-2. Write tests in grammar-lib/src/tests/nX_patterns.rs with print_debug
-3. Examine tokenization output
-4. Implement matcher in grammar-lib/src/matchers/nX.rs
-5. Run tests until passing
-6. Remove print_debug calls
-7. Verify with assert_pattern_range
+### Workflow (Proven)
+1. Review grammar_points_data.json
+2. Write test with print_debug
+3. Run test to see tokenization
+4. Implement matcher
+5. Update test with correct ranges
+6. Remove print_debug
+7. Verify all variants pass
+8. Update feature_list.json
+9. Commit
 
-### Reference Material
-- REFERENCE_EXAMPLES.md: 7 exemplary implementations to follow
-- GRAMMAR_PATTERN_STANDARDS.md: Code standards and conventions
-- grammar_points_data.json: Structure variants and explanations
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 12 tests passing
+- ✅ Git repository clean
 
-## Notes for Next Session
+---
 
-### Environment
-- Kagome server must be running on port 6061 (check with ./init.sh)
-- Build passes with warnings (unused helper functions - expected until implemented)
-- 8 basic tests currently passing
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 1 (0.11%)
+- **Remaining**: 923 (99.89%)
+- **Estimated work**: ~231 hours @ 15 min/pattern
 
-### Kagome Tokenization Quirks
-- Te-form can appear as both "て" and "で" (voicing)
-- Verb conjugations: Check features[5] for conjugation form
-- らしい as 助動詞 can mean "seems like" OR "typical of" (context-dependent)
-- Compound words may tokenize as single token or separate tokens
-
-### Patterns That May Be Tricky
-- Particles with multiple meanings (の, で, に, etc.)
-- Patterns requiring semantic disambiguation (らしい①/②)
-- Wildcard patterns with variable intervening tokens
-- Patterns with optional components
-
-### Code Quality Standards
-- Always use assert_pattern_range (not just assert_has_pattern)
-- Test ALL structure variants from grammar_points_data.json
-- Use realistic subtitle-quality sentences
-- Include negative tests for similar-looking patterns
-- Remove print_debug before committing
-- Document undetectable variants with TODO comments
-
-## Files Created This Session
-- feature_list.json: Complete tracking of all 924 patterns
-- init.sh: Environment setup and validation script
-- claude-progress.txt: This progress report
-- audit_patterns.py: Script to generate feature_list.json
-- enrich_feature_list.py: Script to add descriptions from grammar data
-
-## Next Steps
-1. Start with N5 たい pattern (well-documented in REFERENCE_EXAMPLES.md)
-2. Create grammar-lib/src/tests/n5_patterns.rs
-3. Implement crate::matchers::n5::tai_form()
-4. Follow test-first workflow from CLAUDE.md
-5. Work through N5 patterns systematically
-6. Commit after each pattern or small group of related patterns
-
-## Estimated Work
-- ~924 patterns total
-- Average 10-15 minutes per pattern (with variants)
-- ~154 hours of focused implementation work
-- Many sessions of autonomous development ahead
-
-This is a marathon, not a sprint. Focus on quality and following the reference examples precisely.
+**Session 1 complete. Ready for Session 2.**
