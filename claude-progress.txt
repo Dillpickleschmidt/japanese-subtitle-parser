@@ -1186,3 +1186,76 @@
 - **Velocity this session**: 5 patterns/hour (exceptionally high - simple patterns)
 
 **Session 15 complete. Ready for Session 16.**
+
+---
+
+## Session 16 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: One pattern implemented successfully
+**Patterns completed**: 26/924 (2.81%)
+**Time invested**: ~60 minutes
+
+### Accomplishments
+1. ✅ Implemented Adjective + て + B (linking adjectives/nouns to phrases) pattern
+2. ✅ All 3 structure variants tested and passing with proper range assertions
+3. ✅ Handles both copula で and case particle で forms
+4. ✅ No test regressions - all 80 tests pass
+
+### Completed Patterns
+
+#### Adjective + て + B (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_i_adjective_te (大きくて - i-adj + て)
+  - test_na_adjective_de (綺麗で - na-adj + で copula)
+  - test_noun_de_copula (医者で - noun + で case particle)
+- **Structures**:
+  - い-Adjective[連用テ接続] + て (助詞/接続助詞)
+  - な-Adjective[形容動詞語幹] + で (助動詞 or 助詞/格助詞)
+  - Noun[名詞/一般] + で (助動詞 or 助詞/格助詞)
+- **Technical notes**:
+  - Combined custom matcher handles all three structure variants in one pattern
+  - Accepts both copula で (助動詞, base=だ) and case particle で (助詞/格助詞)
+  - Kagome sometimes tokenizes noun+で as case particle instead of copula
+  - Excludes pronouns (代名詞) and non-independent nouns (非自立) from matching
+
+### Progress by JLPT Level
+- N5: 26/117 (22.22%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- い-Adjective in 連用テ接続 form precedes て particle (e.g., 大きく + て)
+- な-Adjectives are tokenized as 名詞/形容動詞語幹
+- Noun + で can be parsed as either:
+  - Copula: 助動詞 with base_form=だ (grammatically correct)
+  - Case particle: 助詞/格助詞 (Kagome sometimes does this)
+- Both forms need to be accepted for comprehensive pattern matching
+- Multi-structure patterns can be handled with combined custom matchers
+
+### Next Priority (N5 patterns)
+1. Adjective + て・Noun + で - similar but distinct pattern
+2. Verb + て - basic te-form connector
+3. Verb + て + B - te-form sequential actions
+4. い-Adjective patterns (past, negative, etc.)
+5. な-Adjective patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 80 tests passing (77 previous + 3 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 26 (2.81%)
+- **Remaining**: 898 (97.19%)
+- **Estimated work**: ~225 hours @ 15 min/pattern
+
+**Session 16 in progress.**
