@@ -743,3 +743,95 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 10 complete. Ready for Session 11.**
+
+---
+
+## Session 11 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Three demonstrative pronoun patterns implemented successfully
+**Patterns completed**: 16/924 (1.73%)
+**Time invested**: ~25 minutes
+
+### Accomplishments
+1. ✅ Implemented これ (this) pattern
+2. ✅ Implemented それ (that) pattern
+3. ✅ Implemented あれ (that over there) pattern
+4. ✅ All 6 test variants passing with proper range assertions
+5. ✅ No test regressions - all 55 tests pass
+
+### Completed Patterns
+
+#### これ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_kore_with_wa (これは美味しいです)
+  - test_kore_with_mo (これも欲しい)
+- **Structure**: これ (demonstrative pronoun for things near speaker)
+- **Technical notes**:
+  - Tokenizes as 名詞/代名詞/一般
+  - Stub function already existed, filled in implementation
+  - Pattern declaration already existed in patterns.rs
+
+#### それ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_sore_with_wa (それは大変だね)
+  - test_sore_with_da (それだ！絶対それだよ)
+- **Structure**: それ (demonstrative pronoun for things near listener)
+- **Technical notes**:
+  - Same tokenization as これ: 名詞/代名詞/一般
+  - Refers to things near listener or previously mentioned
+
+#### あれ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_are_with_wa (あれは病院です)
+  - test_are_with_ga (あれがバス停です)
+- **Structure**: あれ (demonstrative pronoun for things away from both speaker and listener)
+- **Technical notes**:
+  - Same tokenization as これ and それ: 名詞/代名詞/一般
+  - Indicates things distant from both speaker and listener
+
+### Progress by JLPT Level
+- N5: 16/117 (13.68%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- All demonstrative pronouns (ここ/そこ/あそこ/これ/それ/あれ) share 名詞/代名詞 POS
+- Pattern declarations and stub functions already existed in codebase
+- Simple single-token matchers work well for demonstratives
+- Consistent implementation pattern across demonstrative family
+
+### Next Priority (N5 patterns)
+1. この, その, あの - demonstrative determiners (likely already have stubs)
+2. どこ, どれ - question words
+3. Adjective patterns (て forms, の usage)
+4. More verb patterns
+5. い-Adjective patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 55 tests passing (49 previous + 6 new)
+- ✅ Git repository clean
+
+### Workflow Insights
+- Check for existing stub functions before implementing
+- Pattern declarations may already exist in patterns.rs
+- Related patterns (demonstrative families) are efficient to implement together
+- Single-token patterns are very quick (~5-8 min each)
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 16 (1.73%)
+- **Remaining**: 908 (98.27%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 11 complete. Ready for Session 12.**
