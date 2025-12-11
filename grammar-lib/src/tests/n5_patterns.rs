@@ -672,3 +672,96 @@ mod are_tests {
         assert_pattern_range(&patterns, "あれ", 0, 2); // あれ
     }
 }
+
+// ========== この (This ~) ==========
+// Pattern: この (this ~ - demonstrative determiner for things near speaker)
+// Data source: grammar_points_data.json["この"]
+//
+// Structure variants to test:
+//   standard[0]: この + Noun
+
+mod kono_tests {
+    use super::*;
+
+    #[test]
+    fn test_kono_with_noun() {
+        let sentence = "このスーツは高い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "この");
+        assert_pattern_range(&patterns, "この", 0, 2); // この
+    }
+
+    #[test]
+    fn test_kono_with_work() {
+        let sentence = "この仕事は大変だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "この");
+        assert_pattern_range(&patterns, "この", 0, 2); // この
+    }
+}
+
+// ========== その (That ~) ==========
+// Pattern: その (that ~ - demonstrative determiner for things near listener)
+// Data source: grammar_points_data.json["その"]
+//
+// Structure variants to test:
+//   standard[0]: その + Noun
+
+mod sono_tests {
+    use super::*;
+
+    #[test]
+    fn test_sono_with_noun() {
+        let sentence = "その店は美味しいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "その");
+        assert_pattern_range(&patterns, "その", 0, 2); // その
+    }
+
+    #[test]
+    fn test_sono_with_person() {
+        let sentence = "その人は誰ですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "その");
+        assert_pattern_range(&patterns, "その", 0, 2); // その
+    }
+}
+
+// ========== あの (That ~ over there) ==========
+// Pattern: あの (that ~ over there - demonstrative determiner for things away from both)
+// Data source: grammar_points_data.json["あの"]
+//
+// Structure variants to test:
+//   standard[0]: あの + Noun
+
+mod ano_tests {
+    use super::*;
+
+    #[test]
+    fn test_ano_with_noun() {
+        let sentence = "あの映画は面白かった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あの");
+        assert_pattern_range(&patterns, "あの", 0, 2); // あの
+    }
+
+    #[test]
+    fn test_ano_with_place() {
+        let sentence = "あの建物は何ですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あの");
+        assert_pattern_range(&patterns, "あの", 0, 2); // あの
+    }
+}

@@ -268,19 +268,52 @@ pub fn gairu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: この
+// Pattern: この (this ~)
+// Structures: この + Noun (pre-noun adjectival/demonstrative determiner)
 pub fn kono() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KonoMatcher;
+    impl Matcher for KonoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "この"
+                && token.base_form == "この"
+                && token.pos.first().is_some_and(|p| p == "連体詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KonoMatcher))]
 }
 
-// Pattern: その
+// Pattern: その (that ~)
+// Structures: その + Noun (pre-noun adjectival/demonstrative determiner)
 pub fn sono() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SonoMatcher;
+    impl Matcher for SonoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "その"
+                && token.base_form == "その"
+                && token.pos.first().is_some_and(|p| p == "連体詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SonoMatcher))]
 }
 
-// Pattern: あの
+// Pattern: あの (that ~ over there)
+// Structures: あの + Noun (pre-noun adjectival/demonstrative determiner)
 pub fn ano() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct AnoMatcher;
+    impl Matcher for AnoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "あの"
+                && token.base_form == "あの"
+                && token.pos.first().is_some_and(|p| p == "連体詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(AnoMatcher))]
 }
 
 // Pattern: ～んです・のです
