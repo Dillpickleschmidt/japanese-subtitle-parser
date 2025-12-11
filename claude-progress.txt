@@ -1864,3 +1864,60 @@ This was the first pattern implemented completely from scratch in this session:
 - ✅ Git repository clean
 
 **Session 23 complete. きらい pattern successfully implemented.**
+
+---
+
+## Session 24 - 2025-12-11 (Continuation)
+
+### ✅ Session Summary
+**Status**: Second pattern implemented - くらい ①
+**Patterns completed this session**: 2 total (きらい + くらい ①)
+**Time invested**: ~90 minutes total
+
+### Accomplishments
+1. ✅ Implemented くらい ① (about/approximately) pattern
+2. ✅ All 3 test variants passing with proper range assertions
+3. ✅ Handles both くらい and ぐらい variants
+4. ✅ No test regressions - all 118 tests pass
+
+### Completed Patterns
+
+#### くらい ① (N5) ✓ - NEW IMPLEMENTATION
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_kurai_with_time (後３分くらいで着く)
+  - test_gurai_with_counter (４個ぐらい欲しいな)
+  - test_kurai_with_question (どのくらいで着きますか？)
+- **Structure**: Number/counter + くらい or ぐらい
+- **Technical notes**:
+  - くらい and ぐらい tokenize as 助詞/副助詞 (adverbial particle)
+  - Numbers tokenize as 名詞/数
+  - Counters tokenize as 名詞/接尾/助数詞
+  - Question word どの is 連体詞 (pre-noun adjectival)
+  - Optional number matcher allows matching both "３分くらい" and just "分くらい"
+  - Combined matcher handles both counters and question words
+
+### Progress by JLPT Level
+- N5: Continuing from previous sessions
+- Total tests: 118 passing (was 115, +3 new)
+
+### Technical Discoveries
+- Number and counter are separate tokens in Japanese tokenization
+- Pattern needs to handle both "number+counter+くらい" and "question+くらい"
+- Using Optional matcher for number allows flexibility while maintaining accuracy
+- Combined CounterOrQuestionMatcher allows single pattern for multiple structures
+
+### Session Productivity
+**Two patterns completed from scratch in one session:**
+1. きらい (dislike) - na-adjective pattern with optional particles
+2. くらい ① (about) - number/counter pattern with multiple variants
+
+Both patterns implemented following proper workflow and all tests passing.
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 118 tests passing (no regressions)
+- ✅ Git repository clean
+
+**Session 24 complete. Two N5 patterns successfully implemented.**
