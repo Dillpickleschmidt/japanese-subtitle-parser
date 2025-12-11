@@ -1731,3 +1731,79 @@
 - **Estimated work**: ~223 hours @ 15 min/pattern
 
 **Session 21 complete. Ready for Session 22.**
+
+---
+
+## Session 22 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: One pattern implemented successfully
+**Patterns completed**: 33/924 (3.57%)
+**Time invested**: ~25 minutes
+
+### Accomplishments
+1. ✅ Implemented よ (sentence-ending particle) pattern
+2. ✅ All 3 test variants passing with proper range assertions
+3. ✅ Simple, clean single-token matcher
+4. ✅ No test regressions - all 112 tests pass
+
+### Completed Patterns
+
+#### よ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_yo_with_verb (これは美味しいよ - with adjective)
+  - test_yo_with_noun (明日は休みだよ - with copula)
+  - test_yo_polite (気をつけてくださいよ - with verb)
+- **Structure**: Sentence + よ
+- **Technical notes**:
+  - よ tokenizes as 助詞/終助詞 (sentence-ending particle)
+  - Used to convey new information or add emphasis
+  - Simple single-token matcher with POS checks
+
+### Progress by JLPT Level
+- N5: 33/117 (28.21%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- Sentence-ending particles (終助詞) are a distinct category
+- よ has consistent tokenization across all contexts
+- Simple single-token patterns are very quick to implement (~25 min)
+
+### Workflow Applied
+1. ✅ Read grammar_points_data.json for structure variants
+2. ✅ Wrote all 3 tests with print_debug()
+3. ✅ Ran tests to analyze tokenization
+4. ✅ Implemented simple single-token matcher
+5. ✅ Verified pattern detection in all tests
+6. ✅ Removed print_debug() and added assertions
+7. ✅ Ran full test suite - no regressions (112 tests pass)
+8. ✅ Updated feature_list.json
+9. ✅ Committed with proper message
+
+### Next Priority (N5 patterns)
+1. ね - Similar sentence-ending particle (already has stub)
+2. More simple particle patterns
+3. い-Adjective patterns (Predicate, + Noun, base form)
+4. な-Adjective patterns
+5. Verb patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 112 tests passing (109 previous + 3 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 33 (3.57%)
+- **Remaining**: 891 (96.43%)
+- **Estimated work**: ~222 hours @ 15 min/pattern
+
+**Session 22 complete. Ready for Session 23.**
