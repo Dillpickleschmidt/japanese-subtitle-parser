@@ -393,3 +393,45 @@ mod temo_ii_tests {
         assert_pattern_range(&patterns, "Verb + てもいい", 3, 11); // 遊んでもいいです (で form, extended with です)
     }
 }
+
+// ========== にいく (Go to do) ==========
+// Pattern: にいく (go to do something)
+// Data source: grammar_points_data.json["Verb + にいく"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + に + 行く
+//   polite[0]: Verb[stem] + に + 行きます
+
+mod ni_iku_tests {
+    use super::*;
+
+    #[test]
+    fn test_ni_iku_standard() {
+        let sentence = "釣りにいく";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + にいく");
+        assert_pattern_range(&patterns, "Verb + にいく", 0, 5); // 釣りにいく
+    }
+
+    #[test]
+    fn test_ni_iku_stem_form() {
+        let sentence = "今からトレーニングをしにいきます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + にいく");
+        assert_pattern_range(&patterns, "Verb + にいく", 10, 16); // しにいきます (extended with ます)
+    }
+
+    #[test]
+    fn test_ni_iku_eating() {
+        let sentence = "昼ご飯を食べに行こう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + にいく");
+        assert_pattern_range(&patterns, "Verb + にいく", 4, 10); // 食べに行こう (extended with う)
+    }
+}

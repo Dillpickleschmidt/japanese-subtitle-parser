@@ -431,9 +431,53 @@ pub fn he() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Verb + にいく
+// Pattern: にいく (go to do something)
+// Structures: Verb[stem] + に + 行く
+// Note: Verb stems in 連用形 OR suru-verb nouns (like 釣り)
 pub fn verb_niiku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Match verb stem (連用形) OR suru-verb noun
+    #[derive(Debug)]
+    struct VerbStemOrNounMatcher;
+    impl Matcher for VerbStemOrNounMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // Match verbs in 連用形 (stem form)
+            if token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return token.features.get(5).is_some_and(|f| f == "連用形");
+            }
+            // Match nouns (including suru-verb nouns like 釣り)
+            if token.pos.first().is_some_and(|pos| pos == "名詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match 行く or いく (any conjugation form)
+    #[derive(Debug)]
+    struct IkuVerbMatcher;
+    impl Matcher for IkuVerbMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form == "行く" || token.base_form == "いく")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbStemOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IkuVerbMatcher)),
+    ]
 }
 
 // Pattern: 誰
