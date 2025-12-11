@@ -108,3 +108,48 @@ mod te_iru_tests {
         assert_pattern_range(&patterns, "ている①", 3, 7); // してます
     }
 }
+
+// ========== も (Also/Too) ==========
+// Pattern: も (also/too/even)
+// Data source: grammar_points_data.json["も"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + も
+//
+// Note: This pattern has only one structure variant but multiple contexts
+// Test different contexts: pronoun + も, noun + particle + も
+// NEGATIVE tests: Exclude 誰も/何も (different grammar - "nobody/nothing")
+
+mod mo_also_tests {
+    use super::*;
+
+    #[test]
+    fn test_pronoun_also() {
+        let sentence = "俺もそう思ってたんだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も");
+        assert_pattern_range(&patterns, "も", 0, 2); // 俺も
+    }
+
+    #[test]
+    fn test_noun_particle_also() {
+        let sentence = "こんな場所にも来たことあるの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も");
+        assert_pattern_range(&patterns, "も", 3, 7); // 場所にも
+    }
+
+    // NEGATIVE TEST - should NOT match (different grammar)
+    #[test]
+    fn test_question_dare_mo() {
+        let sentence = "誰も来ないなんて寂しいな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "も")); // 誰も is different grammar
+    }
+}

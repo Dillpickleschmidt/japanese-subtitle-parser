@@ -20,9 +20,50 @@ pub fn ha() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: も
+// Pattern: も (also/too/even)
+// Structures: Noun + (particle) + も
+// Excludes question words (誰も, 何も are different grammar)
 pub fn mo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Question words to exclude (these form different grammar patterns)
+    const QUESTION_WORDS: &[&str] = &[
+        "誰", "何", "どこ", "いつ", "どれ", "どちら", "どの", "なぜ", "なん",
+    ];
+
+    #[derive(Debug)]
+    struct NonQuestionNounMatcher;
+    impl Matcher for NonQuestionNounMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+                && !QUESTION_WORDS.contains(&token.base_form.as_str())
+        }
+    }
+
+    #[derive(Debug)]
+    struct CaseParticleMatcher;
+    impl Matcher for CaseParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NonQuestionNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CaseParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ]
 }
 
 // Pattern: これ
