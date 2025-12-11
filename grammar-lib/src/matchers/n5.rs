@@ -1552,9 +1552,41 @@ pub fn adjective_no_ha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: あげる
+// Pattern: あげる (to give)
+// Structures: Object(Noun) + を + [optional recipient] + あげる/あげます
 pub fn ageru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::noun_matcher;
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct AgeruVerbMatcher;
+    impl Matcher for AgeruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "あげる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 3,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(AgeruVerbMatcher)),
+    ]
 }
 
 // Pattern: くれる

@@ -1607,3 +1607,57 @@ mod ga_iru_tests {
         assert_pattern_range(&patterns, "がいる", 0, 5); // 猫がいます
     }
 }
+
+// ========== あげる (To give) ==========
+// Pattern: あげる (to give, to offer up)
+// Data source: grammar_points_data.json["あげる"]
+//
+// Structure variants to test:
+//   standard[0]: Giver + は/が + Recipient + に + Object + を + あげる
+//   standard[1]: Recipient + に + Giver + は/が + Object + を + あげる
+//   standard[2]: Giver + は/が + Object + を + Recipient + に + あげる
+//   polite[0-2]: Same structures with あげます
+
+mod ageru_tests {
+    use super::*;
+
+    #[test]
+    fn test_ageru_standard_order() {
+        let sentence = "トムがタカにプレゼントをあげる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あげる");
+        assert_pattern_range(&patterns, "あげる", 6, 15); // プレゼントをあげる
+    }
+
+    #[test]
+    fn test_ageru_recipient_first() {
+        let sentence = "タカにトムがプレゼントをあげる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あげる");
+        assert_pattern_range(&patterns, "あげる", 6, 15); // プレゼントをあげる
+    }
+
+    #[test]
+    fn test_ageru_object_first() {
+        let sentence = "トムがプレゼントをタカにあげる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あげる");
+        assert_pattern_range(&patterns, "あげる", 3, 15); // プレゼントをタカにあげる
+    }
+
+    #[test]
+    fn test_ageru_polite() {
+        let sentence = "友達に本をあげます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あげる");
+        assert_pattern_range(&patterns, "あげる", 3, 9); // 本をあげます
+    }
+}
