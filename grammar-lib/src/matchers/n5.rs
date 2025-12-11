@@ -66,19 +66,55 @@ pub fn mo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: これ
+// Pattern: これ (this)
+// Structures: これ (demonstrative pronoun for things near speaker)
 pub fn kore() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KoreMatcher;
+    impl Matcher for KoreMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "これ"
+                && token.base_form == "これ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KoreMatcher))]
 }
 
-// Pattern: それ
+// Pattern: それ (that)
+// Structures: それ (demonstrative pronoun for things near listener)
 pub fn sore() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SoreMatcher;
+    impl Matcher for SoreMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "それ"
+                && token.base_form == "それ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SoreMatcher))]
 }
 
-// Pattern: あれ
+// Pattern: あれ (that over there)
+// Structures: あれ (demonstrative pronoun for things away from both speaker and listener)
 pub fn are() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct AreMatcher;
+    impl Matcher for AreMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "あれ"
+                && token.base_form == "あれ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(AreMatcher))]
 }
 
 // Pattern: の

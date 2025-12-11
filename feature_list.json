@@ -198,13 +198,13 @@
   {
     "pattern_name": "あれ",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "あれ , just like これ and それ , is one of several 'pronoun-like' words in Japanese ( substitute nouns ) [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null
@@ -576,13 +576,13 @@
   {
     "pattern_name": "これ",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "これ is often thought to be equal to 'this' in English, which is basically correct [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null
@@ -674,13 +674,13 @@
   {
     "pattern_name": "それ",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Just like これ , それ is a 'pronoun-like' word in Japanese ( substitute noun ) [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null

@@ -579,3 +579,96 @@ mod soko_tests {
         assert_pattern_range(&patterns, "そこ", 0, 2); // そこ
     }
 }
+
+// ========== これ (This) ==========
+// Pattern: これ (this - demonstrative pronoun for things near speaker)
+// Data source: grammar_points_data.json["これ"]
+//
+// Structure variants to test:
+//   standard[0]: これ (as demonstrative pronoun)
+
+mod kore_tests {
+    use super::*;
+
+    #[test]
+    fn test_kore_with_wa() {
+        let sentence = "これは美味しいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "これ");
+        assert_pattern_range(&patterns, "これ", 0, 2); // これ
+    }
+
+    #[test]
+    fn test_kore_with_mo() {
+        let sentence = "これも欲しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "これ");
+        assert_pattern_range(&patterns, "これ", 0, 2); // これ
+    }
+}
+
+// ========== それ (That) ==========
+// Pattern: それ (that - demonstrative pronoun for things near listener)
+// Data source: grammar_points_data.json["それ"]
+//
+// Structure variants to test:
+//   standard[0]: それ (as demonstrative pronoun)
+
+mod sore_tests {
+    use super::*;
+
+    #[test]
+    fn test_sore_with_wa() {
+        let sentence = "それは大変だね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それ");
+        assert_pattern_range(&patterns, "それ", 0, 2); // それ
+    }
+
+    #[test]
+    fn test_sore_with_da() {
+        let sentence = "それだ！絶対それだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それ");
+        assert_pattern_range(&patterns, "それ", 0, 2); // First それ
+    }
+}
+
+// ========== あれ (That over there) ==========
+// Pattern: あれ (that - demonstrative pronoun for things away from both speaker and listener)
+// Data source: grammar_points_data.json["あれ"]
+//
+// Structure variants to test:
+//   standard[0]: あれ (as demonstrative pronoun)
+
+mod are_tests {
+    use super::*;
+
+    #[test]
+    fn test_are_with_wa() {
+        let sentence = "あれは病院です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あれ");
+        assert_pattern_range(&patterns, "あれ", 0, 2); // あれ
+    }
+
+    #[test]
+    fn test_are_with_ga() {
+        let sentence = "あれがバス停です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あれ");
+        assert_pattern_range(&patterns, "あれ", 0, 2); // あれ
+    }
+}
