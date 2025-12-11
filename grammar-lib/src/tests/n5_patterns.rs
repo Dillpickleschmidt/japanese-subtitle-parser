@@ -991,3 +991,47 @@ mod dare_tests {
         assert_pattern_range(&patterns, "誰", 3, 4); // 誰
     }
 }
+
+// ========== Adjective + て + B ==========
+// Pattern: Adjective + て + B (linking adjectives to phrases)
+// Data source: grammar_points_data.json["Adjective + て + B"]
+//
+// Structure variants to test:
+//   standard[0]: い-Adjective[い] + く + て + Phrase
+//   standard[1]: な-Adjective + で + Phrase
+//   standard[2]: Noun + で + Phrase
+//   polite: None listed
+
+mod adjective_te_b_tests {
+    use super::*;
+
+    #[test]
+    fn test_i_adjective_te() {
+        let sentence = "田中さんの犬は大きくて遊ぶのが好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + て + B");
+        assert_pattern_range(&patterns, "Adjective + て + B", 7, 11); // 大きくて
+    }
+
+    #[test]
+    fn test_na_adjective_de() {
+        let sentence = "マサミは綺麗で水泳が趣味です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + て + B");
+        assert_pattern_range(&patterns, "Adjective + て + B", 4, 7); // 綺麗で
+    }
+
+    #[test]
+    fn test_noun_de_copula() {
+        let sentence = "彼女は医者で優しい人です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + て + B");
+        assert_pattern_range(&patterns, "Adjective + て + B", 3, 6); // 医者で
+    }
+}

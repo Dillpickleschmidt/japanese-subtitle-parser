@@ -1038,9 +1038,59 @@ pub fn adjective_te_u30fb_noun_de() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Adjective + て + B
+// Pattern: Adjective + て + B (linking adjectives/nouns to phrases)
+// Structures: い-Adj[くて] + Phrase, な-Adj[で] + Phrase, Noun[で] + Phrase
 pub fn adjective_te_b() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Combined matcher that matches both い-Adj+て and な-Adj/Noun+で patterns
+    #[derive(Debug)]
+    struct AdjectiveTeBFirstToken;
+    impl Matcher for AdjectiveTeBFirstToken {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // Match い-Adjective in 連用テ接続 form (e.g., 大きく)
+            let is_i_adj_te_form = token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続");
+
+            // Match な-Adjective (名詞/形容動詞語幹) e.g., 綺麗
+            let is_na_adj = token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹");
+
+            // Match regular Noun (but not 非自立) e.g., 学生, 医者
+            let is_noun = token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p != "非自立")
+                && token.pos.get(1).is_some_and(|p| p != "代名詞"); // Exclude pronouns
+
+            is_i_adj_te_form || is_na_adj || is_noun
+        }
+    }
+
+    // Matcher for て or で (the linking particle/copula)
+    #[derive(Debug)]
+    struct TeDeLinkerMatcher;
+    impl Matcher for TeDeLinkerMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // て particle (used with い-Adjectives)
+            let is_te = token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞");
+
+            // で copula (used with な-Adjectives and Nouns)
+            let is_de_copula = token.surface == "で"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ";
+
+            // で case particle (sometimes used with Nouns in linking)
+            let is_de_particle = token.surface == "で"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞");
+
+            is_te || is_de_copula || is_de_particle
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AdjectiveTeBFirstToken)),
+        TokenMatcher::Custom(Arc::new(TeDeLinkerMatcher)),
+    ]
 }
 
 // Pattern: のがへた
