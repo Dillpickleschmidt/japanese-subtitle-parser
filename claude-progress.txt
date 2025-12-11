@@ -1313,3 +1313,82 @@
 - **Velocity this session**: ~1.3 patterns/hour (multi-structure patterns)
 
 **Session 16 complete. Ready for Session 17.**
+
+---
+
+## Session 17 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: One pattern implemented successfully
+**Patterns completed**: 28/924 (3.03%)
+**Time invested**: ~45 minutes
+
+### Accomplishments
+1. ✅ Implemented い-Adjective (Past) pattern
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ Followed test-first workflow (print_debug → implement → finalize)
+4. ✅ No test regressions - all 88 tests pass
+
+### Completed Patterns
+
+#### い-Adjective (Past) (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_i_adjective_past_standard (面白かった - interesting was)
+  - test_i_adjective_past_polite (温かかったです - was warm polite)
+  - test_i_adjective_past_cold (寒かった - was cold)
+  - test_i_adjective_past_sweet (甘かったです - was sweet polite)
+- **Structure**: い-Adjective[連用タ接続] + た
+- **Technical notes**:
+  - Matcher checks for 形容詞 with conjugation form 連用タ接続
+  - Uses past_auxiliary() helper for た auxiliary verb
+  - Polite form (です) extends automatically via auxiliary system
+
+### Progress by JLPT Level
+- N5: 28/117 (23.93%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- い-Adjectives in past form use 連用タ接続 conjugation
+- Pattern: い stem removed, replaced with かっ, then た added
+- Example: 面白い → 面白かっ (連用タ接続) → 面白かった
+- Polite form adds です after た automatically
+- Matcher implementation is very straightforward with conjugation form check
+
+### Workflow Applied
+1. ✅ Read grammar_points_data.json for structure variants
+2. ✅ Wrote all 4 tests with print_debug()
+3. ✅ Ran tests to analyze tokenization
+4. ✅ Implemented matcher based on actual token structure
+5. ✅ Verified pattern detection in all tests
+6. ✅ Removed print_debug() and added assertions
+7. ✅ Ran full test suite - no regressions
+8. ✅ Updated feature_list.json
+9. ✅ Committed with proper message
+
+### Next Priority (N5 patterns)
+1. い-Adjective くなかった - negative past form
+2. い-Adjective (Predicate) - basic predicate usage
+3. い-Adjective + Noun - adjective modifying nouns
+4. い-Adjectives - base form pattern
+5. な-Adjective patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 88 tests passing (84 previous + 4 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 28 (3.03%)
+- **Remaining**: 896 (96.97%)
+- **Estimated work**: ~224 hours @ 15 min/pattern
+
+**Session 17 complete. Ready for Session 18.**
