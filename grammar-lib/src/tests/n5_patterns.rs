@@ -351,3 +351,45 @@ mod made_until_tests {
         assert_pattern_range(&patterns, "Noun + まで", 0, 4); // 空港まで
     }
 }
+
+// ========== てもいい (It's okay to) ==========
+// Pattern: てもいい (permission/it's okay to do)
+// Data source: grammar_points_data.json["Verb + てもいい"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[て] + も + いい
+//   polite[0]: Verb[て] + も + いい + です
+
+mod temo_ii_tests {
+    use super::*;
+
+    #[test]
+    fn test_temo_ii_standard() {
+        let sentence = "その靴を買ってもいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + てもいい");
+        assert_pattern_range(&patterns, "Verb + てもいい", 4, 10); // 買ってもいい
+    }
+
+    #[test]
+    fn test_temo_ii_polite() {
+        let sentence = "この肉は食べてもいいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + てもいい");
+        assert_pattern_range(&patterns, "Verb + てもいい", 4, 12); // 食べてもいいです (extended with です)
+    }
+
+    #[test]
+    fn test_demo_ii_de_particle() {
+        let sentence = "ここで遊んでもいいですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + てもいい");
+        assert_pattern_range(&patterns, "Verb + てもいい", 3, 11); // 遊んでもいいです (で form, extended with です)
+    }
+}

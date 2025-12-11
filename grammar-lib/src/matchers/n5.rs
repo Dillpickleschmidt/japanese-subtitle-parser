@@ -665,9 +665,39 @@ pub fn masenka() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Verb + てもいい
+// Pattern: てもいい (permission/it's okay to do)
+// Structures: Verb[て] + も + いい
 pub fn verb_temoii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::{concat, flexible_verb_form, ii_form};
+
+    // Match て or で (conjunction particle after verb)
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match も (係助詞 - binding particle)
+    #[derive(Debug)]
+    struct MoBindingParticleMatcher;
+    impl Matcher for MoBindingParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoBindingParticleMatcher)),
+        ii_form(),
+    ]
 }
 
 // Pattern: てください
