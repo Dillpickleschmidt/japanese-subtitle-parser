@@ -1086,3 +1086,103 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 14 complete. Continuing with next pattern.**
+
+---
+
+## Session 15 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Five patterns implemented successfully  
+**Patterns completed**: 25/924 (2.71%)
+**Time invested**: ~60 minutes
+**Tests passing**: 77 (up from 65)
+
+### Accomplishments
+1. ✅ Implemented けど・だけど (but/however - casual) pattern
+2. ✅ Implemented どこ (where) question word pattern
+3. ✅ Implemented どれ (which) question word pattern
+4. ✅ Implemented どの (which ~) pre-noun adjectival pattern
+5. ✅ Implemented 誰 (who) question word pattern
+6. ✅ All 77 tests passing with proper range assertions
+7. ✅ No test regressions - clean test suite
+8. ✅ Completed the こそあど demonstrative system (place/thing/determiner + question words)
+
+### Completed Patterns
+
+#### けど・だけど (N5) ✓
+- **Tests**: 4 variants (verb, い-adj, な-adj, noun)
+- **Structures**: Verb/い-Adj + けど, な-Adj/Noun + だ + けど
+- **Range examples**: 泳ぐけど (2-6), 寒いけど (4-8), 静かだけど (3-8), ステーキだけど (3-10)
+- **Notes**: Similar implementation to ので pattern with optional だ matcher
+
+#### どこ (N5) ✓
+- **Tests**: 2 variants (with particle, as subject)
+- **Structure**: Demonstrative pronoun (名詞/代名詞/一般)
+- **Range examples**: どこ (3-5)
+- **Notes**: Question word for place ("where")
+
+#### どれ (N5) ✓
+- **Tests**: 2 variants (with が, after topic)
+- **Structure**: Demonstrative pronoun (名詞/代名詞/一般)
+- **Range examples**: どれ (0-2), どれ (6-8)
+- **Notes**: Question word for things ("which")
+
+#### どの (N5) ✓
+- **Tests**: 2 variants (with noun, "whatever" usage)
+- **Structure**: Pre-noun adjectival (連体詞)
+- **Range examples**: どの (0-2)
+- **Notes**: Pre-noun adjectival, different POS from pronouns
+
+#### 誰 (N5) ✓
+- **Tests**: 2 variants (as subject, with particle)
+- **Structure**: Demonstrative pronoun (名詞/代名詞/一般)
+- **Range examples**: 誰 (0-1), 誰 (3-4)
+- **Notes**: Question word for person ("who")
+
+### Progress by JLPT Level
+- N5: 25/117 (21.37%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- けど/だけど follows same pattern as が and ので (conjunction particles)
+- Question words (どこ, どれ, 誰) all tokenize as 名詞/代名詞/一般
+- どの is a 連体詞 (rentaishi/pre-noun adjectival), different from pronouns
+- Completed demonstrative families:
+  - こ-series: ここ, これ, この ✓
+  - そ-series: そこ, それ, その ✓
+  - あ-series: あそこ, あれ, あの ✓
+  - ど-series: どこ, どれ, どの, 誰 ✓
+
+### Workflow Efficiency
+- Implementing related patterns together (demonstrative families) is very efficient
+- Simple single-token patterns take ~5-8 minutes each
+- Multi-structure patterns (like けど・だけど) take ~30 minutes
+- Using print_debug first, then implementing, then removing debug is the proven workflow
+
+### Next Priority (N5 patterns)
+1. Continue with simple particle/conjunction patterns
+2. Basic adjective patterns (past, negative, etc.)
+3. Basic verb patterns
+4. More demonstrative-related patterns (if any remain)
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 77 tests passing (65 original + 12 new)
+- ✅ Git repository clean
+- ✅ All commits made with proper messages
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 25 (2.71%)
+- **Remaining**: 899 (97.29%)
+- **Estimated work**: ~225 hours @ 15 min/pattern
+- **Velocity this session**: 5 patterns/hour (exceptionally high - simple patterns)
+
+**Session 15 complete. Ready for Session 16.**
