@@ -471,3 +471,103 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 7 complete. Ready for Session 8.**
+
+---
+
+## Session 8 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Three more patterns implemented successfully
+**Patterns completed**: 10/924 (1.08%)
+**Time invested**: ~90 minutes
+
+### Accomplishments
+1. ✅ Implemented Noun + まで (until/to - ending point) pattern
+2. ✅ Implemented Verb + てもいい (permission/it's okay) pattern
+3. ✅ Implemented Verb + にいく (go to do something) pattern
+4. ✅ All 48 tests passing with proper range assertions
+5. ✅ No test regressions
+
+### Completed Patterns
+
+#### Noun + まで (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_place_made (駅まで - place)
+  - test_time_made (９時まで - time)
+  - test_location_made (空港まで - location)
+- **Structure**: Noun + まで
+- **Technical notes**:
+  - まで tokenizes as 助詞/副助詞 (adverbial particle)
+  - Similar to から but different particle subtype
+  - Number tokens separate from counter nouns
+
+#### Verb + てもいい (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_temo_ii_standard (買ってもいい - standard て form)
+  - test_temo_ii_polite (食べてもいいです - polite form)
+  - test_demo_ii_de_particle (遊んでもいいです - で form)
+- **Structure**: Verb[て] + も + いい
+- **Technical notes**:
+  - て/で is 助詞/接続助詞 (conjunction particle)
+  - も is 助詞/係助詞 (binding particle)
+  - いい is 形容詞/非自立 (non-independent adjective)
+  - Polite form (です) extends automatically
+
+#### Verb + にいく (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_ni_iku_standard (釣りにいく - noun form)
+  - test_ni_iku_stem_form (しにいきます - verb stem + polite)
+  - test_ni_iku_eating (食べに行こう - volitional form)
+- **Structure**: Verb[stem] + に + 行く
+- **Technical notes**:
+  - Verb stems in 連用形 OR suru-verb nouns (like 釣り)
+  - に is 助詞/格助詞 (case particle)
+  - 行く matches any conjugation (基本形, 連用形, 未然ウ接続, etc.)
+  - Pattern extends with auxiliary verbs (ます, う, etc.)
+
+### Progress by JLPT Level
+- N5: 10/117 (8.55%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- Adverbial particles (副助詞) like まで vs case particles (格助詞) like から/に
+- Binding particles (係助詞) like も attach to previous elements
+- Verb stem form is 連用形 in morphological analysis
+- Suru-verb nouns (釣り) can function as verb stems in patterns
+- Non-independent adjectives (非自立) like いい require preceding context
+
+### Next Priority (N5 patterns)
+1. けど/だけど - but
+2. から (because) - different from から (from)
+3. て - te-form connector
+4. まで (different usage patterns)
+5. Adjective patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 39 tests passing (30 from session 6 + 9 new)
+- ✅ Git repository clean
+
+### Workflow Refinements
+- Pattern range includes full construction (verb + particle + verb)
+- Multiple custom matchers per pattern is common and clean
+- Reusing helpers from mod.rs (flexible_verb_form, ii_form, etc.) speeds development
+- Testing both て and で forms in same pattern validates robustness
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 10 (1.08%)
+- **Remaining**: 914 (98.92%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 8 complete. Ready for Session 9.**
