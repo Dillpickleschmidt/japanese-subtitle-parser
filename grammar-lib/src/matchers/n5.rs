@@ -1033,9 +1033,13 @@ pub fn teiru_u2462() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Adjective + て・Noun + で
+// Pattern: Adjective + て・Noun + で (basic linking form)
+// Structures: Same as Adjective + て + B, but specifically for linking qualities
+// This reuses the same matcher implementation
 pub fn adjective_te_u30fb_noun_de() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // This is the same grammatical structure as adjective_te_b(),
+    // just used in a different context (linking qualities vs. linking to phrases)
+    adjective_te_b()
 }
 
 // Pattern: Adjective + て + B (linking adjectives/nouns to phrases)

@@ -1035,3 +1035,60 @@ mod adjective_te_b_tests {
         assert_pattern_range(&patterns, "Adjective + て + B", 3, 6); // 医者で
     }
 }
+
+// ========== Adjective + て・Noun + で ==========
+// Pattern: Adjective + て・Noun + で (linking adjectives - listing qualities)
+// Data source: grammar_points_data.json["Adjective + て・Noun + で"]
+//
+// Structure variants to test:
+//   standard[0]: い-Adjective[い] + く + て
+//   standard[3]: な-Adjective + で
+//   standard[6]: Noun + で
+//   special: いい→よくて (exception)
+//   polite: None listed
+
+mod adjective_te_noun_de_tests {
+    use super::*;
+
+    #[test]
+    fn test_i_adj_linking() {
+        let sentence = "このパソコンは新しくて早い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + て・Noun + で");
+        assert_pattern_range(&patterns, "Adjective + て・Noun + で", 7, 11); // 新しくて
+    }
+
+    #[test]
+    fn test_na_adj_linking() {
+        let sentence = "あの自転車は便利で軽い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + て・Noun + で");
+        assert_pattern_range(&patterns, "Adjective + て・Noun + で", 6, 9); // 便利で
+    }
+
+    #[test]
+    fn test_noun_linking() {
+        let sentence = "音楽を作るのは仕事で趣味だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + て・Noun + で");
+        assert_pattern_range(&patterns, "Adjective + て・Noun + で", 7, 10); // 仕事で
+    }
+
+    #[test]
+    fn test_ii_exception() {
+        let sentence = "彼はいい人でよくて優しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + て・Noun + で");
+        // Should match both 人で and よくて
+        // Testing よくて (the いい→よく exception case)
+        assert_pattern_range(&patterns, "Adjective + て・Noun + で", 6, 9); // よくて
+    }
+}
