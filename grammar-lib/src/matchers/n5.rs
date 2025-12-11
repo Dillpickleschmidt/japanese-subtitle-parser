@@ -334,9 +334,38 @@ pub fn darou() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: がある
+// Pattern: がある (there is/exists - for inanimate objects)
+// Structures: Noun + が + ある/あります
 pub fn gaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match が particle (case particle)
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ある verb (base_form = ある)
+    #[derive(Debug)]
+    struct AruVerbMatcher;
+    impl Matcher for AruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AruVerbMatcher)),
+    ]
 }
 
 // Pattern: がいる

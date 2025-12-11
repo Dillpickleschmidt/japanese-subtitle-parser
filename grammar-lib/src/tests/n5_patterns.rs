@@ -1543,3 +1543,35 @@ mod kurai_tests {
         assert_pattern_range(&patterns, "くらい ①", 0, 5); // どのくらい
     }
 }
+
+// ========== がある (Existence of inanimate objects) ==========
+// Pattern: がある (there is/exists - inanimate)
+// Data source: grammar_points_data.json["がある"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + が + ある
+//   polite[0]: Noun + が + あります
+
+mod ga_aru_tests {
+    use super::*;
+
+    #[test]
+    fn test_ga_aru_standard() {
+        let sentence = "明日、テストがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がある");
+        assert_pattern_range(&patterns, "がある", 3, 9); // テストがある
+    }
+
+    #[test]
+    fn test_ga_aru_polite() {
+        let sentence = "部屋に椅子があります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がある");
+        assert_pattern_range(&patterns, "がある", 3, 10); // 椅子があります
+    }
+}
