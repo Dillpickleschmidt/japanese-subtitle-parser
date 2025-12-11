@@ -1,4 +1,5 @@
 use crate::pattern_matcher::TokenMatcher;
+use std::sync::Arc;
 
 // Pattern: と
 pub fn to() -> Vec<TokenMatcher> {
@@ -66,8 +67,47 @@ pub fn nakute() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ないで
+// Pattern: ないで (without doing)
+// Structure: Verb[未然形] + ない + で
 pub fn naide() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Match verb in 未然形 (negative stem form)
+    #[derive(Debug)]
+    struct VerbMizenMatcher;
+    impl super::Matcher for VerbMizenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ない auxiliary in 連用デ接続 form
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl super::Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用デ接続")
+        }
+    }
+
+    // Match で as conjunction particle
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbMizenMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+    ]
 }
 
 // Pattern: Verb［れる・られる］
@@ -561,8 +601,10 @@ pub fn nasai() -> Vec<TokenMatcher> {
 }
 
 // Pattern: Verb[ないで]
+// Pattern: Verb[ないで] (without doing)
+// Structure: Verb[未然形] + ない + で
 pub fn verb_naide() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    naide()  // Same implementation as ないで
 }
 
 // Pattern: てくれてありがとう

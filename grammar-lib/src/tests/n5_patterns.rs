@@ -1661,3 +1661,64 @@ mod ageru_tests {
         assert_pattern_range(&patterns, "あげる", 3, 9); // 本をあげます
     }
 }
+
+// ========== ないで (without doing) - N4 pattern ==========
+// Pattern: ないで (without doing)
+// Data source: grammar_points_data.json["ないで"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ない] + で
+//
+// Note: There are TWO patterns in patterns.rs for this grammar point:
+//   - "ないで"
+//   - "Verb[ないで]"
+// Both use the same implementation (naide function).
+
+#[cfg(test)]
+mod naide_tests {
+    use super::*;
+
+    #[test]
+    fn test_naide_godan_verb() {
+        // 焼く (godan verb) -> 焼かない
+        let sentence = "魚を焼かないで食べたから、お腹を壊した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないで");
+        assert_pattern_range(&patterns, "ないで", 2, 7); // 焼かないで
+    }
+
+    #[test]
+    fn test_naide_ichidan_verb() {
+        // かける (ichidan verb) -> かけない
+        let sentence = "ドアのカギをかけないで寝るの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないで");
+        assert_pattern_range(&patterns, "ないで", 6, 11); // かけないで
+    }
+
+    #[test]
+    fn test_naide_with_surprise() {
+        // 伝える (ichidan verb) -> 伝えない
+        let sentence = "上司に伝えないで休んだの！？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないで");
+        assert_pattern_range(&patterns, "ないで", 3, 8); // 伝えないで
+    }
+
+    #[test]
+    fn test_verb_naide_pattern() {
+        // Also test the "Verb[ないで]" pattern name
+        let sentence = "温めないで食べた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[ないで]");
+        assert_pattern_range(&patterns, "Verb[ないで]", 0, 5); // 温めないで
+    }
+}
