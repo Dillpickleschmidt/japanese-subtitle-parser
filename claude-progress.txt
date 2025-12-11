@@ -407,3 +407,67 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 6 complete. Ready for Session 7.**
+
+---
+
+## Session 7 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Seventh pattern implemented successfully
+**Patterns completed**: 7/924 (0.76%)
+**Time invested**: ~30 minutes
+
+### Accomplishments
+1. ✅ Implemented Noun + まで (until/to - ending point) pattern
+2. ✅ All 3 test variants passing with proper range assertions
+3. ✅ No test regressions - all 33 tests pass
+
+### Completed Patterns
+
+#### Noun + まで (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_place_made (駅まで - place)
+  - test_time_made (９時まで - time expression)
+  - test_location_made (空港まで - location)
+- **Structure**: Noun + まで
+- **Technical notes**:
+  - まで tokenizes as 助詞/副助詞 (particle/副助詞)
+  - Works with place nouns, time expressions, and location nouns
+  - Number tokens (like ９) tokenize separately from counter nouns (like 時)
+
+### Progress by JLPT Level
+- N5: 7/117 (5.98%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- まで is a 副助詞 (adverbial particle), unlike から which is 格助詞 (case particle)
+- Similar implementation pattern to から but with different particle subtype
+- Time expressions with numbers tokenize with number and counter as separate tokens
+
+### Next Priority (N5 patterns)
+1. けど/だけど - but
+2. Verb + てもいい - it's okay to (listed in feature_list.json)
+3. Verb + にいく - go to do something
+4. て - te-form connector
+5. Adjective patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 33 tests passing (30 previous + 3 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 7 (0.76%)
+- **Remaining**: 917 (99.24%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 7 complete. Ready for Session 8.**
