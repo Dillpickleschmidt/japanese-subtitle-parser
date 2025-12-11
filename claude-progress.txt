@@ -339,3 +339,71 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 5 complete. Ready for Session 6.**
+
+---
+
+## Session 6 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Sixth pattern implemented successfully
+**Patterns completed**: 6/924 (0.65%)
+**Time invested**: ~30 minutes
+
+### Accomplishments
+1. ✅ Implemented ので (because/since - objective reasoning) pattern
+2. ✅ All 4 structure variants tested and passing with proper range assertions
+3. ✅ No test regressions - all 30 tests pass
+
+### Completed Patterns
+
+#### ので (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_verb_node (来るので - verb + ので)
+  - test_i_adjective_node (寒いので - い-adjective + ので)
+  - test_na_adjective_node (綺麗なので - な-adjective + な + ので)
+  - test_noun_node (日曜日なので - noun + な + ので)
+- **Structure**:
+  - Verb/い-Adj + ので
+  - な-Adj/Noun + な + ので
+- **Technical notes**:
+  - ので tokenizes as 助詞/接続助詞 (conjunction particle)
+  - な is 助動詞 with base_form=だ and feature="体言接続"
+  - VerbAdjNounMatcher matches any verb, adjective, or noun before ので
+  - Optional な matcher handles な-adjectives and nouns
+
+### Progress by JLPT Level
+- N5: 6/117 (5.13%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- ので is more formal/objective than から for expressing reasons
+- The な before ので is the copula だ in its 体言接続 form
+- Pattern includes the full construction (verb/adj/noun + な? + ので)
+
+### Next Priority (N5 patterns)
+1. けど/だけど - but
+2. て - te-form connector
+3. まで - until/as far as
+4. Verb + にいく - go to do something
+5. てもいい - it's okay to
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 30 tests passing (26 previous + 4 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 6 (0.65%)
+- **Remaining**: 918 (99.35%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 6 complete. Ready for Session 7.**
