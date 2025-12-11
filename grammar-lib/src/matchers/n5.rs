@@ -151,14 +151,38 @@ pub fn u_verb_negative() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ここ
+// Pattern: ここ (this place / here)
+// Structures: ここ (demonstrative pronoun)
 pub fn koko() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KokoMatcher;
+    impl Matcher for KokoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "ここ"
+                && token.base_form == "ここ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KokoMatcher))]
 }
 
-// Pattern: そこ
+// Pattern: そこ (that place / there)
+// Structures: そこ (demonstrative pronoun)
 pub fn soko() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SokoMatcher;
+    impl Matcher for SokoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "そこ"
+                && token.base_form == "そこ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SokoMatcher))]
 }
 
 // Pattern: あそこ (that place over there)

@@ -517,3 +517,65 @@ mod asoko_tests {
         assert_pattern_range(&patterns, "あそこ", 0, 3); // あそこ
     }
 }
+
+// ========== ここ (Here / This place) ==========
+// Pattern: ここ (this place - near the speaker)
+// Data source: grammar_points_data.json["ここ"]
+//
+// Structure variants to test:
+//   standard[0]: ここ (as demonstrative pronoun)
+
+mod koko_tests {
+    use super::*;
+
+    #[test]
+    fn test_koko_with_particle() {
+        let sentence = "ここのパンは美味しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ここ");
+        assert_pattern_range(&patterns, "ここ", 0, 2); // ここ
+    }
+
+    #[test]
+    fn test_koko_as_subject() {
+        let sentence = "先生、ここが痛いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ここ");
+        assert_pattern_range(&patterns, "ここ", 3, 5); // ここ
+    }
+}
+
+// ========== そこ (There / That place) ==========
+// Pattern: そこ (that place - near the listener or previously mentioned)
+// Data source: grammar_points_data.json["そこ"]
+//
+// Structure variants to test:
+//   standard[0]: そこ (as demonstrative pronoun)
+
+mod soko_tests {
+    use super::*;
+
+    #[test]
+    fn test_soko_with_particle() {
+        let sentence = "そこの犬は危ないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そこ");
+        assert_pattern_range(&patterns, "そこ", 0, 2); // そこ
+    }
+
+    #[test]
+    fn test_soko_as_subject() {
+        let sentence = "そこは綺麗？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そこ");
+        assert_pattern_range(&patterns, "そこ", 0, 2); // そこ
+    }
+}

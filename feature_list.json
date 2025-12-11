@@ -548,13 +548,13 @@
   {
     "pattern_name": "ここ",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ここ is one of the forms of the これ family of words used to identify things close to the speaker [2 std, 0 pol]",
     "priority": 1,
     "skip_reason": null
@@ -646,13 +646,13 @@
   {
     "pattern_name": "そこ",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そこ is one of the forms of the それ family of words used to identify things close to the listener [2 std, 0 pol]",
     "priority": 1,
     "skip_reason": null
