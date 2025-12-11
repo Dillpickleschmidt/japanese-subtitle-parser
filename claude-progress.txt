@@ -571,3 +571,70 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 8 complete. Ready for Session 9.**
+
+---
+
+## Session 9 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Eleventh pattern implemented successfully
+**Patterns completed**: 11/924 (1.19%)
+**Time invested**: ~25 minutes
+
+### Accomplishments
+1. ✅ Implemented Verb + まで (until [verb] happens) pattern
+2. ✅ All 3 test variants passing with proper range assertions
+3. ✅ No test regressions - all 42 tests pass
+
+### Completed Patterns
+
+#### Verb + まで (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_verb_made_until (来るまで - until friend comes)
+  - test_verb_made_polite (壊れるまで - until it breaks, polite context)
+  - test_verb_made_negative_context (始まるまで - until class starts, past negative)
+- **Structure**: Verb + まで
+- **Technical notes**:
+  - VerbMatcher matches any 動詞 (verb)
+  - MadeParticleMatcher checks surface="まで" AND 助詞/副助詞
+  - Same particle type as Noun + まで (副助詞)
+  - Used in contexts where action continues until verb happens
+  - Verb must be non-past (基本形) as まで indicates future endpoint
+
+### Progress by JLPT Level
+- N5: 11/117 (9.40%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- Verb + まで uses same particle type (副助詞) as Noun + まで
+- The verb before まで must be in non-past form (基本形/連体形)
+- Pattern works regardless of surrounding context (casual, polite, past, negative)
+- Range includes full construction: Verb + まで
+
+### Next Priority (N5 patterns)
+1. Adjective + て + B - adjective te-form connector
+2. Adjective + て・Noun + で - te/de forms for description
+3. Verb + て - basic te-form connector
+4. Verb + て + B - te-form sequential actions
+5. けど/だけど - but
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 42 tests passing (39 previous + 3 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 11 (1.19%)
+- **Remaining**: 913 (98.81%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 9 complete. Ready for Session 10.**
