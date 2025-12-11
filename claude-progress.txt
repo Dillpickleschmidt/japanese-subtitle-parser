@@ -936,3 +936,82 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 12 complete. Ready for Session 13.**
+
+---
+
+## Session 13 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Adjective + の(は) pattern implemented successfully
+**Patterns completed**: 20/924 (2.16%)
+**Time invested**: ~40 minutes
+
+### Accomplishments
+1. ✅ Implemented Adjective + の(は) (nominalizer pattern)
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ Handles both い-adjectives and な-adjectives
+4. ✅ Supports all three particles (は, が, も)
+5. ✅ No test regressions - all 65 tests pass
+
+### Completed Patterns
+
+#### Adjective + の(は) (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_i_adjective_no_wa (可愛いのは - i-adj + の + は)
+  - test_na_adjective_no_wa (心配なのは - na-adj + な + の + は)
+  - test_i_adjective_no_ga (熱いのが - i-adj + の + が)
+  - test_i_adjective_no_mo (冷たいのも - i-adj + の + も)
+- **Structures**:
+  - い-Adjective + の + は/が/も
+  - な-Adjective + な + の + は/が/も
+- **Technical notes**:
+  - の tokenizes as 名詞/非自立/一般 (non-independent noun - nominalizer)
+  - な before の is 助動詞 with base_form=だ in 体言接続 form
+  - Combined matcher handles both adjective types
+  - Optional な matcher allows pattern to match both i-adj and na-adj
+
+### Progress by JLPT Level
+- N5: 20/117 (17.09%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- Nominalizer の is a non-independent noun (名詞/非自立/一般)
+- Different from possessive の which is 助詞/連体化
+- な-adjectives (名詞/サ変接続 or 名詞/形容動詞語幹) require な copula
+- All three particles (は, が, も) work with this pattern
+- Pattern meaning: "the one that [adjective]"
+
+### Next Priority (N5 patterns)
+1. Adjective + て + B - adjective te-form connector
+2. Adjective + て・Noun + で - te/de forms for description
+3. Verb + て - basic te-form connector
+4. Verb + て + B - te-form sequential actions
+5. い-Adjective patterns (basic, past, predicate)
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 65 tests passing (61 previous + 4 new)
+- ✅ Git repository clean
+
+### Workflow Notes
+- Used print_debug to understand tokenization first
+- Implemented comprehensive custom matchers for each component
+- Tested all particle variants (は, が, も)
+- Used Optional matcher for な to handle both adjective types
+- Pattern successfully distinguishes nominalizer の from possessive の
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 20 (2.16%)
+- **Remaining**: 904 (97.84%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 13 complete. Ready for Session 14.**
