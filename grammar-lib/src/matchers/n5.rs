@@ -123,8 +123,28 @@ pub fn no() -> Vec<TokenMatcher> {
 }
 
 // Pattern: いい
+// Pattern: いい (good - irregular i-adjective, affirmative form only)
+// Structures: いい
+// Note: Other forms are handled by general i-adjective patterns:
+//   - よくない → い-Adjectives くない
+//   - よかった → い-Adjective (Past)
+//   - よくなかった → い-Adjective くなかった
 pub fn ii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for いい (affirmative form)
+    #[derive(Debug)]
+    struct IiMatcher;
+    impl Matcher for IiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いい"
+                && token.base_form == "いい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(4).is_some_and(|f| f == "形容詞・イイ")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(IiMatcher))]
 }
 
 // Pattern: い-Adjectives

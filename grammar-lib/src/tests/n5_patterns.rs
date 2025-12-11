@@ -1197,3 +1197,73 @@ mod i_adjective_kunakatta_tests {
         assert_pattern_range(&patterns, "い-Adjective くなかった", 4, 11); // 難しくなかった
     }
 }
+
+// ========== いい (Good - Irregular) ==========
+// Pattern: いい (good - irregular i-adjective, affirmative form only)
+// Data source: grammar_points_data.json["いい"]
+//
+// Structure variants to test:
+//   standard[0]: いい (non-past affirmative)
+//   polite[0]: いい + です (polite affirmative)
+//
+// Other forms handled by different patterns:
+//   よくない → い-Adjectives くない (not yet implemented)
+//   よかった → い-Adjective (Past)
+//   よくなかった → い-Adjective くなかった
+
+mod ii_tests {
+    use super::*;
+
+    #[test]
+    fn test_ii_standard() {
+        let sentence = "これはいい映画だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いい");
+        assert_pattern_range(&patterns, "いい", 3, 5); // いい
+    }
+
+    #[test]
+    fn test_ii_polite() {
+        let sentence = "このレストランはいいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いい");
+        assert_pattern_range(&patterns, "いい", 8, 12); // いいです (extends with です)
+    }
+
+    #[test]
+    fn test_ii_predicate() {
+        let sentence = "いい天気ですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いい");
+        assert_pattern_range(&patterns, "いい", 0, 2); // いい
+    }
+
+    // Verify that past forms are handled by other patterns
+    #[test]
+    fn test_yoi_past_handled_by_other_pattern() {
+        let sentence = "昨日の天気はよかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should be detected by い-Adjective (Past), not いい
+        assert_has_pattern(&patterns, "い-Adjective (Past)");
+        assert_pattern_range(&patterns, "い-Adjective (Past)", 6, 10); // よかった
+    }
+
+    #[test]
+    fn test_yoi_past_negative_handled_by_other_pattern() {
+        let sentence = "昨日の天気はよくなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should be detected by い-Adjective くなかった, not いい
+        assert_has_pattern(&patterns, "い-Adjective くなかった");
+        assert_pattern_range(&patterns, "い-Adjective くなかった", 6, 12); // よくなかった
+    }
+}
