@@ -274,3 +274,68 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 4 complete. Ready for Session 5.**
+
+---
+
+## Session 5 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Fifth pattern implemented successfully
+**Patterns completed**: 5/924 (0.54%)
+**Time invested**: ~35 minutes
+
+### Accomplishments
+1. ✅ Implemented から (from - starting point) pattern
+2. ✅ All 3 test variants passing with proper range assertions
+3. ✅ No test regressions - all 26 tests pass
+
+### Completed Patterns
+
+#### から (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_location_from (モロッコから - country name)
+  - test_place_from (空港から - place name)
+  - test_time_from (今日から - time expression)
+- **Structure**: Starting Point (Noun) + から
+- **Technical notes**:
+  - から tokenizes as 助詞/格助詞/一般 (case particle)
+  - Uses noun_matcher() to match any noun before から
+  - Custom KaraParticleMatcher checks surface, POS, and subtype
+  - This is the "from" usage (starting point), not "because" (which requires だ)
+
+### Progress by JLPT Level
+- N5: 5/117 (4.27%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- から as case particle (格助詞) indicates starting point
+- Works with location nouns (モロッコ, 空港) and time nouns (今日)
+- Different from から meaning "because" (which is だから or な-adj/noun + だから)
+
+### Next Priority (N5 patterns)
+1. ので - because (more formal than から for reasoning)
+2. けど/だけど - but
+3. て - te-form connector
+4. まで - until/as far as
+5. Verb + にいく - go to do something
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 26 tests passing (23 previous + 3 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 5 (0.54%)
+- **Remaining**: 919 (99.46%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 5 complete. Ready for Session 6.**
