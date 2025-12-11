@@ -1877,3 +1877,48 @@ mod verb_te_tests {
         assert_pattern_range(&patterns, "Verb + て", 3, 5); // 来て
     }
 }
+
+// ========== Verb + て+ B (Sequential Actions) ==========
+// Pattern: Verb + て+ B (te-form followed by another action)
+// Data source: grammar_points_data.json["Verb + て+ B"]
+//
+// Structure: Verb[て] + (Action) Phrase
+// Meaning: Sequential actions "do X, then do Y"
+
+mod verb_te_b_tests {
+    use super::*;
+
+    #[test]
+    fn test_te_then_verb() {
+        let sentence = "ショッピングセンターに行って買い物をします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て+ B");
+        assert_pattern_range(&patterns, "Verb + て+ B", 11, 21); // 行って買い物をします
+    }
+
+    #[test]
+    fn test_te_then_verb_past() {
+        let sentence = "パンを買って食べた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て+ B");
+        assert_pattern_range(&patterns, "Verb + て+ B", 3, 9); // 買って食べた
+    }
+
+    #[test]
+    fn test_multiple_te_sequence() {
+        let sentence = "朝起きて顔を洗って朝ごはんを食べた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // This sentence has multiple sequential te-forms:
+        // - 起きて顔を洗って (wake up, then wash face)
+        // - 洗って朝ごはんを食べた (wash, then eat breakfast)
+        assert_has_pattern(&patterns, "Verb + て+ B");
+        // Should detect at least one of the sequences
+        // The pattern matcher will find the first complete sequence
+    }
+}

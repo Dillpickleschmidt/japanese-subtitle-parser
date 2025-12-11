@@ -1059,8 +1059,49 @@ pub fn tekara() -> Vec<TokenMatcher> {
 }
 
 // Pattern: Verb + て+ B
+// Pattern: Verb + て+ B (sequential actions)
+// Structures: Verb[て/で] + (optional particles/nouns/etc.) + Verb/Action
+// Meaning: Sequential actions - "do X, then do Y"
 pub fn verb_te_b() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Helper: Match any verb (the second verb in the sequence)
+    #[derive(Debug)]
+    struct SecondVerbMatcher;
+    impl Matcher for SecondVerbMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match: Verb[連用形/連用タ接続] + て/で + (0-5 tokens) + Verb
+    // The wildcard allows for particles, objects, etc. between the te-form and next verb
+    concat(vec![
+        vec![
+            super::flexible_verb_form(),
+            te_de_conjunction(),
+        ],
+        vec![TokenMatcher::Wildcard {
+            min: 0,
+            max: 5,
+            stop_conditions: vec![],
+        }],
+        vec![TokenMatcher::Custom(Arc::new(SecondVerbMatcher))],
+    ])
+}
+
+// Helper: Match て or で as conjunction particle
+fn te_de_conjunction() -> TokenMatcher {
+    #[derive(Debug)]
+    struct TeDeConjunctionMatcher;
+    impl Matcher for TeDeConjunctionMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(TeDeConjunctionMatcher))
 }
 
 // Pattern: もう
