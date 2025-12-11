@@ -308,3 +308,46 @@ mod node_tests {
         assert_pattern_range(&patterns, "ので", 3, 9); // 日曜日なので
     }
 }
+
+// ========== まで (Until/To) ==========
+// Pattern: まで (until/to - ending point)
+// Data source: grammar_points_data.json["Noun + まで"]
+//
+// Structure variants to test:
+//   standard[0]: Ending Point + まで
+//   standard[1]: Noun + まで
+// (These are effectively the same - test different contexts)
+
+mod made_until_tests {
+    use super::*;
+
+    #[test]
+    fn test_place_made() {
+        let sentence = "駅まで送るよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun + まで");
+        assert_pattern_range(&patterns, "Noun + まで", 0, 3); // 駅まで
+    }
+
+    #[test]
+    fn test_time_made() {
+        let sentence = "９時まで勉強する";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun + まで");
+        assert_pattern_range(&patterns, "Noun + まで", 1, 4); // 時まで (９ is separate token)
+    }
+
+    #[test]
+    fn test_location_made() {
+        let sentence = "空港まで行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun + まで");
+        assert_pattern_range(&patterns, "Noun + まで", 0, 4); // 空港まで
+    }
+}

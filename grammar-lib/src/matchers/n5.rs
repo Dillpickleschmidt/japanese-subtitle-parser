@@ -589,9 +589,25 @@ pub fn kurai_u2460() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Noun + まで
+// Pattern: まで (until/to - ending point)
+// Structures: Noun + まで
 pub fn noun_made() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::noun_matcher;
+
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+    ]
 }
 
 // Pattern: Verb + まで

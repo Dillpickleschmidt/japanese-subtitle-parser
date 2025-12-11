@@ -44,13 +44,13 @@
   {
     "pattern_name": "Noun + まで",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "まで is a particle that roughly means 'as far as' [2 std, 0 pol]",
     "priority": 1,
     "skip_reason": null
