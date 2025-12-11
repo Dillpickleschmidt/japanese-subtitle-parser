@@ -161,9 +161,21 @@ pub fn soko() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: あそこ
+// Pattern: あそこ (that place over there)
+// Structures: あそこ (demonstrative pronoun)
 pub fn asoko() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct AsokoMatcher;
+    impl Matcher for AsokoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "あそこ"
+                && token.base_form == "あそこ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(AsokoMatcher))]
 }
 
 // Pattern: で

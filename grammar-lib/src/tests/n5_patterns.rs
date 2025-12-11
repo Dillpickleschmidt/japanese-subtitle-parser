@@ -476,3 +476,44 @@ mod verb_made_tests {
         assert_pattern_range(&patterns, "Verb + まで", 3, 8); // 始まるまで
     }
 }
+
+// ========== あそこ (That place over there) ==========
+// Pattern: あそこ (that place over there - distant from both speaker and listener)
+// Data source: grammar_points_data.json["あそこ"]
+//
+// Structure variants to test:
+//   standard[0]: あそこ (as demonstrative pronoun)
+
+mod asoko_tests {
+    use super::*;
+
+    #[test]
+    fn test_asoko_with_particle() {
+        let sentence = "あそこの店はいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あそこ");
+        assert_pattern_range(&patterns, "あそこ", 0, 3); // あそこ
+    }
+
+    #[test]
+    fn test_asoko_as_subject() {
+        let sentence = "あそこは嫌だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あそこ");
+        assert_pattern_range(&patterns, "あそこ", 0, 3); // あそこ
+    }
+
+    #[test]
+    fn test_asoko_with_mo() {
+        let sentence = "あそこも暑い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あそこ");
+        assert_pattern_range(&patterns, "あそこ", 0, 3); // あそこ
+    }
+}
