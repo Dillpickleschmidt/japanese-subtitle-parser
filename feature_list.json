@@ -30,13 +30,13 @@
   {
     "pattern_name": "Adjective + の(は)",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the roles that the particle の can take in Japanese is replacing a noun that has already been mentioned, or one... [3 std, 0 pol]",
     "priority": 1,
     "skip_reason": null

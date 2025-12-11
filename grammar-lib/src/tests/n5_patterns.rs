@@ -765,3 +765,55 @@ mod ano_tests {
         assert_pattern_range(&patterns, "あの", 0, 2); // あの
     }
 }
+
+// ========== Adjective + の(は) ==========
+// Pattern: Adjective + の(は) (nominalizer - "the one that")
+// Data source: grammar_points_data.json["Adjective + の(は)"]
+//
+// Structure variants to test:
+//   standard[0]: な-Adjective + な + の + は/が/も
+//   standard[1]: い-Adjective + の + は/が/も
+
+mod adjective_no_wa_tests {
+    use super::*;
+
+    #[test]
+    fn test_i_adjective_no_wa() {
+        let sentence = "可愛いのは私の犬です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + の(は)");
+        assert_pattern_range(&patterns, "Adjective + の(は)", 0, 5); // 可愛いのは
+    }
+
+    #[test]
+    fn test_na_adjective_no_wa() {
+        let sentence = "心配なのはあなたです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + の(は)");
+        assert_pattern_range(&patterns, "Adjective + の(は)", 0, 5); // 心配なのは
+    }
+
+    #[test]
+    fn test_i_adjective_no_ga() {
+        let sentence = "熱いのがこれです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + の(は)");
+        assert_pattern_range(&patterns, "Adjective + の(は)", 0, 4); // 熱いのが
+    }
+
+    #[test]
+    fn test_i_adjective_no_mo() {
+        let sentence = "冷たいのも好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adjective + の(は)");
+        assert_pattern_range(&patterns, "Adjective + の(は)", 0, 5); // 冷たいのも
+    }
+}

@@ -973,8 +973,88 @@ pub fn nogajouzu() -> Vec<TokenMatcher> {
 }
 
 // Pattern: Adjective + の(は)
+// Pattern: Adjective + の(は) - "the one that [adjective]"
+// Structures:
+//   i-Adjective + の + は/が/も
+//   な-Adjective + な + の + は/が/も
 pub fn adjective_no_ha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match い-adjective
+    #[derive(Debug)]
+    struct IAdjMatcher;
+    impl Matcher for IAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    // Match な-adjective (noun that can take な)
+    #[derive(Debug)]
+    struct NaAdjMatcher;
+    impl Matcher for NaAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+                    || token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+        }
+    }
+
+    // Match な (copula in 体言接続 form)
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match の (nominalizer)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.base_form == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match は/が/も particle
+    #[derive(Debug)]
+    struct WaGaMoParticleMatcher;
+    impl Matcher for WaGaMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "は" || token.surface == "が" || token.surface == "も")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match adjective (either i-adj or na-adj+な)
+    #[derive(Debug)]
+    struct AdjectiveOrNaAdjectiveMatcher;
+    impl Matcher for AdjectiveOrNaAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // i-adjective
+            (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立"))
+            // OR na-adjective (noun that can take な)
+            || (token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+                    || token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AdjectiveOrNaAdjectiveMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaCopulaMatcher)))),
+        TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
+        TokenMatcher::Custom(Arc::new(WaGaMoParticleMatcher)),
+    ]
 }
 
 // Pattern: あげる
