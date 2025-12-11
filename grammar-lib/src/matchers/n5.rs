@@ -681,9 +681,93 @@ pub fn janakatta() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: い-Adjective くなかった
+// Pattern: い-Adjective くなかった - Adjective[く] + なかった
+// Structures:
+//   Standard: い-Adjective[連用テ接続] + なかっ + た
+//   Polite: い-Adjective[連用テ接続] + あり + ませ + ん + でし + た
 pub fn i_adjective_kunakatta() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct IAdjKuFormMatcher;
+    impl Matcher for IAdjKuFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NakattaMatcher;
+    impl Matcher for NakattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なかっ"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct AriMatcher;
+    impl Matcher for AriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DeshiMatcher;
+    impl Matcher for DeshiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "でし"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Combined matcher for both standard and polite forms
+    #[derive(Debug)]
+    struct KunakattaOrArimasenMatcher;
+    impl Matcher for KunakattaOrArimasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match なかっ (standard form)
+            (token.surface == "なかっ"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // OR match あり (polite form start)
+            || (token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjKuFormMatcher)),
+        TokenMatcher::Custom(Arc::new(KunakattaOrArimasenMatcher)),
+        // The rest (た or ませんでした) will extend automatically
+    ]
 }
 
 // Pattern: Verbs (Non-past)

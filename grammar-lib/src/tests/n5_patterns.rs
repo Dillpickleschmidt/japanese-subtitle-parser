@@ -1144,3 +1144,56 @@ mod i_adjective_past_tests {
         assert_pattern_range(&patterns, "い-Adjective (Past)", 6, 12); // 甘かったです
     }
 }
+
+// ========== い-Adjective くなかった (Negative Past) ==========
+// Pattern: い-Adjective negative past tense
+// Data source: grammar_points_data.json["い-Adjective くなかった"]
+//
+// Structure variants to test:
+//   standard[0]: い-Adjective[く] + なかった
+//   polite[0]: い-Adjective[く] + なかった + です
+//   polite[1]: い-Adjective[く] + ありませんでした
+
+mod i_adjective_kunakatta_tests {
+    use super::*;
+
+    #[test]
+    fn test_kunakatta_standard() {
+        let sentence = "私は太くなかったよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective くなかった");
+        assert_pattern_range(&patterns, "い-Adjective くなかった", 2, 8); // 太くなかった
+    }
+
+    #[test]
+    fn test_kunakatta_semi_polite() {
+        let sentence = "この車は高くなかったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective くなかった");
+        assert_pattern_range(&patterns, "い-Adjective くなかった", 4, 12); // 高くなかったです
+    }
+
+    #[test]
+    fn test_kunakatta_polite() {
+        let sentence = "北海道は暑くありませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective くなかった");
+        assert_pattern_range(&patterns, "い-Adjective くなかった", 4, 14); // 暑くありませんでした
+    }
+
+    #[test]
+    fn test_kunakatta_difficult() {
+        let sentence = "テストは難しくなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective くなかった");
+        assert_pattern_range(&patterns, "い-Adjective くなかった", 4, 11); // 難しくなかった
+    }
+}

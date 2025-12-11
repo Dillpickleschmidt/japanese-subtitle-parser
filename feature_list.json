@@ -254,13 +254,13 @@
   {
     "pattern_name": "い-Adjective くなかった",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to create the negative past form of い-Adjectives , we will need to use the conjugation form [4 std, 7 pol]",
     "priority": 1,
     "skip_reason": null
