@@ -725,9 +725,23 @@ pub fn u_verb_negative_past() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Verb + て
+// Pattern: Verb + て (te-form for sequential actions)
+// Structures: Verb[連用形/連用タ接続] + て/で (as conjunction particle)
 pub fn verb_te() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TeDeConjunctionMatcher;
+    impl Matcher for TeDeConjunctionMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeConjunctionMatcher)),
+    ]
 }
 
 // Pattern: ている① (progressive/resultative state)

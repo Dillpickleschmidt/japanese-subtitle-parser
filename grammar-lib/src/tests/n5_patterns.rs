@@ -1722,3 +1722,158 @@ mod naide_tests {
         assert_pattern_range(&patterns, "Verb[ないで]", 0, 5); // 温めないで
     }
 }
+
+// ========== TEMPORARY: Number + も (as many as) - N4 pattern ==========
+#[cfg(test)]
+mod number_mo_temp_test {
+    use super::*;
+
+    #[test]
+    fn temp_tokenization_test() {
+        let sentence = "１２時間も仕事をしたから疲れた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+
+        let sentence2 = "その携帯２０万円もしたの？！";
+        let tokens2 = tokenize_sentence(sentence2);
+        let patterns2 = detect_patterns(&tokens2);
+        print_debug(sentence2, &tokens2, &patterns2);
+
+        let sentence3 = "一回も地下鉄に乗ったことが無い";
+        let tokens3 = tokenize_sentence(sentence3);
+        let patterns3 = detect_patterns(&tokens3);
+        print_debug(sentence3, &tokens3, &patterns3);
+    }
+}
+
+// ========== Verb + て (Te-form) ==========
+// Pattern: Verb + て (te-form conjugation for sequential actions)
+// Data source: grammar_points_data.json["Verb + て"]
+//
+// Structure variants to test (17 standard forms):
+//   [る1] Verb: 見る → 見て
+//   [る5] Verb: 座る → 座って
+//   [う] Verb: 歌う → 歌って
+//   [つ] Verb: 打つ → 打って
+//   [く] Verb: 歩く → 歩いて
+//   [ぐ] Verb: 泳ぐ → 泳いで
+//   [ぬ] Verb: 死ぬ → 死んで
+//   [ぶ] Verb: 飛ぶ → 飛んで
+//   [む] Verb: 休む → 休んで
+//   [す] Verb: 話す → 話して
+//   Irregular: 行く → 行って, する → して, くる → きて
+
+mod verb_te_tests {
+    use super::*;
+
+    #[test]
+    fn test_ru_verb_te() {
+        let sentence = "友達と映画を見て楽しかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 6, 8); // 見て
+    }
+
+    #[test]
+    fn test_u_verb_ru_ending_te() {
+        let sentence = "椅子に座って本を読んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 3, 6); // 座って
+    }
+
+    #[test]
+    fn test_u_ending_te() {
+        let sentence = "歌を歌って踊った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 2, 5); // 歌って
+    }
+
+    #[test]
+    fn test_ku_ending_te() {
+        let sentence = "公園まで歩いて行った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 4, 7); // 歩いて
+    }
+
+    #[test]
+    fn test_gu_ending_te() {
+        let sentence = "海で泳いで遊んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 2, 5); // 泳いで
+    }
+
+    #[test]
+    fn test_mu_ending_te() {
+        let sentence = "図書館で休んで勉強した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 4, 7); // 休んで
+    }
+
+    #[test]
+    fn test_bu_ending_te() {
+        let sentence = "鳥が空を飛んで行った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 4, 7); // 飛んで
+    }
+
+    #[test]
+    fn test_su_ending_te() {
+        let sentence = "先生と話して分かった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 3, 6); // 話して
+    }
+
+    #[test]
+    fn test_irregular_iku_te() {
+        let sentence = "学校に行って勉強する";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 3, 6); // 行って
+    }
+
+    #[test]
+    fn test_irregular_suru_te() {
+        let sentence = "宿題をして寝た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 3, 5); // して
+    }
+
+    #[test]
+    fn test_irregular_kuru_te() {
+        let sentence = "友達が来て一緒に遊んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て");
+        assert_pattern_range(&patterns, "Verb + て", 3, 5); // 来て
+    }
+}
