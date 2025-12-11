@@ -1503,3 +1503,43 @@ mod kirai_tests {
         assert_pattern_range(&patterns, "きらい", 0, 4); // 大嫌いな
     }
 }
+
+// ========== くらい ① (About/Approximately) ==========
+// Pattern: くらい ① (about/approximately with numbers)
+// Data source: grammar_points_data.json["くらい ①"]
+//
+// Structure: Number/counter + くらい or ぐらい
+
+mod kurai_tests {
+    use super::*;
+
+    #[test]
+    fn test_kurai_with_time() {
+        let sentence = "後３分くらいで着く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くらい ①");
+        assert_pattern_range(&patterns, "くらい ①", 1, 6); // ３分くらい
+    }
+
+    #[test]
+    fn test_gurai_with_counter() {
+        let sentence = "４個ぐらい欲しいな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くらい ①");
+        assert_pattern_range(&patterns, "くらい ①", 0, 5); // ４個ぐらい
+    }
+
+    #[test]
+    fn test_kurai_with_question() {
+        let sentence = "どのくらいで着きますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くらい ①");
+        assert_pattern_range(&patterns, "くらい ①", 0, 5); // どのくらい
+    }
+}

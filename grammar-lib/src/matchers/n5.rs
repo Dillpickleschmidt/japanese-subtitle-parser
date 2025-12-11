@@ -1054,9 +1054,71 @@ pub fn maeni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: くらい ①
+/// Pattern: くらい ① (about/approximately)
+/// Structures: Number/counter + くらい or ぐらい
 pub fn kurai_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NumberMatcher;
+    impl Matcher for NumberMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "数")
+        }
+    }
+
+    #[derive(Debug)]
+    struct CounterMatcher;
+    impl Matcher for CounterMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "接尾")
+                && token.pos.get(2).is_some_and(|p| p == "助数詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct QuestionWordMatcher;
+    impl Matcher for QuestionWordMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "どの" && token.pos.first().is_some_and(|p| p == "連体詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KuraiParticleMatcher;
+    impl Matcher for KuraiParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            (token.surface == "くらい" || token.surface == "ぐらい")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct CounterOrQuestionMatcher;
+    impl Matcher for CounterOrQuestionMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // Match counters (名詞/接尾/助数詞)
+            if token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "接尾")
+                && token.pos.get(2).is_some_and(|p| p == "助数詞")
+            {
+                return true;
+            }
+            // Match question words like どの (連体詞)
+            if token.surface == "どの" && token.pos.first().is_some_and(|p| p == "連体詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match: [Optional Number] + [Counter OR Question Word] + くらい
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberMatcher)))),
+        TokenMatcher::Custom(Arc::new(CounterOrQuestionMatcher)),
+        TokenMatcher::Custom(Arc::new(KuraiParticleMatcher)),
+    ]
 }
 
 // Pattern: まで (until/to - ending point)
