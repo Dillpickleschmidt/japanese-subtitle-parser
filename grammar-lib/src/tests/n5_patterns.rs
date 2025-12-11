@@ -153,3 +153,57 @@ mod mo_also_tests {
         assert!(!has_pattern(&patterns, "も")); // 誰も is different grammar
     }
 }
+
+// ========== たことがある (Experience) ==========
+// Pattern: たことがある (have experience of)
+// Data source: grammar_points_data.json["たことがある"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[た] + こと + が + ある
+//   standard[1]: Verb[た] + こと + が + ない
+//   polite[0]: Verb[た] + こと + が + あります
+//   polite[1]: Verb[た] + こと + が + ありません
+
+mod ta_koto_ga_aru_tests {
+    use super::*;
+
+    #[test]
+    fn test_affirmative_standard() {
+        let sentence = "あいつとは前に会ったことがあるはずだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たことがある");
+        assert_pattern_range(&patterns, "たことがある", 7, 15); // 会ったことがある
+    }
+
+    #[test]
+    fn test_negative_standard() {
+        let sentence = "こんな料理は食べたことがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たことがある");
+        assert_pattern_range(&patterns, "たことがある", 6, 14); // 食べたことがない
+    }
+
+    #[test]
+    fn test_affirmative_polite() {
+        let sentence = "京都に行ったことがあります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たことがある");
+        assert_pattern_range(&patterns, "たことがある", 3, 13); // 行ったことがあります
+    }
+
+    #[test]
+    fn test_negative_polite() {
+        let sentence = "まだ一度も使ったことがありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たことがある");
+        assert_pattern_range(&patterns, "たことがある", 5, 16); // 使ったことがありません
+    }
+}

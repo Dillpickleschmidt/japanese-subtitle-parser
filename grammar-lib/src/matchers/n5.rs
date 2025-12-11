@@ -639,9 +639,35 @@ pub fn ya() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たことがある
+// Pattern: たことがある (have experience of)
+// Structures: Verb[た] + こと + が + ある/ない
 pub fn takotogaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Helper: Match ある or ない (affirmative or negative)
+    #[derive(Debug)]
+    struct AruNaiMatcher;
+    impl Matcher for AruNaiMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // Match ある as verb
+            if token.base_form == "ある" && token.pos.first().is_some_and(|p| p == "動詞") {
+                return true;
+            }
+            // Match ない as adjective (negative form of ある)
+            if token.base_form == "ない" && token.pos.first().is_some_and(|p| p == "形容詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![super::past_auxiliary()],
+        vec![TokenMatcher::Surface("こと")],
+        vec![TokenMatcher::Surface("が")],
+        vec![TokenMatcher::Custom(Arc::new(AruNaiMatcher))],
+    ])
 }
 
 // Pattern: ている③
