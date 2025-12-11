@@ -281,9 +281,53 @@ pub fn i_adjectives_kunai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ので
+// Pattern: ので (because/since - objective reasoning)
+// Structures:
+//   Verb + ので
+//   い-Adj + ので
+//   な-Adj + な + ので
+//   Noun + な + ので
 pub fn node() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Helper: Match verb, adjective, or noun
+    #[derive(Debug)]
+    struct VerbAdjNounMatcher;
+    impl Matcher for VerbAdjNounMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| {
+                p == "動詞" || p == "形容詞" || p == "名詞"
+            })
+        }
+    }
+
+    // Helper: Match な as auxiliary verb (だ in 体言接続 form)
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Helper: Match ので as conjunction particle
+    #[derive(Debug)]
+    struct NodeParticleMatcher;
+    impl Matcher for NodeParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "ので"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbAdjNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NaCopulaMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(NodeParticleMatcher)),
+    ]
 }
 
 // Pattern: から (from a starting point)

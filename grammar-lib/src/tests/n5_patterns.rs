@@ -251,3 +251,60 @@ mod kara_from_tests {
         assert_pattern_range(&patterns, "から", 0, 4); // 今日から
     }
 }
+
+// ========== ので (Because/Since) ==========
+// Pattern: ので (because, since - objective reasoning)
+// Data source: grammar_points_data.json["ので"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + ので
+//   standard[1]: い-Adjective + ので
+//   standard[2]: な-Adjective + な + ので
+//   standard[3]: Noun + な + ので
+//
+// Note: More formal/objective than から
+// Can also appear as んで (casual)
+
+mod node_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_node() {
+        let sentence = "友達が家に来るので、部屋の掃除をする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ので");
+        assert_pattern_range(&patterns, "ので", 5, 9); // 来るので
+    }
+
+    #[test]
+    fn test_i_adjective_node() {
+        let sentence = "今日は寒いので、コートを着ます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ので");
+        assert_pattern_range(&patterns, "ので", 3, 7); // 寒いので
+    }
+
+    #[test]
+    fn test_na_adjective_node() {
+        let sentence = "景色が綺麗なので、写真を撮ります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ので");
+        assert_pattern_range(&patterns, "ので", 3, 8); // 綺麗なので
+    }
+
+    #[test]
+    fn test_noun_node() {
+        let sentence = "今日は日曜日なので休みです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ので");
+        assert_pattern_range(&patterns, "ので", 3, 9); // 日曜日なので
+    }
+}
