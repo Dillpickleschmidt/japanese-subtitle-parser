@@ -1575,3 +1575,35 @@ mod ga_aru_tests {
         assert_pattern_range(&patterns, "がある", 3, 10); // 椅子があります
     }
 }
+
+// ========== がいる (Existence of animate objects) ==========
+// Pattern: がいる (there is/exists - animate)
+// Data source: grammar_points_data.json["がいる"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + が + いる
+//   polite[0]: Noun + が + います
+
+mod ga_iru_tests {
+    use super::*;
+
+    #[test]
+    fn test_ga_iru_standard() {
+        let sentence = "公園に子供がいる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がいる");
+        assert_pattern_range(&patterns, "がいる", 3, 8); // 子供がいる
+    }
+
+    #[test]
+    fn test_ga_iru_polite() {
+        let sentence = "猫がいます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がいる");
+        assert_pattern_range(&patterns, "がいる", 0, 5); // 猫がいます
+    }
+}

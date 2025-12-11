@@ -436,13 +436,13 @@
   {
     "pattern_name": "がいる",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "がいる is a common construction that is simply a combination of the が particle, and the verb いる [2 std, 2 pol]",
     "priority": 1,
     "skip_reason": null
