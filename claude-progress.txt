@@ -1015,3 +1015,74 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 13 complete. Ready for Session 14.**
+
+---
+
+## Session 14 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: けど・だけど pattern implemented successfully
+**Patterns completed**: 21/924 (2.27%)
+**Time invested**: ~30 minutes
+
+### Accomplishments
+1. ✅ Implemented けど・だけど (but/however - casual) pattern
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ Handles all four structure types correctly
+4. ✅ No test regressions - all 69 tests pass
+
+### Completed Patterns
+
+#### けど・だけど (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_verb_kedo (泳ぐけど - verb + けど)
+  - test_i_adjective_kedo (寒いけど - い-adj + けど)
+  - test_na_adjective_dakedo (静かだけど - な-adj + だ + けど)
+  - test_noun_dakedo (ステーキだけど - noun + だ + けど)
+- **Structures**:
+  - Verb + けど
+  - い-Adjective + けど
+  - な-Adjective + だ + けど
+  - Noun + だ + けど
+- **Technical notes**:
+  - けど tokenizes as 助詞/接続助詞 (conjunction particle)
+  - だ is 助動詞 with base_form=だ (copula)
+  - Very similar implementation to ので pattern
+  - Optional だ matcher allows pattern to match both direct (verb/い-adj) and copula (な-adj/noun) forms
+
+### Progress by JLPT Level
+- N5: 21/117 (17.95%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- けど is more casual than が for expressing "but"
+- けど follows the same conjugation pattern as が and ので
+- Optional matchers allow single pattern to handle multiple structure variants
+- Pattern successfully matches both けど and だけど forms
+
+### Next Priority (N5 patterns)
+1. More N5 conjunction/particle patterns
+2. Adjective patterns (て forms, past, etc.)
+3. Verb patterns (て forms, etc.)
+4. Basic grammar constructions
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 69 tests passing (65 previous + 4 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 21 (2.27%)
+- **Remaining**: 903 (97.73%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 14 complete. Continuing with next pattern.**

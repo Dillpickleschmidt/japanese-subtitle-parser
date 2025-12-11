@@ -968,13 +968,13 @@
   {
     "pattern_name": "どこ",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "どこ is one of the forms of the どれ family of words used to enquire about unknown things [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null
@@ -982,13 +982,13 @@
   {
     "pattern_name": "どの",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "どの is classified as a 'pre-noun adjectival' in Japanese [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null
@@ -996,13 +996,13 @@
   {
     "pattern_name": "どれ",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "どれ is from the same family of words as これ , それ , and あれ [6 std, 6 pol]",
     "priority": 1,
     "skip_reason": null

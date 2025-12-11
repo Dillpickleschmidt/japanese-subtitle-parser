@@ -681,18 +681,48 @@ pub fn dake() -> Vec<TokenMatcher> {
 }
 
 // Pattern: どれ
+// Pattern: どれ (which - question word for things)
 pub fn dore() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DoreMatcher;
+    impl Matcher for DoreMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "どれ"
+                && token.base_form == "どれ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(DoreMatcher))]
 }
 
-// Pattern: どこ
+// Pattern: どこ (where - question word for place)
 pub fn doko() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DokoMatcher;
+    impl Matcher for DokoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "どこ"
+                && token.base_form == "どこ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(DokoMatcher))]
 }
 
-// Pattern: どの
+// Pattern: どの (which ~ - pre-noun adjectival)
 pub fn dono() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DonoMatcher;
+    impl Matcher for DonoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "どの"
+                && token.base_form == "どの"
+                && token.pos.first().is_some_and(|p| p == "連体詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(DonoMatcher))]
 }
 
 // Pattern: ている②

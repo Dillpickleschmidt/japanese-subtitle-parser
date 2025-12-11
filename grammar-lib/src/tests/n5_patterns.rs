@@ -871,3 +871,93 @@ mod kedo_dakedo_tests {
         assert_pattern_range(&patterns, "けど・だけど", 3, 10); // ステーキだけど
     }
 }
+
+// ========== どこ (Where) ==========
+// Pattern: どこ (where - question word for place)
+// Data source: grammar_points_data.json["どこ"]
+//
+// Structure: Demonstrative (single token)
+
+mod doko_tests {
+    use super::*;
+
+    #[test]
+    fn test_doko_with_particle() {
+        let sentence = "明日はどこに行く？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どこ");
+        assert_pattern_range(&patterns, "どこ", 3, 5); // どこ
+    }
+
+    #[test]
+    fn test_doko_as_subject() {
+        let sentence = "ここはどこですか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どこ");
+        assert_pattern_range(&patterns, "どこ", 3, 5); // どこ
+    }
+}
+
+// ========== どれ (Which) ==========
+// Pattern: どれ (which - question word for things)
+// Data source: grammar_points_data.json["どれ"]
+//
+// Structure: Demonstrative (single token)
+
+mod dore_tests {
+    use super::*;
+
+    #[test]
+    fn test_dore_with_ga() {
+        let sentence = "どれが飛びますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どれ");
+        assert_pattern_range(&patterns, "どれ", 0, 2); // どれ
+    }
+
+    #[test]
+    fn test_dore_after_topic() {
+        let sentence = "あなたの車はどれ？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どれ");
+        assert_pattern_range(&patterns, "どれ", 6, 8); // どれ
+    }
+}
+
+// ========== どの (Which ~) ==========
+// Pattern: どの (which ~ - pre-noun adjectival)
+// Data source: grammar_points_data.json["どの"]
+//
+// Structure: Demonstrative + Noun (pre-noun adjectival)
+
+mod dono_tests {
+    use super::*;
+
+    #[test]
+    fn test_dono_with_noun() {
+        let sentence = "どの飲み物がいい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どの");
+        assert_pattern_range(&patterns, "どの", 0, 2); // どの
+    }
+
+    #[test]
+    fn test_dono_whatever() {
+        let sentence = "どの色でもいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どの");
+        assert_pattern_range(&patterns, "どの", 0, 2); // どの
+    }
+}
