@@ -240,13 +240,13 @@
   {
     "pattern_name": "い-Adjective + Noun",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In Japanese, almost any type of word can be attached to the beginning of a noun to modify the meaning, or describe th... [5 std, 0 pol]",
     "priority": 1,
     "skip_reason": null

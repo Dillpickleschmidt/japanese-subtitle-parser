@@ -1922,3 +1922,65 @@ mod verb_te_b_tests {
         // The pattern matcher will find the first complete sequence
     }
 }
+
+// ========== い-Adjective + Noun ==========
+// Pattern: い-Adjective + Noun (adjective modifying noun)
+// Data source: grammar_points_data.json["い-Adjective + Noun"]
+//
+// Structure variants to test:
+//   standard[0]: い-Adjective + Noun (e.g., かわいい猫, 新しい車, 寒い冬)
+
+mod i_adjective_noun_tests {
+    use super::*;
+
+    #[test]
+    fn test_kawaii_neko() {
+        let sentence = "あそこにかわいい猫がいる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective + Noun");
+        assert_pattern_range(&patterns, "い-Adjective + Noun", 4, 9); // かわいい猫
+    }
+
+    #[test]
+    fn test_atarashii_kuruma() {
+        let sentence = "新しい車を買いたいな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective + Noun");
+        assert_pattern_range(&patterns, "い-Adjective + Noun", 0, 4); // 新しい車
+    }
+
+    #[test]
+    fn test_samui_fuyu() {
+        let sentence = "寒い冬は苦手だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective + Noun");
+        assert_pattern_range(&patterns, "い-Adjective + Noun", 0, 3); // 寒い冬
+    }
+
+    #[test]
+    fn test_hayai_kuruma() {
+        let sentence = "速い車が好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective + Noun");
+        assert_pattern_range(&patterns, "い-Adjective + Noun", 0, 3); // 速い車
+    }
+
+    #[test]
+    fn test_kowai_sensei() {
+        let sentence = "怖い先生には近づかない方がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective + Noun");
+        assert_pattern_range(&patterns, "い-Adjective + Noun", 0, 4); // 怖い先生
+    }
+}
+

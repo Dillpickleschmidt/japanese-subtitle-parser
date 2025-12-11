@@ -475,9 +475,21 @@ pub fn i_adjective_past() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: い-Adjective + Noun
+// Pattern: い-Adjective + Noun (adjective modifying noun)
+// Structures: い-Adjective + Noun
 pub fn i_adjective_noun() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct IAdjMatcher;
+    impl Matcher for IAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: な-Adjective + Noun
