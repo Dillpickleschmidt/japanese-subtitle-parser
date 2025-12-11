@@ -207,3 +207,47 @@ mod ta_koto_ga_aru_tests {
         assert_pattern_range(&patterns, "たことがある", 5, 16); // 使ったことがありません
     }
 }
+
+// ========== から (From - Starting Point) ==========
+// Pattern: から (from a starting point)
+// Data source: grammar_points_data.json["から"]
+//
+// Structure variants to test:
+//   standard[0]: Starting Point + から
+//
+// Note: This is the "from" usage (モロッコから, 空港から)
+// Not the "because" usage (which requires だ before から)
+
+mod kara_from_tests {
+    use super::*;
+
+    #[test]
+    fn test_location_from() {
+        let sentence = "彼女はモロッコから来ました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から");
+        assert_pattern_range(&patterns, "から", 3, 9); // モロッコから
+    }
+
+    #[test]
+    fn test_place_from() {
+        let sentence = "空港から車で来ました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から");
+        assert_pattern_range(&patterns, "から", 0, 4); // 空港から
+    }
+
+    #[test]
+    fn test_time_from() {
+        let sentence = "今日から新しい仕事を始めます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から");
+        assert_pattern_range(&patterns, "から", 0, 4); // 今日から
+    }
+}

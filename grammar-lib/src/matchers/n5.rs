@@ -286,9 +286,25 @@ pub fn node() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: から
+// Pattern: から (from a starting point)
+// Structures: Starting Point + から
 pub fn kara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::noun_matcher;
+
+    #[derive(Debug)]
+    struct KaraParticleMatcher;
+    impl Matcher for KaraParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(KaraParticleMatcher)),
+    ]
 }
 
 // Pattern: けど・だけど
