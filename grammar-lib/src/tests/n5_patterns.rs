@@ -54,3 +54,57 @@ mod tai_form_tests {
         assert_pattern_range(&patterns, "たい", 5, 13); // なりたくなかった
     }
 }
+
+// ========== ている① (Progressive/Resultative) ==========
+// Pattern: ている① (progressive/resultative state)
+// Data source: grammar_points_data.json["ている①"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[て] + いる
+//   standard[1]: Verb[て] + る (contracted)
+//   polite[0]: Verb[て] + います
+//   polite[1]: Verb[て] + ます (contracted)
+
+mod te_iru_tests {
+    use super::*;
+
+    #[test]
+    fn test_te_iru_progressive() {
+        let sentence = "最近ずっとあのことを考えている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている①");
+        assert_pattern_range(&patterns, "ている①", 10, 15); // 考えている
+    }
+
+    #[test]
+    fn test_te_iru_contracted() {
+        let sentence = "あいつ、どこ行ってるんだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている①");
+        assert_pattern_range(&patterns, "ている①", 6, 10); // 行ってる
+    }
+
+    #[test]
+    fn test_te_imasu_polite() {
+        let sentence = "今ラーメンを食べています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている①");
+        assert_pattern_range(&patterns, "ている①", 6, 12); // 食べています
+    }
+
+    #[test]
+    fn test_te_masu_contracted_polite() {
+        let sentence = "彼は何してます？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている①");
+        assert_pattern_range(&patterns, "ている①", 3, 7); // してます
+    }
+}

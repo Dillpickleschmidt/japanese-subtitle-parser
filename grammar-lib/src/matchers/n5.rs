@@ -270,9 +270,59 @@ pub fn verb_te() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ている①
+// Pattern: ている① (progressive/resultative state)
+// Structures:
+//   Full: Verb[連用形/連用タ接続] + て/で + いる
+//   Contracted: Verb[連用タ接続] + てる (single token, NO て particle)
 pub fn teiru_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Helper: Match て or で (connecting particle) OR てる/でる (contracted verb)
+    // This handles both cases:
+    // 1. て/で particle (followed by いる)
+    // 2. てる/でる verb (which already includes the て/で sound)
+    #[derive(Debug)]
+    struct TeOrTeruMatcher;
+    impl Matcher for TeOrTeruMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // Case 1: て/で particle
+            if (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+            {
+                return true;
+            }
+            // Case 2: てる/でる verb (contracted form)
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form == "てる" || token.base_form == "でる")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Helper: Match いる as auxiliary verb (only for full form)
+    // For contracted form (てる), this won't match, but that's okay because
+    // てる is already matched by the previous matcher
+    #[derive(Debug)]
+    struct IruMatcher;
+    impl Matcher for IruMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.base_form == "いる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // This matches:
+    // 1. Full form: Verb[連用形/連用タ接続] + て/で + いる
+    // 2. Contracted: Verb[連用タ接続] + てる (the optional いる won't match, but that's OK)
+    concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeOrTeruMatcher))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(
+            Arc::new(IruMatcher),
+        )))],
+    ])
 }
 
 // Pattern: へ

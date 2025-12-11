@@ -828,13 +828,13 @@
   {
     "pattern_name": "ている①",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ている is a construction used in Japanese to convey that someone or something is existing in a constant state of 'doing'... [2 std, 2 pol]",
     "priority": 1,
     "skip_reason": null
