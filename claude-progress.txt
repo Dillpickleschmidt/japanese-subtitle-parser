@@ -2075,3 +2075,82 @@ Both patterns follow the same structure and implementation approach, making them
 - **Estimated work**: ~222 hours @ 15 min/pattern
 
 **Session 26 complete. Ready for Session 27.**
+
+---
+
+## Session 27 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: First N4 pattern implemented successfully
+**Patterns completed**: 2 new patterns (both reference same grammar point)
+**Total patterns**: 130 tests passing
+**Time invested**: ~60 minutes
+
+### Accomplishments
+1. ✅ Implemented ないで (without doing) N4 pattern
+2. ✅ Implemented Verb[ないで] pattern (same grammar point, different name)
+3. ✅ All 4 test variants passing with proper range assertions
+4. ✅ No test regressions - all 130 tests pass
+5. ✅ Updated feature_list.json for both pattern names
+
+### Completed Patterns
+
+#### ないで / Verb[ないで] (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs
+- **Tests**: 4 variants, all passing
+  - test_naide_godan_verb (焼かないで - godan verb)
+  - test_naide_ichidan_verb (かけないで - ichidan verb)
+  - test_naide_with_surprise (伝えないで - surprise context)
+  - test_verb_naide_pattern (温めないで - alternate pattern name)
+- **Structure**: Verb[未然形] + ない + で
+- **Technical notes**:
+  - Verb in 未然形 (negative stem form)
+  - ない tokenizes as 助動詞 with conjugation form 連用デ接続
+  - で is 助詞/接続助詞 (conjunction particle)
+  - Two pattern names in patterns.rs both use same naide() implementation
+
+### Progress by JLPT Level
+- N5: 42/117 (35.90%) ✓
+- N4: 2/176 (1.14%) ✓
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- N4 patterns stored in grammar-lib/src/matchers/n4.rs
+- 未然形 (mizen-kei / negative stem form) used for negative constructions
+- ない auxiliary has specific conjugation form 連用デ接続 when followed by で
+- Pattern declarations can have multiple names for same grammar point
+- Contrast with なくて: ないで highlights action done without (A), なくて gives reason
+
+### Next Priority (N4 patterns)
+1. Verb[よう] - volitional form
+2. Number + しか〜ない - only (with negative)
+3. Number + も - as many as / even
+4. Question-phrase + か - embedded questions
+5. Causative-Passive constructions
+
+### Workflow Insights
+- Used temporary test with print_debug to understand tokenization
+- Removed temporary test after implementation
+- Wrote 4 proper tests covering godan/ichidan verbs and both pattern names
+- Both "ないで" and "Verb[ないで]" patterns updated in feature_list.json
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 130 tests passing (126 previous + 4 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics (End of Session 27)
+- **Total patterns in codebase**: 924
+- **Completed patterns**: 44 unique grammar points
+- **Pattern declarations completed**: 44 (some grammar points have multiple names)
+- **Tests passing**: 130
+- **Remaining**: 880 (95.24%)
+- **Estimated work remaining**: ~220 hours @ 15 min/pattern
+
+**Session 27 complete. Ready for Session 28.**
