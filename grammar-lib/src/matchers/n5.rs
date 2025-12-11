@@ -1,4 +1,9 @@
 use crate::pattern_matcher::TokenMatcher;
+use crate::KagomeToken;
+use std::sync::Arc;
+use super::Matcher;
+
+// ========== たい (Want to do) ==========
 
 // Pattern: だ
 pub fn da() -> Vec<TokenMatcher> {
@@ -385,9 +390,27 @@ pub fn temoii() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たい
+// Pattern: たい (desire form)
+// Structures: Verb[連用形] + たい/たく/たかっ/たくなかっ
 pub fn tai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TaiFormMatcher;
+    impl Matcher for TaiFormMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // Match たい as the base form (covers たい, たく, たかった, etc.)
+            token.base_form == "たい"
+                && (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                    || token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Verb {
+            conjugation_form: Some("連用形"),
+            base_form: None,
+        },
+        TokenMatcher::Custom(Arc::new(TaiFormMatcher)),
+    ]
 }
 
 // Pattern: たり～たりする
