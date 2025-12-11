@@ -961,3 +961,33 @@ mod dono_tests {
         assert_pattern_range(&patterns, "どの", 0, 2); // どの
     }
 }
+
+// ========== 誰 (Who) ==========
+// Pattern: 誰 (who - question word for person)
+// Data source: grammar_points_data.json["誰"]
+//
+// Structure: Demonstrative (single token)
+
+mod dare_tests {
+    use super::*;
+
+    #[test]
+    fn test_dare_subject() {
+        let sentence = "誰が来る？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰");
+        assert_pattern_range(&patterns, "誰", 0, 1); // 誰
+    }
+
+    #[test]
+    fn test_dare_with_particle() {
+        let sentence = "お前は誰と行く？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰");
+        assert_pattern_range(&patterns, "誰", 3, 4); // 誰
+    }
+}

@@ -626,8 +626,19 @@ pub fn verb_niiku() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 誰
+// Pattern: 誰 (who - question word for person)
 pub fn dare() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DareMatcher;
+    impl Matcher for DareMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "誰"
+                && token.base_form == "誰"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(DareMatcher))]
 }
 
 // Pattern: い-Adjective (Predicate)
