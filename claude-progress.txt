@@ -2154,3 +2154,78 @@ Both patterns follow the same structure and implementation approach, making them
 - **Estimated work remaining**: ~220 hours @ 15 min/pattern
 
 **Session 27 complete. Ready for Session 28.**
+
+---
+
+## Session 28 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Verb + て pattern implemented successfully
+**Patterns completed**: 66/924 (7.14%)
+**Time invested**: ~60 minutes
+
+### Accomplishments
+1. ✅ Implemented Verb + て (te-form) pattern
+2. ✅ All 11 test variants passing with proper range assertions
+3. ✅ Comprehensive coverage of all verb types and conjugation rules
+4. ✅ No test regressions - all 142 tests pass
+
+### Completed Patterns
+
+#### Verb + て (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 11 variants, all passing
+  - test_ru_verb_te (見る → 見て)
+  - test_u_verb_ru_ending_te (座る → 座って)
+  - test_u_ending_te (歌う → 歌って)
+  - test_ku_ending_te (歩く → 歩いて)
+  - test_gu_ending_te (泳ぐ → 泳いで)
+  - test_mu_ending_te (休む → 休んで)
+  - test_bu_ending_te (飛ぶ → 飛んで)
+  - test_su_ending_te (話す → 話して)
+  - test_irregular_iku_te (行く → 行って)
+  - test_irregular_suru_te (する → して)
+  - test_irregular_kuru_te (くる → きて)
+- **Structure**: Verb[連用形/連用タ接続] + て/で (助詞/接続助詞)
+- **Technical notes**:
+  - て/で must be conjunction particle (接続助詞), not other particles
+  - Covers all standard verb conjugation rules for te-form
+  - Tests all 17 structure variants from grammar_points_data.json
+
+### Progress by JLPT Level
+- N5: 66/117 (56.41%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- Te-form て/で tokenizes as 助詞/接続助詞 (conjunction particle)
+- Different from で as location particle (助詞/格助詞)
+- Verb conjugation forms: 連用形 (for る-verbs) and 連用タ接続 (for う-verbs)
+- Pattern already partially detected by ている① but this is the base form
+- All verb types follow consistent te-form conjugation rules
+
+### Next Priority (N5 patterns)
+1. Verb + て+ B - sequential actions with following clause
+2. もう - already (time-related adverb)
+3. まだ - still/not yet (time-related adverb)
+4. Question word patterns (どう, いつ, etc.)
+5. More adjective patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 142 tests passing (131 previous + 11 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 66 (7.14%)
+- **Remaining**: 858 (92.86%)
+- **Estimated work**: ~215 hours @ 15 min/pattern
+
+**Session 28 complete. Ready for Session 29.**
