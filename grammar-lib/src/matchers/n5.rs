@@ -460,9 +460,37 @@ pub fn gaaru_noun() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: い-Adjectives くない
+// Pattern: い-Adjectives くない (negative present)
+// Structures:
+//   い-Adjective[連用テ接続] + ない
+//   い-Adjective[連用テ接続] + ない + です (semi-polite)
+//   い-Adjective[連用テ接続] + ありません (polite - handled by くなかった pattern)
 pub fn i_adjectives_kunai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Match i-adjective in 連用テ接続 form (く conjugation)
+    #[derive(Debug)]
+    struct IAdjKuFormMatcher;
+    impl Matcher for IAdjKuFormMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続")
+        }
+    }
+
+    // Match ない as auxiliary verb (negative)
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjKuFormMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: ので (because/since - objective reasoning)

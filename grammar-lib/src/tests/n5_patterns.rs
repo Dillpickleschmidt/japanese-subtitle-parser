@@ -1365,3 +1365,58 @@ mod ga_but_tests {
         assert_pattern_range(&patterns, "が", 2, 5); // ですが
     }
 }
+
+// ========== い-Adjectives くない (Negative) ==========
+// Pattern: い-Adjectives くない (negative present)
+// Data source: grammar_points_data.json["い-Adjectives くない"]
+//
+// Structure variants to test:
+//   standard[0]: い-Adjective[く] + ない
+//   polite[0]: い-Adjective[く] + ない + です (semi-polite)
+//   polite[1]: い-Adjective[く] + ありません (polite)
+
+mod i_adjective_kunai_tests {
+    use super::*;
+
+    #[test]
+    fn test_kunai_standard() {
+        let sentence = "この料理は美味しくないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjectives くない");
+        assert_pattern_range(&patterns, "い-Adjectives くない", 5, 11); // 美味しくない
+    }
+
+    #[test]
+    fn test_kunai_semi_polite() {
+        let sentence = "今日はあまり寒くないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjectives くない");
+        assert_pattern_range(&patterns, "い-Adjectives くない", 6, 12); // 寒くないです
+    }
+
+    #[test]
+    fn test_kunai_polite() {
+        // Polite form (くありません) is handled by い-Adjective くなかった pattern
+        let sentence = "このテストは難しくありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Verify that くなかった pattern handles this
+        assert_has_pattern(&patterns, "い-Adjective くなかった");
+        assert_pattern_range(&patterns, "い-Adjective くなかった", 6, 14); // 難しくありません
+    }
+
+    #[test]
+    fn test_yokunai_exception() {
+        let sentence = "天気はよくないね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjectives くない");
+        assert_pattern_range(&patterns, "い-Adjectives くない", 3, 7); // よくない
+    }
+}
