@@ -435,3 +435,44 @@ mod ni_iku_tests {
         assert_pattern_range(&patterns, "Verb + にいく", 4, 10); // 食べに行こう (extended with う)
     }
 }
+
+// ========== Verb + まで (Until) ==========
+// Pattern: Verb + まで (until [verb] happens)
+// Data source: grammar_points_data.json["Verb + まで"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + まで
+
+mod verb_made_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_made_until() {
+        let sentence = "友達が来るまで、駅をウロウロした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + まで");
+        assert_pattern_range(&patterns, "Verb + まで", 3, 7); // 来るまで
+    }
+
+    #[test]
+    fn test_verb_made_polite() {
+        let sentence = "携帯は壊れるまで、使います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + まで");
+        assert_pattern_range(&patterns, "Verb + まで", 3, 8); // 壊れるまで
+    }
+
+    #[test]
+    fn test_verb_made_negative_context() {
+        let sentence = "授業が始まるまで、先生が来なかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + まで");
+        assert_pattern_range(&patterns, "Verb + まで", 3, 8); // 始まるまで
+    }
+}

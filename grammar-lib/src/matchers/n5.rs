@@ -654,9 +654,31 @@ pub fn noun_made() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: Verb + まで
+// Pattern: Verb + まで (until [verb] happens)
+// Structures: Verb + まで
 pub fn verb_made() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct VerbMatcher;
+    impl Matcher for VerbMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbMatcher)),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+    ]
 }
 
 // Pattern: すぎる
