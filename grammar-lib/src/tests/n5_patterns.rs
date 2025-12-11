@@ -1461,3 +1461,45 @@ mod yo_tests {
         assert_pattern_range(&patterns, "よ", 9, 10); // よ
     }
 }
+
+// ========== きらい (Dislike) ==========
+// Pattern: きらい (dislike/hate - na-adjective)
+// Data source: grammar_points_data.json["きらい"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + が + 嫌い (predicate usage)
+//   standard[1]: 嫌い + な + Noun (adjectival usage)
+
+mod kirai_tests {
+    use super::*;
+
+    #[test]
+    fn test_kirai_predicate() {
+        let sentence = "私はスポーツが嫌いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きらい");
+        assert_pattern_range(&patterns, "きらい", 6, 11); // が嫌いです
+    }
+
+    #[test]
+    fn test_kirai_adjectival() {
+        let sentence = "彼の嫌いな食べ物はピザです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きらい");
+        assert_pattern_range(&patterns, "きらい", 2, 5); // 嫌いな
+    }
+
+    #[test]
+    fn test_kirai_daisuki() {
+        let sentence = "大嫌いな先輩が来る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きらい");
+        assert_pattern_range(&patterns, "きらい", 0, 4); // 大嫌いな
+    }
+}

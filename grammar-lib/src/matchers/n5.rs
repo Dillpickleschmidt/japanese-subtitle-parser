@@ -457,9 +457,46 @@ pub fn suki() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: きらい
+/// Pattern: きらい (dislike/hate)
+/// Structures:
+///   - Noun + が + 嫌い (predicate)
+///   - 嫌い + な + Noun (adjectival)
 pub fn kirai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KiraiMatcher;
+    impl Matcher for KiraiMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            (token.surface == "嫌い" || token.surface == "大嫌い")
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹")
+        }
+    }
+
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaParticleMatcher;
+    impl Matcher for NaParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(KiraiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaParticleMatcher)))),
+    ]
 }
 
 // Pattern: のがすき
