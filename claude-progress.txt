@@ -1927,14 +1927,15 @@ Both patterns implemented following proper workflow and all tests passing.
 ## Session 25 - 2025-12-11
 
 ### ✅ Session Summary
-**Status**: がある pattern implemented successfully
-**Patterns completed**: 36/924 (3.90%)
-**Time invested**: ~40 minutes
+**Status**: Two existence patterns implemented successfully
+**Patterns completed**: 37/924 (4.00%)
+**Time invested**: ~60 minutes
 
 ### Accomplishments
 1. ✅ Implemented がある (there is/exists - inanimate objects) pattern
-2. ✅ All 2 test variants passing with proper range assertions
-3. ✅ No test regressions - all 120 tests pass
+2. ✅ Implemented がいる (there is/exists - animate objects) pattern
+3. ✅ All 4 test variants passing with proper range assertions
+4. ✅ No test regressions - all 122 tests pass
 
 ### Completed Patterns
 
@@ -1950,8 +1951,20 @@ Both patterns implemented following proper workflow and all tests passing.
   - Polite form (あります) extends automatically via auxiliary verb system
   - Pattern range includes full construction: Noun + が + ある
 
+#### がいる (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_ga_iru_standard (公園に子供がいる)
+  - test_ga_iru_polite (猫がいます)
+- **Structure**: Noun + が + いる/います
+- **Technical notes**:
+  - Same が particle structure as がある
+  - いる verb (base_form="いる") for animate objects
+  - Very similar implementation to がある, just different verb
+  - Polite form (います) also extends automatically
+
 ### Progress by JLPT Level
-- N5: 36/117 (30.77%) ✓
+- N5: 37/117 (31.62%) ✓
 - N4: 0/176 (0%)
 - N3: 0/217 (0%)
 - N2: 0/217 (0%)
@@ -1959,13 +1972,21 @@ Both patterns implemented following proper workflow and all tests passing.
 - NT: 0/13 (0%)
 
 ### Technical Discoveries
-- ある verb can be matched by base_form="ある" regardless of conjugation
+- ある/いる verbs can be matched by base_form regardless of conjugation
+- Both patterns share identical structure, only verb differs
 - Pattern system automatically extends with ます auxiliary for polite forms
 - が as case particle (格助詞) is distinct from が as conjunction
 - Noun matcher from mod.rs works well for any noun type
 
+### Session Productivity
+**Two related patterns completed in one session:**
+1. がある (inanimate existence) - 2 tests
+2. がいる (animate existence) - 2 tests
+
+Both patterns follow the same structure and implementation approach, making them efficient to implement together.
+
 ### Next Priority (N5 patterns)
-1. がいる - existence pattern for animate objects (similar to がある)
+1. Simple adverbs (けっこう, etc.)
 2. い-Adjective patterns (basic, predicate, + noun)
 3. Verb patterns (dictionary forms, negatives, etc.)
 4. More particle patterns
@@ -1974,15 +1995,15 @@ Both patterns implemented following proper workflow and all tests passing.
 ### Environment Status
 - ✅ Kagome server on port 6061
 - ✅ Build succeeds
-- ✅ 120 tests passing (118 previous + 2 new)
+- ✅ 122 tests passing (118 previous + 4 new)
 - ✅ Git repository clean
 
 ---
 
 ## Cumulative Statistics
 - **Total patterns**: 924
-- **Completed**: 36 (3.90%)
-- **Remaining**: 888 (96.10%)
+- **Completed**: 37 (4.00%)
+- **Remaining**: 887 (96.00%)
 - **Estimated work**: ~222 hours @ 15 min/pattern
 
 **Session 25 complete. Ready for Session 26.**
