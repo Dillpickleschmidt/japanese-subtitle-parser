@@ -211,9 +211,21 @@ pub fn ga() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: よ
+// Pattern: よ (sentence-ending particle for emphasis/new information)
+// Structure: Sentence + よ
 pub fn yo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct YoParticleMatcher;
+    impl Matcher for YoParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "よ"
+                && token.base_form == "よ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(YoParticleMatcher))]
 }
 
 // Pattern: ね

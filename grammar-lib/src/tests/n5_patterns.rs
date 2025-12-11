@@ -1420,3 +1420,44 @@ mod i_adjective_kunai_tests {
         assert_pattern_range(&patterns, "い-Adjectives くない", 3, 7); // よくない
     }
 }
+
+// ========== よ (Sentence-ending particle) ==========
+// Pattern: よ (emphasis/new information)
+// Data source: grammar_points_data.json["よ"]
+//
+// Structure variants to test:
+//   standard[0]: Sentence + よ
+
+mod yo_tests {
+    use super::*;
+
+    #[test]
+    fn test_yo_with_verb() {
+        let sentence = "これは美味しいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よ");
+        assert_pattern_range(&patterns, "よ", 7, 8); // よ
+    }
+
+    #[test]
+    fn test_yo_with_noun() {
+        let sentence = "明日は休みだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よ");
+        assert_pattern_range(&patterns, "よ", 6, 7); // よ
+    }
+
+    #[test]
+    fn test_yo_polite() {
+        let sentence = "気をつけてくださいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よ");
+        assert_pattern_range(&patterns, "よ", 9, 10); // よ
+    }
+}
