@@ -638,3 +638,108 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 9 complete. Ready for Session 10.**
+
+---
+
+## Session 10 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Three more patterns implemented successfully
+**Patterns completed**: 14/924 (1.52%)
+**Time invested**: ~60 minutes
+
+### Accomplishments
+1. ✅ Implemented Verb + まで (until [verb] happens) pattern
+2. ✅ Implemented あそこ (that place over there) pattern
+3. ✅ Implemented ここ (this place / here) pattern
+4. ✅ Implemented そこ (that place / there) pattern
+5. ✅ All 49 tests passing with proper range assertions
+6. ✅ No test regressions
+
+### Completed Patterns
+
+#### Verb + まで (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_verb_made_until (来るまで - until friend comes)
+  - test_verb_made_polite (壊れるまで - until breaks, polite context)
+  - test_verb_made_negative_context (始まるまで - until starts, past negative)
+- **Structure**: Verb + まで
+- **Technical notes**:
+  - VerbMatcher matches any 動詞
+  - MadeParticleMatcher checks 助詞/副助詞
+  - Verb must be in non-past form before まで
+
+#### あそこ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_asoko_with_particle (あそこの店 - with の)
+  - test_asoko_as_subject (あそこは嫌 - as subject)
+  - test_asoko_with_mo (あそこも暑い - with も)
+- **Structure**: あそこ (demonstrative pronoun)
+- **Technical notes**:
+  - AsokoMatcher checks surface, base_form, POS=名詞/代名詞
+  - Indicates place distant from both speaker and listener
+
+#### ここ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_koko_with_particle (ここのパン - with の)
+  - test_koko_as_subject (ここが痛い - as subject)
+- **Structure**: ここ (demonstrative pronoun)
+- **Technical notes**:
+  - KokoMatcher checks surface, base_form, POS=名詞/代名詞
+  - Indicates place near the speaker
+
+#### そこ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_soko_with_particle (そこの犬 - with の)
+  - test_soko_as_subject (そこは綺麗 - as subject)
+- **Structure**: そこ (demonstrative pronoun)
+- **Technical notes**:
+  - SokoMatcher checks surface, base_form, POS=名詞/代名詞
+  - Indicates place near listener or previously mentioned
+
+### Progress by JLPT Level
+- N5: 14/117 (11.97%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- All demonstrative place pronouns (ここ, そこ, あそこ) share 名詞/代名詞 POS
+- Simple single-token matchers work well for demonstratives
+- Pattern implementation is very consistent for word family (こそあど言葉)
+- Verb + まで requires non-past verb form (基本形)
+
+### Next Priority (N5 patterns)
+1. これ, それ, あれ - demonstrative pronouns for things
+2. この, その, あの - demonstrative determiners
+3. どこ, どれ - question words
+4. Adjective patterns (て forms, の usage)
+5. More verb patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 49 tests passing (42 previous + 7 new)
+- ✅ Git repository clean
+
+### Workflow Insights
+- Implementing related patterns together (demonstratives) is efficient
+- Single-token patterns are quick (~5 min each)
+- Testing both particle contexts and bare usage covers most cases
+- Consistent implementation pattern across word families
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 14 (1.52%)
+- **Remaining**: 910 (98.48%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 10 complete. Ready for Session 11.**
