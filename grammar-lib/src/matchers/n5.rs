@@ -321,9 +321,24 @@ pub fn uff5e_ndesu_u30fb_nodesu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: い-Adjective (Past)
+// Pattern: い-Adjective (Past) - Adjective[い] + かった
+// Structures: い-Adjective[連用タ接続] + た
 pub fn i_adjective_past() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct IAdjKattaMatcher;
+    impl Matcher for IAdjKattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjKattaMatcher)),
+        super::past_auxiliary(),
+    ]
 }
 
 // Pattern: い-Adjective + Noun

@@ -1092,3 +1092,55 @@ mod adjective_te_noun_de_tests {
         assert_pattern_range(&patterns, "Adjective + て・Noun + で", 6, 9); // よくて
     }
 }
+
+// ========== い-Adjective (Past) ==========
+// Pattern: い-Adjective past tense
+// Data source: grammar_points_data.json["い-Adjective (Past)"]
+//
+// Structure variants to test:
+//   standard[0]: い-Adjective[い] + かった
+//   polite[0]: い-Adjective[い] + かった + です
+
+mod i_adjective_past_tests {
+    use super::*;
+
+    #[test]
+    fn test_i_adjective_past_standard() {
+        let sentence = "昨日の映画は面白かったね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective (Past)");
+        assert_pattern_range(&patterns, "い-Adjective (Past)", 6, 11); // 面白かった
+    }
+
+    #[test]
+    fn test_i_adjective_past_polite() {
+        let sentence = "お風呂が温かかったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective (Past)");
+        assert_pattern_range(&patterns, "い-Adjective (Past)", 4, 11); // 温かかったです
+    }
+
+    #[test]
+    fn test_i_adjective_past_cold() {
+        let sentence = "昨日の夜は寒かった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective (Past)");
+        assert_pattern_range(&patterns, "い-Adjective (Past)", 5, 9); // 寒かった
+    }
+
+    #[test]
+    fn test_i_adjective_past_sweet() {
+        let sentence = "このケーキは甘かったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective (Past)");
+        assert_pattern_range(&patterns, "い-Adjective (Past)", 6, 12); // 甘かったです
+    }
+}
