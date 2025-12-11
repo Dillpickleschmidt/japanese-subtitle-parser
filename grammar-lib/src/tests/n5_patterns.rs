@@ -817,3 +817,57 @@ mod adjective_no_wa_tests {
         assert_pattern_range(&patterns, "Adjective + の(は)", 0, 5); // 冷たいのも
     }
 }
+
+// ========== けど・だけど (But) ==========
+// Pattern: けど・だけど (but/however - casual)
+// Data source: grammar_points_data.json["けど・だけど"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + けど
+//   standard[1]: い-Adjective + けど
+//   standard[2]: な-Adjective + だ + けど
+//   standard[3]: Noun + だ + けど
+
+mod kedo_dakedo_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_kedo() {
+        let sentence = "毎日泳ぐけど、今日は泳がない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けど・だけど");
+        assert_pattern_range(&patterns, "けど・だけど", 2, 6); // 泳ぐけど
+    }
+
+    #[test]
+    fn test_i_adjective_kedo() {
+        let sentence = "北海道は寒いけど、綺麗だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けど・だけど");
+        assert_pattern_range(&patterns, "けど・だけど", 4, 8); // 寒いけど
+    }
+
+    #[test]
+    fn test_na_adjective_dakedo() {
+        let sentence = "田舎は静かだけど、不便だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けど・だけど");
+        assert_pattern_range(&patterns, "けど・だけど", 3, 8); // 静かだけど
+    }
+
+    #[test]
+    fn test_noun_dakedo() {
+        let sentence = "これはステーキだけど、冷たい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けど・だけど");
+        assert_pattern_range(&patterns, "けど・だけど", 3, 10); // ステーキだけど
+    }
+}

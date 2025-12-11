@@ -456,9 +456,49 @@ pub fn kara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: けど・だけど
+// Pattern: けど・だけど (but/however - casual)
+// Structures: Verb/い-Adj + けど, な-Adj/Noun + だ + けど
 pub fn kedo_u30fb_dakedo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Helper: Match verb, adjective, or noun
+    #[derive(Debug)]
+    struct VerbAdjNounMatcher;
+    impl Matcher for VerbAdjNounMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| {
+                p == "動詞" || p == "形容詞" || p == "名詞"
+            })
+        }
+    }
+
+    // Helper: Match だ as auxiliary verb
+    #[derive(Debug)]
+    struct DaCopulaMatcher;
+    impl Matcher for DaCopulaMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Helper: Match けど as conjunction particle
+    #[derive(Debug)]
+    struct KedoParticleMatcher;
+    impl Matcher for KedoParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "けど"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbAdjNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DaCopulaMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(KedoParticleMatcher)),
+    ]
 }
 
 // Pattern: る-Verb (Negative-Past)
