@@ -1560,3 +1560,89 @@
 - **Estimated work**: ~224 hours @ 15 min/pattern
 
 **Session 19 complete. Ready for Session 20.**
+
+---
+
+## Session 20 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: One pattern implemented successfully
+**Patterns completed**: 31/924 (3.35%)
+**Time invested**: ~45 minutes
+
+### Accomplishments
+1. ✅ Implemented が (but/however - sentence connector) pattern
+2. ✅ All 8 test variants passing with proper range assertions
+3. ✅ Handles all structure variants: Verb, い-Adj, な-Adj, Noun + (だ/です/ます) + が
+4. ✅ No test regressions - all 105 tests pass
+
+### Completed Patterns
+
+#### が (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 8 variants, all passing
+  - test_verb_ga (走るが - verb + が)
+  - test_i_adjective_ga (辛いが - i-adjective + が)
+  - test_na_adjective_da_ga (便利だが - na-adjective + だ + が)
+  - test_noun_da_ga (大切だが - noun + だ + が)
+  - test_verb_polite_ga (行きますが - verb + ます + が)
+  - test_i_adjective_desu_ga (高いですが - i-adjective + です + が)
+  - test_na_adjective_desu_ga (綺麗ですが - na-adjective + です + が)
+  - test_noun_desu_ga (学生ですが - noun + です + が)
+- **Structures**:
+  - Standard: Verb/い-Adj + が, な-Adj/Noun + だ + が
+  - Polite: Verb + ます + が, Adj/Noun + です + が
+- **Technical notes**:
+  - が as conjunction particle is 助詞/接続助詞
+  - Matcher accepts verb, adjective, or auxiliary verbs (だ/です/ます) before が
+  - The pattern highlights contrast/adversative meaning ("but/however")
+  - Different from が as subject marker (助詞/格助詞)
+
+### Progress by JLPT Level
+- N5: 31/117 (26.50%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- が has multiple uses: subject marker (格助詞) vs conjunction (接続助詞)
+- This pattern matches the conjunction usage (but/however)
+- Auxiliary verbs (だ/です/ます) appear before が in formal/polite speech
+- VerbOrAdjectiveMatcher is reusable for patterns requiring similar preconditions
+
+### Workflow Applied
+1. ✅ Read grammar_points_data.json for structure variants
+2. ✅ Wrote all 8 tests with print_debug() initially
+3. ✅ Ran tests to analyze tokenization of each variant
+4. ✅ Implemented matcher with custom matchers for が particle and preceding elements
+5. ✅ Found ます auxiliary verb needed to be added to matcher
+6. ✅ Updated all tests with correct character ranges
+7. ✅ Removed print_debug() from all tests
+8. ✅ Ran full test suite - no regressions (105 tests pass)
+9. ✅ Updated feature_list.json
+10. ✅ Committed with proper message
+
+### Next Priority (N5 patterns)
+1. か - "or" usage (A か B か)
+2. Verb + て - basic te-form connector
+3. Verb + て+ B - sequential actions
+4. い-Adjective (Predicate) - basic predicate usage
+5. い-Adjective + Noun - adjective modifying nouns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 105 tests passing (97 previous + 8 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 31 (3.35%)
+- **Remaining**: 893 (96.65%)
+- **Estimated work**: ~223 hours @ 15 min/pattern
+
+**Session 20 complete. Ready for Session 21.**
