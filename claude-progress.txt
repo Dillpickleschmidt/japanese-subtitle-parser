@@ -835,3 +835,104 @@
 - **Estimated work**: ~230 hours @ 15 min/pattern
 
 **Session 11 complete. Ready for Session 12.**
+
+---
+
+## Session 12 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Three demonstrative determiner patterns implemented successfully
+**Patterns completed**: 19/924 (2.06%)
+**Time invested**: ~20 minutes
+
+### Accomplishments
+1. ✅ Implemented この (this ~) pattern
+2. ✅ Implemented その (that ~) pattern
+3. ✅ Implemented あの (that ~ over there) pattern
+4. ✅ All 6 test variants passing with proper range assertions
+5. ✅ No test regressions - all 61 tests pass
+
+### Completed Patterns
+
+#### この (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_kono_with_noun (このスーツは高い)
+  - test_kono_with_work (この仕事は大変だ)
+- **Structure**: この + Noun (pre-noun adjectival)
+- **Technical notes**:
+  - Tokenizes as 連体詞 (rentaishi/pre-noun adjectival)
+  - Must appear before a noun
+  - Part of こそあど demonstrative system
+
+#### その (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_sono_with_noun (その店は美味しいよ)
+  - test_sono_with_person (その人は誰ですか)
+- **Structure**: その + Noun (pre-noun adjectival)
+- **Technical notes**:
+  - Same tokenization as この: 連体詞
+  - Refers to things near listener or previously mentioned
+  - Different POS from pronoun それ (名詞/代名詞)
+
+#### あの (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_ano_with_noun (あの映画は面白かった)
+  - test_ano_with_place (あの建物は何ですか)
+- **Structure**: あの + Noun (pre-noun adjectival)
+- **Technical notes**:
+  - Same tokenization as この and その: 連体詞
+  - Indicates things distant from both speaker and listener
+  - Completes the demonstrative determiner family
+
+### Progress by JLPT Level
+- N5: 19/117 (16.24%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- Demonstrative determiners (この/その/あの) tokenize as 連体詞 (rentaishi)
+- Different POS from demonstrative pronouns (名詞/代名詞)
+- Rentaishi are pre-noun adjectivals that don't conjugate
+- All demonstratives follow consistent こそあど system (ko-so-a-do)
+- Used temporary test to understand tokenization before implementation
+
+### Completed Demonstrative Families
+✓ Place pronouns: ここ, そこ, あそこ
+✓ Thing pronouns: これ, それ, あれ
+✓ Determiners: この, その, あの
+
+### Next Priority (N5 patterns)
+1. どこ, どれ, どの - question word demonstratives (complete the こそあど system)
+2. い-Adjective patterns (basic, past, predicate, くない, くなかった)
+3. な-Adjective patterns
+4. More verb patterns
+5. Particle patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 61 tests passing (55 previous + 6 new)
+- ✅ Git repository clean
+
+### Workflow Insights
+- Implementing related pattern families together is very efficient
+- Used temporary test to check tokenization (removed after)
+- Stub functions and pattern declarations already existed
+- Simple demonstrative patterns take ~6-8 minutes each
+- Having completed 2 sessions worth of demonstratives shows good momentum
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 19 (2.06%)
+- **Remaining**: 905 (97.94%)
+- **Estimated work**: ~230 hours @ 15 min/pattern
+
+**Session 12 complete. Ready for Session 13.**
