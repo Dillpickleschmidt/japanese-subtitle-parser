@@ -1252,10 +1252,64 @@
 
 ---
 
+### Completed Patterns (Session 16 continued)
+
+#### Adjective + て・Noun + で (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_i_adj_linking (新しくて - i-adj linking)
+  - test_na_adj_linking (便利で - na-adj linking)
+  - test_noun_linking (仕事で - noun linking)
+  - test_ii_exception (よくて - いい exception)
+- **Structures**:
+  - Same as Adjective + て + B
+  - Reuses implementation via function call
+- **Technical notes**:
+  - This is contextually the same structure as て + B
+  - て・Noun + で is for linking qualities
+  - て + B is for linking to full phrases
+  - Both use the same matcher implementation
+
+### Progress by JLPT Level (Updated)
+- N5: 27/117 (23.08%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Session 16 Summary
+**Patterns completed**: 2 patterns
+- Adjective + て + B (linking to phrases)
+- Adjective + て・Noun + で (linking qualities)
+
+**Time invested**: ~90 minutes total
+**Tests added**: 7 (3 + 4)
+**Total tests passing**: 84 (up from 77)
+
+### Next Priority (N5 patterns)
+1. **Verb + て** - Complex pattern with 17 structure variants (て/で conjugations)
+   - Requires handling all verb conjugation rules
+   - May reuse/extend existing helpers (flexible_verb_form, TeOrTeruMatcher)
+2. Verb + て + B - sequential actions
+3. い-Adjective patterns (past, negative, etc.)
+4. Verbs (Non-past) - basic verb forms
+5. More complex verb patterns
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 84 tests passing (77 previous + 7 new)
+- ✅ Git repository clean
+- ✅ All commits made with proper messages
+
+---
+
 ## Cumulative Statistics
 - **Total patterns**: 924
-- **Completed**: 26 (2.81%)
-- **Remaining**: 898 (97.19%)
+- **Completed**: 27 (2.92%)
+- **Remaining**: 897 (97.08%)
 - **Estimated work**: ~225 hours @ 15 min/pattern
+- **Velocity this session**: ~1.3 patterns/hour (multi-structure patterns)
 
-**Session 16 in progress.**
+**Session 16 complete. Ready for Session 17.**
