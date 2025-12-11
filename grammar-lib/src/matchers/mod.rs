@@ -2,6 +2,14 @@ use crate::pattern_matcher::TokenMatcher;
 use crate::KagomeToken;
 use std::sync::Arc;
 
+pub mod nt;
+
+pub mod n5;
+pub mod n4;
+pub mod n3;
+pub mod n1;
+pub mod n2;
+
 /// Trait for token matching logic
 ///
 /// Implementations of this trait provide matching logic for tokens
@@ -170,20 +178,4 @@ pub fn noun_matcher() -> TokenMatcher {
         }
     }
     TokenMatcher::Custom(Arc::new(NounMatcher))
-}
-
-pub mod n1;
-pub mod n2;
-pub mod n3;
-pub mod n4;
-pub mod n5;
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_matcher_trait_exists() {
-        // Verify trait is properly defined
-        // Note: Structs are now scoped inside functions (lexically scoped)
-        // so they cannot be referenced from here. This is intentional design.
-    }
 }

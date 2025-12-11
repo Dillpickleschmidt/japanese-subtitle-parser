@@ -1,11 +1,3 @@
-mod compound_tests;
-mod integration;
-mod n1_patterns;
-mod n2_patterns;
-mod n3_patterns;
-mod n4_patterns;
-mod n5_patterns;
-
 use crate::{pattern_text, select_best_patterns, KagomeToken, PatternMatch};
 use kagome_client::KagomeServer;
 use std::sync::{LazyLock, Mutex};

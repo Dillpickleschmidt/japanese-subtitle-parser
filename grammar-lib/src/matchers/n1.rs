@@ -1,650 +1,921 @@
 use crate::pattern_matcher::TokenMatcher;
-use crate::KagomeToken;
-use std::sync::Arc;
 
-#[allow(unused_imports)]
-use super::concat;
-
-// ========== N1 Pattern Functions ==========
-
-// めく (split): Shows signs of (謎めく - mysterious)
-pub fn meku() -> Vec<TokenMatcher> {
-    vec![super::noun_matcher(), TokenMatcher::specific_verb("めく")]
+// Pattern: という
+pub fn toiu() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// めく (compound): Single-token compounds (春めく - spring-like)
-fn verb_with_base_suffix_meku() -> TokenMatcher {
-    #[derive(Debug)]
-    struct VerbWithBaseSuffixMeku;
-    impl super::Matcher for VerbWithBaseSuffixMeku {
-        fn matches(&self, token: &KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.base_form.ends_with("めく")
-        }
-    }
-    TokenMatcher::Custom(Arc::new(VerbWithBaseSuffixMeku))
+// Pattern: まま(に)
+pub fn mama_ni() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-pub fn meku_compound() -> Vec<TokenMatcher> {
-    vec![verb_with_base_suffix_meku()]
+// Pattern: に至るまで
+pub fn niitarumade() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// まみれ (split): Covered with, smeared with (血まみれ - covered in blood)
-pub fn mamire() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("まみれ")]
+// Pattern: たところで
+pub fn tatokorode() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// まみれ (compound): Single-token compounds (泥まみれ - covered in mud)
-fn noun_with_base_suffix_mamire() -> TokenMatcher {
-    #[derive(Debug)]
-    struct NounWithBaseSuffixMamire;
-    impl super::Matcher for NounWithBaseSuffixMamire {
-        fn matches(&self, token: &KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.base_form.ends_with("まみれ")
-        }
-    }
-    TokenMatcher::Custom(Arc::new(NounWithBaseSuffixMamire))
+// Pattern: 如く・如き・如し
+pub fn gotoku_u30fb_shiki_u30fb_gotoshi() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-pub fn mamire_compound() -> Vec<TokenMatcher> {
-    vec![noun_with_base_suffix_mamire()]
+// Pattern: に足る
+pub fn nitaru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// ずくめ: Entirely, nothing but (suffix to noun)
-pub fn zukume() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("ずくめ")]
+// Pattern: 極まりない・極まる
+pub fn kiwamarinai_u30fb_kiwamaru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// っぱなし: Leaving as is, leaving undone (suffix to verb stem)
-pub fn ppanashi() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("っぱなし")]
+// Pattern: といえども
+pub fn toiedomo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// 極まる: Extremely, to the utmost (suffix to na-adjective stem)
-pub fn kiwamaru() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::specific_verb("極まる")]
+// Pattern: を以て
+pub fn womotte() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// 極まりない: Kagome lexicalizes this as single adjective, not 極まる+ない
-pub fn kiwamarinai() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("極まりない")]
+// Pattern: きらいがある
+pub fn kiraigaaru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// べく: In order to, for the purpose of (suffix to verb stem)
-pub fn beku() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::verb_with_form("基本形"),
-        TokenMatcher::Surface("べく"),
-    ]
+// Pattern: ならまだしも
+pub fn naramadashimo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// べからず: Must not, should not (classical prohibition, suffix to verb stem)
-pub fn bekarazu() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::verb_with_form("基本形"),
-        TokenMatcher::Surface("べから"),
-        TokenMatcher::Surface("ず"),
-    ]
+// Pattern: までもない
+pub fn mademonai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// まじき: Should not, unworthy of (classical negative, suffix to verb stem)
-pub fn majiki() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("まじき")]
+// Pattern: ともなると・にもなると
+pub fn tomonaruto_u30fb_nimonaruto() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// なり: As soon as (verb + なり)
+// Pattern: をいいことに
+pub fn woiikotoni() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 如何
+pub fn ika_2() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ～るまでだ
+pub fn uff5e_rumadeda() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にあって
+pub fn niatte() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: を余儀なくされる
+pub fn woyoginakusareru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: とは
+pub fn toha() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: じゃあるまいし
+pub fn jaarumaishi() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: てからというもの
+pub fn tekaratoiumono() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: かたわら
+pub fn katawara() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: を皮切りに
+pub fn wokawakirini() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に至っては
+pub fn niitatteha() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: なり
 pub fn nari() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::verb_with_form("基本形"),
-        TokenMatcher::Surface("なり"),
-    ]
+    vec![]  // TODO: Implement
 }
 
-// や否や: As soon as (verb + や + 否や)
-pub fn ya_inaya() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::verb_with_form("基本形"),
-        TokenMatcher::Surface("や"),
-        TokenMatcher::Surface("否や"),
-    ]
+// Pattern: ともなく・ともなしに
+pub fn tomonaku_u30fb_tomonashini() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// Kagome lexicalizes やいなや (kana form) as single particle
-pub fn ya_inaya_single() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::verb_with_form("基本形"),
-        TokenMatcher::Surface("やいなや"),
-    ]
+// Pattern: 塗れ
+pub fn nure() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// が早いか: As soon as (verb + が + 早い + か)
-pub fn ga_hayai_ka() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::verb_with_form("基本形"),
-        TokenMatcher::Surface("が"),
-        TokenMatcher::Surface("早い"),
-        TokenMatcher::Surface("か"),
-    ]
+// Pattern: ようが～まいが
+pub fn youga_uff5e_maiga() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// が最後: Once ~ then forever (verb + が + 最後)
-pub fn ga_saigo() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::verb_with_form("基本形"),
-        TokenMatcher::Surface("が"),
-        TokenMatcher::Surface("最後"),
-    ]
+// Pattern: からする
+pub fn karasuru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// ごとき: Like/such as (noun + ごとき)
-pub fn gotoki() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("ごとき")]
+// Pattern: にして①
+pub fn nishite_u2460() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// を皮切りに: Starting with (noun + を + 皮切りに)
-pub fn wo_kawakiri_ni() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("を"),
-        TokenMatcher::Surface("皮切り"),
-        TokenMatcher::Surface("に"),
-    ]
+// Pattern: ものを
+pub fn monowo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// をもって: With/by means of (noun + をもって)
-pub fn wo_motte() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("をもって")]
+// Pattern: であれ
+pub fn deare() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// なくしては: Without (noun + なく + し + て + は)
-pub fn nakushiteha() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("なく"),
-        TokenMatcher::Surface("し"),
-        TokenMatcher::Surface("て"),
-        TokenMatcher::Surface("は"),
-    ]
+// Pattern: をおいてほかに〜ない
+pub fn wooitehokani_u301c_nai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// なしに: Without (noun + なしに)
-pub fn nashini() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("なし"),
-        TokenMatcher::Surface("に"),
-    ]
+// Pattern: をもって
+pub fn womotte_2() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// ならでは: Unique to (noun + ならでは)
-pub fn naradewa() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("ならでは")]
+// Pattern: とはいえ
+pub fn tohaie() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// に足る: Worth/deserve (noun + に + 足る)
-pub fn ni_taru() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("に"),
-        TokenMatcher::specific_verb("足る"),
-    ]
+// Pattern: ならでは
+pub fn naradeha() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// とあって: Because/being (noun + と + あっ + て)
-pub fn toatte() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("と"),
-        TokenMatcher::Surface("あっ"),
-        TokenMatcher::Surface("て"),
-    ]
-}
-
-// かたがた: While/also to (verb stem + かたがた)
-pub fn katagata() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("かたがた")]
-}
-
-// を限りに: As the last time (を + 限りに)
-pub fn wo_kagiri_ni() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("を"),
-        TokenMatcher::Surface("限り"),
-        TokenMatcher::Surface("に"),
-    ]
-}
-
-// を経て: Through/via (を + 経て)
-pub fn wo_hete() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("を"),
-        TokenMatcher::Surface("経"),
-        TokenMatcher::Surface("て"),
-    ]
-}
-
-// をおして: In spite of (を + おして)
-pub fn wo_oshite() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("を"),
-        TokenMatcher::Surface("おして"),
-    ]
-}
-
-// をふまえて: Based on (を + 踏まえて)
-pub fn wo_fumaete() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("を"),
-        TokenMatcher::Surface("踏まえ"),
-        TokenMatcher::Surface("て"),
-    ]
-}
-
-// てやまない: Never cease (te-form + やまない)
-pub fn te_yamanai() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Surface("て"),
-        TokenMatcher::Surface("やま"),
-        TokenMatcher::Surface("ない"),
-    ]
-}
-
-// と思いきや: Contrary to expectations
-pub fn to_omoikiya() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("と"),
-        TokenMatcher::Surface("思い"),
-        TokenMatcher::Surface("き"),
-        TokenMatcher::Surface("や"),
-    ]
-}
-
-// とあれば: If it's the case
-pub fn to_areba() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("と"),
-        TokenMatcher::Surface("あれ"),
-        TokenMatcher::Surface("ば"),
-    ]
-}
-
-// たところで: Even if
-pub fn ta_tokoro_de() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::verb_with_form("連用タ接続"),
-        TokenMatcher::Surface("た"),
-        TokenMatcher::Surface("ところ"),
-        TokenMatcher::Surface("で"),
-    ]
-}
-
-// であれ: Whether/even if
-pub fn de_are() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("で"),
-        TokenMatcher::Surface("あれ"),
-    ]
-}
-
-// とはいえ: Although/even though
-pub fn to_wa_ie() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("と"),
-        TokenMatcher::Surface("は"),
-        TokenMatcher::Surface("いえ"),
-    ]
-}
-
-// ようが: No matter/even if
-pub fn you_ga() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::verb_with_form("未然ウ接続"),
-        TokenMatcher::Surface("う"),
-        TokenMatcher::Surface("が"),
-    ]
-}
-
-// ないまでも: Even if not
-pub fn nai_made_mo() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("ない"),
-        TokenMatcher::Surface("まで"),
-        TokenMatcher::Surface("も"),
-    ]
-}
-
-// ながらも: While/though
-pub fn nagara_mo() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("ながら"),
-        TokenMatcher::Surface("も"),
-    ]
-}
-
-// ではあるまいし: It's not like
-pub fn dewa_arumaishi() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("で"),
-        TokenMatcher::Surface("は"),
-        TokenMatcher::Surface("ある"),
-        TokenMatcher::Surface("まい"),
-        TokenMatcher::Surface("し"),
-    ]
-}
-
-// としたところで: Even if
-pub fn to_shita_tokoro_de() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("と"),
-        TokenMatcher::Surface("し"),
-        TokenMatcher::Surface("た"),
-        TokenMatcher::Surface("ところ"),
-        TokenMatcher::Surface("で"),
-    ]
-}
-
-// といえども: Even though/although
-pub fn to_iedomo() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("と"),
-        TokenMatcher::Surface("いえ"),
-        TokenMatcher::Surface("ども"),
-    ]
-}
-
-// ともなると: When it comes to
-pub fn tomo_naruto() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("と"),
-        TokenMatcher::Surface("も"),
-        TokenMatcher::Surface("なる"),
-        TokenMatcher::Surface("と"),
-    ]
-}
-
-// にたえない: Cannot bear/unbearable
-pub fn ni_taenai() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("に"),
-        TokenMatcher::Surface("堪え"),
-        TokenMatcher::Surface("ない"),
-    ]
-}
-
-// にそくして: In accordance with
-pub fn ni_sokushite() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("に"),
-        TokenMatcher::Surface("即し"),
-        TokenMatcher::Surface("て"),
-    ]
-}
-
-// と相まって: Combined with
-pub fn to_aimatte() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("と"),
-        TokenMatcher::Surface("相まって"),
-    ]
-}
-
-// をよそに: In spite of/ignoring
-pub fn wo_yosoni() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("を"),
-        TokenMatcher::Surface("よそ"),
-        TokenMatcher::Surface("に"),
-    ]
-}
-
-// てもさしつかえない: It's okay to
-pub fn temo_sashitsukaenai() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Surface("て"),
-        TokenMatcher::Surface("も"),
-        TokenMatcher::Surface("さしつかえ"),
-        TokenMatcher::Surface("ない"),
-    ]
-}
-
-// を禁じ得ない: Cannot help but
-pub fn wo_kinjienai() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("を"),
-        TokenMatcher::Surface("禁じ"),
-        TokenMatcher::Surface("得"),
-        TokenMatcher::Surface("ない"),
-    ]
-}
-
-// を余儀なくされる: Be forced to
-pub fn wo_yoginakusareru() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("を"),
-        TokenMatcher::Surface("余儀なく"),
-        TokenMatcher::Surface("さ"),
-        TokenMatcher::Surface("れる"),
-    ]
-}
-
-// てからというもの: Since/ever since
-pub fn te_karatoiumono() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Surface("て"),
-        TokenMatcher::Surface("から"),
-        TokenMatcher::Surface("という"),
-        TokenMatcher::Surface("もの"),
-    ]
-}
-
-// にもまして: More than/even more
-pub fn nimo_mashite() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("に"),
-        TokenMatcher::Surface("も"),
-        TokenMatcher::Surface("まして"),
-    ]
-}
-
-// にひきかえ: In contrast to
-pub fn ni_hikikae() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("に"),
-        TokenMatcher::Surface("ひきかえ"),
-    ]
-}
-
-// いかん patterns (depending on)
-pub fn ikan_de() -> Vec<TokenMatcher> {
-    vec![
-        super::noun_matcher(),
-        TokenMatcher::Surface("いかん"),
-        TokenMatcher::Surface("で"),
-    ]
-}
-
-pub fn ikan_no_da() -> Vec<TokenMatcher> {
-    vec![
-        super::noun_matcher(),
-        TokenMatcher::Surface("の"),
-        TokenMatcher::Surface("いかん"),
-        TokenMatcher::Surface("だ"),
-    ]
-}
-
-pub fn ikan_niyotte() -> Vec<TokenMatcher> {
-    vec![
-        super::noun_matcher(),
-        TokenMatcher::Surface("いかん"),
-        TokenMatcher::Surface("によって"),
-    ]
-}
-
-pub fn ikan_shidai() -> Vec<TokenMatcher> {
-    vec![
-        super::noun_matcher(),
-        TokenMatcher::Surface("いかん"),
-        TokenMatcher::Surface("次第"),
-    ]
-}
-
-// きらい: dislike/tendency
-fn kiraiga_form() -> TokenMatcher {
-    #[derive(Debug)]
-    struct KiraiGaFormMatcher;
-    impl super::Matcher for KiraiGaFormMatcher {
-        fn matches(&self, token: &KagomeToken) -> bool {
-            token.surface == "嫌い" || token.surface == "きらい"
-        }
-    }
-    TokenMatcher::Custom(Arc::new(KiraiGaFormMatcher))
-}
-
-pub fn kirai_ga_aru() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, kiraiga_form(), TokenMatcher::Surface("が"), TokenMatcher::Surface("ある")]
-}
-
-// わりに/わりには: Considering/proportionally
-pub fn warini() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("割り"), TokenMatcher::Surface("に")]
-}
-
-pub fn wariniha() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("割り"), TokenMatcher::Surface("に"), TokenMatcher::Surface("は")]
-}
-
-// すら: even (emphatic)
+// Pattern: すら
 pub fn sura() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("すら")]
+    vec![]  // TODO: Implement
 }
 
-// またたく間に: in the blink of an eye
-pub fn taritomo() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("たり"),
-        TokenMatcher::Surface("と"),
-        TokenMatcher::Surface("も"),
-    ]
+// Pattern: あっての
+pub fn atteno() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// 如何だ: how/what (formal/archaic)
-pub fn koto_nashini() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("こと"),
-        TokenMatcher::Surface("なし"),
-        TokenMatcher::Surface("に"),
-    ]
+// Pattern: ～たまでだ
+pub fn uff5e_tamadeda() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// しまつだ: shameful/what a [noun]!
-pub fn shimatsu_da() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("始末"), TokenMatcher::Surface("だ")]
+// Pattern: を経て
+pub fn wohete() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-pub fn shimatsu_datta() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("始末"), TokenMatcher::Surface("だっ")]
+// Pattern: ながらに
+pub fn nagarani() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// ですら: even (with copula)
-pub fn de_sura() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("で"), TokenMatcher::Surface("すら")]
+// Pattern: たなり・なり
+pub fn tanari_u30fb_nari() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// 甲斐もなく: without avail/despite efforts (甲斐 = benefit/avail)
-pub fn kai_mo_naku() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("甲斐"),
-        TokenMatcher::Surface("も"),
-        TokenMatcher::Surface("なく"),
-    ]
+// Pattern: の極み
+pub fn nokiwami() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// だけまし: at least/only better for
-pub fn dake_mashi() -> Vec<TokenMatcher> {
-    vec![TokenMatcher::Any, TokenMatcher::Surface("だけ"), TokenMatcher::Surface("まし")]
+// Pattern: にしてみれば
+pub fn nishitemireba() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// ないではすまない: cannot escape/must do
-pub fn naide_wa_sumanai() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("ない"),
-        TokenMatcher::Surface("で"),
-        TokenMatcher::Surface("は"),
-        TokenMatcher::Surface("すま"),
-        TokenMatcher::Surface("ない"),
-    ]
+// Pattern: だの
+pub fn dano() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// 生まれながらに: from birth/innately (umare form)
-pub fn nagarani_umare() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Surface("生まれながら"),
-        TokenMatcher::Surface("に"),
-    ]
+// Pattern: あくまでも
+pub fn akumademo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// 生まれながらにして: from birth (umare + shite form)
-pub fn nagarani_umare_shite() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Surface("生まれながら"),
-        TokenMatcher::Surface("に"),
-        TokenMatcher::Surface("し"),
-        TokenMatcher::Surface("て"),
-    ]
+// Pattern: べく
+pub fn beku() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// ながらに: while/in spite of (split noun + nagara + ni)
-pub fn nagarani_split() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("ながら"),
-        TokenMatcher::Surface("に"),
-    ]
+// Pattern: ところを
+pub fn tokorowo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// ながらにして: while doing/despite (split + shite)
-pub fn nagarani_shite() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("ながら"),
-        TokenMatcher::Surface("に"),
-        TokenMatcher::Surface("し"),
-        TokenMatcher::Surface("て"),
-    ]
+// Pattern: からある
+pub fn karaaru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }
 
-// はおろか: let alone/not to mention (は + oroka)
-pub fn ha_oroka() -> Vec<TokenMatcher> {
-    vec![
-        TokenMatcher::Any,
-        TokenMatcher::Surface("は"),
-        TokenMatcher::Surface("おろか"),
-    ]
+// Pattern: にして②
+pub fn nishite_u2461() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: つ〜つ
+pub fn tsu_u301c_tsu() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 飽くまで(も)
+pub fn akumade_mo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: であれ〜であれ
+pub fn deare_u301c_deare() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: たら最後
+pub fn tarasaigo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: いかなる
+pub fn ikanaru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: なりに
+pub fn narini() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: れる・られる + ままに
+pub fn reru_u30fb_rareru_mamani() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にまつわる
+pub fn nimatsuwaru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: たる
+pub fn taru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: なら〜で
+pub fn nara_u301c_de() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: をものともせず
+pub fn womonotomosezu() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: には当たらない
+pub fn nihaataranai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ものと思う
+pub fn monotoomou() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: を踏まえて
+pub fn wofumaete() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ゆえに
+pub fn yueni() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にとどまらず
+pub fn nitodomarazu() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: と思いきや
+pub fn toomoikiya() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: どうにも
+pub fn dounimo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ことだし
+pub fn kotodashi() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: がん～
+pub fn gan_uff5e() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: か否か
+pub fn kainaka() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: たら〜で
+pub fn tara_u301c_de() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: べくして
+pub fn bekushite() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: かれ〜かれ
+pub fn kare_u301c_kare() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 〜に〜ない
+pub fn u301c_ni_u301c_nai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: なくして(は)
+pub fn nakushite_ha() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: のなんのって
+pub fn nonannotte() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にかかっている
+pub fn nikakatteiru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: てやまない
+pub fn teyamanai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ぐらいなら
+pub fn gurainara() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ってば・ったら
+pub fn tteba_u30fb_ttara() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ずとも
+pub fn zutomo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: とあって
+pub fn toatte() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: でもなんでもない
+pub fn demonandemonai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ぐるみで
+pub fn gurumide() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: そばから
+pub fn sobakara() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 訳あり(訳あって)
+pub fn wakeari_yakuatte() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に至って・に至り
+pub fn niitatte_u30fb_niitari() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: だに + しない
+pub fn dani_shinai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: がてら
+pub fn gatera() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: んがため(に)
+pub fn ngatame_ni() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: いかん〜ず
+pub fn ikan_u301c_zu() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にも～ない
+pub fn nimo_uff5e_nai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: い-Adj[く] + もなんともない
+pub fn i_adj_ku_monantomonai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: Verb + だに
+pub fn verb_dani() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ～なり～なり
+pub fn uff5e_nari_uff5e_nari() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ないでもない
+pub fn naidemonai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: もさることながら
+pub fn mosarukotonagara() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ものと思っていた
+pub fn monotoomotteita() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: でなくてなんだろう
+pub fn denakutenandarou() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: はさておき・はさておいて
+pub fn hasateoki_u30fb_hasateoite() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 折には
+pub fn oriniha() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: とばかり（に）
+pub fn tobakari_uff08_ni_uff09() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: わ〜わ
+pub fn wa_u301c_wa() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: なりとも
+pub fn naritomo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に至っても
+pub fn niitattemo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: を兼ねて
+pub fn wokanete() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: Verb[ない]もの(だろう)か
+pub fn verb_nai_mono_darou_ka() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: Verb[て] + みせる
+pub fn verb_te_miseru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 相まって
+pub fn aimatte() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に足りない
+pub fn nitarinai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: べからず
+pub fn bekarazu() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: んばかりに
+pub fn nbakarini() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に則って・に則り
+pub fn ninottotte_u30fb_ninottori() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: Adj限りだ
+pub fn adjkagirida() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: はおろか
+pub fn haoroka() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: めく・めいた
+pub fn meku_u30fb_meita() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: といわず
+pub fn toiwazu() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にもほどがある
+pub fn nimohodogaaru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にもまして
+pub fn nimomashite() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: まくる
+pub fn makuru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: わ〜わ（で）
+pub fn wa_u301c_wa_uff08_de_uff09() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: どうにか
+pub fn dounika() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: や否や
+pub fn yainaya() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 次第です
+pub fn shidaidesu() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: というところ
+pub fn toiutokoro() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: １～たりとも～ない
+pub fn ichi_uff5e_taritomo_uff5e_nai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ったらない・といったらない
+pub fn ttaranai_u30fb_toittaranai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に照らして・に照らすと
+pub fn niterashite_u30fb_niterasuto() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: とあれば
+pub fn toareba() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: さぞ
+pub fn sazo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ときたら
+pub fn tokitara() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: びる
+pub fn biru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にしたところで
+pub fn nishitatokorode() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ～ばこそ
+pub fn uff5e_bakoso() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ても差し支えない
+pub fn temosashitsukaenai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: には及ばない①
+pub fn nihaoyobanai_u2460() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に即して
+pub fn nisokushite() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ないまでも
+pub fn naimademo() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: をよそに
+pub fn woyosoni() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に限ったことではない
+pub fn nikagittakotodehanai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: とは比べものにならない
+pub fn tohakurabemononinaranai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: まじき
+pub fn majiki() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: の至り
+pub fn noitari() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に恥じない
+pub fn nihajinai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ずじまい
+pub fn zujimai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に言わせれば・に言わせると・に言わせたら
+pub fn niiwasereba_u30fb_niiwaseruto_u30fb_niiwasetara() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ったら・といったら
+pub fn ttara_u30fb_toittara() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: こととて
+pub fn kototote() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ずくめ
+pub fn zukume() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: には及ばない②
+pub fn nihaoyobanai_u2461() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: とは言うものの
+pub fn tohaiumonono() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: が早いか
+pub fn gahayaika() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に難くない
+pub fn nikatakunai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ならいざ知らず
+pub fn naraizashirazu() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: を禁じ得ない
+pub fn wokinjienai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にかこつけて
+pub fn nikakotsukete() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ようによっては
+pub fn youniyotteha() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: べくもない
+pub fn bekumonai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: と来たら
+pub fn tokitara_2() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ものとして
+pub fn monotoshite() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: を前提に
+pub fn wozenteini() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ずにはすまない
+pub fn zunihasumanai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に堪えない
+pub fn nikotaenai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 始末だ
+pub fn shimatsuda() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ものなら②
+pub fn mononara_u2461() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: にひきかえ
+pub fn nihikikae() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: それまでだ
+pub fn soremadeda() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: といおうか
+pub fn toiouka() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ずにはおかない
+pub fn zunihaokanai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: を限りに
+pub fn wokagirini() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: てはかなわない
+pub fn tehakanawanai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: かたがた
+pub fn katagata() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: を余儀なくさせる
+pub fn woyoginakusaseru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ～てやる
+pub fn uff5e_teyaru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ただ〜のみ
+pub fn tada_u301c_nomi() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ものとする
+pub fn monotosuru() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: との
+pub fn tono() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 以前
+pub fn izen() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: ともあろう
+pub fn tomoarou() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: こそすれ〜ない
+pub fn kososure_u301c_nai() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: 並み
+pub fn nami() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: に先駆けて
+pub fn nisakigakete() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
+}
+
+// Pattern: を機に
+pub fn wokini() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement
 }

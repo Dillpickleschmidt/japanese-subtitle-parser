@@ -1,8 +1,3 @@
-use crate::matchers::n1::*;
-use crate::matchers::n2::*;
-use crate::matchers::n3::*;
-use crate::matchers::n4::*;
-use crate::matchers::n5::*;
 use crate::pattern_matcher::{GrammarPattern, PatternCategory, PatternMatcher};
 
 macro_rules! declare_patterns {
@@ -43,2163 +38,7408 @@ macro_rules! declare_patterns {
 }
 
 declare_patterns! {
-    // ========== N5 PATTERNS (38 total) ==========
-    DictionaryForm {
-        name: "dictionary_form",
-        matcher_fn: dictionary_form,
+    // ========== N5 PATTERNS ==========
+
+    Da {
+        name: "だ",
+        matcher_fn: crate::matchers::n5::da,
         priority: 1,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    MasuForm {
-        name: "masu_form",
-        matcher_fn: masu_ending,
-        priority: 4,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    ShortNegative {
-        name: "short_negative",
-        matcher_fn: short_negative,
-        priority: 4,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    PoliteNegative {
-        name: "polite_negative",
-        matcher_fn: polite_negative,
-        priority: 4,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    PastTense {
-        name: "past_tense",
-        matcher_fn: ta_form,
-        priority: 4,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    ShortPastNegative {
-        name: "short_past_negative",
-        matcher_fn: short_past_negative,
-        priority: 4,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    PolitePast {
-        name: "polite_past",
-        matcher_fn: polite_past_ending,
-        priority: 4,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    Deshita {
-        name: "deshita",
-        matcher_fn: deshita,
-        priority: 4,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    TaiForm {
-        name: "tai_form",
-        matcher_fn: tai_form,
-        priority: 5,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    TakunaiForm {
-        name: "takunai_form",
-        matcher_fn: takunai_form,
-        priority: 6,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    TakattaForm {
-        name: "takatta_form",
-        matcher_fn: takatta_form,
-        priority: 6,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    TeForm {
-        name: "te_form",
-        matcher_fn: te_form,
-        priority: 3,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    TeIru {
-        name: "te_iru",
-        matcher_fn: te_iru,
-        priority: 10,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    TeKara {
-        name: "te_kara",
-        matcher_fn: te_kara,
-        priority: 9,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    TeKudasai {
-        name: "te_kudasai",
-        matcher_fn: te_kudasai,
-        priority: 10,
+
+    Desu {
+        name: "です",
+        matcher_fn: crate::matchers::n5::desu,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    TeMoIi {
-        name: "te_mo_ii",
-        matcher_fn: te_mo_ii,
-        priority: 11,
+
+    Ha {
+        name: "は",
+        matcher_fn: crate::matchers::n5::ha,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    TeWaIkenai {
-        name: "te_wa_ikenai",
-        matcher_fn: te_wa_ikenai,
-        priority: 11,
+
+    Mo {
+        name: "も",
+        matcher_fn: crate::matchers::n5::mo,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    NaideKudasai {
-        name: "naide_kudasai",
-        matcher_fn: naide_kudasai,
-        priority: 11,
+
+    Kore {
+        name: "これ",
+        matcher_fn: crate::matchers::n5::kore,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    MasenKa {
-        name: "masen_ka",
-        matcher_fn: masen_ka,
-        priority: 7,
+
+    Sore {
+        name: "それ",
+        matcher_fn: crate::matchers::n5::sore,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    PoliteVolitional {
-        name: "polite_volitional",
-        matcher_fn: polite_volitional,
-        priority: 6,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    MashouKa {
-        name: "mashou_ka",
-        matcher_fn: mashou_ka,
-        priority: 8,
+
+    Are {
+        name: "あれ",
+        matcher_fn: crate::matchers::n5::are,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    TaKotoGaAru {
-        name: "ta_koto_ga_aru",
-        matcher_fn: ta_koto_ga_aru,
-        priority: 11,
+
+    No {
+        name: "の",
+        matcher_fn: crate::matchers::n5::no,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    Sugiru {
-        name: "sugiru",
-        matcher_fn: sugiru,
-        priority: 6,
+
+    Ii {
+        name: "いい",
+        matcher_fn: crate::matchers::n5::ii,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    TsumoriDesu {
-        name: "tsumori_desu",
-        matcher_fn: tsumori_desu,
-        priority: 9,
+
+    IAdjectives {
+        name: "い-Adjectives",
+        matcher_fn: crate::matchers::n5::i_adjectives,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
-    HouGaIi {
-        name: "hou_ga_ii",
-        matcher_fn: hou_ga_ii,
-        priority: 11,
+
+    NaAdjectives {
+        name: "な-Adjectives",
+        matcher_fn: crate::matchers::n5::na_adjectives,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
+
+    Ka {
+        name: "か",
+        matcher_fn: crate::matchers::n5::ka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Ga {
+        name: "が",
+        matcher_fn: crate::matchers::n5::ga,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Yo {
+        name: "よ",
+        matcher_fn: crate::matchers::n5::yo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Ne {
+        name: "ね",
+        matcher_fn: crate::matchers::n5::ne,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    RuVerbDictionary {
+        name: "る-Verb (Dictionary)",
+        matcher_fn: crate::matchers::n5::ru_verb_dictionary,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    UVerbDictionary {
+        name: "う-Verb (Dictionary)",
+        matcher_fn: crate::matchers::n5::u_verb_dictionary,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Wo {
+        name: "を",
+        matcher_fn: crate::matchers::n5::wo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Masu {
+        name: "ます",
+        matcher_fn: crate::matchers::n5::masu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    RuVerbNegative {
+        name: "る-Verb (Negative)",
+        matcher_fn: crate::matchers::n5::ru_verb_negative,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    UVerbNegative {
+        name: "う-Verb (Negative)",
+        matcher_fn: crate::matchers::n5::u_verb_negative,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Koko {
+        name: "ここ",
+        matcher_fn: crate::matchers::n5::koko,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Soko {
+        name: "そこ",
+        matcher_fn: crate::matchers::n5::soko,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Asoko {
+        name: "あそこ",
+        matcher_fn: crate::matchers::n5::asoko,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    De {
+        name: "で",
+        matcher_fn: crate::matchers::n5::de,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Ni {
+        name: "に",
+        matcher_fn: crate::matchers::n5::ni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
     Deshou {
-        name: "deshou",
-        matcher_fn: deshou,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    MadaTeImasen {
-        name: "mada_te_imasen",
-        matcher_fn: mada_te_imasen,
-        priority: 12,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    NDesu {
-        name: "n_desu",
-        matcher_fn: n_desu,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    NodeVerb {
-        name: "node_verb",
-        matcher_fn: node_verb,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    NodeAdjective {
-        name: "node_adjective",
-        matcher_fn: node_adjective,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    NodeNominal {
-        name: "node_nominal",
-        matcher_fn: node_nominal,
-        priority: 4,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    NiIku {
-        name: "ni_iku",
-        matcher_fn: ni_iku,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    MaeNi {
-        name: "mae_ni",
-        matcher_fn: mae_ni,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    Adjective {
-        name: "adjective",
-        matcher_fn: adjective,
+        name: "でしょう",
+        matcher_fn: crate::matchers::n5::deshou,
         priority: 1,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    AdjectivePast {
-        name: "adjective_past",
-        matcher_fn: adjective_past,
-        priority: 2,
-        category: PatternCategory::Conjugation,
-        jlpt: "n5",
-    },
-    XWaYDesu {
-        name: "x_wa_y_desu",
-        matcher_fn: x_wa_y_desu,
-        priority: 2,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    KaParticleEnding {
-        name: "ka_particle_ending",
-        matcher_fn: ka_particle_ending,
-        priority: 3,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    GaParticleSubject {
-        name: "ga_particle_subject",
-        matcher_fn: ga_particle_subject,
-        priority: 3,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    MoAlso {
-        name: "mo_also",
-        matcher_fn: mo_also,
-        priority: 3,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    NegativeNounJanai {
-        name: "negative_noun_janai",
-        matcher_fn: negative_noun_janai,
-        priority: 3,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    NegativeNounJaArimasen {
-        name: "negative_noun_ja_arimasen",
-        matcher_fn: negative_noun_ja_arimasen,
-        priority: 3,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    NegativeNounDewaArimasen {
-        name: "negative_noun_dewa_arimasen",
-        matcher_fn: negative_noun_dewa_arimasen,
-        priority: 3,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    NoParticleModifier {
-        name: "no_particle_modifier",
-        matcher_fn: no_particle_modifier,
-        priority: 2,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    Adverb {
-        name: "adverb",
-        matcher_fn: adverb,
-        priority: 3,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    AdverbIAdj {
-        name: "adverb_i_adj",
-        matcher_fn: adverb_i_adj,
-        priority: 3,
-        category: PatternCategory::Construction,
-        jlpt: "n5",
-    },
-    AdverbNaAdj {
-        name: "adverb_na_adj",
-        matcher_fn: adverb_na_adj,
-        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n5",
     },
 
-    // ========== N4 PATTERNS (62 total) ==========
-    TeMiru {
-        name: "te_miru",
-        matcher_fn: te_miru,
-        priority: 10,
+    Darou {
+        name: "だろう",
+        matcher_fn: crate::matchers::n5::darou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Gaaru {
+        name: "がある",
+        matcher_fn: crate::matchers::n5::gaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Gairu {
+        name: "がいる",
+        matcher_fn: crate::matchers::n5::gairu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Kono {
+        name: "この",
+        matcher_fn: crate::matchers::n5::kono,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Sono {
+        name: "その",
+        matcher_fn: crate::matchers::n5::sono,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Ano {
+        name: "あの",
+        matcher_fn: crate::matchers::n5::ano,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Uff5eNdesuU30fbNodesu {
+        name: "～んです・のです",
+        matcher_fn: crate::matchers::n5::uff5e_ndesu_u30fb_nodesu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    IAdjectivePast {
+        name: "い-Adjective (Past)",
+        matcher_fn: crate::matchers::n5::i_adjective_past,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    IAdjectiveNoun {
+        name: "い-Adjective + Noun",
+        matcher_fn: crate::matchers::n5::i_adjective_noun,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    NaAdjectiveNoun {
+        name: "な-Adjective + Noun",
+        matcher_fn: crate::matchers::n5::na_adjective_noun,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Heiku {
+        name: "へいく",
+        matcher_fn: crate::matchers::n5::heiku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Suru {
+        name: "する",
+        matcher_fn: crate::matchers::n5::suru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Kuru {
+        name: "くる",
+        matcher_fn: crate::matchers::n5::kuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    RuVerbPast {
+        name: "る-Verb (Past)",
+        matcher_fn: crate::matchers::n5::ru_verb_past,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    UVerbPast {
+        name: "う-Verb (Past)",
+        matcher_fn: crate::matchers::n5::u_verb_past,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Suki {
+        name: "好き",
+        matcher_fn: crate::matchers::n5::suki,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Kirai {
+        name: "きらい",
+        matcher_fn: crate::matchers::n5::kirai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Nogasuki {
+        name: "のがすき",
+        matcher_fn: crate::matchers::n5::nogasuki,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    GaaruNoun {
+        name: "がある + Noun",
+        matcher_fn: crate::matchers::n5::gaaru_noun,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    IAdjectivesKunai {
+        name: "い-Adjectives くない",
+        matcher_fn: crate::matchers::n5::i_adjectives_kunai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Node {
+        name: "ので",
+        matcher_fn: crate::matchers::n5::node,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Kara {
+        name: "から",
+        matcher_fn: crate::matchers::n5::kara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    KedoU30fbDakedo {
+        name: "けど・だけど",
+        matcher_fn: crate::matchers::n5::kedo_u30fb_dakedo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    RuVerbNegativePast {
+        name: "る-Verb (Negative-Past)",
+        matcher_fn: crate::matchers::n5::ru_verb_negative_past,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    UVerbNegativePast {
+        name: "う-Verb (Negative-Past)",
+        matcher_fn: crate::matchers::n5::u_verb_negative_past,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    VerbTe {
+        name: "Verb + て",
+        matcher_fn: crate::matchers::n5::verb_te,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    TeiruU2460 {
+        name: "ている①",
+        matcher_fn: crate::matchers::n5::teiru_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    He {
+        name: "へ",
+        matcher_fn: crate::matchers::n5::he,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    VerbNiiku {
+        name: "Verb + にいく",
+        matcher_fn: crate::matchers::n5::verb_niiku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Dare {
+        name: "誰",
+        matcher_fn: crate::matchers::n5::dare,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    IAdjectivePredicate {
+        name: "い-Adjective (Predicate)",
+        matcher_fn: crate::matchers::n5::i_adjective_predicate,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    NaAdjectiveDa {
+        name: "な-Adjective だ",
+        matcher_fn: crate::matchers::n5::na_adjective_da,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    DattaU30fbDeshita {
+        name: "だった・でした",
+        matcher_fn: crate::matchers::n5::datta_u30fb_deshita,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Janai {
+        name: "じゃない",
+        matcher_fn: crate::matchers::n5::janai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Janakatta {
+        name: "じゃなかった",
+        matcher_fn: crate::matchers::n5::janakatta,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    IAdjectiveKunakatta {
+        name: "い-Adjective くなかった",
+        matcher_fn: crate::matchers::n5::i_adjective_kunakatta,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    VerbsNonPast {
+        name: "Verbs (Non-past)",
+        matcher_fn: crate::matchers::n5::verbs_non_past,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    VerbUff3bTaU30fbTeiruUff3dNoun {
+        name: "Verb［た・ている］+ Noun",
+        matcher_fn: crate::matchers::n5::verb_uff3b_ta_u30fb_teiru_uff3d_noun,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Na {
+        name: "な",
+        matcher_fn: crate::matchers::n5::na,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Dake {
+        name: "だけ",
+        matcher_fn: crate::matchers::n5::dake,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Dore {
+        name: "どれ",
+        matcher_fn: crate::matchers::n5::dore,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Doko {
+        name: "どこ",
+        matcher_fn: crate::matchers::n5::doko,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Dono {
+        name: "どの",
+        matcher_fn: crate::matchers::n5::dono,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    TeiruU2461 {
+        name: "ている②",
+        matcher_fn: crate::matchers::n5::teiru_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Tekara {
+        name: "てから",
+        matcher_fn: crate::matchers::n5::tekara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    VerbTeB {
+        name: "Verb + て+ B",
+        matcher_fn: crate::matchers::n5::verb_te_b,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Mou {
+        name: "もう",
+        matcher_fn: crate::matchers::n5::mou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Mada {
+        name: "まだ",
+        matcher_fn: crate::matchers::n5::mada,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    MadaUff5eTeimasen {
+        name: "まだ～ていません",
+        matcher_fn: crate::matchers::n5::mada_uff5e_teimasen,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Temoii {
+        name: "てもいい",
+        matcher_fn: crate::matchers::n5::temoii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Tai {
+        name: "たい",
+        matcher_fn: crate::matchers::n5::tai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    TariUff5eTarisuru {
+        name: "たり～たりする",
+        matcher_fn: crate::matchers::n5::tari_uff5e_tarisuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Kekkou {
+        name: "けっこう",
+        matcher_fn: crate::matchers::n5::kekkou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Takusan {
+        name: "たくさん",
+        matcher_fn: crate::matchers::n5::takusan,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Maeni {
+        name: "まえに",
+        matcher_fn: crate::matchers::n5::maeni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    KuraiU2460 {
+        name: "くらい ①",
+        matcher_fn: crate::matchers::n5::kurai_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    NounMade {
+        name: "Noun + まで",
+        matcher_fn: crate::matchers::n5::noun_made,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    VerbMade {
+        name: "Verb + まで",
+        matcher_fn: crate::matchers::n5::verb_made,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Sugiru {
+        name: "すぎる",
+        matcher_fn: crate::matchers::n5::sugiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Nisuru {
+        name: "にする",
+        matcher_fn: crate::matchers::n5::nisuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Uff5eNinaruU30fbUff5eKunaru {
+        name: "～になる・～くなる",
+        matcher_fn: crate::matchers::n5::uff5e_ninaru_u30fb_uff5e_kunaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    NonakadeUff5eGaichibanUff5e {
+        name: "のなかで～がいちばん～",
+        matcher_fn: crate::matchers::n5::nonakade_uff5e_gaichiban_uff5e,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    YoriUff5eNohouga {
+        name: "より～のほうが",
+        matcher_fn: crate::matchers::n5::yori_uff5e_nohouga,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    NanikaU30fbNanimo {
+        name: "なにか・なにも",
+        matcher_fn: crate::matchers::n5::nanika_u30fb_nanimo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    DarekaU30fbDokokaU30fbDaremoU30fbDokomo {
+        name: "誰か・どこか・誰も・どこも",
+        matcher_fn: crate::matchers::n5::dareka_u30fb_dokoka_u30fb_daremo_u30fb_dokomo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Mashou {
+        name: "ましょう",
+        matcher_fn: crate::matchers::n5::mashou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Uff5eMashouka {
+        name: "～ましょうか",
+        matcher_fn: crate::matchers::n5::uff5e_mashouka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Masenka {
+        name: "ませんか",
+        matcher_fn: crate::matchers::n5::masenka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    VerbTemoii {
+        name: "Verb + てもいい",
+        matcher_fn: crate::matchers::n5::verb_temoii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Tekudasai {
+        name: "てください",
+        matcher_fn: crate::matchers::n5::tekudasai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Naidekudasai {
+        name: "ないでください",
+        matcher_fn: crate::matchers::n5::naidekudasai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Tehaikenai {
+        name: "てはいけない",
+        matcher_fn: crate::matchers::n5::tehaikenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Nakutehaikenai {
+        name: "なくてはいけない",
+        matcher_fn: crate::matchers::n5::nakutehaikenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Nakutehanaranai {
+        name: "なくてはならない",
+        matcher_fn: crate::matchers::n5::nakutehanaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Tahougaii {
+        name: "たほうがいい",
+        matcher_fn: crate::matchers::n5::tahougaii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Naihougaii {
+        name: "ないほうがいい",
+        matcher_fn: crate::matchers::n5::naihougaii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    NakuchaU30fbNakya {
+        name: "なくちゃ・なきゃ",
+        matcher_fn: crate::matchers::n5::nakucha_u30fb_nakya,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Ya {
+        name: "や",
+        matcher_fn: crate::matchers::n5::ya,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Takotogaaru {
+        name: "たことがある",
+        matcher_fn: crate::matchers::n5::takotogaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    TeiruU2462 {
+        name: "ている③",
+        matcher_fn: crate::matchers::n5::teiru_u2462,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    AdjectiveTeU30fbNounDe {
+        name: "Adjective + て・Noun + で",
+        matcher_fn: crate::matchers::n5::adjective_te_u30fb_noun_de,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    AdjectiveTeB {
+        name: "Adjective + て + B",
+        matcher_fn: crate::matchers::n5::adjective_te_b,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Nogaheta {
+        name: "のがへた",
+        matcher_fn: crate::matchers::n5::nogaheta,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Nogajouzu {
+        name: "のがじょうず",
+        matcher_fn: crate::matchers::n5::nogajouzu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    AdjectiveNoHa {
+        name: "Adjective + の(は)",
+        matcher_fn: crate::matchers::n5::adjective_no_ha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Ageru {
+        name: "あげる",
+        matcher_fn: crate::matchers::n5::ageru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Kureru {
+        name: "くれる",
+        matcher_fn: crate::matchers::n5::kureru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Morau {
+        name: "もらう",
+        matcher_fn: crate::matchers::n5::morau,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Keredomo {
+        name: "けれども",
+        matcher_fn: crate::matchers::n5::keredomo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Tsumorida {
+        name: "つもりだ",
+        matcher_fn: crate::matchers::n5::tsumorida,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    // ========== N4 PATTERNS ==========
+
+    To {
+        name: "と",
+        matcher_fn: crate::matchers::n4::to,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n4",
     },
-    TeShimau {
-        name: "te_shimau",
-        matcher_fn: te_shimau,
-        priority: 10,
+
+    Demo {
+        name: "でも",
+        matcher_fn: crate::matchers::n4::demo,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n4",
     },
-    TeAru {
-        name: "te_aru",
-        matcher_fn: te_aru,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeKureru {
-        name: "te_kureru",
-        matcher_fn: te_kureru,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeKudasaru {
-        name: "te_kudasaru",
-        matcher_fn: te_kudasaru,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeAgeru {
-        name: "te_ageru",
-        matcher_fn: te_ageru,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeOku {
-        name: "te_oku",
-        matcher_fn: te_oku,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeMorau {
-        name: "te_morau",
-        matcher_fn: te_morau,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeMo {
-        name: "te_mo",
-        matcher_fn: te_mo,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeSumimasen {
-        name: "te_sumimasen",
-        matcher_fn: te_sumimasen,
-        priority: 11,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeKureteArigatou {
-        name: "te_kurete_arigatou",
-        matcher_fn: te_kurete_arigatou,
-        priority: 13,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeYokatta {
-        name: "te_yokatta",
-        matcher_fn: te_yokatta,
-        priority: 11,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TeItadakemasenKa {
-        name: "te_itadakemasen_ka",
-        matcher_fn: te_itadakemasen_ka,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TariSuruSingle {
-        name: "tari_suru_single",
-        matcher_fn: tari_suru_single,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TariSuru {
-        name: "tari_suru",
-        matcher_fn: tari_suru,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    BaConditional {
-        name: "ba_conditional",
-        matcher_fn: ba_conditional,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TaraConditional {
-        name: "tara_conditional",
-        matcher_fn: tara_conditional,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    TaraDou {
-        name: "tara_dou",
-        matcher_fn: tara_dou,
-        priority: 12,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    BaYokatta {
-        name: "ba_yokatta",
-        matcher_fn: ba_yokatta,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    PotentialGodan {
-        name: "potential_godan",
-        matcher_fn: potential_godan,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    PotentialGaVerb {
-        name: "potential_ga_verb",
-        matcher_fn: potential_ga_verb,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    PotentialGaIchidan {
-        name: "potential_ga_ichidan",
-        matcher_fn: potential_ga_ichidan,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    PassiveIchidan {
-        name: "passive_ichidan",
-        matcher_fn: passive_ichidan,
-        priority: 4,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    PassiveGodan {
-        name: "passive_godan",
-        matcher_fn: passive_godan,
-        priority: 4,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    Causative {
-        name: "causative",
-        matcher_fn: causative,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    CausativePassive {
-        name: "causative_passive",
-        matcher_fn: causative_passive,
-        priority: 11,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    ShortVolitional {
-        name: "short_volitional",
-        matcher_fn: short_volitional,
-        priority: 6,
-        category: PatternCategory::Conjugation,
-        jlpt: "n4",
-    },
-    Imperative {
-        name: "imperative",
-        matcher_fn: imperative,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    Nagara {
-        name: "nagara",
-        matcher_fn: nagara,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    NakuchaIkenai {
-        name: "nakucha_ikenai",
-        matcher_fn: nakucha_ikenai,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    MustNakereba {
-        name: "must_nakereba",
-        matcher_fn: must_nakereba,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    MustNakuteWa {
-        name: "must_nakute_wa",
-        matcher_fn: must_nakute_wa,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    Naide {
-        name: "naide",
-        matcher_fn: naide,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    NakuteMoIi {
-        name: "nakute_mo_ii",
-        matcher_fn: nakute_mo_ii,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    HazuDesu {
-        name: "hazu_desu",
-        matcher_fn: hazu_desu,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    Tagaru {
-        name: "tagaru",
-        matcher_fn: tagaru,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
+
     Yasui {
-        name: "yasui",
-        matcher_fn: yasui,
-        priority: 6,
+        name: "やすい",
+        matcher_fn: crate::matchers::n4::yasui,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n4",
     },
+
     Nikui {
-        name: "nikui",
-        matcher_fn: nikui,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    Nasai {
-        name: "nasai",
-        matcher_fn: nasai,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    GaHoshii {
-        name: "ga_hoshii",
-        matcher_fn: ga_hoshii,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    ShikaNai {
-        name: "shika_nai",
-        matcher_fn: shika_nai,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    ToIu {
-        name: "to_iu",
-        matcher_fn: to_iu,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    DictionaryTo {
-        name: "dictionary_to",
-        matcher_fn: dictionary_to,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    ToIi {
-        name: "to_ii",
-        matcher_fn: to_ii,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    KotoNiSuru {
-        name: "koto_ni_suru",
-        matcher_fn: koto_ni_suru,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    KotoNiNaru {
-        name: "koto_ni_naru",
-        matcher_fn: koto_ni_naru,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    Noni {
-        name: "noni",
-        matcher_fn: noni,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    Nara {
-        name: "nara",
-        matcher_fn: nara,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    Shi {
-        name: "shi",
-        matcher_fn: shi,
-        priority: 3,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    KaDouKa {
-        name: "ka_dou_ka",
-        matcher_fn: ka_dou_ka,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    Mitai {
-        name: "mitai",
-        matcher_fn: mitai,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    MitaiAdjNoun {
-        name: "mitai_adj_noun",
-        matcher_fn: mitai_adj_noun,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    KamoShirenai {
-        name: "kamo_shirenai",
-        matcher_fn: kamo_shirenai,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    KamoShirenaiAdjNoun {
-        name: "kamo_shirenai_adj_noun",
-        matcher_fn: kamo_shirenai_adj_noun,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    KamoShiremasen {
-        name: "kamo_shiremasen",
-        matcher_fn: kamo_shiremasen,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    KamoShiremasenAdjNoun {
-        name: "kamo_shiremasen_adj_noun",
-        matcher_fn: kamo_shiremasen_adj_noun,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    ONiNaru {
-        name: "o_ni_naru",
-        matcher_fn: o_ni_naru,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    SouDesuAppearance {
-        name: "sou_desu_appearance",
-        matcher_fn: sou_desu_appearance,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    SouDesuHearsay {
-        name: "sou_desu_hearsay",
-        matcher_fn: sou_desu_hearsay,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n4",
-    },
-    SouDesuHearsayNa {
-        name: "sou_desu_hearsay_na",
-        matcher_fn: sou_desu_hearsay_na,
-        priority: 9,
+        name: "にくい",
+        matcher_fn: crate::matchers::n4::nikui,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n4",
     },
 
-    // ========== N3 PATTERNS (60 total) ==========
+    Dandan {
+        name: "だんだん",
+        matcher_fn: crate::matchers::n4::dandan,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Dondon {
+        name: "どんどん",
+        matcher_fn: crate::matchers::n4::dondon,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Uff5eRa {
+        name: "～ら",
+        matcher_fn: crate::matchers::n4::uff5e_ra,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Teiku {
+        name: "ていく",
+        matcher_fn: crate::matchers::n4::teiku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tekuru {
+        name: "てくる ",
+        matcher_fn: crate::matchers::n4::tekuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Kata {
+        name: "かた",
+        matcher_fn: crate::matchers::n4::kata,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Dakede {
+        name: "だけで",
+        matcher_fn: crate::matchers::n4::dakede,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    DagaU30fbDesuga {
+        name: "だが・ですが",
+        matcher_fn: crate::matchers::n4::daga_u30fb_desuga,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Nakute {
+        name: "なくて",
+        matcher_fn: crate::matchers::n4::nakute,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Naide {
+        name: "ないで",
+        matcher_fn: crate::matchers::n4::naide,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    VerbUff3bReruU30fbRareruUff3d {
+        name: "Verb［れる・られる］",
+        matcher_fn: crate::matchers::n4::verb_uff3b_reru_u30fb_rareru_uff3d,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    TadoushiU30fbJidoushi {
+        name: "他動詞・自動詞",
+        matcher_fn: crate::matchers::n4::tadoushi_u30fb_jidoushi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Naosu {
+        name: "なおす",
+        matcher_fn: crate::matchers::n4::naosu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Toiukoto {
+        name: "ということ",
+        matcher_fn: crate::matchers::n4::toiukoto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Toki {
+        name: "とき",
+        matcher_fn: crate::matchers::n4::toki,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Mazu {
+        name: "まず",
+        matcher_fn: crate::matchers::n4::mazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Made {
+        name: "まで",
+        matcher_fn: crate::matchers::n4::made,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Madeni {
+        name: "までに",
+        matcher_fn: crate::matchers::n4::madeni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Mata {
+        name: "また",
+        matcher_fn: crate::matchers::n4::mata,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
     Hajimeru {
-        name: "hajimeru",
-        matcher_fn: hajimeru,
-        priority: 7,
+        name: "はじめる",
+        matcher_fn: crate::matchers::n4::hajimeru,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    WoHajime {
-        name: "wo_hajime",
-        matcher_fn: wo_hajime,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Rashii {
-        name: "rashii",
-        matcher_fn: rashii,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    YouNiNaru {
-        name: "you_ni_naru",
-        matcher_fn: you_ni_naru,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    YouNiSuru {
-        name: "you_ni_suru",
-        matcher_fn: you_ni_suru,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    YouNiStandalone {
-        name: "you_ni_standalone",
-        matcher_fn: you_ni_standalone,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    TameNi {
-        name: "tame_ni",
-        matcher_fn: tame_ni,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Zu {
-        name: "zu",
-        matcher_fn: zu,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Gachi {
-        name: "gachi",
-        matcher_fn: gachi,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    PpoiSplit {
-        name: "ppoi_split",
-        matcher_fn: ppoi_split,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    PpoiCompound {
-        name: "ppoi_compound",
-        matcher_fn: ppoi_compound,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    TaBakari {
-        name: "ta_bakari",
-        matcher_fn: ta_bakari,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    TaMonoDa {
-        name: "ta_mono_da",
-        matcher_fn: ta_mono_da,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    TaMonoDesu {
-        name: "ta_mono_desu",
-        matcher_fn: ta_mono_desu,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    NiChigainai {
-        name: "ni_chigainai",
-        matcher_fn: ni_chigainai,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Mama {
-        name: "mama",
-        matcher_fn: mama,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Furi {
-        name: "furi",
-        matcher_fn: furi,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    NaiUchiNi {
-        name: "nai_uchi_ni",
-        matcher_fn: nai_uchi_ni,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    ToShitara {
-        name: "to_shitara",
-        matcher_fn: to_shitara,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    TsumorideDe {
-        name: "tsumori_de",
-        matcher_fn: tsumori_de,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Bakari {
-        name: "bakari",
-        matcher_fn: bakari,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    KiriPast {
-        name: "kiri_past",
-        matcher_fn: kiri_past,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    KiriNoun {
-        name: "kiri_noun",
-        matcher_fn: kiri_noun,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Kawari {
-        name: "kawari",
-        matcher_fn: kawari,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    OkageDe {
-        name: "okage_de",
-        matcher_fn: okage_de,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Sae {
-        name: "sae",
-        matcher_fn: sae,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    SaeBa {
-        name: "sae_ba",
-        matcher_fn: sae_ba,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Koso {
-        name: "koso",
-        matcher_fn: koso,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Masaka {
-        name: "masaka",
-        matcher_fn: masaka,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Mushiro {
-        name: "mushiro",
-        matcher_fn: mushiro,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Sudeni {
-        name: "sudeni",
-        matcher_fn: sudeni,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Tsui {
-        name: "tsui",
-        matcher_fn: tsui,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Doushitemo {
-        name: "doushitemo",
-        matcher_fn: doushitemo,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Seizei {
-        name: "seizei",
-        matcher_fn: seizei,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Douyara {
-        name: "douyara",
-        matcher_fn: douyara,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Kaette {
-        name: "kaette",
-        matcher_fn: kaette,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Sarani {
-        name: "sarani",
-        matcher_fn: sarani,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Wazawaza {
-        name: "wazawaza",
-        matcher_fn: wazawaza,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Nakanaka {
-        name: "nakanaka",
-        matcher_fn: nakanaka,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Ittai {
-        name: "ittai",
-        matcher_fn: ittai,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    // Suffixes (2)
-    TekiSuffix {
-        name: "teki_suffix",
-        matcher_fn: teki_suffix,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    TateSuffix {
-        name: "tate_suffix",
-        matcher_fn: tate_suffix,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    NiYotte {
-        name: "ni_yotte",
-        matcher_fn: ni_yotte,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    NiYoruTo {
-        name: "ni_yoru_to",
-        matcher_fn: ni_yoru_to,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    OiteCompound {
-        name: "oite_compound",
-        matcher_fn: oite_compound,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    OiteSplit {
-        name: "oite_split",
-        matcher_fn: oite_split,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Toshite {
-        name: "toshite",
-        matcher_fn: toshite,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    NiKansuru {
-        name: "ni_kansuru",
-        matcher_fn: ni_kansuru,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    // No More Than (1)
-    Suginai {
-        name: "suginai",
-        matcher_fn: suginai,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    ToTomoni {
-        name: "to_tomoni",
-        matcher_fn: to_tomoni,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    TeHajimete {
-        name: "te_hajimete",
-        matcher_fn: te_hajimete,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Gurai {
-        name: "gurai",
-        matcher_fn: gurai,
-        priority: 5,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    BaHodo {
-        name: "ba_hodo",
-        matcher_fn: ba_hodo,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    // Limitation (2)
-    Kagiru {
-        name: "kagiru",
-        matcher_fn: kagiru,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-    Mai {
-        name: "mai",
-        matcher_fn: mai,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
+        jlpt: "n4",
     },
 
-    // ========== N2 PATTERNS (70 total) ==========
-    // Adverbs (17)
-    Toutei {
-        name: "toutei",
-        matcher_fn: toutei,
-        priority: 5,
+    Owaru {
+        name: "おわる",
+        matcher_fn: crate::matchers::n4::owaru,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Yoppodo {
-        name: "yoppodo",
-        matcher_fn: yoppodo,
-        priority: 5,
+
+    Goro {
+        name: "ごろ",
+        matcher_fn: crate::matchers::n4::goro,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Iyoiyo {
-        name: "iyoiyo",
-        matcher_fn: iyoiyo,
-        priority: 5,
+
+    Atode {
+        name: "あとで",
+        matcher_fn: crate::matchers::n4::atode,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Sekkaku {
-        name: "sekkaku",
-        matcher_fn: sekkaku,
-        priority: 5,
+
+    Teita {
+        name: "ていた ",
+        matcher_fn: crate::matchers::n4::teita,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Yappari {
-        name: "yappari",
-        matcher_fn: yappari,
-        priority: 5,
+
+    NiFrequency {
+        name: "に (Frequency)",
+        matcher_fn: crate::matchers::n4::ni_frequency,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
+
+    Toutou {
+        name: "とうとう",
+        matcher_fn: crate::matchers::n4::toutou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Yori {
+        name: "より",
+        matcher_fn: crate::matchers::n4::yori,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Gotoni {
+        name: "ごとに",
+        matcher_fn: crate::matchers::n4::gotoni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
     Narubeku {
-        name: "narubeku",
-        matcher_fn: narubeku,
-        priority: 5,
+        name: "なるべく",
+        matcher_fn: crate::matchers::n4::narubeku,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Tashika {
-        name: "tashika",
-        matcher_fn: tashika,
-        priority: 5,
+
+    Rutokoroda {
+        name: "るところだ",
+        matcher_fn: crate::matchers::n4::rutokoroda,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    ManIchiKanji {
-        name: "man_ichi",
-        matcher_fn: man_ichi_kanji,
-        priority: 5,
+
+    Noni {
+        name: "のに ",
+        matcher_fn: crate::matchers::n4::noni,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    ManIchiKana {
-        name: "man_ichi_kana",
-        matcher_fn: man_ichi_kana,
-        priority: 5,
+
+    Toomou {
+        name: "とおもう",
+        matcher_fn: crate::matchers::n4::toomou,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    NanishiroKanji {
-        name: "nanishiro_kanji",
-        matcher_fn: nanishiro_kanji,
-        priority: 5,
+
+    Nado {
+        name: "など",
+        matcher_fn: crate::matchers::n4::nado,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    NanishiroKana {
-        name: "nanishiro_kana",
-        matcher_fn: nanishiro_kana,
-        priority: 5,
+
+    Mitai {
+        name: "みたい",
+        matcher_fn: crate::matchers::n4::mitai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    SoreniShitemo {
-        name: "sorenishitemo",
-        matcher_fn: soreni_shitemo,
-        priority: 5,
+
+    Koto {
+        name: "こと",
+        matcher_fn: crate::matchers::n4::koto,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Tachimachi {
-        name: "tachimachi",
-        matcher_fn: tachimachi,
-        priority: 5,
+
+    Sou {
+        name: "そう ",
+        matcher_fn: crate::matchers::n4::sou,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    ItsunoManikaKanji {
-        name: "itsunomanika_split",
-        matcher_fn: itsunomanika_split,
-        priority: 5,
+
+    Sa {
+        name: "さ",
+        matcher_fn: crate::matchers::n4::sa,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    ItsunoManikaKana {
-        name: "itsunomanika",
-        matcher_fn: itsunomanika,
-        priority: 5,
+
+    TokaUff5eToka {
+        name: "とか～とか",
+        matcher_fn: crate::matchers::n4::toka_uff5e_toka,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Aete {
-        name: "aete",
-        matcher_fn: aete,
-        priority: 5,
+
+    Souiu {
+        name: "そういう",
+        matcher_fn: crate::matchers::n4::souiu,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Semete {
-        name: "semete",
-        matcher_fn: semete,
-        priority: 5,
+
+    VerbYou {
+        name: "Verb[よう]",
+        matcher_fn: crate::matchers::n4::verb_you,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // Unavoidably/Properly (3)
-    YamouezuVerb {
-        name: "yamuoezu_verb",
-        matcher_fn: yamuoezu_verb,
-        priority: 7,
+
+    Youda {
+        name: "ようだ",
+        matcher_fn: crate::matchers::n4::youda,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    RouNi {
-        name: "rou_ni",
-        matcher_fn: rou_ni,
-        priority: 5,
+
+    Zenzen {
+        name: "ぜんぜん",
+        matcher_fn: crate::matchers::n4::zenzen,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    SasuganiSplit {
-        name: "sasugani_split",
-        matcher_fn: sasugani_split,
-        priority: 6,
+
+    Kana {
+        name: "かな",
+        matcher_fn: crate::matchers::n4::kana,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // After All (2)
-    NantottemmoKanji {
-        name: "nantoittemo_split_kanji",
-        matcher_fn: nantoittemo_split_kanji,
-        priority: 9,
+
+    AmariUff5eNai {
+        name: "あまり～ない",
+        matcher_fn: crate::matchers::n4::amari_uff5e_nai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    NantottemmoKana {
-        name: "nantoittemo_adverb_split",
-        matcher_fn: nantoittemo_adverb_split,
-        priority: 9,
+
+    Ba {
+        name: "ば",
+        matcher_fn: crate::matchers::n4::ba,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // Ability/Impossibility (3)
-    Kaneru {
-        name: "kaneru",
-        matcher_fn: kaneru,
-        priority: 7,
+
+    Nara {
+        name: "なら",
+        matcher_fn: crate::matchers::n4::nara,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Kanenai {
-        name: "kanenai",
-        matcher_fn: kanenai,
-        priority: 8,
+
+    Garu {
+        name: "がる",
+        matcher_fn: crate::matchers::n4::garu,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Tamaranai {
-        name: "tamaranai",
-        matcher_fn: tamaranai,
-        priority: 6,
+
+    Gasuru {
+        name: "がする",
+        matcher_fn: crate::matchers::n4::gasuru,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // Without/Consist Of (3)
-    NaideSumu {
-        name: "naide_sumu_split",
-        matcher_fn: naide_sumu_split,
-        priority: 9,
+
+    Tagaru {
+        name: "たがる",
+        matcher_fn: crate::matchers::n4::tagaru,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    KaraNaru {
-        name: "kara_naru",
-        matcher_fn: kara_naru,
-        priority: 7,
+
+    Kamoshirenai {
+        name: "かもしれない",
+        matcher_fn: crate::matchers::n4::kamoshirenai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    YoriShikataGanaiKanji {
-        name: "yori_shikata_ganai",
-        matcher_fn: yori_shikata_ganai,
-        priority: 9,
+
+    MitainiU30fbMitaina {
+        name: "みたいに・みたいな",
+        matcher_fn: crate::matchers::n4::mitaini_u30fb_mitaina,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    YoriShikataGanaiKana {
-        name: "yori_shikata_ganai_kana",
-        matcher_fn: yori_shikata_ganai_kana,
-        priority: 9,
+
+    SouniU30fbSouna {
+        name: "そうに・そうな ",
+        matcher_fn: crate::matchers::n4::souni_u30fb_souna,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // After Doing (1)
-    TaUeDe {
-        name: "ta_ue_de",
-        matcher_fn: ta_ue_de,
-        priority: 9,
+
+    NoyouniU30fbNoyouna {
+        name: "のように・のような ",
+        matcher_fn: crate::matchers::n4::noyouni_u30fb_noyouna,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // Correspond To (2)
-    NiAtaruCompound {
-        name: "ni_ataru_compound",
-        matcher_fn: ni_ataru_compound,
-        priority: 7,
+
+    U301cYoutoomouU30fbU301cOutoomou {
+        name: "〜ようと思う・〜おうと思う",
+        matcher_fn: crate::matchers::n4::u301c_youtoomou_u30fb_u301c_outoomou,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    NiAtaruKanji {
-        name: "ni_ataru_compound_kanji",
-        matcher_fn: ni_ataru_kanji,
-        priority: 7,
+
+    KuU30fbNi {
+        name: "く・に",
+        matcher_fn: crate::matchers::n4::ku_u30fb_ni,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // Like/Through (3)
-    // GotoshiKana {
-    //     name: "gotoshi_kana",
-    //     matcher_fn: gotoshi,
-    //     priority: 6,
-    //     category: PatternCategory::Construction,
-    //     jlpt: "n2",
-    // },
-    GotoshiKanji {
-        name: "gotoshi_kanji",
-        matcher_fn: gotoshi_kanji,
-        priority: 6,
+
+    Uff5eNisuruU30fbUff5eKusuru {
+        name: "～にする・～くする",
+        matcher_fn: crate::matchers::n4::uff5e_nisuru_u30fb_uff5e_kusuru,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    TsuujiteVerbKanji {
-        name: "tsuujite_verb_kanji",
-        matcher_fn: tsuujite_verb_kanji,
-        priority: 7,
+
+    Toii {
+        name: "といい",
+        matcher_fn: crate::matchers::n4::toii,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // TsuujiteVerbKana {
-    //     name: "tsuujite_verb_kana",
-    //     matcher_fn: tsuujite_verb_kana,
-    //     priority: 7,
-    //     category: PatternCategory::Construction,
-    //     jlpt: "n2",
-    // },
-    // Amount To (1)
-    Noboru {
-        name: "noboru",
-        matcher_fn: noboru,
-        priority: 7,
+
+    Youninaru {
+        name: "ようになる",
+        matcher_fn: crate::matchers::n4::youninaru,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // While/And (2)
-    GateraSplit {
-        name: "gatera_split",
-        matcher_fn: gatera_split,
-        priority: 8,
+
+    MaiUff5eNoyouni {
+        name: "まい～のように",
+        matcher_fn: crate::matchers::n4::mai_uff5e_noyouni,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    Oyobi {
-        name: "oyobi",
-        matcher_fn: oyobi,
-        priority: 7,
+
+    Janaika {
+        name: "じゃないか",
+        matcher_fn: crate::matchers::n4::janaika,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    // Perhaps Because/Therefore (2)
-    SeiKa {
-        name: "sei_ka",
-        matcher_fn: sei_ka,
-        priority: 7,
+
+    RashiiU2460 {
+        name: "らしい ①",
+        matcher_fn: crate::matchers::n4::rashii_u2460,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    YueniSplit {
-        name: "yueni_split",
-        matcher_fn: yueni_split,
-        priority: 7,
+
+    Teoku {
+        name: "ておく",
+        matcher_fn: crate::matchers::n4::teoku,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    IppouDewaSplit {
-        name: "ippou_dewa_split",
-        matcher_fn: ippou_dewa_split,
-        priority: 8,
+
+    Gahoshii {
+        name: "がほしい",
+        matcher_fn: crate::matchers::n4::gahoshii,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    MonoNo {
-        name: "mono_no",
-        matcher_fn: mono_no,
-        priority: 6,
+
+    Tehoshii {
+        name: "てほしい",
+        matcher_fn: crate::matchers::n4::tehoshii,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    MonoNoSplit {
-        name: "mono_no_split",
-        matcher_fn: mono_no_split,
-        priority: 6,
+
+    Tokiita {
+        name: "ときいた",
+        matcher_fn: crate::matchers::n4::tokiita,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    KuseNiSplit {
-        name: "kuse_ni_split",
-        matcher_fn: kuse_ni_split,
-        priority: 7,
+
+    Kikoeru {
+        name: "聞こえる",
+        matcher_fn: crate::matchers::n4::kikoeru,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    KaketeHaCompound {
-        name: "kaketeha_compound",
-        matcher_fn: kaketeha_compound,
-        priority: 8,
+
+    Mieru {
+        name: "見える",
+        matcher_fn: crate::matchers::n4::mieru,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    ItaruMadeKana {
-        name: "itaru_made",
-        matcher_fn: itaru_made,
-        priority: 7,
+
+    Dasu {
+        name: "だす",
+        matcher_fn: crate::matchers::n4::dasu,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    ItaruMadeKanji {
-        name: "itaru_made_kanji",
-        matcher_fn: itaru_made_kanji,
-        priority: 7,
+
+    Uff5eDai {
+        name: "～代",
+        matcher_fn: crate::matchers::n4::uff5e_dai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    NiItaruMadeKana {
-        name: "ni_itaru_made",
-        matcher_fn: ni_itaru_made,
-        priority: 8,
+
+    NumberMo {
+        name: "Number + も",
+        matcher_fn: crate::matchers::n4::number_mo,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    NiItaruMadeKanji {
-        name: "ni_itaru_made_kanji",
-        matcher_fn: ni_itaru_made_kanji,
-        priority: 8,
+
+    Hotondo {
+        name: "ほとんど",
+        matcher_fn: crate::matchers::n4::hotondo,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    IgaiNo {
-        name: "igai_no",
-        matcher_fn: igai_no,
-        priority: 7,
+
+    SonnaU30fbKonnaU30fbAnnaU30fbDonna {
+        name: "そんな・こんな・あんな・どんな",
+        matcher_fn: crate::matchers::n4::sonna_u30fb_konna_u30fb_anna_u30fb_donna,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    BaIiNoni {
-        name: "ba_ii_noni",
-        matcher_fn: ba_ii_noni,
-        priority: 9,
+
+    Kaku {
+        name: "各",
+        matcher_fn: crate::matchers::n4::kaku,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    BaYoiNoniSplit {
-        name: "ba_yoi_noni_split",
-        matcher_fn: ba_yoi_noni_split,
-        priority: 11,
+
+    IjouU2460 {
+        name: "以上 ①",
+        matcher_fn: crate::matchers::n4::ijou_u2460,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    WakeDesu {
-        name: "wake_desu",
-        matcher_fn: wake_desu,
-        priority: 7,
+
+    Ika {
+        name: "いか",
+        matcher_fn: crate::matchers::n4::ika,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    WakeDa {
-        name: "wake_da",
-        matcher_fn: wake_da,
-        priority: 7,
+
+    Igai {
+        name: "いがい",
+        matcher_fn: crate::matchers::n4::igai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    YouNaKiGaSuru {
-        name: "you_na_ki_ga_suru",
-        matcher_fn: you_na_ki_ga_suru,
-        priority: 10,
+
+    ZuttoU2460 {
+        name: "ずっと ①",
+        matcher_fn: crate::matchers::n4::zutto_u2460,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    NiKiWoTsukeru {
-        name: "ni_ki_wo_tsukeru",
-        matcher_fn: ni_ki_wo_tsukeru,
-        priority: 9,
+
+    Daitai {
+        name: "だいたい",
+        matcher_fn: crate::matchers::n4::daitai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    BetsuniNaiSplit {
-        name: "betsuni_nai_split",
-        matcher_fn: betsuni_nai_split,
-        priority: 8,
+
+    Nonakade {
+        name: "のなかで",
+        matcher_fn: crate::matchers::n4::nonakade,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    WakeNiwaIkanaiShort {
-        name: "wake_niwa_ikanai_short",
-        matcher_fn: wake_niwa_ikanai_short,
-        priority: 10,
+
+    YouniU30fbYouna {
+        name: "ように・ような",
+        matcher_fn: crate::matchers::n4::youni_u30fb_youna,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    NaiWakeNiwaIkanaiShort {
-        name: "nai_wake_niwa_ikanai_short",
-        matcher_fn: nai_wake_niwa_ikanai_short,
-        priority: 11,
+
+    NumberAmountHa {
+        name: "Number/Amount + は",
+        matcher_fn: crate::matchers::n4::number_amount_ha,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    DewaNaiDarouKaFullSplit {
-        name: "dewa_nai_darou_ka_full_split",
-        matcher_fn: dewa_nai_darou_ka_full_split,
-        priority: 11,
+
+    NanCounterKa {
+        name: "なん + counter + か",
+        matcher_fn: crate::matchers::n4::nan_counter_ka,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    ToIuWakeDewaNaiCompound {
-        name: "to_iu_wake_dewa_nai_compound",
-        matcher_fn: to_iu_wake_dewa_nai_compound,
-        priority: 11,
+
+    Ma {
+        name: "真(っ)",
+        matcher_fn: crate::matchers::n4::ma,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    NiKoshitaKotoWaNai {
-        name: "ni_koshita_koto_wa_nai",
-        matcher_fn: ni_koshita_koto_wa_nai,
-        priority: 11,
+
+    NumberShikaU301cNai {
+        name: "Number + しか〜ない",
+        matcher_fn: crate::matchers::n4::number_shika_u301c_nai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    SashitsukaenaiKana {
-        name: "sashitsukaenai",
-        matcher_fn: sashitsukaenai,
-        priority: 7,
+
+    Uff5eHaUff5eNohitotsuda {
+        name: "～は～の一つだ",
+        matcher_fn: crate::matchers::n4::uff5e_ha_uff5e_nohitotsuda,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    SashitsukaenaiKanji {
-        name: "sashitsukaenai_kanji",
-        matcher_fn: sashitsukaenai_kanji,
-        priority: 7,
+
+    Uff5eNaiUff5eHanai {
+        name: "～ない～はない",
+        matcher_fn: crate::matchers::n4::uff5e_nai_uff5e_hanai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    ToIttemKanji {
-        name: "to_ittemo",
-        matcher_fn: to_ittemo,
-        priority: 8,
+
+    SukoshimoUff5eNai {
+        name: "すこしも～ない",
+        matcher_fn: crate::matchers::n4::sukoshimo_uff5e_nai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    ToIttemKana {
-        name: "to_ittemo_kana",
-        matcher_fn: to_ittemo_kana,
-        priority: 8,
+
+    Sukunakunai {
+        name: "すくなくない",
+        matcher_fn: crate::matchers::n4::sukunakunai,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    GaKiNiNaru {
-        name: "ga_ki_ni_naru",
-        matcher_fn: ga_ki_ni_naru,
-        priority: 9,
+
+    Baaiha {
+        name: "ばあいは",
+        matcher_fn: crate::matchers::n4::baaiha,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    OmouYouNi {
-        name: "omou_you_ni",
-        matcher_fn: omou_you_ni,
-        priority: 8,
+
+    VerbTe2 {
+        name: "Verb[て]",
+        matcher_fn: crate::matchers::n4::verb_te_2,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    MonoDesukara {
-        name: "mono_desukara",
-        matcher_fn: mono_desukara,
-        priority: 8,
+
+    Teyokatta {
+        name: "てよかった",
+        matcher_fn: crate::matchers::n4::teyokatta,
+        priority: 1,
         category: PatternCategory::Construction,
-        jlpt: "n2",
+        jlpt: "n4",
     },
-    MonoDakara {
-        name: "mono_dakara",
-        matcher_fn: mono_dakara,
-        priority: 8,
+
+    VerbUff3bSeruU30fbSaseruUff3d {
+        name: "Verb［せる・させる］",
+        matcher_fn: crate::matchers::n4::verb_uff3b_seru_u30fb_saseru_uff3d,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Toittemoii {
+        name: "といってもいい",
+        matcher_fn: crate::matchers::n4::toittemoii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Temo {
+        name: "ても",
+        matcher_fn: crate::matchers::n4::temo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    TeshimauU30fbChau {
+        name: "てしまう・ちゃう",
+        matcher_fn: crate::matchers::n4::teshimau_u30fb_chau,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    VerbTeB2 {
+        name: "Verb[て] + B",
+        matcher_fn: crate::matchers::n4::verb_te_b_2,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    CausativePassive {
+        name: "Causative-Passive",
+        matcher_fn: crate::matchers::n4::causative_passive,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    VerbTeU30fbNounDeB {
+        name: "Verb[て]・Noun[で] + B",
+        matcher_fn: crate::matchers::n4::verb_te_u30fb_noun_de_b,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tearu {
+        name: "てある ",
+        matcher_fn: crate::matchers::n4::tearu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    YouniUff5eTehoshii {
+        name: "ように～てほしい",
+        matcher_fn: crate::matchers::n4::youni_uff5e_tehoshii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Teiruaidani {
+        name: "ているあいだに",
+        matcher_fn: crate::matchers::n4::teiruaidani,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Nakutemoii {
+        name: "なくてもいい",
+        matcher_fn: crate::matchers::n4::nakutemoii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Temiru {
+        name: "てみる",
+        matcher_fn: crate::matchers::n4::temiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tesumimasen {
+        name: "てすみません",
+        matcher_fn: crate::matchers::n4::tesumimasen,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Teageru {
+        name: "てあげる",
+        matcher_fn: crate::matchers::n4::teageru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tekureru {
+        name: "てくれる",
+        matcher_fn: crate::matchers::n4::tekureru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Temorau {
+        name: "てもらう",
+        matcher_fn: crate::matchers::n4::temorau,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Nasai {
+        name: "なさい",
+        matcher_fn: crate::matchers::n4::nasai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    VerbNaide {
+        name: "Verb[ないで]",
+        matcher_fn: crate::matchers::n4::verb_naide,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tekuretearigatou {
+        name: "てくれてありがとう",
+        matcher_fn: crate::matchers::n4::tekuretearigatou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    TekurenaiU30fbTemoraenai {
+        name: "てくれない・てもらえない",
+        matcher_fn: crate::matchers::n4::tekurenai_u30fb_temoraenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Uff5eNodarouka {
+        name: "～のだろうか",
+        matcher_fn: crate::matchers::n4::uff5e_nodarouka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    OUff5eNinaru {
+        name: "お～になる ",
+        matcher_fn: crate::matchers::n4::o_uff5e_ninaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Nasaru {
+        name: "なさる",
+        matcher_fn: crate::matchers::n4::nasaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    OUff5eKudasai {
+        name: "お～ください ",
+        matcher_fn: crate::matchers::n4::o_uff5e_kudasai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Irassharu {
+        name: "いらっしゃる",
+        matcher_fn: crate::matchers::n4::irassharu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Gozaimasu {
+        name: "ございます",
+        matcher_fn: crate::matchers::n4::gozaimasu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Degozaimasu {
+        name: "でございます",
+        matcher_fn: crate::matchers::n4::degozaimasu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    OU301cSuru {
+        name: "お〜する",
+        matcher_fn: crate::matchers::n4::o_u301c_suru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Itasu {
+        name: "いたす",
+        matcher_fn: crate::matchers::n4::itasu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Teitadakemasenka {
+        name: "ていただけませんか",
+        matcher_fn: crate::matchers::n4::teitadakemasenka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tara {
+        name: "たら",
+        matcher_fn: crate::matchers::n4::tara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    HokaniMoU30fbHokaNiHa {
+        name: "ほかに(も)・ほか(に)は",
+        matcher_fn: crate::matchers::n4::hokani_mo_u30fb_hoka_ni_ha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Gahitsuyou {
+        name: "がひつよう",
+        matcher_fn: crate::matchers::n4::gahitsuyou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Sonnani {
+        name: "そんなに",
+        matcher_fn: crate::matchers::n4::sonnani,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Hitsuyougaaru {
+        name: "ひつようがある",
+        matcher_fn: crate::matchers::n4::hitsuyougaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tatoeba {
+        name: "たとえば",
+        matcher_fn: crate::matchers::n4::tatoeba,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    ReruU30fbRareruPotential {
+        name: "れる・られる (Potential)",
+        matcher_fn: crate::matchers::n4::reru_u30fb_rareru_potential,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    NdakedoU30fbNdesuga {
+        name: "んだけど・んですが",
+        matcher_fn: crate::matchers::n4::ndakedo_u30fb_ndesuga,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Hazuda {
+        name: "はずだ",
+        matcher_fn: crate::matchers::n4::hazuda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Kadouka {
+        name: "かどうか",
+        matcher_fn: crate::matchers::n4::kadouka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Naito {
+        name: "ないと",
+        matcher_fn: crate::matchers::n4::naito,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Hazuganai {
+        name: "はずがない",
+        matcher_fn: crate::matchers::n4::hazuganai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    ShikaUff5eNai {
+        name: "しか～ない ",
+        matcher_fn: crate::matchers::n4::shika_uff5e_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Dakedenaku {
+        name: "だけでなく",
+        matcher_fn: crate::matchers::n4::dakedenaku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Kotogadekiru {
+        name: "ことができる",
+        matcher_fn: crate::matchers::n4::kotogadekiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Kai {
+        name: "かい",
+        matcher_fn: crate::matchers::n4::kai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Moshi {
+        name: "もし",
+        matcher_fn: crate::matchers::n4::moshi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    ShiUff5eShi {
+        name: "し～し ",
+        matcher_fn: crate::matchers::n4::shi_uff5e_shi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    DedekiruU30fbKaradekiru {
+        name: "でできる・からできる",
+        matcher_fn: crate::matchers::n4::dedekiru_u30fb_karadekiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Nagara {
+        name: "ながら",
+        matcher_fn: crate::matchers::n4::nagara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tatokoroda {
+        name: "たところだ",
+        matcher_fn: crate::matchers::n4::tatokoroda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Teirutokoroda {
+        name: "ているところだ",
+        matcher_fn: crate::matchers::n4::teirutokoroda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    ToUff5eToU3001Dochiraga {
+        name: "と～と、どちらが ",
+        matcher_fn: crate::matchers::n4::to_uff5e_to_u3001_dochiraga,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Younisuru {
+        name: "ようにする",
+        matcher_fn: crate::matchers::n4::younisuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Nakerebaikenai {
+        name: "なければいけない",
+        matcher_fn: crate::matchers::n4::nakerebaikenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Nakerebanaranai {
+        name: "なければならない",
+        matcher_fn: crate::matchers::n4::nakerebanaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tsuzukeru {
+        name: "つづける",
+        matcher_fn: crate::matchers::n4::tsuzukeru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Youniiu {
+        name: "ようにいう",
+        matcher_fn: crate::matchers::n4::youniiu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Yoteida {
+        name: "よていだ",
+        matcher_fn: crate::matchers::n4::yoteida,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Youniinoru {
+        name: "ようにいのる",
+        matcher_fn: crate::matchers::n4::youniinoru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tabakari {
+        name: "たばかり",
+        matcher_fn: crate::matchers::n4::tabakari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Kasuru {
+        name: "化する",
+        matcher_fn: crate::matchers::n4::kasuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Meireigata {
+        name: "命令形",
+        matcher_fn: crate::matchers::n4::meireigata,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Youni {
+        name: "ように",
+        matcher_fn: crate::matchers::n4::youni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Kashira {
+        name: "かしら",
+        matcher_fn: crate::matchers::n4::kashira,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    RashiiU2461 {
+        name: "らしい ②",
+        matcher_fn: crate::matchers::n4::rashii_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Nimieru {
+        name: "にみえる",
+        matcher_fn: crate::matchers::n4::nimieru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tomieru {
+        name: "とみえる",
+        matcher_fn: crate::matchers::n4::tomieru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Kaze {
+        name: "風",
+        matcher_fn: crate::matchers::n4::kaze,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Gamirareru {
+        name: "がみられる",
+        matcher_fn: crate::matchers::n4::gamirareru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Nikigatsuku {
+        name: "にきがつく",
+        matcher_fn: crate::matchers::n4::nikigatsuku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    U301cDemoU301cDemo {
+        name: "〜でも 〜でも",
+        matcher_fn: crate::matchers::n4::u301c_demo_u301c_demo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Soreni {
+        name: "それに",
+        matcher_fn: crate::matchers::n4::soreni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Sorede {
+        name: "それで",
+        matcher_fn: crate::matchers::n4::sorede,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    QuestionPhraseKa {
+        name: "Question-phrase + か",
+        matcher_fn: crate::matchers::n4::question_phrase_ka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Soredemo {
+        name: "それでも",
+        matcher_fn: crate::matchers::n4::soredemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Taradou {
+        name: "たらどう",
+        matcher_fn: crate::matchers::n4::taradou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tokangaerareteiru {
+        name: "とかんがえられている",
+        matcher_fn: crate::matchers::n4::tokangaerareteiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Tosareteiru {
+        name: "とされている",
+        matcher_fn: crate::matchers::n4::tosareteiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Toiwareteiru {
+        name: "といわれている",
+        matcher_fn: crate::matchers::n4::toiwareteiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    Bayokatta {
+        name: "ばよかった",
+        matcher_fn: crate::matchers::n4::bayokatta,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    // ========== N3 PATTERNS ==========
+
+    Tte {
+        name: "って",
+        matcher_fn: crate::matchers::n3::tte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Baii {
+        name: "ばいい",
+        matcher_fn: crate::matchers::n3::baii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TaraiiU30fbToii {
+        name: "たらいい・といい",
+        matcher_fn: crate::matchers::n3::taraii_u30fb_toii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Naka {
+        name: "中",
+        matcher_fn: crate::matchers::n3::naka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nomani {
+        name: "の間に",
+        matcher_fn: crate::matchers::n3::nomani,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uchini {
+        name: "うちに",
+        matcher_fn: crate::matchers::n3::uchini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Naiuchini {
+        name: "ないうちに",
+        matcher_fn: crate::matchers::n3::naiuchini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Beki {
+        name: "べき",
+        matcher_fn: crate::matchers::n3::beki,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Bekidehanai {
+        name: "べきではない",
+        matcher_fn: crate::matchers::n3::bekidehanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nakanaka {
+        name: " なかなか",
+        matcher_fn: crate::matchers::n3::nakanaka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Amari {
+        name: "あまり",
+        matcher_fn: crate::matchers::n3::amari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NakanakaUff5eNai {
+        name: "なかなか～ない",
+        matcher_fn: crate::matchers::n3::nakanaka_uff5e_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NiyorutoU30fbNiyoreba {
+        name: "によると・によれば",
+        matcher_fn: crate::matchers::n3::niyoruto_u30fb_niyoreba,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NiyotteU30fbNiyoru {
+        name: "によって・による",
+        matcher_fn: crate::matchers::n3::niyotte_u30fb_niyoru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    MattakuUff5eNai {
+        name: "全く～ない",
+        matcher_fn: crate::matchers::n3::mattaku_uff5e_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kotoda {
+        name: "ことだ",
+        matcher_fn: crate::matchers::n3::kotoda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Souda {
+        name: "そうだ ",
+        matcher_fn: crate::matchers::n3::souda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Suruto {
+        name: "すると",
+        matcher_fn: crate::matchers::n3::suruto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sousuruto {
+        name: "そうすると",
+        matcher_fn: crate::matchers::n3::sousuruto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nohaxnohouda {
+        name: "のはXの方だ",
+        matcher_fn: crate::matchers::n3::nohaxnohouda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nountasukata {
+        name: "Noun＋型",
+        matcher_fn: crate::matchers::n3::nountasukata,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tegoran {
+        name: "てごらん",
+        matcher_fn: crate::matchers::n3::tegoran,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    ParticleNo {
+        name: "Particle + の",
+        matcher_fn: crate::matchers::n3::particle_no,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Dearu {
+        name: "である",
+        matcher_fn: crate::matchers::n3::dearu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tokoroga {
+        name: "ところが",
+        matcher_fn: crate::matchers::n3::tokoroga,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tokorode {
+        name: "ところで",
+        matcher_fn: crate::matchers::n3::tokorode,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Hodo {
+        name: "ほど",
+        matcher_fn: crate::matchers::n3::hodo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    BaU301cHodo {
+        name: "ば〜ほど",
+        matcher_fn: crate::matchers::n3::ba_u301c_hodo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    HodoUff5eNai {
+        name: "ほど～ない",
+        matcher_fn: crate::matchers::n3::hodo_uff5e_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    DehaU30fbSoredehaU30fbJaa {
+        name: "では・それでは・じゃあ",
+        matcher_fn: crate::matchers::n3::deha_u30fb_soredeha_u30fb_jaa,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Noni2 {
+        name: "のに",
+        matcher_fn: crate::matchers::n3::noni_2,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TameNi {
+        name: "ため(に)",
+        matcher_fn: crate::matchers::n3::tame_ni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tameni {
+        name: "ために",
+        matcher_fn: crate::matchers::n3::tameni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Toiukotoda {
+        name: "ということだ",
+        matcher_fn: crate::matchers::n3::toiukotoda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Toiunoha {
+        name: "というのは",
+        matcher_fn: crate::matchers::n3::toiunoha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Teki {
+        name: "的",
+        matcher_fn: crate::matchers::n3::teki,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    MonoU30fbMon {
+        name: "もの・もん",
+        matcher_fn: crate::matchers::n3::mono_u30fb_mon,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Monoda {
+        name: "ものだ",
+        matcher_fn: crate::matchers::n3::monoda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Saichuuni {
+        name: "最中に",
+        matcher_fn: crate::matchers::n3::saichuuni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uede {
+        name: "上で",
+        matcher_fn: crate::matchers::n3::uede,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Okagede {
+        name: "おかげで",
+        matcher_fn: crate::matchers::n3::okagede,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nimotozuite {
+        name: "にもとづいて",
+        matcher_fn: crate::matchers::n3::nimotozuite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Ten {
+        name: "点",
+        matcher_fn: crate::matchers::n3::ten,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NazenaraU301cKara {
+        name: "なぜなら〜から",
+        matcher_fn: crate::matchers::n3::nazenara_u301c_kara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Koso {
+        name: "こそ",
+        matcher_fn: crate::matchers::n3::koso,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Karakoso {
+        name: "からこそ",
+        matcher_fn: crate::matchers::n3::karakoso,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Bakari {
+        name: "ばかり",
+        matcher_fn: crate::matchers::n3::bakari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Bakarida {
+        name: "ばかりだ",
+        matcher_fn: crate::matchers::n3::bakarida,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Bakarini {
+        name: "ばかりに",
+        matcher_fn: crate::matchers::n3::bakarini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kotogaaru {
+        name: "ことがある",
+        matcher_fn: crate::matchers::n3::kotogaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kotonisuru {
+        name: "ことにする",
+        matcher_fn: crate::matchers::n3::kotonisuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kotonano {
+        name: "ことなの",
+        matcher_fn: crate::matchers::n3::kotonano,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kotoninaru {
+        name: "ことになる",
+        matcher_fn: crate::matchers::n3::kotoninaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uff5eHaUff5eDeyuumei {
+        name: "～は～で有名",
+        matcher_fn: crate::matchers::n3::uff5e_ha_uff5e_deyuumei,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kotohanai {
+        name: "ことはない",
+        matcher_fn: crate::matchers::n3::kotohanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uff5eToittemo {
+        name: " ～と言っても",
+        matcher_fn: crate::matchers::n3::uff5e_toittemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Toieba {
+        name: "といえば",
+        matcher_fn: crate::matchers::n3::toieba,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Au {
+        name: "合う",
+        matcher_fn: crate::matchers::n3::au,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NiawaseteU30fbNiatta {
+        name: "に合わせて・に合った",
+        matcher_fn: crate::matchers::n3::niawasete_u30fb_niatta,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nitsuite {
+        name: "について",
+        matcher_fn: crate::matchers::n3::nitsuite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uff5eNoSugata {
+        name: "～(の)姿",
+        matcher_fn: crate::matchers::n3::uff5e_no_sugata,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Toieru {
+        name: "と言える",
+        matcher_fn: crate::matchers::n3::toieru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    ChantoU30fbKichinto {
+        name: "ちゃんと・きちんと",
+        matcher_fn: crate::matchers::n3::chanto_u30fb_kichinto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    SonotameNi {
+        name: "そのため(に)",
+        matcher_fn: crate::matchers::n3::sonotame_ni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sonokekka {
+        name: "その結果",
+        matcher_fn: crate::matchers::n3::sonokekka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nikurabete {
+        name: "に比べて",
+        matcher_fn: crate::matchers::n3::nikurabete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    DonnaniU301cTemo {
+        name: "どんなに〜ても",
+        matcher_fn: crate::matchers::n3::donnani_u301c_temo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    IkuraU301cDemo {
+        name: "いくら〜でも",
+        matcher_fn: crate::matchers::n3::ikura_u301c_demo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    U301cKahaU301cNiyottechigau {
+        name: "〜かは〜によって違う",
+        matcher_fn: crate::matchers::n3::u301c_kaha_u301c_niyottechigau,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kanari {
+        name: "かなり",
+        matcher_fn: crate::matchers::n3::kanari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Amarini {
+        name: "あまりに",
+        matcher_fn: crate::matchers::n3::amarini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Wakeda {
+        name: "わけだ",
+        matcher_fn: crate::matchers::n3::wakeda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Wakedehanai {
+        name: "わけではない",
+        matcher_fn: crate::matchers::n3::wakedehanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Todoujini {
+        name: "と同時に",
+        matcher_fn: crate::matchers::n3::todoujini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TokorodattaU2460 {
+        name: "ところだった ①",
+        matcher_fn: crate::matchers::n3::tokorodatta_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Datte {
+        name: "だって",
+        matcher_fn: crate::matchers::n3::datte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Ndatte {
+        name: "んだって",
+        matcher_fn: crate::matchers::n3::ndatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kankeigaaru {
+        name: "関係がある",
+        matcher_fn: crate::matchers::n3::kankeigaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NikansuruU30fbNikanshite {
+        name: "に関する・に関して",
+        matcher_fn: crate::matchers::n3::nikansuru_u30fb_nikanshite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nitaishite {
+        name: "に対して",
+        matcher_fn: crate::matchers::n3::nitaishite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    KuraiU2461 {
+        name: "くらい ②",
+        matcher_fn: crate::matchers::n3::kurai_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    HaUff5eKuraidesu {
+        name: "は～くらいです",
+        matcher_fn: crate::matchers::n3::ha_uff5e_kuraidesu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    SaInterjection {
+        name: "さ - Interjection",
+        matcher_fn: crate::matchers::n3::sa_interjection,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    SaFiller {
+        name: "さ - Filler",
+        matcher_fn: crate::matchers::n3::sa_filler,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    SaCasualYo {
+        name: "さ - Casual よ",
+        matcher_fn: crate::matchers::n3::sa_casual_yo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sorezore {
+        name: "それぞれ",
+        matcher_fn: crate::matchers::n3::sorezore,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sokode {
+        name: "そこで",
+        matcher_fn: crate::matchers::n3::sokode,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Shikanai {
+        name: "しかない",
+        matcher_fn: crate::matchers::n3::shikanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Temokamawanai {
+        name: "てもかまわない",
+        matcher_fn: crate::matchers::n3::temokamawanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uff5eTemoUff5eNakutemo {
+        name: "～ても～なくても",
+        matcher_fn: crate::matchers::n3::uff5e_temo_uff5e_nakutemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Njanai {
+        name: "んじゃない",
+        matcher_fn: crate::matchers::n3::njanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Wakeganai {
+        name: "わけがない",
+        matcher_fn: crate::matchers::n3::wakeganai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    ToshitaraU30fbTosurebaU30fbTosuruto {
+        name: "としたら・とすれば・とすると",
+        matcher_fn: crate::matchers::n3::toshitara_u30fb_tosureba_u30fb_tosuruto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Toshite {
+        name: "として",
+        matcher_fn: crate::matchers::n3::toshite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nishiteha {
+        name: "にしては",
+        matcher_fn: crate::matchers::n3::nishiteha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nishitemo {
+        name: "にしても",
+        matcher_fn: crate::matchers::n3::nishitemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uff5eToiunohajijitsuda {
+        name: "～というのは事実だ",
+        matcher_fn: crate::matchers::n3::uff5e_toiunohajijitsuda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Karaiuto {
+        name: "から言うと",
+        matcher_fn: crate::matchers::n3::karaiuto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nitotte {
+        name: "に取って",
+        matcher_fn: crate::matchers::n3::nitotte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kotokara {
+        name: "ことから",
+        matcher_fn: crate::matchers::n3::kotokara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Toiuyori {
+        name: "というより",
+        matcher_fn: crate::matchers::n3::toiuyori,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Hamochiron {
+        name: "はもちろん",
+        matcher_fn: crate::matchers::n3::hamochiron,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Wohajime {
+        name: "をはじめ",
+        matcher_fn: crate::matchers::n3::wohajime,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tehajimete {
+        name: "て初めて",
+        matcher_fn: crate::matchers::n3::tehajimete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sae {
+        name: "さえ",
+        matcher_fn: crate::matchers::n3::sae,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    SaeU301cBa {
+        name: "さえ〜ば",
+        matcher_fn: crate::matchers::n3::sae_u301c_ba,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tamonoda {
+        name: "たものだ",
+        matcher_fn: crate::matchers::n3::tamonoda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sate {
+        name: "さて",
+        matcher_fn: crate::matchers::n3::sate,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Mushiro {
+        name: "むしろ",
+        matcher_fn: crate::matchers::n3::mushiro,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tsumari {
+        name: "つまり",
+        matcher_fn: crate::matchers::n3::tsumari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sunawachi {
+        name: "即ち",
+        matcher_fn: crate::matchers::n3::sunawachi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kaette {
+        name: "却って",
+        matcher_fn: crate::matchers::n3::kaette,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    MarudeU2026Youda {
+        name: "まるで…ようだ",
+        matcher_fn: crate::matchers::n3::marude_u2026_youda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Younakigasuru {
+        name: "ような気がする",
+        matcher_fn: crate::matchers::n3::younakigasuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TotemoUff5eNai {
+        name: "とても～ない",
+        matcher_fn: crate::matchers::n3::totemo_uff5e_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    BetsuniU301cNai {
+        name: "別に〜ない",
+        matcher_fn: crate::matchers::n3::betsuni_u301c_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Bakaridenaku {
+        name: "ばかりでなく",
+        matcher_fn: crate::matchers::n3::bakaridenaku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    DehanakuteU30fbJanakute {
+        name: "ではなくて・じゃなくて",
+        matcher_fn: crate::matchers::n3::dehanakute_u30fb_janakute,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    DakedenakuTeUff5eMo {
+        name: "だけでなく(て)～も",
+        matcher_fn: crate::matchers::n3::dakedenaku_te_uff5e_mo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Dakeshika {
+        name: "だけしか",
+        matcher_fn: crate::matchers::n3::dakeshika,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    HaiumademonaiU2460 {
+        name: "は言うまでもない ①",
+        matcher_fn: crate::matchers::n3::haiumademonai_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    KesshiteU301cNai {
+        name: "決して〜ない",
+        matcher_fn: crate::matchers::n3::kesshite_u301c_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Wakenihaikanai {
+        name: "わけにはいかない",
+        matcher_fn: crate::matchers::n3::wakenihaikanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    U301cYoutoshinai {
+        name: "〜ようとしない",
+        matcher_fn: crate::matchers::n3::u301c_youtoshinai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Moshikashitara {
+        name: "もしかしたら",
+        matcher_fn: crate::matchers::n3::moshikashitara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TatoeU301cTemo {
+        name: "たとえ〜ても",
+        matcher_fn: crate::matchers::n3::tatoe_u301c_temo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kotoni {
+        name: "ことに",
+        matcher_fn: crate::matchers::n3::kotoni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kotoka {
+        name: "ことか",
+        matcher_fn: crate::matchers::n3::kotoka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uff5eKatoiutoU2460 {
+        name: "～かというと ①",
+        matcher_fn: crate::matchers::n3::uff5e_katoiuto_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uff5eKatoiutoU2461 {
+        name: "～かというと ②",
+        matcher_fn: crate::matchers::n3::uff5e_katoiuto_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Deiuto {
+        name: "で言うと",
+        matcher_fn: crate::matchers::n3::deiuto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uff5eZutsu {
+        name: "～ずつ",
+        matcher_fn: crate::matchers::n3::uff5e_zutsu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    ZuttoU2461 {
+        name: "ずっと ②",
+        matcher_fn: crate::matchers::n3::zutto_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Darake {
+        name: "だらけ",
+        matcher_fn: crate::matchers::n3::darake,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Mottomo {
+        name: "もっとも",
+        matcher_fn: crate::matchers::n3::mottomo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Futatabi {
+        name: "再び",
+        matcher_fn: crate::matchers::n3::futatabi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Mi {
+        name: "み",
+        matcher_fn: crate::matchers::n3::mi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Toonajikurai {
+        name: "と同じくらい",
+        matcher_fn: crate::matchers::n3::toonajikurai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    ToonajideU30fbTochigatte {
+        name: "と同じで・と違って",
+        matcher_fn: crate::matchers::n3::toonajide_u30fb_tochigatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tonarande {
+        name: "と並んで",
+        matcher_fn: crate::matchers::n3::tonarande,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nichigainai {
+        name: "に違いない",
+        matcher_fn: crate::matchers::n3::nichigainai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Atari {
+        name: "当たり",
+        matcher_fn: crate::matchers::n3::atari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Niataru {
+        name: "に当たる",
+        matcher_fn: crate::matchers::n3::niataru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nikagiru {
+        name: "に限る",
+        matcher_fn: crate::matchers::n3::nikagiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tohakagiranai {
+        name: "とは限らない",
+        matcher_fn: crate::matchers::n3::tohakagiranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    MettaniU301cNai {
+        name: "めったに〜ない",
+        matcher_fn: crate::matchers::n3::mettani_u301c_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Warini {
+        name: "割に",
+        matcher_fn: crate::matchers::n3::warini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    VerbVolitionalTosuru {
+        name: "Verb[volitional]とする",
+        matcher_fn: crate::matchers::n3::verb_volitional_tosuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    VerbVolitionalToshitaga {
+        name: "Verb[volitional] + としたが",
+        matcher_fn: crate::matchers::n3::verb_volitional_toshitaga,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    IumademonaiU2461 {
+        name: "言うまでもない ②",
+        matcher_fn: crate::matchers::n3::iumademonai_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Soumonai {
+        name: "そうもない",
+        matcher_fn: crate::matchers::n3::soumonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Naikotohanai {
+        name: "ないことはない",
+        matcher_fn: crate::matchers::n3::naikotohanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NankaU30fbNante {
+        name: "なんか・なんて",
+        matcher_fn: crate::matchers::n3::nanka_u30fb_nante,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    MataU301cMo {
+        name: "又〜も",
+        matcher_fn: crate::matchers::n3::mata_u301c_mo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tsuideni {
+        name: "ついでに",
+        matcher_fn: crate::matchers::n3::tsuideni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Totomoni {
+        name: "と共に",
+        matcher_fn: crate::matchers::n3::totomoni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nitsurete {
+        name: "につれて",
+        matcher_fn: crate::matchers::n3::nitsurete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tadachini {
+        name: "直ちに",
+        matcher_fn: crate::matchers::n3::tadachini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tatotanni {
+        name: "たとたんに",
+        matcher_fn: crate::matchers::n3::tatotanni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Okini {
+        name: "おきに",
+        matcher_fn: crate::matchers::n3::okini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tabini {
+        name: "たびに",
+        matcher_fn: crate::matchers::n3::tabini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Aruiha {
+        name: "あるいは",
+        matcher_fn: crate::matchers::n3::aruiha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nagaramo {
+        name: "ながらも",
+        matcher_fn: crate::matchers::n3::nagaramo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NioiteU30fbNiokeru {
+        name: "において・における",
+        matcher_fn: crate::matchers::n3::nioite_u30fb_niokeru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Daiichi {
+        name: "第一",
+        matcher_fn: crate::matchers::n3::daiichi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Masumasu {
+        name: "ますます",
+        matcher_fn: crate::matchers::n3::masumasu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Ippouda {
+        name: "一方だ",
+        matcher_fn: crate::matchers::n3::ippouda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Ippoude {
+        name: "一方で",
+        matcher_fn: crate::matchers::n3::ippoude,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tsuini {
+        name: "遂に",
+        matcher_fn: crate::matchers::n3::tsuini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sudeni {
+        name: "すでに",
+        matcher_fn: crate::matchers::n3::sudeni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Zuni {
+        name: "ずに",
+        matcher_fn: crate::matchers::n3::zuni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Zunihairarenai {
+        name: "ずにはいられない",
+        matcher_fn: crate::matchers::n3::zunihairarenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nashi {
+        name: "なし",
+        matcher_fn: crate::matchers::n3::nashi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Ari {
+        name: "あり",
+        matcher_fn: crate::matchers::n3::ari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kangaerarenai {
+        name: "考えられない",
+        matcher_fn: crate::matchers::n3::kangaerarenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kanarazushimo {
+        name: "必ずしも ",
+        matcher_fn: crate::matchers::n3::kanarazushimo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Renyoukei {
+        name: "連用形",
+        matcher_fn: crate::matchers::n3::renyoukei,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Muki {
+        name: "向き",
+        matcher_fn: crate::matchers::n3::muki,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Muke {
+        name: "向け",
+        matcher_fn: crate::matchers::n3::muke,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    AgaruU30fbAgeru {
+        name: "上がる・上げる",
+        matcher_fn: crate::matchers::n3::agaru_u30fb_ageru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kiru {
+        name: "切る",
+        matcher_fn: crate::matchers::n3::kiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kirenai {
+        name: "切れない",
+        matcher_fn: crate::matchers::n3::kirenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kiri {
+        name: "きり",
+        matcher_fn: crate::matchers::n3::kiri,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kake {
+        name: "かけ",
+        matcher_fn: crate::matchers::n3::kake,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nikakete {
+        name: "にかけて",
+        matcher_fn: crate::matchers::n3::nikakete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tate {
+        name: "たて",
+        matcher_fn: crate::matchers::n3::tate,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    KomuU2460 {
+        name: "込む ①",
+        matcher_fn: crate::matchers::n3::komu_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    KomuU2461 {
+        name: "込む ②",
+        matcher_fn: crate::matchers::n3::komu_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Furiwosuru {
+        name: "ふりをする",
+        matcher_fn: crate::matchers::n3::furiwosuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    DekirebaU30fbDekitara {
+        name: "できれば・できたら",
+        matcher_fn: crate::matchers::n3::dekireba_u30fb_dekitara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Deyokereba {
+        name: "でよければ",
+        matcher_fn: crate::matchers::n3::deyokereba,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Shidai {
+        name: "次第",
+        matcher_fn: crate::matchers::n3::shidai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Toori {
+        name: "とおり",
+        matcher_fn: crate::matchers::n3::toori,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Demoaru {
+        name: "でもある",
+        matcher_fn: crate::matchers::n3::demoaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Doushitemo {
+        name: "どうしても",
+        matcher_fn: crate::matchers::n3::doushitemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    MoshimoUff5eNaraU30fbMoshimoUff5eDemo {
+        name: "もしも～なら・もしも～でも",
+        matcher_fn: crate::matchers::n3::moshimo_uff5e_nara_u30fb_moshimo_uff5e_demo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Doushi {
+        name: "同士",
+        matcher_fn: crate::matchers::n3::doushi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Gatai {
+        name: "がたい",
+        matcher_fn: crate::matchers::n3::gatai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Masaka {
+        name: "まさか",
+        matcher_fn: crate::matchers::n3::masaka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    ZenshahaU30fbKoushaha {
+        name: "前者は・後者は",
+        matcher_fn: crate::matchers::n3::zenshaha_u30fb_koushaha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Tsui {
+        name: "つい",
+        matcher_fn: crate::matchers::n3::tsui,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Seide {
+        name: "せいで",
+        matcher_fn: crate::matchers::n3::seide,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kuseni {
+        name: "くせに",
+        matcher_fn: crate::matchers::n3::kuseni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Gachi {
+        name: "がち",
+        matcher_fn: crate::matchers::n3::gachi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Gimi {
+        name: "ぎみ",
+        matcher_fn: crate::matchers::n3::gimi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Ppoi {
+        name: "っぽい",
+        matcher_fn: crate::matchers::n3::ppoi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Ppanashi {
+        name: "っぱなし",
+        matcher_fn: crate::matchers::n3::ppanashi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Wazawaza {
+        name: "わざわざ",
+        matcher_fn: crate::matchers::n3::wazawaza,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Ittai {
+        name: "一体",
+        matcher_fn: crate::matchers::n3::ittai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sekkaku {
+        name: "折角",
+        matcher_fn: crate::matchers::n3::sekkaku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kke {
+        name: "っけ",
+        matcher_fn: crate::matchers::n3::kke,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Kawarini {
+        name: "代わりに",
+        matcher_fn: crate::matchers::n3::kawarini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Nikawatte {
+        name: "に代わって",
+        matcher_fn: crate::matchers::n3::nikawatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Dokoroka {
+        name: "どころか",
+        matcher_fn: crate::matchers::n3::dokoroka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Toiuriyuude {
+        name: "という理由で",
+        matcher_fn: crate::matchers::n3::toiuriyuude,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Uff5eHaUff5eTonatteiru {
+        name: "～は～となっている",
+        matcher_fn: crate::matchers::n3::uff5e_ha_uff5e_tonatteiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Sayuusuru {
+        name: "左右する",
+        matcher_fn: crate::matchers::n3::sayuusuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    // ========== N2 PATTERNS ==========
+
+    EruU30fbEru {
+        name: "得る・得る",
+        matcher_fn: crate::matchers::n2::eru_u30fb_eru,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },
 
-    // ========== N1 PATTERNS (107 total) ==========
-    Meku {
-        name: "meku",
-        matcher_fn: meku,
-        priority: 6,
+    U301cEnai {
+        name: "〜得ない",
+        matcher_fn: crate::matchers::n2::u301c_enai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Zaruwoenai {
+        name: "ざるを得ない",
+        matcher_fn: crate::matchers::n2::zaruwoenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Uff5eZaru {
+        name: "～ざる",
+        matcher_fn: crate::matchers::n2::uff5e_zaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tsumoride {
+        name: "つもりで",
+        matcher_fn: crate::matchers::n2::tsumoride,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Douse {
+        name: "どうせ",
+        matcher_fn: crate::matchers::n2::douse,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Semete {
+        name: "せめて",
+        matcher_fn: crate::matchers::n2::semete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Douyara {
+        name: "どうやら",
+        matcher_fn: crate::matchers::n2::douyara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Naniyara {
+        name: "なにやら",
+        matcher_fn: crate::matchers::n2::naniyara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Yorihokanai {
+        name: "よりほかない",
+        matcher_fn: crate::matchers::n2::yorihokanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tashikani {
+        name: "確かに",
+        matcher_fn: crate::matchers::n2::tashikani,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    IchiouU2460 {
+        name: "一応 ①",
+        matcher_fn: crate::matchers::n2::ichiou_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    IchiouU2461 {
+        name: "一応 ②",
+        matcher_fn: crate::matchers::n2::ichiou_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nisouinai {
+        name: "に相違ない",
+        matcher_fn: crate::matchers::n2::nisouinai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Mangaichi {
+        name: "万が一",
+        matcher_fn: crate::matchers::n2::mangaichi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    YouganaiU30fbYoumonai {
+        name: "ようがない・ようもない",
+        matcher_fn: crate::matchers::n2::youganai_u30fb_youmonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nihokanaranai {
+        name: "にほかならない",
+        matcher_fn: crate::matchers::n2::nihokanaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kkonai {
+        name: "っこない",
+        matcher_fn: crate::matchers::n2::kkonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Sorenara {
+        name: "それなら",
+        matcher_fn: crate::matchers::n2::sorenara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    MononaraU2460 {
+        name: "ものなら①",
+        matcher_fn: crate::matchers::n2::mononara_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Uff5eWoUff5eNimakaseru {
+        name: "～を～に任せる",
+        matcher_fn: crate::matchers::n2::uff5e_wo_uff5e_nimakaseru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ikasu {
+        name: "活かす",
+        matcher_fn: crate::matchers::n2::ikasu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ooyoso {
+        name: "おおよそ",
+        matcher_fn: crate::matchers::n2::ooyoso,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Mai {
+        name: "まい",
+        matcher_fn: crate::matchers::n2::mai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ue {
+        name: "上",
+        matcher_fn: crate::matchers::n2::ue,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ueni {
+        name: "上に",
+        matcher_fn: crate::matchers::n2::ueni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    IjouU2461 {
+        name: "以上 ②",
+        matcher_fn: crate::matchers::n2::ijou_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ijouni {
+        name: "以上に",
+        matcher_fn: crate::matchers::n2::ijouni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    TochuuniU30fbTochuude {
+        name: "途中に・途中で",
+        matcher_fn: crate::matchers::n2::tochuuni_u30fb_tochuude,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nakawo {
+        name: "中を",
+        matcher_fn: crate::matchers::n2::nakawo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Wochuushinni {
+        name: "を中心に",
+        matcher_fn: crate::matchers::n2::wochuushinni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Sonoue {
+        name: "その上",
+        matcher_fn: crate::matchers::n2::sonoue,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ueha {
+        name: "上は",
+        matcher_fn: crate::matchers::n2::ueha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Noshitade {
+        name: "の下で",
+        matcher_fn: crate::matchers::n2::noshitade,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    KouNoNoun {
+        name: "後(の) Noun",
+        matcher_fn: crate::matchers::n2::kou_no_noun,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Temae {
+        name: "手前",
+        matcher_fn: crate::matchers::n2::temae,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Womegutte {
+        name: "を巡って",
+        matcher_fn: crate::matchers::n2::womegutte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Niwatatte {
+        name: "にわたって",
+        matcher_fn: crate::matchers::n2::niwatatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nisotte {
+        name: "に沿って",
+        matcher_fn: crate::matchers::n2::nisotte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    TasueU30fbNosue {
+        name: "た末・の末",
+        matcher_fn: crate::matchers::n2::tasue_u30fb_nosue,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nishitagatte {
+        name: "にしたがって",
+        matcher_fn: crate::matchers::n2::nishitagatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    NitomonatteU30fbNitomonai {
+        name: "に伴って・に伴い",
+        matcher_fn: crate::matchers::n2::nitomonatte_u30fb_nitomonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nitsuki {
+        name: "につき",
+        matcher_fn: crate::matchers::n2::nitsuki,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nitsuke {
+        name: "につけ",
+        matcher_fn: crate::matchers::n2::nitsuke,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikakawaru {
+        name: "にかかわる",
+        matcher_fn: crate::matchers::n2::nikakawaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    NimukatteU30fbNimukete {
+        name: "に向かって・に向けて",
+        matcher_fn: crate::matchers::n2::nimukatte_u30fb_nimukete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Gakininaru {
+        name: "が気になる",
+        matcher_fn: crate::matchers::n2::gakininaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikiwotsukeru {
+        name: "に気をつける",
+        matcher_fn: crate::matchers::n2::nikiwotsukeru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Mokamawazu {
+        name: "も構わず",
+        matcher_fn: crate::matchers::n2::mokamawazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kaneru {
+        name: "かねる",
+        matcher_fn: crate::matchers::n2::kaneru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kanenai {
+        name: "かねない",
+        matcher_fn: crate::matchers::n2::kanenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Wonozoite {
+        name: "を除いて",
+        matcher_fn: crate::matchers::n2::wonozoite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikakawarazu {
+        name: "にかかわらず",
+        matcher_fn: crate::matchers::n2::nikakawarazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nimokakawarazu {
+        name: "にもかかわらず",
+        matcher_fn: crate::matchers::n2::nimokakawarazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikagitte {
+        name: "に限って",
+        matcher_fn: crate::matchers::n2::nikagitte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikagirazu {
+        name: "に限らず",
+        matcher_fn: crate::matchers::n2::nikagirazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    NaoU2460 {
+        name: "なお①",
+        matcher_fn: crate::matchers::n2::nao_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    NaoU2461 {
+        name: "なお②",
+        matcher_fn: crate::matchers::n2::nao_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kagiri {
+        name: "限り",
+        matcher_fn: crate::matchers::n2::kagiri,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    ShidaidaU30fbShidaide {
+        name: "次第だ・次第で",
+        matcher_fn: crate::matchers::n2::shidaida_u30fb_shidaide,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Shidaini {
+        name: "次第に",
+        matcher_fn: crate::matchers::n2::shidaini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Uff5eTekoso {
+        name: "～てこそ",
+        matcher_fn: crate::matchers::n2::uff5e_tekoso,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Wotowazu {
+        name: "を問わず",
+        matcher_fn: crate::matchers::n2::wotowazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Yorishikataganai {
+        name: "よりしかたがない",
+        matcher_fn: crate::matchers::n2::yorishikataganai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikoshitakotohanai {
+        name: "に越したことはない",
+        matcher_fn: crate::matchers::n2::nikoshitakotohanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Yousuruni {
+        name: "要するに",
+        matcher_fn: crate::matchers::n2::yousuruni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tekaradenaito {
+        name: "てからでないと",
+        matcher_fn: crate::matchers::n2::tekaradenaito,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nakuhanai {
+        name: "なくはない",
+        matcher_fn: crate::matchers::n2::nakuhanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    NaikotonihaUff5eNai {
+        name: "ないことには～ない",
+        matcher_fn: crate::matchers::n2::naikotoniha_uff5e_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Naidehairarenai {
+        name: "ないではいられない",
+        matcher_fn: crate::matchers::n2::naidehairarenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nebanaranai {
+        name: "ねばならない",
+        matcher_fn: crate::matchers::n2::nebanaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tamae {
+        name: "たまえ",
+        matcher_fn: crate::matchers::n2::tamae,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Uff5eNouchiDe {
+        name: "～のうち(で)",
+        matcher_fn: crate::matchers::n2::uff5e_nouchi_de,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tsutsu {
+        name: "つつ",
+        matcher_fn: crate::matchers::n2::tsutsu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    TsutsuMo {
+        name: "つつ(も)",
+        matcher_fn: crate::matchers::n2::tsutsu_mo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nisaishite {
+        name: "に際して",
+        matcher_fn: crate::matchers::n2::nisaishite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Saini {
+        name: "際に",
+        matcher_fn: crate::matchers::n2::saini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    NiatariU30fbNiatatte {
+        name: "にあたり・にあたって",
+        matcher_fn: crate::matchers::n2::niatari_u30fb_niatatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Wokeikini {
+        name: "を契機に",
+        matcher_fn: crate::matchers::n2::wokeikini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tsutsuaru {
+        name: "つつある",
+        matcher_fn: crate::matchers::n2::tsutsuaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Uff5eTokoroniU30fbUff5eTokorohe {
+        name: "～ところに・～ところへ",
+        matcher_fn: crate::matchers::n2::uff5e_tokoroni_u30fb_uff5e_tokorohe,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    KaU301cNaikanouchini {
+        name: "か〜ないかのうちに",
+        matcher_fn: crate::matchers::n2::ka_u301c_naikanouchini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Gakeni {
+        name: "がけに",
+        matcher_fn: crate::matchers::n2::gakeni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Teiteha {
+        name: "ていては",
+        matcher_fn: crate::matchers::n2::teiteha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    TokorodattaU2461 {
+        name: "ところだった ②",
+        matcher_fn: crate::matchers::n2::tokorodatta_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Dokorodehanai {
+        name: "どころではない",
+        matcher_fn: crate::matchers::n2::dokorodehanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Burini {
+        name: "ぶりに",
+        matcher_fn: crate::matchers::n2::burini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Teha {
+        name: "ては",
+        matcher_fn: crate::matchers::n2::teha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    TehaU301cTeha {
+        name: "ては〜ては",
+        matcher_fn: crate::matchers::n2::teha_u301c_teha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Momata {
+        name: "も又",
+        matcher_fn: crate::matchers::n2::momata,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    KekkaU30fbNokekka {
+        name: "結果・の結果",
+        matcher_fn: crate::matchers::n2::kekka_u30fb_nokekka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Irai {
+        name: "以来",
+        matcher_fn: crate::matchers::n2::irai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nisakidachi {
+        name: "に先立ち",
+        matcher_fn: crate::matchers::n2::nisakidachi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Hatashite {
+        name: "はたして",
+        matcher_fn: crate::matchers::n2::hatashite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kaigaaru {
+        name: "甲斐がある",
+        matcher_fn: crate::matchers::n2::kaigaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Yagate {
+        name: "やがて",
+        matcher_fn: crate::matchers::n2::yagate,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Shitagatte {
+        name: "したがって",
+        matcher_fn: crate::matchers::n2::shitagatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ageku {
+        name: "あげく",
+        matcher_fn: crate::matchers::n2::ageku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kikkake {
+        name: "きっかけ",
+        matcher_fn: crate::matchers::n2::kikkake,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikaketeha {
+        name: "にかけては",
+        matcher_fn: crate::matchers::n2::nikaketeha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tokkuni {
+        name: "とっくに",
+        matcher_fn: crate::matchers::n2::tokkuni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Imadani {
+        name: "未だに",
+        matcher_fn: crate::matchers::n2::imadani,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Womotoni {
+        name: "をもとに",
+        matcher_fn: crate::matchers::n2::womotoni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Karaniha {
+        name: "からには",
+        matcher_fn: crate::matchers::n2::karaniha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Itsunomanika {
+        name: "いつの間にか",
+        matcher_fn: crate::matchers::n2::itsunomanika,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ittan {
+        name: "一旦",
+        matcher_fn: crate::matchers::n2::ittan,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Hamotoyori {
+        name: "はもとより",
+        matcher_fn: crate::matchers::n2::hamotoyori,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Souninai {
+        name: "そうにない",
+        matcher_fn: crate::matchers::n2::souninai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nihanshite {
+        name: "に反して",
+        matcher_fn: crate::matchers::n2::nihanshite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Gyakuni {
+        name: "逆に",
+        matcher_fn: crate::matchers::n2::gyakuni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Hanmen {
+        name: "反面",
+        matcher_fn: crate::matchers::n2::hanmen,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nuku {
+        name: "抜く",
+        matcher_fn: crate::matchers::n2::nuku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nukide {
+        name: "抜きで",
+        matcher_fn: crate::matchers::n2::nukide,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Iyoiyo {
+        name: "いよいよ",
+        matcher_fn: crate::matchers::n2::iyoiyo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Zunisumu {
+        name: "ずに済む",
+        matcher_fn: crate::matchers::n2::zunisumu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nioujite {
+        name: "に応じて",
+        matcher_fn: crate::matchers::n2::nioujite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    WotsuujiteU30fbWotooshite {
+        name: "を通じて・を通して",
+        matcher_fn: crate::matchers::n2::wotsuujite_u30fb_wotooshite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikotaete {
+        name: "に応えて",
+        matcher_fn: crate::matchers::n2::nikotaete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Soretomo {
+        name: "それとも",
+        matcher_fn: crate::matchers::n2::soretomo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nishitara {
+        name: "にしたら",
+        matcher_fn: crate::matchers::n2::nishitara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    NishitemoUff5eNishitemo {
+        name: "にしても～にしても",
+        matcher_fn: crate::matchers::n2::nishitemo_uff5e_nishitemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toshiteha {
+        name: "としては",
+        matcher_fn: crate::matchers::n2::toshiteha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toshitemo {
+        name: "としても",
+        matcher_fn: crate::matchers::n2::toshitemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Sorenishitemo {
+        name: "それにしても",
+        matcher_fn: crate::matchers::n2::sorenishitemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nu {
+        name: "ぬ",
+        matcher_fn: crate::matchers::n2::nu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kotonaku {
+        name: "ことなく",
+        matcher_fn: crate::matchers::n2::kotonaku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nite {
+        name: "にて",
+        matcher_fn: crate::matchers::n2::nite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Niha {
+        name: "には",
+        matcher_fn: crate::matchers::n2::niha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Omouyouni {
+        name: "思うように",
+        matcher_fn: crate::matchers::n2::omouyouni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    KatoomottaraU30fbKatoomouto {
+        name: "かと思ったら・かと思うと",
+        matcher_fn: crate::matchers::n2::katoomottara_u30fb_katoomouto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toiumonodemonai {
+        name: "というものでもない",
+        matcher_fn: crate::matchers::n2::toiumonodemonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tokangaerareru {
+        name: "と考えられる",
+        matcher_fn: crate::matchers::n2::tokangaerareru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toiutenkarakangaeruto {
+        name: "という点から考えると",
+        matcher_fn: crate::matchers::n2::toiutenkarakangaeruto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toiukotoha {
+        name: "ということは",
+        matcher_fn: crate::matchers::n2::toiukotoha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Fuuni {
+        name: "ふうに",
+        matcher_fn: crate::matchers::n2::fuuni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toiukazeni {
+        name: "という風に",
+        matcher_fn: crate::matchers::n2::toiukazeni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Monono {
+        name: "ものの",
+        matcher_fn: crate::matchers::n2::monono,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toiumonoda {
+        name: "というものだ",
+        matcher_fn: crate::matchers::n2::toiumonoda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Karamiruto {
+        name: "から見ると",
+        matcher_fn: crate::matchers::n2::karamiruto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tokorowomiruto {
+        name: "ところを見ると",
+        matcher_fn: crate::matchers::n2::tokorowomiruto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    KarasurutoU30fbKarasureba {
+        name: "からすると・からすれば",
+        matcher_fn: crate::matchers::n2::karasuruto_u30fb_karasureba,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Karashite {
+        name: "からして",
+        matcher_fn: crate::matchers::n2::karashite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Karatoitte {
+        name: "からといって",
+        matcher_fn: crate::matchers::n2::karatoitte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Souieba {
+        name: "そういえば",
+        matcher_fn: crate::matchers::n2::souieba,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    OUff5eNegau {
+        name: "お～願う",
+        matcher_fn: crate::matchers::n2::o_uff5e_negau,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Uff5eTechoudai {
+        name: "～て頂戴",
+        matcher_fn: crate::matchers::n2::uff5e_techoudai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toka {
+        name: "とか",
+        matcher_fn: crate::matchers::n2::toka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    U301cYoudehanaika {
+        name: "〜ようではないか",
+        matcher_fn: crate::matchers::n2::u301c_youdehanaika,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kanoyouda {
+        name: "かのようだ",
+        matcher_fn: crate::matchers::n2::kanoyouda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nodehanaidarouka {
+        name: "のではないだろうか",
+        matcher_fn: crate::matchers::n2::nodehanaidarouka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tetouzenda {
+        name: "て当然だ",
+        matcher_fn: crate::matchers::n2::tetouzenda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nomotouzenda {
+        name: "のも当然だ",
+        matcher_fn: crate::matchers::n2::nomotouzenda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    TattaNo {
+        name: "たった(の)",
+        matcher_fn: crate::matchers::n2::tatta_no,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Osoregaaru {
+        name: "恐れがある",
+        matcher_fn: crate::matchers::n2::osoregaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Osoraku {
+        name: "おそらく",
+        matcher_fn: crate::matchers::n2::osoraku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Monoka {
+        name: "ものか",
+        matcher_fn: crate::matchers::n2::monoka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Omakeni {
+        name: "おまけに",
+        matcher_fn: crate::matchers::n2::omakeni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikimatteiru {
+        name: "に決まっている",
+        matcher_fn: crate::matchers::n2::nikimatteiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kotoninatteiru {
+        name: "ことになっている",
+        matcher_fn: crate::matchers::n2::kotoninatteiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ki {
+        name: "気",
+        matcher_fn: crate::matchers::n2::ki,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ge {
+        name: "げ",
+        matcher_fn: crate::matchers::n2::ge,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kotodakara {
+        name: "ことだから",
+        matcher_fn: crate::matchers::n2::kotodakara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Monodakara {
+        name: "ものだから",
+        matcher_fn: crate::matchers::n2::monodakara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    MonodesukaraU30fbMonode {
+        name: "ものですから・もので",
+        matcher_fn: crate::matchers::n2::monodesukara_u30fb_monode,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Monogaaru {
+        name: "ものがある",
+        matcher_fn: crate::matchers::n2::monogaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Keikougaaru {
+        name: "傾向がある",
+        matcher_fn: crate::matchers::n2::keikougaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Uff5eNiataisuru {
+        name: "～に値する",
+        matcher_fn: crate::matchers::n2::uff5e_niataisuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Teshouganai {
+        name: "てしょうがない",
+        matcher_fn: crate::matchers::n2::teshouganai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Dakemashida {
+        name: "だけましだ",
+        matcher_fn: crate::matchers::n2::dakemashida,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    SaiwaiU30fbSaiwainakotoni {
+        name: "幸い・幸いなことに",
+        matcher_fn: crate::matchers::n2::saiwai_u30fb_saiwainakotoni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    YoudehaU30fbYouja {
+        name: "ようでは・ようじゃ",
+        matcher_fn: crate::matchers::n2::youdeha_u30fb_youja,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Sasuga {
+        name: "さすが",
+        matcher_fn: crate::matchers::n2::sasuga,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    KotohaU301cGa {
+        name: "ことは〜が",
+        matcher_fn: crate::matchers::n2::kotoha_u301c_ga,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Sarani {
+        name: "更に",
+        matcher_fn: crate::matchers::n2::sarani,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    KiyoshiU3005 {
+        name: "精々",
+        matcher_fn: crate::matchers::n2::kiyoshi_u3005,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Wazukani {
+        name: "僅かに",
+        matcher_fn: crate::matchers::n2::wazukani,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Oyobi {
+        name: "および",
+        matcher_fn: crate::matchers::n2::oyobi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tachimachi {
+        name: "たちまち",
+        matcher_fn: crate::matchers::n2::tachimachi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Ikinari {
+        name: "いきなり",
+        matcher_fn: crate::matchers::n2::ikinari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toitta {
+        name: "といった",
+        matcher_fn: crate::matchers::n2::toitta,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Wokomete {
+        name: "を込めて",
+        matcher_fn: crate::matchers::n2::wokomete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nikuwaete {
+        name: "に加えて",
+        matcher_fn: crate::matchers::n2::nikuwaete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nanikarananimade {
+        name: "何から何まで",
+        matcher_fn: crate::matchers::n2::nanikarananimade,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Habetsutoshite {
+        name: "は別として",
+        matcher_fn: crate::matchers::n2::habetsutoshite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Dakeni {
+        name: "だけに",
+        matcher_fn: crate::matchers::n2::dakeni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Dakeha {
+        name: "だけは",
+        matcher_fn: crate::matchers::n2::dakeha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Dakeatte {
+        name: "だけあって",
+        matcher_fn: crate::matchers::n2::dakeatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Naniyori {
+        name: "何より",
+        matcher_fn: crate::matchers::n2::naniyori,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nanitoittemo {
+        name: "何といっても",
+        matcher_fn: crate::matchers::n2::nanitoittemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kananika {
+        name: "か何か",
+        matcher_fn: crate::matchers::n2::kananika,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tenaranai {
+        name: "てならない",
+        matcher_fn: crate::matchers::n2::tenaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nominarazu {
+        name: "のみならず",
+        matcher_fn: crate::matchers::n2::nominarazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Sorenanoni {
+        name: "それなのに",
+        matcher_fn: crate::matchers::n2::sorenanoni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Iwayuru {
+        name: "いわゆる",
+        matcher_fn: crate::matchers::n2::iwayuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nisuginai {
+        name: "にすぎない",
+        matcher_fn: crate::matchers::n2::nisuginai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    MoUff5eBaUff5eMo {
+        name: "も～ば～も",
+        matcher_fn: crate::matchers::n2::mo_uff5e_ba_uff5e_mo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Deshikanai {
+        name: "でしかない",
+        matcher_fn: crate::matchers::n2::deshikanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tetamaranai {
+        name: "てたまらない",
+        matcher_fn: crate::matchers::n2::tetamaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    NiseyoU30fbNishiro {
+        name: "にせよ・にしろ",
+        matcher_fn: crate::matchers::n2::niseyo_u30fb_nishiro,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nanishiro {
+        name: "何しろ",
+        matcher_fn: crate::matchers::n2::nanishiro,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    NishiroUff5eNishiro {
+        name: "にしろ～にしろ",
+        matcher_fn: crate::matchers::n2::nishiro_uff5e_nishiro,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Hatomokaku {
+        name: "はともかく",
+        matcher_fn: crate::matchers::n2::hatomokaku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Naratomokaku {
+        name: "ならともかく",
+        matcher_fn: crate::matchers::n2::naratomokaku,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    YaraUff5eYara {
+        name: "やら～やら",
+        matcher_fn: crate::matchers::n2::yara_uff5e_yara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Shikashinagara {
+        name: "しかしながら",
+        matcher_fn: crate::matchers::n2::shikashinagara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Kotonihanaranai {
+        name: "ことにはならない",
+        matcher_fn: crate::matchers::n2::kotonihanaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Dakenokotohaaru {
+        name: "だけのことはある",
+        matcher_fn: crate::matchers::n2::dakenokotohaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tehanaranai {
+        name: "てはならない",
+        matcher_fn: crate::matchers::n2::tehanaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tehairarenai {
+        name: "てはいられない",
+        matcher_fn: crate::matchers::n2::tehairarenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    RikuniUff5eNai {
+        name: "陸に～ない",
+        matcher_fn: crate::matchers::n2::rikuni_uff5e_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Shikamo {
+        name: "しかも",
+        matcher_fn: crate::matchers::n2::shikamo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tedemo {
+        name: "てでも",
+        matcher_fn: crate::matchers::n2::tedemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tomo {
+        name: "とも",
+        matcher_fn: crate::matchers::n2::tomo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Naiwakenihaikanai {
+        name: "ないわけにはいかない",
+        matcher_fn: crate::matchers::n2::naiwakenihaikanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Toiuwakedehanai {
+        name: "というわけではない",
+        matcher_fn: crate::matchers::n2::toiuwakedehanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Nomomottomoda {
+        name: "のももっともだ",
+        matcher_fn: crate::matchers::n2::nomomottomoda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Tatte {
+        name: "たって",
+        matcher_fn: crate::matchers::n2::tatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    // ========== N1 PATTERNS ==========
+
+    Toiu {
+        name: "という",
+        matcher_fn: crate::matchers::n1::toiu,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    MekuCompound {
-        name: "meku_compound",
-        matcher_fn: meku_compound,
-        priority: 5,
+
+    MamaNi {
+        name: "まま(に)",
+        matcher_fn: crate::matchers::n1::mama_ni,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Mamire {
-        name: "mamire",
-        matcher_fn: mamire,
-        priority: 6,
+
+    Niitarumade {
+        name: "に至るまで",
+        matcher_fn: crate::matchers::n1::niitarumade,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    MamireCompound {
-        name: "mamire_compound",
-        matcher_fn: mamire_compound,
-        priority: 5,
+
+    Tatokorode {
+        name: "たところで",
+        matcher_fn: crate::matchers::n1::tatokorode,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Zukume {
-        name: "zukume",
-        matcher_fn: zukume,
-        priority: 6,
+
+    GotokuU30fbShikiU30fbGotoshi {
+        name: "如く・如き・如し",
+        matcher_fn: crate::matchers::n1::gotoku_u30fb_shiki_u30fb_gotoshi,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Ppanashi {
-        name: "ppanashi",
-        matcher_fn: ppanashi,
-        priority: 6,
+
+    Nitaru {
+        name: "に足る",
+        matcher_fn: crate::matchers::n1::nitaru,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Kiwamaru {
-        name: "kiwamaru",
-        matcher_fn: kiwamaru,
-        priority: 7,
+
+    KiwamarinaiU30fbKiwamaru {
+        name: "極まりない・極まる",
+        matcher_fn: crate::matchers::n1::kiwamarinai_u30fb_kiwamaru,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Kiwamarinai {
-        name: "kiwamarinai",
-        matcher_fn: kiwamarinai,
-        priority: 7,
+
+    Toiedomo {
+        name: "といえども",
+        matcher_fn: crate::matchers::n1::toiedomo,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Beku {
-        name: "beku",
-        matcher_fn: beku,
-        priority: 7,
+
+    Womotte {
+        name: "を以て",
+        matcher_fn: crate::matchers::n1::womotte,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Bekarazu {
-        name: "bekarazu",
-        matcher_fn: bekarazu,
-        priority: 8,
+
+    Kiraigaaru {
+        name: "きらいがある",
+        matcher_fn: crate::matchers::n1::kiraigaaru,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Majiki {
-        name: "majiki",
-        matcher_fn: majiki,
-        priority: 6,
+
+    Naramadashimo {
+        name: "ならまだしも",
+        matcher_fn: crate::matchers::n1::naramadashimo,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
+
+    Mademonai {
+        name: "までもない",
+        matcher_fn: crate::matchers::n1::mademonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TomonarutoU30fbNimonaruto {
+        name: "ともなると・にもなると",
+        matcher_fn: crate::matchers::n1::tomonaruto_u30fb_nimonaruto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Woiikotoni {
+        name: "をいいことに",
+        matcher_fn: crate::matchers::n1::woiikotoni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Ika2 {
+        name: "如何",
+        matcher_fn: crate::matchers::n1::ika_2,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Uff5eRumadeda {
+        name: "～るまでだ",
+        matcher_fn: crate::matchers::n1::uff5e_rumadeda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Niatte {
+        name: "にあって",
+        matcher_fn: crate::matchers::n1::niatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Woyoginakusareru {
+        name: "を余儀なくされる",
+        matcher_fn: crate::matchers::n1::woyoginakusareru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Toha {
+        name: "とは",
+        matcher_fn: crate::matchers::n1::toha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Jaarumaishi {
+        name: "じゃあるまいし",
+        matcher_fn: crate::matchers::n1::jaarumaishi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Tekaratoiumono {
+        name: "てからというもの",
+        matcher_fn: crate::matchers::n1::tekaratoiumono,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Katawara {
+        name: "かたわら",
+        matcher_fn: crate::matchers::n1::katawara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Wokawakirini {
+        name: "を皮切りに",
+        matcher_fn: crate::matchers::n1::wokawakirini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Niitatteha {
+        name: "に至っては",
+        matcher_fn: crate::matchers::n1::niitatteha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     Nari {
-        name: "nari",
-        matcher_fn: nari,
-        priority: 7,
+        name: "なり",
+        matcher_fn: crate::matchers::n1::nari,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    YaInaya {
-        name: "ya_inaya",
-        matcher_fn: ya_inaya,
-        priority: 8,
+
+    TomonakuU30fbTomonashini {
+        name: "ともなく・ともなしに",
+        matcher_fn: crate::matchers::n1::tomonaku_u30fb_tomonashini,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    YaInayaSingle {
-        name: "ya_inaya_single",
-        matcher_fn: ya_inaya_single,
-        priority: 7,
+
+    Nure {
+        name: "塗れ",
+        matcher_fn: crate::matchers::n1::nure,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    GaHayaiKa {
-        name: "ga_hayai_ka",
-        matcher_fn: ga_hayai_ka,
-        priority: 9,
+
+    YougaUff5eMaiga {
+        name: "ようが～まいが",
+        matcher_fn: crate::matchers::n1::youga_uff5e_maiga,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    GaSaigo {
-        name: "ga_saigo",
-        matcher_fn: ga_saigo,
-        priority: 8,
+
+    Karasuru {
+        name: "からする",
+        matcher_fn: crate::matchers::n1::karasuru,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Gotoki {
-        name: "gotoki",
-        matcher_fn: gotoki,
-        priority: 6,
+
+    NishiteU2460 {
+        name: "にして①",
+        matcher_fn: crate::matchers::n1::nishite_u2460,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    WoKawakiriNi {
-        name: "wo_kawakiri_ni",
-        matcher_fn: wo_kawakiri_ni,
-        priority: 9,
+
+    Monowo {
+        name: "ものを",
+        matcher_fn: crate::matchers::n1::monowo,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    WoMotte {
-        name: "wo_motte",
-        matcher_fn: wo_motte,
-        priority: 7,
+
+    Deare {
+        name: "であれ",
+        matcher_fn: crate::matchers::n1::deare,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Nakushiteha {
-        name: "nakushiteha",
-        matcher_fn: nakushiteha,
-        priority: 10,
+
+    WooitehokaniU301cNai {
+        name: "をおいてほかに〜ない",
+        matcher_fn: crate::matchers::n1::wooitehokani_u301c_nai,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Nashini {
-        name: "nashini",
-        matcher_fn: nashini,
-        priority: 7,
+
+    Womotte2 {
+        name: "をもって",
+        matcher_fn: crate::matchers::n1::womotte_2,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Naradewa {
-        name: "naradewa",
-        matcher_fn: naradewa,
-        priority: 7,
+
+    Tohaie {
+        name: "とはいえ",
+        matcher_fn: crate::matchers::n1::tohaie,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    NiTaru {
-        name: "ni_taru",
-        matcher_fn: ni_taru,
-        priority: 8,
+
+    Naradeha {
+        name: "ならでは",
+        matcher_fn: crate::matchers::n1::naradeha,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    Toatte {
-        name: "toatte",
-        matcher_fn: toatte,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    Katagata {
-        name: "katagata",
-        matcher_fn: katagata,
-        priority: 6,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    WoKagiriNi {
-        name: "wo_kagiri_ni",
-        matcher_fn: wo_kagiri_ni,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    WoHete {
-        name: "wo_hete",
-        matcher_fn: wo_hete,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    WoOshite {
-        name: "wo_oshite",
-        matcher_fn: wo_oshite,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    WoFumaete {
-        name: "wo_fumaete",
-        matcher_fn: wo_fumaete,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    TeYamanai {
-        name: "te_yamanai",
-        matcher_fn: te_yamanai,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    ToOmoikiya {
-        name: "to_omoikiya",
-        matcher_fn: to_omoikiya,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    ToAreba {
-        name: "to_areba",
-        matcher_fn: to_areba,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    TaTokoroDe {
-        name: "ta_tokoro_de",
-        matcher_fn: ta_tokoro_de,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    DeAre {
-        name: "de_are",
-        matcher_fn: de_are,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    ToWaIe {
-        name: "to_wa_ie",
-        matcher_fn: to_wa_ie,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    YouGa {
-        name: "you_ga",
-        matcher_fn: you_ga,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    NaiMadeMo {
-        name: "nai_made_mo",
-        matcher_fn: nai_made_mo,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    NagaraMo {
-        name: "nagara_mo",
-        matcher_fn: nagara_mo,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    DewaArumaishi {
-        name: "dewa_arumaishi",
-        matcher_fn: dewa_arumaishi,
-        priority: 11,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    ToShitaTokoroDe {
-        name: "to_shita_tokoro_de",
-        matcher_fn: to_shita_tokoro_de,
-        priority: 11,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    ToIedomo {
-        name: "to_iedomo",
-        matcher_fn: to_iedomo,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    TomoNaruto {
-        name: "tomo_naruto",
-        matcher_fn: tomo_naruto,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    NiTaenai {
-        name: "ni_taenai",
-        matcher_fn: ni_taenai,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    NiSokushite {
-        name: "ni_sokushite",
-        matcher_fn: ni_sokushite,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    ToAimatte {
-        name: "to_aimatte",
-        matcher_fn: to_aimatte,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    WoYosoni {
-        name: "wo_yosoni",
-        matcher_fn: wo_yosoni,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    TemoSashitsukaenai {
-        name: "temo_sashitsukaenai",
-        matcher_fn: temo_sashitsukaenai,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    WoKinjienai {
-        name: "wo_kinjienai",
-        matcher_fn: wo_kinjienai,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    WoYoginakusareru {
-        name: "wo_yoginakusareru",
-        matcher_fn: wo_yoginakusareru,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    TeKaratoiumono {
-        name: "te_karatoiumono",
-        matcher_fn: te_karatoiumono,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    NimoMashite {
-        name: "nimo_mashite",
-        matcher_fn: nimo_mashite,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    NiHikikae {
-        name: "ni_hikikae",
-        matcher_fn: ni_hikikae,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    IkanDe {
-        name: "ikan_de",
-        matcher_fn: ikan_de,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    IkanNiyotte {
-        name: "ikan_niyotte",
-        matcher_fn: ikan_niyotte,
-        priority: 10,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    IkanShidai {
-        name: "ikan_shidai",
-        matcher_fn: ikan_shidai,
-        priority: 11,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    IkanNoDa {
-        name: "ikan_no_da",
-        matcher_fn: ikan_no_da,
-        priority: 11,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    Taritomo {
-        name: "taritomo",
-        matcher_fn: taritomo,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    KiraiGaAru {
-        name: "kirai_ga_aru",
-        matcher_fn: kirai_ga_aru,
-        priority: 9,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    ShimatsuDa {
-        name: "shimatsu_da",
-        matcher_fn: shimatsu_da,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    ShimatsuDatta {
-        name: "shimatsu_datta",
-        matcher_fn: shimatsu_datta,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    Warini {
-        name: "warini",
-        matcher_fn: warini,
-        priority: 7,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
-    Wariniha {
-        name: "wariniha",
-        matcher_fn: wariniha,
-        priority: 8,
-        category: PatternCategory::Construction,
-        jlpt: "n1",
-    },
+
     Sura {
-        name: "sura",
-        matcher_fn: sura,
-        priority: 6,
+        name: "すら",
+        matcher_fn: crate::matchers::n1::sura,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    DeSura {
-        name: "de_sura",
-        matcher_fn: de_sura,
-        priority: 7,
+
+    Atteno {
+        name: "あっての",
+        matcher_fn: crate::matchers::n1::atteno,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    KotoNashini {
-        name: "koto_nashini",
-        matcher_fn: koto_nashini,
-        priority: 8,
+
+    Uff5eTamadeda {
+        name: "～たまでだ",
+        matcher_fn: crate::matchers::n1::uff5e_tamadeda,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    KaiMoNaku {
-        name: "kai_mo_naku",
-        matcher_fn: kai_mo_naku,
-        priority: 7,
+
+    Wohete {
+        name: "を経て",
+        matcher_fn: crate::matchers::n1::wohete,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    DakeMashi {
-        name: "dake_mashi",
-        matcher_fn: dake_mashi,
-        priority: 7,
+
+    Nagarani {
+        name: "ながらに",
+        matcher_fn: crate::matchers::n1::nagarani,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    NaideWaSumanai {
-        name: "naide_wa_sumanai",
-        matcher_fn: naide_wa_sumanai,
-        priority: 8,
+
+    TanariU30fbNari {
+        name: "たなり・なり",
+        matcher_fn: crate::matchers::n1::tanari_u30fb_nari,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    NagaraniUmare {
-        name: "nagarani_umare",
-        matcher_fn: nagarani_umare,
-        priority: 9,
+
+    Nokiwami {
+        name: "の極み",
+        matcher_fn: crate::matchers::n1::nokiwami,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    NagaraniUmareShite {
-        name: "nagarani_umare_shite",
-        matcher_fn: nagarani_umare_shite,
-        priority: 10,
+
+    Nishitemireba {
+        name: "にしてみれば",
+        matcher_fn: crate::matchers::n1::nishitemireba,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    NagaraniSplit {
-        name: "nagarani_split",
-        matcher_fn: nagarani_split,
-        priority: 7,
+
+    Dano {
+        name: "だの",
+        matcher_fn: crate::matchers::n1::dano,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    NagaraniShite {
-        name: "nagarani_shite",
-        matcher_fn: nagarani_shite,
-        priority: 8,
+
+    Akumademo {
+        name: "あくまでも",
+        matcher_fn: crate::matchers::n1::akumademo,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
-    HaOroka {
-        name: "ha_oroka",
-        matcher_fn: ha_oroka,
-        priority: 7,
+
+    Beku {
+        name: "べく",
+        matcher_fn: crate::matchers::n1::beku,
+        priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n1",
+    },
+
+    Tokorowo {
+        name: "ところを",
+        matcher_fn: crate::matchers::n1::tokorowo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Karaaru {
+        name: "からある",
+        matcher_fn: crate::matchers::n1::karaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NishiteU2461 {
+        name: "にして②",
+        matcher_fn: crate::matchers::n1::nishite_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TsuU301cTsu {
+        name: "つ〜つ",
+        matcher_fn: crate::matchers::n1::tsu_u301c_tsu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    AkumadeMo {
+        name: "飽くまで(も)",
+        matcher_fn: crate::matchers::n1::akumade_mo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    DeareU301cDeare {
+        name: "であれ〜であれ",
+        matcher_fn: crate::matchers::n1::deare_u301c_deare,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Tarasaigo {
+        name: "たら最後",
+        matcher_fn: crate::matchers::n1::tarasaigo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Ikanaru {
+        name: "いかなる",
+        matcher_fn: crate::matchers::n1::ikanaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Narini {
+        name: "なりに",
+        matcher_fn: crate::matchers::n1::narini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    ReruU30fbRareruMamani {
+        name: "れる・られる + ままに",
+        matcher_fn: crate::matchers::n1::reru_u30fb_rareru_mamani,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nimatsuwaru {
+        name: "にまつわる",
+        matcher_fn: crate::matchers::n1::nimatsuwaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Taru {
+        name: "たる",
+        matcher_fn: crate::matchers::n1::taru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NaraU301cDe {
+        name: "なら〜で",
+        matcher_fn: crate::matchers::n1::nara_u301c_de,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Womonotomosezu {
+        name: "をものともせず",
+        matcher_fn: crate::matchers::n1::womonotomosezu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nihaataranai {
+        name: "には当たらない",
+        matcher_fn: crate::matchers::n1::nihaataranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Monotoomou {
+        name: "ものと思う",
+        matcher_fn: crate::matchers::n1::monotoomou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Wofumaete {
+        name: "を踏まえて",
+        matcher_fn: crate::matchers::n1::wofumaete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Yueni {
+        name: "ゆえに",
+        matcher_fn: crate::matchers::n1::yueni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nitodomarazu {
+        name: "にとどまらず",
+        matcher_fn: crate::matchers::n1::nitodomarazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Toomoikiya {
+        name: "と思いきや",
+        matcher_fn: crate::matchers::n1::toomoikiya,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Dounimo {
+        name: "どうにも",
+        matcher_fn: crate::matchers::n1::dounimo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Kotodashi {
+        name: "ことだし",
+        matcher_fn: crate::matchers::n1::kotodashi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    GanUff5e {
+        name: "がん～",
+        matcher_fn: crate::matchers::n1::gan_uff5e,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Kainaka {
+        name: "か否か",
+        matcher_fn: crate::matchers::n1::kainaka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TaraU301cDe {
+        name: "たら〜で",
+        matcher_fn: crate::matchers::n1::tara_u301c_de,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Bekushite {
+        name: "べくして",
+        matcher_fn: crate::matchers::n1::bekushite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    KareU301cKare {
+        name: "かれ〜かれ",
+        matcher_fn: crate::matchers::n1::kare_u301c_kare,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    U301cNiU301cNai {
+        name: "〜に〜ない",
+        matcher_fn: crate::matchers::n1::u301c_ni_u301c_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NakushiteHa {
+        name: "なくして(は)",
+        matcher_fn: crate::matchers::n1::nakushite_ha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nonannotte {
+        name: "のなんのって",
+        matcher_fn: crate::matchers::n1::nonannotte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nikakatteiru {
+        name: "にかかっている",
+        matcher_fn: crate::matchers::n1::nikakatteiru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Teyamanai {
+        name: "てやまない",
+        matcher_fn: crate::matchers::n1::teyamanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Gurainara {
+        name: "ぐらいなら",
+        matcher_fn: crate::matchers::n1::gurainara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TtebaU30fbTtara {
+        name: "ってば・ったら",
+        matcher_fn: crate::matchers::n1::tteba_u30fb_ttara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Zutomo {
+        name: "ずとも",
+        matcher_fn: crate::matchers::n1::zutomo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Toatte {
+        name: "とあって",
+        matcher_fn: crate::matchers::n1::toatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Demonandemonai {
+        name: "でもなんでもない",
+        matcher_fn: crate::matchers::n1::demonandemonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Gurumide {
+        name: "ぐるみで",
+        matcher_fn: crate::matchers::n1::gurumide,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Sobakara {
+        name: "そばから",
+        matcher_fn: crate::matchers::n1::sobakara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    WakeariYakuatte {
+        name: "訳あり(訳あって)",
+        matcher_fn: crate::matchers::n1::wakeari_yakuatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NiitatteU30fbNiitari {
+        name: "に至って・に至り",
+        matcher_fn: crate::matchers::n1::niitatte_u30fb_niitari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    DaniShinai {
+        name: "だに + しない",
+        matcher_fn: crate::matchers::n1::dani_shinai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Gatera {
+        name: "がてら",
+        matcher_fn: crate::matchers::n1::gatera,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NgatameNi {
+        name: "んがため(に)",
+        matcher_fn: crate::matchers::n1::ngatame_ni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    IkanU301cZu {
+        name: "いかん〜ず",
+        matcher_fn: crate::matchers::n1::ikan_u301c_zu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NimoUff5eNai {
+        name: "にも～ない",
+        matcher_fn: crate::matchers::n1::nimo_uff5e_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    IAdjKuMonantomonai {
+        name: "い-Adj[く] + もなんともない",
+        matcher_fn: crate::matchers::n1::i_adj_ku_monantomonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    VerbDani {
+        name: "Verb + だに",
+        matcher_fn: crate::matchers::n1::verb_dani,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Uff5eNariUff5eNari {
+        name: "～なり～なり",
+        matcher_fn: crate::matchers::n1::uff5e_nari_uff5e_nari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Naidemonai {
+        name: "ないでもない",
+        matcher_fn: crate::matchers::n1::naidemonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Mosarukotonagara {
+        name: "もさることながら",
+        matcher_fn: crate::matchers::n1::mosarukotonagara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Monotoomotteita {
+        name: "ものと思っていた",
+        matcher_fn: crate::matchers::n1::monotoomotteita,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Denakutenandarou {
+        name: "でなくてなんだろう",
+        matcher_fn: crate::matchers::n1::denakutenandarou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    HasateokiU30fbHasateoite {
+        name: "はさておき・はさておいて",
+        matcher_fn: crate::matchers::n1::hasateoki_u30fb_hasateoite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Oriniha {
+        name: "折には",
+        matcher_fn: crate::matchers::n1::oriniha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TobakariUff08NiUff09 {
+        name: "とばかり（に）",
+        matcher_fn: crate::matchers::n1::tobakari_uff08_ni_uff09,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    WaU301cWa {
+        name: "わ〜わ",
+        matcher_fn: crate::matchers::n1::wa_u301c_wa,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Naritomo {
+        name: "なりとも",
+        matcher_fn: crate::matchers::n1::naritomo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Niitattemo {
+        name: "に至っても",
+        matcher_fn: crate::matchers::n1::niitattemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Wokanete {
+        name: "を兼ねて",
+        matcher_fn: crate::matchers::n1::wokanete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    VerbNaiMonoDarouKa {
+        name: "Verb[ない]もの(だろう)か",
+        matcher_fn: crate::matchers::n1::verb_nai_mono_darou_ka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    VerbTeMiseru {
+        name: "Verb[て] + みせる",
+        matcher_fn: crate::matchers::n1::verb_te_miseru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Aimatte {
+        name: "相まって",
+        matcher_fn: crate::matchers::n1::aimatte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nitarinai {
+        name: "に足りない",
+        matcher_fn: crate::matchers::n1::nitarinai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Bekarazu {
+        name: "べからず",
+        matcher_fn: crate::matchers::n1::bekarazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nbakarini {
+        name: "んばかりに",
+        matcher_fn: crate::matchers::n1::nbakarini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NinottotteU30fbNinottori {
+        name: "に則って・に則り",
+        matcher_fn: crate::matchers::n1::ninottotte_u30fb_ninottori,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Adjkagirida {
+        name: "Adj限りだ",
+        matcher_fn: crate::matchers::n1::adjkagirida,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Haoroka {
+        name: "はおろか",
+        matcher_fn: crate::matchers::n1::haoroka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    MekuU30fbMeita {
+        name: "めく・めいた",
+        matcher_fn: crate::matchers::n1::meku_u30fb_meita,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Toiwazu {
+        name: "といわず",
+        matcher_fn: crate::matchers::n1::toiwazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nimohodogaaru {
+        name: "にもほどがある",
+        matcher_fn: crate::matchers::n1::nimohodogaaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nimomashite {
+        name: "にもまして",
+        matcher_fn: crate::matchers::n1::nimomashite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Makuru {
+        name: "まくる",
+        matcher_fn: crate::matchers::n1::makuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    WaU301cWaUff08DeUff09 {
+        name: "わ〜わ（で）",
+        matcher_fn: crate::matchers::n1::wa_u301c_wa_uff08_de_uff09,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Dounika {
+        name: "どうにか",
+        matcher_fn: crate::matchers::n1::dounika,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Yainaya {
+        name: "や否や",
+        matcher_fn: crate::matchers::n1::yainaya,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Shidaidesu {
+        name: "次第です",
+        matcher_fn: crate::matchers::n1::shidaidesu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Toiutokoro {
+        name: "というところ",
+        matcher_fn: crate::matchers::n1::toiutokoro,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    IchiUff5eTaritomoUff5eNai {
+        name: "１～たりとも～ない",
+        matcher_fn: crate::matchers::n1::ichi_uff5e_taritomo_uff5e_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TtaranaiU30fbToittaranai {
+        name: "ったらない・といったらない",
+        matcher_fn: crate::matchers::n1::ttaranai_u30fb_toittaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NiterashiteU30fbNiterasuto {
+        name: "に照らして・に照らすと",
+        matcher_fn: crate::matchers::n1::niterashite_u30fb_niterasuto,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Toareba {
+        name: "とあれば",
+        matcher_fn: crate::matchers::n1::toareba,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Sazo {
+        name: "さぞ",
+        matcher_fn: crate::matchers::n1::sazo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Tokitara {
+        name: "ときたら",
+        matcher_fn: crate::matchers::n1::tokitara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Biru {
+        name: "びる",
+        matcher_fn: crate::matchers::n1::biru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nishitatokorode {
+        name: "にしたところで",
+        matcher_fn: crate::matchers::n1::nishitatokorode,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Uff5eBakoso {
+        name: "～ばこそ",
+        matcher_fn: crate::matchers::n1::uff5e_bakoso,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Temosashitsukaenai {
+        name: "ても差し支えない",
+        matcher_fn: crate::matchers::n1::temosashitsukaenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NihaoyobanaiU2460 {
+        name: "には及ばない①",
+        matcher_fn: crate::matchers::n1::nihaoyobanai_u2460,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nisokushite {
+        name: "に即して",
+        matcher_fn: crate::matchers::n1::nisokushite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Naimademo {
+        name: "ないまでも",
+        matcher_fn: crate::matchers::n1::naimademo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Woyosoni {
+        name: "をよそに",
+        matcher_fn: crate::matchers::n1::woyosoni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nikagittakotodehanai {
+        name: "に限ったことではない",
+        matcher_fn: crate::matchers::n1::nikagittakotodehanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Tohakurabemononinaranai {
+        name: "とは比べものにならない",
+        matcher_fn: crate::matchers::n1::tohakurabemononinaranai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Majiki {
+        name: "まじき",
+        matcher_fn: crate::matchers::n1::majiki,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Noitari {
+        name: "の至り",
+        matcher_fn: crate::matchers::n1::noitari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nihajinai {
+        name: "に恥じない",
+        matcher_fn: crate::matchers::n1::nihajinai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Zujimai {
+        name: "ずじまい",
+        matcher_fn: crate::matchers::n1::zujimai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NiiwaserebaU30fbNiiwaserutoU30fbNiiwasetara {
+        name: "に言わせれば・に言わせると・に言わせたら",
+        matcher_fn: crate::matchers::n1::niiwasereba_u30fb_niiwaseruto_u30fb_niiwasetara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TtaraU30fbToittara {
+        name: "ったら・といったら",
+        matcher_fn: crate::matchers::n1::ttara_u30fb_toittara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Kototote {
+        name: "こととて",
+        matcher_fn: crate::matchers::n1::kototote,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Zukume {
+        name: "ずくめ",
+        matcher_fn: crate::matchers::n1::zukume,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    NihaoyobanaiU2461 {
+        name: "には及ばない②",
+        matcher_fn: crate::matchers::n1::nihaoyobanai_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Tohaiumonono {
+        name: "とは言うものの",
+        matcher_fn: crate::matchers::n1::tohaiumonono,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Gahayaika {
+        name: "が早いか",
+        matcher_fn: crate::matchers::n1::gahayaika,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nikatakunai {
+        name: "に難くない",
+        matcher_fn: crate::matchers::n1::nikatakunai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Naraizashirazu {
+        name: "ならいざ知らず",
+        matcher_fn: crate::matchers::n1::naraizashirazu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Wokinjienai {
+        name: "を禁じ得ない",
+        matcher_fn: crate::matchers::n1::wokinjienai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nikakotsukete {
+        name: "にかこつけて",
+        matcher_fn: crate::matchers::n1::nikakotsukete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Youniyotteha {
+        name: "ようによっては",
+        matcher_fn: crate::matchers::n1::youniyotteha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Bekumonai {
+        name: "べくもない",
+        matcher_fn: crate::matchers::n1::bekumonai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Tokitara2 {
+        name: "と来たら",
+        matcher_fn: crate::matchers::n1::tokitara_2,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Monotoshite {
+        name: "ものとして",
+        matcher_fn: crate::matchers::n1::monotoshite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Wozenteini {
+        name: "を前提に",
+        matcher_fn: crate::matchers::n1::wozenteini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Zunihasumanai {
+        name: "ずにはすまない",
+        matcher_fn: crate::matchers::n1::zunihasumanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nikotaenai {
+        name: "に堪えない",
+        matcher_fn: crate::matchers::n1::nikotaenai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Shimatsuda {
+        name: "始末だ",
+        matcher_fn: crate::matchers::n1::shimatsuda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    MononaraU2461 {
+        name: "ものなら②",
+        matcher_fn: crate::matchers::n1::mononara_u2461,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nihikikae {
+        name: "にひきかえ",
+        matcher_fn: crate::matchers::n1::nihikikae,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Soremadeda {
+        name: "それまでだ",
+        matcher_fn: crate::matchers::n1::soremadeda,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Toiouka {
+        name: "といおうか",
+        matcher_fn: crate::matchers::n1::toiouka,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Zunihaokanai {
+        name: "ずにはおかない",
+        matcher_fn: crate::matchers::n1::zunihaokanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Wokagirini {
+        name: "を限りに",
+        matcher_fn: crate::matchers::n1::wokagirini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Tehakanawanai {
+        name: "てはかなわない",
+        matcher_fn: crate::matchers::n1::tehakanawanai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Katagata {
+        name: "かたがた",
+        matcher_fn: crate::matchers::n1::katagata,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Woyoginakusaseru {
+        name: "を余儀なくさせる",
+        matcher_fn: crate::matchers::n1::woyoginakusaseru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Uff5eTeyaru {
+        name: "～てやる",
+        matcher_fn: crate::matchers::n1::uff5e_teyaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TadaU301cNomi {
+        name: "ただ〜のみ",
+        matcher_fn: crate::matchers::n1::tada_u301c_nomi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Monotosuru {
+        name: "ものとする",
+        matcher_fn: crate::matchers::n1::monotosuru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Tono {
+        name: "との",
+        matcher_fn: crate::matchers::n1::tono,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Izen {
+        name: "以前",
+        matcher_fn: crate::matchers::n1::izen,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Tomoarou {
+        name: "ともあろう",
+        matcher_fn: crate::matchers::n1::tomoarou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    KososureU301cNai {
+        name: "こそすれ〜ない",
+        matcher_fn: crate::matchers::n1::kososure_u301c_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nami {
+        name: "並み",
+        matcher_fn: crate::matchers::n1::nami,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Nisakigakete {
+        name: "に先駆けて",
+        matcher_fn: crate::matchers::n1::nisakigakete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Wokini {
+        name: "を機に",
+        matcher_fn: crate::matchers::n1::wokini,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    // ========== NT PATTERNS ==========
+
+    Zo {
+        name: "ぞ",
+        matcher_fn: crate::matchers::nt::zo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    Ze {
+        name: "ぜ",
+        matcher_fn: crate::matchers::nt::ze,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    Wa {
+        name: "わ",
+        matcher_fn: crate::matchers::nt::wa,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    I {
+        name: "い",
+        matcher_fn: crate::matchers::nt::i,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    NSlang {
+        name: "ん (Slang)",
+        matcher_fn: crate::matchers::nt::n_slang,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    TsuSlang {
+        name: "つ (Slang)",
+        matcher_fn: crate::matchers::nt::tsu_slang,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    Uff5eYagaru {
+        name: "～やがる",
+        matcher_fn: crate::matchers::nt::uff5e_yagaru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    Gaii {
+        name: "がいい",
+        matcher_fn: crate::matchers::nt::gaii,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    Karou {
+        name: "かろう",
+        matcher_fn: crate::matchers::nt::karou,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    Yaya {
+        name: "やや",
+        matcher_fn: crate::matchers::nt::yaya,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    Izuremo {
+        name: "いずれも",
+        matcher_fn: crate::matchers::nt::izuremo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    Awayokuba {
+        name: "あわよくば",
+        matcher_fn: crate::matchers::nt::awayokuba,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
+
+    Muzu {
+        name: "むず",
+        matcher_fn: crate::matchers::nt::muzu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
     },
 }
 

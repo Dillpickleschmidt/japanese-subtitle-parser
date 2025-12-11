@@ -10,3 +10,6 @@ target
 /src-tauri/jmdict.sqlite*
 /src-tauri/search_results.json
 grammar-lib/src/compounds.txt
+grammar_points.csv
+grammar_points_data.json
+grammar_points_jlpt.csv
