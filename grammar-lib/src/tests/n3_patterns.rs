@@ -1246,3 +1246,85 @@ mod kotoda_tests {
         assert_pattern_range(&patterns, "ことだ", 10, 16); // ないことです
     }
 }
+
+// ========== ことがある (sometimes/there are times when) ==========
+// Pattern: ことがある (occasionally happens)
+// Data source: grammar_points_data.json["ことがある"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[る] + こと + がある
+//   standard[1]: い-Adjective + こと + がある
+//   standard[2]: な-Adjective + な + こと + がある
+//   standard[3]: Verb[ない] + こと + がある
+//   standard[4]: も instead of が
+//   polite[0-4]: Same with あります
+
+mod kotogaaru_tests {
+    use super::*;
+
+    // Test: Verb[る] + ことがある (sometimes happens)
+    #[test]
+    fn test_kotogaaru_verb() {
+        let sentence = "この馬は人を蹴ることがあるので気をつけて";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことがある");
+        assert_pattern_range(&patterns, "ことがある", 6, 13); // 蹴ることがある
+    }
+
+    // Test: い-Adjective + ことがある (there are times when)
+    #[test]
+    fn test_kotogaaru_i_adjective() {
+        let sentence = "先生の授業はたまに楽しいことがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことがある");
+        assert_pattern_range(&patterns, "ことがある", 9, 17); // 楽しいことがある
+    }
+
+    // Test: な-Adjective + な + ことがある (there are times when)
+    #[test]
+    fn test_kotogaaru_na_adjective() {
+        let sentence = "仕事はたまには楽なことがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことがある");
+        assert_pattern_range(&patterns, "ことがある", 8, 14); // なことがある
+    }
+
+    // Test: Verb[ない] + こともある (sometimes doesn't happen - も variant)
+    #[test]
+    fn test_kotogaaru_verb_negative() {
+        let sentence = "彼は時々来ないこともある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことがある");
+        assert_pattern_range(&patterns, "ことがある", 5, 12); // ないこともある
+    }
+
+    // Test: こともある (も variant - also happens)
+    #[test]
+    fn test_kotomoaru_variant() {
+        let sentence = "仕事は楽しいけど、大変なこともある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことがある");
+        assert_pattern_range(&patterns, "ことがある", 11, 17); // なこともある
+    }
+
+    // Test: ことがあります (polite form)
+    #[test]
+    fn test_kotogaaru_polite() {
+        let sentence = "週に一回のペースでラーメンを食べることがあります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことがある");
+        assert_pattern_range(&patterns, "ことがある", 14, 24); // 食べることがあります
+    }
+}
