@@ -3,19 +3,20 @@
 ## Session 60 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N5 pattern fully implemented (な - prohibitive "don't do X")
-**Patterns completed**: 1 new pattern (prohibitive command)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 367 (was 363)
+**Status**: Two N5 patterns fully implemented (な + で)
+**Patterns completed**: 2 new patterns (prohibitive command + particle)
+**Tests added**: 8 comprehensive tests
+**Total tests**: 371 (was 363)
 
 ### Accomplishments
 1. ✅ Implemented な (prohibitive - don't!) pattern (N5)
-2. ✅ All 4 test variants passing with proper range assertions
-3. ✅ No test regressions - all 367 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented で (particle - means/method/location) pattern (N5)
+3. ✅ All 8 test variants passing with proper range assertions
+4. ✅ No test regressions - all 371 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### な (N5) ✓
 - **File**: grammar-lib/src/matchers/n5.rs
@@ -42,28 +43,55 @@
 - **Pattern range**: Full construction from verb to な (e.g., 触るな, 走るな)
 - **Similar patterns**: ないで (softer negative request), なさい (positive command)
 
+#### で (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing in n5_patterns.rs
+  - test_de_means_car (車で空港へ行く - transportation means)
+  - test_de_method_train (電車で行く - method/instrument)
+  - test_de_group_everyone (みんなでレストランに行く - group action)
+  - test_de_location_park (公園で遊ぶ - location of action)
+- **Structure**: Noun + で
+- **Tokenization**:
+  - Noun (various types)
+  - で = 助詞/格助詞/一般 (case particle)
+- **Implementation**: Simple 2-token matcher
+  - noun_matcher(): Matches any noun
+  - Custom DeParticleMatcher: Matches で as 助詞/格助詞
+- **Meaning**: Indicates means, method, or location of action
+- **Usage**: Very common particle with multiple related uses (transportation, instrument, location, group action)
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Note**: Pattern declaration already existed but had empty matcher (vec![]) - now fully implemented with tests
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N5)
-- **Tests written**: 4
-- **Tests passing**: 367/367 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~100 (tests + matcher + pattern declaration)
+- **Patterns implemented**: 2 (N5)
+- **Tests written**: 8 (4 for な + 4 for で)
+- **Tests passing**: 371/371 (100%)
+- **Commits**: 3 clean commits (な impl + progress update + で impl)
+- **Lines added**: ~180 (tests + matchers + declarations + feature_list updates)
+
+### Key Insight
+- Found that で pattern existed in patterns.rs but had stub matcher (vec![])
+- This was a "hidden" incomplete pattern - not obvious from feature_list alone
+- May be other stub matchers worth checking: に, の, etc.
 
 ### Next Priorities
-Continue with N5 patterns (29 remaining):
+Continue with N5 patterns (27 remaining):
 
-**Concrete N5 patterns to implement**:
-1. で - particle indicating means/method/location (Noun + で)
-2. ている② - resultative state (has done/is in state of)
-3. ている③ - habitual action (regularly does)
-4. な-Adjective + Noun - na-adjective modifying noun
-5. Verb［た・ている］+ Noun - relative clause with verb
+**Check for other stub patterns**:
+1. に - particle (location/direction/time) - **check if stub**
+2. の - particle (possession/modification) - **check if stub**
 
-**Note**: Avoid overly broad patterns like "Verbs (Non-past)", "い-Adjectives", etc.
-Focus on concrete, structurally distinguishable patterns.
+**Other concrete N5 patterns**:
+3. ている② - resultative state (difficult - same structure as existing ている)
+4. ている③ - habitual action (difficult - same structure as existing ている)
+5. な-Adjective + Noun - na-adjective modifying noun
+6. Verb［た・ている］+ Noun - relative clause with verb
+
+**Note**: Prioritize stub implementations (declarations exist but no matcher logic).
+Avoid semantic-only distinctions (ている②/③) and overly broad patterns.
 
 ### Environment Status
-- ✅ All 367 tests passing
+- ✅ All 371 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
