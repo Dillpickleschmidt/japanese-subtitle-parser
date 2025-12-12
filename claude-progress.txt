@@ -1,5 +1,102 @@
 # Grammar-lib Development Progress
 
+## Session 59 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N5 pattern fully implemented (なくちゃ・なきゃ - casual "must do")
+**Patterns completed**: 1 new pattern (casual obligation)
+**Tests added**: 7 comprehensive tests
+**Total tests**: 363 (was 356)
+
+### Accomplishments
+1. ✅ Implemented なくちゃ・なきゃ (must do - casual) pattern (N5)
+2. ✅ All 7 structure variants tested and passing with proper range assertions
+3. ✅ No test regressions - all 363 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### なくちゃ・なきゃ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 7 variants, all passing in n5_patterns.rs
+  - test_nakya_ikenai_standard (今日は家の掃除をしなきゃいけないから、遊ばない - なきゃいけない)
+  - test_nakucha_ikenai_standard (野菜を食べなくちゃいけない - なくちゃいけない)
+  - test_nakerya_dame_casual (お前がやらなけりゃだめだろ - なけりゃだめ, male speech)
+  - test_nakya_ikemasen_polite (明日までに宿題を終わらせなきゃいけません - polite)
+  - test_nakucha_ikemasen_polite (会議の前に資料を準備しなくちゃいけません - polite)
+  - test_nakya_abbreviated (あっ、洗濯をしなきゃ - abbreviated without いけない)
+  - test_nakucha_abbreviated (宿題をしなくちゃ - abbreviated without いけない)
+- **Structures**:
+  - Verb[ない] + なきゃ + いけない (standard)
+  - Verb[ない] + なくちゃ + いけない (standard)
+  - Verb[ない] + なけりゃ + だめ (very casual, male speech)
+  - Verb[ない] + なきゃ + いけません (polite)
+  - Verb[ない] + なくちゃ + いけません (polite)
+  - Verb[ない] + なきゃ (abbreviated - without ending)
+  - Verb[ない] + なくちゃ (abbreviated - without ending)
+- **Tokenization insights**:
+  - Verb in 未然形 (irrealis form) - e.g., し, 食べ, やら, 終わらせ, 準備し
+  - なきゃ = 助動詞, base=ない, conjugation=仮定縮約２ (single token)
+  - なけりゃ = 助動詞, base=ない, conjugation=仮定縮約１ (single token)
+  - なくちゃ = なく (助動詞, 連用テ接続) + ちゃ (助詞/接続助詞) - two tokens
+  - いけ = 動詞/非自立, base=いける (can be 未然形 or 連用形)
+  - なら/なり = 動詞/非自立, base=なる
+  - だめ = 名詞/形容動詞語幹
+  - ない/ません = negative endings
+- **Implementation**: Flexible matcher with multiple optional components
+  - Custom MizenVerbMatcher: Verb in 未然形
+  - Custom NakuchaNakyaMatcher: Matches なきゃ, なけりゃ, or なく (all three forms)
+  - Optional ChaParticleMatcher: ちゃ particle (only after なく)
+  - Optional IkeMatcher: いけ (動詞/非自立, base=いける)
+  - Optional NaruMatcher: なら or なり (base=なる)
+  - Optional DameMatcher: だめ (名詞)
+  - Optional NegativeEndingMatcher: ない or ませ (2 optional for ません)
+- **Meaning**: Casual "must do/gotta do" - shortened forms of なくてはいけない/なければいけない
+- **Usage**: Very common in casual speech, similar to "gotta" in English
+- **Pattern priority**: 1 (construction pattern - N5 level)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Test coverage**: All major structure variants including abbreviated forms
+- **Implementation notes**:
+  - Handles both single-token forms (なきゃ, なけりゃ) and two-token forms (なく + ちゃ)
+  - All optional matchers allow for abbreviated usage (just なきゃ/なくちゃ without endings)
+  - Comprehensive coverage of polite and casual variants
+- **Related patterns**: なくてはならない (more formal), なくてはいけない (formal)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N5)
+- **Tests written**: 7
+- **Tests passing**: 363/363 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~246 (tests + matcher + feature_list update)
+
+### Next Priorities
+Continue with N5 patterns (30 remaining):
+
+**High-value N5 construction patterns to implement**:
+1. Verbs (Non-past) - dictionary form as non-past tense (may be too broad)
+2. Basic verb conjugations (Dictionary, Negative, Past, Negative-Past)
+3. い-Adjective (Predicate) - adjectives in predicate position
+4. い-Adjectives - adjective forms
+5. な-Adjectives - na-adjective forms
+6. な-Adjective だ - predicate form
+7. くれる - to give (to me/us) (✅ already complete)
+8. する - irregular verb (✅ already complete)
+
+**Simple adverb/particle patterns**:
+- More N5 adverbs and particles that are straightforward implementations
+
+### Environment Status
+- ✅ All 363 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session or to continue
+
+---
+
 ## Session 58 - 2025-12-12
 
 ### ✅ Session Summary
