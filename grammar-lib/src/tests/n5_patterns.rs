@@ -3903,3 +3903,61 @@ mod mada_tests {
         assert_pattern_range(&patterns, "まだ", 0, 2); // まだ
     }
 }
+
+// ========== けっこう (Quite, fairly) ==========
+// Pattern: けっこう (quite, fairly, pretty)
+// Data source: grammar_points_data.json["けっこう"]
+//
+// Structure variants to test:
+//   standard[0]: けっこう + Phrase
+//   standard[2]: けっこうだ (set expression)
+//   polite[0]: けっこう + Phrase (polite)
+//   polite[2]: けっこうです (set expression polite)
+
+mod kekkou_tests {
+    use super::*;
+
+    // けっこう + Verb (past tense)
+    #[test]
+    fn test_kekkou_verb_past() {
+        let sentence = "けっこう走ったね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けっこう");
+        assert_pattern_range(&patterns, "けっこう", 0, 4); // けっこう
+    }
+
+    // けっこう + Adjective (polite)
+    #[test]
+    fn test_kekkou_adjective_polite() {
+        let sentence = "けっこう高いですよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けっこう");
+        assert_pattern_range(&patterns, "けっこう", 0, 4); // けっこう
+    }
+
+    // けっこうです (set expression - "no thank you")
+    #[test]
+    fn test_kekkou_desu() {
+        let sentence = "袋はけっこうです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けっこう");
+        assert_pattern_range(&patterns, "けっこう", 2, 6); // けっこう
+    }
+
+    // けっこう + Adjective
+    #[test]
+    fn test_kekkou_adjective() {
+        let sentence = "このラーメンはけっこう美味しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けっこう");
+        assert_pattern_range(&patterns, "けっこう", 7, 11); // けっこう
+    }
+}

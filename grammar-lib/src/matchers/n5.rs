@@ -1837,9 +1837,21 @@ pub fn tari_uff5e_tarisuru() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: けっこう
+// Pattern: けっこう (quite, fairly, pretty)
+// Structures: けっこう + Phrase / けっこうだ/です
 pub fn kekkou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KekkouMatcher;
+    impl Matcher for KekkouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "けっこう"
+                && token.base_form == "けっこう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KekkouMatcher))]
 }
 
 // Pattern: たくさん (a lot, many)
