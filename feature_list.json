@@ -1304,13 +1304,13 @@
   {
     "pattern_name": "へいく",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "へ行（い）く is a common construction used when describing a place that someone/something is 'heading' [2 std, 0 pol]",
     "priority": 1,
     "skip_reason": null

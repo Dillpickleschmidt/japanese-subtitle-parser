@@ -738,9 +738,37 @@ pub fn na_adjective_noun() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: へいく
+// Pattern: へいく (Place + へ/に + 行く)
+// Structures: Place/Noun + へ + 行く OR Place/Noun + に + 行く
 pub fn heiku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for へ or に particle (case particles)
+    #[derive(Debug)]
+    struct HeNiParticleMatcher;
+    impl Matcher for HeNiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "へ" || token.surface == "に")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for 行く verb (in any conjugation)
+    #[derive(Debug)]
+    struct IkuMatcher;
+    impl Matcher for IkuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "行く" && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(HeNiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IkuMatcher)),
+    ]
 }
 
 // Pattern: する

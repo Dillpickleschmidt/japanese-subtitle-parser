@@ -4912,3 +4912,61 @@ mod masu_tests {
         assert_pattern_range(&patterns, "ます", 2, 6); // 食べます
     }
 }
+
+// ========== へいく (Going to a place) ==========
+// Pattern: へいく (Place + へ/に + 行く)
+// Data source: grammar_points_data.json["へいく"]
+//
+// Structure variants to test:
+//   standard[0]: Place + へ + 行く
+//   standard[1]: Place + に + 行く
+//
+// Note: Testing both へ and に particles with 行く verb
+
+mod heiku_tests {
+    use super::*;
+
+    // Place + へ + 行く
+    #[test]
+    fn test_heiku_with_he() {
+        let sentence = "学校へ行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "へいく");
+        assert_pattern_range(&patterns, "へいく", 0, 5); // 学校へ行く
+    }
+
+    // Place + に + 行く
+    #[test]
+    fn test_heiku_with_ni() {
+        let sentence = "病院に行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "へいく");
+        assert_pattern_range(&patterns, "へいく", 0, 5); // 病院に行く
+    }
+
+    // More natural sentence with へ
+    #[test]
+    fn test_heiku_natural_he() {
+        let sentence = "明日は東京へ行くつもりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "へいく");
+        assert_pattern_range(&patterns, "へいく", 3, 8); // 東京へ行く
+    }
+
+    // Polite form with に (single-token place)
+    #[test]
+    fn test_heiku_polite_ni() {
+        let sentence = "毎週公園に行きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "へいく");
+        assert_pattern_range(&patterns, "へいく", 2, 9); // 公園に行きます
+    }
+}
