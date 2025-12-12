@@ -1,5 +1,106 @@
 # Grammar-lib Development Progress
 
+## Session 83 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (ことだ - should/ought to)
+**Patterns completed**: 1 new N3 pattern (advice/weak command construction)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 499 (was 495)
+
+### Accomplishments
+1. ✅ Implemented ことだ pattern (N3) - advice/weak command construction
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 499 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### ことだ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 197)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_kotoda_verb_affirmative (食べることだ - should eat)
+  - test_kotoda_verb_negative (ないことだ - should not give up)
+  - test_kotoda_verb_polite (来ることです - should come, polite)
+  - test_kotoda_verb_negative_polite (ないことです - should not endure, polite)
+- **Structures**:
+  - Verb[る] + こと + だ
+  - Verb[ない] + こと + だ
+  - Verb[る] + こと + です
+  - Verb[ない] + こと + です
+- **Tokenization insights**:
+  - Verb in 基本形 (dictionary form) or 未然形 + ない
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - だ = 助動詞/特殊・ダ/基本形
+  - です = 助動詞/特殊・デス/基本形
+- **Implementation**: 3-token matcher
+  1. TokenMatcher::Any - Matches any preceding token (verb or verb+ない)
+  2. KotoMatcher - Matches こと as 名詞/非自立/一般
+  3. DaDesuMatcher - Matches だ or です as 助動詞 (特殊・ダ or 特殊・デス)
+- **Meaning**: "should / ought to" - expresses advice or weak command with authority
+- **Usage**: Common N3 construction for giving advice, often seen on signs/rules
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - 食べることだ (chars 8-14, verb + こと + だ)
+  - ないことだ (chars 8-13, negative verb + こと + だ)
+  - 来ることです (chars 11-17, verb + こと + です)
+  - ないことです (chars 10-16, negative verb + こと + です)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N3 level in patterns.rs)
+- **Test coverage**: All 4 structure variants from grammar_points_data.json
+  - Verb[る] + ことだ (tested with 食べる)
+  - Verb[ない] + ことだ (tested with 諦めない)
+  - Verb[る] + ことです (tested with 来る)
+  - Verb[ない] + ことです (tested with しない)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Simple 3-token matcher with TokenMatcher::Any handles all verb forms elegantly
+- **Pattern range**: Includes full construction from verb through copula
+- **Authority nuance**: Pattern implies authority, used for rules/expectations, not casual advice
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 499/499 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~98 (tests + matcher implementation + feature_list update)
+
+### Key Insights
+- Pattern is part of the こと construction family (ことか, ことから, ことだ)
+- All share similar structure (preceding element + こと + particle/copula)
+- TokenMatcher::Any provides flexibility for matching diverse preceding elements
+- Test-first workflow successfully identified tokenization structure
+- All test sentences are realistic and subtitle-quality
+- Pattern naturally handles both affirmative and negative verb forms
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 こと-based patterns to implement**:
+1. ことがある - "sometimes happens" (another こと pattern)
+2. ことに - "to my..." (emotion expression)
+3. ことにする - "decide to"
+4. ことになる - "it has been decided that"
+5. ことはない - "there is no need to"
+
+**Other high-value N3 patterns**:
+1. いくら〜でも - "no matter how much"
+2. かけ - incomplete/unfinished action
+3. から言うと - "from the perspective of"
+4. Noun＋型 - "type/style" suffix pattern
+
+**Recommendation**: Continue with こと-based patterns (ことがある, ことに, etc.) as they share similar structure and the KotoMatcher is already well-established. This will allow efficient implementation of related patterns.
+
+### Environment Status
+- ✅ All 499 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 82 - 2025-12-12 (Updated)
 
 ### ✅ Session Summary
