@@ -1570,3 +1570,59 @@ mod kotohanai_tests {
         assert_pattern_range(&patterns, "ことはない", 0, 12); // 心配することはありません (full sentence - verb is at start)
     }
 }
+
+// ========== ということだ (it is said that / it means that) ==========
+// Pattern: ということだ (hearsay/conclusion with certainty)
+// Data source: grammar_points_data.json["ということだ"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase + ということ + だ
+//   polite[0]: Phrase + ということ + です
+
+mod toiukotoda_tests {
+    use super::*;
+
+    // Test: Verb phrase + ということだ (hearsay - it is said that)
+    #[test]
+    fn test_toiukotoda_hearsay() {
+        let sentence = "この井戸水は汚染されているということだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということだ");
+        assert_pattern_range(&patterns, "ということだ", 11, 19); // いるということだ
+    }
+
+    // Test: Phrase + ということだ (conclusion - it means that)
+    #[test]
+    fn test_toiukotoda_conclusion() {
+        let sentence = "まだ新鮮ということだな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということだ");
+        assert_pattern_range(&patterns, "ということだ", 2, 10); // 新鮮ということだ
+    }
+
+    // Test: Phrase + ということです (polite form)
+    #[test]
+    fn test_toiukotoda_polite() {
+        let sentence = "この病気は薬では治せないということです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということだ");
+        assert_pattern_range(&patterns, "ということだ", 10, 19); // ないということです
+    }
+
+    // Test: によると + ということだ (with information source marker)
+    #[test]
+    fn test_toiukotoda_source() {
+        let sentence = "先生によると、地震が来るということだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということだ");
+        assert_pattern_range(&patterns, "ということだ", 10, 18); // 来るということだ
+    }
+}

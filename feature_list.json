@@ -5308,13 +5308,13 @@
   {
     "pattern_name": "ということだ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like ということ, an expression used for nominalizing a phrase in the fashion of 'the ~ that ~', ということだ makes use of the au... [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null

@@ -312,9 +312,47 @@ pub fn tameni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ということだ
+// Pattern: ということだ (it is said that / it means that - hearsay/conclusion with certainty)
+// Structures: Phrase + ということ + だ / Phrase + ということ + です
 pub fn toiukotoda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ToiuMatcher;
+    impl Matcher for ToiuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "という"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.features.get(4).is_some_and(|f| f == "特殊・ダ")
+                    || token.features.get(4).is_some_and(|f| f == "特殊・デス"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ToiuMatcher)),
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: というのは
