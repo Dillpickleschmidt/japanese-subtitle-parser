@@ -3,19 +3,20 @@
 ## Session 39 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One pattern fully implemented (ないでください)
-**Patterns completed**: 1 new pattern
-**Tests added**: 3 comprehensive tests
-**Total tests**: 200 (was 197)
+**Status**: Two patterns fully implemented (ないでください + てはいけない)
+**Patterns completed**: 2 new patterns
+**Tests added**: 6 comprehensive tests
+**Total tests**: 203 (was 197)
 
 ### Accomplishments
 1. ✅ Implemented ないでください (please don't do - polite negative request) pattern
-2. ✅ All 3 test variants passing with proper range assertions
-3. ✅ No test regressions - all 200 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented てはいけない (must not do - prohibition) pattern
+3. ✅ All 6 test variants passing with proper range assertions
+4. ✅ No test regressions - all 203 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### ないでください (N5) ✓
 - **File**: grammar-lib/src/matchers/n5.rs
@@ -32,27 +33,50 @@
   - Pattern range includes full Verb + ないで + ください construction
   - Casual form (Verb + ないで) is already handled by separate ないで pattern
 
+#### てはいけない (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_te_wa_ikenai_standard (開けてはいけない - standard prohibition)
+  - test_te_wa_ikenai_polite (吸ってはいけません - polite prohibition)
+  - test_chya_ikenai_casual (行っちゃいけない - casual contraction)
+- **Structures**:
+  - Verb[て] + は + いけない (standard)
+  - Verb[て] + は + いけません (polite)
+  - Verb + ちゃ + いけない (casual contraction of てはいけない)
+  - Verb + じゃ + いけない (casual contraction of ではいけない)
+- **Tokenization insights**:
+  - Verb in 連用形 or 連用タ接続
+  - て/で or ちゃ/じゃ as 助詞/接続助詞
+  - は as 助詞/係助詞 (optional for ちゃ/じゃ forms)
+  - いけ as 動詞/非自立 (base: いける)
+    - 未然形 when followed by ない
+    - 連用形 when followed by ませ + ん (polite)
+  - Pattern correctly extends with polite ませ + ん ending
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern)
+- **Pattern priority**: 1 (construction patterns)
 - **Matcher approach**: Sequential token matching with custom matchers
 - **Custom matchers created**:
-  - NegativeVerbFormMatcher: Match verb in 未然形 or 未然ウ接続
-  - NaiAuxiliaryDeFormMatcher: Match ない in 連用デ接続 form
-  - DeParticleMatcher: Match で as conjunction particle
-  - KudasaiMatcher: Match ください as non-independent verb
-- **Implementation notes**: Pattern declaration already existed in patterns.rs; just needed to implement the matcher function
+  - ないでください:
+    - NegativeVerbFormMatcher, NaiAuxiliaryDeFormMatcher, DeParticleMatcher, KudasaiMatcher
+  - てはいけない:
+    - TeWaIkenaiMatcher (handles both て/で and ちゃ/じゃ), WaParticleMatcher (optional), IkeMatcher (both 未然形 and 連用形), NaiAuxiliaryMatcher (optional for polite)
+- **Implementation notes**:
+  - Both pattern declarations already existed in patterns.rs
+  - てはいけない matcher uses optional tokens to handle both standard and polite forms
+  - Polite form extension (ませ + ん) handled automatically by extension system
 
 ### Next Priorities (N5 patterns still needed)
 High-value construction patterns from feature_list.json:
-1. てはいけない - must not do
-2. なくてはいけない - must do
-3. なくてはならない - must do (formal)
-4. ～んです・のです - explanatory のです
-5. ～ましょうか - shall we?
-6. ませんか - won't you?
+1. なくてはいけない - must do
+2. なくてはならない - must do (formal)
+3. ～んです・のです - explanatory のです
+4. ～ましょうか - shall we?
+5. ませんか - won't you?
+6. てもいい - may do
 
 ### Environment Status
-- ✅ All 200 tests passing
+- ✅ All 203 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
