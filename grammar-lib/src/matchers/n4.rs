@@ -960,9 +960,36 @@ pub fn dakedenaku() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ことができる
+// Pattern: ことができる (can do / be able to)
+// Structures: Verb + ことができる, Noun + ができる
 pub fn kotogadekiru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct GaHaParticleMatcher;
+    impl Matcher for GaHaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "が" || token.surface == "は")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KotoMatcher)))),
+        TokenMatcher::Custom(Arc::new(GaHaParticleMatcher)),
+        TokenMatcher::specific_verb("できる"),
+    ]
 }
 
 // Pattern: かい

@@ -244,3 +244,88 @@ mod amari_nai_tests {
         assert_pattern_range(&patterns, "あまり～ない", 3, 14); // あまり良い考えじゃない
     }
 }
+
+// ========== ことができる (can do / be able to) ==========
+// Pattern: ことができる
+// Data source: grammar_points_data.json["ことができる"]
+//
+// Structures to test:
+//   - standard[0]: Verb + こと + が + できる
+//   - standard[1]: Noun + が + できる (no こと needed)
+//   - polite[0]: Verb + こと + が + できます
+//   - polite[1]: Noun + が + できます
+//
+// Examples from data:
+//   - 泳ぐことができる (can swim)
+//   - 料理をすることができる (can cook)
+//   - 運転ができる (can drive, noun)
+#[cfg(test)]
+mod kotogadekiru_tests {
+    use super::*;
+
+    // Testing: Verb + ことができる
+    #[test]
+    fn test_kotogadekiru_verb() {
+        let sentence = "魚のように泳ぐことができるようになりたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことができる");
+        assert_pattern_range(&patterns, "ことができる", 5, 13); // 泳ぐことができる
+    }
+
+    // Testing: Verb + ことができる (different context)
+    #[test]
+    fn test_kotogadekiru_verb_simple() {
+        let sentence = "彼は料理をすることができる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことができる");
+        assert_pattern_range(&patterns, "ことができる", 5, 13); // することができる
+    }
+
+    // Testing: Noun + ができる (no こと)
+    #[test]
+    fn test_kotogadekiru_noun() {
+        let sentence = "運転ができる彼氏が欲しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことができる");
+        assert_pattern_range(&patterns, "ことができる", 0, 6); // 運転ができる
+    }
+
+    // Testing: Verb + ことができます (polite)
+    #[test]
+    fn test_kotogadekiru_polite() {
+        let sentence = "私は英語を話すことができます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことができる");
+        assert_pattern_range(&patterns, "ことができる", 5, 14); // 話すことができます
+    }
+
+    // Testing: Noun + ができる (polite context)
+    #[test]
+    fn test_kotogadekiru_noun_polite() {
+        let sentence = "力仕事ができる人を探しています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことができる");
+        assert_pattern_range(&patterns, "ことができる", 0, 7); // 力仕事ができる
+    }
+
+    // Testing: Negative form - ことはできない (は instead of が)
+    #[test]
+    fn test_kotogadekiru_negative() {
+        let sentence = "こんな難しいことはできない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことができる");
+        assert_pattern_range(&patterns, "ことができる", 3, 13); // 難しいことはできない
+    }
+}
