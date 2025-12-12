@@ -334,9 +334,90 @@ pub fn kana() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: あまり～ない
+// Pattern: あまり～ない (not very)
+// Structures:
+// - あまり + Verb[ない]
+// - あまり + い-Adjective[ない]
+// - あまり + Noun + ではない/じゃない
+// - あまり + な-Adjective + ではない/じゃない
+// - Casual variant: あんまり (instead of あまり)
+//
+// Examples:
+// - あまり並ばない (not stand in line very long)
+// - あまり寂しくない (not feel very lonely)
+// - あまり平和ではない (not very peaceful)
+// - あんまり食べたくない (don't want to eat very much)
+//
+// Tokenization pattern:
+// - あまり OR あんまり (副詞/助詞類接続 OR 名詞/一般)
+// - Wildcard (0-5 tokens)
+// - ない (助動詞)
+//
+// Note: あまり can tokenize as:
+// - 副詞/助詞類接続 (adverb, before verbs/adjectives)
+// - 名詞/一般 (noun, before adjectives/nouns)
 pub fn amari_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match あまり or あんまり (flexible POS matching)
+    #[derive(Debug)]
+    struct AmariMatcher;
+    impl Matcher for AmariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match surface: あまり OR あんまり
+            if token.surface != "あまり" && token.surface != "あんまり" {
+                return false;
+            }
+            // Match base form
+            if token.base_form != "あまり" && token.base_form != "あんまり" {
+                return false;
+            }
+
+            // Can be either:
+            // - 副詞/助詞類接続 (adverb)
+            // - 名詞/一般 (noun)
+            let is_adverb = token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続");
+
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般");
+
+            is_adverb || is_noun
+        }
+    }
+
+    // Match ない (auxiliary verb OR adjective)
+    // Can be:
+    // - 助動詞 (after verbs: 並ばない)
+    // - 形容詞/自立 (after で: ではない)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface != "ない" || token.base_form != "ない" {
+                return false;
+            }
+
+            // Check if it's auxiliary verb (助動詞)
+            let is_auxiliary = token.pos.first().is_some_and(|pos| pos == "助動詞");
+
+            // Check if it's adjective (形容詞/自立)
+            let is_adjective = token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立");
+
+            is_auxiliary || is_adjective
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AmariMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 5,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: ば

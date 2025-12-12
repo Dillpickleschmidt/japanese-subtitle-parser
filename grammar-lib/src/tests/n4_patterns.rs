@@ -156,3 +156,91 @@ mod atode_tests {
         assert_pattern_range(&patterns, "あとで", 8, 11); // あとで
     }
 }
+
+// ========== あまり～ない (not very) ==========
+// Pattern: あまり～ない
+// Data source: grammar_points_data.json["あまり～ない"]
+//
+// Structures to test:
+//   - standard[0]: あまり(1) + Verb[ない]
+//   - standard[1]: あまり(1) + い-Adjective[ない]
+//   - standard[2]: あまり(1) + Noun + ではない(2)
+//   - standard[3]: あまり + な-Adjective + ではない(2)
+//   - Note: (1) あんまり (casual variant)
+//   - Note: (2) じゃない (casual variant)
+//
+// Examples from data:
+//   - あまり並ばないと思う (not stand in line very long)
+//   - あまり寂しくない (not feel very lonely)
+//   - あまり平和ではない (not very peaceful)
+//   - あまりいい肉ではない (hardly good meat)
+#[cfg(test)]
+mod amari_nai_tests {
+    use super::*;
+
+    // Testing structure.standard[0]: あまり + Verb[ない]
+    #[test]
+    fn test_amari_verb_nai() {
+        let sentence = "今の時間だったらあまり並ばないと思うよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり～ない");
+        assert_pattern_range(&patterns, "あまり～ない", 8, 15); // あまり並ばない
+    }
+
+    // Testing structure.standard[1]: あまり + い-Adjective[ない]
+    #[test]
+    fn test_amari_i_adj_nai() {
+        let sentence = "私には犬がいるからあまり寂しくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり～ない");
+        assert_pattern_range(&patterns, "あまり～ない", 9, 17); // あまり寂しくない
+    }
+
+    // Testing structure.standard[2]: あまり + Noun + ではない
+    #[test]
+    fn test_amari_noun_dewa_nai() {
+        let sentence = "最近はどこもあまり平和ではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり～ない");
+        assert_pattern_range(&patterns, "あまり～ない", 6, 15); // あまり平和ではない
+    }
+
+    // Testing structure.standard[3]: あまり + な-Adjective + ではない
+    #[test]
+    fn test_amari_na_adj_dewa_nai() {
+        let sentence = "そこの肉屋の肉はあまりいい肉ではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり～ない");
+        assert_pattern_range(&patterns, "あまり～ない", 8, 18); // あまりいい肉ではない
+    }
+
+    // Testing casual variant: あんまり + Verb[ない]
+    #[test]
+    fn test_anmari_verb_nai() {
+        let sentence = "あんまり食べたくないんだよね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり～ない");
+        assert_pattern_range(&patterns, "あまり～ない", 0, 10); // あんまり食べたくない
+    }
+
+    // Testing casual variant: あまり + Noun + じゃない
+    #[test]
+    fn test_amari_noun_janai() {
+        let sentence = "それはあまり良い考えじゃないと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり～ない");
+        assert_pattern_range(&patterns, "あまり～ない", 3, 14); // あまり良い考えじゃない
+    }
+}
