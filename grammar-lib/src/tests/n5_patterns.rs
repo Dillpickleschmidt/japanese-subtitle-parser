@@ -4585,3 +4585,96 @@ mod nakutewa_naranai_tests {
         assert_pattern_range(&patterns, "なくてはならない", 9, 19); // しなくちゃなりません
     }
 }
+
+// ========== なくちゃ・なきゃ (Must do - casual) ==========
+// Pattern: なくちゃ・なきゃ (casual "must do/gotta do")
+// Data source: grammar_points_data.json["なくちゃ・なきゃ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ない] + なきゃ + いけない
+//   standard[1]: Verb[ない] + なくちゃ + いけない
+//   standard[2]: Verb[ない] + なけりゃ + だめ (very casual, male speech)
+//   polite[0]: Verb[ない] + なきゃ + いけません
+//   polite[1]: Verb[ない] + なくちゃ + いけません
+//   Abbreviated forms (without いけない/ならない/だめ)
+
+mod nakucha_nakya_tests {
+    use super::*;
+
+    // Standard form: なきゃいけない
+    #[test]
+    fn test_nakya_ikenai_standard() {
+        let sentence = "今日は家の掃除をしなきゃいけないから、遊ばない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくちゃ・なきゃ");
+        assert_pattern_range(&patterns, "なくちゃ・なきゃ", 8, 16); // しなきゃいけない
+    }
+
+    // Standard form: なくちゃいけない
+    #[test]
+    fn test_nakucha_ikenai_standard() {
+        let sentence = "野菜を食べなくちゃいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくちゃ・なきゃ");
+        assert_pattern_range(&patterns, "なくちゃ・なきゃ", 3, 13); // 食べなくちゃいけない
+    }
+
+    // Very casual form: なけりゃだめ (male speech)
+    #[test]
+    fn test_nakerya_dame_casual() {
+        let sentence = "お前がやらなけりゃだめだろ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくちゃ・なきゃ");
+        assert_pattern_range(&patterns, "なくちゃ・なきゃ", 3, 13); // やらなけりゃだめだろ
+    }
+
+    // Polite form: なきゃいけません
+    #[test]
+    fn test_nakya_ikemasen_polite() {
+        let sentence = "明日までに宿題を終わらせなきゃいけません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくちゃ・なきゃ");
+        assert_pattern_range(&patterns, "なくちゃ・なきゃ", 11, 20); // せなきゃいけません
+    }
+
+    // Polite form: なくちゃいけません
+    #[test]
+    fn test_nakucha_ikemasen_polite() {
+        let sentence = "会議の前に資料を準備しなくちゃいけません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくちゃ・なきゃ");
+        assert_pattern_range(&patterns, "なくちゃ・なきゃ", 8, 20); // 準備しなくちゃいけません
+    }
+
+    // Abbreviated form: なきゃ (without いけない)
+    #[test]
+    fn test_nakya_abbreviated() {
+        let sentence = "あっ、洗濯をしなきゃ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくちゃ・なきゃ");
+        assert_pattern_range(&patterns, "なくちゃ・なきゃ", 6, 10); // しなきゃ
+    }
+
+    // Abbreviated form: なくちゃ (without いけない)
+    #[test]
+    fn test_nakucha_abbreviated() {
+        let sentence = "宿題をしなくちゃ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくちゃ・なきゃ");
+        assert_pattern_range(&patterns, "なくちゃ・なきゃ", 3, 8); // しなくちゃ
+    }
+}
