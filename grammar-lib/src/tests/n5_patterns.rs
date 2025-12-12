@@ -3834,3 +3834,72 @@ mod takusan_tests {
         assert_pattern_range(&patterns, "たくさん", 6, 10); // たくさん
     }
 }
+
+// ========== まだ (Still, not yet) ==========
+// Pattern: まだ (still, not yet)
+// Data source: grammar_points_data.json["まだ"]
+//
+// Structure variants to test:
+//   standard[0]: まだ + Verb[ている]
+//   standard[1]: まだ + Noun + が + いる
+//   standard[2]: まだ + Noun + が + ある
+//   polite[0-2]: Polite variants with います/あります
+
+mod mada_tests {
+    use super::*;
+
+    // まだ + Verb[ている] - still doing
+    #[test]
+    fn test_mada_te_iru() {
+        let sentence = "まだ走っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まだ");
+        assert_pattern_range(&patterns, "まだ", 0, 2); // まだ
+    }
+
+    // まだ + Noun + が + いる
+    #[test]
+    fn test_mada_ga_iru() {
+        let sentence = "まだ親がいるからゲームできない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まだ");
+        assert_pattern_range(&patterns, "まだ", 0, 2); // まだ
+    }
+
+    // まだ + Noun + が + ある
+    #[test]
+    fn test_mada_ga_aru() {
+        let sentence = "まだ宿題があるから、遊ばない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まだ");
+        assert_pattern_range(&patterns, "まだ", 0, 2); // まだ
+    }
+
+    // まだ in question form
+    #[test]
+    fn test_mada_question() {
+        let sentence = "まだ日本語の勉強しているの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まだ");
+        assert_pattern_range(&patterns, "まだ", 0, 2); // まだ
+    }
+
+    // Polite form: まだ + Verb[ている] + polite
+    #[test]
+    fn test_mada_te_imasu() {
+        let sentence = "まだ仕事をしています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まだ");
+        assert_pattern_range(&patterns, "まだ", 0, 2); // まだ
+    }
+}

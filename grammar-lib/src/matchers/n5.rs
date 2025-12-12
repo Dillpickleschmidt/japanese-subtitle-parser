@@ -1650,9 +1650,21 @@ pub fn mou() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(MouMatcher))]
 }
 
-// Pattern: まだ
+// Pattern: まだ (still, not yet)
+// Structures: まだ + Phrase (various combinations)
 pub fn mada() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MadaMatcher;
+    impl Matcher for MadaMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "まだ"
+                && token.base_form == "まだ"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(MadaMatcher))]
 }
 
 // Pattern: まだ～ていません (still haven't done / haven't done yet)
