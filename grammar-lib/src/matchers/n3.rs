@@ -2102,9 +2102,125 @@ pub fn zuni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ずにはいられない
+// Pattern: ずにはいられない (can't help but do / cannot resist doing)
+// Structures: Verb[未然形] + ずにはいられない / ずにはいられません
+// Exception: する → せずにはいられない
 pub fn zunihairarenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Reuse MizenFormVerbMatcher from zuni
+    #[derive(Debug)]
+    struct MizenFormVerbMatcher;
+    impl Matcher for MizenFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f == "未然形" || f == "未然ヌ接続")
+        }
+    }
+
+    // Match ず (助動詞, base=ぬ)
+    #[derive(Debug)]
+    struct ZuAuxiliaryMatcher;
+    impl Matcher for ZuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ぬ"
+        }
+    }
+
+    // Match に particle (格助詞/一般)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match は particle (係助詞)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match い or はいら from いる/はいる verb (未然形)
+    // Kagome may tokenize "いられ" differently depending on context
+    #[derive(Debug)]
+    struct IruMizenMatcher;
+    impl Matcher for IruMizenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && ((token.surface == "い" && token.base_form == "いる")
+                    || (token.surface == "はいら" && token.base_form == "はいる"))
+        }
+    }
+
+    // Match られ or れ from られる/れる auxiliary (potential)
+    // In standard form: られ (未然形)
+    // In polite form: れ (連用形)
+    #[derive(Debug)]
+    struct RareruAuxiliaryMatcher;
+    impl Matcher for RareruAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            ((token.surface == "られ" && token.base_form == "られる")
+                || (token.surface == "れ" && token.base_form == "れる"))
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match ない (basic form) or ません (polite negative)
+    // For standard: ない (助動詞, 基本形)
+    // For polite: ませ + ん
+    #[derive(Debug)]
+    struct NaiMasenMatcher;
+    impl Matcher for NaiMasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない
+            (token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ない")
+                // Match ませ (from ません)
+                || (token.surface == "ませ"
+                    && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    && token.base_form == "ます")
+        }
+    }
+
+    // Optional ん for polite form (ません)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ん"
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MizenFormVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        // は particle is optional - Kagome may tokenize "はいら" as verb "はいる" without separate は
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(IruMizenMatcher)),
+        TokenMatcher::Custom(Arc::new(RareruAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMasenMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))),
+    ]
 }
 
 // Pattern: なし

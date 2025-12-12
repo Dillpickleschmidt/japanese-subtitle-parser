@@ -4762,13 +4762,13 @@
   {
     "pattern_name": "ずにはいられない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned in our ずに lesson, ず is an auxiliary verb that is not commonly used in modern Japanese, except for in set... [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null

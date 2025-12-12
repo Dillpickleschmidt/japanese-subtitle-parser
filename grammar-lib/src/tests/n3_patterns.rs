@@ -2660,3 +2660,81 @@ mod zuni_tests {
         assert_pattern_range(&patterns, "ずに", 2, 5); // 言わず (without に)
     }
 }
+
+// ========== ずにはいられない (can't help but do) ==========
+// Pattern: ずにはいられない (can't help but do / cannot resist doing)
+// Data source: grammar_points_data.json["ずにはいられない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb［ない］+ ずにはいられない
+//   polite[0]: Verb［ない］+ ずにはいられません
+//   Exception: する ￫ せずにはいられない
+
+mod zunihairarenai_tests {
+    use super::*;
+
+    // Test: Regular verb + ずにはいられない (can't help but eat)
+    // Example: 美味しそうなステーキがあったら、食べずにはいられない
+    // (If there is delicious steak, I can't help but eat it)
+    #[test]
+    fn test_zunihairarenai_regular_verb() {
+        let sentence = "美味しそうなステーキがあったら、食べずにはいられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはいられない");
+        assert_pattern_range(&patterns, "ずにはいられない", 16, 26); // 食べずにはいられない
+    }
+
+    // Test: Regular verb + ずにはいられない (can't help but cry)
+    // Example: この映画を見ると誰でも泣かずにはいられない
+    // (No matter who you are, if you watch this movie, you can't help but cry)
+    #[test]
+    fn test_zunihairarenai_naku() {
+        let sentence = "この映画を見ると誰でも泣かずにはいられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはいられない");
+        assert_pattern_range(&patterns, "ずにはいられない", 11, 21); // 泣かずにはいられない
+    }
+
+    // Test: する verb exception + せずにはいられない (can't help but thank)
+    // Example: 先輩には感謝をせずにはいられない
+    // (I can't help but show my senpai appreciation)
+    #[test]
+    fn test_zunihairarenai_suru_exception() {
+        let sentence = "先輩には感謝をせずにはいられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはいられない");
+        assert_pattern_range(&patterns, "ずにはいられない", 7, 16); // せずにはいられない (includes compound)
+    }
+
+    // Test: する verb + せずにはいられない (can't help but sneeze)
+    // Example: 猫アレルギーなのでくしゃみをせずにはいられない
+    // (I'm allergic to cats so I can't help but sneeze)
+    #[test]
+    fn test_zunihairarenai_kushami() {
+        let sentence = "猫アレルギーなのでくしゃみをせずにはいられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはいられない");
+        assert_pattern_range(&patterns, "ずにはいられない", 14, 23); // せずにはいられない
+    }
+
+    // Test: Polite form - ずにはいられません
+    // Example: あんな話を聞いたら笑わずにはいられません
+    // (If I hear such a story, I can't help but laugh - polite)
+    #[test]
+    fn test_zunihairarenai_polite() {
+        let sentence = "あんな話を聞いたら笑わずにはいられません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはいられない");
+        assert_pattern_range(&patterns, "ずにはいられない", 9, 20); // 笑わずにはいられません
+    }
+}
