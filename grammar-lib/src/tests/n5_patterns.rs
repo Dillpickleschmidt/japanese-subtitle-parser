@@ -4112,3 +4112,75 @@ mod desu_copula_tests {
         assert_pattern_range(&patterns, "です", 3, 7); // 暑いです
     }
 }
+
+// ========== くれる (To give to me/us) ==========
+// Pattern: くれる (to give to me/us)
+// Data source: grammar_points_data.json["くれる"]
+//
+// Structure variants:
+//   The pattern itself is just the verb くれる
+//   Word order is flexible (giver, recipient, object can appear in various orders)
+//   Examples:
+//     - おばあちゃんはいつもお菓子をくれる (grandmother always gives me candy)
+//     - 毎年、彼女が手紙をくれる (every year, girlfriend gives me a letter)
+//     - 母は毎日私にクッキーをくれる (mother gives me cookies every day)
+//     - 嫁がプレゼントをくれた (wife gave me a present - past tense)
+
+mod kureru_tests {
+    use super::*;
+
+    // Present tense - basic form
+    #[test]
+    fn test_kureru_present() {
+        let sentence = "おばあちゃんはいつもお菓子をくれる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くれる");
+        assert_pattern_range(&patterns, "くれる", 14, 17); // くれる
+    }
+
+    // Present tense - with recipient に
+    #[test]
+    fn test_kureru_present_with_recipient() {
+        let sentence = "母は毎日私にクッキーをくれる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くれる");
+        assert_pattern_range(&patterns, "くれる", 11, 14); // くれる
+    }
+
+    // Past tense
+    #[test]
+    fn test_kureru_past() {
+        let sentence = "嫁がプレゼントをくれた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くれる");
+        assert_pattern_range(&patterns, "くれる", 8, 11); // くれた
+    }
+
+    // Polite present tense
+    #[test]
+    fn test_kureru_polite_present() {
+        let sentence = "友達が本をくれます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くれる");
+        assert_pattern_range(&patterns, "くれる", 5, 9); // くれます
+    }
+
+    // Te-form (くれて)
+    #[test]
+    fn test_kureru_te_form() {
+        let sentence = "先生が辞書をくれてありがとう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くれる");
+        assert_pattern_range(&patterns, "くれる", 6, 8); // くれ (stem before て)
+    }
+}

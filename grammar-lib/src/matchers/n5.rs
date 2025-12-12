@@ -3027,9 +3027,18 @@ pub fn ageru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: くれる
+// Pattern: くれる (to give to me/us)
+// Structures: Just the verb くれる in any conjugation
 pub fn kureru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KureruMatcher;
+    impl Matcher for KureruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "くれる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(KureruMatcher))]
 }
 
 // Pattern: もらう
