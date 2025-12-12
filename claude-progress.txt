@@ -1,21 +1,22 @@
 # Grammar-lib Development Progress
 
-## Session 64 - 2025-12-12 (CURRENT)
+## Session 64 - 2025-12-12 (FINAL)
 
 ### ✅ Session Summary
-**Status**: One N5 pattern fully implemented (な-Adjective + Noun)
-**Patterns completed**: 1 new N5 pattern (na-adjective modification)
-**Tests added**: 5 comprehensive tests
-**Total tests**: 403 (was 398)
+**Status**: Two N5 patterns fully implemented (な-Adjective + Noun, な-Adjective だ)
+**Patterns completed**: 2 new N5 patterns (na-adjective modification + predicate)
+**Tests added**: 10 comprehensive tests
+**Total tests**: 408 (was 398)
 
 ### Accomplishments
 1. ✅ Implemented な-Adjective + Noun pattern (N5)
-2. ✅ All 5 test variants passing with proper range assertions
-3. ✅ No test regressions - all 403 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented な-Adjective だ pattern (N5 predicate form)
+3. ✅ All 10 test variants passing with proper range assertions
+4. ✅ No test regressions - all 408 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### な-Adjective + Noun (N5) ✓
 - **File**: grammar-lib/src/matchers/n5.rs
@@ -54,20 +55,57 @@
   - Range calculation system may be extending to include adjacent matched patterns
   - Documented in test comment for future investigation
 
+#### な-Adjective だ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 5 variants, all passing in n5_patterns.rs
+  - test_na_adjective_da_standard (あの場所は静かだから落ち着く - 静かだ)
+  - test_na_adjective_da_polite (彼氏は素敵です - 素敵です)
+  - test_na_adjective_da_standalone (この料理、本当に美味しくて健康的 - 健康 alone)
+  - test_na_adjective_da_past (昨日の試験は簡単だった - 簡単だった)
+  - test_na_adjective_da_polite_past (会議は重要でした - 重要でした)
+- **Structures**:
+  - な-Adjective + だ (standard copula)
+  - な-Adjective + です (polite copula)
+  - な-Adjective + だった (past)
+  - な-Adjective + でした (polite past)
+  - な-Adjective alone (copula omitted in casual speech)
+- **Tokenization**:
+  - Na-adjective = 名詞/形容動詞語幹 (na-adjective stem)
+  - だ = 助動詞, base=だ, 特殊・ダ (copula - various conjugations)
+  - です = 助動詞, base=です, 特殊・デス (polite copula)
+  - だっ = 助動詞, base=だ, 連用タ接続 (copula connecting to た)
+  - でし = 助動詞, base=です, 連用形 (polite copula connecting to た)
+- **Implementation**: 2-token matcher with optional copula
+  - Custom NaAdjPredicateMatcher: Matches 名詞/形容動詞語幹
+  - Optional CopulaMatcher: Matches だ or です (any conjugation with base_form だ or です)
+- **Meaning**: Na-adjective in predicate position - describes subject
+- **Usage**: Fundamental N5 pattern for predicative use of na-adjectives
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Pattern ranges**: Full construction from na-adjective through copula (or just na-adjective if standalone)
+  - Examples: 静かだ (5-8), 素敵です (3-7), 簡単だった (6-11), 健康 (13-15 standalone)
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N5)
-- **Tests written**: 5
-- **Tests passing**: 403/403 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~106 (tests + matcher + feature_list update)
+- **Patterns implemented**: 2 (N5)
+- **Tests written**: 10 (5 for な-Adjective + Noun + 5 for な-Adjective だ)
+- **Tests passing**: 408/408 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~209 (tests + matchers + feature_list updates)
+
+### Key Insights
+- Both patterns work with na-adjectives (名詞/形容動詞語幹)
+- な-Adjective + Noun uses な in 体言接続 form (attributive connection to noun)
+- な-Adjective だ uses だ/です in various conjugations (predicate form)
+- Optional matcher successfully handles both copula variants and standalone usage
+- Related patterns (だ, です, だった, でした) already existed but accepted any preceding token
+- New pattern is more specific - only matches na-adjectives before copula
 
 ### Next Priorities
-Continue with N5 patterns (27 remaining, excluding the one just completed):
+Continue with N5 patterns (26 remaining):
 
 **High-value N5 construction patterns to implement**:
 1. Verb［た・ている］+ Noun - relative clause with verb (complex but important)
 2. より～のほうが - comparative construction (4 structures, but has Wildcard issues per Session 63)
-3. Other concrete construction patterns with clear structure variants
+3. Other stub patterns with clear structure variants
 
 **Patterns to avoid for now**:
 - Very broad patterns: Verbs (Non-past), い-Adjectives, な-Adjectives, verb conjugations
@@ -75,11 +113,11 @@ Continue with N5 patterns (27 remaining, excluding the one just completed):
 - Overly simple particles: は, の, へ (may be too broad or already have stubs)
 
 ### Environment Status
-- ✅ All 403 tests passing
+- ✅ All 408 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
-- ✅ Ready for next pattern or to continue
+- ✅ Ready for next session or to continue
 
 ---
 
