@@ -1047,9 +1047,44 @@ pub fn uff5e_toiunohajijitsuda() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: から言うと
+// Pattern: から言うと (speaking from, from the viewpoint of)
+// Structures: Noun + から + 言う + と/ば/て
 pub fn karaiuto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KaraParticleMatcher;
+    impl Matcher for KaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct IuVerbMatcher;
+    impl Matcher for IuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "言う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct ConditionalParticleMatcher;
+    impl Matcher for ConditionalParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "と" || token.surface == "ば" || token.surface == "て")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun
+        TokenMatcher::Custom(Arc::new(KaraParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ConditionalParticleMatcher)),
+    ]
 }
 
 // Pattern: に取って

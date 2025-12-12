@@ -1847,3 +1847,49 @@ mod ikura_demo_tests {
         assert_pattern_range(&patterns, "いくら〜でも", 7, 14); // いくら嫌いでも
     }
 }
+
+// ========== から言うと (from the perspective of) ==========
+// Pattern: から言うと (speaking from, from the viewpoint of)
+// Data source: grammar_points_data.json["から言うと"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + から言うと
+//   standard[1]: から言えば (conditional variant)
+//   standard[1]: から言って (て-form variant)
+
+mod kara_iuto_tests {
+    use super::*;
+
+    // Test: Noun + から言うと (main form)
+    #[test]
+    fn test_kara_iuto_noun() {
+        let sentence = "私の経験から言うと、このやり方が一番効率がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から言うと");
+        assert_pattern_range(&patterns, "から言うと", 2, 9); // 経験から言うと
+    }
+
+    // Test: Noun + から言えば (conditional variant)
+    #[test]
+    fn test_kara_ieba_conditional() {
+        let sentence = "私の立場から言えば、彼は絶対いつか成功する";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から言うと");
+        assert_pattern_range(&patterns, "から言うと", 2, 9); // 立場から言えば
+    }
+
+    // Test: Noun + から言って (て-form variant)
+    #[test]
+    fn test_kara_itte_te_form() {
+        let sentence = "この結果から言って、この計画はあまりよくありませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から言うと");
+        assert_pattern_range(&patterns, "から言うと", 2, 9); // 結果から言って
+    }
+}
