@@ -117,9 +117,61 @@ pub fn nakanaka() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(NakanakaMatcher))]
 }
 
-// Pattern: あまり
+// Pattern: あまり (so much that / excessive - leading to negative result)
+// Structures:
+//   1. Verb (基本形) + あまり
+//   2. Noun + の + あまり (includes さ/み derived nouns)
+//   3. な-Adjective + な + あまり
 pub fn amari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct AmariPrecedingMatcher;
+    impl Matcher for AmariPrecedingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match the token directly before あまり:
+            // 1. Verb (基本形)
+            // 2. の (助詞/連体化)
+            // 3. な (助動詞/体言接続)
+
+            // Verb in 基本形
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形") {
+                return true;
+            }
+
+            // の (助詞/連体化)
+            if token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") {
+                return true;
+            }
+
+            // な (助動詞/体言接続)
+            if token.surface == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "体言接続") {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    #[derive(Debug)]
+    struct AmariMatcher;
+    impl Matcher for AmariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match あまり as 名詞/一般 or 名詞/非自立/副詞可能
+            token.surface == "あまり"
+                && token.base_form == "あまり"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AmariPrecedingMatcher)),
+        TokenMatcher::Custom(Arc::new(AmariMatcher)),
+    ]
 }
 
 // Pattern: なかなか～ない

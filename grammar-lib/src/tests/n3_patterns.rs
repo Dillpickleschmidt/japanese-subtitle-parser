@@ -226,3 +226,74 @@ mod okini_tests {
         assert_pattern_range(&patterns, "おきに", 0, 6); // 一ヶ月おきに
     }
 }
+
+// ========== あまり (so much that / excessive) ==========
+// Pattern: あまり (so much that / to the point that)
+// Data source: grammar_points_data.json["あまり"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + あまり + (Negative Result) Phrase
+//   standard[1]: い-Adjective[さ] + の + あまり + (Negative Result) Phrase
+//   standard[2]: い-Adjective[み] + の + あまり + (Negative Result) Phrase
+//   standard[3]: な-Adjective + な + あまり + (Negative Result) Phrase
+//   standard[4]: Noun + の + あまり + (Negative Result) Phrase
+
+mod amari_tests {
+    use super::*;
+
+    // Test: Verb + あまり (so much that - excessive action leading to negative result)
+    #[test]
+    fn test_amari_verb() {
+        let sentence = "彼は仕事に集中するあまり、終電を逃しました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり");
+        // Note: Range extends back from する to include preceding 集中 (compound verb)
+        assert_pattern_range(&patterns, "あまり", 5, 12); // 集中するあまり
+    }
+
+    // Test: い-Adjective[さ] + の + あまり (excessive quality leading to negative result)
+    #[test]
+    fn test_amari_i_adj_sa() {
+        let sentence = "トムは暑さのあまり、気を失った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり");
+        assert_pattern_range(&patterns, "あまり", 5, 9); // のあまり
+    }
+
+    // Test: い-Adjective[み] + の + あまり (excessive quality leading to negative result)
+    #[test]
+    fn test_amari_i_adj_mi() {
+        let sentence = "彼女は悲しみのあまりボーっとしている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり");
+        assert_pattern_range(&patterns, "あまり", 6, 10); // のあまり
+    }
+
+    // Test: な-Adjective + な + あまり (excessive quality leading to negative result)
+    #[test]
+    fn test_amari_na_adj() {
+        let sentence = "彼は音楽が好きなあまり、仕事を辞めてバンドを作った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり");
+        assert_pattern_range(&patterns, "あまり", 7, 11); // なあまり
+    }
+
+    // Test: Noun + の + あまり (excessive state leading to negative result)
+    #[test]
+    fn test_amari_noun() {
+        let sentence = "ヤスエは緊張のあまり上手く歌えなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまり");
+        assert_pattern_range(&patterns, "あまり", 6, 10); // のあまり
+    }
+}

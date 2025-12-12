@@ -4216,13 +4216,13 @@
   {
     "pattern_name": "あまり",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As a noun , あまり means 'excess', and refers to an amount of something that is in surplus [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
