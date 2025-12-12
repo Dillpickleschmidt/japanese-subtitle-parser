@@ -478,13 +478,13 @@
   {
     "pattern_name": "くる",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "来（く）る is one of only two main verbs in Japanese that do not follow the standard rules of conjugation for Godan and Ic... [1 std, 1 pol]",
     "priority": 1,
     "skip_reason": null

@@ -667,8 +667,24 @@ pub fn suru() -> Vec<TokenMatcher> {
 }
 
 // Pattern: くる
+// Pattern: くる (to come - irregular verb)
+// Structures: 来る/くる (various conjugations)
 pub fn kuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match くる verb (base_form = 来る, conjugation type = カ変・来ル)
+    #[derive(Debug)]
+    struct KuruMatcher;
+    impl Matcher for KuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "来る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(4).is_some_and(|f| f.starts_with("カ変"))
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KuruMatcher))]
 }
 
 // Pattern: る-Verb (Past)

@@ -3964,3 +3964,66 @@ mod kekkou_tests {
         assert_pattern_range(&patterns, "けっこう", 7, 11); // けっこう
     }
 }
+
+// ========== くる (Come - Irregular verb) ==========
+// Pattern: くる (to come - irregular verb)
+// Data source: grammar_points_data.json["くる"]
+//
+// Structure variants to test:
+//   standard[0]: くる (dictionary form)
+//   polite[0]: きます (polite form)
+//
+// Note: くる conjugates irregularly:
+//   - Non-past: くる/来る
+//   - Past: きた/来た
+//   - Te-form: きて/来て
+//   - Negative: こない/来ない
+//   - Stem: き/来
+
+mod kuru_tests {
+    use super::*;
+
+    // Dictionary form: くる
+    #[test]
+    fn test_kuru_dictionary() {
+        let sentence = "明日パーティーに来る？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くる");
+        assert_pattern_range(&patterns, "くる", 8, 10); // 来る
+    }
+
+    // Polite form: きます
+    #[test]
+    fn test_kuru_polite() {
+        let sentence = "友達が家に来ます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くる");
+        assert_pattern_range(&patterns, "くる", 5, 8); // 来ます
+    }
+
+    // Past form: きた
+    #[test]
+    fn test_kuru_past() {
+        let sentence = "昨日彼女が来た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くる");
+        assert_pattern_range(&patterns, "くる", 5, 7); // 来た
+    }
+
+    // Te-form: きて
+    #[test]
+    fn test_kuru_te_form() {
+        let sentence = "駅に来ている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くる");
+        assert_pattern_range(&patterns, "くる", 2, 3); // 来
+    }
+}
