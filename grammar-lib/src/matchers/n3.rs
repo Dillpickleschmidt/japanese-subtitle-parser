@@ -214,9 +214,82 @@ pub fn uede() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: おかげで
+// Pattern: おかげで (thanks to / because of)
+// Structures:
+//   - Verb (attributive) + おかげで
+//   - い-Adjective + おかげで
+//   - な-Adjective + な + おかげで
+//   - Noun + の + おかげで
 pub fn okagede() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use crate::pattern_matcher::TokenMatcher;
+
+    // Match おかげ as noun
+    #[derive(Debug)]
+    struct OkageMatcher;
+    impl Matcher for OkageMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "おかげ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match で as case particle
+    #[derive(Debug)]
+    struct DeCaseParticleMatcher;
+    impl Matcher for DeCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match any verb, adjective, or noun that can precede おかげで
+    // This includes:
+    // - Verbs in dictionary/attributive form
+    // - Past tense auxiliary た (after verbs)
+    // - い-adjectives in basic form
+    // - な-adjectives with な
+    // - Nouns with の
+    #[derive(Debug)]
+    struct AttributivePrecedingMatcher;
+    impl Matcher for AttributivePrecedingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb in dictionary/attributive form
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形" || f == "連体形");
+
+            // Past tense auxiliary た (基本形)
+            let is_past_aux = token.surface == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+
+            // い-adjective in basic form
+            let is_i_adj = token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+
+            // な (copula in attributive form after na-adjective)
+            let is_na_copula = token.surface == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "体言接続");
+
+            // の particle (after noun)
+            let is_no_particle = token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"));
+
+            is_verb || is_past_aux || is_i_adj || is_na_copula || is_no_particle
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AttributivePrecedingMatcher)),
+        TokenMatcher::Custom(Arc::new(OkageMatcher)),
+        TokenMatcher::Custom(Arc::new(DeCaseParticleMatcher)),
+    ]
 }
 
 // Pattern: にもとづいて

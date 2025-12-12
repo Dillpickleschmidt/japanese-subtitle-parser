@@ -66,3 +66,61 @@ mod nakanaka_tests {
         assert_pattern_range(&patterns, " なかなか", 0, 4); // なかなか
     }
 }
+
+// ========== おかげで (thanks to) ==========
+// Pattern: おかげで (thanks to / because of)
+// Data source: grammar_points_data.json["おかげで"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + おかげで
+//   standard[1]: ［い］Adjective + おかげで
+//   standard[2]: ［な］Adjective + な + おかげで
+//   standard[3]: Noun + の + おかげで
+
+mod okagede_tests {
+    use super::*;
+
+    // Test: Verb + おかげで
+    #[test]
+    fn test_okagede_verb() {
+        let sentence = "タケルくんに手伝ってもらったおかげで仕事が早く終わったよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おかげで");
+        assert_pattern_range(&patterns, "おかげで", 13, 18); // たおかげで
+    }
+
+    // Test: い-Adjective + おかげで
+    #[test]
+    fn test_okagede_i_adjective() {
+        let sentence = "部屋が汚いおかげでどこに何があるか全く分からない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おかげで");
+        assert_pattern_range(&patterns, "おかげで", 3, 9); // 汚いおかげで
+    }
+
+    // Test: な-Adjective + な + おかげで
+    #[test]
+    fn test_okagede_na_adjective() {
+        let sentence = "友達が有名なおかげで、どんな高級レストランでも予約なしで入れる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おかげで");
+        assert_pattern_range(&patterns, "おかげで", 5, 10); // なおかげで
+    }
+
+    // Test: Noun + の + おかげで
+    #[test]
+    fn test_okagede_noun() {
+        let sentence = "あなたのおかげで不自由のない生活ができている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おかげで");
+        assert_pattern_range(&patterns, "おかげで", 3, 8); // のおかげで
+    }
+}
