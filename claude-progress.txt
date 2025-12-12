@@ -1,5 +1,64 @@
 # Grammar-lib Development Progress
 
+## Session 39 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One pattern fully implemented (ないでください)
+**Patterns completed**: 1 new pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 200 (was 197)
+
+### Accomplishments
+1. ✅ Implemented ないでください (please don't do - polite negative request) pattern
+2. ✅ All 3 test variants passing with proper range assertions
+3. ✅ No test regressions - all 200 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### ないでください (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_naide_kudasai_basic (言わないでください - basic polite request)
+  - test_naide_kudasai_sit (座らないでください - polite request with seat verb)
+  - test_naide_casual (食べないで - casual form without ください, detected by existing ないで pattern)
+- **Structure**: Verb[未然形] + ない + で + ください
+- **Tokenization insights**:
+  - Verb in 未然形 (irrealis/negative form)
+  - ない is 助動詞 with 連用デ接続 conjugation form
+  - で is 助詞/接続助詞 (conjunction particle)
+  - ください tokenizes as 動詞/非自立 with base_form くださる
+  - Pattern range includes full Verb + ないで + ください construction
+  - Casual form (Verb + ないで) is already handled by separate ないで pattern
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Matcher approach**: Sequential token matching with custom matchers
+- **Custom matchers created**:
+  - NegativeVerbFormMatcher: Match verb in 未然形 or 未然ウ接続
+  - NaiAuxiliaryDeFormMatcher: Match ない in 連用デ接続 form
+  - DeParticleMatcher: Match で as conjunction particle
+  - KudasaiMatcher: Match ください as non-independent verb
+- **Implementation notes**: Pattern declaration already existed in patterns.rs; just needed to implement the matcher function
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. てはいけない - must not do
+2. なくてはいけない - must do
+3. なくてはならない - must do (formal)
+4. ～んです・のです - explanatory のです
+5. ～ましょうか - shall we?
+6. ませんか - won't you?
+
+### Environment Status
+- ✅ All 200 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 38 - 2025-12-12
 
 ### ✅ Session Summary
