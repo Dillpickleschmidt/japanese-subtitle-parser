@@ -1964,3 +1964,50 @@ mod noun_kata_tests {
         assert_pattern_range(&patterns, "Noun＋型", 0, 2); // 文型
     }
 }
+
+// ========== ～ようとしない (shall not / doesn't try to) ==========
+// Pattern: ～ようとしない (shall not / doesn't try to)
+// Data source: grammar_points_data.json["〜ようとしない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[おう] + としない
+//   polite[0]: Verb[おう] + としません
+
+mod youtoshinai_tests {
+    use super::*;
+
+    // Test: Verb[おう] + としない (standard form)
+    // Example: 聞こうとしない - doesn't try to listen
+    #[test]
+    fn test_youtoshinai_standard() {
+        let sentence = "彼は怒っているから、誰の話も聞こうとしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜ようとしない");
+        assert_pattern_range(&patterns, "〜ようとしない", 14, 21); // 聞こうとしない
+    }
+
+    // Test: Verb[おう] + としない (different verb)
+    // Example: 帰ろうとしない - doesn't try to go home
+    #[test]
+    fn test_youtoshinai_kaeru() {
+        let sentence = "家になかなか帰ろうとしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜ようとしない");
+        assert_pattern_range(&patterns, "〜ようとしない", 6, 13); // 帰ろうとしない
+    }
+
+    // Test: Verb[おう] + としません (polite form)
+    #[test]
+    fn test_youtoshinai_polite() {
+        let sentence = "あの子は全然勉強しようとしません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜ようとしない");
+        assert_pattern_range(&patterns, "〜ようとしない", 6, 16); // 勉強しようとしません
+    }
+}

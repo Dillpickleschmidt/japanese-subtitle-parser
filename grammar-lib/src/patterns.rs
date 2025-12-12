@@ -3676,6 +3676,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    Youtoshinai {
+        name: "〜ようとしない",
+        matcher_fn: crate::matchers::n3::youtoshinai,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     VerbVolitionalToshitaga {
         name: "Verb[volitional] + としたが",
         matcher_fn: crate::matchers::n3::verb_volitional_toshitaga,

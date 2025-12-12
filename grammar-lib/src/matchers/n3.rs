@@ -1505,6 +1505,89 @@ pub fn verb_volitional_tosuru() -> Vec<TokenMatcher> {
     ]
 }
 
+// Pattern: ～ようとしない (shall not / doesn't try to)
+// Structures: Verb[おう] + としない / としません
+pub fn youtoshinai() -> Vec<TokenMatcher> {
+    // Match verb in volitional form (未然ウ接続)
+    #[derive(Debug)]
+    struct VolitionalVerbMatcher;
+    impl Matcher for VolitionalVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然ウ接続")
+        }
+    }
+
+    // Match う as auxiliary verb (助動詞/不変化型/基本形)
+    #[derive(Debug)]
+    struct VolitionalAuxiliaryMatcher;
+    impl Matcher for VolitionalAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match と as quotation particle
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match し from する in 未然形 or 連用形
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.features.get(5).is_some_and(|f| f == "未然形")
+                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+        }
+    }
+
+    // Match ない (negative auxiliary) or ませ (polite negative stem)
+    #[derive(Debug)]
+    struct NaiMaseMatcher;
+    impl Matcher for NaiMaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            || (token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    // For polite form, optionally match ん after ませ
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VolitionalVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(VolitionalAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMaseMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))),
+    ]
+}
+
 // Pattern: Verb[volitional] + としたが
 pub fn verb_volitional_toshitaga() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
