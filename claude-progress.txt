@@ -1,21 +1,23 @@
 # Grammar-lib Development Progress
 
-## Session 62 - 2025-12-12
+## Session 62 - 2025-12-12 (FINAL)
 
 ### ✅ Session Summary
-**Status**: One N5 pattern fully implemented (のがすき - like doing something)
-**Patterns completed**: 1 new N5 pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 388 (was 384)
+**Status**: Three N5 patterns fully implemented (のがすき series)
+**Patterns completed**: 3 new N5 patterns (related constructions)
+**Tests added**: 10 comprehensive tests
+**Total tests**: 394 (was 384)
 
 ### Accomplishments
 1. ✅ Implemented のがすき (like doing something) pattern (N5)
-2. ✅ All 4 test variants passing with proper range assertions
-3. ✅ No test regressions - all 388 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented のがじょうず (good at doing something) pattern (N5)
+3. ✅ Implemented のがへた (bad at doing something) pattern (N5)
+4. ✅ All 10 test variants passing with proper range assertions
+5. ✅ No test regressions - all 394 tests pass
+6. ✅ Updated feature_list.json for all three patterns
+7. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### のがすき (N5) ✓
 - **File**: grammar-lib/src/matchers/n5.rs
@@ -42,6 +44,30 @@
 - **Pattern priority**: 1 (construction pattern - N5 level)
 - **Note**: Handles both hiragana すき and kanji 好き, supports all conjugation forms
 
+#### のがじょうず (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing in n5_patterns.rs
+  - test_nogajouzu_present (彼は歌うのが上手だ - present)
+  - test_nogajouzu_polite_present (彼女は漢字を覚えるのが上手です - polite present)
+  - test_nogajouzu_past (母は若い頃、踊るのが上手だった - past)
+- **Structure**: Verb[る] + の + が + 上手 + [だ/です/だった]
+- **Meaning**: "to be good at doing (something)"
+- **Usage**: Similar to のがすき but expressing skill rather than preference
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Note**: Same structure as のがすき, uses 上手 (jouzu) as 名詞/形容動詞語幹
+
+#### のがへた (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing in n5_patterns.rs
+  - test_nogaheta_present (私は漢字を教えるのが下手だ - present)
+  - test_nogaheta_polite_present (彼は運転するのが下手です - polite present)
+  - test_nogaheta_past (去年まで料理をするのが下手だった - past)
+- **Structure**: Verb[る] + の + が + 下手 + [だ/です/だった]
+- **Meaning**: "to be bad at doing (something)"
+- **Usage**: Opposite of のがじょうず, expressing lack of skill
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Note**: Same structure as のがすき/のがじょうず, uses 下手 (heta) as 名詞/形容動詞語幹
+
 ### Technical Details
 - **Pattern range**: Full construction from verb to copula ending
   - Examples: 見るのが好きだ (chars 5-12), もらうのが好きです (chars 6-15)
@@ -52,30 +78,33 @@
 - **Test strategy**: Covered all major structure variants from grammar_points_data.json
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N5)
-- **Tests written**: 4
-- **Tests passing**: 388/388 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~146 (tests + matcher + feature_list update)
+- **Patterns implemented**: 3 (N5)
+- **Tests written**: 10 (4 + 3 + 3)
+- **Tests passing**: 394/394 (100%)
+- **Commits**: 3 clean commits
+- **Lines added**: ~398 (tests + matchers + feature_list updates)
+
+### Key Insights
+- All three patterns share identical structure: Verb + の + が + Adjective + Copula
+- Implementation was highly efficient after the first pattern (のがすき)
+- のがじょうず and のがへた took minimal time due to code reuse
+- These patterns form a cohesive series for expressing preference/ability with verbs
 
 ### Next Priorities
-Continue with N5 patterns (24 remaining):
+Continue with N5 patterns (22 remaining):
 
-**Similar patterns to implement next** (high value, similar structure):
-1. のがじょうず - to be good at doing something (similar to のがすき)
-2. のがへた - to be bad at doing something (similar to のがすき)
-
-**Other high-priority N5 patterns**:
-3. のなかで～がいちばん～ - superlative construction
-4. より～のほうが - comparative construction
+**High-priority N5 patterns**:
+1. のなかで～がいちばん～ - superlative construction
+2. より～のほうが - comparative construction
 
 **Patterns to check for stubs**:
-5. は - particle (topic marker) - check if stub
-6. へ - particle (direction marker) - check if stub
-7. の - particle (possession/nominalization) - check if stub
+3. は - particle (topic marker) - check if stub
+4. の - particle (possession/nominalization) - check if stub
+
+**Note**: Three related patterns (のがすき/のがじょうず/のがへた) completed in this session.
 
 ### Environment Status
-- ✅ All 388 tests passing
+- ✅ All 394 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
