@@ -329,3 +329,86 @@ mod kotogadekiru_tests {
         assert_pattern_range(&patterns, "ことができる", 3, 13); // 難しいことはできない
     }
 }
+
+// ========== ということ (that means / you mean) ==========
+// Pattern: ということ
+// Data source: grammar_points_data.json["ということ"]
+//
+// Structure to test:
+//   - standard[0]: Phrase + ということ
+//   - Casual variant: Phrase + ってこと
+//
+// Examples from data:
+//   - 宇宙人はいるということですか (Does that mean aliens exist?)
+//   - ルームメイトだということだよね (That means they're your roommate?)
+//   - 正しいってことですか (casual: Does that mean this is correct?)
+#[cfg(test)]
+mod toiukoto_tests {
+    use super::*;
+
+    // Testing: Phrase + ということ (formal)
+    #[test]
+    fn test_toiukoto_formal() {
+        let sentence = "宇宙人はいるということですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということ");
+        assert_pattern_range(&patterns, "ということ", 4, 13); // いるということです
+    }
+
+    // Testing: Phrase + ということ (statement)
+    #[test]
+    fn test_toiukoto_statement() {
+        let sentence = "ルームメイトだということだよね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということ");
+        assert_pattern_range(&patterns, "ということ", 6, 12); // だということ
+    }
+
+    // Testing: Phrase + ということを (with を particle)
+    #[test]
+    fn test_toiukoto_with_particle() {
+        let sentence = "あの先生の教え方が酷いということを聞いた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということ");
+        assert_pattern_range(&patterns, "ということ", 9, 16); // 酷いということ
+    }
+
+    // Testing: Phrase + ってこと (casual form)
+    #[test]
+    fn test_toiukoto_casual() {
+        let sentence = "これが正しいってことですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということ");
+        assert_pattern_range(&patterns, "ということ", 3, 12); // 正しいってことです
+    }
+
+    // Testing: Phrase + ってこと (casual, question)
+    #[test]
+    fn test_toiukoto_casual_question() {
+        let sentence = "電車で来るってこと？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということ");
+        assert_pattern_range(&patterns, "ということ", 3, 9); // 来るってこと
+    }
+
+    // Testing: Phrase + ってこと (casual clarification)
+    #[test]
+    fn test_toiukoto_casual_clarify() {
+        let sentence = "これは人工ってこと？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということ");
+        assert_pattern_range(&patterns, "ということ", 3, 9); // 人工ってこと
+    }
+}

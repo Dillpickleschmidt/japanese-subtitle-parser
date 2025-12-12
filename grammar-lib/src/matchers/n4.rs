@@ -125,9 +125,37 @@ pub fn naosu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ということ
+// Pattern: ということ (that means / you mean)
+// Structures: Phrase + ということ, Phrase + ってこと
 pub fn toiukoto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    #[derive(Debug)]
+    struct ToiuTteMatcher;
+    impl Matcher for ToiuTteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "という" || token.surface == "って")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ToiuTteMatcher)),
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+    ]
 }
 
 // Pattern: とき
