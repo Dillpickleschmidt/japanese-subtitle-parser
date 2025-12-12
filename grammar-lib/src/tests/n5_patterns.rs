@@ -3584,3 +3584,112 @@ mod temoii_adj_noun_tests {
         assert_pattern_range(&patterns, "てもいい", 0, 10); // 焼きそばでもいいです
     }
 }
+
+// ========== 誰か・どこか・誰も・どこも (Someone/Somewhere/No one/Nowhere) ==========
+// Pattern: 誰か・どこか・誰も・どこも (indefinite/negative pronouns)
+// Data source: grammar_points_data.json["誰か・どこか・誰も・どこも"]
+//
+// Structure variants to test:
+//   standard[0]: WH-Word + か + Particle
+//   standard[1]: WH-Word + Particle + も
+//   standard[2]: WH-Words: どこ, 誰（だれ）
+//   standard[3]: Particles: へ, に, と
+//
+// Basic structures:
+//   - 誰か (someone) in positive sentences
+//   - どこか (somewhere) in positive sentences
+//   - 誰も (no one) in negative sentences
+//   - どこも (nowhere) in negative sentences
+//   - With particles: 誰かに, どこかへ, 誰にも, どこへも etc.
+
+mod dareka_dokoka_tests {
+    use super::*;
+
+    // 誰か (someone) - WH-Word + か
+    #[test]
+    fn test_dareka_someone() {
+        let sentence = "誰かがいますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰か・どこか・誰も・どこも");
+        assert_pattern_range(&patterns, "誰か・どこか・誰も・どこも", 0, 2); // 誰か
+    }
+
+    // どこか (somewhere) - WH-Word + か
+    #[test]
+    fn test_dokoka_somewhere() {
+        let sentence = "来月はどこかへ行きますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰か・どこか・誰も・どこも");
+        assert_pattern_range(&patterns, "誰か・どこか・誰も・どこも", 3, 7); // どこかへ
+    }
+
+    // 誰も (no one) - WH-Word + も
+    #[test]
+    fn test_daremo_no_one() {
+        let sentence = "俺の誕生日パーティーには誰も来なかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰か・どこか・誰も・どこも");
+        assert_pattern_range(&patterns, "誰か・どこか・誰も・どこも", 12, 14); // 誰も
+    }
+
+    // どこも (nowhere) - WH-Word + も
+    #[test]
+    fn test_dokomo_nowhere() {
+        let sentence = "９時だからどこも開いていない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰か・どこか・誰も・どこも");
+        assert_pattern_range(&patterns, "誰か・どこか・誰も・どこも", 5, 8); // どこも
+    }
+
+    // 誰かに (to someone) - WH-Word + か + に
+    #[test]
+    fn test_dareka_ni_to_someone() {
+        let sentence = "誰かに言った？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰か・どこか・誰も・どこも");
+        assert_pattern_range(&patterns, "誰か・どこか・誰も・どこも", 0, 3); // 誰かに
+    }
+
+    // どこかへ (to somewhere) - WH-Word + か + へ
+    #[test]
+    fn test_dokoka_he_to_somewhere() {
+        let sentence = "休みの日はどこかへ行きましたか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰か・どこか・誰も・どこも");
+        assert_pattern_range(&patterns, "誰か・どこか・誰も・どこも", 5, 9); // どこかへ
+    }
+
+    // 誰にも (to no one) - WH-Word + に + も
+    #[test]
+    fn test_dare_ni_mo_to_no_one() {
+        let sentence = "明日は誰にも会わない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰か・どこか・誰も・どこも");
+        assert_pattern_range(&patterns, "誰か・どこか・誰も・どこも", 3, 6); // 誰にも
+    }
+
+    // どこへも (to nowhere) - WH-Word + へ + も
+    #[test]
+    fn test_doko_he_mo_to_nowhere() {
+        let sentence = "今日はどこへも行かない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "誰か・どこか・誰も・どこも");
+        assert_pattern_range(&patterns, "誰か・どこか・誰も・どこも", 3, 7); // どこへも
+    }
+}

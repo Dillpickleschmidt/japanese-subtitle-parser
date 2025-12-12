@@ -1978,9 +1978,100 @@ pub fn nanika_u30fb_nanimo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 誰か・どこか・誰も・どこも
+// Pattern: 誰か・どこか・誰も・どこも (someone/somewhere/no one/nowhere)
+// Structures:
+//   1. WH-Word + か: 誰か, どこか (someone, somewhere)
+//   2. WH-Word + も: 誰も, どこも (no one, nowhere)
+//   3. WH-Word + か + Particle: 誰かに, どこかへ, 誰かと
+//   4. WH-Word + Particle + も: 誰にも, どこへも, 誰とも
+//
+// This matcher needs to handle all four patterns, which have different structures.
+// We'll use a combined approach with optional tokens.
 pub fn dareka_u30fb_dokoka_u30fb_daremo_u30fb_dokomo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match question words: 誰, どこ
+    #[derive(Debug)]
+    struct QuestionWordDareDoko;
+    impl Matcher for QuestionWordDareDoko {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "誰" || token.surface == "どこ")
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+        }
+    }
+
+    // Match か OR case particle (へ, に, と)
+    #[derive(Debug)]
+    struct KaOrCaseParticle;
+    impl Matcher for KaOrCaseParticle {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // か particle
+            if token.surface == "か"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞／並立助詞／終助詞")
+            {
+                return true;
+            }
+
+            // Case particles: へ, に, と
+            if (token.surface == "へ" || token.surface == "に" || token.surface == "と")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+            {
+                return true;
+            }
+
+            // も particle (for patterns like 誰も)
+            if token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Match optional も or case particle
+    #[derive(Debug)]
+    struct OptionalMoOrParticle;
+    impl Matcher for OptionalMoOrParticle {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // も particle
+            if token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+            {
+                return true;
+            }
+
+            // Case particles for patterns like 誰かに
+            if (token.surface == "へ" || token.surface == "に" || token.surface == "と")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Pattern structure: WH-Word + (か OR particle OR も) + optional (particle OR も)
+    // This matches:
+    // - 誰か (WH + か)
+    // - 誰も (WH + も)
+    // - 誰かに (WH + か + に)
+    // - 誰にも (WH + に + も)
+    vec![
+        TokenMatcher::Custom(Arc::new(QuestionWordDareDoko)),
+        TokenMatcher::Custom(Arc::new(KaOrCaseParticle)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            OptionalMoOrParticle,
+        )))),
+    ]
 }
 
 // Pattern: ましょう (let's do / volitional)
