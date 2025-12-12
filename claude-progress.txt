@@ -1,5 +1,142 @@
 # Grammar-lib Development Progress
 
+## Session 87 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two N4 patterns fully implemented (ことができる + ということ)
+**Patterns completed**: 2 new N4 patterns (ability and quotative constructions)
+**Tests added**: 12 comprehensive tests (6 + 6)
+**Total tests**: 543 (was 531)
+
+### Accomplishments
+1. ✅ Implemented ことができる pattern (N4) - ability/capability expression
+2. ✅ Implemented ということ pattern (N4) - quotative nominalization
+3. ✅ All 12 tests passing with proper range assertions
+4. ✅ No test regressions - all 543 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### ことができる (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (line 963)
+- **Tests**: 6 variants, all passing in n4_patterns.rs
+  - test_kotogadekiru_verb (泳ぐことができる - can swim)
+  - test_kotogadekiru_verb_simple (することができる - can do)
+  - test_kotogadekiru_noun (運転ができる - can drive)
+  - test_kotogadekiru_polite (話すことができます - can speak, polite)
+  - test_kotogadekiru_noun_polite (力仕事ができる - can do physical work)
+  - test_kotogadekiru_negative (ことはできない - cannot, with は)
+- **Structures**:
+  - Verb + ことができる
+  - Noun + ができる (no こと needed)
+  - Polite forms with できます
+  - Negative with は instead of が
+- **Tokenization insights**:
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - が or は = 助詞/格助詞 or 助詞/係助詞
+  - できる = 動詞/自立 in any conjugation
+  - こと is optional (verbs use it, nouns don't)
+- **Implementation**: 4-token matcher
+  1. TokenMatcher::Any - Matches any preceding token
+  2. TokenMatcher::Optional(KotoMatcher) - Optional こと
+  3. GaHaParticleMatcher - Matches が or は
+  4. specific_verb("できる") - Matches できる in any conjugation
+- **Meaning**: "can do / be able to" - expresses ability or possibility
+- **Usage**: Similar to potential form but more formal, commonly used in N4
+- **Pattern priority**: 3.1 (higher confidence when こと present)
+- **Pattern ranges**: Include preceding element + optional こと + particle + できる
+  - 泳ぐことができる (chars 5-13)
+  - することができる (chars 5-13)
+  - 運転ができる (chars 0-6)
+  - 話すことができます (chars 5-14)
+  - 力仕事ができる (chars 0-7)
+  - 難しいことはできない (chars 3-13)
+
+#### ということ (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (line 128)
+- **Tests**: 6 variants, all passing in n4_patterns.rs
+  - test_toiukoto_formal (いるということです - formal: that means exists)
+  - test_toiukoto_statement (だということだ - statement: means roommate)
+  - test_toiukoto_with_particle (酷いということを - with を particle)
+  - test_toiukoto_casual (正しいってことです - casual: means correct)
+  - test_toiukoto_casual_question (来るってこと - casual question)
+  - test_toiukoto_casual_clarify (人工ってこと - casual clarification)
+- **Structures**:
+  - Phrase + ということ (formal)
+  - Phrase + ってこと (casual)
+- **Tokenization insights**:
+  - という = 助詞/格助詞/連語 (case particle, compound)
+  - って = 助詞/格助詞/連語 (casual form)
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - Both tokenize identically except surface form
+- **Implementation**: 3-token matcher
+  1. TokenMatcher::Any - Matches any preceding token (phrase)
+  2. ToiuTteMatcher - Matches という or って as 助詞/格助詞/連語
+  3. KotoMatcher - Matches こと as 名詞/非自立/一般
+- **Meaning**: "that means / you mean" - quotative nominalization
+- **Usage**: Clarifying, reporting, or confirming understanding
+- **Pattern priority**: 2.5 (standard N4 pattern)
+- **Pattern ranges**: Include preceding element + という/って + こと
+  - いるということです (chars 4-13)
+  - だということ (chars 6-12)
+  - 酷いということ (chars 9-16)
+  - 正しいってことです (chars 3-12)
+  - 来るってこと (chars 3-9)
+  - 人工ってこと (chars 3-9)
+
+### Technical Details
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - ことができる: 2 standard + 2 polite forms (6 tests covering verb/noun and negative)
+  - ということ: 1 standard form with formal/casual variants (6 tests)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insights**:
+  - ことができる uses optional こと to handle both verb and noun constructions
+  - ということ accepts both formal という and casual って variants
+  - Both patterns share KotoMatcher but serve different grammatical purposes
+- **Pattern ranges**: Include full construction from preceding element through final particle/verb
+
+### Session Statistics
+- **Patterns implemented**: 2 (N4)
+- **Tests written**: 12 (6 + 6)
+- **Tests passing**: 543/543 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~238 (tests + 2 matchers + feature_list updates)
+
+### Key Insights
+- Both patterns extend こと-based constructions at N4 level
+- ことができる bridges verb and noun ability expressions elegantly
+- ということ provides essential quotative/clarification functionality
+- Test-first workflow successfully identified all tokenization patterns
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N4 patterns or move back to N3:
+
+**Remaining high-value N4 patterns**:
+1. こと - general nominalization (1 std, may overlap with many patterns)
+2. Causative-Passive - complex conjugation (22 std + 22 pol structures)
+3. Number + しか〜ない - "only" with negative
+4. Question-phrase + か - embedded questions
+5. Verb[て] - casual command form
+
+**Alternative: Return to N3 patterns**:
+1. ことなの - explanatory "the thing is..." (8 std + 8 pol)
+2. いくら〜でも - "no matter how much"
+3. かけ - incomplete action suffix
+4. から言うと - "from the perspective of"
+
+**Recommendation**: The "こと" pattern (N4) is very general and might match too broadly. Consider implementing more specific patterns first, or move to N3 patterns. The high-value specific N4 patterns like "Number + しか〜ない" or "Question-phrase + か" would be good next choices.
+
+### Environment Status
+- ✅ All 543 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session
+
+---
+
 ## Session 86 - 2025-12-12
 
 ### ✅ Session Summary
