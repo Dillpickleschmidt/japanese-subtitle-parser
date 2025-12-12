@@ -1,5 +1,95 @@
 # Grammar-lib Development Progress
 
+## Session 73 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (～ずつ - each/per/at a time)
+**Patterns completed**: 1 new N3 pattern (suffix)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 446 (was 442)
+
+### Accomplishments
+1. ✅ Implemented ～ずつ pattern (N3) - suffix pattern
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 446 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### ～ずつ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_zutsu_number_counter_one (一つずつ - Counter + ずつ)
+  - test_zutsu_number_counter_person (人ずつ - Number + Counter + ずつ, matches 人ずつ)
+  - test_zutsu_sukoshi (少しずつ - Adverb + ずつ)
+  - test_zutsu_ikuraka (かずつ - いくらか + ずつ, matches かずつ)
+- **Structures**:
+  - Number + Counter + ずつ
+  - 少し + ずつ
+  - いくらか + ずつ
+- **Tokenization insights**:
+  - ずつ = 助詞/副助詞
+  - Preceding tokens vary: 名詞/数, 名詞/接尾/助数詞, 名詞/一般, 副詞, or 助詞
+  - Pattern matches the immediate token before ずつ (2-token matcher)
+- **Implementation**: 2-token matcher
+  - ZutsuPrecedingMatcher: Matches nouns (数/接尾/一般), 少し (副詞), or か (助詞)
+  - ZutsuMatcher: Matches ずつ as 助詞/副助詞
+- **Meaning**: "each / per / at a time" - highlights specific amounts or groupings
+- **Usage**: Common N3 suffix for distributions and increments
+- **Pattern priority**: 3 (construction pattern - N3 level)
+- **Pattern ranges**: Includes immediate preceding token + ずつ
+  - 一つずつ (chars 11-15)
+  - 人ずつ (chars 1-4) - matches counter only
+  - 少しずつ (chars 9-13)
+  - かずつ (chars 5-8) - matches particle only
+
+### Technical Details
+- **Pattern priority**: 3 (construction pattern - N3 level in patterns.rs)
+- **Test coverage**: All 3 structure variants from grammar_points_data.json
+  - Number + Counter + ずつ (tested with 一つ and 一人)
+  - 少し + ずつ (tested with 少し)
+  - いくらか + ずつ (tested with いくらか)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Simple 2-token matcher works well; matches immediate context before ずつ
+- **Pattern range**: Immediate preceding token + ずつ (doesn't extend to full phrases like 一人 or いくらか)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 446/446 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~128 (tests + matcher + pattern declaration + feature_list update)
+
+### Key Insights
+- 2-token matcher is sufficient and reliable for this suffix pattern
+- Pattern matches the immediate preceding element (counter, noun, adverb, or particle)
+- Multi-token phrases like 一人ずつ or いくらかずつ are matched as their final component + ずつ
+- Wildcard approach was tested but caused over-matching; simple 2-token approach is cleaner
+- Test-first workflow successfully identified all tokenization patterns
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. いくら〜でも - "no matter how much"
+2. Verb[volitional]とする - "try to / be about to"
+3. かけ - incomplete/unfinished action
+4. あまりに - "excessively" (related to あまり but different usage)
+5. から言うと - "from the perspective of"
+6. がたい - "difficult to" suffix
+
+**Recommendation**: Continue with concrete N3 patterns that have clear structure variants.
+
+### Environment Status
+- ✅ All 446 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 72 - 2025-12-12
 
 ### ✅ Session Summary
