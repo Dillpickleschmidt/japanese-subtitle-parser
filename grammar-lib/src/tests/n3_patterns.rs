@@ -2279,3 +2279,63 @@ mod temonakutemo_tests {
         assert_pattern_range(&patterns, "～ても～なくても", 12, 22); // 頼んでも頼まなくても
     }
 }
+
+// ========== しかない (no choice but to) ==========
+// Pattern: しかない (no choice but to / there is only)
+// Data source: grammar_points_data.json["しかない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + しかない
+//   polite[0]: Verb + しかありません
+
+mod shikanai_tests {
+    use super::*;
+
+    // Test: Verb + しかない (standard)
+    // Example: 警察を呼ぶしかない - no choice but to call the police
+    #[test]
+    fn test_shikanai_verb_standard() {
+        let sentence = "こうなったら警察を呼ぶしかないな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかない");
+        assert_pattern_range(&patterns, "しかない", 9, 15); // 呼ぶしかない
+    }
+
+    // Test: Verb + しかない (going by car)
+    // Example: 車で行くしかない - no choice but to go by car
+    #[test]
+    fn test_shikanai_verb_car() {
+        let sentence = "もう電車が来ないから、車で行くしかない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかない");
+        assert_pattern_range(&patterns, "しかない", 13, 19); // 行くしかない
+    }
+
+    // Test: Verb + しかない (negative verb)
+    // Example: 我慢するしかない - no choice but to endure
+    #[test]
+    fn test_shikanai_verb_negative_context() {
+        let sentence = "今月は休めないから、コンサートに行くのを我慢するしかない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかない");
+        assert_pattern_range(&patterns, "しかない", 20, 28); // 我慢するしかない
+    }
+
+    // Test: Verb + しかありません (polite)
+    // Example: 待つしかありません - there is no choice but to wait
+    #[test]
+    fn test_shikanai_polite() {
+        let sentence = "申し訳ございませんが、お待ちになるしかありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかない_polite");
+        assert_pattern_range(&patterns, "しかない_polite", 15, 24); // なるしかありません
+    }
+}

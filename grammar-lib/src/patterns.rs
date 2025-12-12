@@ -2924,6 +2924,22 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    Shikanai {
+        name: "しかない",
+        matcher_fn: crate::matchers::n3::shikanai,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    ShikanaiPolite {
+        name: "しかない_polite",
+        matcher_fn: crate::matchers::n3::shikanai_polite,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Toieba {
         name: "といえば",
         matcher_fn: crate::matchers::n3::toieba,
@@ -3191,14 +3207,6 @@ declare_patterns! {
     Sokode {
         name: "そこで",
         matcher_fn: crate::matchers::n3::sokode,
-        priority: 1,
-        category: PatternCategory::Construction,
-        jlpt: "n3",
-    },
-
-    Shikanai {
-        name: "しかない",
-        matcher_fn: crate::matchers::n3::shikanai,
         priority: 1,
         category: PatternCategory::Construction,
         jlpt: "n3",

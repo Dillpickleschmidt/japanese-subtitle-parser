@@ -1096,9 +1096,42 @@ pub fn sokode() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: しかない
+// Pattern: しかない (no choice but to / there is only)
+// Structures: Verb + しかない
 pub fn shikanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ShikaParticleMatcher;
+    impl super::Matcher for ShikaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match しか (係助詞)
+            token.surface == "しか"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiAdjMatcher;
+    impl super::Matcher for NaiAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない as 形容詞/自立
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    vec![
+        // Verb (基本形)
+        TokenMatcher::Verb {
+            conjugation_form: Some("基本形"),
+            base_form: None,
+        },
+        // しか (係助詞)
+        TokenMatcher::Custom(Arc::new(ShikaParticleMatcher)),
+        // ない (形容詞)
+        TokenMatcher::Custom(Arc::new(NaiAdjMatcher)),
+    ]
 }
 
 // Pattern: てもかまわない
@@ -2526,5 +2559,71 @@ pub fn temo_nakutemo() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(TemoNakutemoTeDeParticleMatcher)),
         // も
         TokenMatcher::Custom(Arc::new(TemoNakutemoMoParticleMatcher)),
+    ]
+}
+
+// Pattern: しかない (polite form - しかありません)
+// Structures: Verb + しかありません
+pub fn shikanai_polite() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct ShikaParticleMatcher;
+    impl super::Matcher for ShikaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match しか (係助詞)
+            token.surface == "しか"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct AriVerbMatcher;
+    impl super::Matcher for AriVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match あり (ある verb in 連用形)
+            token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl super::Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ませ (ます auxiliary in 未然形)
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NMatcher;
+    impl super::Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ん (auxiliary)
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        // Verb (基本形)
+        TokenMatcher::Verb {
+            conjugation_form: Some("基本形"),
+            base_form: None,
+        },
+        // しか (係助詞)
+        TokenMatcher::Custom(Arc::new(ShikaParticleMatcher)),
+        // あり (ある verb, 連用形)
+        TokenMatcher::Custom(Arc::new(AriVerbMatcher)),
+        // ませ (ます auxiliary, 未然形)
+        TokenMatcher::Custom(Arc::new(MaseMatcher)),
+        // ん (auxiliary)
+        TokenMatcher::Custom(Arc::new(NMatcher)),
     ]
 }
