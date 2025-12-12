@@ -1,5 +1,88 @@
 # Grammar-lib Development Progress
 
+## Session 96 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (すると)
+**Patterns completed**: 1 new N3 pattern (then/upon that conjunction)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 597 (was 593 at start)
+
+### Accomplishments
+1. ✅ Implemented すると pattern (N3) - "then/upon that/in that case"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 597 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### すると (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 235-267)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod suruto_tests)
+  - test_suruto_uncontrollable_result (押入れの掃除をした。すると、無くしたと思っていた服が出てきた - I cleaned my closet. Upon that, I found clothes I thought I had lost)
+  - test_suruto_gathering (猿にバナナをあげた。すると、猿がどんどん集まってきた - I gave a banana to a monkey. Having done that, more monkeys gathered)
+  - test_suruto_conclusion (１９歳なの？すると、大学１年生でしょう？ - You are 19? So you mean to say that you are a freshman, right?)
+  - test_suruto_story (お祖母ちゃんが川で洗濯をしていた。すると、川の向こうから桃が流れてきた - An old lady was washing clothes. Just then, a peach flowed down the river)
+- **Structure**: する + と (only 1 structure variant)
+- **Tokenization insights**:
+  - する = 動詞/自立, base=する, 基本形 (verb "suru" in base form)
+  - と = 助詞/接続助詞 (conjunction particle)
+  - Pattern is a conjunction that appears at sentence beginning after a previous statement
+- **Implementation**: 2-token matcher
+  - SuruVerbMatcher - Matches する as 動詞/自立/基本形
+  - ToConjunctionMatcher - Matches と as 助詞/接続助詞
+- **Meaning**: "then/upon that/in that case" - indicates result of previous statement, either uncontrollable result or drawing conclusion
+- **Pattern priority**: 3 (high-priority N3 construction)
+- **Pattern ranges**: Include する + と
+  - すると (chars 10-13 in 押入れの掃除をした。すると、無くしたと思っていた服が出てきた)
+  - すると (chars 10-13 in 猿にバナナをあげた。すると、猿がどんどん集まってきた)
+  - すると (chars 6-9 in １９歳なの？すると、大学１年生でしょう？)
+  - すると (chars 17-20 in お祖母ちゃんが川で洗濯をしていた。すると、川の向こうから桃が流れてきた)
+
+### Technical Details
+- **Pattern priority**: 3 (high-priority N3 pattern)
+- **Test coverage**: 1 structure variant from grammar_points_data.json
+  - Phrase。すると + (Result) Phrase (4 tests covering different contexts: uncontrollable results, gathering, drawing conclusions, story context)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Simple 2-token conjunction pattern, always appears at sentence beginning
+- **Note**: Pattern was already declared in patterns.rs, only needed matcher implementation
+- **Usage note**: The result should be either something speaker has no control over, or a conclusion/determination the speaker wants to confirm
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 597/597 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~111 (matcher implementation + 4 tests + feature_list update)
+
+### Key Insights
+- すると is an abbreviation of そうすると
+- Very similar pattern to さて - both are conjunctions at sentence beginning
+- Used to highlight occurrence due to circumstances in previous statement
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. そうすると - "then/in that case" (related to すると, likely similar implementation)
+2. ずに - "without doing" (verb conjugation pattern)
+3. さえ - emphasis particle "even" (6 structures - more complex)
+4. ずっと② - "by far" (different from ずっと① "continuously")
+5. せいで - "because of/due to" (causative pattern)
+
+**Recommendation**: Continue with "そうすると" as it's closely related to すると we just implemented, or "ずに" which is a fundamental N3 verb pattern.
+
+### Environment Status
+- ✅ All 597 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session or to continue implementing
+
+---
+
 ## Session 95 - 2025-12-12
 
 ### ✅ Session Summary
