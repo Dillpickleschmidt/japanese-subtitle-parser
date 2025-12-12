@@ -142,13 +142,13 @@
   {
     "pattern_name": "Verb［た・ている］+ Noun",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In Japanese, if you want to describe something or someone that is performing an action, one of the ways you can do th... [3 std, 0 pol]",
     "priority": 1,
     "skip_reason": null

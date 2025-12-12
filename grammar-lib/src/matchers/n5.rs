@@ -1747,9 +1747,43 @@ pub fn verbs_non_past() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Verb［た・ている］+ Noun
+// Pattern: Verb［た・ている］+ Noun (relative clause - verb modifying noun)
+// Structures: Verb[た] + Noun, Verb[ている] + Noun
+// Matches verbs in past tense or continuous aspect directly modifying nouns
 pub fn verb_uff3b_ta_u30fb_teiru_uff3d_noun() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::{concat, flexible_verb_form, noun_matcher};
+
+    // We need to match variable-length verb phrases before a noun:
+    // - Verb連用形 + た + Noun (e.g., 食べた人)
+    // - Verb連用タ接続 + て/で + いる + Noun (e.g., 飲んでいるコーヒー)
+    //
+    // Approach: Use wildcard to allow 1-2 tokens between verb and noun
+    // This ensures we match verb phrases (not standalone verbs)
+
+    // Helper: Match main verb in connective form (連用形 or 連用タ接続)
+    #[derive(Debug)]
+    struct MainVerbMatcher;
+    impl Matcher for MainVerbMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // Must be a verb (not auxiliary)
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+            // Must be in connective form
+            let form = token.features.get(5);
+            form.is_some_and(|f| f == "連用形" || f == "連用タ接続")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MainVerbMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 2,
+            stop_conditions: vec![],
+        },
+        noun_matcher(),
+    ]
 }
 
 // Pattern: な

@@ -5317,3 +5317,73 @@ mod na_adjective_da_tests {
         assert_pattern_range(&patterns, "な-Adjective だ", 3, 8); // 重要でした
     }
 }
+
+// ========== Verb［た・ている］+ Noun (Relative Clause) ==========
+// Pattern: Verb［た・ている］+ Noun (verb modifying noun - relative clause)
+// Data source: grammar_points_data.json["Verb［た・ている］+ Noun"]
+//
+// Structure variants to test:
+//   standard[0]: Verb［た］+ Noun
+//   standard[1]: Verb［ている］+ Noun
+//
+// Note: Only plain (non-polite) verb forms can modify nouns.
+// Polite forms like ～ます cannot be used in relative clauses.
+
+mod verb_ta_teiru_noun_tests {
+    use super::*;
+
+    // Verb[た] + Noun - past tense verb modifying noun
+    #[test]
+    fn test_verb_ta_noun() {
+        let sentence = "たかしさんは東京に住んだ男";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［た・ている］+ Noun");
+        assert_pattern_range(&patterns, "Verb［た・ている］+ Noun", 9, 13); // 住んだ男
+    }
+
+    // Verb[た] + Noun - past tense, different verb
+    #[test]
+    fn test_verb_ta_noun_tabeta() {
+        let sentence = "貴方が食べたハンバーガー";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［た・ている］+ Noun");
+        assert_pattern_range(&patterns, "Verb［た・ている］+ Noun", 3, 12); // 食べたハンバーガー
+    }
+
+    // Verb[ている] + Noun - continuous form modifying noun
+    #[test]
+    fn test_verb_teiru_noun_nondeiru() {
+        let sentence = "田中さんが飲んでいるコーヒー";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［た・ている］+ Noun");
+        assert_pattern_range(&patterns, "Verb［た・ている］+ Noun", 5, 14); // 飲んでいるコーヒー
+    }
+
+    // Verb[ている] + Noun - continuous form, different verb
+    #[test]
+    fn test_verb_teiru_noun_neteiru() {
+        let sentence = "道で寝ている犬";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［た・ている］+ Noun");
+        assert_pattern_range(&patterns, "Verb［た・ている］+ Noun", 2, 7); // 寝ている犬
+    }
+
+    // Verb[た] + Noun - more complex example
+    #[test]
+    fn test_verb_ta_noun_complex() {
+        let sentence = "昨日会った人はトムさんだった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［た・ている］+ Noun");
+        assert_pattern_range(&patterns, "Verb［た・ている］+ Noun", 2, 6); // 会った人
+    }
+}
