@@ -3,19 +3,20 @@
 ## Session 97 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (ずに)
-**Patterns completed**: 1 new N3 pattern (classical negative auxiliary verb)
-**Tests added**: 5 comprehensive tests
-**Total tests**: 606 (was 601 at start)
+**Status**: Two N3 patterns fully implemented (ずに + ずにはいられない)
+**Patterns completed**: 2 new N3 patterns (classical negative auxiliary + extension)
+**Tests added**: 10 comprehensive tests (5 + 5)
+**Total tests**: 611 (was 601 at start)
 
 ### Accomplishments
 1. ✅ Implemented ずに pattern (N3) - "without doing"
-2. ✅ All 5 tests passing with proper range assertions
-3. ✅ No test regressions - all 606 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented ずにはいられない pattern (N3) - "can't help but do"
+3. ✅ All 10 tests passing with proper range assertions
+4. ✅ No test regressions - all 611 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### ずに (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (line 2054-2103)
@@ -45,52 +46,92 @@
   - せずに (chars 3-6)
   - 言わず (chars 2-5, without に)
 
+#### ずにはいられない (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 2105-2224)
+- **Tests**: 5 variants, all passing in n3_patterns.rs (mod zunihairarenai_tests)
+  - test_zunihairarenai_regular_verb (美味しそうなステーキがあったら、食べずにはいられない - If there is delicious steak, I can't help but eat it)
+  - test_zunihairarenai_naku (この映画を見ると誰でも泣かずにはいられない - No matter who you are, if you watch this movie, you can't help but cry)
+  - test_zunihairarenai_suru_exception (先輩には感謝をせずにはいられない - I can't help but show my senpai appreciation)
+  - test_zunihairarenai_kushami (猫アレルギーなのでくしゃみをせずにはいられない - I'm allergic to cats so I can't help but sneeze)
+  - test_zunihairarenai_polite (あんな話を聞いたら笑わずにはいられません - If I hear such a story, I can't help but laugh - polite)
+- **Structures**:
+  - Standard: Verb［ない］+ ずにはいられない
+  - Polite: Verb［ない］+ ずにはいられません
+  - Exception: する → せずにはいられない
+- **Tokenization insights**:
+  - Standard form: Verb (未然形) + ず + に + は + い (いる, 未然形) + られ (られる, 未然形) + ない (助動詞)
+  - Polite form: Verb (未然形) + ず + に + はいら (はいる, 未然形) + れ (れる, 連用形) + ませ + ん
+  - Kagome tokenizes "いられ" differently: "い + られ" in standard vs "はいら + れ" in polite
+  - The は particle is separate in standard but part of "はいら" verb in polite
+- **Implementation**: 8-token matcher
+  1. MizenFormVerbMatcher - Matches verbs in 未然形 or 未然ヌ接続
+  2. ZuAuxiliaryMatcher - Matches ず (助動詞, base=ぬ)
+  3. NiParticleMatcher - Matches に (格助詞/一般)
+  4. Optional WaParticleMatcher - Matches は (係助詞) - optional for polite form
+  5. IruMizenMatcher - Matches い or はいら (いる/はいる in 未然形)
+  6. RareruAuxiliaryMatcher - Matches られ or れ (potential auxiliary)
+  7. NaiMasenMatcher - Matches ない or ませ (standard/polite)
+  8. Optional NMatcher - Matches ん (for polite ません)
+- **Meaning**: "can't help but do / cannot resist doing" - literally "cannot be without doing"
+- **Pattern priority**: 3 (high-priority N3 pattern)
+- **Pattern ranges**: Include full construction from verb through final particle
+  - 食べずにはいられない (chars 16-26)
+  - 泣かずにはいられない (chars 11-21)
+  - せずにはいられない (chars 7-16, includes compound noun+verb)
+  - せずにはいられない (chars 14-23)
+  - 笑わずにはいられません (chars 9-20, polite form)
+
 ### Technical Details
-- **Pattern priority**: 1 (standard N3 construction)
+- **Pattern priority**: ずに=1, ずにはいられない=3
 - **Test coverage**: All structure variants from grammar_points_data.json
-  - Verb［ない］+ ず(に) - 4 tests (regular verbs)
-  - する ￫ せず(に) exception - 2 tests (する verbs)
-  - ず alone (without に) - 1 test
+  - ずに: Verb［ない］+ ず(に) - 5 tests (4 regular + 2 する + 1 without に)
+  - ずにはいられない: 1 std + 1 pol - 5 tests (2 regular + 2 する + 1 polite)
 - **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
 - **Key insights**:
   - ず is a classical auxiliary verb (same role as ぬ and ない)
   - More formal than ないで but still frequently used in modern Japanese
   - する verbs use special 未然ヌ接続 conjugation (せずに not しずに)
-  - に particle is optional, both ず and ずに are valid
-- **Note**: Pattern was already declared in patterns.rs, only needed matcher implementation
+  - に particle is optional in ずに, but required in ずにはいられない
+  - Kagome tokenizes "いられ" differently in standard vs polite forms
+  - は particle is separate in standard but absorbed into "はいら" verb in polite
+- **Related patterns**: ずに → ずにはいられない (extension with potential negative)
+- **Note**: Both patterns were already declared in patterns.rs, only needed matcher implementations
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 5
-- **Tests passing**: 606/606 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~129 (matcher + 5 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 10 (5 + 5)
+- **Tests passing**: 611/611 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~329 (2 matchers + 10 tests + 2 feature_list updates)
 
 ### Key Insights
 - ずに is a fundamental N3 pattern for expressing negation in formal contexts
+- ずにはいられない extends ずに with potential negative form (cannot resist)
 - Classical auxiliary verb ず has same function as modern ない
-- Test-first workflow successfully identified tokenization pattern for both regular and する verbs
+- Test-first workflow successfully identified complex tokenization variations
 - All test sentences are realistic and subtitle-quality
-- Pattern ranges include full construction from verb stem through optional に
+- Pattern ranges include full construction from verb stem through final particle
+- Kagome's different tokenizations for the same grammatical form required flexible matching
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
 1. さえ - emphasis particle "even" (6 structures)
-2. ずにはいられない - "can't help but" (extension of ずに)
-3. すでに - "already" (formal alternative to もう)
-4. さて - "now then / well" (topic change)
-5. せいで - "because of/due to" (causative pattern)
+2. すでに - "already" (formal alternative to もう) - completed in Session 95 ✓
+3. さて - "now then / well" (topic change) - completed in Session 95 ✓
+4. せいで - "because of/due to" (causative pattern)
+5. ～というのは事実だ - "the fact is..." (explanatory)
+6. そこで - "so/therefore" (conjunction)
 
-**Recommendation**: Continue with "ずにはいられない" as it builds on the ずに pattern just implemented, or "すでに" which is simpler (likely 1 structure).
+**Recommendation**: Continue with "せいで" as it's a fundamental N3 causative pattern, or "さえ" which is a key emphasis particle (though more complex with 6 structures).
 
 ### Environment Status
-- ✅ All 606 tests passing
+- ✅ All 611 tests passing
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
-- ✅ Ready for next pattern implementation
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next pattern implementation or session termination
 
 ---
 
