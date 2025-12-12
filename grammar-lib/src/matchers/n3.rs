@@ -1941,8 +1941,27 @@ pub fn tsuini() -> Vec<TokenMatcher> {
 }
 
 // Pattern: すでに
+// Pattern: すでに (already - formal)
+// Structures: すでに + Phrase
+// Meaning: "already" - formal alternative to もう
+// Usage: Indicates something is already in a completed/unchanging state
+// Examples:
+//   - すでに沸いている (already boiled)
+//   - すでに決まった (already decided)
+//   - すでに遅すぎる (already too late)
 pub fn sudeni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct SudeniMatcher;
+    impl Matcher for SudeniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "すでに"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SudeniMatcher))]
 }
 
 // Pattern: ずに

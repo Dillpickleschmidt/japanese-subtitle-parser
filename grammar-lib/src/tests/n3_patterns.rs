@@ -2339,3 +2339,62 @@ mod shikanai_tests {
         assert_pattern_range(&patterns, "しかない_polite", 15, 24); // なるしかありません
     }
 }
+
+// ========== すでに (already) ==========
+// Pattern: すでに (already - formal)
+// Data source: grammar_points_data.json["すでに"]
+//
+// Structure variants to test:
+//   standard[0]: すでに + Phrase
+
+mod sudeni_tests {
+    use super::*;
+
+    // Test: すでに + Verb[ている] (already doing)
+    // Example: すでに出発している - already departed
+    #[test]
+    fn test_sudeni_verb_teiru() {
+        let sentence = "お湯はすでに沸いている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すでに");
+        assert_pattern_range(&patterns, "すでに", 3, 6); // すでに
+    }
+
+    // Test: すでに + Verb[た] (already done)
+    // Example: すでに決まった - already decided
+    #[test]
+    fn test_sudeni_verb_past() {
+        let sentence = "これはすでに決まった事なので、もう私達じゃ何もできません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すでに");
+        assert_pattern_range(&patterns, "すでに", 3, 6); // すでに
+    }
+
+    // Test: すでに + Adjective
+    // Example: すでに遅い - already late
+    #[test]
+    fn test_sudeni_adjective() {
+        let sentence = "電車に乗るにはすでに遅すぎる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すでに");
+        assert_pattern_range(&patterns, "すでに", 7, 10); // すでに
+    }
+
+    // Test: すでに + Noun (already noun state)
+    // Example: すでに売り切れです - already sold out
+    #[test]
+    fn test_sudeni_noun() {
+        let sentence = "もうすでにチケットは売り切れです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すでに");
+        assert_pattern_range(&patterns, "すでに", 2, 5); // すでに
+    }
+}

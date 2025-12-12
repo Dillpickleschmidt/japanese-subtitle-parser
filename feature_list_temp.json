@@ -4706,13 +4706,13 @@
   {
     "pattern_name": "すでに",
     "jlpt_level": "n3",
-    "category": "complete",
+    "category": "needs_implementation",
     "tests": {
-      "exists": true,
-      "has_range_assertion": true,
+      "exists": false,
+      "has_range_assertion": false,
       "has_print_debug": false
     },
-    "passes": true,
+    "passes": false,
     "description": "As a formal alternative to もう, the adverb 既（すで）に is used in Japanese as 'already' [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
