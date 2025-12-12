@@ -2224,3 +2224,58 @@ mod particle_no_tests {
         assert_pattern_range(&patterns, "Particle + の", 0, 5); // 出発までの
     }
 }
+
+// ========== ～ても～なくても (whether or not) ==========
+// Pattern: ～ても～なくても (whether or not)
+// Data source: grammar_points_data.json["～ても～なくても"]
+//
+// Structure variants to test:
+//   standard[0]: Verb［ても］(A) + Verb［なくても］(A)
+//
+// Note: This pattern uses the same verb twice - once with ても and once with なくても
+// to express "whether or not (verb)", showing that the result doesn't change.
+//
+// Examples from data:
+//   - いてもいなくても (whether or not [someone] is here)
+//   - 運動しても運動しなくても (whether or not [I] exercise)
+//   - 頼んでも頼まなくても (whether [you] order or not)
+
+mod temonakutemo_tests {
+    use super::*;
+
+    // Test: Verb［ても］+ Verb［なくても］
+    // Example: いてもいなくても - whether or not [someone] is here
+    #[test]
+    fn test_temonakutemo_iru() {
+        let sentence = "あの人がいてもいなくても、仕事の量は変わらない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ても～なくても");
+        assert_pattern_range(&patterns, "～ても～なくても", 4, 12); // いてもいなくても
+    }
+
+    // Test: Verb［ても］+ Verb［なくても］
+    // Example: 食べても食べなくても - whether or not [I] eat
+    #[test]
+    fn test_temonakutemo_taberu() {
+        let sentence = "食べても食べなくても、体重は変わらないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ても～なくても");
+        assert_pattern_range(&patterns, "～ても～なくても", 0, 10); // 食べても食べなくても
+    }
+
+    // Test: Verb［ても］+ Verb［なくても］
+    // Example: 頼んでも頼まなくても - whether you order or not
+    #[test]
+    fn test_temonakutemo_tanomu() {
+        let sentence = "ここの居酒屋ではビールを頼んでも頼まなくても、ビールを持ってくる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ても～なくても");
+        assert_pattern_range(&patterns, "～ても～なくても", 12, 22); // 頼んでも頼まなくても
+    }
+}

@@ -2916,6 +2916,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    TemoNakutemo {
+        name: "～ても～なくても",
+        matcher_fn: crate::matchers::n3::temo_nakutemo,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Toieba {
         name: "といえば",
         matcher_fn: crate::matchers::n3::toieba,

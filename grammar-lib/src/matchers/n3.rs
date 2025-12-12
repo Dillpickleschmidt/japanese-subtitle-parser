@@ -2459,3 +2459,72 @@ pub fn kanari_no_noun() -> Vec<TokenMatcher> {
         super::noun_matcher(),
     ]
 }
+
+// Pattern: ～ても～なくても (whether or not)
+// Structures: Verb［ても］(A) + Verb［なくても］(A)
+//
+// Note: This pattern requires the same verb to appear twice with different conjugations.
+// We use a simpler approach: match Verb + て + も + Verb + なく + て + も
+pub fn temo_nakutemo() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TemoNakutemoTeDeParticleMatcher;
+    impl super::Matcher for TemoNakutemoTeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match て or で as 接続助詞
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TemoNakutemoMoParticleMatcher;
+    impl super::Matcher for TemoNakutemoMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match も as 係助詞
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MizenVerbMatcher;
+    impl super::Matcher for MizenVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in 未然形 (or 未然ウ接続 for volitional)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形" || f == "未然ウ接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NakuNaiMatcher;
+    impl super::Matcher for NakuNaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match なく (ない in 連用テ接続)
+            (token.surface == "なく" || token.surface == "なくっ")
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        // First verb (連用形 or 連用タ接続)
+        super::flexible_verb_form(),
+        // て/で
+        TokenMatcher::Custom(Arc::new(TemoNakutemoTeDeParticleMatcher)),
+        // も
+        TokenMatcher::Custom(Arc::new(TemoNakutemoMoParticleMatcher)),
+        // Second verb (未然形) - ideally same base as first, but we can't validate that easily
+        TokenMatcher::Custom(Arc::new(MizenVerbMatcher)),
+        // なく (ない)
+        TokenMatcher::Custom(Arc::new(NakuNaiMatcher)),
+        // て
+        TokenMatcher::Custom(Arc::new(TemoNakutemoTeDeParticleMatcher)),
+        // も
+        TokenMatcher::Custom(Arc::new(TemoNakutemoMoParticleMatcher)),
+    ]
+}
