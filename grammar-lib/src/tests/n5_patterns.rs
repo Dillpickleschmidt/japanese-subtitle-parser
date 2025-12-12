@@ -4733,3 +4733,58 @@ mod na_prohibitive_tests {
         assert_pattern_range(&patterns, "な", 3, 7); // 決めるな
     }
 }
+
+// ========== で (Particle - means/method/location) ==========
+// Pattern: で (particle indicating means, method, or location)
+// Data source: grammar_points_data.json["で"]
+//
+// Structure: Noun + で
+// Single structure variant (standard form only)
+
+mod de_particle_tests {
+    use super::*;
+
+    // Means of transportation
+    #[test]
+    fn test_de_means_car() {
+        let sentence = "車で空港へ行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "で");
+        assert_pattern_range(&patterns, "で", 0, 2); // 車で
+    }
+
+    // Method/instrument
+    #[test]
+    fn test_de_method_train() {
+        let sentence = "電車で行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "で");
+        assert_pattern_range(&patterns, "で", 0, 3); // 電車で
+    }
+
+    // Group action (with people)
+    #[test]
+    fn test_de_group_everyone() {
+        let sentence = "みんなでレストランに行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "で");
+        assert_pattern_range(&patterns, "で", 0, 4); // みんなで
+    }
+
+    // Location where action takes place
+    #[test]
+    fn test_de_location_park() {
+        let sentence = "公園で遊ぶ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "で");
+        assert_pattern_range(&patterns, "で", 0, 3); // 公園で
+    }
+}

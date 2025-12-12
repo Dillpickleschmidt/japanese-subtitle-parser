@@ -384,9 +384,28 @@ pub fn asoko() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(AsokoMatcher))]
 }
 
-// Pattern: で
+// で (particle): Means, method, or location
+// Pattern: Noun + で
+// Structures: Noun + で (means/method/location)
 pub fn de() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match で as 助詞/格助詞/一般 (case particle)
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+    ]
 }
 
 // Pattern: に
