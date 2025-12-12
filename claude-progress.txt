@@ -1,5 +1,129 @@
 # Grammar-lib Development Progress
 
+## Session 89 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two N3 patterns fully implemented (から言うと + Noun＋型)
+**Patterns completed**: 2 new N3 patterns (viewpoint expression + type/style suffix)
+**Tests added**: 8 comprehensive tests (3 + 5)
+**Total tests**: 562 (was 554 at start)
+
+### Accomplishments
+1. ✅ Implemented から言うと pattern (N3) - "speaking from / from the viewpoint of"
+2. ✅ Implemented Noun＋型 pattern (N3) - "type/style/model" suffix
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 562 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### から言うと (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 1050-1088)
+- **Tests**: 3 variants, all passing in n3_patterns.rs (mod kara_iuto_tests)
+  - test_kara_iuto_noun (私の経験から言うと - speaking from my experience)
+  - test_kara_ieba_conditional (私の立場から言えば - speaking from my position)
+  - test_kara_itte_te_form (この結果から言って - speaking from these results)
+- **Structures**:
+  - Noun + から + 言う + と (main form)
+  - Noun + から + 言え + ば (conditional form)
+  - Noun + から + 言っ + て (て-form)
+- **Tokenization insights**:
+  - から = 助詞/格助詞/一般
+  - 言う = 動詞/自立 (any conjugation: 基本形/仮定形/連用タ接続)
+  - と/ば/て = 助詞/接続助詞
+- **Implementation**: 4-token matcher
+  1. TokenMatcher::Any - Noun
+  2. KaraParticleMatcher - から (助詞/格助詞)
+  3. IuVerbMatcher - 言う verb (any conjugation)
+  4. ConditionalParticleMatcher - と/ば/て (接続助詞)
+- **Meaning**: "speaking from / from the viewpoint of / from the perspective of"
+- **Pattern priority**: 1 (N3 construction)
+- **Pattern ranges**: Include noun + から + 言う + particle
+  - 経験から言うと (chars 2-9)
+  - 立場から言えば (chars 2-9)
+  - 結果から言って (chars 2-9)
+
+#### Noun＋型 (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 250-283)
+- **Tests**: 5 variants, all passing in n3_patterns.rs (mod noun_kata_tests)
+  - test_noun_gata_direct (星がた - star-shaped)
+  - test_no_kata (のかた - that type)
+  - test_noun_gata_no_noun (犬がたのロボット - dog-type robot)
+  - test_i_adj_kata (新しいかた - new model)
+  - test_kei_reading (文型 - sentence pattern, Chinese reading)
+- **Structures**:
+  - Noun + がた (direct attachment with 連濁)
+  - の + かた (with の particle, no 連濁)
+  - い-Adjective + かた
+  - Noun + がた + の + Noun (modifying another noun)
+  - ～型/～形 (compound nouns with けい reading)
+- **Tokenization insights**:
+  - Split form: Noun/Adj + がた/かた (2 tokens)
+  - Compound form: 文型 as single token (1 token)
+  - がた/かた = 名詞/一般 or 名詞/非自立
+- **Implementation**: Two patterns
+  1. nountasukata() - Split form (Noun/Adj/の + がた/かた)
+     - NounAdjOrNoMatcher - Matches noun, adjective, or の particle
+     - KataGataMatcher - Matches がた or かた
+  2. nountasukata_compound() - Compound form
+     - KataKeiCompoundMatcher - Matches nouns ending with 型 or 形
+- **Meaning**: "type / style / model / shape / pattern"
+- **Pattern priority**: 1 (N3 construction)
+- **Pattern ranges**: Include preceding element + suffix
+  - 星がた (chars 4-7)
+  - のかた (chars 5-8)
+  - 犬がた (chars 6-9)
+  - 新しいかた (chars 0-5)
+  - 文型 (chars 0-2, compound)
+
+### Technical Details
+- **Pattern priority**: Both patterns priority 1 (N3 constructions)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - から言うと: 2 structures (と/ば/て variants)
+  - Noun＋型: 5 structures (split + compound forms)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insights**:
+  - から言うと accepts three conjugation forms (と/ば/て)
+  - Noun＋型 requires two separate patterns for split vs compound tokenization
+  - Custom matcher for Noun/Adj/の excludes determiners like この/あの
+- **Pattern ranges**: Include full construction from initial element through suffix/particle
+
+### Session Statistics
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (3 + 5)
+- **Tests passing**: 562/562 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~220 (tests + 2 matchers + pattern declarations + feature_list updates)
+
+### Key Insights
+- から言うと is a fundamental N3 pattern for expressing viewpoint/perspective
+- Noun＋型 is versatile, covering both phonetic variants (がた/かた) and readings (がた/けい)
+- Custom matchers provide precise control over what precedes suffixes
+- Split vs compound tokenization requires separate pattern implementations
+- Test-first workflow successfully identified all tokenization edge cases
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. ～と言っても - "even though you say..."
+2. ～ようとしない - "doesn't try to"
+3. あり - existence/availability pattern
+4. ことなの - "the thing is..." (explanatory, 8+8 structures)
+5. さえ - emphasis particle
+
+**Recommendation**: Continue with "～ようとしない" as it builds on existing ようとする knowledge and is simpler than ことなの (1+1 structures vs 8+8).
+
+### Environment Status
+- ✅ All 562 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session
+
+---
+
 ## Session 88 - 2025-12-12
 
 ### ✅ Session Summary
