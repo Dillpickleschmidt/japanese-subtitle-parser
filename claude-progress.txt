@@ -2362,3 +2362,69 @@ Both patterns follow the same structure and implementation approach, making them
 - **Estimated work**: ~214 hours @ 15 min/pattern
 
 **Session 30 complete. Ready for Session 31.**
+
+---
+
+## Session 31 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: ね pattern implemented successfully
+**Patterns completed**: 41/924 (4.44%)
+**Time invested**: ~20 minutes
+
+### Accomplishments
+1. ✅ Implemented ね (sentence-ending particle for seeking agreement)
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ No test regressions - all 154 tests pass
+
+### Completed Patterns
+
+#### ね (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_ne_with_i_adjective (今日も暑いね)
+  - test_ne_with_verb (仕事は疲れるね)
+  - test_ne_with_na_adjective (あれは綺麗だね)
+  - test_ne_polite (今日は寒いですね)
+- **Structure**: Sentence + ね
+- **Technical notes**:
+  - NeParticleMatcher checks surface="ね", base_form="ね", POS=助詞/終助詞
+  - Identical implementation pattern to よ particle
+  - Sentence-ending particle for seeking agreement/confirmation
+
+### Progress by JLPT Level
+- N5: 41/117 (35.04%) ✓
+- N4: 0/176 (0%)
+- N3: 0/217 (0%)
+- N2: 0/217 (0%)
+- N1: 0/184 (0%)
+- NT: 0/13 (0%)
+
+### Technical Discoveries
+- Sentence-ending particles (終助詞) share consistent implementation pattern
+- よ and ね have identical tokenization structure, just different surface forms
+- Simple single-token patterns take ~20 minutes to implement following test-first workflow
+
+### Next Priority (N5 patterns)
+1. か - or/question marker (A か B か pattern)
+2. More demonstrative patterns (どこ, どれ, どの - question words)
+3. Verb conjugation patterns (dictionary form, negative, past)
+4. Adjective patterns (い-Adjectives, い-Adjective predicate)
+5. Complex patterns (がある + Noun, くる, する)
+
+### Environment Status
+- ✅ Kagome server on port 6061
+- ✅ Build succeeds
+- ✅ 154 tests passing (150 previous + 4 new)
+- ✅ Git repository clean
+
+---
+
+## Cumulative Statistics
+- **Total patterns**: 924
+- **Completed**: 41 (4.44%)
+- **Remaining**: 883 (95.56%)
+- **Average time per pattern**: ~15 minutes
+- **Estimated remaining work**: ~220 hours
+
+**Session 31 complete. Ready for Session 32.**
