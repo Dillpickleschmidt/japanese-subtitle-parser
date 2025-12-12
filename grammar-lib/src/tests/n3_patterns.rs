@@ -1188,3 +1188,61 @@ mod kotokara_tests {
         assert_pattern_range(&patterns, "ことから", 3, 8); // のことから
     }
 }
+
+// ========== ことだ (should/ought to) ==========
+// Pattern: ことだ (advice/weak command)
+// Data source: grammar_points_data.json["ことだ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[る] + こと + だ
+//   standard[1]: Verb[ない] + こと + だ
+//   polite[0]: Verb[る] + こと + です
+//   polite[1]: Verb[ない] + こと + です
+
+mod kotoda_tests {
+    use super::*;
+
+    // Test: Verb[る] + ことだ (should do)
+    #[test]
+    fn test_kotoda_verb_affirmative() {
+        let sentence = "面倒でも朝ご飯を食べることだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだ");
+        assert_pattern_range(&patterns, "ことだ", 8, 14); // 食べることだ
+    }
+
+    // Test: Verb[ない] + ことだ (should not do)
+    #[test]
+    fn test_kotoda_verb_negative() {
+        let sentence = "疲れていても諦めないことだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだ");
+        assert_pattern_range(&patterns, "ことだ", 8, 13); // ないことだ
+    }
+
+    // Test: Verb[る] + ことです (polite - should do)
+    #[test]
+    fn test_kotoda_verb_polite() {
+        let sentence = "何があっても時間通りに来ることです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだ");
+        assert_pattern_range(&patterns, "ことだ", 11, 17); // 来ることです
+    }
+
+    // Test: Verb[ない] + ことです (polite - should not do)
+    #[test]
+    fn test_kotoda_verb_negative_polite() {
+        let sentence = "怪我をしたら我慢をしないことです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだ");
+        assert_pattern_range(&patterns, "ことだ", 10, 16); // ないことです
+    }
+}
