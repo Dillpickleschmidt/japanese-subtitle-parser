@@ -1,7 +1,7 @@
 use crate::pattern_matcher::TokenMatcher;
 use crate::KagomeToken;
 use std::sync::Arc;
-use super::Matcher;
+use super::{Matcher, noun_matcher};
 
 // ========== たい (Want to do) ==========
 
@@ -273,9 +273,23 @@ pub fn u_verb_dictionary() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: を
+// Pattern: を (object marker particle)
+// Structures: Object + を
 pub fn wo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+    ]
 }
 
 // Pattern: ます

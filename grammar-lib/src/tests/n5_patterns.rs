@@ -2229,3 +2229,54 @@ mod sugiru_tests {
     }
 }
 
+// ========== を (Object marker particle) ==========
+// Pattern: を (object marker)
+// Data source: grammar_points_data.json["を"]
+//
+// Structure variants to test:
+//   standard[0]: Object + を
+
+mod wo_particle_tests {
+    use super::*;
+
+    #[test]
+    fn test_direct_object() {
+        let sentence = "ラーメンを食べるのが好きだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を");
+        assert_pattern_range(&patterns, "を", 0, 5); // ラーメンを
+    }
+
+    #[test]
+    fn test_song_object() {
+        let sentence = "歌を歌います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を");
+        assert_pattern_range(&patterns, "を", 0, 2); // 歌を
+    }
+
+    #[test]
+    fn test_place_through() {
+        let sentence = "公園を歩くのは気持ちいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を");
+        assert_pattern_range(&patterns, "を", 0, 3); // 公園を
+    }
+
+    #[test]
+    fn test_building_through() {
+        let sentence = "建物の中を走るな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を");
+        assert_pattern_range(&patterns, "を", 3, 5); // 中を
+    }
+}
+
