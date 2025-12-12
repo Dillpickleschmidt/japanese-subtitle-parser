@@ -1,5 +1,99 @@
 # Grammar-lib Development Progress
 
+## Session 97 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (ずに)
+**Patterns completed**: 1 new N3 pattern (classical negative auxiliary verb)
+**Tests added**: 5 comprehensive tests
+**Total tests**: 606 (was 601 at start)
+
+### Accomplishments
+1. ✅ Implemented ずに pattern (N3) - "without doing"
+2. ✅ All 5 tests passing with proper range assertions
+3. ✅ No test regressions - all 606 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### ずに (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 2054-2103)
+- **Tests**: 5 variants, all passing in n3_patterns.rs (mod zuni_tests)
+  - test_zuni_regular_verb (朝ご飯を食べずに仕事に行った - I went to work without eating breakfast)
+  - test_zuni_nomanai (水を飲まずに運動をした - I exercised without drinking water)
+  - test_zuni_suru_exception (勉強せずにテストを受けた - I took the test without studying)
+  - test_zuni_suru_casual (無理をせずに頑張ってください - Please do your best without trying too hard)
+  - test_zu_without_ni (何も言わず立ち去った - Left without saying anything)
+- **Structures**:
+  - Standard: Verb［ない］+ ず(に)
+  - Exception: する ￫ せず(に)
+- **Tokenization insights**:
+  - Regular verbs: Verb (未然形) + ず (助動詞, base=ぬ) + optional に (格助詞)
+  - する verbs: せ (動詞/自立, base=する, 未然ヌ接続) + ず + optional に
+  - The に particle is optional - ず alone is valid
+- **Implementation**: 3-token matcher
+  1. MizenFormVerbMatcher - Matches verbs in 未然形 or 未然ヌ接続
+  2. ZuAuxiliaryMatcher - Matches ず (助動詞, base=ぬ, 特殊・ヌ)
+  3. Optional NiParticleMatcher - Matches に (格助詞/一般)
+- **Meaning**: "without doing" - classical auxiliary verb negation, more formal than ないで
+- **Pattern priority**: 1 (standard N3 construction)
+- **Pattern ranges**: Include verb + ず + optional に
+  - 食べずに (chars 4-8)
+  - 飲まずに (chars 2-6)
+  - 勉強せずに (chars 0-5, includes noun+verb compound)
+  - せずに (chars 3-6)
+  - 言わず (chars 2-5, without に)
+
+### Technical Details
+- **Pattern priority**: 1 (standard N3 construction)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - Verb［ない］+ ず(に) - 4 tests (regular verbs)
+  - する ￫ せず(に) exception - 2 tests (する verbs)
+  - ず alone (without に) - 1 test
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insights**:
+  - ず is a classical auxiliary verb (same role as ぬ and ない)
+  - More formal than ないで but still frequently used in modern Japanese
+  - する verbs use special 未然ヌ接続 conjugation (せずに not しずに)
+  - に particle is optional, both ず and ずに are valid
+- **Note**: Pattern was already declared in patterns.rs, only needed matcher implementation
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 5
+- **Tests passing**: 606/606 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~129 (matcher + 5 tests + feature_list update)
+
+### Key Insights
+- ずに is a fundamental N3 pattern for expressing negation in formal contexts
+- Classical auxiliary verb ず has same function as modern ない
+- Test-first workflow successfully identified tokenization pattern for both regular and する verbs
+- All test sentences are realistic and subtitle-quality
+- Pattern ranges include full construction from verb stem through optional に
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. さえ - emphasis particle "even" (6 structures)
+2. ずにはいられない - "can't help but" (extension of ずに)
+3. すでに - "already" (formal alternative to もう)
+4. さて - "now then / well" (topic change)
+5. せいで - "because of/due to" (causative pattern)
+
+**Recommendation**: Continue with "ずにはいられない" as it builds on the ずに pattern just implemented, or "すでに" which is simpler (likely 1 structure).
+
+### Environment Status
+- ✅ All 606 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation
+
+---
+
 ## Session 96 - 2025-12-12
 
 ### ✅ Session Summary
