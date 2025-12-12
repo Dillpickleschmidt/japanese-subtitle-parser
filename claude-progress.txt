@@ -1,5 +1,125 @@
 # Grammar-lib Development Progress
 
+## Session 85 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two N3 patterns fully implemented (ことになる + ことはない)
+**Patterns completed**: 2 new N3 patterns (こと construction family continued)
+**Tests added**: 9 comprehensive tests (6 + 3)
+**Total tests**: 522 (was 513)
+
+### Accomplishments
+1. ✅ Implemented ことになる pattern (N3) - passive decision/natural consequence
+2. ✅ Implemented ことはない pattern (N3) - no need to/never happens
+3. ✅ All 9 tests passing with proper range assertions
+4. ✅ No test regressions - all 522 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### ことになる (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 592)
+- **Tests**: 6 variants, all passing in n3_patterns.rs
+  - test_kotoninaru_verb_affirmative (転勤することになった - was decided to transfer)
+  - test_kotoninaru_verb_negative (行かないことになりました - decided not to go)
+  - test_kotoninaru_i_adjective (大変なことになる - will end up terrible)
+  - test_kotoninaru_na_adjective (深刻なことになる - will become serious)
+  - test_kotoninaru_polite (働くことになります - will work, polite)
+  - test_kotoninaru_past (退職することになった - ended up quitting)
+- **Structures**:
+  - Verb + ことになる
+  - い-Adjective + ことになる
+  - な-Adjective + な + ことになる
+  - Polite forms: ことになります/なりました
+- **Tokenization insights**:
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - に = 助詞/格助詞/一般 (case particle)
+  - なる = 動詞/自立 (verb in any conjugation)
+- **Implementation**: 4-token matcher (reused KotoMatcher and NiParticleMatcher from ことにする)
+  1. TokenMatcher::Any - Matches any preceding token
+  2. KotoMatcher - Matches こと as 名詞/非自立/一般
+  3. NiParticleMatcher - Matches に as 助詞/格助詞/一般
+  4. specific_verb("なる") - Matches なる in any conjugation
+- **Meaning**: "it has been decided that / will end up being" - passive decision or natural consequence
+- **Usage**: Contrasts with ことにする (active decision) - ことになる is passive/external decision
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - 転勤することになった (chars 7-17, verb + full construction)
+  - ないことになりました (chars 5-15, negative verb + construction)
+  - なことになる (chars 10-16, na-adjective + construction)
+  - 働くことになります (chars 6-15, polite form)
+
+#### ことはない (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 628)
+- **Tests**: 3 variants, all passing in n3_patterns.rs
+  - test_kotohanai_no_need (慌てることはない - no need to rush)
+  - test_kotohanai_never_happens (話すことはない - never talk)
+  - test_kotohanai_polite (心配することはありません - no need to worry, polite)
+- **Structures**:
+  - Verb + ことはない
+  - Verb + ことはありません (polite)
+- **Tokenization insights**:
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - は = 助詞/係助詞 (binding particle)
+  - ない = 形容詞/自立 (i-adjective)
+  - ある = 動詞/自立 (verb, for polite ありません form)
+- **Implementation**: 4-token matcher
+  1. TokenMatcher::Any - Matches any preceding token (verb)
+  2. KotoMatcher - Matches こと as 名詞/非自立/一般
+  3. HaParticleMatcher - Matches は as 助詞/係助詞
+  4. NaiAruMatcher - Matches ない (adjective) or ある (verb for polite)
+- **Meaning**: "there is no need to / it never happens" - reassurance or recurrence negation
+- **Usage**: Two uses: reassuring (no need) or stating something never occurs
+- **Pattern priority**: Not specified in matcher (uses default)
+- **Pattern ranges**:
+  - 慌てることはない (chars 4-12, verb + full construction)
+  - 話すことはない (chars 2-9, verb + construction)
+  - 心配することはありません (chars 0-12, full sentence with polite form)
+
+### Technical Details
+- **Pattern priority**: 1 for ことになる (construction pattern - N3 level in patterns.rs)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - ことになる: 3 standard forms + polite variants (6 tests total)
+  - ことはない: 1 standard + 1 polite form (3 tests total)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Both patterns continue the こと construction family with different particles/endings
+- **Pattern ranges**: Include preceding element (verb/adjective) + full construction
+
+### Session Statistics
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 9 (6 + 3)
+- **Tests passing**: 522/522 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~206 (tests + 2 matchers + feature_list updates)
+
+### Key Insights
+- Both patterns extend the こと construction family (now 8 completed: ことか, ことから, ことだ, ことがある, ことに, ことにする, ことになる, ことはない)
+- ことになる is the passive counterpart to ことにする (external vs internal decision)
+- ことはない uses は (binding particle) instead of に, creating different nuance
+- All こと patterns share similar structure but different particles/endings create distinct meanings
+- Test-first workflow successfully identified all tokenization patterns
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 こと-based patterns (complete the family):
+
+**High-value N3 こと-based patterns to implement**:
+1. ことなの - "the thing is..." (explanatory, 8 std + 8 pol structures)
+2. ということだ - "it means that / I heard that" (1 std + 1 pol)
+3. ないことはない - "it's not that...not" (double negative, 5 std + 5 pol)
+
+**Recommendation**: Continue with ということだ next as it's simpler (1 std + 1 pol) compared to ことなの (8+8 structures). This will maintain momentum while completing the こと construction family systematically.
+
+### Environment Status
+- ✅ All 522 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session
+
+---
+
 ## Session 84 - 2025-12-12
 
 ### ✅ Session Summary
