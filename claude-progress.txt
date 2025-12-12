@@ -1,5 +1,70 @@
 # Grammar-lib Development Progress
 
+## Session 49 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N4 pattern fully implemented (Number + も)
+**Patterns completed**: 1 new pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 283 (was 281)
+
+### Accomplishments
+1. ✅ Implemented Number + も (as many as / not even) pattern
+2. ✅ Created first N4 test file (grammar-lib/src/tests/n4_patterns.rs)
+3. ✅ All 3 test variants passing with proper range assertions
+4. ✅ No test regressions - all 283 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commit with full documentation
+
+### Completed Patterns
+
+#### Number + も (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs
+- **Tests**: 3 variants, all passing
+  - test_number_mo_hours (１２時間も - 12 hours)
+  - test_number_mo_yen (２０万円も - 200,000 yen)
+  - test_number_mo_times (一回も - once)
+- **Structure**: Number + Counter + も
+- **Tokenization insights**:
+  - Numbers can be multiple tokens (１２ = 2 tokens, ２０万 = 3 tokens, 一 = 1 token)
+  - All numbers tokenize as 名詞/数 (number nouns)
+  - Counter tokenizes as 名詞/接尾/助数詞 (suffix/counter)
+  - も tokenizes as 助詞/係助詞 (binding particle)
+- **Implementation notes**:
+  - Flexible number matching: 1-6 number tokens supported
+  - Uses optional matchers for variable-length numbers
+  - Custom matchers: NumberMatcher, CounterMatcher, MoParticleMatcher
+  - Pattern emphasizes surprising quantity (higher or lower than expected)
+  - Translates as "as much as (A)" or "not even (A)"
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N4 level)
+- **Test coverage**: Single structure variant from grammar_points_data.json
+  - Number + Counter + も
+  - Tested with different number formats (single digit, double digit, compound)
+  - Tested with different counters (時間, 円, 回)
+- **Implementation challenges**:
+  - Variable-length number sequences (solved with optional matchers)
+  - First N4 pattern implementation (created new test file structure)
+
+### Next Priorities (N4 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. Number + しか〜ない - only/not even
+2. Question-phrase + か - embedded questions
+3. あとで - after/later
+4. あまり～ない - not very
+5. Verb[よう] - volitional form
+6. てしまう・ちゃう - completion/regret
+
+### Environment Status
+- ✅ All 283 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ First N4 test file created
+
+---
+
 ## Session 48 - 2025-12-12
 
 ### ✅ Session Summary
