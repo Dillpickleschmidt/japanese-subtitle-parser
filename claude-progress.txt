@@ -1,5 +1,89 @@
 # Grammar-lib Development Progress
 
+## Session 57 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N5 pattern fully implemented (まえに)
+**Patterns completed**: 1 new N5 pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 347 (was 343)
+
+### Accomplishments
+1. ✅ Implemented まえに (before - time/location) pattern (N5)
+2. ✅ All 4 structure variants tested and passing with proper range assertions
+3. ✅ No test regressions - all 347 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### まえに (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing in n5_patterns.rs
+  - test_mae_ni_verb (家に入る前に靴を脱ぐ - verb + 前に)
+  - test_mae_ni_noun_location (病院の前にあるコンビニ - noun + の + 前に, location)
+  - test_mae_ni_verb_temporal (寝る前に歯を磨いてください - verb + 前に, time)
+  - test_mae_ni_noun_temporal (試験の前に復習しておこう - noun + の + 前に, time)
+- **Structures**:
+  - Verb[基本形] + 前に
+  - Noun + の + 前に
+- **Tokenization**:
+  - 前 = 名詞/副詞可能 (noun/can-be-adverb), base_form="前"
+  - の = 助詞/連体化 (nominalizer particle) - optional
+  - に = 助詞/格助詞/一般 (case particle)
+- **Implementation**: 4-token matcher with optional の particle
+  - TokenMatcher::Any (matches verb or noun)
+  - TokenMatcher::Optional(の particle) for noun phrases
+  - TokenMatcher::Custom(MaeMatcher) - checks 前 as 名詞/副詞可能
+  - TokenMatcher::Custom(NiParticleMatcher) - checks に as 助詞/格助詞
+- **Meaning**: "before (something)" in time or "in front of (something)" in location
+- **Usage**: Temporal: before an action/event; Spatial: in front of a location
+- **Pattern priority**: 1 (construction pattern - N5 level)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Test coverage**: All 2 structure variants from grammar_points_data.json
+  - Verb + 前に (tested in 2 contexts: action sequence, temporal)
+  - Noun + の + 前に (tested in 2 contexts: location, time)
+- **Implementation approach**:
+  - Core pattern: Any + Optional(の) + 前 + に
+  - Handles both verb and noun variants with a single flexible matcher
+  - Custom matchers for 前, の, and に ensure correct POS tags
+- **Pattern range**: Full construction from verb/noun to に
+  - Examples: 入る前に (chars 2-6), 病院の前に (chars 0-5)
+- **Kanji requirement**: Must use kanji 前 (not hiragana まえ) for proper tokenization
+  - Hiragana まえ tokenizes as verb まえる (to maim) rather than noun 前 (before/front)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N5)
+- **Tests written**: 4
+- **Tests passing**: 347/347 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~90 (tests + matcher + pattern declaration)
+
+### Next Priorities
+Continue with N5 patterns (33 remaining):
+
+**High-value N5 construction patterns to implement**:
+1. なくてはならない - must do (double negative construction)
+2. なくちゃ・なきゃ - must do (casual forms)
+3. なにか・なにも - something/nothing
+4. Verbs (Non-past) - dictionary form as non-past tense
+5. Basic verb conjugations (Dictionary, Negative, Past, Negative-Past)
+6. い-Adjective (Predicate) - adjectives in predicate position
+7. い-Adjectives - adjective forms
+8. な-Adjectives - na-adjective forms
+9. な-Adjective だ - predicate form
+
+### Environment Status
+- ✅ All 347 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session or to continue
+
+---
+
 ## Session 56 - 2025-12-12
 
 ### ✅ Session Summary
