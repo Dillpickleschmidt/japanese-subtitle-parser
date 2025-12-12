@@ -1238,8 +1238,43 @@ pub fn tai() -> Vec<TokenMatcher> {
 }
 
 // Pattern: たり～たりする
+// Pattern: たり～たりする (doing things like A and B)
+// Structures: Verb[た]り + (Verb[た]り) + する
+// Matches from the FIRST たり to する (includes all たり in between)
 pub fn tari_uff5e_tarisuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Match たり or だり (parallel particle)
+    #[derive(Debug)]
+    struct TariDariMatcher;
+    impl Matcher for TariDariMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            (token.surface == "たり" || token.surface == "だり")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "並立助詞")
+        }
+    }
+
+    // Match する (any form)
+    #[derive(Debug)]
+    struct SuruMatcher;
+    impl Matcher for SuruMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TariDariMatcher))],
+        vec![TokenMatcher::Wildcard {
+            min: 0,
+            max: 15,
+            stop_conditions: vec![],
+        }],
+        vec![TokenMatcher::Custom(Arc::new(SuruMatcher))],
+    ])
 }
 
 // Pattern: けっこう

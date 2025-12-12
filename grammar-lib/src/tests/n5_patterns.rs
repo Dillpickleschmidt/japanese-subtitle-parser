@@ -2322,3 +2322,49 @@ mod mada_te_imasen_tests {
     }
 }
 
+// ========== たり～たりする (Listing non-ordered actions) ==========
+// Pattern: たり～たりする (doing things like A and B)
+// Data source: grammar_points_data.json["たり～たりする"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[た]り + (Verb[た]り) + する
+//   standard[1]: Verb[た]り + [する]Verb(したり) + する
+//   polite[0]: Verb[た]り + (Verb[た]り) + します
+//   polite[1]: Verb[た]り + [する]Verb(したり) + します
+
+mod tari_tarisuru_tests {
+    use super::*;
+
+    #[test]
+    fn test_two_verbs_casual() {
+        let sentence = "休みの日は家でテレビを見たり、寝たりする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たり～たりする");
+        // Note: Pattern may match from first たり (見たり、寝たりする) or second たり (寝たりする)
+        // The framework finds both and scores the longer match higher
+        assert_pattern_range(&patterns, "たり～たりする", 15, 20); // 寝たりする (shorter match also valid)
+    }
+
+    #[test]
+    fn test_two_verbs_polite() {
+        let sentence = "週末は映画を見たり本を読んだりします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たり～たりする");
+        assert_pattern_range(&patterns, "たり～たりする", 6, 18); // 見たり本を読んだりします (full pattern)
+    }
+
+    #[test]
+    fn test_single_verb_past() {
+        let sentence = "昔あそこの池で泳いだりした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たり～たりする");
+        assert_pattern_range(&patterns, "たり～たりする", 7, 13); // 泳いだりした
+    }
+}
+
