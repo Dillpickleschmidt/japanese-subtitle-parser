@@ -1,5 +1,64 @@
 # Grammar-lib Development Progress
 
+## Session 38 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One pattern fully implemented (ないほうがいい)
+**Patterns completed**: 1 new pattern
+**Tests added**: 2 comprehensive tests
+**Total tests**: 195 (was 193)
+
+### Accomplishments
+1. ✅ Implemented ないほうがいい (should not do - negative advice) pattern
+2. ✅ All 2 test variants passing with proper range assertions
+3. ✅ No test regressions - all 195 tests pass
+4. ✅ Updated feature_list.json
+
+### Completed Patterns
+
+#### ないほうがいい (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_nai_hou_ga_ii_advice (行かないほうがいい - advice form)
+  - test_nai_hou_ga_ii_polite (触らないほうがいいです - polite with です)
+- **Structure**: Verb[ない] + 方 + が + いい
+- **Tokenization insights**:
+  - Verb in 未然形 (negative/irrealis form)
+  - ない is 助動詞 (auxiliary verb)
+  - ほう tokenizes as 名詞/非自立/一般 (non-independent noun)
+  - が is 助詞/格助詞/一般 (case particle)
+  - いい is 形容詞/自立 (independent adjective)
+  - Polite form (です) extends automatically
+  - Pattern range includes full Verb[ない] + ほう + が + いい construction
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Matcher approach**: Sequential token matching with custom matchers
+- **Custom matchers created**:
+  - NegativeVerbFormMatcher: Matches verb in 未然形 conjugation
+  - NaiAuxiliaryMatcher: Matches ない auxiliary verb
+  - HouMatcher: Matches ほう non-independent noun (reused from たほうがいい)
+  - GaParticleMatcher: Matches が case particle (reused from たほうがいい)
+- **Helper functions used**: ii_form()
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. てください - please do
+2. ないでください - please don't do
+3. てはいけない - must not do
+4. なくてはいけない - must do
+5. なくてはならない - must do (formal)
+6. ～んです・のです - explanatory のです
+7. ～ましょうか - shall we?
+
+### Environment Status
+- ✅ All 195 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 37 - 2025-12-11
 
 ### ✅ Session Summary
