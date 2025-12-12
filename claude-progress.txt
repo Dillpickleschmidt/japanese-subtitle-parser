@@ -1,5 +1,77 @@
 # Grammar-lib Development Progress
 
+## Session 37 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: Two patterns fully implemented (てから + たほうがいい)
+**Patterns completed**: 2 new patterns
+**Tests added**: 6 comprehensive tests
+**Total tests**: 193 (was 187)
+
+### Accomplishments
+1. ✅ Implemented てから (after doing) pattern
+2. ✅ Implemented たほうがいい (should do / advice) pattern
+3. ✅ All 6 test variants passing with proper range assertions
+4. ✅ No test regressions - all 193 tests pass
+5. ✅ Updated feature_list.json
+
+### Completed Patterns
+
+#### てから (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_te_kara_basic (食べてから - basic form)
+  - test_te_kara_polite_context (してから - polite context)
+  - test_te_kara_de_form (食べてから - で form variant)
+- **Structure**: Verb[て] + から
+- **Tokenization insights**:
+  - Verb in 連用形 or 連用タ接続
+  - て/で particle is 助詞/接続助詞
+  - から particle is 助詞/格助詞/一般 (NOT conjunction - indicates "after")
+  - Different from から meaning "because" or "from" (starting point)
+  - Pattern range includes full Verb + て + から construction
+
+#### たほうがいい (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_ta_hou_ga_ii_advice (言ったほうがいい - advice form)
+  - test_ta_hou_ga_ii_polite (洗ったほうがいいです - polite with です)
+  - test_ta_hou_ga_ii_u_verb (頑張ったほうがいい - う-verb)
+- **Structure**: Verb[た] + 方 + が + いい
+- **Tokenization insights**:
+  - Uses flexible_verb_form() + past_auxiliary() for た-form
+  - ほう tokenizes as 名詞/非自立/一般 (non-independent noun)
+  - が is 助詞/格助詞/一般 (case particle)
+  - いい is 形容詞/自立 (independent adjective)
+  - Polite form (です) extends automatically
+  - Pattern range includes full Verb[た] + ほう + が + いい construction
+
+### Technical Details
+- **Pattern priority**: 1 (construction patterns)
+- **Matcher approach**: Sequential token matching with custom matchers
+- **Custom matchers created**:
+  - てから: TeDeParticleMatcher, KaraAfterMatcher
+  - たほうがいい: HouMatcher, GaParticleMatcher
+- **Helper functions used**: flexible_verb_form(), past_auxiliary(), ii_form()
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. ないほうがいい - should not do (advice - negative)
+2. てください - please do
+3. ないでください - please don't do
+4. てはいけない - must not do
+5. なくてはいけない - must do
+6. ～んです・のです - explanatory のです
+7. ～ましょうか - shall we?
+
+### Environment Status
+- ✅ All 193 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 36 - 2025-12-11
 
 ### ✅ Session Summary
