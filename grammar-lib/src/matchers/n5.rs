@@ -886,9 +886,87 @@ pub fn kirai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: のがすき
+// Pattern: のがすき (like doing something)
+// Structures: Verb[る] + の + が + 好き + [だ/です/だった/でした]
 pub fn nogasuki() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Matcher for verb in dictionary form (基本形)
+    #[derive(Debug)]
+    struct DictionaryVerbMatcher;
+    impl Matcher for DictionaryVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Matcher for の (nominalizer, 名詞/非自立)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for が particle (case particle)
+    #[derive(Debug)]
+    struct GaCaseParticleMatcher;
+    impl Matcher for GaCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for すき/好き (as noun or 形容動詞語幹)
+    #[derive(Debug)]
+    struct SukiMatcher;
+    impl Matcher for SukiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "すき" || token.surface == "好き")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Optional matcher for copula endings: だ/です/だった/でした
+    // This includes the auxiliary verb forms for present and past
+    #[derive(Debug)]
+    struct CopulaEndingMatcher;
+    impl Matcher for CopulaEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match だ, だっ, です, でし (various forms of copula)
+            if token.pos.first().is_some_and(|pos| pos == "助動詞") {
+                // だ forms (だ, だっ for だった)
+                if token.base_form == "だ" {
+                    return true;
+                }
+                // です forms (です, でし for でした)
+                if token.base_form == "です" {
+                    return true;
+                }
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
+        TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(SukiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CopulaEndingMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CopulaEndingMatcher,
+        )))), // For た in だった or した in でした
+    ]
 }
 
 // Pattern: がある + Noun (relative clause: noun with/has something)

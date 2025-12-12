@@ -4970,3 +4970,62 @@ mod heiku_tests {
         assert_pattern_range(&patterns, "へいく", 2, 9); // 公園に行きます
     }
 }
+
+// ========== のがすき (Like doing something) ==========
+// Pattern: のがすき (like/love doing)
+// Data source: grammar_points_data.json["のがすき"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[る] + の + が + 好き + だ
+//   polite[0]: Verb[る] + の + が + 好き + です
+//   Past variants from about section:
+//     - Verb[る] + の + が + 好き + だった (past)
+//     - Verb[る] + の + が + 好き + でした (polite past)
+
+mod nogasuki_tests {
+    use super::*;
+
+    // Standard present: Verb + の + が + 好き + だ
+    #[test]
+    fn test_nogasuki_standard_present() {
+        let sentence = "私は映画を見るのが好きだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがすき");
+        assert_pattern_range(&patterns, "のがすき", 5, 12); // 見るのが好きだ
+    }
+
+    // Polite present: Verb + の + が + 好き + です
+    #[test]
+    fn test_nogasuki_polite_present() {
+        let sentence = "プレゼントをもらうのが好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがすき");
+        assert_pattern_range(&patterns, "のがすき", 6, 15); // もらうのが好きです
+    }
+
+    // Past: Verb + の + が + 好き + だった
+    #[test]
+    fn test_nogasuki_past() {
+        let sentence = "彼は野球をするのが好きだった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがすき");
+        assert_pattern_range(&patterns, "のがすき", 5, 14); // するのが好きだった
+    }
+
+    // Polite past: Verb + の + が + 好き + でした
+    #[test]
+    fn test_nogasuki_polite_past() {
+        let sentence = "息子は漢字を書くのが好きでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがすき");
+        assert_pattern_range(&patterns, "のがすき", 6, 15); // 書くのが好きでした
+    }
+}
