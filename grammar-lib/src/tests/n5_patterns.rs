@@ -5388,3 +5388,67 @@ mod verb_ta_teiru_noun_tests {
     }
 }
 
+// ========== い-Adjective (Predicate) ==========
+// Pattern: い-Adjective used as predicate (terminal position)
+// Data source: grammar_points_data.json["い-Adjective (Predicate)"]
+//
+// Structure variants to test:
+//   standard: い-Adjective alone (かわいい, 新しい, 寒い)
+//   polite: い-Adjective + です (かわいいです, 新しいです, 寒いです)
+
+mod i_adjective_predicate_tests {
+    use super::*;
+
+    // Standard form: い-Adjective alone
+    #[test]
+    fn test_i_adj_predicate_kawaii() {
+        let sentence = "あの猫、本当にかわいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective (Predicate)");
+        assert_pattern_range(&patterns, "い-Adjective (Predicate)", 7, 11); // かわいい
+    }
+
+    #[test]
+    fn test_i_adj_predicate_atarashii() {
+        let sentence = "この車は新しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective (Predicate)");
+        assert_pattern_range(&patterns, "い-Adjective (Predicate)", 4, 7); // 新しい
+    }
+
+    #[test]
+    fn test_i_adj_predicate_samui() {
+        let sentence = "今日は寒い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective (Predicate)");
+        assert_pattern_range(&patterns, "い-Adjective (Predicate)", 3, 5); // 寒い
+    }
+
+    // Polite form: い-Adjective + です
+    #[test]
+    fn test_i_adj_predicate_polite_kawaii() {
+        let sentence = "あの子犬はかわいいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective (Predicate)");
+        assert_pattern_range(&patterns, "い-Adjective (Predicate)", 5, 11); // かわいいです
+    }
+
+    #[test]
+    fn test_i_adj_predicate_polite_atarashii() {
+        let sentence = "このパソコンは新しいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjective (Predicate)");
+        assert_pattern_range(&patterns, "い-Adjective (Predicate)", 7, 12); // 新しいです
+    }
+}
+

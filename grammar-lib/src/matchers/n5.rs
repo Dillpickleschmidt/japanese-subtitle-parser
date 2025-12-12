@@ -1336,8 +1336,38 @@ pub fn dare() -> Vec<TokenMatcher> {
 }
 
 // Pattern: い-Adjective (Predicate)
+// Structures: い-Adjective alone or い-Adjective + です
 pub fn i_adjective_predicate() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match い-adjective in dictionary form (基本形)
+    #[derive(Debug)]
+    struct IAdjPredicateMatcher;
+    impl super::Matcher for IAdjPredicateMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match です copula (optional for polite form)
+    #[derive(Debug)]
+    struct DesuCopulaMatcher;
+    impl super::Matcher for DesuCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "です"
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjPredicateMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DesuCopulaMatcher,
+        )))),
+    ]
 }
 
 // Pattern: な-Adjective だ (predicate form)
