@@ -1830,9 +1830,21 @@ pub fn kekkou() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たくさん
+// Pattern: たくさん (a lot, many)
+// Structures: たくさん + Phrase / たくさん + (の) + Noun
 pub fn takusan() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TakusanMatcher;
+    impl Matcher for TakusanMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たくさん"
+                && token.base_form == "たくさん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(TakusanMatcher))]
 }
 
 // Pattern: まえに

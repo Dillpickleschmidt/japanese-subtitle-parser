@@ -3789,3 +3789,48 @@ mod darou_tests {
         assert_pattern_range(&patterns, "だろう", 11, 15); // 行くだろ
     }
 }
+
+// ========== たくさん (A lot, many) ==========
+// Pattern: たくさん (a lot, many)
+// Data source: grammar_points_data.json["たくさん"]
+//
+// Structure variants to test:
+//   standard[0]: たくさん + Phrase
+//   standard[1]: たくさん + (の) + Noun
+
+mod takusan_tests {
+    use super::*;
+
+    // たくさん + Phrase (before verb)
+    #[test]
+    fn test_takusan_phrase_verb() {
+        let sentence = "たくさん食べてよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たくさん");
+        assert_pattern_range(&patterns, "たくさん", 0, 4); // たくさん
+    }
+
+    // たくさん + の + Noun
+    #[test]
+    fn test_takusan_no_noun() {
+        let sentence = "この島にはたくさんの猫がいます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たくさん");
+        assert_pattern_range(&patterns, "たくさん", 5, 9); // たくさん
+    }
+
+    // たくさん + Noun (without の) - focuses on phrase
+    #[test]
+    fn test_takusan_noun_no_no() {
+        let sentence = "あの店の前にたくさん人が集まっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たくさん");
+        assert_pattern_range(&patterns, "たくさん", 6, 10); // たくさん
+    }
+}
