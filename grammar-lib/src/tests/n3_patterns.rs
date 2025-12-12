@@ -1525,3 +1525,48 @@ mod kotoninaru_tests {
         assert_pattern_range(&patterns, "ことになる", 2, 12); // 退職することになった
     }
 }
+
+// ========== ことはない (no need to / never happens) ==========
+// Pattern: ことはない (there is no need / it never happens)
+// Data source: grammar_points_data.json["ことはない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + ことはない
+//   polite[0]: Verb + ことはありません
+
+mod kotohanai_tests {
+    use super::*;
+
+    // Test: Verb + ことはない (no need to - reassurance)
+    #[test]
+    fn test_kotohanai_no_need() {
+        let sentence = "そんなに慌てることはないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことはない");
+        assert_pattern_range(&patterns, "ことはない", 4, 12); // 慌てることはない
+    }
+
+    // Test: Verb + ことはない (never happens - recurrence negation)
+    #[test]
+    fn test_kotohanai_never_happens() {
+        let sentence = "親と話すことはない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことはない");
+        assert_pattern_range(&patterns, "ことはない", 2, 9); // 話すことはない
+    }
+
+    // Test: Verb + ことはありません (polite - no need to)
+    #[test]
+    fn test_kotohanai_polite() {
+        let sentence = "心配することはありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことはない");
+        assert_pattern_range(&patterns, "ことはない", 0, 12); // 心配することはありません (full sentence - verb is at start)
+    }
+}

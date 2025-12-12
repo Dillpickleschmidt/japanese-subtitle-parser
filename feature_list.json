@@ -4594,13 +4594,13 @@
   {
     "pattern_name": "ことはない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことはない is an expression that has two primary purposes in Japanese [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null

@@ -624,9 +624,47 @@ pub fn uff5e_ha_uff5e_deyuumei() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ことはない
+// Pattern: ことはない (no need to / never happens)
+// Structures: Verb + ことはない/ありません
 pub fn kotohanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiAruMatcher;
+    impl Matcher for NaiAruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (i-adjective) or ある (verb for polite ありません)
+            (token.surface == "ない" || token.base_form == "ない")
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                || (token.base_form == "ある"
+                    && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(HaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAruMatcher)),
+    ]
 }
 
 // Pattern:  ～と言っても
