@@ -1291,8 +1291,27 @@ pub fn tamonoda() -> Vec<TokenMatcher> {
 }
 
 // Pattern: さて
+// Pattern: さて (well then / now)
+// Structures: さて + (New Topic) Phrase
+// Meaning: "well" or "well then" - topic change conjunction
+// Usage: Used at sentence beginning to change topic or move to new point
+// Examples:
+//   - さて、そろそろ出ますか (Well then, shall we head off?)
+//   - さて、とりあえず乾杯しましょう (Well, let's toast first)
+//   - さて、この問題の答えが分かる人はいますか (Now, does anyone know the answer?)
 pub fn sate() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct SateMatcher;
+    impl Matcher for SateMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さて"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SateMatcher))]
 }
 
 // Pattern: むしろ

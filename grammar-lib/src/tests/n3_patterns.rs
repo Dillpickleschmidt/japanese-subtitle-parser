@@ -2398,3 +2398,62 @@ mod sudeni_tests {
         assert_pattern_range(&patterns, "すでに", 2, 5); // すでに
     }
 }
+
+// ========== さて (well then / now) ==========
+// Pattern: さて (topic change conjunction)
+// Data source: grammar_points_data.json["さて"]
+//
+// Structure variants to test:
+//   standard[0]: さて + (New Topic) Phrase
+
+mod sate_tests {
+    use super::*;
+
+    // Test: さて at sentence beginning (changing topic)
+    // Example: さて、そろそろ出ますか - Well then, shall we head off?
+    #[test]
+    fn test_sate_topic_change() {
+        let sentence = "さて、そろそろ出ますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さて");
+        assert_pattern_range(&patterns, "さて", 0, 2); // さて
+    }
+
+    // Test: さて with following action
+    // Example: さて、とりあえず乾杯しましょう - Well, let's toast first
+    #[test]
+    fn test_sate_with_action() {
+        let sentence = "さて、とりあえず乾杯しましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さて");
+        assert_pattern_range(&patterns, "さて", 0, 2); // さて
+    }
+
+    // Test: さて with question
+    // Example: さて、この問題の答えが分かる人はいますか - Now, does anyone know the answer?
+    #[test]
+    fn test_sate_with_question() {
+        let sentence = "さて、この問題の答えが分かる人はいますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さて");
+        assert_pattern_range(&patterns, "さて", 0, 2); // さて
+    }
+
+    // Test: さて in casual conversation
+    // Example: さて、次は何しようか - Well then, what shall we do next?
+    #[test]
+    fn test_sate_casual() {
+        let sentence = "さて、次は何しようか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さて");
+        assert_pattern_range(&patterns, "さて", 0, 2); // さて
+    }
+}
