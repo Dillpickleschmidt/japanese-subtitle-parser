@@ -1,5 +1,99 @@
 # Grammar-lib Development Progress
 
+## Session 80 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (くせに - despite/even though)
+**Patterns completed**: 1 new N3 pattern (particle construction)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 476 (was 472)
+
+### Accomplishments
+1. ✅ Implemented くせに pattern (N3) - particle construction pattern
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 476 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### くせに (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 1419)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_kuseni_verb (言ってたくせに - even though said)
+  - test_kuseni_i_adjective (若いくせに - even though young)
+  - test_kuseni_na_adjective (下手なくせに - despite being unskilled)
+  - test_kuseni_noun (犬のくせに - even though a dog)
+- **Structures**:
+  - Verb + くせに
+  - い-Adjective + くせに
+  - な-Adjective + な + くせに
+  - Noun + の + くせに
+- **Tokenization insights**:
+  - くせ = 名詞/非自立/一般 (non-independent noun)
+  - に = 助詞/格助詞/一般 (case particle)
+  - Pattern includes preceding token (verb/adj/particle) + くせ + に
+- **Implementation**: 3-token matcher
+  1. TokenMatcher::Any - Matches any preceding token
+  2. KuseMatcher - Matches くせ as 名詞/非自立/一般
+  3. NiParticleMatcher - Matches に as 助詞/格助詞/一般
+- **Meaning**: "despite / even though / and yet" - criticizes actions/states despite circumstances
+- **Usage**: Common N3 construction for expressing criticism or contradiction
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - たくせに (chars 10-14, includes past auxiliary)
+  - 若いくせに (chars 0-5, includes i-adjective)
+  - なくせに (chars 7-11, includes な connector)
+  - のくせに (chars 5-9, includes の connector)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N3 level in patterns.rs)
+- **Test coverage**: All 4 structure variants from grammar_points_data.json
+  - Verb + くせに (tested with 言ってた)
+  - い-Adjective + くせに (tested with 若い)
+  - な-Adjective + な + くせに (tested with 下手な)
+  - Noun + の + くせに (tested with 犬の)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Simple 3-token matcher with TokenMatcher::Any for flexibility
+- **Pattern range**: Includes preceding element (verb/adjective/particle) + くせ + に
+- **Negative connotation**: Pattern typically used to criticize or point out contradictions
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 476/476 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~92 (tests + matcher implementation + feature_list update)
+
+### Key Insights
+- Pattern uses TokenMatcher::Any for maximum flexibility with preceding element
+- くせ is consistently tokenized as 名詞/非自立/一般 (non-independent noun)
+- Pattern naturally includes な and の connectors when present
+- Test-first workflow successfully identified all tokenization patterns
+- All test sentences are realistic and subtitle-quality with appropriate critical tone
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. こそ - emphasis particle (simple particle pattern)
+2. きり - adverbial particle "only/just"
+3. くらい② - degree/extent particle
+4. いくら〜でも - "no matter how much"
+5. かけ - incomplete/unfinished action
+6. から言うと - "from the perspective of"
+
+**Recommendation**: Continue with simple concrete N3 patterns. こそ would be a good next choice as it's a straightforward emphasis particle.
+
+### Environment Status
+- ✅ All 476 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 79 - 2025-12-12
 
 ### ✅ Session Summary
