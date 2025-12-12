@@ -3684,6 +3684,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    Toittemo {
+        name: " ～と言っても",
+        matcher_fn: crate::matchers::n3::toittemo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     VerbVolitionalToshitaga {
         name: "Verb[volitional] + としたが",
         matcher_fn: crate::matchers::n3::verb_volitional_toshitaga,

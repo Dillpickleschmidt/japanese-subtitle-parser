@@ -1588,6 +1588,76 @@ pub fn youtoshinai() -> Vec<TokenMatcher> {
     ]
 }
 
+// Pattern: ～と言っても (even though / although I say)
+// Structures: Verb/Adj/Noun + (だ) + といっても
+pub fn toittemo() -> Vec<TokenMatcher> {
+    // Match だ as auxiliary (optional for verb/adj, required for na-adj/noun)
+    #[derive(Debug)]
+    struct DaAuxiliaryMatcher;
+    impl Matcher for DaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match と as quotation particle
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match いう in て-form (いっ)
+    #[derive(Debug)]
+    struct IuVerbTeMatcher;
+    impl Matcher for IuVerbTeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いっ"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match て as conjunction particle
+    #[derive(Debug)]
+    struct TeConjunctionMatcher;
+    impl Matcher for TeConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match も as binding particle
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, Adjective, or Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaAuxiliaryMatcher)))),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(IuVerbTeMatcher)),
+        TokenMatcher::Custom(Arc::new(TeConjunctionMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ]
+}
+
 // Pattern: Verb[volitional] + としたが
 pub fn verb_volitional_toshitaga() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement

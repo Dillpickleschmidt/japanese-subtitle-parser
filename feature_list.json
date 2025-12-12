@@ -4118,13 +4118,13 @@
   {
     "pattern_name": " ～と言っても",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As a construction that combines と言（い）う (presenting the previous statement as a quotation) and ても, meaning 'even if (A... [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

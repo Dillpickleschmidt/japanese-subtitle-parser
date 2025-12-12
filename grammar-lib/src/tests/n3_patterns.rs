@@ -2011,3 +2011,65 @@ mod youtoshinai_tests {
         assert_pattern_range(&patterns, "〜ようとしない", 6, 16); // 勉強しようとしません
     }
 }
+
+// ========== ～と言っても (even though / although I say) ==========
+// Pattern: ～と言っても (even though / although I say)
+// Data source: grammar_points_data.json[" ～と言っても"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + と言（い）っても
+//   standard[1]: い-Adjective + と言（い）っても
+//   standard[2]: な-Adjective + （だ） + と言（い）っても
+//   standard[3]: Noun + （だ） + と言（い）っても
+
+mod toittemo_tests {
+    use super::*;
+
+    // Test: Verb + と言っても
+    // Example: 走るといっても - although I say I run
+    #[test]
+    fn test_toittemo_verb() {
+        let sentence = "毎日走るといっても、１５分しか走らないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, " ～と言っても");
+        assert_pattern_range(&patterns, " ～と言っても", 2, 9); // 走るといっても
+    }
+
+    // Test: い-Adjective + と言っても
+    // Example: 辛いといっても - even though I say it's spicy
+    #[test]
+    fn test_toittemo_i_adjective() {
+        let sentence = "辛いといってもピリ辛だから、あなたでも食べれると思うよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, " ～と言っても");
+        assert_pattern_range(&patterns, " ～と言っても", 0, 7); // 辛いといっても
+    }
+
+    // Test: な-Adjective + だ + と言っても
+    // Example: 新鮮だといっても - although I say it's fresh
+    #[test]
+    fn test_toittemo_na_adjective() {
+        let sentence = "この肉は新鮮だといっても、３日前に買ったからそんなに新鮮ではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, " ～と言っても");
+        assert_pattern_range(&patterns, " ～と言っても", 4, 12); // 新鮮だといっても
+    }
+
+    // Test: Noun + だ + と言っても
+    // Example: 新幹線だといっても - although I say it's shinkansen
+    #[test]
+    fn test_toittemo_noun() {
+        let sentence = "新幹線だといってもこだまに乗るから、そんなに早く着かないと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, " ～と言っても");
+        assert_pattern_range(&patterns, " ～と言っても", 0, 9); // 新幹線だといっても
+    }
+}
