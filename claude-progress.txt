@@ -1,5 +1,64 @@
 # Grammar-lib Development Progress
 
+## Session 41 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: だけ pattern fully implemented
+**Patterns completed**: 1 new pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 215 (was 211)
+
+### Accomplishments
+1. ✅ Implemented だけ (only/just - limiting particle) pattern
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ No test regressions - all 215 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Patterns
+
+#### だけ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_dake_verb (食べるだけ - only eating)
+  - test_dake_i_adjective (辛いだけだ - just spicy)
+  - test_dake_na_adjective (有名なだけです - just famous)
+  - test_dake_noun (ブロッコリーだけ - only broccoli)
+- **Structures**:
+  - Verb + だけ
+  - い-Adjective + だけ
+  - な-Adjective + な + だけ
+  - Noun + だけ
+- **Tokenization insights**:
+  - だけ always tokenizes as 助詞/副助詞 (particle/adverbial particle)
+  - Can follow verbs in 基本形, い-adjectives in 基本形, nouns, or な-adjectives + な
+  - な-Adjective case is two tokens: 形容動詞語幹 + な (助動詞, 体言接続)
+  - Pattern uses optional na-adjective stem matcher to handle both single-token (verb/adj/noun) and two-token (na-adj + な) cases
+  - Pattern range includes full construction and extends with copula (だ/です)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Matcher approach**: Optional な-adjective stem + Any token + だけ particle
+- **Custom matchers created**: DakeParticleMatcher, NaAdjectiveStemMatcher, NaAuxiliaryMatcher
+- **Implementation notes**: Uses TokenMatcher::Optional to handle variable-length constructions before だけ
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. だった・でした - was/were (past copula)
+2. じゃない - is not (negative copula)
+3. じゃなかった - was not (past negative copula)
+4. でも - but/however
+5. ～んです・のです - explanatory のです
+6. Verb conjugation patterns (basic verb forms)
+
+### Environment Status
+- ✅ All 215 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 40 - 2025-12-12
 
 ### ✅ Session Summary
