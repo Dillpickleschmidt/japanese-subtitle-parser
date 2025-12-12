@@ -3,17 +3,18 @@
 ## Session 40 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: つもりだ pattern fully implemented
-**Patterns completed**: 1 new pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 207 (was 203)
+**Status**: Two patterns fully implemented (つもりだ + なくてはいけない)
+**Patterns completed**: 2 new patterns
+**Tests added**: 8 comprehensive tests
+**Total tests**: 211 (was 203)
 
 ### Accomplishments
 1. ✅ Implemented つもりだ (intend to/plan to) pattern
-2. ✅ All 4 test variants passing with proper range assertions
-3. ✅ No test regressions - all 207 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented なくてはいけない (must do - obligation) pattern
+3. ✅ All 8 test variants passing with proper range assertions
+4. ✅ No test regressions - all 211 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commits with full documentation
 
 ### Completed Patterns
 
@@ -36,25 +37,50 @@
   - Pattern range includes full Verb + (ない) + つもり + だ/です construction
   - For "つもりはない" construction, pattern matches just "Verb + つもり" (は + ない is separate)
 
+#### なくてはいけない (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_nakutewa_ikenai_basic (寝なくてはいけない - must sleep)
+  - test_nakutewa_ikenai_polite (買わなくてはいけません - must buy polite)
+  - test_nakucha_ikenai_casual (しなくちゃいけない - gotta do)
+  - test_nakucha_ikenai_polite (行かなくちゃいけません - gotta go polite)
+- **Structures**:
+  - Verb[未然形] + なく + て + は + いけない (standard)
+  - Verb[未然形] + なく + ちゃ + いけない (casual contraction)
+  - Both forms work with polite ません ending
+- **Tokenization insights**:
+  - Verb in 未然形 (negative/irrealis stem)
+  - なく is 助動詞, base=ない, 連用テ接続 conjugation form
+  - て or ちゃ as 助詞/接続助詞
+  - は as 助詞/係助詞 (included after て, optional after ちゃ)
+  - いけ as 動詞/非自立, base=いける
+    - 未然形 when followed by ない
+    - 連用形 when followed by ませ (polite)
+  - Pattern correctly extends with polite ませ + ん ending
+  - Pattern range includes full Verb + なく + て/ちゃ + (は) + いけ + ない/ません construction
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern)
-- **Matcher approach**: Verb + optional ない + つもり
+- **Pattern priority**: 1 (construction patterns)
+- **Matcher approaches**:
+  - つもりだ: Verb + optional ない + つもり
+  - なくてはいけない: Verb[未然形] + なく + て/ちゃ + optional は + いけ
 - **Custom matchers created**:
-  - VerbMatcher: Matches any verb (in any form)
-  - NaiAuxMatcher: Optional ない auxiliary for negative intention
-  - TsumoriMatcher: Matches つもり as non-independent noun
+  - つもりだ:
+    - VerbMatcher, NaiAuxMatcher, TsumoriMatcher
+  - なくてはいけない:
+    - NegativeVerbFormMatcher, NakuFormMatcher, TeChaMatcher, WaParticleMatcher, IkeMatcher
+- **Auto-extension**: Both patterns extend automatically for auxiliary verbs (だ/です/ない/ません)
 
 ### Next Priorities (N5 patterns still needed)
 High-value construction patterns from feature_list.json:
-1. なくてはいけない - must do
-2. なくてはならない - must do (formal)
-3. ～んです・のです - explanatory のです
-4. ～ましょうか - shall we?
-5. ませんか - won't you?
-6. なくちゃ・なきゃ - must (casual)
+1. なくてはならない - must do (formal)
+2. ～んです・のです - explanatory のです
+3. ～ましょうか - shall we?
+4. ませんか - won't you?
+5. なくちゃ・なきゃ - must (casual)
 
 ### Environment Status
-- ✅ All 207 tests passing
+- ✅ All 211 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
