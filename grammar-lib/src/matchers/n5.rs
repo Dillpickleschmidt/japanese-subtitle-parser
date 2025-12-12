@@ -3217,9 +3217,81 @@ pub fn adjective_te_b() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: のがへた
+// Pattern: のがへた (bad at doing something)
+// Structures: Verb[る] + の + が + 下手 + [だ/です/だった/でした]
 pub fn nogaheta() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Reuse matchers from nogasuki/nogajouzu patterns (same structure, different adjective)
+    // Matcher for verb in dictionary form (基本形)
+    #[derive(Debug)]
+    struct DictionaryVerbMatcher;
+    impl Matcher for DictionaryVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Matcher for の (nominalizer, 名詞/非自立)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for が particle (case particle)
+    #[derive(Debug)]
+    struct GaCaseParticleMatcher;
+    impl Matcher for GaCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for 下手 (heta - bad at, unskilled at)
+    #[derive(Debug)]
+    struct HetaMatcher;
+    impl Matcher for HetaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "下手"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Optional matcher for copula endings: だ/です/だった/でした
+    #[derive(Debug)]
+    struct CopulaEndingMatcher;
+    impl Matcher for CopulaEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.pos.first().is_some_and(|pos| pos == "助動詞") {
+                if token.base_form == "だ" || token.base_form == "です" {
+                    return true;
+                }
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
+        TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(HetaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CopulaEndingMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CopulaEndingMatcher,
+        )))), // For た in だった or した in でした
+    ]
 }
 
 // Pattern: のがじょうず (good at doing something)

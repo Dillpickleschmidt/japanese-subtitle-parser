@@ -5077,3 +5077,51 @@ mod nogajouzu_tests {
         assert_pattern_range(&patterns, "のがじょうず", 6, 15); // 踊るのが上手だった
     }
 }
+
+// ========== のがへた (Bad at doing something) ==========
+// Pattern: のがへた (bad at doing)
+// Data source: grammar_points_data.json["のがへた"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + のが + 下手（へた）
+//   Past variants from about section:
+//     - Verb + のが + 下手 + だった (past)
+//   Polite variants from examples:
+//     - Verb + のが + 下手 + です (polite present)
+
+mod nogaheta_tests {
+    use super::*;
+
+    // Present: Verb + の + が + 下手
+    #[test]
+    fn test_nogaheta_present() {
+        let sentence = "私は漢字を教えるのが下手だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがへた");
+        assert_pattern_range(&patterns, "のがへた", 5, 13); // 教えるのが下手だ
+    }
+
+    // Polite present: Verb + の + が + 下手 + です
+    #[test]
+    fn test_nogaheta_polite_present() {
+        let sentence = "彼は運転するのが下手です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがへた");
+        assert_pattern_range(&patterns, "のがへた", 2, 12); // 運転するのが下手です
+    }
+
+    // Past: Verb + の + が + 下手 + だった
+    #[test]
+    fn test_nogaheta_past() {
+        let sentence = "去年まで料理をするのが下手だった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがへた");
+        assert_pattern_range(&patterns, "のがへた", 7, 16); // するのが下手だった
+    }
+}
