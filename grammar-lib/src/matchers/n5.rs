@@ -1340,9 +1340,38 @@ pub fn i_adjective_predicate() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: な-Adjective だ
+// Pattern: な-Adjective だ (predicate form)
+// Structures: な-Adjective + だ, な-Adjective + です, な-Adjective + だった, な-Adjective + でした
+// Also matches: な-Adjective alone (だ omitted in casual speech)
 pub fn na_adjective_da() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for na-adjective stem (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct NaAdjPredicateMatcher;
+    impl Matcher for NaAdjPredicateMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Matcher for copula (だ, です, だっ+た, でし+た)
+    #[derive(Debug)]
+    struct CopulaMatcher;
+    impl Matcher for CopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match だ (base form), です (base form), だっ (連用タ接続), でし (連用形)
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "だ" || token.base_form == "です")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaAdjPredicateMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(CopulaMatcher)))),
+    ]
 }
 
 // Pattern: だった・でした (was/were - past copula)

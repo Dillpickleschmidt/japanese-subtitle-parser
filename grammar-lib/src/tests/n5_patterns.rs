@@ -5249,3 +5249,71 @@ mod na_adjective_noun_tests {
         assert_pattern_range(&patterns, "な-Adjective + Noun", 6, 11); // 大切なもの
     }
 }
+
+// ========== な-Adjective だ ==========
+// Pattern: な-Adjective + だ/です (predicate form)
+// Data source: grammar_points_data.json["な-Adjective だ"]
+//
+// Structure variants to test:
+//   standard[0]: な-Adjective + だ (e.g., 静か + だ, 元気 + だ)
+//   polite[0]: な-Adjective + です (e.g., 静か + です, 元気 + です)
+//   casual: な-Adjective alone (だ omitted in casual speech)
+
+mod na_adjective_da_tests {
+    use super::*;
+
+    // Standard form: な-adjective + だ
+    #[test]
+    fn test_na_adjective_da_standard() {
+        let sentence = "あの場所は静かだから落ち着く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な-Adjective だ");
+        assert_pattern_range(&patterns, "な-Adjective だ", 5, 8); // 静かだ
+    }
+
+    // Polite form: な-adjective + です
+    #[test]
+    fn test_na_adjective_da_polite() {
+        let sentence = "彼氏は素敵です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な-Adjective だ");
+        assert_pattern_range(&patterns, "な-Adjective だ", 3, 7); // 素敵です
+    }
+
+    // Casual standalone (no だ): な-adjective alone
+    #[test]
+    fn test_na_adjective_da_standalone() {
+        let sentence = "この料理、本当に美味しくて健康的";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な-Adjective だ");
+        assert_pattern_range(&patterns, "な-Adjective だ", 13, 15); // 健康 (without 的 suffix or copula)
+    }
+
+    // Past form: な-adjective + だった
+    #[test]
+    fn test_na_adjective_da_past() {
+        let sentence = "昨日の試験は簡単だった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な-Adjective だ");
+        assert_pattern_range(&patterns, "な-Adjective だ", 6, 11); // 簡単だった
+    }
+
+    // Polite past: な-adjective + でした
+    #[test]
+    fn test_na_adjective_da_polite_past() {
+        let sentence = "会議は重要でした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な-Adjective だ");
+        assert_pattern_range(&patterns, "な-Adjective だ", 3, 8); // 重要でした
+    }
+}
