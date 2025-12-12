@@ -1637,9 +1637,72 @@ pub fn mada_uff5e_teimasen() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: てもいい
+// Pattern: てもいい (it's okay even if - for adjectives and nouns)
+// Structures:
+//   - い-Adjective[く] + て + も + いい
+//   - な-Adjective/Noun + でも + いい
+// Note: This is different from "Verb + てもいい" which is a separate pattern
 pub fn temoii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Match い-adjective in 連用テ接続 form (く form) OR Noun/な-Adjective
+    #[derive(Debug)]
+    struct IAdjKuOrNounMatcher;
+    impl Matcher for IAdjKuOrNounMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // Match い-adjective in く form
+            (token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続"))
+                // OR match noun/な-adjective
+                || (token.pos.first().is_some_and(|p| p == "名詞")
+                    && (token.pos.get(1).is_some_and(|p| p == "一般")
+                        || token.pos.get(1).is_some_and(|p| p == "形容動詞語幹")))
+        }
+    }
+
+    // Match て (conjunction particle) OR でも (副助詞)
+    #[derive(Debug)]
+    struct TeOrDemoMatcher;
+    impl Matcher for TeOrDemoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            // Match て (接続助詞)
+            (token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞"))
+                // OR match でも (副助詞)
+                || (token.surface == "でも"
+                    && token.pos.first().is_some_and(|p| p == "助詞")
+                    && token.pos.get(1).is_some_and(|p| p == "副助詞"))
+        }
+    }
+
+    // Match も (binding particle - 係助詞)
+    // This is only present after て (not after でも)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match いい (any form - can be adjective OR verb)
+    #[derive(Debug)]
+    struct IiMatcher;
+    impl Matcher for IiMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "いい" || token.surface == "良い"
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjKuOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(TeOrDemoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MoParticleMatcher,
+        )))), // も is only present after て (not after でも)
+        TokenMatcher::Custom(Arc::new(IiMatcher)),
+    ]
 }
 
 // Pattern: たい (desire form)

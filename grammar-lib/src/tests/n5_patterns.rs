@@ -3460,3 +3460,127 @@ mod masenka_tests {
         assert_pattern_range(&patterns, "ませんか", 8, 14); // 行きませんか
     }
 }
+
+// ========== がある + Noun ==========
+// Pattern: がある + Noun (noun with/that has)
+// Data source: grammar_points_data.json["がある + Noun"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + がある + Noun
+//   standard[1]: Noun + のある + Noun (with の instead of が)
+
+mod ga_aru_noun_tests {
+    use super::*;
+
+    // Noun + がある + Noun (restaurant with piano)
+    #[test]
+    fn test_ga_aru_noun_basic() {
+        let sentence = "ピアノがあるレストランを探している";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Noun + がある + Noun (building with convenience store)
+    #[test]
+    fn test_ga_aru_noun_building() {
+        let sentence = "コンビニがあるビルの近くに住んでいる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Noun + のある + Noun (mountain with beautiful river)
+    #[test]
+    fn test_no_aru_noun() {
+        let sentence = "綺麗な川のある山に登りたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+}
+
+// ========== てもいい (It's okay even if - Adjectives/Nouns) ==========
+// Pattern: てもいい (permission/acceptability for adjectives and nouns)
+// Data source: grammar_points_data.json["てもいい"]
+//
+// Structure variants to test:
+//   standard[0]: い-Adjective[く] + ても + いい
+//   standard[1]: な-Adjective + でも + いい
+//   standard[2]: Noun + でも + いい
+//   polite[0-2]: Same forms + です variants
+//
+// Note: "Verb + てもいい" is a separate pattern already implemented
+
+mod temoii_adj_noun_tests {
+    use super::*;
+
+    // い-Adjective[く] + ても + いい (casual)
+    #[test]
+    fn test_temoii_i_adj_casual() {
+        let sentence = "お茶冷たくてもいい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもいい");
+        assert_pattern_range(&patterns, "てもいい", 2, 9); // 冷たくてもいい
+    }
+
+    // い-Adjective[く] + ても + いい + です (polite)
+    #[test]
+    fn test_temoii_i_adj_polite() {
+        let sentence = "部屋が少し暗くてもいいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもいい");
+        assert_pattern_range(&patterns, "てもいい", 5, 13); // 暗くてもいいです
+    }
+
+    // な-Adjective + でも + いい (casual)
+    #[test]
+    fn test_temoii_na_adj_casual() {
+        let sentence = "肉が好きでもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもいい");
+        assert_pattern_range(&patterns, "てもいい", 2, 8); // 好きでもいい
+    }
+
+    // な-Adjective + でも + いい + です (polite)
+    #[test]
+    fn test_temoii_na_adj_polite() {
+        let sentence = "静かでもいいですよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもいい");
+        assert_pattern_range(&patterns, "てもいい", 0, 8); // 静かでもいいです
+    }
+
+    // Noun + でも + いい (casual)
+    #[test]
+    fn test_temoii_noun_casual() {
+        let sentence = "電車でもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもいい");
+        assert_pattern_range(&patterns, "てもいい", 0, 6); // 電車でもいい
+    }
+
+    // Noun + でも + いい + です (polite)
+    #[test]
+    fn test_temoii_noun_polite() {
+        let sentence = "焼きそばでもいいですか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもいい");
+        assert_pattern_range(&patterns, "てもいい", 0, 10); // 焼きそばでもいいです
+    }
+}

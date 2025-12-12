@@ -912,13 +912,13 @@
   {
     "pattern_name": "てもいい",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Noun, い-Adjective , or な-Adjective + てもいい is a construction in Japanese that is used to express that something is 'ok... [3 std, 3 pol]",
     "priority": 1,
     "skip_reason": null
