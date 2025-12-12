@@ -3371,3 +3371,92 @@ mod mashouka_tests {
         assert_pattern_range(&patterns, "～ましょうか", 4, 11); // 食べましょうか
     }
 }
+
+// ========== ましょう (Let's do) ==========
+// Pattern: ましょう (polite volitional - let's do)
+// Data source: grammar_points_data.json["ましょう"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + ましょう
+
+mod mashou_tests {
+    use super::*;
+
+    // Verb stem + ましょう (u-verb) - suggestion/volitional
+    #[test]
+    fn test_mashou_basic() {
+        let sentence = "モールに行きましょう！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ましょう");
+        assert_pattern_range(&patterns, "ましょう", 4, 10); // 行きましょう
+    }
+
+    // Verb stem + ましょう (ru-verb) - volitional/invitation
+    #[test]
+    fn test_mashou_dance() {
+        let sentence = "踊りましょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ましょう");
+        assert_pattern_range(&patterns, "ましょう", 0, 6); // 踊りましょう
+    }
+
+    // Verb stem + ましょう (personal declaration)
+    #[test]
+    fn test_mashou_declaration() {
+        let sentence = "５キロ痩せましょう！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ましょう");
+        assert_pattern_range(&patterns, "ましょう", 3, 9); // 痩せましょう
+    }
+}
+
+// ========== ませんか (Won't you?) ==========
+// Pattern: ませんか (polite invitation)
+// Data source: grammar_points_data.json["ませんか"]
+//
+// Structure variants to test:
+//   polite[0]: Verb[stem] + ませんか
+//   standard[0]: Verb[ない] + か (casual - optional)
+
+mod masenka_tests {
+    use super::*;
+
+    // Verb stem + ませんか (polite invitation)
+    #[test]
+    fn test_masenka_polite() {
+        let sentence = "明日は温泉に行きませんか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ませんか");
+        assert_pattern_range(&patterns, "ませんか", 6, 12); // 行きませんか
+    }
+
+    // Verb stem + ませんか (invitation with 一緒に)
+    #[test]
+    fn test_masenka_together() {
+        let sentence = "一緒にお祭りへ行きませんか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ませんか");
+        assert_pattern_range(&patterns, "ませんか", 7, 13); // 行きませんか
+    }
+
+    // Verb stem + ませんか (different verb)
+    #[test]
+    fn test_masenka_eat() {
+        let sentence = "ラーメンを食べに行きませんか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ませんか");
+        assert_pattern_range(&patterns, "ませんか", 8, 14); // 行きませんか
+    }
+}

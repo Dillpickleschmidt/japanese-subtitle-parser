@@ -1920,9 +1920,38 @@ pub fn dareka_u30fb_dokoka_u30fb_daremo_u30fb_dokomo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ましょう
+// Pattern: ましょう (let's do / volitional)
+// Structures: Verb[連用形] + ましょ + う
 pub fn mashou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::flexible_verb_form;
+
+    // Match ましょ (助動詞, base=ます)
+    #[derive(Debug)]
+    struct MashoMatcher;
+    impl Matcher for MashoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ましょ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ます"
+        }
+    }
+
+    // Match う (助動詞)
+    #[derive(Debug)]
+    struct UMatcher;
+    impl Matcher for UMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        flexible_verb_form(),  // Verb in 連用形
+        TokenMatcher::Custom(Arc::new(MashoMatcher)),  // ましょ
+        TokenMatcher::Custom(Arc::new(UMatcher)),  // う
+    ]
 }
 
 // Pattern: ～ましょうか (shall we?)
@@ -1970,9 +1999,50 @@ pub fn uff5e_mashouka() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ませんか
+// Pattern: ませんか (won't you? - polite invitation)
+// Structures: Verb[連用形] + ませ + ん + か
 pub fn masenka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::flexible_verb_form;
+
+    // Match ませ (助動詞, base=ます, 未然形)
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ます"
+        }
+    }
+
+    // Match ん (助動詞, base=ん)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ん"
+        }
+    }
+
+    // Match か (助詞)
+    #[derive(Debug)]
+    struct KaMatcher;
+    impl Matcher for KaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        flexible_verb_form(),  // Verb in 連用形
+        TokenMatcher::Custom(Arc::new(MaseMatcher)),  // ませ
+        TokenMatcher::Custom(Arc::new(NMatcher)),  // ん
+        TokenMatcher::Custom(Arc::new(KaMatcher)),  // か
+    ]
 }
 
 // Pattern: てもいい (permission/it's okay to do)

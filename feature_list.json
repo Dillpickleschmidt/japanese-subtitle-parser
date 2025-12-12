@@ -1332,13 +1332,13 @@
   {
     "pattern_name": "ましょう",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ましょう is one of the conjugations of the auxiliary verb ます, and is a common (polite) way to suggest that something be d... [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null
@@ -1360,13 +1360,13 @@
   {
     "pattern_name": "ませんか",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ませんか (or ないか more casually) is an expression that is used after verbs as an invitation [1 std, 1 pol]",
     "priority": 1,
     "skip_reason": null
