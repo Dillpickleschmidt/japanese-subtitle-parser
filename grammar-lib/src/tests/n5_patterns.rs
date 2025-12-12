@@ -3693,3 +3693,64 @@ mod dareka_dokoka_tests {
         assert_pattern_range(&patterns, "誰か・どこか・誰も・どこも", 3, 7); // どこへも
     }
 }
+
+// ========== でしょう (Probably/Right?) ==========
+// Pattern: でしょう (tentative/assumption - "probably" or "right?")
+// Data source: grammar_points_data.json["でしょう"]
+//
+// Structure variants to test:
+//   standard[0]: Tentative (contextual use)
+//   standard[1]: Noun + でしょう
+//   standard[2]: Verb + でしょう
+//   standard[3]: Adjective + でしょう
+//
+// Note: でしょう is polite. Casual form is だろう (separate pattern).
+// でしょう can follow plain form verbs/adjectives or nouns.
+
+mod deshou_tests {
+    use super::*;
+
+    // Noun + でしょう
+    #[test]
+    fn test_deshou_noun() {
+        let sentence = "今日の昼ごはんはハンバーガーでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でしょう");
+        assert_pattern_range(&patterns, "でしょう", 8, 18); // ハンバーガーでしょう
+    }
+
+    // Verb + でしょう
+    #[test]
+    fn test_deshou_verb() {
+        let sentence = "彼も踊るでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でしょう");
+        assert_pattern_range(&patterns, "でしょう", 2, 8); // 踊るでしょう
+    }
+
+    // い-Adjective + でしょう (past tense)
+    #[test]
+    fn test_deshou_i_adjective() {
+        let sentence = "イタリアは良かったでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でしょう");
+        assert_pattern_range(&patterns, "でしょう", 8, 13); // たでしょう (past auxiliary + でしょう)
+    }
+
+    // な-Adjective + でしょう
+    #[test]
+    fn test_deshou_na_adjective() {
+        let sentence = "この仕事は簡単でしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でしょう");
+        assert_pattern_range(&patterns, "でしょう", 5, 11); // 簡単でしょう
+    }
+}

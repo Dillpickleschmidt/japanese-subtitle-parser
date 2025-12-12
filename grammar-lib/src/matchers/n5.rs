@@ -369,8 +369,36 @@ pub fn ni() -> Vec<TokenMatcher> {
 }
 
 // Pattern: でしょう
+// Pattern: でしょう (probably/right? - tentative/assumption)
+// Structures: Noun/Verb/Adjective + でしょう
+// Tokenization: でしょ (助動詞, base=です, 未然形) + う (助動詞, 不変化型)
 pub fn deshou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct DeshoMatcher;
+    impl Matcher for DeshoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "でしょ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "です"
+        }
+    }
+
+    #[derive(Debug)]
+    struct UMatcher;
+    impl Matcher for UMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Can follow noun, verb, or adjective
+        TokenMatcher::Custom(Arc::new(DeshoMatcher)),
+        TokenMatcher::Custom(Arc::new(UMatcher)),
+    ]
 }
 
 // Pattern: だろう
