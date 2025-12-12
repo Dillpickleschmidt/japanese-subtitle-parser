@@ -469,3 +469,57 @@ mod zutsu_tests {
         assert_pattern_range(&patterns, "～ずつ", 5, 8); // かずつ
     }
 }
+
+// Pattern: がたい (difficult to do)
+// Data source: grammar_points_data.json["がたい"]
+// Testing structures:
+//   standard[0]: Verb[stem] + がたい
+//   polite[0]: Verb[stem] + がたいです
+
+mod gatai_tests {
+    use super::*;
+
+    // Test: Verb[stem] + がたい (difficult to do) - 信じがたい
+    #[test]
+    fn test_gatai_standard_shinjiru() {
+        let sentence = "あいつが言うことは信じがたいが、今は信じるしかない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がたい");
+        assert_pattern_range(&patterns, "がたい", 9, 14); // 信じがたい
+    }
+
+    // Test: Verb[stem] + がたい (difficult to do) - 期待しがたい
+    #[test]
+    fn test_gatai_standard_kitai() {
+        let sentence = "景気が悪化しているため、今期の売上は期待しがたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がたい");
+        assert_pattern_range(&patterns, "がたい", 18, 24); // 期待しがたい
+    }
+
+    // Test: Verb[stem] + がたい (difficult to do) - 信じがたい in embedded clause
+    #[test]
+    fn test_gatai_standard_embedded() {
+        let sentence = "この話が信じがたいのは分かるが、信じてくれ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がたい");
+        assert_pattern_range(&patterns, "がたい", 4, 9); // 信じがたい
+    }
+
+    // Test: Verb[stem] + がたいです (polite form) - 理解しがたいです
+    #[test]
+    fn test_gatai_polite_rikai() {
+        let sentence = "彼の行動は理解しがたいですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がたい");
+        assert_pattern_range(&patterns, "がたい", 5, 13); // 理解しがたいです
+    }
+}

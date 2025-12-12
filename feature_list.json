@@ -4384,13 +4384,13 @@
   {
     "pattern_name": "がたい",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Coming from the same kanji as 難（むずか）しい 'difficult', 難（がた）い is a suffix that also means 'difficult' [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null
