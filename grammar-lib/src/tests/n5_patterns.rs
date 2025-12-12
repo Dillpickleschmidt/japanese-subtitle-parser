@@ -4843,3 +4843,72 @@ mod ni_particle_tests {
         assert_pattern_range(&patterns, "に", 0, 3); // バスに
     }
 }
+
+// ========== ます (Polite auxiliary verb) ==========
+// Pattern: ます (polite auxiliary verb for verbs)
+// Data source: grammar_points_data.json["ます"]
+//
+// Structure variants to test:
+//   polite[0]: Verb[stem] + ます
+//
+// Note: Testing various conjugations (ます, ました, ません, ませんでした)
+// and different verb types (godan, ichidan, irregular)
+
+mod masu_tests {
+    use super::*;
+
+    // Basic present polite
+    #[test]
+    fn test_masu_present() {
+        let sentence = "毎日勉強をします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ます");
+        assert_pattern_range(&patterns, "ます", 5, 8); // します
+    }
+
+    // Past polite
+    #[test]
+    fn test_masu_past() {
+        let sentence = "昨日料理をしました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ます");
+        assert_pattern_range(&patterns, "ます", 5, 9); // しました
+    }
+
+    // Negative polite
+    #[test]
+    fn test_masu_negative() {
+        let sentence = "今日は行きません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ます");
+        assert_pattern_range(&patterns, "ます", 3, 8); // 行きません
+    }
+
+    // Past negative polite
+    #[test]
+    fn test_masu_past_negative() {
+        let sentence = "先週は雨が降りませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ます");
+        assert_pattern_range(&patterns, "ます", 5, 13); // 降りませんでした
+    }
+
+    // Ichidan verb (one-row verb)
+    #[test]
+    fn test_masu_ichidan() {
+        let sentence = "私が食べます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ます");
+        assert_pattern_range(&patterns, "ます", 2, 6); // 食べます
+    }
+}

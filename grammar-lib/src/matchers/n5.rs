@@ -318,9 +318,27 @@ pub fn wo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ます
+// Pattern: ます (polite auxiliary verb)
+// Structures: Verb[stem/連用形] + ます/まし/ませ
 pub fn masu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::{flexible_verb_form, Matcher};
+
+    // Matcher for ます in any conjugation
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token
+                    .features
+                    .get(4)
+                    .is_some_and(|f| f.starts_with("特殊・マス"))
+        }
+    }
+
+    vec![flexible_verb_form(), TokenMatcher::Custom(Arc::new(MasuMatcher))]
 }
 
 // Pattern: る-Verb (Negative)

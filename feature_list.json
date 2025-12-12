@@ -1346,13 +1346,13 @@
   {
     "pattern_name": "ます",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In traditional Japanese teaching, ます is introduced as something placed on the verbs to create the 'polite form' [0 std, 1 pol]",
     "priority": 1,
     "skip_reason": null
