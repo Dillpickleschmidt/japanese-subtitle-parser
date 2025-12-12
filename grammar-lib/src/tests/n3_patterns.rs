@@ -1696,3 +1696,147 @@ mod naikotohanai_tests {
         assert_pattern_range(&patterns, "ないことはない", 5, 12); // ないこともない
     }
 }
+
+// ========== かけ (half/unfinished action) ==========
+// Pattern: かけ (half/unfinished/on the verge of)
+// Data source: grammar_points_data.json["かけ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + かけだ
+//   standard[1]: Verb[stem] + かける
+//   standard[2]: Verb[stem] + かけの + Noun
+//   polite[0]: Verb[stem] + かけです
+//   polite[1]: Verb[stem] + かけます
+//   polite[2]: Verb[stem] + かけの + Noun (same as standard)
+
+mod kake_tests {
+    use super::*;
+
+    // Test: Verb[stem] + かけだ (half-finished state)
+    #[test]
+    fn test_kake_da_unfinished() {
+        let sentence = "俺の食べかけだけど大丈夫？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: Verb[stem] + かけだ (on the verge of)
+    #[test]
+    fn test_kake_da_verge() {
+        let sentence = "これは私の飲みかけだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: Verb[stem] + かける (verb form - about to)
+    #[test]
+    fn test_kake_ru_verb() {
+        let sentence = "やばい、死にかけるところだった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: Verb[stem] + かけた (past form - half done)
+    #[test]
+    fn test_kake_ta_past() {
+        let sentence = "飲みかけた水を捨てる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: Verb[stem] + かけの + Noun (half-finished noun modifier)
+    #[test]
+    fn test_kake_no_noun_dying() {
+        let sentence = "彼は死にかけの子犬を救った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: Verb[stem] + かけの + Noun (half-broken)
+    #[test]
+    fn test_kake_no_noun_broken() {
+        let sentence = "彼女は壊れかけのパソコンを買って直すのが趣味だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: Verb[stem] + かけです (polite form)
+    #[test]
+    fn test_kake_desu_polite() {
+        let sentence = "終わりかけですからちょっと待って";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+}
+
+// ========== いくら〜でも (no matter how much) ==========
+// Pattern: いくら〜でも (no matter how much / however much)
+// Data source: grammar_points_data.json["いくら〜でも"]
+//
+// Structure variants to test:
+//   standard[0]: いくら + Verb[ても]
+//   standard[1]: いくら + い-Adjective[ても]
+//   standard[2]: いくら + Noun + でも
+//   standard[3]: いくら + な-Adjective + でも
+
+mod ikura_demo_tests {
+    use super::*;
+
+    // Test: いくら + Verb[ても]
+    #[test]
+    fn test_ikura_demo_verb() {
+        let sentence = "あの人にいくら言っても何も変わらないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いくら〜でも");
+        assert_pattern_range(&patterns, "いくら〜でも", 4, 11); // いくら言っても
+    }
+
+    // Test: いくら + い-Adjective[ても]
+    #[test]
+    fn test_ikura_demo_i_adjective() {
+        let sentence = "いくら新しくても落としたら壊れるに決まってるじゃん";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いくら〜でも");
+        assert_pattern_range(&patterns, "いくら〜でも", 0, 8); // いくら新しくても
+    }
+
+    // Test: いくら + Noun + でも
+    #[test]
+    fn test_ikura_demo_noun() {
+        let sentence = "いくら俺でもそんな重いものは持てないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いくら〜でも");
+        assert_pattern_range(&patterns, "いくら〜でも", 0, 6); // いくら俺でも
+    }
+
+    // Test: いくら + な-Adjective + でも
+    #[test]
+    fn test_ikura_demo_na_adjective() {
+        let sentence = "あの人のことがいくら嫌いでも、そんな事言ったら可哀そうだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いくら〜でも");
+        assert_pattern_range(&patterns, "いくら〜でも", 7, 14); // いくら嫌いでも
+    }
+}

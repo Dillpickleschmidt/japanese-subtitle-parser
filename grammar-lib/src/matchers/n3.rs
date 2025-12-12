@@ -766,8 +766,47 @@ pub fn donnani_u301c_temo() -> Vec<TokenMatcher> {
 }
 
 // Pattern: いくら〜でも
+// いくら〜でも: No matter how much (いくら + phrase + ても/でも)
+// Structures:
+//   - いくら + Verb[ても] (いくら...て + も)
+//   - いくら + い-Adjective[ても] (いくら...て + も)
+//   - いくら + Noun + でも (いくら...でも as single token)
+//   - いくら + な-Adjective + でも (いくら...でも as single token)
 pub fn ikura_u301c_demo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match いくら as adverb or noun
+    #[derive(Debug)]
+    struct IkuraMatcher;
+    impl Matcher for IkuraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いくら"
+                && (token.pos.first().is_some_and(|pos| pos == "副詞")
+                    || token.pos.first().is_some_and(|pos| pos == "名詞"))
+        }
+    }
+
+    // Match ても (も after て) or でも (single particle)
+    #[derive(Debug)]
+    struct TemoOrDemoMatcher;
+    impl Matcher for TemoOrDemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match も (係助詞) - for ても pattern
+            (token.surface == "も" && token.pos.get(1).is_some_and(|pos| pos == "係助詞"))
+                // Match でも (副助詞) - for noun/na-adj + でも pattern
+                || (token.surface == "でも" && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IkuraMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 5,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(TemoOrDemoMatcher)),
+    ]
 }
 
 // Pattern: 〜かは〜によって違う
