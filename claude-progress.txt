@@ -1,5 +1,80 @@
 # Grammar-lib Development Progress
 
+## Session 56 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N5 pattern fully implemented (にする)
+**Patterns completed**: 1 new N5 pattern
+**Tests added**: 5 comprehensive tests
+**Total tests**: 343 (was 338)
+
+### Accomplishments
+1. ✅ Implemented にする (to decide on/make) pattern (N5)
+2. ✅ All 5 test variants passing with proper range assertions
+3. ✅ No test regressions - all 343 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### にする (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 5 variants, all passing in n5_patterns.rs
+  - test_ni_suru_present (俺はビールにする - basic present)
+  - test_ni_suru_polite (私はコーヒーにします - polite present)
+  - test_ni_suru_past (結局ラーメンにした - past tense)
+  - test_ni_suru_polite_past (ハイキングの日は日曜日にしました - polite past)
+  - test_ni_suru_volitional (次は緑茶にしよう - volitional form)
+- **Structure**: Noun + に + する/します/した/しました/しよう
+- **Tokenization**:
+  - Noun = 名詞 (various subtypes)
+  - に = 助詞/格助詞/一般 (case particle)
+  - する = 動詞/自立, base_form=する, conjugation_type=サ変・スル (in various conjugations)
+- **Implementation**: 3-token matcher (noun_matcher + に particle + する verb)
+- **Meaning**: "to decide on (A)", "to make it (A)"
+- **Usage**: Indicates a decision or choice where the speaker has direct control over the outcome
+- **Pattern priority**: 2 (higher than standalone する to capture the specific construction)
+
+### Technical Details
+- **Pattern priority**: 2 (construction pattern - N5 level)
+- **Test coverage**: All major conjugation forms tested (present, polite, past, polite past, volitional)
+- **Implementation approach**:
+  - Custom NiParticleMatcher checks surface="に", POS=助詞/格助詞
+  - Custom SuruVerbMatcher checks base_form="する", POS=動詞, conjugation type starts with "サ変"
+  - Uses shared noun_matcher() helper from mod.rs
+- **Pattern range**: Full construction from noun to verb (e.g., ビールにする, コーヒーにします)
+- **Nuance**: Conveys direct decision-making (unlike とする which is softer/less definite)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N5)
+- **Tests written**: 5
+- **Tests passing**: 343/343 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~80 (tests + matcher + pattern declaration)
+
+### Next Priorities
+Continue with N5 patterns (34 remaining):
+
+**High-value N5 construction patterns to implement**:
+1. なくてはならない - must do (double negative construction)
+2. なくちゃ・なきゃ - must do (casual forms)
+3. なにか・なにも - something/nothing
+4. Verbs (Non-past) - dictionary form as non-past tense
+5. Basic verb conjugations (Dictionary, Negative, Past, Negative-Past)
+6. い-Adjective (Predicate) - adjectives in predicate position
+7. い-Adjectives - adjective forms
+8. な-Adjectives - na-adjective forms
+9. な-Adjective だ - predicate form
+
+### Environment Status
+- ✅ All 343 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session or to continue
+
+---
+
 ## Session 55 - 2025-12-12
 
 ### ✅ Session Summary
