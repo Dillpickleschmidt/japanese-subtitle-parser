@@ -2280,3 +2280,45 @@ mod wo_particle_tests {
     }
 }
 
+// ========== まだ～ていません (Haven't done yet) ==========
+// Pattern: まだ～ていません (haven't done yet / still haven't done)
+// Data source: grammar_points_data.json["まだ～ていません"]
+//
+// Structure variants to test:
+//   standard[0]: まだ + Verb[て] + いない
+//   polite[0]: まだ + Verb[て] + いません
+
+mod mada_te_imasen_tests {
+    use super::*;
+
+    #[test]
+    fn test_casual_negative() {
+        let sentence = "まだ何も決めていないんだって";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まだ～ていません");
+        assert_pattern_range(&patterns, "まだ～ていません", 0, 10); // まだ何も決めていない
+    }
+
+    #[test]
+    fn test_polite_negative() {
+        let sentence = "その映画はまだ見ていません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まだ～ていません");
+        assert_pattern_range(&patterns, "まだ～ていません", 5, 13); // まだ見ていません
+    }
+
+    #[test]
+    fn test_with_intervening_words() {
+        let sentence = "宿題はまだ全然終わっていないんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まだ～ていません");
+        assert_pattern_range(&patterns, "まだ～ていません", 3, 14); // まだ全然終わっていない
+    }
+}
+

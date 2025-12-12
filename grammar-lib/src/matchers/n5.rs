@@ -1170,9 +1170,43 @@ pub fn mada() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: まだ～ていません
+// Pattern: まだ～ていません (still haven't done / haven't done yet)
+// Structures: まだ + Verb[て] + いない/いません
 pub fn mada_uff5e_teimasen() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match いる (auxiliary verb)
+    #[derive(Debug)]
+    struct IruAuxMatcher;
+    impl Matcher for IruAuxMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.base_form == "いる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    concat(vec![
+        vec![TokenMatcher::Surface("まだ")],
+        vec![TokenMatcher::Wildcard {
+            min: 0,
+            max: 5,
+            stop_conditions: vec![],
+        }],
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeDeParticleMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(IruAuxMatcher))],
+    ])
 }
 
 // Pattern: てもいい
