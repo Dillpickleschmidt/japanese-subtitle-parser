@@ -1,5 +1,83 @@
 # Grammar-lib Development Progress
 
+## Session 44 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One pattern fully implemented (～んです・のです)
+**Patterns completed**: 1 new pattern
+**Tests added**: 10 comprehensive tests
+**Total tests**: 246 (was 236)
+
+### Accomplishments
+1. ✅ Implemented ～んです・のです (explanatory のです) pattern
+2. ✅ All 10 test variants passing with proper range assertions
+3. ✅ No test regressions - all 246 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commits with full documentation
+
+### Completed Pattern
+
+#### ～んです・のです (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 10 variants, all passing
+  - test_nodesu_i_adj_polite_n (美味しいんです - い-adj + んです)
+  - test_nodesu_i_adj_polite_no (悪いのです - い-adj + のです)
+  - test_nodesu_verb_casual_n (空いたんだ - verb + んだ)
+  - test_nodesu_na_adj_casual_n (元気なんだ - な-adj + なんだ)
+  - test_nodesu_noun_casual_n (学生なんだ - noun + なんだ)
+  - test_nodesu_verb_polite_n (起きるんです - verb + んです)
+  - test_nodesu_verb_polite_no_question (欲しいのですか - verb + のです with か)
+  - test_nodesu_i_adj_polite_n_alt (美味しいんです - alternative sentence)
+  - test_nodesu_na_adj_polite_no (親切なのです - な-adj + なのです)
+  - test_nodesu_noun_polite_n (教師なんです - noun + なんです)
+- **Structures**:
+  - Verb/い-Adj + ん(の) + だ/です
+  - な-Adj/Noun + な + ん(の) + だ/です
+- **Tokenization insights**:
+  - ん/の tokenize as 名詞/非自立
+  - だ/です tokenize as 助動詞
+  - な (before ん/の) tokenizes as 助動詞 (base=だ)
+  - Pattern matches both ん and の variants seamlessly
+- **Custom matchers created**:
+  - NNoMatcher: Matches ん or の (名詞/非自立)
+  - DaDesuMatcher: Matches だ or です (助動詞)
+  - NaAuxMatcher: Matches な (助動詞, base=だ) for な-adj/noun forms
+  - NonNaAuxMatcher: Matches any token EXCEPT な auxiliary (prevents double-matching)
+- **Implementation notes**:
+  - Very common N5 pattern for explanations and emphasis
+  - Handles both casual (だ) and polite (です) forms
+  - Handles both ん (spoken) and の (formal) variants
+  - Prevents double-matching by excluding な auxiliary from initial matcher
+  - Pattern correctly includes full grammatical construction in ranges
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - Both standard (んだ/のだ) and polite (んです/のです) forms
+  - Verbs, い-adjectives, な-adjectives, and nouns
+  - Question form with か particle
+- **Implementation challenge**: Avoiding double-matching
+  - Initial implementation matched both "学生なんだ" and "なんだ" separately
+  - Fixed by excluding な auxiliary from the first token matcher
+  - Now correctly matches only the full construction
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. ～ましょうか - shall we?
+2. 誰か・どこか・誰も・どこも - question words + か/も
+3. より～のほうが - comparison pattern
+4. もらう - to receive (from someone)
+5. ～ませんか - won't you? (invitation)
+6. る-Verb conjugations (Dictionary, Negative, Past, Negative-Past)
+
+### Environment Status
+- ✅ All 246 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 43 - 2025-12-12
 
 ### ✅ Session Summary
