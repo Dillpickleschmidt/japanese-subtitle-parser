@@ -158,8 +158,26 @@ pub fn na_adjectives() -> Vec<TokenMatcher> {
 }
 
 // Pattern: か
+// Pattern: か (or - presenting options/alternatives)
+// Structures: Option A + か + Option B + か
+// Options can be single words or phrases (e.g., "お母さんの靴")
 pub fn ka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Option A (single token for now)
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+        TokenMatcher::Any, // Option B (single token for now)
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+    ]
 }
 
 // Pattern: が

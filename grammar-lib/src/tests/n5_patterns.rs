@@ -2090,3 +2090,57 @@ mod keredomo_tests {
     }
 }
 
+// ========== か (Or/Question marker between options) ==========
+// Pattern: か (or - presenting options/alternatives)
+// Data source: grammar_points_data.json["か"]
+//
+// Structure variants to test:
+//   standard[0]: Verb (A) + か + Verb (B) + か
+//   standard[1]: い-Adjective (A) + か + い-Adjective (B) + か
+//   standard[2]: な-Adjective (A) + か + な-Adjective (B) + か
+//   standard[3]: Noun (A) + か + Noun (B) + か
+
+mod ka_or_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_or_verb() {
+        let sentence = "行くか帰るか決めてよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か");
+        assert_pattern_range(&patterns, "か", 0, 6); // 行くか帰るか
+    }
+
+    #[test]
+    fn test_noun_or_noun() {
+        let sentence = "コーヒーかお茶か選んでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か");
+        assert_pattern_range(&patterns, "か", 0, 8); // コーヒーかお茶か
+    }
+
+    #[test]
+    fn test_i_adjective_or_i_adjective() {
+        let sentence = "寒いか暑いかわからない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か");
+        assert_pattern_range(&patterns, "か", 0, 6); // 寒いか暑いか
+    }
+
+    #[test]
+    fn test_na_adjective_or_na_adjective() {
+        let sentence = "静かか賑やかか選んでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か");
+        assert_pattern_range(&patterns, "か", 0, 7); // 静かか賑やかか
+    }
+}
+
