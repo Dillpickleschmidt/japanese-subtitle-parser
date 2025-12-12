@@ -1,5 +1,107 @@
 # Grammar-lib Development Progress
 
+## Session 58 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N5 pattern fully implemented (なくてはならない)
+**Patterns completed**: 1 pattern (double negative construction)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 356 (was 352)
+
+### Accomplishments
+1. ✅ Implemented なくてはならない (must do - formal) pattern (N5)
+2. ✅ All 4 structure variants tested and passing with proper range assertions
+3. ✅ No test regressions - all 356 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### なくてはならない (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing in n5_patterns.rs
+  - test_nakutewa_naranai_standard (明日までに宿題を提出しなくてはならない - standard form)
+  - test_nakucha_naranai_casual (今日は沢山走ったからシャワーを浴びなくちゃならない - casual form with ちゃ)
+  - test_nakutewa_narimasen_polite (トムはタカにお金を返さなくてはなりません - polite form)
+  - test_nakucha_narimasen_casual_polite (今日は漢字の勉強をしなくちゃなりません - casual polite)
+- **Structures**:
+  - Verb[ない] + なくては + ならない (standard formal)
+  - Verb[ない] + なくちゃ + ならない (casual form)
+  - Verb[ない] + なくては + なりません (polite formal)
+  - Verb[ない] + なくちゃ + なりません (casual polite)
+- **Tokenization**:
+  - Verb in 未然形 (irrealis form) - e.g., 降り, 浴び, 返さ, し
+  - なく = 助動詞, base=ない, conjugation=連用テ接続
+  - て or ちゃ = 助詞/接続助詞 (conjunctive particle)
+  - は = 助詞/係助詞 (topic marker) - only in ては form, not in ちゃ
+  - なら or なり = 動詞/非自立, base=なる (なる verb in 未然形 or 連用形)
+  - ない = 助動詞, base=ない, 基本形
+  - ませ + ん = 助動詞 for polite negative (なりません)
+- **Implementation**: 6-7 token matcher with optional は and ん
+  - Custom MizenVerbMatcher: Verb in 未然形
+  - Custom NakuMatcher: なく (助動詞, base=ない)
+  - Custom TeChaParticleMatcher: て or ちゃ (助詞/接続助詞)
+  - Optional HaTopicMatcher: は (only present in ては form)
+  - Custom NaruMatcher: なら or なり (動詞/非自立, base=なる)
+  - Custom NegativeEndingMatcher: ない, ませ, or ん (excluding です)
+  - Optional second NegativeEndingMatcher: for ん in ません
+- **Meaning**: "must do (A)" - double negative construction ("must not, not do A")
+- **Usage**: Formal/polite way to express obligation (more formal than なくてはいけない)
+- **Pattern priority**: 6 (construction pattern - higher priority due to specificity)
+
+### Technical Details
+- **Pattern priority**: 6 (higher priority for multi-token construction)
+- **Test coverage**: All 4 structure variants from grammar_points_data.json
+  - Standard: なくてはならない
+  - Casual: なくちゃならない (て → ちゃ contraction)
+  - Polite: なくてはなりません
+  - Casual polite: なくちゃなりません
+- **Implementation approach**:
+  - Matches verb in 未然形 (not 連用形 like many other patterns)
+  - Handles both ては and ちゃ forms with a single matcher
+  - Optional は handles difference between ては and ちゃ
+  - Handles both ない and ません endings with optional ん matcher
+- **Pattern range**: Includes full construction from verb to final auxiliary
+  - Examples: 提出しなくてはならない, 浴びなくちゃならない, 返さなくてはなりません
+- **Note**: Pattern may include preceding noun for compound verbs (e.g., 提出する)
+  - This is intentional and provides better context
+
+### Implementation Challenges
+- Initial issue: Used `flexible_verb_form()` which matches 連用形, but this pattern requires 未然形
+  - Solution: Created custom MizenVerbMatcher for 未然形 verbs
+- Edge case: Preventing です from being matched by optional NegativeEndingMatcher
+  - Solution: Added explicit check `token.surface != "です"`
+- Pattern range calculation includes preceding nouns for compound verbs
+  - This is correct behavior and provides fuller context
+
+### Session Statistics
+- **Patterns implemented**: 1 (N5)
+- **Tests written**: 4
+- **Tests passing**: 356/356 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~180 (tests + matcher + pattern declaration)
+
+### Next Priorities
+Continue with N5 patterns (31 remaining):
+
+**High-value N5 construction patterns to implement**:
+1. なくちゃ・なきゃ - must do (casual abbreviated forms without いけない/ならない)
+2. Verbs (Non-past) - dictionary form as non-past tense
+3. Basic verb conjugations (Dictionary, Negative, Past, Negative-Past)
+4. い-Adjective (Predicate) - adjectives in predicate position
+5. い-Adjectives - adjective forms
+6. な-Adjectives - na-adjective forms
+7. な-Adjective だ - predicate form
+
+### Environment Status
+- ✅ All 356 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session or to continue
+
+---
+
 ## Session 57 - 2025-12-12
 
 ### ✅ Session Summary
