@@ -1,5 +1,95 @@
 # Grammar-lib Development Progress
 
+## Session 75 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (がち - tend to/prone to)
+**Patterns completed**: 1 new N3 pattern (suffix)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 454 (was 450)
+
+### Accomplishments
+1. ✅ Implemented がち pattern (N3) - suffix pattern
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 454 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### がち (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 1310)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_gachi_verb_tanomu (頼みがち - tend to order)
+  - test_gachi_verb_saboru (サボりがち - tend to skip/shirk)
+  - test_gachi_noun_byouki (病気がち - prone to getting sick)
+  - test_gachi_noun_rusu (留守がち - often away from home)
+- **Structures**:
+  - Verb[stem/連用形] + がち
+  - Noun + がち
+- **Tokenization insights**:
+  - Verb in 連用形 (e.g., 頼み, サボり)
+  - Noun (e.g., 病気, 留守) = 名詞/サ変接続 or 名詞/一般
+  - がち = 名詞/接尾/形容動詞語幹
+- **Implementation**: 2-token matcher
+  - GachiPrecedingMatcher: Matches verb in 連用形 OR any noun
+  - GachiMatcher: Matches がち as 名詞/接尾/形容動詞語幹
+- **Meaning**: "tend to / prone to / apt to" - expresses tendency (often negative)
+- **Usage**: Common N3 suffix for expressing habits and tendencies
+- **Pattern priority**: 3 (construction pattern - N3 level)
+- **Pattern ranges**: Includes verb stem/noun + がち
+  - 頼みがち (chars 13-17)
+  - サボりがちな (chars 0-6, includes な when followed by noun)
+  - 病気がち (chars 5-9)
+  - 留守がち (chars 10-14)
+
+### Technical Details
+- **Pattern priority**: 3 (construction pattern - N3 level in patterns.rs)
+- **Test coverage**: All major structure variants from grammar_points_data.json
+  - Verb[stem] + がち (tested with 頼む, サボる)
+  - Noun + がち (tested with 病気, 留守)
+  - Pattern naturally extends to include な when used as modifier (サボりがちな人)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Simple 2-token matcher handles both verb and noun variants cleanly
+- **Pattern range**: Verb stem/noun + がち (full grammatical construction)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 454/454 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~93 (tests + matcher implementation + feature_list update)
+
+### Key Insights
+- Pattern is very similar to がたい - suffix pattern with verb/noun preceding
+- Both verb stems and nouns can precede がち naturally
+- Test-first workflow successfully identified all tokenization patterns
+- Pattern extends naturally to include な particle when used as modifier
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. かなり - "considerably/quite" adverb (very simple standalone pattern)
+2. ぎみ - "sensation of / tendency" suffix (similar to がち)
+3. あまりに - "excessively" (related to あまり but different usage)
+4. いくら〜でも - "no matter how much"
+5. Verb[volitional]とする - "try to / be about to"
+6. かけ - incomplete/unfinished action
+7. から言うと - "from the perspective of"
+
+**Recommendation**: Continue with simple concrete N3 patterns. かなり would be a good next choice as it's a straightforward adverb pattern with only 2 structures.
+
+### Environment Status
+- ✅ All 454 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 74 - 2025-12-12
 
 ### ✅ Session Summary
