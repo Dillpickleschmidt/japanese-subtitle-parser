@@ -1,5 +1,98 @@
 # Grammar-lib Development Progress
 
+## Session 72 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (あるいは - or/alternatively)
+**Patterns completed**: 1 new N3 pattern (conjunction)
+**Tests added**: 6 comprehensive tests
+**Total tests**: 442 (was 436)
+
+### Accomplishments
+1. ✅ Implemented あるいは pattern (N3) - conjunction pattern
+2. ✅ All 6 tests passing with proper range assertions
+3. ✅ No test regressions - all 442 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### あるいは (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs
+- **Tests**: 6 variants, all passing in n3_patterns.rs
+  - test_aruiwa_verb (運動をさせるかあるいは - Verb + か + あるいは)
+  - test_aruiwa_i_adjective (遅いかあるいは - い-Adj + か + あるいは)
+  - test_aruiwa_na_adjective (有名かあるいは - な-Adj + か + あるいは)
+  - test_aruiwa_noun_without_ka (牛乳あるいは - Noun + あるいは without か)
+  - test_aruiwa_noun_with_ka (土曜日かあるいは - Noun + か + あるいは)
+  - test_aruiwa_phrase_kamoshirenai (月曜日あるいは - あるいは at beginning)
+- **Structures**:
+  - (Optional か) + あるいは
+  - Works after verbs, adjectives, and nouns
+  - Can appear at the beginning of sentences/phrases
+- **Tokenization insights**:
+  - あるいは = 接続詞 (conjunction)
+  - か = 助詞/副助詞／並立助詞／終助詞 (when present)
+  - Pattern is simple: Optional(か) + あるいは
+- **Implementation**: 2-token matcher with Optional
+  - KaParticleMatcher: Matches か as 助詞/副助詞／並立助詞／終助詞
+  - AruiwaMatcher: Matches あるいは as 接続詞
+  - Uses TokenMatcher::Optional for the か particle
+- **Meaning**: "or / alternatively / possibly" - presents alternatives or possibilities
+- **Usage**: Common N3 conjunction for formal alternatives (more formal than それとも)
+- **Pattern priority**: 3 (construction pattern - N3 level)
+- **Pattern ranges**: Includes optional か + あるいは
+  - With か: かあるいは (e.g., chars 6-11, 10-15, 2-7, 3-8)
+  - Without か: あるいは (e.g., chars 2-6, 3-7)
+
+### Technical Details
+- **Pattern priority**: 3 (construction pattern - N3 level in patterns.rs)
+- **Test coverage**: All major structure variants from grammar_points_data.json
+  - Verb + か + あるいは (tested with させる causative verb)
+  - い-Adjective + か + あるいは (tested with 遅い)
+  - な-Adjective + か + あるいは (tested with 有名 - note: no だ/な before か)
+  - Noun + (か) + あるいは (tested both with and without か)
+  - あるいは at beginning of phrase (tested with + かもしれない)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: あるいは is always a conjunction (接続詞), preceded optionally by か particle
+- **Pattern range**: Full construction including optional か particle through あるいは
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 6
+- **Tests passing**: 442/442 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~120 (tests + matcher + pattern declaration + feature_list update)
+
+### Key Insights
+- Pattern is straightforward - conjunction with optional preceding particle
+- Test-first workflow successfully identified all tokenization patterns
+- Optional matcher works well for the か particle
+- Pattern works in multiple contexts (after verbs, adjectives, nouns, or at beginning)
+- Confidence scoring correctly prioritizes か + あるいは (5.0) over あるいは alone (4.0)
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. いくら〜でも - "no matter how much"
+2. Verb[volitional]とする - "try to / be about to"
+3. かけ - incomplete/unfinished action
+4. あまりに - "excessively" (related to あまり but different usage)
+5. から言うと - "from the perspective of"
+6. がたい - "difficult to" suffix
+
+**Recommendation**: Continue with concrete N3 patterns that have clear structure variants.
+
+### Environment Status
+- ✅ All 442 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 71 - 2025-12-12
 
 ### ✅ Session Summary
