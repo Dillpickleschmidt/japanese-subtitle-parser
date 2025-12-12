@@ -297,3 +297,37 @@ mod amari_tests {
         assert_pattern_range(&patterns, "あまり", 6, 10); // のあまり
     }
 }
+
+// ========== からこそ (precisely because) ==========
+// Pattern: からこそ (precisely because / it's precisely because)
+// Data source: grammar_points_data.json["からこそ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + からこそ + Phrase
+//   standard[1]: Noun + だ + からこそ + Phrase
+
+mod karakoso_tests {
+    use super::*;
+
+    // Test: Verb + からこそ (plain form verb)
+    #[test]
+    fn test_karakoso_verb() {
+        let sentence = "俺は努力したからこそ、試験に合格できたんだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からこそ");
+        assert_pattern_range(&patterns, "からこそ", 5, 10); // たからこそ
+    }
+
+    // Test: Noun + だ + からこそ
+    #[test]
+    fn test_karakoso_noun_da() {
+        let sentence = "君だからこそできたんだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からこそ");
+        assert_pattern_range(&patterns, "からこそ", 1, 6); // だからこそ
+    }
+}

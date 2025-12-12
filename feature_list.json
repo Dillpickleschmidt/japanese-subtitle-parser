@@ -4356,13 +4356,13 @@
   {
     "pattern_name": "からこそ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Traditionally, the adverbial particle こそ is used to emphasize whatever noun (or noun phrase) it is attached to [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

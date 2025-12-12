@@ -417,9 +417,48 @@ pub fn koso() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: からこそ
+// Pattern: からこそ (precisely because)
+// Structures: Verb + た + から + こそ, Noun + だ + から + こそ
 pub fn karakoso() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches た (past auxiliary) or だ (copula) before から
+    #[derive(Debug)]
+    struct TaOrDaMatcher;
+    impl super::Matcher for TaOrDaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "た" || token.base_form == "だ")
+        }
+    }
+
+    // Matches から (conjunction particle)
+    #[derive(Debug)]
+    struct KaraConjunctionMatcher;
+    impl super::Matcher for KaraConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matches こそ (emphatic particle)
+    #[derive(Debug)]
+    struct KosoMatcher;
+    impl super::Matcher for KosoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こそ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(TaOrDaMatcher)),
+        TokenMatcher::Custom(Arc::new(KaraConjunctionMatcher)),
+        TokenMatcher::Custom(Arc::new(KosoMatcher)),
+    ]
 }
 
 // Pattern: ばかり
