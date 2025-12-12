@@ -590,13 +590,13 @@
   {
     "pattern_name": "じゃない",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "じゃない is the casual form of ではない [3 std, 4 pol]",
     "priority": 1,
     "skip_reason": null
@@ -604,13 +604,13 @@
   {
     "pattern_name": "じゃなかった",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "じゃなかった is the casual form of ではなかった [3 std, 4 pol]",
     "priority": 1,
     "skip_reason": null

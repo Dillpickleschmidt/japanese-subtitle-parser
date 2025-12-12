@@ -3035,3 +3035,156 @@ mod mou_tests {
         assert_pattern_range(&patterns, "もう", 0, 2); // もう
     }
 }
+
+// ========== じゃない (Is not - negative copula) ==========
+// Pattern: じゃない (is not)
+// Data source: grammar_points_data.json["じゃない"]
+//
+// Structure variants to test:
+//   standard[0]: な-Adjective + では/じゃ + ない
+//   standard[1]: Noun + では/じゃ + ない
+//   polite[0]: な-Adjective + では/じゃ + ありません
+//   polite[1]: Noun + では/じゃ + ありません
+//   polite[2]: な-Adjective + では/じゃ + ないです
+//   polite[3]: Noun + では/じゃ + ないです
+
+mod janai_tests {
+    use super::*;
+
+    // Noun + じゃない (casual)
+    #[test]
+    fn test_janai_noun_casual() {
+        let sentence = "これは食べ物じゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃない");
+        assert_pattern_range(&patterns, "じゃない", 3, 10); // 食べ物じゃない
+    }
+
+    // な-Adjective + じゃない (casual)
+    #[test]
+    fn test_janai_na_adjective_casual() {
+        let sentence = "この携帯は便利じゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃない");
+        assert_pattern_range(&patterns, "じゃない", 5, 11); // 便利じゃない
+    }
+
+    // Noun + ではない (semi-polite)
+    #[test]
+    fn test_dewa_nai_noun() {
+        let sentence = "それは飲み物ではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃない");
+        assert_pattern_range(&patterns, "じゃない", 3, 10); // 飲み物ではない
+    }
+
+    // Noun + じゃありません (polite)
+    #[test]
+    fn test_janai_arimasen_polite() {
+        let sentence = "これは私の本じゃありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃない");
+        assert_pattern_range(&patterns, "じゃない", 5, 13); // 本じゃありません
+    }
+
+    // な-Adjective + ではありません (polite)
+    #[test]
+    fn test_dewa_arimasen_na_adjective() {
+        let sentence = "あなたの部屋は綺麗ではありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃない");
+        assert_pattern_range(&patterns, "じゃない", 7, 16); // 綺麗ではありません
+    }
+
+    // Noun + じゃないです (polite casual)
+    #[test]
+    fn test_janai_desu_polite() {
+        let sentence = "彼は学生じゃないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃない");
+        assert_pattern_range(&patterns, "じゃない", 2, 8); // 学生じゃない (です extends via auto-extension)
+    }
+}
+
+// ========== じゃなかった (Was not - negative past copula) ==========
+// Pattern: じゃなかった (was not)
+// Data source: grammar_points_data.json["じゃなかった"]
+//
+// Structure variants to test:
+//   standard[0]: な-Adjective + では/じゃ + なかった
+//   standard[1]: Noun + では/じゃ + なかった
+//   polite[0]: な-Adjective + では/じゃ + ありませんでした
+//   polite[1]: Noun + では/じゃ + ありませんでした
+//   polite[2]: な-Adjective + では/じゃ + なかったです
+//   polite[3]: Noun + では/じゃ + なかったです
+
+mod janakatta_tests {
+    use super::*;
+
+    // Noun + じゃなかった (casual)
+    #[test]
+    fn test_janakatta_noun_casual() {
+        let sentence = "あそこは病院じゃなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃなかった");
+        assert_pattern_range(&patterns, "じゃなかった", 4, 12); // 病院じゃなかった
+    }
+
+    // な-Adjective + じゃなかった (casual)
+    #[test]
+    fn test_janakatta_na_adjective_casual() {
+        let sentence = "この車は便利じゃなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃなかった");
+        assert_pattern_range(&patterns, "じゃなかった", 4, 12); // 便利じゃなかった
+    }
+
+    // Noun + ではなかった (semi-polite)
+    #[test]
+    fn test_dewa_nakatta_noun() {
+        let sentence = "それは猫ではなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃなかった");
+        assert_pattern_range(&patterns, "じゃなかった", 3, 10); // 猫ではなかった
+    }
+
+    // Noun + じゃありませんでした (polite)
+    #[test]
+    fn test_janakatta_arimasen_deshita_polite() {
+        let sentence = "あれは私の財布じゃありませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃなかった");
+        assert_pattern_range(&patterns, "じゃなかった", 5, 17); // 財布じゃありませんでした
+    }
+
+    // な-Adjective + ではありませんでした (polite)
+    #[test]
+    fn test_dewa_arimasen_deshita_na_adjective() {
+        let sentence = "あの人は綺麗ではありませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃなかった");
+        assert_pattern_range(&patterns, "じゃなかった", 4, 16); // 綺麗ではありませんでした
+    }
+}

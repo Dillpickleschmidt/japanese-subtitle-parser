@@ -1011,14 +1011,223 @@ pub fn datta_u30fb_deshita() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: じゃない
+// Pattern: じゃない (is not - negative copula)
+// Structures:
+//   Standard: Noun/な-Adj + じゃ + ない
+//   Standard: Noun/な-Adj + で + は + ない (formal)
+//   Polite: Noun/な-Adj + じゃ + あり + ませ + ん
+//   Polite: Noun/な-Adj + で + は + あり + ませ + ん (formal)
+//   Polite casual: Noun/な-Adj + じゃ + ない + です
 pub fn janai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match じゃ (particle) or で (particle OR auxiliary verb base=だ)
+    #[derive(Debug)]
+    struct JaDeParticleMatcher;
+    impl Matcher for JaDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match じゃ as particle
+            if token.surface == "じゃ" && token.pos.first().is_some_and(|p| p == "助詞") {
+                return true;
+            }
+            // Match で as particle (after noun)
+            if token.surface == "で" && token.pos.first().is_some_and(|p| p == "助詞") {
+                return true;
+            }
+            // Match で as auxiliary verb (after な-adjective, base=だ)
+            if token.surface == "で"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ"
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match は particle (optional - only after で)
+    #[derive(Debug)]
+    struct WaTopicParticleMatcher;
+    impl Matcher for WaTopicParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match ない (助動詞 or 形容詞) OR あり (auxiliary or verb)
+    #[derive(Debug)]
+    struct NaiOrAriMatcher;
+    impl Matcher for NaiOrAriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (助動詞 or 形容詞) - for casual/semi-polite
+            if token.surface == "ない"
+                && (token.pos.first().is_some_and(|p| p == "助動詞")
+                    || token.pos.first().is_some_and(|p| p == "形容詞"))
+            {
+                return true;
+            }
+            // Match あり - as auxiliary verb (after noun) OR verb (after な-adj)
+            if token.surface == "あり" && token.base_form == "ある" {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match ませ (助動詞, base=ます) - only after あり
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "ます"
+        }
+    }
+
+    // Match ん (助動詞) - only after ませ
+    #[derive(Debug)]
+    struct NNegationMatcher;
+    impl Matcher for NNegationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun or な-Adjective stem
+        TokenMatcher::Custom(Arc::new(JaDeParticleMatcher)), // じゃ or で
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaTopicParticleMatcher)))), // は (optional)
+        TokenMatcher::Custom(Arc::new(NaiOrAriMatcher)), // ない OR あり
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MaseMatcher)))), // ませ (optional, after あり)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NNegationMatcher)))), // ん (optional, after ませ)
+        // Auto-extension will handle です
+    ]
 }
 
-// Pattern: じゃなかった
+// Pattern: じゃなかった (was not - negative past copula)
+// Structures:
+//   Standard: Noun/な-Adj + じゃ + なかっ + た
+//   Standard: Noun/な-Adj + で + は + なかっ + た (formal)
+//   Polite: Noun/な-Adj + じゃ + あり + ませ + ん + でし + た
+//   Polite: Noun/な-Adj + で + は + あり + ませ + ん + でし + た (formal)
+//   Polite casual: Noun/な-Adj + じゃ + なかっ + た + です
 pub fn janakatta() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match じゃ (particle) or で (particle OR auxiliary verb base=だ)
+    #[derive(Debug)]
+    struct JaDeParticleMatcher;
+    impl Matcher for JaDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match じゃ as particle
+            if token.surface == "じゃ" && token.pos.first().is_some_and(|p| p == "助詞") {
+                return true;
+            }
+            // Match で as particle (after noun)
+            if token.surface == "で" && token.pos.first().is_some_and(|p| p == "助詞") {
+                return true;
+            }
+            // Match で as auxiliary verb (after な-adjective, base=だ)
+            if token.surface == "で"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ"
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match は particle (optional - only after で)
+    #[derive(Debug)]
+    struct WaTopicParticleMatcher;
+    impl Matcher for WaTopicParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match なかっ (助動詞 or 形容詞) OR あり (auxiliary or verb)
+    #[derive(Debug)]
+    struct NakattaOrAriMatcher;
+    impl Matcher for NakattaOrAriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match なかっ - as 助動詞 (with じゃ) or 形容詞 (with では), base=ない
+            if token.surface == "なかっ"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|p| p == "助動詞")
+                    || token.pos.first().is_some_and(|p| p == "形容詞"))
+            {
+                return true;
+            }
+            // Match あり - as auxiliary verb (after noun) OR verb (after な-adj)
+            if token.surface == "あり" && token.base_form == "ある" {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match た (past auxiliary)
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "た"
+        }
+    }
+
+    // Match ませ (助動詞, base=ます) - only after あり
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "ます"
+        }
+    }
+
+    // Match ん (助動詞) - only after ませ
+    #[derive(Debug)]
+    struct NNegationMatcher;
+    impl Matcher for NNegationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match でし (助動詞, base=です) - only after ん
+    #[derive(Debug)]
+    struct DeshiMatcher;
+    impl Matcher for DeshiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "でし"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "です"
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun or な-Adjective stem
+        TokenMatcher::Custom(Arc::new(JaDeParticleMatcher)), // じゃ or で
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaTopicParticleMatcher)))), // は (optional)
+        TokenMatcher::Custom(Arc::new(NakattaOrAriMatcher)), // なかっ OR あり
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MaseMatcher)))), // ませ (optional, after あり)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NNegationMatcher)))), // ん (optional, after ませ)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeshiMatcher)))), // でし (optional, after ん)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TaMatcher)))), // た (optional if after なかっ/でし)
+        // Auto-extension will handle です
+    ]
 }
 
 // Pattern: い-Adjective くなかった - Adjective[く] + なかった
