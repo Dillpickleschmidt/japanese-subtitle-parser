@@ -1,5 +1,98 @@
 # Grammar-lib Development Progress
 
+## Session 94 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (しかない)
+**Patterns completed**: 1 new N3 pattern (no choice but to)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 585 (was 581 at start)
+
+### Accomplishments
+1. ✅ Implemented しかない pattern (N3) - "no choice but to / there is only"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 585 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### しかない (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 1099-1135 + 2565-2629)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod shikanai_tests)
+  - test_shikanai_verb_standard (警察を呼ぶしかない - no choice but to call police)
+  - test_shikanai_verb_car (車で行くしかない - no choice but to go by car)
+  - test_shikanai_verb_negative_context (我慢するしかない - no choice but to endure)
+  - test_shikanai_polite (なるしかありません - no choice but to wait, polite)
+- **Structures**:
+  - Standard: Verb + しかない
+  - Polite: Verb + しかありません
+- **Tokenization insights**:
+  - Standard: Verb (基本形) + しか (助詞/係助詞) + ない (形容詞/自立)
+  - Polite: Verb (基本形) + しか (助詞/係助詞) + あり (ある 連用形) + ませ (未然形) + ん
+- **Implementation**: Two separate matchers
+  1. shikanai() - Standard form (3 tokens)
+     - Verb in 基本形
+     - ShikaParticleMatcher - しか (係助詞)
+     - NaiAdjMatcher - ない (形容詞/自立)
+  2. shikanai_polite() - Polite form (5 tokens)
+     - Verb in 基本形
+     - ShikaParticleMatcher - しか (係助詞)
+     - AriVerbMatcher - あり (ある verb, 連用形)
+     - MaseMatcher - ませ (ます auxiliary, 未然形)
+     - NMatcher - ん (auxiliary)
+- **Meaning**: "no choice but to / there is only" - emphasizes lack of alternatives
+- **Pattern priority**: 3 (high-priority N3 pattern)
+- **Pattern ranges**: Include full construction from verb through final particle
+  - 呼ぶしかない (chars 9-15)
+  - 行くしかない (chars 13-19)
+  - 我慢するしかない (chars 20-28)
+  - なるしかありません (chars 15-24)
+
+### Technical Details
+- **Pattern priority**: 3 (high-priority N3 construction)
+- **Test coverage**: Both structure variants from grammar_points_data.json
+  - Standard: Verb + しかない (3 tests)
+  - Polite: Verb + しかありません (1 test)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Standard and polite forms require separate matchers due to different tokenization
+- **Note**: Pattern replaced existing TODO stub at line 1099 in n3.rs
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 585/585 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~182 (2 matchers + 2 pattern declarations + 4 tests + feature_list update)
+
+### Key Insights
+- しかない is a fundamental N3 pattern expressing lack of choice
+- しか particle (係助詞) always pairs with negative form
+- Standard form uses ない as adjective, polite uses ありません
+- Test-first workflow successfully identified all tokenization patterns
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. さえ - emphasis particle "even" (6 std structures)
+2. ずに - "without doing"
+3. すでに - "already"
+4. さて - "now then / well" (topic change)
+5. ～というのは事実だ - "the fact is..." (1 std + 1 pol)
+
+**Recommendation**: Continue with "さえ" as it's a fundamental N3 particle, or "ずに" which is simpler (fewer structures).
+
+### Environment Status
+- ✅ All 585 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 93 - 2025-12-12
 
 ### ✅ Session Summary
