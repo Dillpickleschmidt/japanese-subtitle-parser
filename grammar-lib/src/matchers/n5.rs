@@ -23,9 +23,22 @@ pub fn da() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: です
+// Pattern: です (polite copula - is/are)
+// Structures: Noun + です, Adjective + です
 pub fn desu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DesuMatcher;
+    impl Matcher for DesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+    vec![
+        TokenMatcher::Any,  // Match any preceding token (noun, い-adj, な-adj)
+        TokenMatcher::Custom(Arc::new(DesuMatcher)),
+    ]
 }
 
 // Pattern: は

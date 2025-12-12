@@ -4064,3 +4064,51 @@ mod da_copula_tests {
         assert_pattern_range(&patterns, "だ", 2, 6); // 真面目だ
     }
 }
+
+// ========== です (Copula - polite is/are) ==========
+// Pattern: です (polite copula - assertion/determination)
+// Data source: grammar_points_data.json["です"]
+//
+// Structure variants to test:
+//   polite[0]: Noun + です
+//   polite[1]: Adjective + です (both い-Adj and な-Adj)
+//
+// Note: です is the polite copula. だ is the casual equivalent.
+// です CAN be used after い-Adjectives (unlike だ), though some consider it informal in writing.
+
+mod desu_copula_tests {
+    use super::*;
+
+    // Noun + です
+    #[test]
+    fn test_desu_noun() {
+        let sentence = "私は学生です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "です");
+        assert_pattern_range(&patterns, "です", 2, 6); // 学生です
+    }
+
+    // な-Adjective + です
+    #[test]
+    fn test_desu_na_adjective() {
+        let sentence = "この部屋は静かです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "です");
+        assert_pattern_range(&patterns, "です", 5, 9); // 静かです
+    }
+
+    // い-Adjective + です
+    #[test]
+    fn test_desu_i_adjective() {
+        let sentence = "今日は暑いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "です");
+        assert_pattern_range(&patterns, "です", 3, 7); // 暑いです
+    }
+}
