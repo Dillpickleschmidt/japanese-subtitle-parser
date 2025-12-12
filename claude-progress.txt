@@ -4228,11 +4228,32 @@ Continue with simple single-token patterns or conjunction patterns
 
 ---
 
-## Cumulative Statistics
+## Cumulative Statistics (Session 34 - continued)
 - **Total patterns**: 924
-- **Completed**: 47 (5.09%)
-- **Remaining**: 877 (94.91%)
+- **Completed**: 48 (5.19%)
+- **Remaining**: 876 (94.81%)
 - **Average time per pattern**: ~20 minutes
 - **Estimated remaining work**: ~292 hours
+
+### Additional Pattern Completed in Session 34
+
+#### くる (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_kuru_dictionary (明日パーティーに来る？ - dictionary form)
+  - test_kuru_polite (友達が家に来ます - polite form)
+  - test_kuru_past (昨日彼女が来た - past form)
+  - test_kuru_te_form (駅に来ている - te-form)
+- **Structure**: くる/来る in various conjugations
+- **Technical notes**:
+  - Irregular verb (カ変・来ル conjugation type)
+  - KuruMatcher checks base_form="来る", POS=動詞, conjugation starts with "カ変"
+  - Detects all conjugations: 来る, 来ます, 来た, 来て, etc.
+  - One of only two irregular verbs in Japanese (the other being する)
+
+### Updated Progress
+- N5: 48/117 (41.03%) ✓
+- Total completed: 48 patterns
+- 312 tests passing (308 previous + 4 new)
 
 **Session 34 complete. Ready for Session 35.**
