@@ -1,5 +1,136 @@
 # Grammar-lib Development Progress
 
+## Session 86 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two N3 patterns fully implemented (ということだ + ないことはない)
+**Patterns completed**: 2 new N3 patterns (こと construction family continued)
+**Tests added**: 9 comprehensive tests (4 + 5)
+**Total tests**: 531 (was 522)
+
+### Accomplishments
+1. ✅ Implemented ということだ pattern (N3) - hearsay/conclusion with certainty
+2. ✅ Implemented ないことはない pattern (N3) - double negative expressing possibility
+3. ✅ All 9 tests passing with proper range assertions
+4. ✅ No test regressions - all 531 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### ということだ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 316)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_toiukotoda_hearsay (汚染されているということだ - it is said that)
+  - test_toiukotoda_conclusion (新鮮ということだ - it means that)
+  - test_toiukotoda_polite (治せないということです - polite form)
+  - test_toiukotoda_source (地震が来るということだ - with によると source marker)
+- **Structures**:
+  - Phrase + ということ + だ
+  - Phrase + ということ + です (polite)
+- **Tokenization insights**:
+  - という = 助詞/格助詞/連語 (case particle, compound)
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - だ = 助動詞/特殊・ダ, です = 助動詞/特殊・デス
+- **Implementation**: 4-token matcher
+  1. TokenMatcher::Any - Matches any preceding token (phrase)
+  2. ToiuMatcher - Matches という as 助詞/格助詞/連語
+  3. KotoMatcher - Matches こと as 名詞/非自立/一般
+  4. DaDesuMatcher - Matches だ or です as 助動詞
+- **Meaning**: "it is said that / it means that" - nominalizes phrase with certainty
+- **Usage**: More formal than そうだ for hearsay, expresses factual certainty
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - いるということだ (chars 11-19, phrase + full construction)
+  - 新鮮ということだ (chars 2-10, noun + construction)
+  - ないということです (chars 10-19, negative verb + polite form)
+  - 来るということだ (chars 10-18, verb + construction)
+
+#### ないことはない (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 1399)
+- **Tests**: 5 variants, all passing in n3_patterns.rs
+  - test_naikotohanai_verb (見ないことはない - not impossible to watch)
+  - test_naikotohanai_i_adjective (危なくないことはない - not that it's not dangerous)
+  - test_naikotohanai_na_adjective (元気ではないことはない - not that I'm not healthy)
+  - test_naikotohanai_potential (食べられないことはない - not that I can't eat)
+  - test_naikotohanai_mo_variant (いけないこともない - も variant)
+- **Structures**:
+  - Verb[ない] + ことはない
+  - い-Adj[ない] + ことはない
+  - な-Adj + ではない + ことはない
+  - こともない (も variant)
+  - Polite forms with ありません
+- **Tokenization insights**:
+  - First ない = 助動詞 or 形容詞 (auxiliary or adjective)
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - は or も = 助詞/係助詞 (binding particle)
+  - Final ない = 形容詞 or 助動詞 (adjective or auxiliary)
+  - ある (for polite ありません) = 動詞/自立
+- **Implementation**: 4-token matcher
+  1. NaiMatcher - Matches ない as 助動詞 or 形容詞
+  2. KotoMatcher - Matches こと as 名詞/非自立/一般
+  3. HaMoParticleMatcher - Matches は or も as 助詞/係助詞
+  4. NaiAruMatcher - Matches ない (adjective or auxiliary) or ある (verb)
+- **Meaning**: "it's not impossible / it's not that...not" - double negative expressing possibility
+- **Usage**: Often implies half-hearted possibility or lack of effort, common with potential verbs
+- **Pattern priority**: 2 (higher than ことはない to match more specific case first)
+- **Pattern ranges**:
+  - ないことはない (chars 4-11, full double negative construction)
+  - ないことはない (chars 6-13, i-adj + construction)
+  - ないことはない (chars 4-11, na-adj + construction)
+  - ないことはない (chars 7-14, potential verb + construction)
+  - ないこともない (chars 5-12, も variant)
+
+### Technical Details
+- **Pattern priority**: ということだ=1, ないことはない=2 (higher to match before ことはない)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - ということだ: 1 standard + 1 polite form (4 tests total covering different contexts)
+  - ないことはない: 3 standard + 2 variants (5 tests covering verb/adj types and も variant)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**:
+  - ということだ is structurally similar to ことだ but with という preceding it
+  - ないことはない has priority 2 to match before general ことはない pattern
+  - Final ない in ないことはない can be either adjective OR auxiliary
+- **Pattern ranges**: Include preceding element + full construction
+
+### Session Statistics
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 9 (4 + 5)
+- **Tests passing**: 531/531 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~230 (tests + 2 matchers + feature_list updates)
+
+### Key Insights
+- Both patterns extend the こと construction family (now 10 completed: ことか, ことから, ことだ, ことがある, ことに, ことにする, ことになる, ことはない, ということだ, ないことはない)
+- ということだ uses という to nominalize the preceding phrase, adding formality and certainty
+- ないことはない is semantically different from ことはない despite structural similarity
+- Priority ordering important: ないことはない (priority 2) matches before ことはない (priority 1)
+- Test-first workflow successfully identified all tokenization patterns
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Only one N3 こと-based pattern remains:
+
+**Remaining N3 こと-based pattern**:
+1. ことなの - "the thing is..." (explanatory, 8 std + 8 pol structures)
+
+**Alternative high-value N3 patterns (non-こと)**:
+1. いくら〜でも - "no matter how much"
+2. かけ - incomplete/unfinished action
+3. から言うと - "from the perspective of"
+4. Noun＋型 - "type/style" suffix pattern
+
+**Recommendation**: Since the こと family is nearly complete, consider implementing ことなの to finish the family, then move to other N3 patterns. Alternatively, ことなの has 16 structure variants which is complex - could move to simpler N3 patterns first.
+
+### Environment Status
+- ✅ All 531 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session
+
+---
+
 ## Session 85 - 2025-12-12
 
 ### ✅ Session Summary
