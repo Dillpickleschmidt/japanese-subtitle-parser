@@ -3,19 +3,20 @@
 ## Session 57 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N5 pattern fully implemented (まえに)
-**Patterns completed**: 1 new N5 pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 347 (was 343)
+**Status**: Two N5 patterns fully implemented (まえに + なにか・なにも)
+**Patterns completed**: 2 pattern entries (3 matcher functions)
+**Tests added**: 9 comprehensive tests
+**Total tests**: 352 (was 343)
 
 ### Accomplishments
 1. ✅ Implemented まえに (before - time/location) pattern (N5)
-2. ✅ All 4 structure variants tested and passing with proper range assertions
-3. ✅ No test regressions - all 347 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented なにか・なにも (something/nothing) patterns (N5)
+3. ✅ All 9 structure variants tested and passing with proper range assertions
+4. ✅ No test regressions - all 352 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### まえに (N5) ✓
 - **File**: grammar-lib/src/matchers/n5.rs
@@ -54,29 +55,53 @@
 - **Kanji requirement**: Must use kanji 前 (not hiragana まえ) for proper tokenization
   - Hiragana まえ tokenizes as verb まえる (to maim) rather than noun 前 (before/front)
 
+#### なにか・なにも (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 5 variants, all passing in n5_patterns.rs
+  - test_nanika_something (なにか食べますか？ - standard form)
+  - test_nanimo_nothing (冷蔵庫の中にはなにもないです - なに + も)
+  - test_nanka_casual (なんか飲みたいな - casual なにか)
+  - test_nanmo_casual (なんも知らないよ - casual なん + も)
+  - test_nannimo_casual (今日はなんにもしたくない - casual なんにも)
+- **Structures**:
+  - **なにか**: なにか (adverb) or なんか (filler)
+  - **なにも**: なに/なん (pronoun) + も (particle), or なんにも (adverb)
+- **Tokenization**:
+  - **なにか**: 副詞/助詞類接続 (single token)
+  - **なんか**: フィラー (filler word, single token)
+  - **なにも**: なに (名詞/代名詞) + も (助詞/係助詞) - 2 tokens
+  - **なんも**: なん (名詞/代名詞) + も (助詞/係助詞) - 2 tokens
+  - **なんにも**: 副詞/一般 (single token)
+- **Implementation**: Two separate matchers
+  - **nanika()**: Single-token matcher for なにか (adverb) or なんか (filler)
+  - **nanimo()**: Flexible matcher for なに/なん + も (2 tokens) or なんにも (1 token)
+- **Meaning**:
+  - なにか = "something", "anything" (affirmative contexts)
+  - なにも = "nothing" (negative contexts with ない/ありません)
+- **Pattern priorities**: Both priority 1 (construction patterns - N5 level)
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N5)
-- **Tests written**: 4
-- **Tests passing**: 347/347 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~90 (tests + matcher + pattern declaration)
+- **Patterns implemented**: 2 (N5) - 3 matcher functions total
+- **Tests written**: 9
+- **Tests passing**: 352/352 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~190 (tests + matchers + pattern declarations)
 
 ### Next Priorities
-Continue with N5 patterns (33 remaining):
+Continue with N5 patterns (32 remaining):
 
 **High-value N5 construction patterns to implement**:
 1. なくてはならない - must do (double negative construction)
 2. なくちゃ・なきゃ - must do (casual forms)
-3. なにか・なにも - something/nothing
-4. Verbs (Non-past) - dictionary form as non-past tense
-5. Basic verb conjugations (Dictionary, Negative, Past, Negative-Past)
-6. い-Adjective (Predicate) - adjectives in predicate position
-7. い-Adjectives - adjective forms
-8. な-Adjectives - na-adjective forms
-9. な-Adjective だ - predicate form
+3. Verbs (Non-past) - dictionary form as non-past tense
+4. Basic verb conjugations (Dictionary, Negative, Past, Negative-Past)
+5. い-Adjective (Predicate) - adjectives in predicate position
+6. い-Adjectives - adjective forms
+7. な-Adjectives - na-adjective forms
+8. な-Adjective だ - predicate form
 
 ### Environment Status
-- ✅ All 347 tests passing
+- ✅ All 352 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
