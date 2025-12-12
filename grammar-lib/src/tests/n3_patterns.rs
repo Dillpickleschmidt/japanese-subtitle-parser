@@ -1126,3 +1126,65 @@ mod kotoka_tests {
         assert_pattern_range(&patterns, "ことか", 21, 26); // あることか
     }
 }
+
+// ========== ことから (from the fact that) ==========
+// Pattern: ことから (from the fact that)
+// Data source: grammar_points_data.json["ことから"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + ことから
+//   standard[1]: い-Adjective + ことから
+//   standard[2]: な-Adjective + な + ことから
+//   standard[3]: Noun + の + ことから
+//
+// Meaning: "from the fact that" - draws logical conclusion from a fact
+// Usage: More formal reasoning than simple から (because)
+// Note: Different from ことだから (conjunction vs. case marker)
+
+mod kotokara_tests {
+    use super::*;
+
+    // Test: Verb + ことから (from the fact that verb)
+    #[test]
+    fn test_kotokara_verb() {
+        let sentence = "こんな早い時間に妻が寝ていることから、今日は色々と大変だったと気づいた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことから");
+        assert_pattern_range(&patterns, "ことから", 12, 18); // いることから
+    }
+
+    // Test: い-Adjective + ことから (from the fact that adjective)
+    #[test]
+    fn test_kotokara_i_adjective() {
+        let sentence = "家の家具が全部新しいことから、彼はここに引っ越してきたばかりだと分かった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことから");
+        assert_pattern_range(&patterns, "ことから", 7, 14); // 新しいことから
+    }
+
+    // Test: な-Adjective + な + ことから (from the fact that na-adj)
+    #[test]
+    fn test_kotokara_na_adjective() {
+        let sentence = "子供が静かなことから、何か悪いことをしていると分かった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことから");
+        assert_pattern_range(&patterns, "ことから", 5, 10); // なことから
+    }
+
+    // Test: Noun + の + ことから (from these facts)
+    #[test]
+    fn test_kotokara_noun() {
+        let sentence = "これらのことからイベントを中止することに決めました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことから");
+        assert_pattern_range(&patterns, "ことから", 3, 8); // のことから
+    }
+}
