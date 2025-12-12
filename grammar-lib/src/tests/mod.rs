@@ -111,4 +111,5 @@ pub fn print_debug(sentence: &str, tokens: &[KagomeToken], matches: &[PatternMat
 }
 
 // Test modules
+mod n4_patterns;
 mod n5_patterns;

@@ -405,9 +405,70 @@ pub fn uff5e_dai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Number + も
+// Pattern: Number + も (as many as / not even)
+// Structures: Number + Counter + も
+//
+// Examples:
+// - １２時間も (as many as 12 hours)
+// - ２０万円も (as much as 200,000 yen)
+// - 一回も (not even once)
+//
+// Tokenization pattern:
+// - One or more number tokens (名詞/数)
+// - Counter token (名詞/接尾/助数詞)
+// - も particle (助詞/係助詞)
 pub fn number_mo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match number tokens (名詞/数)
+    #[derive(Debug)]
+    struct NumberMatcher;
+    impl Matcher for NumberMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "数")
+        }
+    }
+
+    // Match counter tokens (名詞/接尾/助数詞)
+    #[derive(Debug)]
+    struct CounterMatcher;
+    impl Matcher for CounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助数詞")
+        }
+    }
+
+    // Match も particle after numbers (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Pattern: One or more numbers + counter + も
+    // Numbers can be 1-many tokens (一 vs １２ vs ２０万円)
+    // We'll use a flexible approach with optional number tokens
+    use super::concat;
+
+    concat(vec![
+        vec![TokenMatcher::Custom(Arc::new(NumberMatcher))], // First number (required)
+        vec![
+            TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberMatcher)))),
+            TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberMatcher)))),
+            TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberMatcher)))),
+            TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberMatcher)))),
+            TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberMatcher)))),
+        ], // Up to 5 additional numbers (should be enough for most cases)
+        vec![TokenMatcher::Custom(Arc::new(CounterMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(MoParticleMatcher))],
+    ])
 }
 
 // Pattern: ほとんど

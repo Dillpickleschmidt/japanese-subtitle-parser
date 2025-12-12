@@ -1774,30 +1774,6 @@ mod naide_tests {
     }
 }
 
-// ========== TEMPORARY: Number + も (as many as) - N4 pattern ==========
-#[cfg(test)]
-mod number_mo_temp_test {
-    use super::*;
-
-    #[test]
-    fn temp_tokenization_test() {
-        let sentence = "１２時間も仕事をしたから疲れた";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-
-        let sentence2 = "その携帯２０万円もしたの？！";
-        let tokens2 = tokenize_sentence(sentence2);
-        let patterns2 = detect_patterns(&tokens2);
-        print_debug(sentence2, &tokens2, &patterns2);
-
-        let sentence3 = "一回も地下鉄に乗ったことが無い";
-        let tokens3 = tokenize_sentence(sentence3);
-        let patterns3 = detect_patterns(&tokens3);
-        print_debug(sentence3, &tokens3, &patterns3);
-    }
-}
-
 // ========== Verb + て (Te-form) ==========
 // Pattern: Verb + て (te-form conjugation for sequential actions)
 // Data source: grammar_points_data.json["Verb + て"]
