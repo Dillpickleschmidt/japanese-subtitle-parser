@@ -1707,8 +1707,63 @@ pub fn kiri() -> Vec<TokenMatcher> {
 }
 
 // Pattern: かけ
+// かけ: Half-finished/about to (Verb[stem] + かけ)
+// Structures:
+//   - Verb[stem] + かけだ (split: verb + かけ)
+//   - Verb[stem] + かける (split: verb + かける)
+//   - Verb[stem] + かけの + Noun (can be split or compound)
+// Tokenization:
+//   - Split form: 食べ (verb) + かけ (動詞/非自立) - match as 2 tokens
+//   - Compound form: 死にかけ (single verb with base="死にかける") - match as 1 token
+// Note: We need two separate patterns for different tokenizations
 pub fn kake() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match かけ/かける as non-independent verb (split form only)
+    #[derive(Debug)]
+    struct KakeSplitMatcher;
+    impl Matcher for KakeSplitMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Split form: かけ or かける as non-independent verb
+            (token.surface == "かけ" || token.surface == "かける")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.base_form == "かける"
+        }
+    }
+
+    // Match preceding verb stem
+    #[derive(Debug)]
+    struct VerbStemMatcher;
+    impl Matcher for VerbStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbStemMatcher)),
+        TokenMatcher::Custom(Arc::new(KakeSplitMatcher)),
+    ]
+}
+
+// かけ (compound): Compound verbs ending in かける (like 死にかける)
+pub fn kake_compound() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct KakeCompoundMatcher;
+    impl Matcher for KakeCompoundMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Compound form: verbs ending in かける (like 死にかける)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.surface.ends_with("かけ")
+                && token.base_form.ends_with("かける")
+                && token.base_form != "かける" // Exclude standalone かける
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KakeCompoundMatcher))]
 }
 
 // Pattern: にかけて

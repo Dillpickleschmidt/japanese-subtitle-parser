@@ -1718,8 +1718,9 @@ mod kake_tests {
         let sentence = "俺の食べかけだけど大丈夫？";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "かけ");
+        assert_pattern_range(&patterns, "かけ", 2, 7); // 食べかけだ
     }
 
     // Test: Verb[stem] + かけだ (on the verge of)
@@ -1728,8 +1729,9 @@ mod kake_tests {
         let sentence = "これは私の飲みかけだ";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "かけ");
+        assert_pattern_range(&patterns, "かけ", 5, 10); // 飲みかけだ
     }
 
     // Test: Verb[stem] + かける (verb form - about to)
@@ -1738,8 +1740,9 @@ mod kake_tests {
         let sentence = "やばい、死にかけるところだった";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "かけ");
+        assert_pattern_range(&patterns, "かけ", 4, 9); // 死にかける
     }
 
     // Test: Verb[stem] + かけた (past form - half done)
@@ -1748,28 +1751,31 @@ mod kake_tests {
         let sentence = "飲みかけた水を捨てる";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "かけ");
+        assert_pattern_range(&patterns, "かけ", 0, 5); // 飲みかけた
     }
 
-    // Test: Verb[stem] + かけの + Noun (half-finished noun modifier)
+    // Test: Verb[stem] + かけの + Noun (compound form - half-finished noun modifier)
     #[test]
     fn test_kake_no_noun_dying() {
         let sentence = "彼は死にかけの子犬を救った";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "かけ_compound");
+        assert_pattern_range(&patterns, "かけ_compound", 2, 6); // 死にかけ
     }
 
-    // Test: Verb[stem] + かけの + Noun (half-broken)
+    // Test: Verb[stem] + かけの + Noun (split form - half-broken)
     #[test]
     fn test_kake_no_noun_broken() {
         let sentence = "彼女は壊れかけのパソコンを買って直すのが趣味だ";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "かけ");
+        assert_pattern_range(&patterns, "かけ", 3, 7); // 壊れかけ
     }
 
     // Test: Verb[stem] + かけです (polite form)
@@ -1778,8 +1784,9 @@ mod kake_tests {
         let sentence = "終わりかけですからちょっと待って";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "かけ");
+        assert_pattern_range(&patterns, "かけ", 0, 7); // 終わりかけです
     }
 }
 

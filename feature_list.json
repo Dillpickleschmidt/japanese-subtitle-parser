@@ -4328,13 +4328,13 @@
   {
     "pattern_name": "かけ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Being an unofficial helper verb, かけ is what is known as a 造語（ぞうご） (neologism), and carries one specific meaning when ... [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null

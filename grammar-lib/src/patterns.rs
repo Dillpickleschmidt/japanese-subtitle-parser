@@ -3964,6 +3964,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    KakeCompound {
+        name: "かけ_compound",
+        matcher_fn: crate::matchers::n3::kake_compound,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Nikakete {
         name: "にかけて",
         matcher_fn: crate::matchers::n3::nikakete,
