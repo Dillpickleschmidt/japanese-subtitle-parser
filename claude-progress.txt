@@ -1,5 +1,81 @@
 # Grammar-lib Development Progress
 
+## Session 42 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two patterns fully implemented (や + もう)
+**Patterns completed**: 2 new patterns
+**Tests added**: 6 comprehensive tests
+**Total tests**: 225 (was 219)
+
+### Accomplishments
+1. ✅ Implemented や (and/or - non-exhaustive listing particle) pattern
+2. ✅ Implemented もう (already/anymore - adverb) pattern
+3. ✅ All 6 test variants passing with proper range assertions
+4. ✅ No test regressions - all 225 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### や (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_ya_basic_listing (果物や弁当 - fruit and bento)
+  - test_ya_multiple_items (飛行機や船や車 - multiple や in sentence)
+  - test_ya_with_particle (ビールやワイン - with particle after)
+- **Structure**: Noun + や + Noun
+- **Tokenization insights**:
+  - や tokenizes as 助詞/並立助詞 (particle/parallel particle)
+  - Used for non-exhaustive listing (unlike と which is exhaustive)
+  - Pattern detects multiple や instances in same sentence
+  - Pattern range includes full Noun + や + Noun construction
+
+#### もう (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_mou_already_past (もう食べた - already ate)
+  - test_mou_anymore_negative (もうお金がない - no money anymore)
+  - test_mou_question (もうデザートを食べた？ - already ate?)
+- **Structures**:
+  - もう + (Past) Phrase (already)
+  - もう + (Negative) Phrase (anymore)
+- **Tokenization insights**:
+  - もう tokenizes as 副詞/一般 (adverb/general)
+  - Single token pattern - just the adverb itself
+  - Works in statements and questions
+  - Pattern range is just the もう token (2 characters)
+
+### Technical Details
+- **Pattern priorities**: Both priority 1 (construction patterns)
+- **Matcher approaches**:
+  - や: Three-token matcher (Noun + や + Noun)
+  - もう: Single-token matcher (adverb)
+- **Custom matchers created**:
+  - や: YaParticleMatcher (checks surface + POS)
+  - もう: MouMatcher (checks surface + POS)
+- **Implementation notes**:
+  - Both patterns use simple surface + POS matching
+  - や pattern reuses existing noun_matcher() helper
+  - もう is one of the simplest patterns (single adverb)
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. ～んです・のです - explanatory のです
+2. ～ましょうか - shall we?
+3. 誰か・どこか・誰も・どこも - question words + か/も
+4. より～のほうが - comparison pattern
+5. もらう - to receive (from someone)
+6. る-Verb conjugations (Dictionary, Negative, Past, Negative-Past)
+
+### Environment Status
+- ✅ All 225 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 41 - 2025-12-12
 
 ### ✅ Session Summary
