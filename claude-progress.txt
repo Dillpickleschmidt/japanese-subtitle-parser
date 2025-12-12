@@ -1,6 +1,101 @@
 # Grammar-lib Development Progress
 
-## Session 80 - 2025-12-12
+## Session 80 - 2025-12-12 (Updated)
+
+### ✅ Session Summary
+**Status**: Two N3 patterns fully implemented (くせに + こそ)
+**Patterns completed**: 2 new N3 patterns (particle constructions)
+**Tests added**: 7 comprehensive tests (4 + 3)
+**Total tests**: 479 (was 472)
+
+### Accomplishments
+1. ✅ Implemented くせに pattern (N3) - criticism particle construction
+2. ✅ Implemented こそ pattern (N3) - emphasis particle
+3. ✅ All 7 tests passing with proper range assertions
+4. ✅ No test regressions - all 479 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### くせに (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 1419)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_kuseni_verb (言ってたくせに - even though said)
+  - test_kuseni_i_adjective (若いくせに - even though young)
+  - test_kuseni_na_adjective (下手なくせに - despite being unskilled)
+  - test_kuseni_noun (犬のくせに - even though a dog)
+- **Structures**: Verb/Adjective/Noun + (な/の) + くせ + に
+- **Implementation**: 3-token matcher with TokenMatcher::Any
+- **Meaning**: "despite / even though / and yet" - criticizes actions
+- **Priority**: 1
+
+#### こそ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 415)
+- **Tests**: 3 variants, all passing in n3_patterns.rs
+  - test_koso_noun_emphasis (曲こそ - this song exactly)
+  - test_koso_time_noun (今度こそ - this time for sure)
+  - test_koso_pronoun (私こそ - I am the one)
+- **Structures**: Noun + こそ
+- **Tokenization insights**:
+  - こそ = 助詞/係助詞 (binding particle)
+  - Used after nouns, pronouns, time expressions
+- **Implementation**: 2-token matcher
+  1. noun_matcher() - Matches any noun
+  2. KosoMatcher - Matches こそ as 助詞/係助詞
+- **Meaning**: "precisely / exactly / for sure" - strongly emphasizes/highlights
+- **Usage**: Common N3 particle for strong emphasis (stronger than は or が)
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - 曲こそ (chars 2-5, noun + particle)
+  - 今度こそ (chars 0-4, time noun + particle)
+  - 私こそ (chars 5-8, pronoun + particle)
+
+### Technical Details
+- **Both patterns**: Simple, clean implementations with custom matchers
+- **くせに**: Uses TokenMatcher::Any for flexibility
+- **こそ**: Uses noun_matcher() for proper noun detection
+- **Test coverage**: All structure variants from grammar_points_data.json
+- **Implementation approach**: Test-first workflow for both patterns
+- **All test sentences**: Realistic and subtitle-quality
+
+### Session Statistics
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 7 (4 + 3)
+- **Tests passing**: 479/479 (100%)
+- **Commits**: 3 clean commits (2 implementations + 1 progress update)
+- **Lines added**: ~156 (tests + matchers + feature_list updates)
+
+### Key Insights
+- Simple particle patterns are quick to implement with test-first workflow
+- Both くせに and こそ are common, essential N3 particles
+- TokenMatcher::Any and noun_matcher() provide excellent flexibility
+- Consistent tokenization makes these patterns reliable
+- Test sentences demonstrate realistic usage contexts
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. きり - adverbial particle "only/just/since"
+2. くらい② - degree/extent particle
+3. ことか - question particle for emphasis
+4. いくら〜でも - "no matter how much"
+5. かけ - incomplete/unfinished action
+6. から言うと - "from the perspective of"
+
+**Recommendation**: Continue with simple concrete N3 patterns. きり would be a good next choice as it's a straightforward adverbial particle.
+
+### Environment Status
+- ✅ All 479 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
+## Session 80 - 2025-12-12 (Original)
 
 ### ✅ Session Summary
 **Status**: One N3 pattern fully implemented (くせに - despite/even though)
