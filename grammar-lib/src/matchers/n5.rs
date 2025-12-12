@@ -3304,3 +3304,99 @@ pub fn mae_ni() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
     ]
 }
+
+// Pattern: なにか (something/anything)
+// Structures: なにか/なんか + Phrase
+pub fn nanika() -> Vec<TokenMatcher> {
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match なにか (副詞/助詞類接続) or なんか (フィラー)
+    #[derive(Debug)]
+    struct NanikaMatcher;
+    impl Matcher for NanikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match なにか as adverb
+            (token.surface == "なにか"
+                && token.base_form == "なにか"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続"))
+                ||
+            // Match なんか as filler
+            (token.surface == "なんか"
+                && token.base_form == "なんか"
+                && token.pos.first().is_some_and(|pos| pos == "フィラー"))
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NanikaMatcher))]
+}
+
+// Pattern: なにも (nothing)
+// Structures: なに/なん + も, なんにも
+pub fn nanimo() -> Vec<TokenMatcher> {
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match なんにも (single token adverb)
+    #[derive(Debug)]
+    struct NannimoMatcher;
+    impl Matcher for NannimoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なんにも"
+                && token.base_form == "なんにも"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match なに or なん (pronoun)
+    #[derive(Debug)]
+    struct NaniNanMatcher;
+    impl Matcher for NaniNanMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "なに" || token.surface == "なん")
+                && (token.base_form == "なに" || token.base_form == "なん")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "代名詞")
+        }
+    }
+
+    // Match も particle
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Try matching either なんにも (single token) or なに/なん + も (two tokens)
+    // We'll use a custom matcher that checks for either pattern
+    #[derive(Debug)]
+    struct NanimoOrNannimoMatcher;
+    impl Matcher for NanimoOrNannimoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match なんにも as single token
+            (token.surface == "なんにも"
+                && token.base_form == "なんにも"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般"))
+                ||
+            // Match なに/なん as pronoun (will be followed by も)
+            ((token.surface == "なに" || token.surface == "なん")
+                && (token.base_form == "なに" || token.base_form == "なん")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "代名詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NanimoOrNannimoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MoParticleMatcher,
+        )))), // Optional も for two-token pattern
+    ]
+}

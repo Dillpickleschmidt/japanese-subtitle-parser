@@ -368,6 +368,22 @@ declare_patterns! {
         jlpt: "n5",
     },
 
+    Nanika {
+        name: "なにか",
+        matcher_fn: crate::matchers::n5::nanika,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
+    Nanimo {
+        name: "なにも",
+        matcher_fn: crate::matchers::n5::nanimo,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
     Kuru {
         name: "くる",
         matcher_fn: crate::matchers::n5::kuru,

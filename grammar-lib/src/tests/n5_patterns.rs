@@ -4456,3 +4456,71 @@ mod mae_ni_tests {
         assert_pattern_range(&patterns, "まえに", 0, 5); // 試験の前に
     }
 }
+
+// ========== なにか・なにも (Something/Nothing) ==========
+// Pattern: なにか (something/anything), なにも (nothing)
+// Data source: grammar_points_data.json["なにか・なにも"]
+//
+// Structure variants to test:
+//   standard[0]: 何（なに）か + Phrase
+//   standard[1]: 何（なに）も + Phrase［ない］
+//   Casual variants: なんか, なんにか, なんも, なんにも
+
+mod nanika_nanimo_tests {
+    use super::*;
+
+    // なにか + Phrase (something)
+    #[test]
+    fn test_nanika_something() {
+        let sentence = "なにか食べますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なにか");
+        assert_pattern_range(&patterns, "なにか", 0, 3); // なにか
+    }
+
+    // なにも + ない (nothing)
+    #[test]
+    fn test_nanimo_nothing() {
+        let sentence = "冷蔵庫の中にはなにもないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なにも");
+        assert_pattern_range(&patterns, "なにも", 7, 10); // なにも
+    }
+
+    // なんか (casual variant of なにか)
+    #[test]
+    fn test_nanka_casual() {
+        let sentence = "なんか飲みたいな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なにか");
+        assert_pattern_range(&patterns, "なにか", 0, 3); // なんか
+    }
+
+    // なんも (casual variant of なにも)
+    #[test]
+    fn test_nanmo_casual() {
+        let sentence = "なんも知らないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なにも");
+        assert_pattern_range(&patterns, "なにも", 0, 3); // なんも
+    }
+
+    // なんにも (another casual variant of なにも)
+    #[test]
+    fn test_nannimo_casual() {
+        let sentence = "今日はなんにもしたくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なにも");
+        assert_pattern_range(&patterns, "なにも", 3, 7); // なんにも
+    }
+}
