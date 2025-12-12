@@ -4788,3 +4788,58 @@ mod de_particle_tests {
         assert_pattern_range(&patterns, "で", 0, 3); // 公園で
     }
 }
+
+// ========== に (Particle - location/direction/time) ==========
+// Pattern: に (particle indicating location, direction, or time)
+// Data source: grammar_points_data.json["に"]
+//
+// Structure: Noun + に
+// Single structure variant (standard form only)
+
+mod ni_particle_tests {
+    use super::*;
+
+    // Location (in/at)
+    #[test]
+    fn test_ni_location_room() {
+        let sentence = "彼は部屋にいます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に");
+        assert_pattern_range(&patterns, "に", 2, 5); // 部屋に
+    }
+
+    // Direction/destination (to)
+    #[test]
+    fn test_ni_direction_park() {
+        let sentence = "公園に行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に");
+        assert_pattern_range(&patterns, "に", 0, 3); // 公園に
+    }
+
+    // Time (on/at)
+    #[test]
+    fn test_ni_time_birthday() {
+        let sentence = "誕生日にケーキを食べる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に");
+        assert_pattern_range(&patterns, "に", 2, 4); // 日に (from 誕生日)
+    }
+
+    // Vehicle/surface (on)
+    #[test]
+    fn test_ni_vehicle_bus() {
+        let sentence = "バスに乗る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に");
+        assert_pattern_range(&patterns, "に", 0, 3); // バスに
+    }
+}
