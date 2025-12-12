@@ -2583,3 +2583,80 @@ mod sousuruto_tests {
         assert_pattern_range(&patterns, "そうすると", 14, 19); // そうすると
     }
 }
+
+// ========== ずに (without doing) ==========
+// Pattern: ずに (without doing)
+// Data source: grammar_points_data.json["ずに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb［ない］+ ず(に)
+//   Exception: する ￫ せず(に)
+
+mod zuni_tests {
+    use super::*;
+
+    // Test: Regular verb + ずに (without eating)
+    // Example: 朝ご飯を食べずに仕事に行った
+    // (I went to work without eating breakfast)
+    #[test]
+    fn test_zuni_regular_verb() {
+        let sentence = "朝ご飯を食べずに仕事に行った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに");
+        assert_pattern_range(&patterns, "ずに", 4, 8); // 食べずに
+    }
+
+    // Test: Regular verb + ずに (without drinking)
+    // Example: 水を飲まずに運動をした
+    // (I exercised without drinking water)
+    #[test]
+    fn test_zuni_nomanai() {
+        let sentence = "水を飲まずに運動をした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに");
+        assert_pattern_range(&patterns, "ずに", 2, 6); // 飲まずに
+    }
+
+    // Test: する verb exception + せずに (without studying)
+    // Example: 勉強せずにテストを受けた
+    // (I took the test without studying)
+    #[test]
+    fn test_zuni_suru_exception() {
+        let sentence = "勉強せずにテストを受けた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに");
+        assert_pattern_range(&patterns, "ずに", 0, 5); // 勉強せずに (includes compound noun+verb)
+    }
+
+    // Test: する verb exception + せずに (without trying too hard)
+    // Example: 無理をせずに頑張ってください
+    // (Please do your best without trying too hard)
+    #[test]
+    fn test_zuni_suru_casual() {
+        let sentence = "無理をせずに頑張ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに");
+        assert_pattern_range(&patterns, "ずに", 3, 6); // せずに
+    }
+
+    // Test: ず alone (without に) - should also work
+    // Example: 何も言わず立ち去った
+    // (Left without saying anything)
+    #[test]
+    fn test_zu_without_ni() {
+        let sentence = "何も言わず立ち去った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに");
+        assert_pattern_range(&patterns, "ずに", 2, 5); // 言わず (without に)
+    }
+}

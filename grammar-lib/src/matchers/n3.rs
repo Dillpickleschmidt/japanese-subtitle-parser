@@ -2051,9 +2051,55 @@ pub fn sudeni() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SudeniMatcher))]
 }
 
-// Pattern: ずに
+// Pattern: ずに (without doing)
+// Structures: Verb[未然形] + ず(に)
+// Exception: する → せず(に)
 pub fn zuni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in 未然形 (imperfective/negative stem form)
+    // This includes both regular verbs and する verbs (which become せ)
+    #[derive(Debug)]
+    struct MizenFormVerbMatcher;
+    impl Matcher for MizenFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f == "未然形" || f == "未然ヌ接続")
+        }
+    }
+
+    // Match ず (助動詞, base=ぬ, 特殊・ヌ, 連用ニ接続)
+    #[derive(Debug)]
+    struct ZuAuxiliaryMatcher;
+    impl Matcher for ZuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ぬ"
+        }
+    }
+
+    // Match に particle (格助詞/一般) - optional
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MizenFormVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: ずにはいられない

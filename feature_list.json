@@ -4748,13 +4748,13 @@
   {
     "pattern_name": "ずに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although it is not considered to be one of the primary 18 auxiliary verbs that are used in modern Japanese, ず is a cl... [3 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
