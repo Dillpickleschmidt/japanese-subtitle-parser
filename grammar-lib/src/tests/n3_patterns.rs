@@ -1003,3 +1003,64 @@ mod kiri_tests {
     //     // 寝たきり is tokenized as single noun, not verb + た + きり
     // }
 }
+
+// ========== くらい ② (degree/extent - so...that) ==========
+// Pattern: くらい② (degree/extent - expresses limit/extent causing result)
+// Data source: grammar_points_data.json["くらい ②"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + くらい/ぐらい
+//   standard[1]: い-Adjective + くらい/ぐらい
+//   standard[2]: な-Adjective + な + くらい/ぐらい
+//   standard[3]: Noun + くらい/ぐらい
+//
+// Note: This is different from くらい① which is for approximation ("about/approximately")
+// くらい② expresses extent/degree that causes or allows a result ("so...that")
+
+mod kurai2_tests {
+    use super::*;
+
+    // Test: Verb + くらい (so much that)
+    #[test]
+    fn test_kurai2_verb() {
+        let sentence = "今日はもう一生走りたくないくらい走った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くらい ②");
+        assert_pattern_range(&patterns, "くらい ②", 11, 16); // ないくらい
+    }
+
+    // Test: Verb + くらい (extent causing result)
+    #[test]
+    fn test_kurai2_verb_scream() {
+        let sentence = "わたしも叫びたいくらい、怖かった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くらい ②");
+        assert_pattern_range(&patterns, "くらい ②", 6, 11); // たいくらい
+    }
+
+    // Test: な-Adjective + な + ぐらい (extent - ぐらい variant)
+    #[test]
+    fn test_kurai2_na_adjective_gurai() {
+        let sentence = "５連休が必要なぐらい疲れています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くらい ②");
+        assert_pattern_range(&patterns, "くらい ②", 6, 10); // なぐらい
+    }
+
+    // Test: Noun + くらい (to about the level of)
+    #[test]
+    fn test_kurai2_noun_level() {
+        let sentence = "俺もキヨミさんくらいピアノが弾けるようになりたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くらい ②");
+        assert_pattern_range(&patterns, "くらい ②", 5, 10); // さんくらい
+    }
+}

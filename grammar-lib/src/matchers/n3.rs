@@ -723,9 +723,24 @@ pub fn nitaishite() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: くらい ②
+// Pattern: くらい ② (degree/extent - so...that)
+// Structures: Verb/Adjective/Noun + くらい/ぐらい
 pub fn kurai_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KuraiMatcher;
+    impl Matcher for KuraiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Matches くらい or ぐらい as 助詞/副助詞
+            (token.surface == "くらい" || token.surface == "ぐらい")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Matches verb/adjective/noun before くらい
+        TokenMatcher::Custom(Arc::new(KuraiMatcher)),
+    ]
 }
 
 // Pattern: は～くらいです
