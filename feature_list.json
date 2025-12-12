@@ -4398,13 +4398,13 @@
   {
     "pattern_name": "がち",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "がち is a suffix in Japanese that will be used after nouns, or the conjunctive form of verbs [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

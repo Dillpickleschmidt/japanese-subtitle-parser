@@ -1305,9 +1305,41 @@ pub fn kuseni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: がち
+// Pattern: がち (tend to/prone to)
+// Structures: Verb[stem] + がち / Noun + がち
 pub fn gachi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct GachiPrecedingMatcher;
+    impl Matcher for GachiPrecedingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Matches: Verb in 連用形 (stem) OR Noun
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形") {
+                return true;
+            }
+            // Match nouns (especially サ変接続 and 一般)
+            if token.pos.first().is_some_and(|pos| pos == "名詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    #[derive(Debug)]
+    struct GachiMatcher;
+    impl Matcher for GachiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "がち"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(GachiPrecedingMatcher)),
+        TokenMatcher::Custom(Arc::new(GachiMatcher)),
+    ]
 }
 
 // Pattern: ぎみ

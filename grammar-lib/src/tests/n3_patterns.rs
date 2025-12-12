@@ -523,3 +523,58 @@ mod gatai_tests {
         assert_pattern_range(&patterns, "がたい", 5, 13); // 理解しがたいです
     }
 }
+
+// Pattern: がち (tend to/prone to)
+// Data source: grammar_points_data.json["がち"]
+// Testing structures:
+//   standard[0]: Verb[stem] + がち
+//   standard[1]: Noun + がち
+//   standard[2]: Noun + がち + な + Noun
+
+mod gachi_tests {
+    use super::*;
+
+    // Test: Verb[stem] + がち - 頼みがち (tend to order)
+    #[test]
+    fn test_gachi_verb_tanomu() {
+        let sentence = "ここに来るといつもパフェを頼みがちだけど、今日はパンケーキを頼む";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がち");
+        assert_pattern_range(&patterns, "がち", 13, 17); // 頼みがち
+    }
+
+    // Test: Verb[stem] + がち - サボりがち (tend to skip/shirk) with な
+    #[test]
+    fn test_gachi_verb_saboru() {
+        let sentence = "サボりがちな人はだいたい成績が悪い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がち");
+        assert_pattern_range(&patterns, "がち", 0, 6); // サボりがちな (includes な)
+    }
+
+    // Test: Noun + がち - 病気がち (prone to getting sick)
+    #[test]
+    fn test_gachi_noun_byouki() {
+        let sentence = "うちの子は病気がちなので、週に二、三日ぐらいは学校を休みます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がち");
+        assert_pattern_range(&patterns, "がち", 5, 9); // 病気がち
+    }
+
+    // Test: Noun + がち (standalone) - 留守がち (often away from home)
+    #[test]
+    fn test_gachi_noun_rusu() {
+        let sentence = "最近は仕事が忙しくて留守がちです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がち");
+        assert_pattern_range(&patterns, "がち", 10, 14); // 留守がち
+    }
+}
