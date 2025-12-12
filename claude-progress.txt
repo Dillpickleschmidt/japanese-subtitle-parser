@@ -1,5 +1,89 @@
 # Grammar-lib Development Progress
 
+## Session 51 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two N5 patterns fully implemented (たくさん + まだ)
+**Patterns completed**: 2 new patterns
+**Tests added**: 8 comprehensive tests
+**Total tests**: 304 (was 296)
+
+### Accomplishments
+1. ✅ Implemented たくさん (a lot/many) pattern
+2. ✅ Implemented まだ (still/not yet) pattern
+3. ✅ All 8 structure variants tested and passing with proper range assertions
+4. ✅ No test regressions - all 304 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### たくさん (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_takusan_phrase_verb (たくさん食べてよ - eat a lot)
+  - test_takusan_no_noun (たくさんの猫 - a lot of cats)
+  - test_takusan_noun_no_no (たくさん人が - many people)
+- **Structures**:
+  - たくさん + Phrase
+  - たくさん + の + Noun
+  - たくさん + Noun (without の)
+- **Tokenization insights**:
+  - たくさん tokenizes as 名詞/副詞可能 (noun/can-be-adverb)
+  - Single token pattern
+  - Pattern range is just たくさん (2 characters)
+- **Implementation notes**:
+  - Simple single-token matcher
+  - Checks surface, base_form, and POS (名詞/副詞可能)
+  - Pattern correctly matches in all contexts
+
+#### まだ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 5 variants, all passing
+  - test_mada_te_iru (まだ走っている - still running)
+  - test_mada_ga_iru (まだ親がいる - parents still here)
+  - test_mada_ga_aru (まだ宿題がある - still have homework)
+  - test_mada_question (まだ勉強しているの？ - still studying?)
+  - test_mada_te_imasu (まだ仕事をしています - still working)
+- **Structures**:
+  - まだ + Verb[ている]
+  - まだ + Noun + が + いる/ある
+  - Question forms
+  - Polite variants
+- **Tokenization insights**:
+  - まだ tokenizes as 副詞/助詞類接続 (adverb)
+  - Single token pattern
+  - Pattern range is just まだ (2 characters)
+- **Implementation notes**:
+  - Simple single-token matcher
+  - Checks surface, base_form, and POS (副詞/助詞類接続)
+  - Works in all contexts (statements, questions, polite forms)
+
+### Technical Details
+- **Pattern priorities**: Both priority 1 (construction patterns - N5 level)
+- **Test coverage**: All structure variants from grammar_points_data.json
+- **Implementation approach**: Both are simple single-token adverb matchers
+- **No complexity**: Straightforward implementations with no edge cases
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. くれる - to give (to me/us)
+2. けっこう - fairly/quite
+3. より～のほうが - comparison pattern
+4. まえに - before (temporal)
+5. なにか・なにも - something/nothing (question words)
+6. なくてはならない - must do
+
+### Environment Status
+- ✅ All 304 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
+# Grammar-lib Development Progress
+
 ## Session 50 - 2025-12-12
 
 ### ✅ Session Summary
