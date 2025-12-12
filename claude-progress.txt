@@ -1,5 +1,83 @@
 # Grammar-lib Development Progress
 
+## Session 45 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two patterns fully implemented (ましょう + ませんか)
+**Patterns completed**: 2 new patterns
+**Tests added**: 6 comprehensive tests
+**Total tests**: 256 (was 250)
+
+### Accomplishments
+1. ✅ Implemented ましょう (let's do / volitional) pattern
+2. ✅ Implemented ませんか (won't you? / polite invitation) pattern
+3. ✅ All 6 test variants passing with proper range assertions
+4. ✅ No test regressions - all 256 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commit with full documentation
+
+### Completed Patterns
+
+#### ましょう (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_mashou_basic (行きましょう - u-verb suggestion)
+  - test_mashou_dance (踊りましょう - ru-verb invitation)
+  - test_mashou_declaration (痩せましょう - personal declaration)
+- **Structure**: Verb[連用形] + ましょ + う
+- **Tokenization insights**:
+  - Verb in 連用形 (stem form)
+  - ましょ tokenizes as 助動詞 (base=ます)
+  - う tokenizes as 助動詞 (auxiliary)
+  - Pattern is same as ましょうか but without か particle
+- **Implementation notes**:
+  - Polite volitional form meaning "let's do" or "shall we"
+  - Can be used as suggestion, invitation, or personal declaration
+  - Simple 3-token pattern: verb stem + ましょ + う
+  - Reused matchers from ましょうか implementation
+
+#### ませんか (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_masenka_polite (行きませんか - basic invitation)
+  - test_masenka_together (行きませんか - with 一緒に)
+  - test_masenka_eat (行きませんか - different verb)
+- **Structure**: Verb[連用形] + ませ + ん + か
+- **Tokenization insights**:
+  - Verb in 連用形 (stem form)
+  - ませ tokenizes as 助動詞 (base=ます, 未然形)
+  - ん tokenizes as 助動詞 (base=ん)
+  - か tokenizes as 助詞 (question particle)
+- **Implementation notes**:
+  - Polite invitation pattern meaning "won't you?"
+  - More directly inviting than ましょうか (which is more suggestive)
+  - Simple 4-token pattern: verb stem + ませ + ん + か
+  - Works with all verb types (u-verbs and ru-verbs)
+
+### Technical Details
+- **Pattern priorities**: Both priority 1 (construction patterns)
+- **Test coverage**: One structure variant per pattern (both patterns have single standard structure)
+  - ましょう: Polite volitional form (no polite variant - already polite)
+  - ませんか: Polite invitation (tested in various contexts)
+- **Implementation challenges**: None - straightforward token matching patterns
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. 誰か・どこか・誰も・どこも - question words + か/も
+2. より～のほうが - comparison pattern
+3. もらう - to receive (from someone)
+4. くれる - to give (to me/us)
+5. る-Verb conjugations (Dictionary, Negative, Past, Negative-Past)
+6. う-Verb conjugations (Dictionary, Negative, Past, Negative-Past)
+
+### Environment Status
+- ✅ All 256 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 44 - 2025-12-12
 
 ### ✅ Session Summary
