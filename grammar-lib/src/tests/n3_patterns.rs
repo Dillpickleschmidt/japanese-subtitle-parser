@@ -1064,3 +1064,65 @@ mod kurai2_tests {
         assert_pattern_range(&patterns, "くらい ②", 5, 10); // さんくらい
     }
 }
+
+// ========== ことか (how/god knows/what) ==========
+// Pattern: ことか (how / god knows how / what)
+// Data source: grammar_points_data.json["ことか"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + ことか
+//   standard[1]: い-Adjective + ことか
+//   standard[2]: な-Adjective + な + ことか
+//   standard[3]: Noun + である + ことか
+//
+// Meaning: Expresses emphasis on the extent/magnitude of something (rhetorical question)
+// Usage: Primarily written language, sounds dramatic/poetic
+// Often used with: どれだけ, なんて, 何回, どんなに (extent/number words)
+
+mod kotoka_tests {
+    use super::*;
+
+    // Test: Verb + ことか (how many times)
+    #[test]
+    fn test_kotoka_verb() {
+        let sentence = "あの人のコンサートには何回いったことか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことか");
+        assert_pattern_range(&patterns, "ことか", 15, 19); // たことか
+    }
+
+    // Test: い-Adjective + ことか (how cute)
+    #[test]
+    fn test_kotoka_i_adjective() {
+        let sentence = "うちの犬はどんなに可愛いことか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことか");
+        assert_pattern_range(&patterns, "ことか", 9, 15); // 可愛いことか
+    }
+
+    // Test: な-Adjective + な + ことか (how bored)
+    #[test]
+    fn test_kotoka_na_adjective() {
+        let sentence = "なんて暇なことか。こんなに暇なのは久しぶりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことか");
+        assert_pattern_range(&patterns, "ことか", 4, 8); // なことか
+    }
+
+    // Test: Noun + である + ことか (how worried)
+    #[test]
+    fn test_kotoka_noun_dearu() {
+        let sentence = "息子を一人で電車に乗せるのがどれだけ心配であることか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことか");
+        assert_pattern_range(&patterns, "ことか", 21, 26); // あることか
+    }
+}
