@@ -749,9 +749,38 @@ pub fn nogasuki() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: がある + Noun
+// Pattern: がある + Noun (relative clause: noun with/has something)
+// Structures: Noun1 + が/の + ある + Noun2
 pub fn gaaru_noun() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match が or の particle
+    #[derive(Debug)]
+    struct GaOrNoParticleMatcher;
+    impl Matcher for GaOrNoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "が" || token.surface == "の")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match ある verb (base_form = ある)
+    #[derive(Debug)]
+    struct AruVerbMatcher;
+    impl Matcher for AruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(GaOrNoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AruVerbMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: い-Adjectives くない (negative present)

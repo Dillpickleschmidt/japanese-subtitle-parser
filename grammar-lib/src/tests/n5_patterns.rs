@@ -3454,8 +3454,9 @@ mod ga_aru_noun_tests {
         let sentence = "ピアノがあるレストランを探している";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "がある + Noun");
+        assert_pattern_range(&patterns, "がある + Noun", 0, 11); // ピアノがあるレストラン
     }
 
     // Noun + がある + Noun (building with convenience store)
@@ -3464,8 +3465,9 @@ mod ga_aru_noun_tests {
         let sentence = "コンビニがあるビルの近くに住んでいる";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "がある + Noun");
+        assert_pattern_range(&patterns, "がある + Noun", 0, 9); // コンビニがあるビル
     }
 
     // Noun + のある + Noun (mountain with beautiful river)
@@ -3474,8 +3476,9 @@ mod ga_aru_noun_tests {
         let sentence = "綺麗な川のある山に登りたい";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "がある + Noun");
+        assert_pattern_range(&patterns, "がある + Noun", 3, 8); // 川のある山
     }
 }
 
