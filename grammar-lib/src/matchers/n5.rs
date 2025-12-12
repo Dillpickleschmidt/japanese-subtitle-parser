@@ -1684,9 +1684,102 @@ pub fn naidekudasai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: てはいけない
+// Pattern: てはいけない (must not do - prohibition)
+// Structures:
+//   Verb[て] + は + いけない (standard)
+//   Verb + ちゃ + いけない (casual contraction of てはいけない)
+//   Verb + じゃ + いけない (casual contraction of ではいけない)
 pub fn tehaikenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match て or で (conjunction particle)
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match ちゃ or じゃ (casual contraction particles)
+    #[derive(Debug)]
+    struct ChyaJyaParticleMatcher;
+    impl Matcher for ChyaJyaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ちゃ" || token.surface == "じゃ")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match は particle
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match いけ (non-independent verb in negative or polite form)
+    // 未然形 for ない (いけない), 連用形 for ます (いけません)
+    #[derive(Debug)]
+    struct IkeMatcher;
+    impl Matcher for IkeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いけ"
+                && token.base_form == "いける"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f == "未然形" || f == "連用形")
+        }
+    }
+
+    // Match ない auxiliary
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Two variants: てはいけない and ちゃいけない/じゃいけない
+    // We'll create a matcher that handles both
+    #[derive(Debug)]
+    struct TeWaIkenaiMatcher;
+    impl Matcher for TeWaIkenaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match て/で + は or ちゃ/じゃ
+            let te_de = (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞");
+
+            let chya_jya = (token.surface == "ちゃ" || token.surface == "じゃ")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞");
+
+            te_de || chya_jya
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeWaIkenaiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(IkeMatcher)),
+        // ない is optional because polite form uses ませ + ん instead (extension system handles this)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)))),
+    ]
 }
 
 // Pattern: なくてはいけない

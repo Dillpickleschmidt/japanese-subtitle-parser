@@ -2663,3 +2663,47 @@ mod naide_kudasai_tests {
         assert_pattern_range(&patterns, "ないで", 12, 17); // 食べないで
     }
 }
+
+// ========== てはいけない (Must not do) ==========
+// Pattern: てはいけない (prohibition - must not do)
+// Data source: grammar_points_data.json["てはいけない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[て] + は + いけない
+//   polite[0]: Verb[て] + は + いけません
+//   Note: Casual variants ちゃいけない and じゃいけない also mentioned
+
+mod te_wa_ikenai_tests {
+    use super::*;
+
+    #[test]
+    fn test_te_wa_ikenai_standard() {
+        let sentence = "タクシーの扉を自分で開けてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはいけない");
+        assert_pattern_range(&patterns, "てはいけない", 10, 18); // 開けてはいけない
+    }
+
+    #[test]
+    fn test_te_wa_ikenai_polite() {
+        let sentence = "子供の前でタバコを吸ってはいけません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはいけない");
+        assert_pattern_range(&patterns, "てはいけない", 9, 18); // 吸ってはいけません
+    }
+
+    // Casual variant: ちゃいけない (てはいけない → ちゃいけない)
+    #[test]
+    fn test_chya_ikenai_casual() {
+        let sentence = "危ない場所に行っちゃいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはいけない");
+        assert_pattern_range(&patterns, "てはいけない", 6, 14); // 行っちゃいけない
+    }
+}
