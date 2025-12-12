@@ -4580,13 +4580,13 @@
   {
     "pattern_name": "ことになる",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことになる is an expression that combines the nominalizing use of こと (creating a noun-phrase), with the case marking parti... [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null

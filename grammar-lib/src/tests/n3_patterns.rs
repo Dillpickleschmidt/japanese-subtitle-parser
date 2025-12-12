@@ -1443,3 +1443,85 @@ mod kotonisuru_tests {
         assert_pattern_range(&patterns, "ことにする", 6, 14); // ないことにします
     }
 }
+
+// ========== ことになる (it has been decided / will end up) ==========
+// Pattern: ことになる (passive decision / natural consequence)
+// Data source: grammar_points_data.json["ことになる"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + ことになる
+//   standard[1]: い-Adjective + ことになる
+//   standard[2]: な-Adjective + な + ことになる
+//   polite[0]: Verb + ことになります
+//   polite[1]: い-Adjective + ことになります
+//   polite[2]: な-Adjective + な + ことになります
+
+mod kotoninaru_tests {
+    use super::*;
+
+    // Test: Verb + ことになる (it has been decided)
+    #[test]
+    fn test_kotoninaru_verb_affirmative() {
+        let sentence = "来月から海外に転勤することになった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになる");
+        assert_pattern_range(&patterns, "ことになる", 7, 17); // 転勤することになった
+    }
+
+    // Test: Verb[negative] + ことになる (decided not to)
+    #[test]
+    fn test_kotoninaru_verb_negative() {
+        let sentence = "結局、行かないことになりました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになる");
+        assert_pattern_range(&patterns, "ことになる", 5, 15); // ないことになりました
+    }
+
+    // Test: い-Adjective + ことになる (will end up being)
+    #[test]
+    fn test_kotoninaru_i_adjective() {
+        let sentence = "そんなことしたら大変なことになるぞ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになる");
+        assert_pattern_range(&patterns, "ことになる", 10, 16); // なことになる
+    }
+
+    // Test: な-Adjective + な + ことになる (will become)
+    #[test]
+    fn test_kotoninaru_na_adjective() {
+        let sentence = "治療しないと深刻なことになる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになる");
+        assert_pattern_range(&patterns, "ことになる", 8, 14); // なことになる
+    }
+
+    // Test: Verb + ことになります (polite - it has been decided)
+    #[test]
+    fn test_kotoninaru_polite() {
+        let sentence = "新しい支店で働くことになります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになる");
+        assert_pattern_range(&patterns, "ことになる", 6, 15); // 働くことになります
+    }
+
+    // Test: Verb + ことになった (past tense - was decided)
+    #[test]
+    fn test_kotoninaru_past() {
+        let sentence = "急に退職することになった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになる");
+        assert_pattern_range(&patterns, "ことになる", 2, 12); // 退職することになった
+    }
+}
