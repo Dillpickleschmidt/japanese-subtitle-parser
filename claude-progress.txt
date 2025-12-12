@@ -1,5 +1,86 @@
 # Grammar-lib Development Progress
 
+## Session 95 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (すでに)
+**Patterns completed**: 1 new N3 pattern (already - formal)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 589 (was 585 at start)
+
+### Accomplishments
+1. ✅ Implemented すでに pattern (N3) - "already" (formal alternative to もう)
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 589 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### すでに (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 1944-1965)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod sudeni_tests)
+  - test_sudeni_verb_teiru (お湯はすでに沸いている - already boiled)
+  - test_sudeni_verb_past (これはすでに決まった事 - already decided)
+  - test_sudeni_adjective (すでに遅すぎる - already too late)
+  - test_sudeni_noun (もうすでにチケットは売り切れです - already sold out)
+- **Structure**: すでに + Phrase (only 1 structure variant)
+- **Tokenization insights**:
+  - すでに = 副詞/一般 (adverb)
+  - Pattern is simply the adverb itself, appearing before various phrases
+- **Implementation**: Single-token matcher
+  - SudeniMatcher - Matches すでに as 副詞/一般
+- **Meaning**: "already" - formal alternative to もう, emphasizes unchanging/completed state
+- **Pattern priority**: 1 (standard N3 construction)
+- **Pattern ranges**: Just the adverb すでに itself
+  - すでに (chars 3-6 in お湯はすでに沸いている)
+  - すでに (chars 3-6 in これはすでに決まった事)
+  - すでに (chars 7-10 in 電車に乗るにはすでに遅すぎる)
+  - すでに (chars 2-5 in もうすでにチケットは売り切れです)
+
+### Technical Details
+- **Pattern priority**: 1 (standard N3 adverb)
+- **Test coverage**: 1 structure variant from grammar_points_data.json
+  - すでに + Phrase (4 tests covering different phrase types: verb, adjective, noun)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Very simple pattern - just match the adverb すでに itself
+- **Note**: Pattern was already declared in patterns.rs, only needed matcher implementation
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 589/589 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~67 (matcher implementation + 4 tests + feature_list update)
+
+### Key Insights
+- すでに is one of the simplest patterns - just a single adverb token
+- Formal alternative to もう, commonly used in written/formal contexts
+- Test-first workflow successfully identified the simple tokenization
+- All test sentences are realistic and subtitle-quality
+- Pattern range is just the adverb itself (not including following phrase)
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. さえ - emphasis particle "even" (6 structures - more complex)
+2. ずに - "without doing" (likely simpler)
+3. さて - "now then / well" (topic change, likely simple adverb)
+4. すると - "then/in that case" (likely simple)
+5. ずっと② - "by far" (different from ずっと① "continuously")
+
+**Recommendation**: Continue with "さて" or "すると" as they are likely simple adverb/conjunction patterns. Save "さえ" for later due to its complexity (6 structure variants).
+
+### Environment Status
+- ✅ All 589 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 94 - 2025-12-12
 
 ### ✅ Session Summary
