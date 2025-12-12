@@ -1,5 +1,88 @@
 # Grammar-lib Development Progress
 
+## Session 62 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N5 pattern fully implemented (のがすき - like doing something)
+**Patterns completed**: 1 new N5 pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 388 (was 384)
+
+### Accomplishments
+1. ✅ Implemented のがすき (like doing something) pattern (N5)
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ No test regressions - all 388 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### のがすき (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing in n5_patterns.rs
+  - test_nogasuki_standard_present (私は映画を見るのが好きだ - standard present)
+  - test_nogasuki_polite_present (プレゼントをもらうのが好きです - polite present)
+  - test_nogasuki_past (彼は野球をするのが好きだった - past)
+  - test_nogasuki_polite_past (息子は漢字を書くのが好きでした - polite past)
+- **Structure**: Verb[る] + の + が + 好き + [だ/です/だった/でした]
+- **Tokenization**:
+  - Verb in 基本形 (dictionary form) - e.g., 見る, もらう, する, 書く
+  - の = 名詞/非自立/一般 (nominalizer)
+  - が = 助詞/格助詞/一般 (case particle)
+  - すき/好き = 名詞 or 名詞/形容動詞語幹
+  - Optional copula: だ/です/だった/でした (助動詞)
+- **Implementation**: 6-token matcher with 2 optional copula matchers
+  - Custom DictionaryVerbMatcher: Verb in 基本形
+  - Custom NoNominalizerMatcher: の as 名詞/非自立
+  - Custom GaCaseParticleMatcher: が as 助詞/格助詞
+  - Custom SukiMatcher: すき or 好き as 名詞
+  - Two Optional CopulaEndingMatchers: for だ/です forms (handles だった, でした)
+- **Meaning**: "to like/love doing (something)"
+- **Usage**: Common construction with dictionary form verbs + nominalizer の
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Note**: Handles both hiragana すき and kanji 好き, supports all conjugation forms
+
+### Technical Details
+- **Pattern range**: Full construction from verb to copula ending
+  - Examples: 見るのが好きだ (chars 5-12), もらうのが好きです (chars 6-15)
+- **Implementation challenges**:
+  - Tokenizer treats すき differently depending on context (noun vs. verb すく)
+  - Using kanji 好き ensures consistent tokenization as 名詞/形容動詞語幹
+  - Matcher accepts both hiragana and kanji for robustness
+- **Test strategy**: Covered all major structure variants from grammar_points_data.json
+
+### Session Statistics
+- **Patterns implemented**: 1 (N5)
+- **Tests written**: 4
+- **Tests passing**: 388/388 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~146 (tests + matcher + feature_list update)
+
+### Next Priorities
+Continue with N5 patterns (24 remaining):
+
+**Similar patterns to implement next** (high value, similar structure):
+1. のがじょうず - to be good at doing something (similar to のがすき)
+2. のがへた - to be bad at doing something (similar to のがすき)
+
+**Other high-priority N5 patterns**:
+3. のなかで～がいちばん～ - superlative construction
+4. より～のほうが - comparative construction
+
+**Patterns to check for stubs**:
+5. は - particle (topic marker) - check if stub
+6. へ - particle (direction marker) - check if stub
+7. の - particle (possession/nominalization) - check if stub
+
+### Environment Status
+- ✅ All 388 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session or to continue
+
+---
+
 ## Session 61 - 2025-12-12
 
 ### ✅ Session Summary
