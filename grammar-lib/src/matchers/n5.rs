@@ -688,8 +688,24 @@ pub fn heiku() -> Vec<TokenMatcher> {
 }
 
 // Pattern: する
+// Pattern: する (to do/make - irregular verb)
+// Structures: する/します/した/して/しない (various conjugations)
 pub fn suru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match する verb (base_form = する, conjugation type = サ変・スル)
+    #[derive(Debug)]
+    struct SuruMatcher;
+    impl Matcher for SuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(4).is_some_and(|f| f.starts_with("サ変"))
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SuruMatcher))]
 }
 
 // Pattern: くる

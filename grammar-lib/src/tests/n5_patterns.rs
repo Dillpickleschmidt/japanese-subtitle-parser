@@ -4184,3 +4184,81 @@ mod kureru_tests {
         assert_pattern_range(&patterns, "くれる", 6, 8); // くれ (stem before て)
     }
 }
+
+// ========== する (Irregular verb - to do/make) ==========
+// Pattern: する (irregular verb)
+// Data source: grammar_points_data.json["する"]
+//
+// Structure variants to test:
+//   standard[0]: する
+//   polite[0]: します
+
+mod suru_tests {
+    use super::*;
+
+    // Dictionary form (する)
+    #[test]
+    fn test_suru_dictionary() {
+        let sentence = "今日は洗濯をするつもりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "する");
+        assert_pattern_range(&patterns, "する", 6, 8); // する
+    }
+
+    // Polite present (します)
+    #[test]
+    fn test_suru_polite_present() {
+        let sentence = "毎日勉強をします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "する");
+        assert_pattern_range(&patterns, "する", 5, 8); // します
+    }
+
+    // Past tense (した)
+    #[test]
+    fn test_suru_past() {
+        let sentence = "昨日料理をした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "する");
+        assert_pattern_range(&patterns, "する", 5, 7); // した
+    }
+
+    // Polite past (しました)
+    #[test]
+    fn test_suru_polite_past() {
+        let sentence = "先週電話をしました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "する");
+        assert_pattern_range(&patterns, "する", 5, 9); // しました
+    }
+
+    // Te-form (して)
+    #[test]
+    fn test_suru_te_form() {
+        let sentence = "準備をしてから出かける";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "する");
+        assert_pattern_range(&patterns, "する", 3, 4); // し (stem before て)
+    }
+
+    // Negative (しない)
+    #[test]
+    fn test_suru_negative() {
+        let sentence = "そんなことはしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "する");
+        assert_pattern_range(&patterns, "する", 6, 9); // しない
+    }
+}
