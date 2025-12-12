@@ -1,22 +1,23 @@
 # Grammar-lib Development Progress
 
-## Session 81 - 2025-12-12
+## Session 81 - 2025-12-12 (Updated)
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (きり - only/just/since)
-**Patterns completed**: 1 new N3 pattern (adverbial particle)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 483 (was 479)
+**Status**: Two N3 patterns fully implemented (きり + くらい②)
+**Patterns completed**: 2 new N3 patterns (adverbial particles)
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 487 (was 479)
 
 ### Accomplishments
 1. ✅ Implemented きり pattern (N3) - adverbial particle construction
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 483 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
-6. ✅ Identified and documented undetectable variant (寝たきり compound)
+2. ✅ Implemented くらい ② pattern (N3) - degree/extent particle
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 487 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+7. ✅ Identified and documented undetectable variant (寝たきり compound)
 
-### Completed Pattern
+### Completed Patterns
 
 #### きり (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 1341)
@@ -46,6 +47,35 @@
   - 度っきり (chars 4-8, counter + っきり casual)
   - 人っきり (chars 1-5, counter + っきり)
 
+#### くらい ② (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 727)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_kurai2_verb (走りたくないくらい - so much that)
+  - test_kurai2_verb_scream (叫びたいくらい - extent causing result)
+  - test_kurai2_na_adjective_gurai (必要なぐらい - ぐらい variant)
+  - test_kurai2_noun_level (さんくらい - to about the level of)
+- **Structures**:
+  - Verb + くらい/ぐらい
+  - い-Adjective + くらい/ぐらい
+  - な-Adjective + な + くらい/ぐらい
+  - Noun + くらい/ぐらい
+- **Tokenization insights**:
+  - くらい = 助詞/副助詞 (auxiliary particle)
+  - ぐらい = 助詞/副助詞 (same POS tag, casual variant)
+  - Note: くらい① (approximation) and くらい② (extent/degree) tokenize identically
+  - Both patterns can match the same instance - user sees both grammar explanations
+- **Implementation**: 2-token matcher
+  1. TokenMatcher::Any - Matches any preceding token (verb/adjective/noun)
+  2. KuraiMatcher - Matches くらい or ぐらい as 助詞/副助詞
+- **Meaning**: "so...that / to the extent that / about the level of" - expresses degree/extent
+- **Usage**: Common N3 particle expressing limits/extent that cause or allow results
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - ないくらい (chars 11-16, negative verb + くらい)
+  - たいくらい (chars 6-11, tai-form + くらい)
+  - なぐらい (chars 6-10, na-adjective connector + ぐらい)
+  - さんくらい (chars 5-10, proper noun + くらい)
+
 ### Technical Details
 - **Pattern priority**: 1 (construction pattern - N3 level in patterns.rs)
 - **Test coverage**: Main structure variants from grammar_points_data.json
@@ -58,38 +88,39 @@
 - **Undetectable case**: 寝たきり (bedridden) is a lexicalized compound noun, tokenized as a single token, not detectable by the pattern matcher
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4 (plus 1 documented as undetectable)
-- **Tests passing**: 483/483 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~99 (tests + matcher implementation + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (plus 1 documented as undetectable)
+- **Tests passing**: 487/487 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~181 (tests + matchers + feature_list updates)
 
 ### Key Insights
-- きり and っきり are both common adverbial particles in N3-level Japanese
+- きり and くらい② are both common adverbial particles in N3-level Japanese
 - TokenMatcher::Any provides excellent flexibility for matching diverse preceding elements
 - Lexicalized compound expressions like 寝たきり cannot be detected structurally
+- くらい① and くらい② tokenize identically - both patterns match, showing user both meanings
 - Test-first workflow successfully identified tokenization patterns for all variants
-- Pattern handles both formal (きり) and casual (っきり) variants seamlessly
+- Both patterns handle formal and casual variants seamlessly (きり/っきり, くらい/ぐらい)
 - All test sentences are realistic and subtitle-quality
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 construction patterns to implement**:
-1. くらい② - degree/extent particle
-2. ことか - question particle for emphasis
-3. いくら〜でも - "no matter how much"
-4. かけ - incomplete/unfinished action
-5. から言うと - "from the perspective of"
-6. Noun＋型 - "type/style" suffix pattern
+1. ことか - question particle for emphasis
+2. いくら〜でも - "no matter how much"
+3. かけ - incomplete/unfinished action
+4. から言うと - "from the perspective of"
+5. Noun＋型 - "type/style" suffix pattern
+6. にあたって - "on the occasion of"
 
-**Recommendation**: Continue with simple concrete N3 patterns. くらい② would be a good next choice as it's a straightforward particle pattern.
+**Recommendation**: Continue with simple concrete N3 patterns. ことか would be a good next choice as it's a straightforward particle pattern expressing emphasis.
 
 ### Environment Status
-- ✅ All 483 tests passing
+- ✅ All 487 tests passing
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next session
 
 ---
