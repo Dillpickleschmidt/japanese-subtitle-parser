@@ -3,19 +3,20 @@
 ## Session 50 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N4 pattern fully implemented (あとで)
-**Patterns completed**: 1 new pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 290 (was 286)
+**Status**: Two N4 patterns fully implemented (あとで + あまり～ない)
+**Patterns completed**: 2 new patterns
+**Tests added**: 10 comprehensive tests
+**Total tests**: 296 (was 286)
 
 ### Accomplishments
 1. ✅ Implemented あとで (after/later) pattern
-2. ✅ All 4 structure variants tested and passing with proper range assertions
-3. ✅ No test regressions - all 290 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented あまり～ない (not very) pattern
+3. ✅ All 10 structure variants tested and passing with proper range assertions
+4. ✅ No test regressions - all 296 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### あとで (N4) ✓
 - **File**: grammar-lib/src/matchers/n4.rs
@@ -43,33 +44,65 @@
   - DeAfterAtoMatcher checks for both particle and copula forms
   - All 4 structure variants reduce to the same tokenization: あと + で
 
+#### あまり～ない (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs
+- **Tests**: 6 variants, all passing
+  - test_amari_verb_nai (あまり並ばない - not wait very long)
+  - test_amari_i_adj_nai (あまり寂しくない - not very lonely)
+  - test_amari_noun_dewa_nai (あまり平和ではない - not very peaceful)
+  - test_amari_na_adj_dewa_nai (あまりいい肉ではない - hardly good meat)
+  - test_anmari_verb_nai (あんまり食べたくない - don't want to eat much)
+  - test_amari_noun_janai (あまり良い考えじゃない - not a very good idea)
+- **Structures**:
+  - あまり + Verb[ない]
+  - あまり + い-Adjective[ない]
+  - あまり + Noun + ではない/じゃない
+  - あまり + な-Adjective + ではない/じゃない
+  - Casual variant: あんまり (instead of あまり)
+- **Tokenization insights**:
+  - あまり can tokenize as TWO different POS:
+    - 副詞/助詞類接続 (adverb) - before verbs
+    - 名詞/一般 (noun) - before adjectives/nouns
+  - あんまり always tokenizes as 副詞/助詞類接続 (adverb)
+  - ない can also tokenize as TWO different POS:
+    - 助動詞 (auxiliary) - after verbs (並ばない)
+    - 形容詞/自立 (adjective) - after で (ではない)
+  - Wildcard (0-5 tokens) between あまり and ない
+- **Implementation notes**:
+  - Core matcher: (あまり OR あんまり) + Wildcard + ない
+  - AmariMatcher checks for both あまり and あんまり with flexible POS
+  - NaiMatcher checks for ない as both auxiliary and adjective
+  - Wildcard allows for various constructions between あまり and ない
+  - Custom matchers: AmariMatcher, NaiMatcher
+  - Pattern captures full construction from あまり to ない
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern - N4 level)
-- **Test coverage**: All 4 structure variants from grammar_points_data.json
-  - Verb[た] + あとで (past tense verb)
-  - Noun + の + あとで (possessive)
-  - あとで at sentence start (standalone)
-  - Verb + のは + あとで (nominalized verb with topic marker)
-- **Implementation challenge**:
-  - で after あと has dual nature (particle vs copula)
-  - Solution: Custom matcher checks both POS types
-  - Ensures pattern matches in all contexts
+- **Pattern priorities**: Both priority 1 (construction patterns - N4 level)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - あとで: All 4 structure variants (Verb[た], Noun+の, standalone, Verb+のは)
+  - あまり～ない: All 6 structure variants (Verb, い-Adj, Noun, な-Adj, あんまり, じゃない)
+- **Implementation challenges**:
+  - あとで: で after あと has dual nature (particle vs copula)
+    - Solution: Custom matcher checks both POS types
+  - あまり～ない: Both あまり and ない have dual POS possibilities
+    - Solution: Flexible matchers check all valid POS combinations
+    - Wildcard allows variable constructions between あまり and ない
 
 ### Next Priorities (N4 patterns still needed)
 High-value construction patterns from feature_list.json:
 1. Number + しか〜ない - only/not even
-2. あまり～ない - not very
-3. Question-phrase + か - embedded questions
-4. Verb[よう] - volitional form
-5. てしまう・ちゃう - completion/regret
-6. たら - conditional form
+2. Question-phrase + か - embedded questions
+3. Verb[よう] - volitional form
+4. てしまう・ちゃう - completion/regret
+5. たら - conditional form
+6. ば - conditional ba-form
 
 ### Environment Status
-- ✅ All 290 tests passing
+- ✅ All 296 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
-- ✅ N4 test file expanded (3 patterns total)
+- ✅ N4 test file expanded (4 patterns total)
 
 ---
 
