@@ -3754,3 +3754,62 @@ mod deshou_tests {
         assert_pattern_range(&patterns, "でしょう", 5, 11); // 簡単でしょう
     }
 }
+
+// ========== だろう (Probably/Right? - Casual) ==========
+// Pattern: だろう (tentative/assumption - "probably" or "right?" - casual form)
+// Data source: grammar_points_data.json["だろう"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + だろう
+//   standard[1]: Adjective + だろう
+//   standard[2]: Noun + だろう
+//
+// Note: だろう is casual form of でしょう. Can also contract to だろ.
+
+mod darou_tests {
+    use super::*;
+
+    // Verb + だろう
+    #[test]
+    fn test_darou_verb() {
+        let sentence = "明日は晴れるだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だろう");
+        assert_pattern_range(&patterns, "だろう", 3, 9); // 晴れるだろう
+    }
+
+    // い-Adjective + だろう
+    #[test]
+    fn test_darou_i_adjective() {
+        let sentence = "明日は寒いだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だろう");
+        assert_pattern_range(&patterns, "だろう", 3, 8); // 寒いだろう
+    }
+
+    // Noun + だろう
+    #[test]
+    fn test_darou_noun() {
+        let sentence = "これはお菓子だろう？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だろう");
+        assert_pattern_range(&patterns, "だろう", 3, 9); // お菓子だろう
+    }
+
+    // Contracted form だろ (without う)
+    #[test]
+    fn test_darou_contracted() {
+        let sentence = "お前、明日パーティーに行くだろ？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だろう");
+        assert_pattern_range(&patterns, "だろう", 11, 15); // 行くだろ
+    }
+}

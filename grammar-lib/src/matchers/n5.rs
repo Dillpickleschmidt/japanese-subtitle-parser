@@ -401,9 +401,38 @@ pub fn deshou() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: だろう
+// Pattern: だろう (probably/right? - casual tentative/assumption)
+// Structures: Noun/Verb/Adjective + だろう (or contracted だろ)
+// Tokenization:
+//   - Full form: だろ (助動詞, base=だ, 未然形) + う (助動詞, 不変化型)
+//   - Contracted: だろ (助動詞, base=だ, 未然形) alone
 pub fn darou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct DaroMatcher;
+    impl Matcher for DaroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だろ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    #[derive(Debug)]
+    struct UMatcher;
+    impl Matcher for UMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Can follow noun, verb, or adjective
+        TokenMatcher::Custom(Arc::new(DaroMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(UMatcher)))),  // う is optional for contracted form
+    ]
 }
 
 // Pattern: がある (there is/exists - for inanimate objects)
