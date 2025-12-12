@@ -3,19 +3,20 @@
 ## Session 55 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N5 pattern fully implemented (する - irregular verb)
-**Patterns completed**: 1 new N5 pattern
-**Tests added**: 6 comprehensive tests
-**Total tests**: 333 (was 327)
+**Status**: Two N5 patterns fully implemented (する + もらう)
+**Patterns completed**: 2 new N5 patterns
+**Tests added**: 11 comprehensive tests
+**Total tests**: 338 (was 327)
 
 ### Accomplishments
 1. ✅ Implemented する (to do/make - irregular verb) pattern (N5)
-2. ✅ All 6 test variants passing with proper range assertions
-3. ✅ No test regressions - all 333 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented もらう (to receive from someone) pattern (N5)
+3. ✅ All 11 test variants passing with proper range assertions
+4. ✅ No test regressions - all 338 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### する (N5) ✓
 - **File**: grammar-lib/src/matchers/n5.rs
@@ -39,18 +40,33 @@
 - **Pattern range**: The verb in all its forms (する/します/した/しました/して/しない)
 - **Similar to**: くる pattern (the other irregular verb) with identical implementation structure
 
+#### もらう (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 5 variants, all passing in n5_patterns.rs
+  - test_morau_present (誕生日にプレゼントをもらう - dictionary form)
+  - test_morau_past (駅でティッシュをもらったけど欲しい？ - past tense)
+  - test_morau_polite (母からお小遣いをもらいます - polite present)
+  - test_morau_polite_past (お正月におばあちゃんからお金をもらいました - polite past)
+  - test_morau_te_form (彼女に手作りのケーキをもらって嬉しかった - te-form)
+- **Structure**: もらう in any conjugation (もらう/もらいます/もらった/もらって)
+- **Tokenization**: もらう = 動詞/自立, base_form=もらう, conjugation_type=五段・ワ行促音便
+- **Implementation**: Simple single-token matcher checking base_form="もらう", POS="動詞", and conjugation type contains "五段・ワ行"
+- **Meaning**: "to receive/get (from someone)" - one of three giving/receiving verbs (くれる, あげる, もらう)
+- **Usage**: Recipient is marked with は/が, giver with に/から, object with を
+- **Similar to**: くれる pattern with identical implementation structure
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N5)
-- **Tests written**: 6
-- **Tests passing**: 333/333 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~102 (tests + matcher + feature_list update)
+- **Patterns implemented**: 2 (N5)
+- **Tests written**: 11 (6 for する + 5 for もらう)
+- **Tests passing**: 338/338 (100%)
+- **Commits**: 3 clean commits (する implementation, progress update, もらう implementation)
+- **Lines added**: ~190 (tests + matchers + feature_list updates)
 
 ### Next Priorities
-Continue with N5 patterns (36 remaining):
+Continue with N5 patterns (35 remaining):
 
 **High-value N5 patterns to implement**:
-1. もらう - to receive (from someone) - companion to くれる/あげる
+1. あげる - to give (to someone) - final verb in giving/receiving trio
 2. Verbs (Non-past) - dictionary form as non-past tense
 3. Basic verb conjugations (Dictionary, Negative, Past, Negative-Past)
 4. い-Adjective (Predicate) - adjectives in predicate position
@@ -59,7 +75,7 @@ Continue with N5 patterns (36 remaining):
 7. な-Adjective だ - predicate form
 
 ### Environment Status
-- ✅ All 333 tests passing
+- ✅ All 338 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
