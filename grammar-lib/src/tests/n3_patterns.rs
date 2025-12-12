@@ -331,3 +331,84 @@ mod karakoso_tests {
         assert_pattern_range(&patterns, "からこそ", 1, 6); // だからこそ
     }
 }
+
+// ========== あるいは (or/alternatively) ==========
+// Pattern: あるいは (or / alternatively / possibly)
+// Data source: grammar_points_data.json["あるいは"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + か + あるいは
+//   standard[1]: い-Adjective + か + あるいは
+//   standard[2]: な-Adjective + か + あるいは
+//   standard[3]: Noun + (か) + あるいは (か is optional)
+//   standard[4]: あるいは + Phrase + かもしれない
+
+mod aruiwa_tests {
+    use super::*;
+
+    // Test: Verb + か + あるいは
+    #[test]
+    fn test_aruiwa_verb() {
+        let sentence = "運動をさせるかあるいは餌を減らしてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あるいは");
+        assert_pattern_range(&patterns, "あるいは", 6, 11); // かあるいは
+    }
+
+    // Test: い-Adjective + か + あるいは
+    #[test]
+    fn test_aruiwa_i_adjective() {
+        let sentence = "パソコンの動作が遅いかあるいは電源が点かなくなった場合は、私達が直します";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あるいは");
+        assert_pattern_range(&patterns, "あるいは", 10, 15); // かあるいは
+    }
+
+    // Test: な-Adjective + か + あるいは
+    #[test]
+    fn test_aruiwa_na_adjective() {
+        let sentence = "有名かあるいは綺麗であれば誰でも入れるらしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あるいは");
+        assert_pattern_range(&patterns, "あるいは", 2, 7); // かあるいは
+    }
+
+    // Test: Noun + (か) + あるいは (without か)
+    #[test]
+    fn test_aruiwa_noun_without_ka() {
+        let sentence = "牛乳あるいはチーズが使われている料理は食べられません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あるいは");
+        assert_pattern_range(&patterns, "あるいは", 2, 6); // あるいは (without か)
+    }
+
+    // Test: Noun + か + あるいは (with か)
+    #[test]
+    fn test_aruiwa_noun_with_ka() {
+        let sentence = "土曜日かあるいは日曜日までには終わらせておきます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あるいは");
+        assert_pattern_range(&patterns, "あるいは", 3, 8); // かあるいは
+    }
+
+    // Test: あるいは + Phrase + かもしれない (あるいは at beginning)
+    #[test]
+    fn test_aruiwa_phrase_kamoshirenai() {
+        let sentence = "月曜日あるいは火曜日に新しい生徒が来るかもしれない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あるいは");
+        assert_pattern_range(&patterns, "あるいは", 3, 7); // あるいは (without か)
+    }
+}

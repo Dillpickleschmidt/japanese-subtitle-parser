@@ -4258,13 +4258,13 @@
   {
     "pattern_name": "あるいは",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "あるいは is a construction in Japanese that is used as a 接続語（せつぞくご） (conjunction) [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null

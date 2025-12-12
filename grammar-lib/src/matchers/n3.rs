@@ -1360,3 +1360,31 @@ pub fn uff5e_ha_uff5e_tonatteiru() -> Vec<TokenMatcher> {
 pub fn sayuusuru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
+
+// Pattern: あるいは (or/alternatively)
+// Structures: (Optional か) + あるいは
+pub fn aruiwa() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct AruiwaMatcher;
+    impl Matcher for AruiwaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あるいは"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(AruiwaMatcher)),
+    ]
+}

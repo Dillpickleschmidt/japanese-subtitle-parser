@@ -2820,6 +2820,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    Aruiwa {
+        name: "あるいは",
+        matcher_fn: crate::matchers::n3::aruiwa,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Bakari {
         name: "ばかり",
         matcher_fn: crate::matchers::n3::bakari,
