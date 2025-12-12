@@ -3,19 +3,20 @@
 ## Session 69 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (うちに - while/during)
-**Patterns completed**: 1 new N3 pattern (temporal expression)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 426 (was 422)
+**Status**: Two N3 patterns fully implemented (うちに + おきに)
+**Patterns completed**: 2 new N3 patterns (temporal/interval expressions)
+**Tests added**: 7 comprehensive tests (4 + 3)
+**Total tests**: 429 (was 422)
 
 ### Accomplishments
-1. ✅ Implemented うちに pattern (N3)
-2. ✅ All 4 structure variants tested and passing with proper range assertions
-3. ✅ No test regressions - all 426 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+1. ✅ Implemented うちに pattern (N3) - 4 structure variants
+2. ✅ Implemented おきに pattern (N3) - interval/frequency expression
+3. ✅ All 7 tests passing with proper range assertions
+4. ✅ No test regressions - all 429 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### うちに (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs
@@ -43,6 +44,30 @@
 - **Pattern ranges**: Includes attributive marker + うち + に
   - Examples: 会ううちに (4-9), 熱いうちに (0-5), なうちに (10-14), のうちに (1-5)
 
+#### おきに (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs
+- **Tests**: 3 variants, all passing in n3_patterns.rs
+  - test_okini_day_interval (一日おきに - day counter)
+  - test_okini_hour_interval (２時間おきに - hour counter)
+  - test_okini_month_interval (一ヶ月おきに - month counter)
+- **Structure**:
+  - Number + Counter + おきに
+- **Tokenization insights**:
+  - Number = 名詞/数
+  - Counter = 名詞/接尾/助数詞
+  - おき = 名詞/接尾/一般
+  - に = 助詞/格助詞/一般
+- **Implementation**: 4-token matcher with specific POS checking
+  - NumberMatcher: Matches 名詞/数
+  - CounterMatcher: Matches 名詞/接尾/助数詞
+  - OkiMatcher: Matches おき as 名詞/接尾
+  - NiCaseParticleMatcher: Matches に as 助詞/格助詞
+- **Meaning**: "at intervals of / every (X)" - expresses frequency or intervals
+- **Usage**: Common N3 expression for describing recurring events at specific intervals
+- **Pattern priority**: 3 (construction pattern - N3 level)
+- **Pattern ranges**: Includes number + counter + おきに
+  - Examples: 一日おきに (4-9), ２時間おきに (2-8), 一ヶ月おきに (0-6)
+
 ### Technical Details
 - **Pattern priority**: 3 (construction pattern - N3 level)
 - **Test coverage**: All 4 structure variants from grammar_points_data.json
@@ -55,27 +80,34 @@
 - **Pattern range**: Full grammatical construction from attributive marker through に
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 426/426 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~120 (tests + matcher + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 7 (4 for うちに + 3 for おきに)
+- **Tests passing**: 429/429 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~215 (tests + matchers + feature_list updates)
+
+### Key Insights
+- Both patterns are N3-level temporal/frequency expressions
+- うちに has 4 structure variants (verb, い-adj, な-adj, noun)
+- おきに has 1 structure (number + counter), tested with multiple counter types
+- Both use 3-4 token matchers with precise POS tag checking
+- Test-first workflow (print_debug → analyze → implement) worked perfectly
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 construction patterns to implement**:
-1. おきに - interval/frequency expression
-2. あまり - "excess / too much"
-3. あるいは - "or / alternatively" conjunction
-4. いくら〜でも - "no matter how much"
-5. Verb[volitional]とする - "try to / be about to"
-6. かけ - incomplete/unfinished action
+1. あまり - "excess / too much"
+2. あるいは - "or / alternatively" conjunction
+3. いくら〜でも - "no matter how much"
+4. Verb[volitional]とする - "try to / be about to"
+5. かけ - incomplete/unfinished action
+6. あまりに - "excessively"
 
 **Recommendation**: Continue with concrete N3 patterns that have clear structure variants.
 
 ### Environment Status
-- ✅ All 426 tests passing
+- ✅ All 429 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
