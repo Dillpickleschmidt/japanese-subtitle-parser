@@ -4262,3 +4262,70 @@ mod suru_tests {
         assert_pattern_range(&patterns, "する", 6, 9); // しない
     }
 }
+
+// ========== もらう (to receive/get from someone) ==========
+// Pattern: もらう (to receive)
+// Data source: grammar_points_data.json["もらう"]
+//
+// Structure variants to test:
+//   standard[0-2]: Various word orders with Giver+に, Recipient+は/が, Object+を
+//   polite[0-2]: Same structures with もらいます
+
+mod morau_tests {
+    use super::*;
+
+    // Basic present (もらう)
+    #[test]
+    fn test_morau_present() {
+        let sentence = "誕生日にプレゼントをもらう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もらう");
+        assert_pattern_range(&patterns, "もらう", 10, 13); // もらう
+    }
+
+    // Past tense (もらった)
+    #[test]
+    fn test_morau_past() {
+        let sentence = "駅でティッシュをもらったけど欲しい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もらう");
+        assert_pattern_range(&patterns, "もらう", 8, 12); // もらった
+    }
+
+    // Polite form (もらいます)
+    #[test]
+    fn test_morau_polite() {
+        let sentence = "母からお小遣いをもらいます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もらう");
+        assert_pattern_range(&patterns, "もらう", 8, 13); // もらいます
+    }
+
+    // Polite past (もらいました)
+    #[test]
+    fn test_morau_polite_past() {
+        let sentence = "お正月におばあちゃんからお金をもらいました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もらう");
+        assert_pattern_range(&patterns, "もらう", 15, 21); // もらいました
+    }
+
+    // Te-form (もらって)
+    #[test]
+    fn test_morau_te_form() {
+        let sentence = "彼女に手作りのケーキをもらって嬉しかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もらう");
+        assert_pattern_range(&patterns, "もらう", 11, 14); // もらっ (stem before て)
+    }
+}

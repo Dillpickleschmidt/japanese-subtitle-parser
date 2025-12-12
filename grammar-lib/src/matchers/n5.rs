@@ -3058,8 +3058,24 @@ pub fn kureru() -> Vec<TokenMatcher> {
 }
 
 // Pattern: もらう
+// Pattern: もらう (to receive/get from someone)
+// Structures: もらう/もらいます/もらった/もらって (various conjugations)
 pub fn morau() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match もらう verb (base_form = もらう, conjugation type = 五段・ワ行促音便)
+    #[derive(Debug)]
+    struct MorauMatcher;
+    impl Matcher for MorauMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "もらう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(4).is_some_and(|f| f.contains("五段・ワ行"))
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(MorauMatcher))]
 }
 
 // Pattern: けれども
