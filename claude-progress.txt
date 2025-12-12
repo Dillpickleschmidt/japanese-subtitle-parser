@@ -3,19 +3,20 @@
 ## Session 96 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (すると)
-**Patterns completed**: 1 new N3 pattern (then/upon that conjunction)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 597 (was 593 at start)
+**Status**: Two N3 patterns fully implemented (すると + そうすると)
+**Patterns completed**: 2 new N3 patterns (related conjunctions)
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 601 (was 593 at start)
 
 ### Accomplishments
 1. ✅ Implemented すると pattern (N3) - "then/upon that/in that case"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 597 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented そうすると pattern (N3) - "then/if you do that" (full form of すると)
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 601 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### すると (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (line 235-267)
@@ -40,25 +41,56 @@
   - すると (chars 6-9 in １９歳なの？すると、大学１年生でしょう？)
   - すると (chars 17-20 in お祖母ちゃんが川で洗濯をしていた。すると、川の向こうから桃が流れてきた)
 
+#### そうすると (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 268-311)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod sousuruto_tests)
+  - test_sousuruto_running (もう少し遅く走ってみれば。そうすると、もっと長い距離走れるよ - Try to run a little slower. Once you do that, you will be able to run a longer distance)
+  - test_sousuruto_roasting (食べる前に軽く炙ってください。そうすると、もっと美味しく食べれます - Please roast before eating. Having done that, it will taste even more delicious)
+  - test_sousuruto_fishing (この餌を使ってみ。そうすると、もっと大きい魚が釣れるよ - Try using this bait. If you do so, you'll be able to catch a bigger fish)
+  - test_sousuruto_conclusion (１９９３年生まれなんですか？そうすると、２９歳と言う事ですね - You were born in 1993? So that means that you are 29, right?)
+- **Structure**: そう + する + と (only 1 structure variant)
+- **Tokenization insights**:
+  - そう = 副詞/助詞類接続 (adverb meaning "like that/as such")
+  - する = 動詞/自立, base=する, 基本形 (verb "suru" in base form)
+  - と = 助詞/接続助詞 (conjunction particle)
+  - Pattern is a conjunction that appears at sentence beginning after a previous statement
+- **Implementation**: 3-token matcher
+  - SouAdverbMatcher - Matches そう as 副詞/助詞類接続
+  - SuruVerbMatcher - Matches する as 動詞/自立/基本形
+  - ToConjunctionMatcher - Matches と as 助詞/接続助詞
+- **Meaning**: "then/if you do that/in that case" - full form of すると, indicates result of previous statement
+- **Pattern priority**: 3 (high-priority N3 construction)
+- **Pattern ranges**: Include そう + する + と
+  - そうすると (chars 13-18 in もう少し遅く走ってみれば。そうすると、もっと長い距離走れるよ)
+  - そうすると (chars 15-20 in 食べる前に軽く炙ってください。そうすると、もっと美味しく食べれます)
+  - そうすると (chars 9-14 in この餌を使ってみ。そうすると、もっと大きい魚が釣れるよ)
+  - そうすると (chars 14-19 in １９９３年生まれなんですか？そうすると、２９歳と言う事ですね)
+
 ### Technical Details
-- **Pattern priority**: 3 (high-priority N3 pattern)
-- **Test coverage**: 1 structure variant from grammar_points_data.json
-  - Phrase。すると + (Result) Phrase (4 tests covering different contexts: uncontrollable results, gathering, drawing conclusions, story context)
+- **Pattern priority**: Both patterns priority 3 (high-priority N3 patterns)
+- **Test coverage**: 1 structure variant each from grammar_points_data.json
+  - すると: Phrase。すると + (Result) Phrase (4 tests)
+  - そうすると: Phrase (A)。 そうすると + (Result) Phrase (4 tests)
 - **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
-- **Key insight**: Simple 2-token conjunction pattern, always appears at sentence beginning
-- **Note**: Pattern was already declared in patterns.rs, only needed matcher implementation
+- **Key insights**:
+  - すると is 2-token pattern (する + と)
+  - そうすると is 3-token pattern (そう + する + と) - full form of すると
+  - Both patterns appear at sentence beginning after a previous statement
+  - Both indicate either uncontrollable results or drawing conclusions
+- **Note**: Both patterns were already declared in patterns.rs, only needed matcher implementations
 - **Usage note**: The result should be either something speaker has no control over, or a conclusion/determination the speaker wants to confirm
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 597/597 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~111 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 601/601 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~224 (2 matcher implementations + 8 tests + 2 feature_list updates)
 
 ### Key Insights
-- すると is an abbreviation of そうすると
-- Very similar pattern to さて - both are conjunctions at sentence beginning
+- すると is an abbreviation of そうすると - implemented both in same session
+- Both are conjunctions that appear at sentence beginning
+- Very similar to さて pattern - all are sentence-beginning conjunctions
 - Used to highlight occurrence due to circumstances in previous statement
 - All test sentences are realistic and subtitle-quality
 
@@ -66,19 +98,19 @@
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
-1. そうすると - "then/in that case" (related to すると, likely similar implementation)
-2. ずに - "without doing" (verb conjugation pattern)
-3. さえ - emphasis particle "even" (6 structures - more complex)
-4. ずっと② - "by far" (different from ずっと① "continuously")
-5. せいで - "because of/due to" (causative pattern)
+1. ずに - "without doing" (verb conjugation pattern)
+2. さえ - emphasis particle "even" (6 structures - more complex)
+3. ずっと② - "by far" (different from ずっと① "continuously")
+4. せいで - "because of/due to" (causative pattern)
+5. ことなの - "the thing is..." (8+8 structures - very complex)
 
-**Recommendation**: Continue with "そうすると" as it's closely related to すると we just implemented, or "ずに" which is a fundamental N3 verb pattern.
+**Recommendation**: Continue with "ずに" as it's a fundamental N3 verb pattern with simpler structure (likely 1-2 variants), or other simpler patterns before tackling complex ones like さえ (6 structures) or ことなの (16 structures).
 
 ### Environment Status
-- ✅ All 597 tests passing
+- ✅ All 601 tests passing
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next session or to continue implementing
 
 ---
