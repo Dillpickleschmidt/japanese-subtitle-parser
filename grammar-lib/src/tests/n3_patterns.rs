@@ -1893,3 +1893,74 @@ mod kara_iuto_tests {
         assert_pattern_range(&patterns, "から言うと", 2, 9); // 結果から言って
     }
 }
+
+// ========== Noun＋型 (type/style/model) ==========
+// Pattern: Noun＋型 (type, style, model, shape)
+// Data source: grammar_points_data.json["Noun＋型"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + がた (direct attachment with 連濁)
+//   standard[1]: Noun + の + かた (with の particle)
+//   standard[2]: Noun + がた + の + Noun (modifying another noun)
+//   standard[3]: い-Adjective + かた (adjective stem)
+//   standard[4]: けい (Chinese reading in compounds)
+
+mod noun_kata_tests {
+    use super::*;
+
+    // Test: Noun + がた (direct attachment with rendaku)
+    #[test]
+    fn test_noun_gata_direct() {
+        let sentence = "この紙を星がたに切ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun＋型");
+        assert_pattern_range(&patterns, "Noun＋型", 4, 7); // 星がた
+    }
+
+    // Test: の + かた (with の particle as preceding element)
+    // Note: After の particle, かた (not がた) is used
+    #[test]
+    fn test_no_kata() {
+        let sentence = "あのタイプのかたは最近人気がありますよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun＋型");
+        assert_pattern_range(&patterns, "Noun＋型", 5, 8); // のかた
+    }
+
+    // Test: Noun + がた + の + Noun (modifying another noun)
+    #[test]
+    fn test_noun_gata_no_noun() {
+        let sentence = "九十年代には犬がたのロボットのおもちゃが人気だった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun＋型");
+        assert_pattern_range(&patterns, "Noun＋型", 6, 9); // 犬がた
+    }
+
+    // Test: い-Adjective + かた (adjective + かた)
+    #[test]
+    fn test_i_adj_kata() {
+        let sentence = "新しいかたの自転車はいつ発売されますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun＋型");
+        assert_pattern_range(&patterns, "Noun＋型", 0, 5); // 新しいかた
+    }
+
+    // Test: けい (Chinese reading in compound)
+    #[test]
+    fn test_kei_reading() {
+        let sentence = "文型は基本なのでしっかりと勉強しておきましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun＋型");
+        assert_pattern_range(&patterns, "Noun＋型", 0, 2); // 文型
+    }
+}

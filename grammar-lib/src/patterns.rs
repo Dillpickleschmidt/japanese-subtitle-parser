@@ -2620,6 +2620,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    NountasukataCompound {
+        name: "Noun＋型",
+        matcher_fn: crate::matchers::n3::nountasukata_compound,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Tegoran {
         name: "てごらん",
         matcher_fn: crate::matchers::n3::tegoran,

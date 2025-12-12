@@ -4132,13 +4132,13 @@
   {
     "pattern_name": "Noun＋型",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "型（がた） , or sometimes 形（がた）, are two kanji that are often used as a suffix , to identify that something is 'shaped', o... [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

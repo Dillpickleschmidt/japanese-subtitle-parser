@@ -247,9 +247,60 @@ pub fn nohaxnohouda() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Noun＋型
+// Pattern: Noun＋型 (split form: Noun/Adjective + がた/かた)
+// Structures: Noun + がた, い-Adj + かた, Noun + の + かた
 pub fn nountasukata() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NounAdjOrNoMatcher;
+    impl Matcher for NounAdjOrNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match: Noun, Adjective, or の particle (not determiners)
+            if token.pos.first().is_some_and(|pos| pos == "名詞") {
+                return true;
+            }
+            if token.pos.first().is_some_and(|pos| pos == "形容詞") {
+                return true;
+            }
+            if token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    #[derive(Debug)]
+    struct KataGataMatcher;
+    impl Matcher for KataGataMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "がた" || token.surface == "かた")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.base_form == "がた" || token.base_form == "かた")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NounAdjOrNoMatcher)),
+        TokenMatcher::Custom(Arc::new(KataGataMatcher)),
+    ]
+}
+
+// Pattern: Noun＋型 (compound form: ～型 or ～形 as single token)
+// Structures: 文型, etc. (compound nouns ending with 型 or 形)
+pub fn nountasukata_compound() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct KataKeiCompoundMatcher;
+    impl Matcher for KataKeiCompoundMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.base_form.ends_with("型") || token.base_form.ends_with("形"))
+                && token.base_form.len() > 3 // More than just "型" or "形" alone
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KataKeiCompoundMatcher))]
 }
 
 // Pattern: てごらん
