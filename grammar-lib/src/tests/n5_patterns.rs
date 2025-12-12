@@ -2558,3 +2558,34 @@ mod ta_hou_ga_ii_tests {
     }
 }
 
+// ========== ないほうがいい (Should not do) ==========
+// Pattern: ないほうがいい (advice - negative)
+// Data source: grammar_points_data.json["ないほうがいい"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ない] + 方 + が + いい
+//   polite[0]: Verb[ない] + 方 + が + いい + です
+
+mod nai_hou_ga_ii_tests {
+    use super::*;
+
+    #[test]
+    fn test_nai_hou_ga_ii_advice() {
+        let sentence = "あそこは危ないから、行かないほうがいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないほうがいい");
+        assert_pattern_range(&patterns, "ないほうがいい", 10, 19); // 行かないほうがいい
+    }
+
+    #[test]
+    fn test_nai_hou_ga_ii_polite() {
+        let sentence = "それは触らないほうがいいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないほうがいい");
+        assert_pattern_range(&patterns, "ないほうがいい", 3, 14); // 触らないほうがいいです
+    }
+}

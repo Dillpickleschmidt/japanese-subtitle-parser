@@ -1650,9 +1650,65 @@ pub fn tahougaii() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ないほうがいい
+// Pattern: ないほうがいい (should not do - negative advice)
+// Structures: Verb[ない] + 方 + が + いい
 pub fn naihougaii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match verb in 未然形 (negative/irrealis form)
+    #[derive(Debug)]
+    struct NegativeVerbFormMatcher;
+    impl Matcher for NegativeVerbFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "未然形")
+        }
+    }
+
+    // Match ない auxiliary verb
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match ほう as non-independent noun (reuse from たほうがいい)
+    #[derive(Debug)]
+    struct HouMatcher;
+    impl Matcher for HouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほう"
+                && token.base_form == "ほう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match が particle (reuse from たほうがいい)
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NegativeVerbFormMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(HouMatcher)),
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        super::ii_form(),
+    ]
 }
 
 // Pattern: なくちゃ・なきゃ
