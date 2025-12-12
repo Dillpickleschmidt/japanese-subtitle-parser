@@ -1,5 +1,78 @@
 # Grammar-lib Development Progress
 
+## Session 50 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N4 pattern fully implemented (あとで)
+**Patterns completed**: 1 new pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 290 (was 286)
+
+### Accomplishments
+1. ✅ Implemented あとで (after/later) pattern
+2. ✅ All 4 structure variants tested and passing with proper range assertions
+3. ✅ No test regressions - all 290 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### あとで (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs
+- **Tests**: 4 variants, all passing
+  - test_atode_verb_ta (食べたあとで - after eating)
+  - test_atode_noun_no (仕事のあとで - after work)
+  - test_atode_at_start (あとで洗濯もの - later do laundry)
+  - test_atode_verb_no_wa (取るのはあとで - copying is later)
+- **Structures**:
+  - Verb[た] + あとで
+  - Noun + の + あとで
+  - あとで + Phrase (at start)
+  - Verb + のは + あとで
+- **Tokenization insights**:
+  - あと always tokenizes as 名詞/一般 (noun/general)
+  - で after あと can be TWO things:
+    - 助詞/格助詞/一般 (particle: "with/at") - most common
+    - 助動詞 (copula, base=だ: "is") - in constructions like "あとでいい" (later is fine)
+  - Pattern range is just "あと + で" (2 tokens)
+- **Implementation notes**:
+  - Core matcher: あと (名詞/一般) + で (particle OR copula)
+  - Flexible matching handles both particle and copula forms of で
+  - Pattern works regardless of what comes before あとで
+  - Custom matchers: AtoMatcher, DeAfterAtoMatcher
+  - DeAfterAtoMatcher checks for both particle and copula forms
+  - All 4 structure variants reduce to the same tokenization: あと + で
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N4 level)
+- **Test coverage**: All 4 structure variants from grammar_points_data.json
+  - Verb[た] + あとで (past tense verb)
+  - Noun + の + あとで (possessive)
+  - あとで at sentence start (standalone)
+  - Verb + のは + あとで (nominalized verb with topic marker)
+- **Implementation challenge**:
+  - で after あと has dual nature (particle vs copula)
+  - Solution: Custom matcher checks both POS types
+  - Ensures pattern matches in all contexts
+
+### Next Priorities (N4 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. Number + しか〜ない - only/not even
+2. あまり～ない - not very
+3. Question-phrase + か - embedded questions
+4. Verb[よう] - volitional form
+5. てしまう・ちゃう - completion/regret
+6. たら - conditional form
+
+### Environment Status
+- ✅ All 290 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ N4 test file expanded (3 patterns total)
+
+---
+
 ## Session 49 - 2025-12-12
 
 ### ✅ Session Summary
