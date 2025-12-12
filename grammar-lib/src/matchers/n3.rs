@@ -308,9 +308,57 @@ pub fn tegoran() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Particle + の
+// Pattern: Particle + の (nominalization with particles)
+// Structures: Noun + Particle(から/と/へ/で/まで) + の
+// Meaning: Forms a link between two nouns where noun B has qualities described by noun A + particle
 pub fn particle_no() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match particle (から/と/へ/で/まで) that can precede の
+    #[derive(Debug)]
+    struct LinkingParticleMatcher;
+    impl Matcher for LinkingParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match から/と/へ/で as 格助詞 or まで as 副助詞
+            if !["から", "と", "へ", "で", "まで"].contains(&token.surface.as_str()) {
+                return false;
+            }
+
+            // から, と, へ, で are 格助詞
+            if (token.surface == "から" || token.surface == "と"
+                || token.surface == "へ" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") {
+                return true;
+            }
+
+            // まで is 副助詞
+            if token.surface == "まで"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞") {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Match の as nominalizing particle (連体化)
+    #[derive(Debug)]
+    struct NominalizingNoMatcher;
+    impl Matcher for NominalizingNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        super::noun_matcher(), // Preceding noun
+        TokenMatcher::Custom(Arc::new(LinkingParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NominalizingNoMatcher)),
+    ]
 }
 
 // Pattern: である

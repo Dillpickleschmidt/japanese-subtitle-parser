@@ -2146,3 +2146,81 @@ mod ari_tests {
         assert_pattern_range(&patterns, "あり", 0, 8); // めっちゃありです (includes following です)
     }
 }
+
+// ========== Particle + の (nominalization with particles) ==========
+// Pattern: Particle + の (Noun + Particle + の + Noun)
+// Data source: grammar_points_data.json["Particle + の"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + から + の + Noun (from)
+//   standard[1]: Noun + と + の + Noun (with/grouped with)
+//   standard[2]: Noun + へ + の + Noun (toward)
+//   standard[3]: Noun + で + の + Noun (done with/by means of)
+//   standard[4]: Noun + まで + の + Noun (until)
+//
+// Note: The grammar point describes particles (から、と、へ、で、まで) being grouped with の
+// to form a link between two nouns, where noun B has qualities described by noun A + particle.
+
+mod particle_no_tests {
+    use super::*;
+
+    // Test: Noun + から + の + Noun (from)
+    // Example: アメリカからのお土産
+    #[test]
+    fn test_kara_no() {
+        let sentence = "これはアメリカからのお土産です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Particle + の");
+        assert_pattern_range(&patterns, "Particle + の", 3, 10); // アメリカからの
+    }
+
+    // Test: Noun + と + の + Noun (with/grouped with)
+    // Example: 彼との関係
+    #[test]
+    fn test_to_no() {
+        let sentence = "別れた後、彼との関係はどうなるんだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Particle + の");
+        assert_pattern_range(&patterns, "Particle + の", 5, 8); // 彼との
+    }
+
+    // Test: Noun + へ + の + Noun (toward)
+    // Example: 海外への手紙
+    #[test]
+    fn test_e_no() {
+        let sentence = "海外への手紙はこちらのポストにお入れください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Particle + の");
+        assert_pattern_range(&patterns, "Particle + の", 0, 4); // 海外への
+    }
+
+    // Test: Noun + で + の + Noun (done with/by means of)
+    // Example: 車での通勤
+    #[test]
+    fn test_de_no() {
+        let sentence = "環境に悪いので車での通勤は控えてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Particle + の");
+        assert_pattern_range(&patterns, "Particle + の", 7, 10); // 車での
+    }
+
+    // Test: Noun + まで + の + Noun (until)
+    // Example: 出発までの時間
+    #[test]
+    fn test_made_no() {
+        let sentence = "出発までの時間、何をします？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Particle + の");
+        assert_pattern_range(&patterns, "Particle + の", 0, 5); // 出発までの
+    }
+}
