@@ -1,6 +1,6 @@
 # Grammar-lib Development Progress
 
-## Session 63 - 2025-12-12
+## Session 63 - 2025-12-12 (FINAL)
 
 ### ✅ Session Summary
 **Status**: One N5 pattern fully implemented (のなかで～がいちばん～)
@@ -14,6 +14,15 @@
 3. ✅ No test regressions - all 398 tests pass
 4. ✅ Updated feature_list.json
 5. ✅ Clean commit with full documentation
+6. ⚠️ Attempted より～のほうが pattern but encountered Wildcard matcher issues - deferred to next session
+
+### Issues Encountered
+- **より～のほうが pattern**: Spent significant time investigating Wildcard matcher behavior
+  - Pattern works for simple noun comparisons (1 token between より and 方)
+  - Does NOT work for multi-token comparisons (comma + adjective/verb)
+  - Issue appears to be with Wildcard greedy matching or stop_conditions not working as expected
+  - Reverted all changes - pattern requires deeper investigation of Wildcard implementation
+  - **Recommendation**: Either fix Wildcard matcher or use alternative approach (multiple specific patterns)
 
 ### Completed Pattern
 
