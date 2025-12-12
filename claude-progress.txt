@@ -1,5 +1,127 @@
 # Grammar-lib Development Progress
 
+## Session 90 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two N3 patterns fully implemented (〜ようとしない + ～と言っても)
+**Patterns completed**: 2 new N3 patterns (volitional negative + quotative concession)
+**Tests added**: 7 comprehensive tests (3 + 4)
+**Total tests**: 569 (was 562 at start)
+
+### Accomplishments
+1. ✅ Implemented 〜ようとしない pattern (N3) - "shall not / doesn't try to"
+2. ✅ Implemented ～と言っても pattern (N3) - "even though / although I say"
+3. ✅ All 7 tests passing with proper range assertions
+4. ✅ No test regressions - all 569 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### 〜ようとしない (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 1508-1589)
+- **Tests**: 3 variants, all passing in n3_patterns.rs (mod youtoshinai_tests)
+  - test_youtoshinai_standard (聞こうとしない - doesn't try to listen)
+  - test_youtoshinai_kaeru (帰ろうとしない - doesn't try to go home)
+  - test_youtoshinai_polite (勉強しようとしません - doesn't try to study, polite)
+- **Structures**:
+  - Verb[おう] + としない (standard)
+  - Verb[おう] + としません (polite)
+- **Tokenization insights**:
+  - Verb (未然ウ接続) + う (助動詞) + と (格助詞) + し (する 未然形/連用形) + ない/ませ + (ん)
+  - Pattern matches both としない and としません forms
+- **Implementation**: 6-token matcher with optional ん for polite form
+  1. VolitionalVerbMatcher - Verb in 未然ウ接続
+  2. VolitionalAuxiliaryMatcher - う (助動詞)
+  3. ToQuotationMatcher - と (格助詞)
+  4. ShiMatcher - し from する (未然形 or 連用形)
+  5. NaiMaseMatcher - ない or ませ
+  6. Optional NMatcher - ん (for polite negative)
+- **Meaning**: "shall not / doesn't try to" - emphasizes lack of effort or willingness
+- **Pattern priority**: 2 (higher than general Verb[volitional]とする pattern)
+- **Pattern ranges**: Include full construction from verb through negative
+  - 聞こうとしない (chars 14-21)
+  - 帰ろうとしない (chars 6-13)
+  - 勉強しようとしません (chars 6-16)
+- **Note**: More specific than existing "Verb[volitional]とする" pattern, matches only negative forms
+
+#### ～と言っても (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 1591-1659)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod toittemo_tests)
+  - test_toittemo_verb (走るといっても - although I say I run)
+  - test_toittemo_i_adjective (辛いといっても - even though I say it's spicy)
+  - test_toittemo_na_adjective (新鮮だといっても - although I say it's fresh)
+  - test_toittemo_noun (新幹線だといっても - although I say it's shinkansen)
+- **Structures**:
+  - Verb + と言（い）っても
+  - い-Adjective + と言（い）っても
+  - な-Adjective + （だ） + と言（い）っても
+  - Noun + （だ） + と言（い）っても
+- **Tokenization insights**:
+  - Any token + (optional だ) + と (助詞/格助詞/引用) + いっ (いう 連用タ接続) + て (助詞/接続助詞) + も (助詞/係助詞)
+  - だ is optional for verbs/i-adjectives, commonly used with na-adjectives/nouns
+- **Implementation**: 6-token matcher
+  1. TokenMatcher::Any - Verb, Adjective, or Noun
+  2. Optional DaAuxiliaryMatcher - だ (助動詞)
+  3. ToQuotationMatcher - と (助詞/格助詞/引用)
+  4. IuVerbTeMatcher - いっ (いう in て-form)
+  5. TeConjunctionMatcher - て (助詞/接続助詞)
+  6. MoParticleMatcher - も (助詞/係助詞)
+- **Meaning**: "even though / although I say" - clarifies or contrasts statement
+- **Pattern priority**: 1 (standard N3 construction)
+- **Pattern ranges**: Include preceding element + full construction through も
+  - 走るといっても (chars 2-9, verb + construction)
+  - 辛いといっても (chars 0-7, i-adj + construction)
+  - 新鮮だといっても (chars 4-12, na-adj + だ + construction)
+  - 新幹線だといっても (chars 0-9, noun + だ + construction)
+
+### Technical Details
+- **Pattern priority**: 〜ようとしない=2, ～と言っても=1
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - 〜ようとしない: 1 std + 1 pol (3 tests covering different verbs)
+  - ～と言っても: 4 std structures (verb/i-adj/na-adj/noun)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insights**:
+  - 〜ようとしない is more specific than Verb[volitional]とする, only matching negative
+  - ～と言っても accepts any preceding word type with optional だ
+  - と particle must be 引用 type (quotation) for と言っても pattern
+- **Pattern ranges**: Include full construction from initial element through final particle
+
+### Session Statistics
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 7 (3 + 4)
+- **Tests passing**: 569/569 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~289 (tests + 2 matchers + pattern declarations + feature_list updates)
+
+### Key Insights
+- 〜ようとしない builds on existing Verb[volitional]とする pattern with higher priority for negatives
+- ～と言っても uses quotative と particle to introduce concessive meaning
+- Both patterns demonstrate common N3 constructions for nuanced expression
+- Test-first workflow successfully identified all tokenization patterns
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. Particle + の - particle nominalization (1 std structure, likely simple)
+2. ～ようとしない (DONE) ✓
+3. あり - existence/availability pattern
+4. ことなの - "the thing is..." (explanatory, 8+8 structures - complex)
+5. さえ - emphasis particle
+
+**Recommendation**: Continue with "Particle + の" as it's simpler (1 structure) or "あり" which is a fundamental pattern. Save ことなの for later due to its complexity (16 structures).
+
+### Environment Status
+- ✅ All 569 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session
+
+---
+
 ## Session 89 - 2025-12-12
 
 ### ✅ Session Summary
