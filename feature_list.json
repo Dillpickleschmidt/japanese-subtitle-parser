@@ -730,13 +730,13 @@
   {
     "pattern_name": "たほうがいい",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In Japanese, there are several ways to express that something 'should' be done [1 std, 1 pol]",
     "priority": 1,
     "skip_reason": null
@@ -870,13 +870,13 @@
   {
     "pattern_name": "てから",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to specifically express that one thing happens/begins to happen after another thing, てから will be used [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null

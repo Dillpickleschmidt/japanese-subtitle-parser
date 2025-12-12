@@ -2475,3 +2475,86 @@ mod suki_tests {
     }
 }
 
+// ========== てから (After doing) ==========
+// Pattern: てから (after doing)
+// Data source: grammar_points_data.json["てから"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[て] + から
+
+mod te_kara_tests {
+    use super::*;
+
+    #[test]
+    fn test_te_kara_basic() {
+        let sentence = "おやつを食べてから、勉強を始める";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てから");
+        assert_pattern_range(&patterns, "てから", 4, 9); // 食べてから
+    }
+
+    #[test]
+    fn test_te_kara_polite_context() {
+        let sentence = "洗濯をしてから、出かけます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てから");
+        assert_pattern_range(&patterns, "てから", 3, 7); // してから
+    }
+
+    #[test]
+    fn test_te_kara_de_form() {
+        let sentence = "晩ご飯を食べてから、洗い物をする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てから");
+        assert_pattern_range(&patterns, "てから", 4, 9); // 食べてから
+    }
+}
+
+// ========== たほうがいい (Should do / It would be better to) ==========
+// Pattern: たほうがいい (should do, advice)
+// Data source: grammar_points_data.json["たほうがいい"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[た] + 方 + が + いい
+//   polite[0]: Verb[た] + 方 + が + いい + です
+
+mod ta_hou_ga_ii_tests {
+    use super::*;
+
+    #[test]
+    fn test_ta_hou_ga_ii_advice() {
+        let sentence = "警察に言ったほうがいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たほうがいい");
+        assert_pattern_range(&patterns, "たほうがいい", 3, 11); // 言ったほうがいい
+    }
+
+    #[test]
+    fn test_ta_hou_ga_ii_polite() {
+        let sentence = "手を洗ったほうがいいですよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たほうがいい");
+        assert_pattern_range(&patterns, "たほうがいい", 2, 12); // 洗ったほうがいいです
+    }
+
+    #[test]
+    fn test_ta_hou_ga_ii_u_verb() {
+        let sentence = "もっと頑張ったほうがいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たほうがいい");
+        assert_pattern_range(&patterns, "たほうがいい", 3, 12); // 頑張ったほうがいい
+    }
+}
+

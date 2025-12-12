@@ -1125,9 +1125,39 @@ pub fn teiru_u2461() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てから
+// てから: After doing
+// Structures: Verb[て] + から
 pub fn tekara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match て or で particle (conjunction particle)
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match から as case particle (not conjunction particle)
+    // This から indicates "after", not "because"
+    #[derive(Debug)]
+    struct KaraAfterMatcher;
+    impl Matcher for KaraAfterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KaraAfterMatcher)),
+    ]
 }
 
 // Pattern: Verb + て+ B
@@ -1583,9 +1613,41 @@ pub fn nakutehanaranai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たほうがいい
+// たほうがいい: Should do / It would be better to
+// Structures: Verb[た] + 方 + が + いい
 pub fn tahougaii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match ほう as non-independent noun
+    #[derive(Debug)]
+    struct HouMatcher;
+    impl Matcher for HouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほう"
+                && token.base_form == "ほう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match が particle
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        super::past_auxiliary(),
+        TokenMatcher::Custom(Arc::new(HouMatcher)),
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        super::ii_form(),
+    ]
 }
 
 // Pattern: ないほうがいい
