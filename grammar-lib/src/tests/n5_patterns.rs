@@ -4524,3 +4524,64 @@ mod nanika_nanimo_tests {
         assert_pattern_range(&patterns, "なにも", 3, 7); // なんにも
     }
 }
+
+// ========== なくてはならない (Must do - formal) ==========
+// Pattern: なくてはならない (must do, have to)
+// Data source: grammar_points_data.json["なくてはならない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ない] + なくては + ならない
+//   standard[1]: Verb[ない] + なくちゃ + ならない
+//   polite[0]: Verb[ない] + なくては + なりません
+//   polite[1]: Verb[ない] + なくちゃ + なりません
+//
+// Note: This is a double negative construction meaning "must do"
+// Literally: "must not, not do (A)"
+
+mod nakutewa_naranai_tests {
+    use super::*;
+
+    // Standard form: なくてはならない
+    #[test]
+    fn test_nakutewa_naranai_standard() {
+        let sentence = "明日までに宿題を提出しなくてはならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてはならない");
+        assert_pattern_range(&patterns, "なくてはならない", 8, 19); // 提出しなくてはならない
+    }
+
+    // Casual form: なくちゃならない
+    #[test]
+    fn test_nakucha_naranai_casual() {
+        let sentence = "今日は沢山走ったからシャワーを浴びなくちゃならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてはならない");
+        assert_pattern_range(&patterns, "なくてはならない", 15, 25); // 浴びなくちゃならない
+    }
+
+    // Polite form: なくてはなりません
+    #[test]
+    fn test_nakutewa_narimasen_polite() {
+        let sentence = "トムはタカにお金を返さなくてはなりません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてはならない");
+        assert_pattern_range(&patterns, "なくてはならない", 9, 20); // 返さなくてはなりません
+    }
+
+    // Casual polite form: なくちゃなりません
+    #[test]
+    fn test_nakucha_narimasen_casual_polite() {
+        let sentence = "今日は漢字の勉強をしなくちゃなりません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてはならない");
+        assert_pattern_range(&patterns, "なくてはならない", 9, 19); // しなくちゃなりません
+    }
+}

@@ -384,6 +384,14 @@ declare_patterns! {
         jlpt: "n5",
     },
 
+    NakutewaNaranai {
+        name: "なくてはならない",
+        matcher_fn: crate::matchers::n5::nakutewa_naranai,
+        priority: 6,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
     Kuru {
         name: "くる",
         matcher_fn: crate::matchers::n5::kuru,

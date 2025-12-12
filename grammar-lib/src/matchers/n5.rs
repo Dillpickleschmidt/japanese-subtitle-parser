@@ -3400,3 +3400,107 @@ pub fn nanimo() -> Vec<TokenMatcher> {
         )))), // Optional も for two-token pattern
     ]
 }
+
+// ========== なくてはならない (Must do - formal) ==========
+// Pattern: なくてはならない / なくちゃならない (must do, have to)
+// Structures: Verb[未然形] + なく + (ては/ちゃ) + なら + (ない/ません)
+//
+// This is a double negative construction: "must not, not do (A)" = "must do (A)"
+// - なく = negative auxiliary (ない) in 連用テ接続 form
+// - て/ちゃ = conjunctive particle (て) or casual form (ちゃ)
+// - は = topic marker (only in ては form)
+// - なら = なる (to become) in 未然形
+// - ない/ません = negative ending
+
+pub fn nakutewa_naranai() -> Vec<TokenMatcher> {
+    // Match verb in 未然形 (irrealis form)
+    #[derive(Debug)]
+    struct MizenVerbMatcher;
+    impl Matcher for MizenVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "未然形")
+        }
+    }
+
+    // Match なく (negative auxiliary in 連用テ接続)
+    #[derive(Debug)]
+    struct NakuMatcher;
+    impl Matcher for NakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "連用テ接続")
+        }
+    }
+
+    // Match て or ちゃ (conjunctive particle)
+    #[derive(Debug)]
+    struct TeChaParticleMatcher;
+    impl Matcher for TeChaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "ちゃ")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match は (topic marker) - only present in ては form, not in ちゃ form
+    #[derive(Debug)]
+    struct HaTopicMatcher;
+    impl Matcher for HaTopicMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match なら or なり (なる in 未然形 or 連用形)
+    #[derive(Debug)]
+    struct NaruMatcher;
+    impl Matcher for NaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "なら" || token.surface == "なり")
+                && token.base_form == "なる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match ない, ませ, or ん (negative endings)
+    // Explicitly exclude です to prevent incorrect matching
+    #[derive(Debug)]
+    struct NegativeEndingMatcher;
+    impl Matcher for NegativeEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.surface != "です"  // Explicitly exclude です
+                && ((token.surface == "ない" && token.base_form == "ない")
+                    || (token.surface == "ませ" && token.base_form == "ます")
+                    || (token.surface == "ん" && token.base_form == "ん"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MizenVerbMatcher)), // Verb in 未然形
+        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        TokenMatcher::Custom(Arc::new(TeChaParticleMatcher)), // て or ちゃ
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            HaTopicMatcher,
+        )))), // Optional は (only in ては)
+        TokenMatcher::Custom(Arc::new(NaruMatcher)), // なら or なり
+        TokenMatcher::Custom(Arc::new(NegativeEndingMatcher)), // ない or ませ
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NegativeEndingMatcher,
+        )))), // Optional ん (for ません)
+    ]
+}
