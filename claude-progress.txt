@@ -1,5 +1,131 @@
 # Grammar-lib Development Progress
 
+## Session 88 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two N3 patterns fully implemented (いくら〜でも + かけ)
+**Patterns completed**: 2 new N3 patterns (no matter how + half-finished verb suffix)
+**Tests added**: 11 comprehensive tests (4 + 7)
+**Total tests**: 554 (was 550 at start)
+
+### Accomplishments
+1. ✅ Implemented いくら〜でも pattern (N3) - "no matter how much" construction
+2. ✅ Implemented かけ pattern (N3) - "half-finished/about to" verb suffix
+3. ✅ All 11 tests passing with proper range assertions
+4. ✅ No test regressions - all 554 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### いくら〜でも (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 769)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_ikura_demo_verb (いくら言っても - no matter how much I tell)
+  - test_ikura_demo_i_adjective (いくら新しくても - no matter how new)
+  - test_ikura_demo_noun (いくら俺でも - even if it's me)
+  - test_ikura_demo_na_adjective (いくら嫌いでも - no matter how much I dislike)
+- **Structures**:
+  - いくら + Verb[ても]
+  - いくら + い-Adjective[ても]
+  - いくら + Noun + でも
+  - いくら + な-Adjective + でも
+- **Tokenization insights**:
+  - いくら = 副詞/一般 or 名詞/一般
+  - ても = て + も (two tokens)
+  - でも = single token (助詞/副助詞)
+- **Implementation**: 3-token matcher with wildcard
+  1. IkuraMatcher - Matches いくら as adverb or noun
+  2. Wildcard (min: 1, max: 5)
+  3. TemoOrDemoMatcher - Matches も (係助詞) or でも (副助詞)
+- **Meaning**: "no matter how much / however much" - emphasizes quantity or degree
+- **Pattern priority**: 2.0 (N3 level pattern)
+- **Pattern ranges**: Include いくら + phrase + ても/でも
+  - いくら言っても (chars 4-11)
+  - いくら新しくても (chars 0-8)
+  - いくら俺でも (chars 0-6)
+  - いくら嫌いでも (chars 7-14)
+
+#### かけ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 1710 + 1751)
+- **Tests**: 7 variants, all passing in n3_patterns.rs
+  - test_kake_da_unfinished (食べかけだ - half-eaten)
+  - test_kake_da_verge (飲みかけだ - half-drunk)
+  - test_kake_ru_verb (死にかける - about to die)
+  - test_kake_ta_past (飲みかけた - half-drunk, past)
+  - test_kake_no_noun_dying (死にかけの子犬 - dying puppy, compound)
+  - test_kake_no_noun_broken (壊れかけのパソコン - half-broken computer)
+  - test_kake_desu_polite (終わりかけです - almost finished, polite)
+- **Structures**:
+  - Verb[stem] + かけだ
+  - Verb[stem] + かける
+  - Verb[stem] + かけの + Noun
+- **Tokenization insights**:
+  - Split form: 食べ (verb) + かけ (動詞/非自立, base="かける")
+  - Compound form: 死にかけ (single verb with base="死にかける")
+  - Two separate patterns needed for different tokenizations
+- **Implementation**: Two patterns (split + compound)
+  1. kake() - VerbStemMatcher + KakeSplitMatcher (2 tokens)
+  2. kake_compound() - KakeCompoundMatcher (1 token)
+- **Meaning**: "half-finished / about to / on the verge of" - suspended action
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**: Include verb stem + かけ
+  - 食べかけだ (chars 2-7)
+  - 飲みかけだ (chars 5-10)
+  - 死にかける (chars 4-9)
+  - 飲みかけた (chars 0-5)
+  - 死にかけ (chars 2-6, compound)
+  - 壊れかけ (chars 3-7)
+  - 終わりかけです (chars 0-7)
+
+### Technical Details
+- **Pattern priority**: いくら〜でも=2.0, かけ=1
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - いくら〜でも: 4 variants (Verb[ても], い-Adj[ても], Noun+でも, な-Adj+でも)
+  - かけ: 6 variants (3 standard + 3 polite forms, plus compound tokenization)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insights**:
+  - いくら〜でも handles both ても (2 tokens) and でも (1 token) patterns
+  - かけ requires separate patterns for split vs compound tokenization
+  - Compound verbs like 死にかける must be matched as single tokens
+- **Pattern ranges**: Include full construction from initial element through final particle/verb
+
+### Session Statistics
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 11 (4 new + 7 updated from print_debug)
+- **Tests passing**: 554/554 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~285 (tests + 2 matchers + pattern declarations + feature_list updates)
+
+### Key Insights
+- いくら〜でも is a fundamental N3 pattern for expressing "no matter how much"
+- かけ is a versatile verb suffix for incomplete/suspended actions
+- Wildcard matchers are effective for patterns with variable intervening content
+- Compound tokenization requires separate pattern declarations
+- Test-first workflow successfully identified all tokenization edge cases
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. から言うと - "from the perspective of"
+2. Noun＋型 - "type/style" suffix pattern
+3. ～と言っても - "even though you say..."
+4. ～ようとしない - "doesn't try to"
+5. あり - existence/availability pattern
+
+**Recommendation**: Continue with "から言うと" as it's a common N3 pattern for expressing perspective.
+
+### Environment Status
+- ✅ All 554 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session
+
+---
+
 ## Session 87 - 2025-12-12
 
 ### ✅ Session Summary
