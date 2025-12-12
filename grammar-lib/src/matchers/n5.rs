@@ -1851,3 +1851,81 @@ pub fn keredomo() -> Vec<TokenMatcher> {
 pub fn tsumorida() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
+
+// Pattern: ～になる・～くなる (become)
+// Structures:
+//   い-Adjective[く] + なる
+//   な-Adjective/Noun + に + なる
+pub fn ni_naru_ku_naru() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match い-adjective in く form (連用テ接続)
+    #[derive(Debug)]
+    struct IAdjKuFormMatcher;
+    impl Matcher for IAdjKuFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続")
+        }
+    }
+
+    // Match noun or な-adjective (形容動詞語幹)
+    #[derive(Debug)]
+    struct NounOrNaAdjMatcher;
+    impl Matcher for NounOrNaAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|p| p == "形容動詞語幹")
+                    || token.pos.get(1).is_some_and(|p| p == "一般")
+                    || token.pos.get(1).is_some_and(|p| p == "サ変接続")
+                    || token.pos.get(1).is_some_and(|p| p == "固有名詞"))
+        }
+    }
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match なる verb (any conjugation)
+    #[derive(Debug)]
+    struct NaruVerbMatcher;
+    impl Matcher for NaruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "なる" && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Two patterns in one:
+    // 1. い-Adj[く] + なる
+    // 2. Noun/な-Adj + に + なる
+    // We'll use Custom matcher that tries both patterns
+    #[derive(Debug)]
+    struct KuNaruOrNiNaruMatcher;
+    impl Matcher for KuNaruOrNiNaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match い-adj in く form OR noun/な-adj
+            (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続"))
+                || (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && (token.pos.get(1).is_some_and(|p| p == "形容動詞語幹")
+                        || token.pos.get(1).is_some_and(|p| p == "一般")
+                        || token.pos.get(1).is_some_and(|p| p == "サ変接続")
+                        || token.pos.get(1).is_some_and(|p| p == "固有名詞")))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KuNaruOrNiNaruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(NaruVerbMatcher)),
+    ]
+}

@@ -2368,3 +2368,68 @@ mod tari_tarisuru_tests {
     }
 }
 
+// ========== ～になる・～くなる (Become) ==========
+// Pattern: になる・くなる (change of state, becoming)
+// Data source: grammar_points_data.json["～になる・～くなる"]
+//
+// Structure variants to test:
+//   standard[0]: な-Adjective + に + なる
+//   standard[1]: い-Adjective[く] + なる
+//   standard[2]: Noun + に + なる
+//   standard[3]: Exception - いい → よくなる
+//   polite[0-2]: Same forms + なります
+
+mod ni_naru_ku_naru_tests {
+    use super::*;
+
+    #[test]
+    fn test_i_adjective_ku_naru() {
+        let sentence = "お茶が冷たくなったよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～になる・～くなる");
+        assert_pattern_range(&patterns, "～になる・～くなる", 3, 9); // 冷たくなった
+    }
+
+    #[test]
+    fn test_i_adjective_ku_naru_variant() {
+        let sentence = "コーヒーが温くなった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～になる・～くなる");
+        assert_pattern_range(&patterns, "～になる・～くなる", 5, 10); // 温くなった
+    }
+
+    #[test]
+    fn test_noun_ni_naru() {
+        let sentence = "私は医者にならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～になる・～くなる");
+        assert_pattern_range(&patterns, "～になる・～くなる", 2, 9); // 医者にならない
+    }
+
+    #[test]
+    fn test_ii_exception_yoku_naru() {
+        let sentence = "勉強してるから頭が良くなる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～になる・～くなる");
+        assert_pattern_range(&patterns, "～になる・～くなる", 9, 13); // 良くなる
+    }
+
+    #[test]
+    fn test_na_adjective_ni_naru_polite() {
+        let sentence = "部屋が綺麗になります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～になる・～くなる");
+        assert_pattern_range(&patterns, "～になる・～くなる", 3, 10); // 綺麗になります
+    }
+}
+

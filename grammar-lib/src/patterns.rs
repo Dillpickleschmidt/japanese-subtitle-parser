@@ -976,6 +976,14 @@ declare_patterns! {
         jlpt: "n5",
     },
 
+    NiNaruKuNaru {
+        name: "～になる・～くなる",
+        matcher_fn: crate::matchers::n5::ni_naru_ku_naru,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
     // ========== N4 PATTERNS ==========
 
     To {

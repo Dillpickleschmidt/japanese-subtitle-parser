@@ -1598,13 +1598,13 @@
   {
     "pattern_name": "～になる・～くなる",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "になる (with な-Adjectives ), or くなる (with い-Adjectives ) is an expression used in Japanese to show that something is 'be... [5 std, 5 pol]",
     "priority": 1,
     "skip_reason": null
