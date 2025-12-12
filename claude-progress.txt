@@ -1,5 +1,76 @@
 # Grammar-lib Development Progress
 
+## Session 60 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N5 pattern fully implemented (な - prohibitive "don't do X")
+**Patterns completed**: 1 new pattern (prohibitive command)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 367 (was 363)
+
+### Accomplishments
+1. ✅ Implemented な (prohibitive - don't!) pattern (N5)
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ No test regressions - all 367 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### な (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing in n5_patterns.rs
+  - test_na_prohibitive_danger (危険！触るな！ - danger warning)
+  - test_na_prohibitive_mother (「家の中で走るな！」と母が言った - quoted speech)
+  - test_na_prohibitive_casual (そんなこと言うな - casual context)
+  - test_na_prohibitive_decide (勝手に決めるな - different verb)
+- **Structure**: Verb[基本形] + な
+- **Tokenization**:
+  - Verb in 基本形 (dictionary form) - e.g., 触る, 走る, 言う, 決める
+  - な = 助詞/終助詞 (final particle)
+- **Implementation**: Simple 2-token matcher
+  - Custom DictionaryFormVerbMatcher: Matches verb with features[5]="基本形"
+  - Custom NaProhibitiveMatcher: Matches な as 助詞/終助詞
+- **Meaning**: Strong negative command "don't do X!" - prohibitive
+- **Usage**: Casual/informal command to strongly tell someone not to do something
+- **Pattern priority**: 1 (construction pattern - N5 level)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Test coverage**: Multiple contexts (danger warning, quoted speech, casual)
+- **Implementation approach**: Straightforward verb + particle matcher
+- **Pattern range**: Full construction from verb to な (e.g., 触るな, 走るな)
+- **Similar patterns**: ないで (softer negative request), なさい (positive command)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N5)
+- **Tests written**: 4
+- **Tests passing**: 367/367 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~100 (tests + matcher + pattern declaration)
+
+### Next Priorities
+Continue with N5 patterns (29 remaining):
+
+**Concrete N5 patterns to implement**:
+1. で - particle indicating means/method/location (Noun + で)
+2. ている② - resultative state (has done/is in state of)
+3. ている③ - habitual action (regularly does)
+4. な-Adjective + Noun - na-adjective modifying noun
+5. Verb［た・ている］+ Noun - relative clause with verb
+
+**Note**: Avoid overly broad patterns like "Verbs (Non-past)", "い-Adjectives", etc.
+Focus on concrete, structurally distinguishable patterns.
+
+### Environment Status
+- ✅ All 367 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session or to continue
+
+---
+
 ## Session 59 - 2025-12-12
 
 ### ✅ Session Summary
