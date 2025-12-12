@@ -977,9 +977,47 @@ pub fn warini() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Verb[volitional]とする
+// Pattern: Verb[volitional]とする (try to / be about to)
+// Structures: Verb[未然ウ接続] + う + と + する/します/した/etc.
 pub fn verb_volitional_tosuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Match verb in volitional form (未然ウ接続)
+    #[derive(Debug)]
+    struct VolitionalVerbMatcher;
+    impl Matcher for VolitionalVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然ウ接続")
+        }
+    }
+
+    // Match う as auxiliary verb (助動詞/不変化型/基本形)
+    #[derive(Debug)]
+    struct VolitionalAuxiliaryMatcher;
+    impl Matcher for VolitionalAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match と as quotation particle
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VolitionalVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(VolitionalAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::specific_verb("する"),
+    ]
 }
 
 // Pattern: Verb[volitional] + としたが

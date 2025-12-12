@@ -634,3 +634,59 @@ mod kanari_tests {
         assert_pattern_range(&patterns, "かなり + の + Noun", 6, 11); // かなりの人
     }
 }
+
+// ========== Verb[volitional]とする (try to / be about to) ==========
+// Pattern: Verb[volitional]とする (try to / be about to)
+// Data source: grammar_points_data.json["Verb[volitional]とする"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[おう] + とする
+//   polite[0]: Verb[おう] + とします
+
+mod verb_volitional_tosuru_tests {
+    use super::*;
+
+    // Test: Verb[volitional] + とする (standard form)
+    #[test]
+    fn test_volitional_tosuru_standard() {
+        let sentence = "この子はなんでも食べようとするから、お菓子は隠してね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional]とする");
+        assert_pattern_range(&patterns, "Verb[volitional]とする", 8, 15); // 食べようとする
+    }
+
+    // Test: Verb[volitional] + とする (past tense)
+    #[test]
+    fn test_volitional_tosuru_past() {
+        let sentence = "今年は毎日日本語の勉強をしようとしたが、時間がなくて出来なかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional]とする");
+        assert_pattern_range(&patterns, "Verb[volitional]とする", 12, 18); // しようとした
+    }
+
+    // Test: Verb[volitional] + とします (polite form)
+    #[test]
+    fn test_volitional_tosuru_polite() {
+        let sentence = "明日から毎朝早く起きようとします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional]とする");
+        assert_pattern_range(&patterns, "Verb[volitional]とする", 8, 16); // 起きようとします
+    }
+
+    // Test: Verb[volitional] + としたら (conditional + interruption meaning)
+    #[test]
+    fn test_volitional_tosuru_tara() {
+        let sentence = "家を出ようとしたら、急に雨が降り始めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional]とする");
+        assert_pattern_range(&patterns, "Verb[volitional]とする", 2, 9); // 出ようとしたら
+    }
+}
