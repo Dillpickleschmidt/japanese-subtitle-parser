@@ -1,12 +1,85 @@
 # Grammar-lib Development Progress
 
+## Session 47 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One pattern fully implemented (誰か・どこか・誰も・どこも)
+**Patterns completed**: 1 new pattern
+**Tests added**: 8 comprehensive tests
+**Total tests**: 273 (was 265)
+
+### Accomplishments
+1. ✅ Implemented 誰か・どこか・誰も・どこも (someone/somewhere/no one/nowhere) pattern
+2. ✅ All 8 test variants passing with proper range assertions
+3. ✅ No test regressions - all 273 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Patterns
+
+#### 誰か・どこか・誰も・どこも (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 8 variants, all passing
+  - test_dareka_someone (誰か - someone)
+  - test_dokoka_somewhere (どこかへ - to somewhere)
+  - test_daremo_no_one (誰も - no one)
+  - test_dokomo_nowhere (どこも - nowhere)
+  - test_dareka_ni_to_someone (誰かに - to someone)
+  - test_dokoka_he_to_somewhere (どこかへ - to somewhere)
+  - test_dare_ni_mo_to_no_one (誰にも - to no one)
+  - test_doko_he_mo_to_nowhere (どこへも - to nowhere)
+- **Structures**:
+  1. WH-word + か: 誰か, どこか (someone, somewhere)
+  2. WH-word + も: 誰も, どこも (no one, nowhere)
+  3. WH-word + か + particle: 誰かに, どこかへ, 誰かと
+  4. WH-word + particle + も: 誰にも, どこへも, 誰とも
+- **Tokenization insights**:
+  - 誰, どこ tokenize as 名詞/代名詞/一般 (noun/pronoun/general)
+  - か tokenizes as 助詞/副助詞／並立助詞／終助詞
+  - も tokenizes as 助詞/係助詞
+  - Case particles (へ, に, と) tokenize as 助詞/格助詞
+  - Patterns have variable length (2-3 tokens)
+- **Implementation notes**:
+  - Used flexible matcher with optional third token
+  - Second token matches か OR も OR case particles (へ, に, と)
+  - Third token (optional) matches も OR case particles
+  - Handles all 4 pattern types with single unified matcher
+  - Key insight: か always comes before other particles, も always after
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Test coverage**: All 4 structure variants from grammar_points_data.json
+  - Basic forms: 誰か, どこか, 誰も, どこも
+  - With particles: 誰かに, どこかへ, 誰にも, どこへも
+- **Implementation challenges**:
+  - Variable-length patterns (2 or 3 tokens)
+  - Solution: Optional matcher for third token
+  - Complex logic for second token (か OR も OR particle)
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. より～のほうが - comparison pattern
+2. もらう - to receive (from someone)
+3. くれる - to give (to me/us)
+4. まだ - still/not yet adverb
+5. まえに - before (temporal)
+6. る-Verb conjugations (Dictionary, Negative, Past, Negative-Past)
+
+### Environment Status
+- ✅ All 273 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 46 - 2025-12-12
 
 ### ✅ Session Summary
 **Status**: One pattern fully implemented (てもいい - adjective/noun variant)
 **Patterns completed**: 1 new pattern
 **Tests added**: 6 comprehensive tests
-**Total tests**: 262 (was 256)
+**Total tests**: 265 (was 259)
 
 ### Accomplishments
 1. ✅ Implemented てもいい (it's okay even if - for adjectives and nouns) pattern
