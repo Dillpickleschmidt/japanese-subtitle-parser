@@ -1070,9 +1070,57 @@ pub fn na() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: だけ
+// Pattern: だけ (only/just - limiting particle)
+// Structures: Verb + だけ / い-Adj + だけ / な-Adj + な + だけ / Noun + だけ
 pub fn dake() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だけ particle (副助詞)
+    #[derive(Debug)]
+    struct DakeParticleMatcher;
+    impl Matcher for DakeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match な-adjective stem (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct NaAdjectiveStemMatcher;
+    impl Matcher for NaAdjectiveStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Match な (auxiliary verb, 体言接続 form)
+    #[derive(Debug)]
+    struct NaAuxiliaryMatcher;
+    impl Matcher for NaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // We need to handle both:
+    // 1. Single token + だけ (verb, い-adj, noun)
+    // 2. な-adj stem + な + だけ (two tokens before だけ)
+    //
+    // Since we can't express "one OR two tokens before だけ" in a single pattern,
+    // we'll use a more permissive approach: optionally match な-adj stem, then match
+    // any token (which could be verb/adj/noun OR な), then だけ.
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NaAdjectiveStemMatcher,
+        )))),
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(DakeParticleMatcher)),
+    ]
 }
 
 // Pattern: どれ

@@ -2826,3 +2826,61 @@ mod nakutewa_ikenai_tests {
         assert_pattern_range(&patterns, "なくてはいけない", 7, 18); // 行かなくちゃいけません
     }
 }
+
+// ========== だけ (Only/Just) ==========
+// Pattern: だけ (only/just - limiting particle)
+// Data source: grammar_points_data.json["だけ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + だけ
+//   standard[1]: い-Adjective + だけ
+//   standard[2]: な-Adjective + な + だけ
+//   standard[3]: Noun + だけ
+
+mod dake_tests {
+    use super::*;
+
+    // Verb + だけ (only going to eat)
+    #[test]
+    fn test_dake_verb() {
+        let sentence = "今夜は食べるだけ、何も飲まない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけ");
+        assert_pattern_range(&patterns, "だけ", 3, 8); // 食べるだけ
+    }
+
+    // い-Adjective + だけ (just spicy)
+    #[test]
+    fn test_dake_i_adjective() {
+        let sentence = "このスープは辛いだけだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけ");
+        assert_pattern_range(&patterns, "だけ", 6, 11); // 辛いだけだ (extends with だ)
+    }
+
+    // な-Adjective + な + だけ (just famous)
+    #[test]
+    fn test_dake_na_adjective() {
+        let sentence = "あの人は有名なだけです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけ");
+        assert_pattern_range(&patterns, "だけ", 4, 11); // 有名なだけです (full construction with auxiliary extension)
+    }
+
+    // Noun + だけ (only broccoli)
+    #[test]
+    fn test_dake_noun() {
+        let sentence = "私はブロッコリーだけが嫌いだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけ");
+        assert_pattern_range(&patterns, "だけ", 2, 10); // ブロッコリーだけ
+    }
+}
