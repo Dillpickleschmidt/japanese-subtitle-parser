@@ -2589,3 +2589,34 @@ mod nai_hou_ga_ii_tests {
         assert_pattern_range(&patterns, "ないほうがいい", 3, 14); // 触らないほうがいいです
     }
 }
+
+// ========== てください (Please do) ==========
+// Pattern: てください (polite request)
+// Data source: grammar_points_data.json["てください"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[て] + ください
+
+mod tekudasai_tests {
+    use super::*;
+
+    #[test]
+    fn test_tekudasai_request() {
+        let sentence = "手を洗ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てください");
+        assert_pattern_range(&patterns, "てください", 2, 9); // 洗ってください
+    }
+
+    #[test]
+    fn test_tekudasai_de_form() {
+        let sentence = "これを見てください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てください");
+        assert_pattern_range(&patterns, "てください", 3, 9); // 見てください
+    }
+}

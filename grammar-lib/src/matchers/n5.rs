@@ -1588,9 +1588,39 @@ pub fn verb_temoii() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: てください
+// Pattern: てください (please do - polite request)
+// Structures: Verb[て] + ください
 pub fn tekudasai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::{flexible_verb_form, Matcher};
+
+    // Match て or で (conjunction particle after verb)
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match ください as non-independent verb
+    #[derive(Debug)]
+    struct KudasaiMatcher;
+    impl Matcher for KudasaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ください"
+                && token.base_form == "くださる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KudasaiMatcher)),
+    ]
 }
 
 // Pattern: ないでください
