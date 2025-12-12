@@ -2035,3 +2035,58 @@ mod i_adjective_noun_tests {
     }
 }
 
+// ========== けれども (But/Although - formal) ==========
+// Pattern: けれども (formal conjunction meaning "but/although")
+// Data source: grammar_points_data.json["けれども"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + けれども
+//   standard[1]: い-Adjective + けれども
+//   standard[2]: な-Adjective + だ + けれども
+//   standard[3]: Noun + だ + けれども
+//   polite[0-3]: Same with です forms
+
+mod keredomo_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_keredomo() {
+        let sentence = "私は１０キロ走ったけれども、疲れていません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けれども");
+        assert_pattern_range(&patterns, "けれども", 9, 13); // けれども
+    }
+
+    #[test]
+    fn test_i_adjective_keredomo() {
+        let sentence = "温泉は熱いけれども、気持ちいいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けれども");
+        assert_pattern_range(&patterns, "けれども", 5, 9); // けれども
+    }
+
+    #[test]
+    fn test_na_adjective_keredomo() {
+        let sentence = "あの人は綺麗だけれども、怖いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けれども");
+        assert_pattern_range(&patterns, "けれども", 7, 11); // けれども
+    }
+
+    #[test]
+    fn test_noun_keredomo() {
+        let sentence = "これはゲームだけれども、面白くないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "けれども");
+        assert_pattern_range(&patterns, "けれども", 7, 11); // けれども
+    }
+}
+

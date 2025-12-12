@@ -1679,8 +1679,21 @@ pub fn morau() -> Vec<TokenMatcher> {
 }
 
 // Pattern: けれども
+// Pattern: けれども (but/although - formal)
+// Structures: Sentence + けれども
 pub fn keredomo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KeredomoMatcher;
+    impl Matcher for KeredomoMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "けれども"
+                && token.base_form == "けれども"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KeredomoMatcher))]
 }
 
 // Pattern: つもりだ
