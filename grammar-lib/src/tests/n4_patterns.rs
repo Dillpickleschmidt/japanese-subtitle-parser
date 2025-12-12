@@ -92,3 +92,67 @@ mod number_mo_tests {
         assert_pattern_range(&patterns, "Number + も", 0, 3); // 一回も
     }
 }
+
+// ========== あとで (after/later) ==========
+// Pattern: あとで
+// Data source: grammar_points_data.json["あとで"]
+//
+// Structures to test:
+//   - standard[0]: Verb[た] + あとで
+//   - standard[1]: Noun + の + あとで
+//   - standard[2]: 後（あと）で + Phrase
+//   - standard[3]: Verb + のは + あとで
+//
+// Examples from data:
+//   - 食べたあとで (after eating)
+//   - 仕事のあとで (after work)
+//   - あとで洗濯もの干してね (please hang the laundry later)
+//   - コピーを取るのはあとでいい (it's fine to make copies later)
+#[cfg(test)]
+mod atode_tests {
+    use super::*;
+
+    // Testing structure.standard[0]: Verb[た] + あとで
+    #[test]
+    fn test_atode_verb_ta() {
+        let sentence = "食べたあとで歯を磨いてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あとで");
+        assert_pattern_range(&patterns, "あとで", 3, 6); // あとで
+    }
+
+    // Testing structure.standard[1]: Noun + の + あとで
+    #[test]
+    fn test_atode_noun_no() {
+        let sentence = "仕事のあとで飲み会に行きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あとで");
+        assert_pattern_range(&patterns, "あとで", 3, 6); // あとで
+    }
+
+    // Testing structure.standard[2]: 後（あと）で + Phrase
+    #[test]
+    fn test_atode_at_start() {
+        let sentence = "あとで洗濯もの干してね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あとで");
+        assert_pattern_range(&patterns, "あとで", 0, 3); // あとで
+    }
+
+    // Testing structure.standard[3]: Verb + のは + あとで
+    #[test]
+    fn test_atode_verb_no_wa() {
+        let sentence = "コピーを取るのはあとでいいから、今は上司に電話して";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あとで");
+        assert_pattern_range(&patterns, "あとで", 8, 11); // あとで
+    }
+}

@@ -170,9 +170,68 @@ pub fn goro() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: あとで
+// Pattern: あとで (after/later)
+// Structures:
+// - Verb[た] + あとで
+// - Noun + の + あとで
+// - あとで + Phrase (at start)
+// - Verb + のは + あとで
+//
+// Examples:
+// - 食べたあとで (after eating)
+// - 仕事のあとで (after work)
+// - あとで洗濯もの干してね (please hang the laundry later)
+// - コピーを取るのはあとでいい (it's fine to make copies later)
+//
+// Tokenization pattern:
+// - あと (名詞/一般)
+// - で (助詞/格助詞/一般 OR 助動詞, base=だ)
+//
+// Note: We match "あと + で" regardless of what comes before,
+// since all variants end with this combination.
 pub fn atode() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match あと noun (名詞/一般)
+    #[derive(Debug)]
+    struct AtoMatcher;
+    impl Matcher for AtoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あと"
+                && token.base_form == "あと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match で particle or copula after あと
+    // Can be:
+    // - 助詞/格助詞/一般 (particle: "with/at")
+    // - 助動詞 (copula, base=だ: "is")
+    #[derive(Debug)]
+    struct DeAfterAtoMatcher;
+    impl Matcher for DeAfterAtoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface != "で" {
+                return false;
+            }
+
+            // Check if it's a particle (助詞/格助詞)
+            let is_particle = token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞");
+
+            // Check if it's a copula (助動詞, base=だ)
+            let is_copula = token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ";
+
+            is_particle || is_copula
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AtoMatcher)),
+        TokenMatcher::Custom(Arc::new(DeAfterAtoMatcher)),
+    ]
 }
 
 // Pattern: ていた 
