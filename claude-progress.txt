@@ -1,5 +1,56 @@
 # Grammar-lib Development Progress
 
+## Session 34 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: を pattern fully implemented
+**Patterns completed**: 1 new pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 173 (was 169)
+
+### Accomplishments
+1. ✅ Implemented を (object marker particle) pattern
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ No test regressions - all 173 tests pass
+4. ✅ Updated feature_list.json
+
+### Completed Patterns
+
+#### を (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_direct_object (ラーメンを食べる - direct object)
+  - test_song_object (歌を歌います - object with verb)
+  - test_place_through (公園を歩く - place through which action occurs)
+  - test_building_through (建物の中を走る - complex noun + を)
+- **Structure**: Object (Noun) + を
+- **Tokenization insights**:
+  - を tokenizes as 助詞/格助詞/一般 (particle/case particle)
+  - Works with both direct objects (things acted upon) and places (through which action occurs)
+  - Pattern includes full Noun + を construction
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Matcher approach**: Simple two-token matcher (noun + を particle)
+- **Custom matcher**: WoParticleMatcher checks surface="を" and POS=助詞/格助詞
+- **Range**: Full construction (Noun + を)
+
+### Next Priorities (N5 patterns still needed)
+High-value patterns from feature_list.json:
+1. ～んです・のです - explanatory のです
+2. ～ましょうか - shall we?
+3. ～になる・～くなる - become (change of state)
+4. 好き - to like
+5. る-Verb conjugations (Dictionary, Negative, Past, Negative-Past)
+
+### Environment Status
+- ✅ All 173 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 33 - 2025-12-11
 
 ### ✅ Session Summary
