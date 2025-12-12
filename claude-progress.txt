@@ -3,16 +3,17 @@
 ## Session 38 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One pattern fully implemented (ないほうがいい)
-**Patterns completed**: 1 new pattern
-**Tests added**: 2 comprehensive tests
-**Total tests**: 195 (was 193)
+**Status**: Two patterns fully implemented (ないほうがいい + てください)
+**Patterns completed**: 2 new patterns
+**Tests added**: 4 comprehensive tests
+**Total tests**: 197 (was 193)
 
 ### Accomplishments
 1. ✅ Implemented ないほうがいい (should not do - negative advice) pattern
-2. ✅ All 2 test variants passing with proper range assertions
-3. ✅ No test regressions - all 195 tests pass
-4. ✅ Updated feature_list.json
+2. ✅ Implemented てください (please do - polite request) pattern
+3. ✅ All 4 test variants passing with proper range assertions
+4. ✅ No test regressions - all 197 tests pass
+5. ✅ Updated feature_list.json
 
 ### Completed Patterns
 
@@ -31,28 +32,37 @@
   - Polite form (です) extends automatically
   - Pattern range includes full Verb[ない] + ほう + が + いい construction
 
+#### てください (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 2 variants, all passing
+  - test_tekudasai_request (洗ってください - て form)
+  - test_tekudasai_de_form (見てください - で variant)
+- **Structure**: Verb[て] + ください
+- **Tokenization insights**:
+  - Verb in 連用形 or 連用タ接続
+  - て/で is 助詞/接続助詞 (conjunction particle)
+  - ください tokenizes as 動詞/非自立 with base_form くださる
+  - Pattern range includes full Verb + て/で + ください construction
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern)
+- **Pattern priority**: 1 (construction patterns)
 - **Matcher approach**: Sequential token matching with custom matchers
 - **Custom matchers created**:
-  - NegativeVerbFormMatcher: Matches verb in 未然形 conjugation
-  - NaiAuxiliaryMatcher: Matches ない auxiliary verb
-  - HouMatcher: Matches ほう non-independent noun (reused from たほうがいい)
-  - GaParticleMatcher: Matches が case particle (reused from たほうがいい)
-- **Helper functions used**: ii_form()
+  - ないほうがいい: NegativeVerbFormMatcher, NaiAuxiliaryMatcher, HouMatcher, GaParticleMatcher
+  - てください: TeDeParticleMatcher, KudasaiMatcher
+- **Helper functions used**: flexible_verb_form(), ii_form()
 
 ### Next Priorities (N5 patterns still needed)
 High-value construction patterns from feature_list.json:
-1. てください - please do
-2. ないでください - please don't do
-3. てはいけない - must not do
-4. なくてはいけない - must do
-5. なくてはならない - must do (formal)
-6. ～んです・のです - explanatory のです
-7. ～ましょうか - shall we?
+1. ないでください - please don't do
+2. てはいけない - must not do
+3. なくてはいけない - must do
+4. なくてはならない - must do (formal)
+5. ～んです・のです - explanatory のです
+6. ～ましょうか - shall we?
 
 ### Environment Status
-- ✅ All 195 tests passing
+- ✅ All 197 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
