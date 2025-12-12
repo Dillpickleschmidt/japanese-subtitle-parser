@@ -228,9 +228,21 @@ pub fn yo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(YoParticleMatcher))]
 }
 
-// Pattern: ね
+// Pattern: ね (seeking agreement/confirmation)
+// Structures: Sentence + ね
 pub fn ne() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NeParticleMatcher;
+    impl Matcher for NeParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "ね"
+                && token.base_form == "ね"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NeParticleMatcher))]
 }
 
 // Pattern: る-Verb (Dictionary)

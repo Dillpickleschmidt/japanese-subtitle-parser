@@ -1462,6 +1462,57 @@ mod yo_tests {
     }
 }
 
+// ========== ね (Sentence-ending particle for seeking agreement) ==========
+// Pattern: ね (seeking agreement/confirmation)
+// Data source: grammar_points_data.json["ね"]
+//
+// Structure variants to test:
+//   standard[0]: Sentence + ね
+
+mod ne_tests {
+    use super::*;
+
+    #[test]
+    fn test_ne_with_i_adjective() {
+        let sentence = "今日も暑いね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ね");
+        assert_pattern_range(&patterns, "ね", 5, 6); // ね
+    }
+
+    #[test]
+    fn test_ne_with_verb() {
+        let sentence = "仕事は疲れるね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ね");
+        assert_pattern_range(&patterns, "ね", 6, 7); // ね
+    }
+
+    #[test]
+    fn test_ne_with_na_adjective() {
+        let sentence = "あれは綺麗だね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ね");
+        assert_pattern_range(&patterns, "ね", 6, 7); // ね
+    }
+
+    #[test]
+    fn test_ne_polite() {
+        let sentence = "今日は寒いですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ね");
+        assert_pattern_range(&patterns, "ね", 7, 8); // ね
+    }
+}
+
 // ========== きらい (Dislike) ==========
 // Pattern: きらい (dislike/hate - na-adjective)
 // Data source: grammar_points_data.json["きらい"]
