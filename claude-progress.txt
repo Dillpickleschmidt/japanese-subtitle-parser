@@ -3,17 +3,18 @@
 ## Session 41 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: だけ pattern fully implemented
-**Patterns completed**: 1 new pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 215 (was 211)
+**Status**: Two patterns fully implemented (だけ + だった・でした)
+**Patterns completed**: 2 new patterns
+**Tests added**: 8 comprehensive tests
+**Total tests**: 219 (was 211)
 
 ### Accomplishments
 1. ✅ Implemented だけ (only/just - limiting particle) pattern
-2. ✅ All 4 test variants passing with proper range assertions
-3. ✅ No test regressions - all 215 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented だった・でした (was/were - past copula) pattern
+3. ✅ All 8 test variants passing with proper range assertions
+4. ✅ No test regressions - all 219 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commits with full documentation
 
 ### Completed Patterns
 
@@ -36,23 +37,45 @@
   - Pattern uses optional na-adjective stem matcher to handle both single-token (verb/adj/noun) and two-token (na-adj + な) cases
   - Pattern range includes full construction and extends with copula (だ/です)
 
+#### だった・でした (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_noun_datta (静かだった - was quiet, casual)
+  - test_na_adjective_datta (綺麗だった - was beautiful, casual)
+  - test_noun_deshita (静かでした - was quiet, polite)
+  - test_na_adjective_deshita (綺麗でした - was beautiful, polite)
+- **Structures**:
+  - Noun + だった / でした
+  - な-Adjective + だった / でした
+- **Tokenization insights**:
+  - だった: だっ (助動詞, base=だ, 連用タ接続) + た (助動詞, 特殊・タ)
+  - でした: でし (助動詞, base=です, 連用形) + た (助動詞, 特殊・タ)
+  - Pattern matches な-Adjective stem or noun + だっ/でし + た
+  - Pattern range includes full construction (Noun/な-Adj + だった/でした)
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern)
-- **Matcher approach**: Optional な-adjective stem + Any token + だけ particle
-- **Custom matchers created**: DakeParticleMatcher, NaAdjectiveStemMatcher, NaAuxiliaryMatcher
-- **Implementation notes**: Uses TokenMatcher::Optional to handle variable-length constructions before だけ
+- **Pattern priorities**: Both priority 1 (construction patterns)
+- **Matcher approaches**:
+  - だけ: Optional な-adjective stem + Any token + だけ particle
+  - だった・でした: Any token + (だっ OR でし) + た
+- **Custom matchers created**:
+  - だけ: DakeParticleMatcher, NaAdjectiveStemMatcher, NaAuxiliaryMatcher
+  - だった・でした: DattaMatcher, DeshitaMatcher, TaPastMatcher, DattaOrDeshitaMatcher
+- **Implementation notes**:
+  - だけ uses TokenMatcher::Optional to handle variable-length constructions
+  - だった・でした uses combined matcher for だっ/でし to handle both casual and polite forms
 
 ### Next Priorities (N5 patterns still needed)
 High-value construction patterns from feature_list.json:
-1. だった・でした - was/were (past copula)
-2. じゃない - is not (negative copula)
-3. じゃなかった - was not (past negative copula)
-4. でも - but/however
+1. じゃない - is not (negative copula)
+2. じゃなかった - was not (past negative copula)
+3. でも - but/however
+4. くれる - to give (to me/us)
 5. ～んです・のです - explanatory のです
 6. Verb conjugation patterns (basic verb forms)
 
 ### Environment Status
-- ✅ All 215 tests passing
+- ✅ All 219 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
