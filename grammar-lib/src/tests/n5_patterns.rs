@@ -2433,3 +2433,45 @@ mod ni_naru_ku_naru_tests {
     }
 }
 
+// ========== 好き (To like) ==========
+// Pattern: 好き (like, likable)
+// Data source: grammar_points_data.json["好き"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + が + 好き + だ
+//   polite[0]: Noun + が + 好き + です
+
+mod suki_tests {
+    use super::*;
+
+    #[test]
+    fn test_suki_standard() {
+        let sentence = "私はコンビニが好きだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "好き");
+        assert_pattern_range(&patterns, "好き", 7, 10); // 好きだ
+    }
+
+    #[test]
+    fn test_suki_polite() {
+        let sentence = "彼はサーフィンが好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "好き");
+        assert_pattern_range(&patterns, "好き", 8, 12); // 好きです
+    }
+
+    #[test]
+    fn test_daisuki() {
+        let sentence = "大好きだよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "好き");
+        assert_pattern_range(&patterns, "好き", 0, 4); // 大好きだ
+    }
+}
+

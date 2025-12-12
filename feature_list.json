@@ -1556,13 +1556,13 @@
   {
     "pattern_name": "好き",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "好（す）き , meaning 'to like', is one of the very common な-Adjectives in Japanese that is used in many different expressions [1 std, 1 pol]",
     "priority": 1,
     "skip_reason": null

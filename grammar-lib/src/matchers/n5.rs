@@ -566,9 +566,25 @@ pub fn u_verb_past() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 好き
+// Pattern: 好き (like, likable)
+// Structures:
+//   好き (な-adjective)
+//   大好き (な-adjective - love)
 pub fn suki() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 好き or 大好き (な-adjective / 形容動詞語幹)
+    #[derive(Debug)]
+    struct SukiMatcher;
+    impl Matcher for SukiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "好き" || token.base_form == "大好き")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SukiMatcher))]
 }
 
 /// Pattern: きらい (dislike/hate)
