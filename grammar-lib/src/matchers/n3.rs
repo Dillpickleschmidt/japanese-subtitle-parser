@@ -1050,8 +1050,35 @@ pub fn tatoe_u301c_temo() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ことに
+// Pattern: ことに (particularly/especially/to my...)
+// Structures: Verb/Adjective/Noun + ことに
+// Expresses emotional emphasis or notable circumstance
 pub fn kotoni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: ことか (how / god knows / what)

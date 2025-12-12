@@ -1328,3 +1328,60 @@ mod kotogaaru_tests {
         assert_pattern_range(&patterns, "ことがある", 14, 24); // 食べることがあります
     }
 }
+
+// ========== ことに (particularly/especially/to my...) ==========
+// Pattern: ことに (particularly/especially/to my...)
+// Data source: grammar_points_data.json["ことに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + ことに
+//   standard[1]: い-Adjective + ことに
+//   standard[2]: な-Adjective + な + ことに
+
+mod kotoni_tests {
+    use super::*;
+
+    // Test: Verb + ことに (particularly/especially)
+    #[test]
+    fn test_kotoni_verb() {
+        let sentence = "驚いたことに、彼女が突然結婚したんだって";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことに");
+        assert_pattern_range(&patterns, "ことに", 2, 6); // たことに
+    }
+
+    // Test: い-Adjective + ことに (particularly/especially)
+    #[test]
+    fn test_kotoni_i_adjective() {
+        let sentence = "珍しいことに、今日は彼が遅刻してきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことに");
+        assert_pattern_range(&patterns, "ことに", 0, 6); // 珍しいことに
+    }
+
+    // Test: な-Adjective + な + ことに (unfortunately/fortunately)
+    #[test]
+    fn test_kotoni_na_adjective() {
+        let sentence = "残念なことに、その商品はもう売り切れでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことに");
+        assert_pattern_range(&patterns, "ことに", 2, 6); // なことに
+    }
+
+    // Test: Common expression 幸いなことに (fortunately)
+    #[test]
+    fn test_kotoni_saiwai() {
+        let sentence = "幸いなことに、誰も怪我をしなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことに");
+        assert_pattern_range(&patterns, "ことに", 2, 6); // なことに
+    }
+}

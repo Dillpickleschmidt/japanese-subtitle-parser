@@ -4552,13 +4552,13 @@
   {
     "pattern_name": "ことに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When 事（こと） 'thing' is combined with the case-marking particle に following a statement, it highlights that something i... [3 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
