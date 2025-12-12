@@ -1,5 +1,99 @@
 # Grammar-lib Development Progress
 
+## Session 81 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (きり - only/just/since)
+**Patterns completed**: 1 new N3 pattern (adverbial particle)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 483 (was 479)
+
+### Accomplishments
+1. ✅ Implemented きり pattern (N3) - adverbial particle construction
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 483 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+6. ✅ Identified and documented undetectable variant (寝たきり compound)
+
+### Completed Pattern
+
+#### きり (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 1341)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_kiri_verb_past (食べたきり - since eating)
+  - test_kiri_noun (一人きり - alone)
+  - test_kiri_counter_ikkiri (一度っきり - only once, casual variant)
+  - test_kiri_counter_futari (二人っきり - just two of us)
+- **Structures**:
+  - Verb[た] + きり
+  - Noun/Counter + きり
+  - Number + Counter + っきり (casual variant)
+- **Tokenization insights**:
+  - きり = 名詞/非自立/副詞可能 (non-independent noun, adverbial use)
+  - っきり = 名詞/接尾/副詞可能 (suffix form, casual variant)
+  - Both variants are handled by the same matcher
+  - Note: 寝たきり is lexicalized as a single compound noun (undetectable)
+- **Implementation**: 2-token matcher
+  1. TokenMatcher::Any - Matches any preceding token (verb/noun/counter)
+  2. KiriMatcher - Matches きり or っきり with appropriate POS tags
+- **Meaning**: "only / just / since" - expresses limitation or "first and last time"
+- **Usage**: Common N3 adverbial particle expressing limits or finality
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - たきり (chars 8-11, verb past + きり)
+  - 人きり (chars 1-4, counter + きり)
+  - 度っきり (chars 4-8, counter + っきり casual)
+  - 人っきり (chars 1-5, counter + っきり)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N3 level in patterns.rs)
+- **Test coverage**: Main structure variants from grammar_points_data.json
+  - Verb[た] + きり (tested with 食べた)
+  - Noun + きり (tested with 一人)
+  - Counter + っきり (tested with 一度, 二人)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Simple 2-token matcher with TokenMatcher::Any handles all variants elegantly
+- **Pattern range**: Includes preceding element + きり/っきり
+- **Undetectable case**: 寝たきり (bedridden) is a lexicalized compound noun, tokenized as a single token, not detectable by the pattern matcher
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4 (plus 1 documented as undetectable)
+- **Tests passing**: 483/483 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~99 (tests + matcher implementation + feature_list update)
+
+### Key Insights
+- きり and っきり are both common adverbial particles in N3-level Japanese
+- TokenMatcher::Any provides excellent flexibility for matching diverse preceding elements
+- Lexicalized compound expressions like 寝たきり cannot be detected structurally
+- Test-first workflow successfully identified tokenization patterns for all variants
+- Pattern handles both formal (きり) and casual (っきり) variants seamlessly
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. くらい② - degree/extent particle
+2. ことか - question particle for emphasis
+3. いくら〜でも - "no matter how much"
+4. かけ - incomplete/unfinished action
+5. から言うと - "from the perspective of"
+6. Noun＋型 - "type/style" suffix pattern
+
+**Recommendation**: Continue with simple concrete N3 patterns. くらい② would be a good next choice as it's a straightforward particle pattern.
+
+### Environment Status
+- ✅ All 483 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 80 - 2025-12-12 (Updated)
 
 ### ✅ Session Summary
