@@ -885,3 +885,47 @@ mod kuseni_tests {
         assert_pattern_range(&patterns, "くせに", 5, 9); // のくせに
     }
 }
+
+// ========== こそ (emphasis particle) ==========
+// Pattern: こそ (emphasis/precisely/exactly)
+// Data source: grammar_points_data.json["こそ"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + こそ
+
+mod koso_tests {
+    use super::*;
+
+    // Test: Noun + こそ (this song exactly)
+    #[test]
+    fn test_koso_noun_emphasis() {
+        let sentence = "この曲こそ俺がずーっと探していた曲だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こそ");
+        assert_pattern_range(&patterns, "こそ", 2, 5); // 曲こそ
+    }
+
+    // Test: Time noun + こそ (this time for sure)
+    #[test]
+    fn test_koso_time_noun() {
+        let sentence = "今度こそ勝つぞ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こそ");
+        assert_pattern_range(&patterns, "こそ", 0, 4); // 今度こそ
+    }
+
+    // Test: Pronoun + こそ (I am the one)
+    #[test]
+    fn test_koso_pronoun() {
+        let sentence = "いえいえ、私こそありがとうございます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こそ");
+        assert_pattern_range(&patterns, "こそ", 5, 8); // 私こそ
+    }
+}

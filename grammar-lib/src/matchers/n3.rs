@@ -412,9 +412,23 @@ pub fn nazenara_u301c_kara() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: こそ
+// Pattern: こそ (emphasis particle)
+// Structures: Noun + こそ
 pub fn koso() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KosoMatcher;
+    impl Matcher for KosoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こそ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(KosoMatcher)),
+    ]
 }
 
 // Pattern: からこそ (precisely because)
