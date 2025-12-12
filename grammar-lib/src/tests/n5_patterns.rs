@@ -2620,3 +2620,46 @@ mod tekudasai_tests {
         assert_pattern_range(&patterns, "てください", 3, 9); // 見てください
     }
 }
+
+// ========== ないでください (Please don't do) ==========
+// Pattern: ないでください (polite negative request)
+// Data source: grammar_points_data.json["ないでください"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ないで] + ください
+//   Note: "Politeness Levels" mentioned but not detailed - testing casual variant without ください too
+
+mod naide_kudasai_tests {
+    use super::*;
+
+    #[test]
+    fn test_naide_kudasai_basic() {
+        let sentence = "これは誰にも言わないでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないでください");
+        assert_pattern_range(&patterns, "ないでください", 6, 15); // 言わないでください
+    }
+
+    #[test]
+    fn test_naide_kudasai_sit() {
+        let sentence = "そこには座らないでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないでください");
+        assert_pattern_range(&patterns, "ないでください", 4, 13); // 座らないでください
+    }
+
+    // Casual form without ください (detected by separate ないで pattern)
+    #[test]
+    fn test_naide_casual() {
+        let sentence = "それ、お兄ちゃんのだから食べないで";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないで");
+        assert_pattern_range(&patterns, "ないで", 12, 17); // 食べないで
+    }
+}

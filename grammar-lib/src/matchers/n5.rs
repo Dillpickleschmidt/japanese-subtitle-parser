@@ -1623,9 +1623,65 @@ pub fn tekudasai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ないでください
+// Pattern: ないでください (please don't do - polite negative request)
+// Structures: Verb[未然形] + ない + で + ください
 pub fn naidekudasai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match verb in 未然形 (irrealis/negative form)
+    #[derive(Debug)]
+    struct NegativeVerbFormMatcher;
+    impl Matcher for NegativeVerbFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f == "未然形" || f == "未然ウ接続")
+        }
+    }
+
+    // Match ない auxiliary verb in 連用デ接続 form
+    #[derive(Debug)]
+    struct NaiAuxiliaryDeFormMatcher;
+    impl Matcher for NaiAuxiliaryDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用デ接続")
+        }
+    }
+
+    // Match で (conjunction particle)
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match ください as non-independent verb
+    #[derive(Debug)]
+    struct KudasaiMatcher;
+    impl Matcher for KudasaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ください"
+                && token.base_form == "くださる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NegativeVerbFormMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryDeFormMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KudasaiMatcher)),
+    ]
 }
 
 // Pattern: てはいけない
