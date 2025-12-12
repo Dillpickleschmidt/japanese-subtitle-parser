@@ -1,5 +1,66 @@
 # Grammar-lib Development Progress
 
+## Session 40 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: つもりだ pattern fully implemented
+**Patterns completed**: 1 new pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 207 (was 203)
+
+### Accomplishments
+1. ✅ Implemented つもりだ (intend to/plan to) pattern
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ No test regressions - all 207 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Patterns
+
+#### つもりだ (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_tsumori_basic_polite (食べるつもりです - basic polite intention)
+  - test_tsumori_nai_intention (行かないつもりだ - negative intention)
+  - test_tsumori_wa_nai (起きるつもりはない - no intention of)
+  - test_tsumori_casual (買うつもりだ - casual form)
+- **Structures**:
+  - Verb[基本形] + つもり + だ/です (basic intention)
+  - Verb[未然形] + ない + つもり + だ/です (negative intention)
+  - Verb + つもり + は/が + ない/ありません (no intention)
+- **Tokenization insights**:
+  - Verb in 基本形 (dictionary form) for affirmative
+  - Verb in 未然形 + ない (助動詞) for negative intention
+  - つもり tokenizes as 名詞/非自立/一般 (non-independent noun)
+  - だ/です extends automatically via auxiliary verb system
+  - Pattern range includes full Verb + (ない) + つもり + だ/です construction
+  - For "つもりはない" construction, pattern matches just "Verb + つもり" (は + ない is separate)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Matcher approach**: Verb + optional ない + つもり
+- **Custom matchers created**:
+  - VerbMatcher: Matches any verb (in any form)
+  - NaiAuxMatcher: Optional ない auxiliary for negative intention
+  - TsumoriMatcher: Matches つもり as non-independent noun
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. なくてはいけない - must do
+2. なくてはならない - must do (formal)
+3. ～んです・のです - explanatory のです
+4. ～ましょうか - shall we?
+5. ませんか - won't you?
+6. なくちゃ・なきゃ - must (casual)
+
+### Environment Status
+- ✅ All 207 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 39 - 2025-12-12
 
 ### ✅ Session Summary

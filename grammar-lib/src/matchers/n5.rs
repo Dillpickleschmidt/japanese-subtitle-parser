@@ -1782,9 +1782,79 @@ pub fn tehaikenai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なくてはいけない
+// Pattern: なくてはいけない (must do)
+// Structures:
+//   Verb[未然形] + なく + て + は + いけない
+//   Verb[未然形] + なく + ちゃ + いけない (casual)
 pub fn nakutehaikenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in 未然形 (negative stem)
+    #[derive(Debug)]
+    struct NegativeVerbFormMatcher;
+    impl Matcher for NegativeVerbFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match なく (auxiliary verb, 連用テ接続 form of ない)
+    #[derive(Debug)]
+    struct NakuFormMatcher;
+    impl Matcher for NakuFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ない"
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続")
+        }
+    }
+
+    // Match て or ちゃ (conjunction particle)
+    #[derive(Debug)]
+    struct TeChaMatcher;
+    impl Matcher for TeChaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "ちゃ")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match は (particle - optional for ちゃ)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match いけ (auxiliary verb of いける)
+    // Can be 未然形 (before ない) or 連用形 (before ます)
+    #[derive(Debug)]
+    struct IkeMatcher;
+    impl Matcher for IkeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いけ"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.base_form == "いける"
+                && (token.features.get(5).is_some_and(|f| f == "未然形" || f == "連用形"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NegativeVerbFormMatcher)),
+        TokenMatcher::Custom(Arc::new(NakuFormMatcher)),
+        TokenMatcher::Custom(Arc::new(TeChaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(IkeMatcher)),
+        // ない extends automatically
+    ]
 }
 
 // Pattern: なくてはならない

@@ -2768,3 +2768,61 @@ mod tsumori_da_tests {
         assert_pattern_range(&patterns, "つもりだ", 8, 14); // 買うつもりだ
     }
 }
+
+// ========== なくてはいけない (Must do) ==========
+// Pattern: なくてはいけない (obligation/must do - double negative)
+// Data source: grammar_points_data.json["なくてはいけない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ない] + なくては + いけない
+//   standard[1]: Verb[ない] + なくちゃ + いけない (casual)
+//   polite[0]: Verb[ない] + なくては + いけません
+//   polite[1]: Verb[ない] + なくちゃ + いけません
+
+mod nakutewa_ikenai_tests {
+    use super::*;
+
+    // Basic obligation: 寝なくてはいけない (must sleep)
+    #[test]
+    fn test_nakutewa_ikenai_basic() {
+        let sentence = "今日は９時に寝なくてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてはいけない");
+        assert_pattern_range(&patterns, "なくてはいけない", 6, 15); // 寝なくてはいけない
+    }
+
+    // Polite form: 買わなくてはいけません (must buy - polite)
+    #[test]
+    fn test_nakutewa_ikenai_polite() {
+        let sentence = "明日は彼女の誕生日プレゼントを買わなくてはいけません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてはいけない");
+        assert_pattern_range(&patterns, "なくてはいけない", 15, 26); // 買わなくてはいけません
+    }
+
+    // Casual contraction: しなくちゃいけない (gotta do)
+    #[test]
+    fn test_nakucha_ikenai_casual() {
+        let sentence = "家の掃除をしなくちゃいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてはいけない");
+        assert_pattern_range(&patterns, "なくてはいけない", 5, 14); // しなくちゃいけない
+    }
+
+    // Polite casual: 行かなくちゃいけません (gotta go - polite casual)
+    #[test]
+    fn test_nakucha_ikenai_polite() {
+        let sentence = "土曜日も会社に行かなくちゃいけません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてはいけない");
+        assert_pattern_range(&patterns, "なくてはいけない", 7, 18); // 行かなくちゃいけません
+    }
+}
