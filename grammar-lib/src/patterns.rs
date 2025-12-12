@@ -3756,6 +3756,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    Zutsu {
+        name: "～ずつ",
+        matcher_fn: crate::matchers::n3::zutsu,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Nagaramo {
         name: "ながらも",
         matcher_fn: crate::matchers::n3::nagaramo,

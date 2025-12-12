@@ -412,3 +412,60 @@ mod aruiwa_tests {
         assert_pattern_range(&patterns, "あるいは", 3, 7); // あるいは (without か)
     }
 }
+
+// ========== ～ずつ (each/per/at a time) ==========
+// Pattern: ～ずつ (each/per/at a time)
+// Data source: grammar_points_data.json["～ずつ"]
+//
+// Structure variants to test:
+//   standard[0]: Number + Counter + ずつ (Per/Each/At time)
+//   standard[1]: 少し + ずつ (Little by little)
+//   standard[2]: いくらか + ずつ (Some … every)
+
+mod zutsu_tests {
+    use super::*;
+
+    // Test: Number + Counter + ずつ (Per/Each/At time) - with simple counter
+    #[test]
+    fn test_zutsu_number_counter_one() {
+        let sentence = "メニューに載ってるもの一つずつちょうだい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ずつ");
+        assert_pattern_range(&patterns, "～ずつ", 11, 15); // 一つずつ
+    }
+
+    // Test: Number + Counter + ずつ (Per/Each/At time) - with person counter
+    #[test]
+    fn test_zutsu_number_counter_person() {
+        let sentence = "一人ずつゆっくりとお入りください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ずつ");
+        assert_pattern_range(&patterns, "～ずつ", 1, 4); // 人ずつ
+    }
+
+    // Test: 少し + ずつ (Little by little)
+    #[test]
+    fn test_zutsu_sukoshi() {
+        let sentence = "このお酒は強いので少しずつ飲んでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ずつ");
+        assert_pattern_range(&patterns, "～ずつ", 9, 13); // 少しずつ
+    }
+
+    // Test: いくらか + ずつ (Some … every)
+    #[test]
+    fn test_zutsu_ikuraka() {
+        let sentence = "毎月いくらかずつお金を貯めて旅行に行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ずつ");
+        assert_pattern_range(&patterns, "～ずつ", 5, 8); // かずつ
+    }
+}

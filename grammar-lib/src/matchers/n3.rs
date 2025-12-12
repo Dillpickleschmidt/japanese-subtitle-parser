@@ -1388,3 +1388,59 @@ pub fn aruiwa() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(AruiwaMatcher)),
     ]
 }
+
+// Pattern: ～ずつ (each/per/at a time)
+// Structures: Number + Counter + ずつ / 少し + ずつ / いくらか + ずつ
+// Note: Matches the immediate token before ずつ (counter, noun, adverb, or particle)
+pub fn zutsu() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct ZutsuPrecedingMatcher;
+    impl Matcher for ZutsuPrecedingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match the immediate token before ずつ:
+            // 1. Numbers (名詞/数) - for patterns like 一人ずつ (where 一 might be separate)
+            if token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "数") {
+                return true;
+            }
+            // 2. Counters (名詞/接尾/助数詞) - for 人, 日, etc.
+            if token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾") {
+                return true;
+            }
+            // 3. General nouns (名詞/一般) - for 一つ, いくら, etc.
+            if token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") {
+                return true;
+            }
+            // 4. 少し (副詞/助詞類接続)
+            if token.surface == "少し"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続") {
+                return true;
+            }
+            // 5. か particle (for いくらか pattern)
+            if token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞／並立助詞／終助詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    #[derive(Debug)]
+    struct ZutsuMatcher;
+    impl Matcher for ZutsuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ずつ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ZutsuPrecedingMatcher)),
+        TokenMatcher::Custom(Arc::new(ZutsuMatcher)),
+    ]
+}
