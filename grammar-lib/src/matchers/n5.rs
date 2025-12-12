@@ -951,9 +951,64 @@ pub fn na_adjective_da() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: だった・でした
+// Pattern: だった・でした (was/were - past copula)
+// Structures: Noun/な-Adj + だった / Noun/な-Adj + でした
 pub fn datta_u30fb_deshita() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だっ (auxiliary verb, 連用タ接続 form of だ)
+    #[derive(Debug)]
+    struct DattaMatcher;
+    impl Matcher for DattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だっ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|conj| conj == "連用タ接続")
+        }
+    }
+
+    // Match でし (auxiliary verb, 連用形 of です)
+    #[derive(Debug)]
+    struct DeshitaMatcher;
+    impl Matcher for DeshitaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "でし"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|conj| conj == "連用形")
+        }
+    }
+
+    // Match た (past tense auxiliary)
+    #[derive(Debug)]
+    struct TaPastMatcher;
+    impl Matcher for TaPastMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match だっ or でし
+    #[derive(Debug)]
+    struct DattaOrDeshitaMatcher;
+    impl Matcher for DattaOrDeshitaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            DattaMatcher.matches(token) || DeshitaMatcher.matches(token)
+        }
+    }
+
+    // Pattern: な-Adjective stem (or noun) + だっ/でし + た
+    vec![
+        TokenMatcher::Any, // な-Adjective stem or Noun
+        TokenMatcher::Custom(Arc::new(DattaOrDeshitaMatcher)),
+        TokenMatcher::Custom(Arc::new(TaPastMatcher)),
+    ]
 }
 
 // Pattern: じゃない

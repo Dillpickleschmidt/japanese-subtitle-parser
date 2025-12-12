@@ -2884,3 +2884,61 @@ mod dake_tests {
         assert_pattern_range(&patterns, "だけ", 2, 10); // ブロッコリーだけ
     }
 }
+
+// ========== だった・でした (Was/Were - Past Copula) ==========
+// Pattern: だった・でした (past tense of だ/です)
+// Data source: grammar_points_data.json["だった・でした"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + だった
+//   standard[1]: な-Adjective + だった
+//   polite[0]: Noun + でした
+//   polite[1]: な-Adjective + でした
+
+mod datta_deshita_tests {
+    use super::*;
+
+    // Noun + だった (was quiet - casual)
+    #[test]
+    fn test_noun_datta() {
+        let sentence = "あの電車は静かだった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だった・でした");
+        assert_pattern_range(&patterns, "だった・でした", 5, 10); // 静かだった
+    }
+
+    // な-Adjective + だった (was beautiful - casual)
+    #[test]
+    fn test_na_adjective_datta() {
+        let sentence = "富士山は綺麗だった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だった・でした");
+        assert_pattern_range(&patterns, "だった・でした", 4, 9); // 綺麗だった
+    }
+
+    // Noun + でした (was quiet - polite)
+    #[test]
+    fn test_noun_deshita() {
+        let sentence = "あの電車は静かでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だった・でした");
+        assert_pattern_range(&patterns, "だった・でした", 5, 10); // 静かでした
+    }
+
+    // な-Adjective + でした (was beautiful - polite)
+    #[test]
+    fn test_na_adjective_deshita() {
+        let sentence = "富士山は綺麗でした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だった・でした");
+        assert_pattern_range(&patterns, "だった・でした", 4, 9); // 綺麗でした
+    }
+}

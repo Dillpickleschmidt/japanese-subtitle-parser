@@ -786,13 +786,13 @@
   {
     "pattern_name": "だった・でした",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to say that something 'was' a certain way in Japanese, you will need to use だった (casual) or でした (polite) att... [2 std, 2 pol]",
     "priority": 1,
     "skip_reason": null
