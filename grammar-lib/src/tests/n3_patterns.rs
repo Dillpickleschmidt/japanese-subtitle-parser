@@ -746,3 +746,84 @@ mod gimi_tests {
         assert_pattern_range(&patterns, "ぎみ", 3, 8); // 遅れぎみだ
     }
 }
+
+// ========== あまりに (excessively/so much) ==========
+// Pattern: あまりに (excessively/so much)
+// Data source: grammar_points_data.json["あまりに"]
+//
+// Structure variants to test:
+//   standard[0]: あまり + に + Adjective
+//   standard[1]: あまり + に + Adverb
+//   standard[2]: あまり + の + Noun
+//   standard[3]: あんまり (colloquial variant)
+//   standard[4]: あまり + にも (emphasis variant)
+
+mod amarini_tests {
+    use super::*;
+
+    // Test: あまりに + い-Adjective (so easy)
+    #[test]
+    fn test_amarini_i_adjective() {
+        let sentence = "今日の仕事はあまりに楽過ぎて仕事をした感じがしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまりに");
+        assert_pattern_range(&patterns, "あまりに", 6, 10); // あまりに
+    }
+
+    // Test: あまりに + Adverb (so late)
+    #[test]
+    fn test_amarini_adverb() {
+        let sentence = "今朝は会社にあまりに遅く着いたため、先輩に怒られた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまりに");
+        assert_pattern_range(&patterns, "あまりに", 6, 10); // あまりに
+    }
+
+    // Test: あまりの + Noun (so much fear)
+    #[test]
+    fn test_amarino_noun() {
+        let sentence = "彼女はあまりの恐怖に、声をあげて叫んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまりの + Noun");
+        assert_pattern_range(&patterns, "あまりの + Noun", 3, 9); // あまりの恐怖
+    }
+
+    // Test: あんまり + Adjective (colloquial - too boring)
+    #[test]
+    fn test_anmari_colloquial() {
+        let sentence = "友達の話があんまりつまらなくて途中からほとんど聞いてなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまりに");
+        assert_pattern_range(&patterns, "あまりに", 5, 9); // あんまり
+    }
+
+    // Test: あまりにも + い-Adjective (emphasis - so boring)
+    #[test]
+    fn test_amarinimo_emphasis() {
+        let sentence = "友達の話があまりにもつまらなくて途中からほとんど聞いてなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまりにも");
+        assert_pattern_range(&patterns, "あまりにも", 5, 10); // あまりにも
+    }
+
+    // Test: あまりに + な-Adjective (so quiet)
+    #[test]
+    fn test_amarini_na_adjective() {
+        let sentence = "部屋があまりに静かで、少し不安になった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あまりに");
+        assert_pattern_range(&patterns, "あまりに", 3, 7); // あまりに
+    }
+}

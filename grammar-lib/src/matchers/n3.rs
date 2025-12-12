@@ -592,9 +592,76 @@ pub fn kanari() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(KanariMatcher))]
 }
 
-// Pattern: あまりに
+// Pattern: あまりに (excessively/so much)
+// Structures: あまりに / あまり + の / あんまり / あまりにも
 pub fn amarini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct AmariniMatcher;
+    impl Matcher for AmariniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "あまりに" || token.surface == "あんまり")
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(AmariniMatcher))]
+}
+
+// Pattern: あまりの (あまり + の + Noun)
+pub fn amarino_noun() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct AmariMatcher;
+    impl Matcher for AmariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あまり"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AmariMatcher)),
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        super::noun_matcher(),
+    ]
+}
+
+// Pattern: あまりにも (あまりに + も for emphasis)
+pub fn amarinimo() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct AmariniMatcher;
+    impl Matcher for AmariniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あまりに"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AmariniMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ]
 }
 
 // Pattern: わけだ

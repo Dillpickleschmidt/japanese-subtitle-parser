@@ -3031,7 +3031,23 @@ declare_patterns! {
     Amarini {
         name: "あまりに",
         matcher_fn: crate::matchers::n3::amarini,
-        priority: 1,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    AmarinoNoun {
+        name: "あまりの + Noun",
+        matcher_fn: crate::matchers::n3::amarino_noun,
+        priority: 4,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    Amarinimo {
+        name: "あまりにも",
+        matcher_fn: crate::matchers::n3::amarinimo,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },
