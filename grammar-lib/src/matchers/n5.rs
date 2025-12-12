@@ -734,8 +734,38 @@ pub fn i_adjective_noun() -> Vec<TokenMatcher> {
 }
 
 // Pattern: な-Adjective + Noun
+// Structures: な-Adjective + な + Noun
 pub fn na_adjective_noun() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for na-adjective (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct NaAdjStemMatcher;
+    impl Matcher for NaAdjStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Matcher for な particle (助動詞, base=だ, conjugation=体言接続)
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaAdjStemMatcher)),
+        TokenMatcher::Custom(Arc::new(NaCopulaMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: へいく (Place + へ/に + 行く)
