@@ -2942,3 +2942,51 @@ mod datta_deshita_tests {
         assert_pattern_range(&patterns, "だった・でした", 4, 9); // 綺麗でした
     }
 }
+
+// ========== や (And/Or - Listing particle) ==========
+// Pattern: や (and/or - non-exhaustive listing)
+// Data source: grammar_points_data.json["や"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + や + Noun
+//
+// Note: や is used to list examples, not exhaustive lists (unlike と)
+
+mod ya_tests {
+    use super::*;
+
+    // Basic listing: Noun + や + Noun
+    #[test]
+    fn test_ya_basic_listing() {
+        let sentence = "このスーパーには果物や弁当がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "や");
+        assert_pattern_range(&patterns, "や", 8, 13); // 果物や弁当
+    }
+
+    // Multiple や particles
+    #[test]
+    fn test_ya_multiple_items() {
+        let sentence = "飛行機や船や車は大きいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should detect both や patterns: 飛行機や船 and 船や車
+        assert_has_pattern(&patterns, "や");
+        // Check first occurrence (飛行機や船)
+        assert_pattern_range(&patterns, "や", 0, 5); // 飛行機や船
+    }
+
+    // With particles after や
+    #[test]
+    fn test_ya_with_particle() {
+        let sentence = "ビールやワインを飲んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "や");
+        assert_pattern_range(&patterns, "や", 0, 7); // ビールやワイン
+    }
+}

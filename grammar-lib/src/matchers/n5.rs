@@ -2068,9 +2068,24 @@ pub fn nakucha_u30fb_nakya() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: や
+// Pattern: や (non-exhaustive listing - "things like")
+// Structures: Noun + や + Noun
 pub fn ya() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct YaParticleMatcher;
+    impl Matcher for YaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "や"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "並立助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(YaParticleMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: たことがある (have experience of)

@@ -1444,13 +1444,13 @@
   {
     "pattern_name": "や",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "や is a particle that has several different roles in Japanese, with the most common being as an adverbial particle [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null
