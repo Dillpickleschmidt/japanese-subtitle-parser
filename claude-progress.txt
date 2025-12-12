@@ -1,5 +1,91 @@
 # Grammar-lib Development Progress
 
+## Session 65 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N5 pattern fully implemented (Verb［た・ている］+ Noun)
+**Patterns completed**: 1 high-priority N5 pattern (relative clauses)
+**Tests added**: 5 comprehensive tests
+**Total tests**: 413 (was 408)
+
+### Accomplishments
+1. ✅ Implemented Verb［た・ている］+ Noun pattern (relative clauses - N5)
+2. ✅ All 5 test variants passing with proper range assertions
+3. ✅ No test regressions - all 413 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### Verb［た・ている］+ Noun (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 5 variants, all passing in n5_patterns.rs
+  - test_verb_ta_noun (たかしさんは東京に住んだ男 - 住んだ男)
+  - test_verb_ta_noun_tabeta (貴方が食べたハンバーガー - 食べたハンバーガー)
+  - test_verb_teiru_noun_nondeiru (田中さんが飲んでいるコーヒー - 飲んでいるコーヒー)
+  - test_verb_teiru_noun_neteiru (道で寝ている犬 - 寝ている犬)
+  - test_verb_ta_noun_complex (昨日会った人はトムさんだった - 会った人)
+- **Structures**:
+  - Verb［た］+ Noun (past tense verb modifying noun)
+  - Verb［ている］+ Noun (continuous aspect verb modifying noun)
+- **Tokenization insights**:
+  - た form: Verb(連用形/連用タ接続) + た(助動詞) + Noun
+  - ている form: Verb(連用タ接続) + て/で(助詞) + いる(動詞/非自立) + Noun
+- **Implementation**: Wildcard matcher approach
+  - MainVerbMatcher: Matches verb in 連用形 or 連用タ接続
+  - Wildcard: Allows 1-2 tokens between verb and noun (for た or て+いる)
+  - noun_matcher(): Matches any noun
+- **Meaning**: Relative clauses - verbs directly modifying nouns
+- **Usage**: Essential N5 pattern for creating relative clauses ("the X that did Y", "the X that is doing Y")
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Pattern ranges**: Full construction from verb through noun
+  - Examples: 食べたハンバーガー (3-12), 住んだ男 (9-13), 飲んでいるコーヒー (5-14), 寝ている犬 (2-7), 会った人 (2-6)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - Verb［た］+ Noun (tested in 3 contexts)
+  - Verb［ている］+ Noun (tested in 2 contexts)
+- **Implementation notes**:
+  - Uses wildcard matcher to handle variable verb phrase length
+  - min: 1, max: 2 tokens between verb and noun prevents false matches
+  - MainVerbMatcher checks for connective form (連用形/連用タ接続)
+- **Pattern range**: Full grammatical construction from verb to noun
+
+### Session Statistics
+- **Patterns implemented**: 1 (N5 - high priority)
+- **Tests written**: 5
+- **Tests passing**: 413/413 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~113 (tests + matcher + feature_list update)
+
+### Key Insights
+- Relative clauses are a fundamental N5 pattern
+- Wildcard matcher approach works well for variable-length patterns
+- Important to filter for connective verb forms to avoid false positives
+- Pattern correctly handles both た and ている forms in one matcher
+
+### Next Priorities
+Continue with N5 patterns (remaining):
+
+**High-priority N5 patterns to consider**:
+1. い-Adjective (Predicate) - adjective in predicate position
+2. Verbs (Non-past) - dictionary form as non-past tense
+3. より～のほうが - comparative construction (deferred in Session 63 due to Wildcard issues)
+4. Other stub patterns (check n5.rs for vec![] implementations)
+
+**Note**: Many remaining N5 patterns are very broad (verb conjugations, adjective categories) or have stub implementations.
+Prioritize concrete, testable construction patterns.
+
+### Environment Status
+- ✅ All 413 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 64 - 2025-12-12 (FINAL)
 
 ### ✅ Session Summary
