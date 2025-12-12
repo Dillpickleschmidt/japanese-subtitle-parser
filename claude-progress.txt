@@ -3,19 +3,20 @@
 ## Session 44 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One pattern fully implemented (～んです・のです)
-**Patterns completed**: 1 new pattern
-**Tests added**: 10 comprehensive tests
-**Total tests**: 246 (was 236)
+**Status**: Two patterns fully implemented (～んです・のです + ～ましょうか)
+**Patterns completed**: 2 new patterns
+**Tests added**: 14 comprehensive tests
+**Total tests**: 250 (was 236)
 
 ### Accomplishments
 1. ✅ Implemented ～んです・のです (explanatory のです) pattern
-2. ✅ All 10 test variants passing with proper range assertions
-3. ✅ No test regressions - all 246 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commits with full documentation
+2. ✅ Implemented ～ましょうか (shall we?) pattern
+3. ✅ All 14 test variants passing with proper range assertions
+4. ✅ No test regressions - all 250 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### ～んです・のです (N5) ✓
 - **File**: grammar-lib/src/matchers/n5.rs
@@ -50,28 +51,55 @@
   - Prevents double-matching by excluding な auxiliary from initial matcher
   - Pattern correctly includes full grammatical construction in ranges
 
+#### ～ましょうか (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_mashouka_basic (行きましょうか - u-verb)
+  - test_mashouka_run (走りましょうか - u-verb)
+  - test_mashouka_u_verb (見ましょうか - u-verb)
+  - test_mashouka_ru_verb (食べましょうか - ru-verb)
+- **Structures**:
+  - Verb[連用形] + ましょ + う + か
+- **Tokenization insights**:
+  - Verb tokenizes in 連用形 (stem form)
+  - ましょ tokenizes as 助動詞 (base=ます)
+  - う tokenizes as 助動詞 (auxiliary)
+  - か tokenizes as 助詞/終助詞 (question particle)
+- **Custom matchers created**:
+  - MashoMatcher: Matches ましょ (助動詞, base=ます)
+  - UMatcher: Matches う (助動詞)
+  - KaMatcher: Matches か (助詞/終助詞)
+- **Implementation notes**:
+  - Polite suggestion pattern asking "shall we?"
+  - Works with all verb types (u-verbs and ru-verbs)
+  - Simple 4-token pattern: verb stem + ましょ + う + か
+  - Straightforward implementation with no special edge cases
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern)
+- **Pattern priorities**: Both priority 1 (construction patterns)
 - **Test coverage**: All structure variants from grammar_points_data.json
-  - Both standard (んだ/のだ) and polite (んです/のです) forms
-  - Verbs, い-adjectives, な-adjectives, and nouns
-  - Question form with か particle
-- **Implementation challenge**: Avoiding double-matching
-  - Initial implementation matched both "学生なんだ" and "なんだ" separately
-  - Fixed by excluding な auxiliary from the first token matcher
-  - Now correctly matches only the full construction
+  - ～んです・のです: Both standard (んだ/のだ) and polite (んです/のです) forms
+  - ～んです・のです: Verbs, い-adjectives, な-adjectives, and nouns
+  - ～んです・のです: Question form with か particle
+  - ～ましょうか: Both u-verbs and ru-verbs tested
+- **Implementation challenges**:
+  - ～んです・のです: Avoiding double-matching
+    - Initial implementation matched both "学生なんだ" and "なんだ" separately
+    - Fixed by excluding な auxiliary from the first token matcher
+    - Now correctly matches only the full construction
+  - ～ましょうか: None (straightforward implementation)
 
 ### Next Priorities (N5 patterns still needed)
 High-value construction patterns from feature_list.json:
-1. ～ましょうか - shall we?
-2. 誰か・どこか・誰も・どこも - question words + か/も
-3. より～のほうが - comparison pattern
-4. もらう - to receive (from someone)
-5. ～ませんか - won't you? (invitation)
-6. る-Verb conjugations (Dictionary, Negative, Past, Negative-Past)
+1. 誰か・どこか・誰も・どこも - question words + か/も
+2. より～のほうが - comparison pattern
+3. もらう - to receive (from someone)
+4. ～ませんか - won't you? (invitation)
+5. る-Verb conjugations (Dictionary, Negative, Past, Negative-Past)
+6. ～ましょう - let's (without か)
 
 ### Environment Status
-- ✅ All 246 tests passing
+- ✅ All 250 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
