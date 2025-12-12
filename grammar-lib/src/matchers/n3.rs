@@ -1396,8 +1396,59 @@ pub fn soumonai() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ないことはない
+// Pattern: ないことはない (it's not impossible / it's not that...not)
+// Structures: Verb[ない] + ことはない / い-Adj[ない] + ことはない / な-Adj + ではない + ことはない
+// Double negative expressing possibility, often with half-hearted nuance
 pub fn naikotohanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct HaMoParticleMatcher;
+    impl Matcher for HaMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "は" || token.surface == "も")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiAruMatcher;
+    impl Matcher for NaiAruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (adjective or auxiliary) or ある (verb for polite ありません)
+            (token.surface == "ない" || token.base_form == "ない")
+                && (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                    || token.pos.first().is_some_and(|pos| pos == "助動詞"))
+                || (token.base_form == "ある"
+                    && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(HaMoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAruMatcher)),
+    ]
 }
 
 // Pattern: なんか・なんて

@@ -5630,13 +5630,13 @@
   {
     "pattern_name": "ないことはない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ないことはない is an expression that utilizes either the auxiliary verb ない, or the い-Adjective ない, depending on what type of... [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null

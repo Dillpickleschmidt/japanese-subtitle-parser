@@ -1626,3 +1626,73 @@ mod toiukotoda_tests {
         assert_pattern_range(&patterns, "ということだ", 10, 18); // 来るということだ
     }
 }
+
+// ========== ないことはない (it's not that...not / not impossible) ==========
+// Pattern: ないことはない (double negative expressing possibility)
+// Data source: grammar_points_data.json["ないことはない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ない] + ことはない
+//   standard[1]: い-Adj[ない] + ことはない
+//   standard[2]: な-Adj + ではない + ことはない
+//   standard[3]: こともない (も variant)
+//   polite variants with ありません
+
+mod naikotohanai_tests {
+    use super::*;
+
+    // Test: Verb[ない] + ことはない (not impossible)
+    #[test]
+    fn test_naikotohanai_verb() {
+        let sentence = "映画は見ないことはないが、詳しくもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないことはない");
+        assert_pattern_range(&patterns, "ないことはない", 4, 11); // ないことはない
+    }
+
+    // Test: い-Adjective[ない] + ことはない
+    #[test]
+    fn test_naikotohanai_i_adjective() {
+        let sentence = "ここは危なくないことはないから、気をつけた方がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないことはない");
+        assert_pattern_range(&patterns, "ないことはない", 6, 13); // ないことはない
+    }
+
+    // Test: な-Adjective + ではない + ことはない
+    #[test]
+    fn test_naikotohanai_na_adjective() {
+        let sentence = "元気ではないことはないけど、すごく元気なわけでもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないことはない");
+        assert_pattern_range(&patterns, "ないことはない", 4, 11); // ないことはない
+    }
+
+    // Test: Verb potential + ないことはない (half-hearted possibility)
+    #[test]
+    fn test_naikotohanai_potential() {
+        let sentence = "納豆は食べられないことはないけど、自分から買って食べようとは思わない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないことはない");
+        assert_pattern_range(&patterns, "ないことはない", 7, 14); // ないことはない
+    }
+
+    // Test: こともない (も variant)
+    #[test]
+    fn test_naikotohanai_mo_variant() {
+        let sentence = "歩いていけないこともないけど、６時間ぐらいかかるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないことはない");
+        assert_pattern_range(&patterns, "ないことはない", 5, 12); // ないこともない
+    }
+}

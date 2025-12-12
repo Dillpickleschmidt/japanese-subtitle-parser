@@ -3695,7 +3695,7 @@ declare_patterns! {
     Naikotohanai {
         name: "ないことはない",
         matcher_fn: crate::matchers::n3::naikotohanai,
-        priority: 1,
+        priority: 2,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },
