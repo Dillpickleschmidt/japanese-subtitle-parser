@@ -1,5 +1,125 @@
 # Grammar-lib Development Progress
 
+## Session 84 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two N3 patterns fully implemented (ことに + ことにする)
+**Patterns completed**: 2 new N3 patterns (こと construction family continued)
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 513 (was 505)
+
+### Accomplishments
+1. ✅ Implemented ことに pattern (N3) - emotional emphasis construction
+2. ✅ Implemented ことにする pattern (N3) - decision-making construction
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 513 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### ことに (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 1053)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_kotoni_verb (驚いたことに - to my surprise)
+  - test_kotoni_i_adjective (珍しいことに - particularly rare)
+  - test_kotoni_na_adjective (残念なことに - unfortunately)
+  - test_kotoni_saiwai (幸いなことに - fortunately)
+- **Structures**:
+  - Verb + ことに
+  - い-Adjective + ことに
+  - な-Adjective + な + ことに
+- **Tokenization insights**:
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - に = 助詞/格助詞/一般 (case particle)
+  - Accepts any preceding token (verb/adjective/auxiliary)
+- **Implementation**: 3-token matcher
+  1. TokenMatcher::Any - Matches any preceding token
+  2. KotoMatcher - Matches こと as 名詞/非自立/一般
+  3. NiParticleMatcher - Matches に as 助詞/格助詞/一般
+- **Meaning**: "particularly / especially / to my..." - expresses emotional emphasis or notable circumstance
+- **Usage**: Common N3 construction for expressing feelings about situations
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - たことに (chars 2-6, past auxiliary + ことに)
+  - 珍しいことに (chars 0-6, i-adjective + ことに)
+  - なことに (chars 2-6, na-adjective connector + ことに)
+
+#### ことにする (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 554)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_kotonisuru_verb_affirmative (休むことにする - decide to take off)
+  - test_kotonisuru_verb_negative (食べないことにする - decide not to eat)
+  - test_kotonisuru_polite (行くことにします - decide to go, polite)
+  - test_kotonisuru_negative_polite (しないことにします - decide not to do, polite)
+- **Structures**:
+  - Verb[る] + ことにする
+  - Verb[ない] + ことにする
+  - Verb[る] + ことにします
+  - Verb[ない] + ことにします
+- **Tokenization insights**:
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - に = 助詞/格助詞/一般 (case particle)
+  - する = 動詞/自立 (verb in any conjugation - する/します)
+- **Implementation**: 4-token matcher
+  1. TokenMatcher::Any - Matches any preceding token (verb)
+  2. KotoMatcher - Matches こと as 名詞/非自立/一般
+  3. NiParticleMatcher - Matches に as 助詞/格助詞/一般
+  4. specific_verb("する") - Matches する in any conjugation
+- **Meaning**: "decide to / make it that" - expresses conscious decision-making
+- **Usage**: Strong expression of resolute decision, common in N3
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - 休むことにする (chars 6-13, verb + ことにする)
+  - ないことにする (chars 9-16, negative verb + ことにする)
+  - 行くことにします (chars 3-11, verb + ことにします)
+  - ないことにします (chars 6-14, negative verb + ことにします)
+
+### Technical Details
+- **Pattern priority**: 1 for both patterns (construction patterns - N3 level in patterns.rs)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - ことに: 3 variants (Verb, い-Adj, な-Adj) + common expression (幸いなことに)
+  - ことにする: 4 variants (Verb[る/ない] x casual/polite forms)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Both patterns use similar こと + particle structure with different endings
+- **Pattern ranges**: Include preceding element (verb/adjective) + full construction
+
+### Session Statistics
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 513/513 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~183 (tests + 2 matchers + feature_list updates)
+
+### Key Insights
+- Both patterns extend the こと construction family (now 6 completed: ことか, ことから, ことだ, ことがある, ことに, ことにする)
+- All share similar structure (こと + particle/copula/verb)
+- TokenMatcher::Any provides excellent flexibility for matching diverse preceding elements
+- ことに emphasizes emotion, ことにする emphasizes decision
+- Test-first workflow successfully identified all tokenization patterns
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 こと-based patterns (complete the family):
+
+**High-value N3 こと-based patterns to implement**:
+1. ことになる - "it has been decided that" (passive decision)
+2. ことはない - "there is no need to"
+3. ことなの - "the thing is..." (explanatory)
+4. ということだ - "it means that / I heard that"
+5. ないことはない - "it's not that...not" (double negative)
+
+**Recommendation**: Continue with ことになる next as it's a natural companion to ことにする (active vs passive decision).
+
+### Environment Status
+- ✅ All 513 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session
+
+---
+
 ## Session 83 - 2025-12-12 (Updated)
 
 ### ✅ Session Summary
