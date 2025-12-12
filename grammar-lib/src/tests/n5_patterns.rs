@@ -5125,3 +5125,59 @@ mod nogaheta_tests {
         assert_pattern_range(&patterns, "のがへた", 7, 16); // するのが下手だった
     }
 }
+
+// ========== のなかで～がいちばん～ (The most among) ==========
+// Pattern: のなかで～がいちばん～ (superlative - most X among Y)
+// Data source: grammar_points_data.json["のなかで～がいちばん～"]
+//
+// Structure variants to test:
+//   standard[0]: (Set of Elements) + の中で一番
+//   standard[1]: その/この + 中で一番
+
+mod nonakade_ga_ichiban_tests {
+    use super::*;
+
+    // Standard structure: Noun + の中で + Noun + が一番 + Adjective
+    #[test]
+    fn test_nonakade_ga_ichiban_standard() {
+        let sentence = "食べ物の中で寿司が一番好きだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなかで～がいちばん～");
+        assert_pattern_range(&patterns, "のなかで～がいちばん～", 3, 11); // の中で寿司が一番
+    }
+
+    // Standard structure with polite ending
+    #[test]
+    fn test_nonakade_ga_ichiban_polite() {
+        let sentence = "授業の中で理科が一番嫌いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなかで～がいちばん～");
+        assert_pattern_range(&patterns, "のなかで～がいちばん～", 2, 10); // の中で理科が一番
+    }
+
+    // Demonstrative この + 中で + interrogative + が一番
+    #[test]
+    fn test_nonakade_ga_ichiban_kono() {
+        let sentence = "この中でどれが一番好き？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなかで～がいちばん～");
+        assert_pattern_range(&patterns, "のなかで～がいちばん～", 0, 9); // この中でどれが一番
+    }
+
+    // Demonstrative その + 中で + は + Noun + が一番 + い-adjective
+    #[test]
+    fn test_nonakade_ga_ichiban_sono() {
+        let sentence = "その中ではクッキーが一番美味しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなかで～がいちばん～");
+        assert_pattern_range(&patterns, "のなかで～がいちばん～", 0, 12); // その中ではクッキーが一番
+    }
+}

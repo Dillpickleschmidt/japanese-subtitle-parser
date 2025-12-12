@@ -976,6 +976,14 @@ declare_patterns! {
         jlpt: "n5",
     },
 
+    NonakadeGaIchiban {
+        name: "のなかで～がいちばん～",
+        matcher_fn: crate::matchers::n5::nonakade_ga_ichiban,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
     AdjectiveNoHa {
         name: "Adjective + の(は)",
         matcher_fn: crate::matchers::n5::adjective_no_ha,

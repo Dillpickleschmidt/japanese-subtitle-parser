@@ -3991,3 +3991,126 @@ pub fn na_prohibitive() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NaProhibitiveMatcher)),
     ]
 }
+
+// ========== のなかで～がいちばん～ (The most among) ==========
+
+// Pattern: のなかで～がいちばん～ (superlative - most X among Y)
+// Structures:
+//   - Noun + の + 中で + (Noun/Pronoun) + が + 一番
+//   - この/その + 中で + (Noun/Pronoun) + が + 一番
+pub fn nonakade_ga_ichiban() -> Vec<TokenMatcher> {
+    use super::concat;
+
+    // Match の (attributive particle)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match この or その (demonstratives)
+    #[derive(Debug)]
+    struct KonoSonoMatcher;
+    impl super::Matcher for KonoSonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "この" || token.surface == "その")
+                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        }
+    }
+
+    // Match 中 (名詞/非自立/副詞可能)
+    #[derive(Debug)]
+    struct NakaMatcher;
+    impl super::Matcher for NakaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "中"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match で (case particle)
+    #[derive(Debug)]
+    struct DeCaseParticleMatcher;
+    impl super::Matcher for DeCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match が (case particle)
+    #[derive(Debug)]
+    struct GaCaseParticleMatcher;
+    impl super::Matcher for GaCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 一番 (名詞/副詞可能)
+    #[derive(Debug)]
+    struct IchibanMatcher;
+    impl super::Matcher for IchibanMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "一番"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Match の or この/その at the start
+    #[derive(Debug)]
+    struct NoOrDemonstrativeMatcher;
+    impl super::Matcher for NoOrDemonstrativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match の (attributive particle)
+            (token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化"))
+            ||
+            // Match この or その (demonstratives)
+            ((token.surface == "この" || token.surface == "その")
+                && token.pos.first().is_some_and(|pos| pos == "連体詞"))
+        }
+    }
+
+    concat(vec![
+        // の or この/その
+        vec![TokenMatcher::Custom(Arc::new(NoOrDemonstrativeMatcher))],
+        // 中
+        vec![TokenMatcher::Custom(Arc::new(NakaMatcher))],
+        // で
+        vec![TokenMatcher::Custom(Arc::new(DeCaseParticleMatcher))],
+        // Optional は (topic marker that can appear after で)
+        vec![TokenMatcher::Optional(Box::new({
+            #[derive(Debug)]
+            struct HaTopicMarkerMatcher;
+            impl super::Matcher for HaTopicMarkerMatcher {
+                fn matches(&self, token: &crate::KagomeToken) -> bool {
+                    token.surface == "は"
+                        && token.pos.first().is_some_and(|pos| pos == "助詞")
+                        && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                }
+            }
+            TokenMatcher::Custom(Arc::new(HaTopicMarkerMatcher))
+        }))],
+        // Wildcard for the subject (0-3 tokens) - e.g., 寿司, どれ, クッキー
+        vec![TokenMatcher::Wildcard {
+            min: 0,
+            max: 3,
+            stop_conditions: vec![],
+        }],
+        // が
+        vec![TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher))],
+        // 一番
+        vec![TokenMatcher::Custom(Arc::new(IchibanMatcher))],
+    ])
+}
