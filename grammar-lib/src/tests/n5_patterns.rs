@@ -4329,3 +4329,73 @@ mod morau_tests {
         assert_pattern_range(&patterns, "もらう", 11, 14); // もらっ (stem before て)
     }
 }
+
+// ========== にする (To decide on/make) ==========
+// Pattern: にする (to decide on/make something)
+// Data source: grammar_points_data.json["にする"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + に + する
+//   polite[0]: Noun + に + します
+//
+// Meaning: "to decide on (A)", "to make it (A)"
+// Usage: Indicates a decision or choice - the speaker has control over the outcome
+
+mod ni_suru_tests {
+    use super::*;
+
+    // Present tense - basic form (する)
+    #[test]
+    fn test_ni_suru_present() {
+        let sentence = "俺はビールにする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にする");
+        assert_pattern_range(&patterns, "にする", 2, 8); // ビールにする
+    }
+
+    // Present tense - polite form (します)
+    #[test]
+    fn test_ni_suru_polite() {
+        let sentence = "私はコーヒーにします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にする");
+        assert_pattern_range(&patterns, "にする", 2, 10); // コーヒーにします
+    }
+
+    // Past tense
+    #[test]
+    fn test_ni_suru_past() {
+        let sentence = "結局ラーメンにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にする");
+        assert_pattern_range(&patterns, "にする", 2, 9); // ラーメンにした
+    }
+
+    // Polite past tense
+    #[test]
+    fn test_ni_suru_polite_past() {
+        let sentence = "ハイキングの日は日曜日にしました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にする");
+        assert_pattern_range(&patterns, "にする", 8, 16); // 日曜日にしました
+    }
+
+    // Volitional form
+    #[test]
+    fn test_ni_suru_volitional() {
+        let sentence = "次は緑茶にしよう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にする");
+        assert_pattern_range(&patterns, "にする", 2, 8); // 緑茶にしよう
+    }
+}

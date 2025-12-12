@@ -352,6 +352,14 @@ declare_patterns! {
         jlpt: "n5",
     },
 
+    NiSuru {
+        name: "にする",
+        matcher_fn: crate::matchers::n5::ni_suru,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
     Kuru {
         name: "くる",
         matcher_fn: crate::matchers::n5::kuru,

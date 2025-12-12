@@ -3218,3 +3218,39 @@ pub fn ni_naru_ku_naru() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NaruVerbMatcher)),
     ]
 }
+
+// Pattern: にする
+// Pattern: にする (to decide on/make something)
+// Structures: Noun + に + する/します/した/しました
+pub fn ni_suru() -> Vec<TokenMatcher> {
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match に particle (case particle)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match する verb (base_form = する, conjugation type = サ変・スル)
+    #[derive(Debug)]
+    struct SuruVerbMatcher;
+    impl Matcher for SuruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(4).is_some_and(|f| f.starts_with("サ変"))
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(SuruVerbMatcher)),
+    ]
+}

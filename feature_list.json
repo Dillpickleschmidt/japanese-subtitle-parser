@@ -1164,13 +1164,13 @@
   {
     "pattern_name": "にする",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にする is a structure that combines the に particle (a location/target), with the verb する [1 std, 1 pol]",
     "priority": 1,
     "skip_reason": null
