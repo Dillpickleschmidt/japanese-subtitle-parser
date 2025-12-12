@@ -2738,3 +2738,62 @@ mod zunihairarenai_tests {
         assert_pattern_range(&patterns, "ずにはいられない", 9, 20); // 笑わずにはいられません
     }
 }
+
+// ========== 遂に (finally/at last) ==========
+// Pattern: 遂に (finally/at last)
+// Data source: grammar_points_data.json["遂に"]
+//
+// Structure variants to test:
+//   standard[0]: ついに + Phrase
+
+mod tsuini_tests {
+    use super::*;
+
+    // Test: ついに + Verb (past tense)
+    // Example: ついに日本上陸！！！ (Finally it has arrived in Japan!!!)
+    #[test]
+    fn test_tsuini_arrival() {
+        let sentence = "ついに日本上陸！！！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "遂に");
+        assert_pattern_range(&patterns, "遂に", 0, 3); // ついに
+    }
+
+    // Test: ついに + Verb (past tense victory)
+    // Example: ついにドラゴンズが勝った！ (The Dragons have finally won!)
+    #[test]
+    fn test_tsuini_victory() {
+        let sentence = "ついにドラゴンズが勝った！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "遂に");
+        assert_pattern_range(&patterns, "遂に", 0, 3); // ついに
+    }
+
+    // Test: ついに + copula + polite
+    // Example: ついに最後の日ですね (Finally it is your last day)
+    #[test]
+    fn test_tsuini_last_day() {
+        let sentence = "ついに最後の日ですね、今まで色々とありがとうございました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "遂に");
+        assert_pattern_range(&patterns, "遂に", 0, 3); // ついに
+    }
+
+    // Test: ついに + Verb (past tense marriage)
+    // Example: 遂に結婚したのか！ (You finally married!?)
+    #[test]
+    fn test_tsuini_marriage() {
+        let sentence = "遂に結婚したのか！おめでとう！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "遂に");
+        assert_pattern_range(&patterns, "遂に", 0, 2); // 遂に (kanji form is 2 chars)
+    }
+}

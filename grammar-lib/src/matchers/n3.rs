@@ -2022,9 +2022,26 @@ pub fn ippoude() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 遂に
+// Pattern: 遂に (finally/at last - formal)
+// Structures: ついに + Phrase
+// Meaning: "finally" or "at last" - emphasizes completion after significant time/effort
+// Usage: Indicates something has finally happened after a long period of time
+// Examples:
+//   - ついに日本上陸 (finally arrived in Japan)
+//   - ついにドラゴンズが勝った (The Dragons have finally won)
+//   - 遂に結婚した (finally married)
+// Note: Both ついに (hiragana) and 遂に (with kanji) are common. Slightly more formal than とうとう.
 pub fn tsuini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TsuiniMatcher;
+    impl Matcher for TsuiniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ついに" || token.surface == "遂に")
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(TsuiniMatcher))]
 }
 
 // Pattern: すでに
