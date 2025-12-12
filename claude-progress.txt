@@ -1,5 +1,98 @@
 # Grammar-lib Development Progress
 
+## Session 77 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (Verb[volitional]とする - try to / be about to)
+**Patterns completed**: 1 new N3 pattern (volitional construction)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 462 (was 458)
+
+### Accomplishments
+1. ✅ Implemented Verb[volitional]とする pattern (N3) - volitional construction
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 462 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### Verb[volitional]とする (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 981)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_volitional_tosuru_standard (食べようとする - try to eat)
+  - test_volitional_tosuru_past (しようとした - tried to do)
+  - test_volitional_tosuru_polite (起きようとします - will try to wake up)
+  - test_volitional_tosuru_tara (出ようとしたら - when about to leave)
+- **Structures**:
+  - Verb[未然ウ接続] + う + と + する
+  - Verb[未然ウ接続] + う + と + します
+- **Tokenization insights**:
+  - Verb in 未然ウ接続 form (e.g., 食べよ, 起きよ, しよ, 出よ)
+  - う = 助動詞/不変化型/基本形
+  - と = 助詞/格助詞/引用 or 一般
+  - する in various forms (する, します, した, したら)
+- **Implementation**: 4-token matcher
+  1. VolitionalVerbMatcher - Matches verb in 未然ウ接続
+  2. VolitionalAuxiliaryMatcher - Matches う as 助動詞
+  3. ToQuotationMatcher - Matches と as quotation particle
+  4. specific_verb("する") - Matches する in any conjugation
+- **Meaning**: "try to / be about to / endeavor to" - expresses intent to do an action
+- **Usage**: Common N3 construction for expressing attempts or imminent actions
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - 食べようとする (chars 8-15, full construction)
+  - しようとした (chars 12-18, includes past form)
+  - 起きようとします (chars 8-16, includes polite form)
+  - 出ようとしたら (chars 2-9, includes conditional)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N3 level in patterns.rs)
+- **Test coverage**: Both structure variants from grammar_points_data.json
+  - Verb[おう] + とする (tested with multiple verbs and conjugations)
+  - Verb[おう] + とします (polite form)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: The volitional form is verb + う auxiliary, followed by と particle and する
+- **Pattern range**: Full construction from verb stem through する conjugation
+- **Flexible conjugation**: Pattern works with any conjugation of する (する, します, した, したら, etc.)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 462/462 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~100 (tests + matcher implementation + feature_list update)
+
+### Key Insights
+- Pattern is straightforward with clear 4-token structure
+- Test-first workflow successfully identified tokenization structure
+- The volitional auxiliary う is always 助動詞/不変化型/基本形
+- Pattern naturally extends to all conjugations of する through specific_verb matcher
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. ぎみ - "sensation of / tendency" suffix (similar to がち/がたい)
+2. あまりに - "excessively" (related to あまり but different usage)
+3. いくら〜でも - "no matter how much"
+4. Verb[volitional] + としたが - related to the pattern just implemented
+5. かけ - incomplete/unfinished action
+6. から言うと - "from the perspective of"
+7. Noun＋型 - "type/style" suffix
+
+**Recommendation**: Continue with concrete N3 patterns. ぎみ would be a good next choice as it's a straightforward suffix pattern similar to がち/がたい that we've already implemented.
+
+### Environment Status
+- ✅ All 462 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 76 - 2025-12-12
 
 ### ✅ Session Summary
