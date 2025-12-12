@@ -4566,13 +4566,13 @@
   {
     "pattern_name": "ことにする",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In a similar way to how にする means to 'decide on' something, ことにする means to decide on a situation, or course of action [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null

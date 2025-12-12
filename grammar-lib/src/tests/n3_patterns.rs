@@ -1385,3 +1385,61 @@ mod kotoni_tests {
         assert_pattern_range(&patterns, "ことに", 2, 6); // なことに
     }
 }
+
+// ========== ことにする (decide to) ==========
+// Pattern: ことにする (decide to / make it that)
+// Data source: grammar_points_data.json["ことにする"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[る] + ことにする
+//   standard[1]: Verb[ない] + ことにする
+//   polite[0]: Verb[る] + ことにします
+//   polite[1]: Verb[ない] + ことにします
+
+mod kotonisuru_tests {
+    use super::*;
+
+    // Test: Verb[る] + ことにする (decide to do)
+    #[test]
+    fn test_kotonisuru_verb_affirmative() {
+        let sentence = "明日は仕事を休むことにする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにする");
+        assert_pattern_range(&patterns, "ことにする", 6, 13); // 休むことにする
+    }
+
+    // Test: Verb[ない] + ことにする (decide not to)
+    #[test]
+    fn test_kotonisuru_verb_negative() {
+        let sentence = "これからは肉を食べないことにする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにする");
+        assert_pattern_range(&patterns, "ことにする", 9, 16); // ないことにする
+    }
+
+    // Test: Verb[る] + ことにします (polite - decide to do)
+    #[test]
+    fn test_kotonisuru_polite() {
+        let sentence = "箱根に行くことにします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにする");
+        assert_pattern_range(&patterns, "ことにする", 3, 11); // 行くことにします
+    }
+
+    // Test: Verb[ない] + ことにします (polite - decide not to)
+    #[test]
+    fn test_kotonisuru_negative_polite() {
+        let sentence = "今日は外出しないことにします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにする");
+        assert_pattern_range(&patterns, "ことにする", 6, 14); // ないことにします
+    }
+}
