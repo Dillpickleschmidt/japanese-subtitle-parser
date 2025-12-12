@@ -3,17 +3,18 @@
 ## Session 48 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One pattern fully implemented (でしょう)
-**Patterns completed**: 1 new pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 277 (was 273)
+**Status**: Two patterns fully implemented (でしょう + だろう)
+**Patterns completed**: 2 new patterns
+**Tests added**: 8 comprehensive tests
+**Total tests**: 281 (was 273)
 
 ### Accomplishments
-1. ✅ Implemented でしょう (probably/right? - tentative/assumption) pattern
-2. ✅ All 4 test variants passing with proper range assertions
-3. ✅ No test regressions - all 277 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+1. ✅ Implemented でしょう (probably/right? - polite tentative) pattern
+2. ✅ Implemented だろう (probably/right? - casual tentative) pattern
+3. ✅ All 8 test variants passing with proper range assertions
+4. ✅ No test regressions - all 281 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commits with full documentation
 
 ### Completed Patterns
 
@@ -41,26 +42,48 @@
   - Pattern correctly detects でしょう in all contexts (nouns, verbs, adjectives)
   - Polite tentative form meaning "probably" or "right?"
 
+#### だろう (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_darou_verb (晴れるだろう - verb + だろう)
+  - test_darou_i_adjective (寒いだろう - i-adj + だろう)
+  - test_darou_noun (お菓子だろう - noun + だろう)
+  - test_darou_contracted (行くだろ - contracted form without う)
+- **Structures**:
+  - Verb + だろう
+  - Adjective + だろう
+  - Noun + だろう
+- **Tokenization insights**:
+  - Full form: だろ (助動詞, base=だ, 未然形) + う (助動詞, 不変化型)
+  - Contracted form: だろ (助動詞, base=だ, 未然形) alone (without う)
+  - Can follow any noun, verb, or adjective
+- **Implementation notes**:
+  - 3-token matcher: Any + だろ + Optional(う)
+  - Uses TokenMatcher::Optional for う to handle both full and contracted forms
+  - Casual equivalent of でしょう
+  - More masculine/casual register than でしょう
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern)
-- **Test coverage**: All 4 structure variants from grammar_points_data.json
-  - Nouns, verbs, い-adjectives, な-adjectives all tested
+- **Pattern priority**: 1 (construction patterns)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - でしょう: Nouns, verbs, い-adjectives, な-adjectives
+  - だろう: Nouns, verbs, adjectives, contracted form
 - **Implementation challenges**:
-  - Deciding pattern range for complex cases like 良かったでしょう
-  - Current approach captures minimal meaningful context (た + でしょう for past adjectives)
-  - This aligns with detecting the でしょう construction while including necessary preceding context
+  - でしょう: Deciding pattern range for complex cases like 良かったでしょう
+  - だろう: Handling both full (だろう) and contracted (だろ) forms with Optional matcher
+  - Both patterns use TokenMatcher::Any for maximum flexibility
 
 ### Next Priorities (N5 patterns still needed)
 High-value construction patterns from feature_list.json:
-1. だろう - casual form of でしょう (probably/right? - casual)
-2. だ - copula (is/are)
-3. まだ - still/not yet adverb
-4. より～のほうが - comparison pattern
-5. もらう - to receive (from someone)
-6. くれる - to give (to me/us)
+1. だ - copula (is/are)
+2. まだ - still/not yet adverb
+3. より～のほうが - comparison pattern
+4. もらう - to receive (from someone)
+5. くれる - to give (to me/us)
+6. Verb conjugation patterns (Dictionary, Negative, Past, etc.)
 
 ### Environment Status
-- ✅ All 277 tests passing
+- ✅ All 281 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
