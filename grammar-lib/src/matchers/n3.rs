@@ -576,9 +576,20 @@ pub fn u301c_kaha_u301c_niyottechigau() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: かなり
+// かなり: Considerably/quite (adverb form)
+// Structures: かなり + Phrase
 pub fn kanari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct KanariMatcher;
+    impl Matcher for KanariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かなり"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KanariMatcher))]
 }
 
 // Pattern: あまりに
@@ -1488,5 +1499,35 @@ pub fn zutsu() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(ZutsuPrecedingMatcher)),
         TokenMatcher::Custom(Arc::new(ZutsuMatcher)),
+    ]
+}
+
+// かなり + の + Noun: Considerable amount of
+// Structures: かなり + の + Noun
+pub fn kanari_no_noun() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct KanariNounMatcher;
+    impl Matcher for KanariNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かなり"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KanariNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        super::noun_matcher(),
     ]
 }

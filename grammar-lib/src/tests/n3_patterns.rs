@@ -578,3 +578,59 @@ mod gachi_tests {
         assert_pattern_range(&patterns, "がち", 10, 14); // 留守がち
     }
 }
+
+// ========== かなり (quite/considerably) ==========
+// Pattern: かなり (quite/fairly/considerably/pretty)
+// Data source: grammar_points_data.json["かなり"]
+//
+// Structure variants to test:
+//   standard[0]: かなり + Phrase
+//   standard[1]: かなり + の + Noun
+
+mod kanari_tests {
+    use super::*;
+
+    // Test: かなり + Adjective (structure.standard[0] - かなり + Phrase)
+    #[test]
+    fn test_kanari_adjective() {
+        let sentence = "今日は一日中仕事をしていたからかなり疲れた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かなり");
+        assert_pattern_range(&patterns, "かなり", 15, 18); // かなり
+    }
+
+    // Test: かなり + Verb (structure.standard[0] - かなり + Phrase)
+    #[test]
+    fn test_kanari_verb() {
+        let sentence = "今月もかなりお金を使ったね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かなり");
+        assert_pattern_range(&patterns, "かなり", 3, 6); // かなり
+    }
+
+    // Test: かなり + の + Noun (structure.standard[1])
+    #[test]
+    fn test_kanari_no_noun_distance() {
+        let sentence = "メキシコまではかなりの距離があるから飛行機で行った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かなり + の + Noun");
+        assert_pattern_range(&patterns, "かなり + の + Noun", 7, 13); // かなりの距離
+    }
+
+    // Test: かなり + の + Noun (structure.standard[1] - different example)
+    #[test]
+    fn test_kanari_no_noun_people() {
+        let sentence = "昨日の事故でかなりの人が怪我をした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かなり + の + Noun");
+        assert_pattern_range(&patterns, "かなり + の + Noun", 6, 11); // かなりの人
+    }
+}

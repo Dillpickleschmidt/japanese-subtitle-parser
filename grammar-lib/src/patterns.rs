@@ -3015,7 +3015,15 @@ declare_patterns! {
     Kanari {
         name: "かなり",
         matcher_fn: crate::matchers::n3::kanari,
-        priority: 1,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    KanariNoNoun {
+        name: "かなり + の + Noun",
+        matcher_fn: crate::matchers::n3::kanari_no_noun,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },
