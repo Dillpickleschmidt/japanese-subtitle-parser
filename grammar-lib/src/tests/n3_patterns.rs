@@ -2520,3 +2520,66 @@ mod suruto_tests {
         assert_pattern_range(&patterns, "すると", 17, 20); // すると
     }
 }
+
+// ========== そうすると (then/if you do that) ==========
+// Pattern: そうすると (then/if you do that/in that case)
+// Data source: grammar_points_data.json["そうすると"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase (A)。 そうすると + (Result) Phrase
+
+mod sousuruto_tests {
+    use super::*;
+
+    // Test: そうすると for uncontrollable result - running slower
+    // Example: もう少し遅く走ってみれば。そうすると、もっと長い距離走れるよ
+    // (Try to run a little slower. Once you do that, you will be able to run a longer distance)
+    #[test]
+    fn test_sousuruto_running() {
+        let sentence = "もう少し遅く走ってみれば。そうすると、もっと長い距離走れるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうすると");
+        assert_pattern_range(&patterns, "そうすると", 13, 18); // そうすると
+    }
+
+    // Test: そうすると for instruction - roasting food
+    // Example: 食べる前に軽く炙ってください。そうすると、もっと美味しく食べれます
+    // (Please roast before eating. Having done that, it will taste even more delicious)
+    #[test]
+    fn test_sousuruto_roasting() {
+        let sentence = "食べる前に軽く炙ってください。そうすると、もっと美味しく食べれます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうすると");
+        assert_pattern_range(&patterns, "そうすると", 15, 20); // そうすると
+    }
+
+    // Test: そうすると for uncontrollable result - fishing
+    // Example: この餌を使ってみ。そうすると、もっと大きい魚が釣れるよ
+    // (Try using this bait. If you do so, you'll be able to catch a bigger fish)
+    #[test]
+    fn test_sousuruto_fishing() {
+        let sentence = "この餌を使ってみ。そうすると、もっと大きい魚が釣れるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうすると");
+        assert_pattern_range(&patterns, "そうすると", 9, 14); // そうすると
+    }
+
+    // Test: そうすると drawing conclusion - birth year
+    // Example: １９９３年生まれなんですか？そうすると、２９歳と言う事ですね
+    // (You were born in 1993? So that means that you are 29, right?)
+    #[test]
+    fn test_sousuruto_conclusion() {
+        let sentence = "１９９３年生まれなんですか？そうすると、２９歳と言う事ですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうすると");
+        assert_pattern_range(&patterns, "そうすると", 14, 19); // そうすると
+    }
+}

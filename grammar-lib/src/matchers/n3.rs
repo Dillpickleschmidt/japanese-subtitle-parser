@@ -265,9 +265,49 @@ pub fn suruto() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: そうすると
+// Pattern: そうすると (then/if you do that/in that case)
+// Structures: そう + する + と
 pub fn sousuruto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct SouAdverbMatcher;
+    impl Matcher for SouAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そう"
+                && token.base_form == "そう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct SuruVerbMatcher;
+    impl Matcher for SuruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "する"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct ToConjunctionMatcher;
+    impl Matcher for ToConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SouAdverbMatcher)),
+        TokenMatcher::Custom(Arc::new(SuruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ToConjunctionMatcher)),
+    ]
 }
 
 // Pattern: のはXの方だ
