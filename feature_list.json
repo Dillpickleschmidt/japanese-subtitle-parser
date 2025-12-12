@@ -618,13 +618,13 @@
   {
     "pattern_name": "すぎる",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "すぎる is a verb that is used in Japanese to mean 'to exceed', or 'to go past' [9 std, 9 pol]",
     "priority": 1,
     "skip_reason": null

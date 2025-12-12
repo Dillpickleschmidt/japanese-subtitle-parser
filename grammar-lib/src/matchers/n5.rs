@@ -1324,9 +1324,59 @@ pub fn verb_made() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: すぎる
+// Pattern: すぎる (too much, excessive)
+// Structures: Verb[stem] + すぎる, い-Adj[stem] + すぎる, な-Adj + すぎる, なさすぎる
 pub fn sugiru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match すぎる as verb
+    #[derive(Debug)]
+    struct SugiruMatcher;
+    impl Matcher for SugiruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "すぎる" && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match verb stem, i-adjective stem, na-adjective, or な (from ない)
+    #[derive(Debug)]
+    struct SugiruPrefixMatcher;
+    impl Matcher for SugiruPrefixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb in 連用形 (stem form)
+            let is_verb_stem = token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形");
+
+            // い-adjective stem (ガル接続 form)
+            let is_iadj_stem = token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続");
+
+            // な-adjective (形容動詞語幹)
+            let is_naadj = token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹");
+
+            is_verb_stem || is_iadj_stem || is_naadj
+        }
+    }
+
+    // Match さ suffix for なさすぎる
+    #[derive(Debug)]
+    struct SaSuffixMatcher;
+    impl Matcher for SaSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SugiruPrefixMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            SaSuffixMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(SugiruMatcher)),
+    ]
 }
 
 // Pattern: にする

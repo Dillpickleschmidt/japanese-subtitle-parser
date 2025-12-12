@@ -2144,3 +2144,88 @@ mod ka_or_tests {
     }
 }
 
+// ========== すぎる (Too much/excessive) ==========
+// Pattern: すぎる (too much, excessive)
+// Data source: grammar_points_data.json["すぎる"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + すぎる
+//   standard[1]: い-Adjective[stem] + すぎる
+//   standard[2]: な-Adjective + すぎる
+//   standard[3-6]: Negative forms with なさすぎる
+//   polite[0-6]: Same forms with すぎます
+
+mod sugiru_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_stem_sugiru() {
+        let sentence = "頑張りすぎるのは身体に良くない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すぎる");
+        assert_pattern_range(&patterns, "すぎる", 0, 6); // 頑張りすぎる
+    }
+
+    #[test]
+    fn test_i_adjective_sugiru() {
+        let sentence = "これは熱すぎるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すぎる");
+        assert_pattern_range(&patterns, "すぎる", 3, 7); // 熱すぎる
+    }
+
+    #[test]
+    fn test_na_adjective_sugiru() {
+        let sentence = "俺には田舎は静かすぎる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すぎる");
+        assert_pattern_range(&patterns, "すぎる", 6, 11); // 静かすぎる
+    }
+
+    #[test]
+    fn test_verb_stem_sugimasu_polite() {
+        let sentence = "最近働きすぎます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すぎる");
+        assert_pattern_range(&patterns, "すぎる", 2, 8); // 働きすぎます
+    }
+
+    #[test]
+    fn test_i_adjective_sugimasu_polite() {
+        let sentence = "この犬、可愛すぎます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すぎる");
+        assert_pattern_range(&patterns, "すぎる", 4, 10); // 可愛すぎます
+    }
+
+    #[test]
+    fn test_negative_nasasugiru() {
+        let sentence = "私はお金がなさすぎる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すぎる");
+        assert_pattern_range(&patterns, "すぎる", 5, 10); // なさすぎる
+    }
+
+    #[test]
+    fn test_yoi_stem_sugiru() {
+        let sentence = "この歌はよすぎる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すぎる");
+        assert_pattern_range(&patterns, "すぎる", 4, 8); // よすぎる
+    }
+}
+
