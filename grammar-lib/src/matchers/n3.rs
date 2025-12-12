@@ -935,9 +935,54 @@ pub fn tatotanni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: おきに
+// Pattern: おきに (at intervals of / every X)
+// Structures: Number + Counter + おきに
 pub fn okini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NumberMatcher;
+    impl Matcher for NumberMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "数")
+        }
+    }
+
+    #[derive(Debug)]
+    struct CounterMatcher;
+    impl Matcher for CounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助数詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct OkiMatcher;
+    impl Matcher for OkiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "おき"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiCaseParticleMatcher;
+    impl Matcher for NiCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NumberMatcher)),
+        TokenMatcher::Custom(Arc::new(CounterMatcher)),
+        TokenMatcher::Custom(Arc::new(OkiMatcher)),
+        TokenMatcher::Custom(Arc::new(NiCaseParticleMatcher)),
+    ]
 }
 
 // Pattern: たびに

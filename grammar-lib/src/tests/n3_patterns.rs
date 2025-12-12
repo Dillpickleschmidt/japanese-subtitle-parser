@@ -182,3 +182,47 @@ mod uchini_tests {
         assert_pattern_range(&patterns, "うちに", 1, 5); // のうちに
     }
 }
+
+// ========== おきに (at intervals of / every) ==========
+// Pattern: おきに (at intervals of / every X)
+// Data source: grammar_points_data.json["おきに"]
+//
+// Structure variants to test:
+//   standard[0]: Number + Counter + おきに
+
+mod okini_tests {
+    use super::*;
+
+    // Test: 一日おきに (one day interval - every second day)
+    #[test]
+    fn test_okini_day_interval() {
+        let sentence = "この薬は一日おきに飲んでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おきに");
+        assert_pattern_range(&patterns, "おきに", 4, 9); // 一日おきに
+    }
+
+    // Test: 二時間おきに (two hour interval - every two hours)
+    #[test]
+    fn test_okini_hour_interval() {
+        let sentence = "毎日２時間おきに体を動かしている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おきに");
+        assert_pattern_range(&patterns, "おきに", 2, 8); // ２時間おきに
+    }
+
+    // Test: 一ヶ月おきに (one month interval - every second month)
+    #[test]
+    fn test_okini_month_interval() {
+        let sentence = "一ヶ月おきに病院に来るように先生に言われました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おきに");
+        assert_pattern_range(&patterns, "おきに", 0, 6); // 一ヶ月おきに
+    }
+}
