@@ -3,18 +3,19 @@
 ## Session 60 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: Two N5 patterns fully implemented (な + で)
-**Patterns completed**: 2 new patterns (prohibitive command + particle)
-**Tests added**: 8 comprehensive tests
-**Total tests**: 371 (was 363)
+**Status**: Three N5 patterns fully implemented (な + で + に)
+**Patterns completed**: 3 new patterns (prohibitive command + 2 particles)
+**Tests added**: 12 comprehensive tests
+**Total tests**: 375 (was 363)
 
 ### Accomplishments
 1. ✅ Implemented な (prohibitive - don't!) pattern (N5)
 2. ✅ Implemented で (particle - means/method/location) pattern (N5)
-3. ✅ All 8 test variants passing with proper range assertions
-4. ✅ No test regressions - all 371 tests pass
-5. ✅ Updated feature_list.json for both patterns
-6. ✅ Clean commits with full documentation
+3. ✅ Implemented に (particle - location/direction/time) pattern (N5)
+4. ✅ All 12 test variants passing with proper range assertions
+5. ✅ No test regressions - all 375 tests pass
+6. ✅ Updated feature_list.json for all three patterns
+7. ✅ Clean commits with full documentation
 
 ### Completed Patterns
 
@@ -62,24 +63,43 @@
 - **Pattern priority**: 1 (construction pattern - N5 level)
 - **Note**: Pattern declaration already existed but had empty matcher (vec![]) - now fully implemented with tests
 
+#### に (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing in n5_patterns.rs
+  - test_ni_location_room (彼は部屋にいます - location in/at)
+  - test_ni_direction_park (公園に行く - direction/destination to)
+  - test_ni_time_birthday (誕生日にケーキを食べる - time on/at)
+  - test_ni_vehicle_bus (バスに乗る - vehicle/surface on)
+- **Structure**: Noun + に
+- **Tokenization**:
+  - Noun (various types)
+  - に = 助詞/格助詞/一般 (case particle)
+- **Implementation**: Simple 2-token matcher
+  - noun_matcher(): Matches any noun
+  - Custom NiParticleMatcher: Matches に as 助詞/格助詞
+- **Meaning**: Indicates location, direction, or time - the "endpoint" of an action
+- **Usage**: Very common particle with multiple related uses (in, at, to, for, on)
+- **Pattern priority**: 1 (construction pattern - N5 level)
+- **Note**: Pattern declaration already existed but had empty matcher (vec![]) - now fully implemented with tests
+
 ### Session Statistics
-- **Patterns implemented**: 2 (N5)
-- **Tests written**: 8 (4 for な + 4 for で)
-- **Tests passing**: 371/371 (100%)
-- **Commits**: 3 clean commits (な impl + progress update + で impl)
-- **Lines added**: ~180 (tests + matchers + declarations + feature_list updates)
+- **Patterns implemented**: 3 (N5)
+- **Tests written**: 12 (4 for な + 4 for で + 4 for に)
+- **Tests passing**: 375/375 (100%)
+- **Commits**: 4 clean commits (な impl + progress + で impl + に impl)
+- **Lines added**: ~260 (tests + matchers + feature_list updates)
 
 ### Key Insight
-- Found that で pattern existed in patterns.rs but had stub matcher (vec![])
-- This was a "hidden" incomplete pattern - not obvious from feature_list alone
-- May be other stub matchers worth checking: に, の, etc.
+- Found that で and に patterns existed in patterns.rs but had stub matchers (vec![])
+- These were "hidden" incomplete patterns - not obvious from feature_list alone
+- Successfully implemented both stubs with comprehensive tests
+- May be other stub matchers worth checking: の, etc.
 
 ### Next Priorities
-Continue with N5 patterns (27 remaining):
+Continue with N5 patterns (26 remaining):
 
 **Check for other stub patterns**:
-1. に - particle (location/direction/time) - **check if stub**
-2. の - particle (possession/modification) - **check if stub**
+1. の - particle (possession/modification) - **check if stub**
 
 **Other concrete N5 patterns**:
 3. ている② - resultative state (difficult - same structure as existing ている)
@@ -91,7 +111,7 @@ Continue with N5 patterns (27 remaining):
 Avoid semantic-only distinctions (ている②/③) and overly broad patterns.
 
 ### Environment Status
-- ✅ All 371 tests passing
+- ✅ All 375 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
