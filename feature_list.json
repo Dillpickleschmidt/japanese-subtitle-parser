@@ -7100,13 +7100,13 @@
   {
     "pattern_name": "～というのは事実だ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "～というのは事実（じじつ）だ is a phrase used to strongly express that (A) is something that is 'true', 'a fact', or has 'no doubt' [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null

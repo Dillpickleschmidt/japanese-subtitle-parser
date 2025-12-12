@@ -2797,3 +2797,67 @@ mod tsuini_tests {
         assert_pattern_range(&patterns, "遂に", 0, 2); // 遂に (kanji form is 2 chars)
     }
 }
+
+// ========== ～というのは事実だ (it is a fact that) ==========
+// Pattern: ～というのは事実だ (it is a fact that / it is true that)
+// Data source: grammar_points_data.json["～というのは事実だ"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase + (という) + のは事実だ
+//   polite[0]: Phrase + (という) + のは事実です
+
+mod toiunohajijitsuda_tests {
+    use super::*;
+
+    // Test: Verb + というのは事実だ (with という)
+    // Example: この人が私の母親を殺したというのは事実だ
+    // (It is a fact that this person killed my mother)
+    #[test]
+    fn test_jijitsuda_verb_with_toiu() {
+        let sentence = "この人が私の母親を殺したというのは事実だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～というのは事実だ");
+        assert_pattern_range(&patterns, "～というのは事実だ", 12, 20); // というのは事実だ
+    }
+
+    // Test: Verb + のは事実だ (without という)
+    // Example: 赤信号を無視したのは事実だ
+    // (It is true that I ignored the red light)
+    #[test]
+    fn test_jijitsuda_verb_without_toiu() {
+        let sentence = "赤信号を無視したのは事実だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～というのは事実だ");
+        assert_pattern_range(&patterns, "～というのは事実だ", 8, 13); // のは事実だ
+    }
+
+    // Test: Copula + というのは事実だ
+    // Example: 彼女が弁護士だというのは事実だ
+    // (It is a fact that she is a lawyer)
+    #[test]
+    fn test_jijitsuda_copula() {
+        let sentence = "彼女が弁護士だというのは事実だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～というのは事実だ");
+        assert_pattern_range(&patterns, "～というのは事実だ", 7, 15); // というのは事実だ
+    }
+
+    // Test: Polite form - のは事実です
+    // Example: 彼女と仲直りしたのは事実です
+    // (It is a fact that I worked it out with my girlfriend)
+    #[test]
+    fn test_jijitsuda_polite() {
+        let sentence = "彼女と仲直りしたのは事実です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～というのは事実だ");
+        assert_pattern_range(&patterns, "～というのは事実だ", 8, 14); // のは事実です
+    }
+}

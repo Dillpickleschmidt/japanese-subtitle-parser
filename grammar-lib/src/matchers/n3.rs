@@ -1243,8 +1243,73 @@ pub fn nishitemo() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ～というのは事実だ
+// Pattern: ～というのは事実だ (it is a fact that)
+// Structures: Phrase + (という) + のは事実だ/です
+// Meaning: "it is a fact that / it is true that" - strongly expresses something is true/factual
+// Usage: Declares a statement as undeniable truth
+// Examples:
+//   - 殺したというのは事実だ (It is a fact that [someone] killed)
+//   - 無視したのは事実だ (It is true that [I] ignored)
+//   - 仲直りしたのは事実です (It is a fact that [we] made up - polite)
+// Note: という is optional, making it sound slightly weaker when omitted
 pub fn uff5e_toiunohajijitsuda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ToiuMatcher;
+    impl Matcher for ToiuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "という"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoMatcher;
+    impl Matcher for NoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct JijitsuMatcher;
+    impl Matcher for JijitsuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "事実"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ToiuMatcher)))),
+        TokenMatcher::Custom(Arc::new(NoMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(JijitsuMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: から言うと (speaking from, from the viewpoint of)
