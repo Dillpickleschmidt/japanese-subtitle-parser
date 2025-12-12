@@ -1391,9 +1391,41 @@ pub fn gachi() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ぎみ
+// Pattern: ぎみ (sensation of / tendency)
+// Structures: Verb[stem/連用形] + ぎみ / Noun + ぎみ
 pub fn gimi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct GimiPrecedingMatcher;
+    impl Matcher for GimiPrecedingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Matches: Verb in 連用形 (stem) OR Noun
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形") {
+                return true;
+            }
+            // Match nouns
+            if token.pos.first().is_some_and(|pos| pos == "名詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    #[derive(Debug)]
+    struct GimiMatcher;
+    impl Matcher for GimiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ぎみ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(GimiPrecedingMatcher)),
+        TokenMatcher::Custom(Arc::new(GimiMatcher)),
+    ]
 }
 
 // Pattern: っぽい

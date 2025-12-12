@@ -690,3 +690,59 @@ mod verb_volitional_tosuru_tests {
         assert_pattern_range(&patterns, "Verb[volitional]とする", 2, 9); // 出ようとしたら
     }
 }
+
+// ========== ぎみ (sensation of / tendency) ==========
+// Pattern: ぎみ (sensation of / a touch of / slightly)
+// Data source: grammar_points_data.json["ぎみ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + 気味（ぎみ）
+//   standard[1]: Noun + 気味（ぎみ）
+
+mod gimi_tests {
+    use super::*;
+
+    // Test: Verb[stem] + ぎみ (太りぎみ - slightly fat)
+    #[test]
+    fn test_gimi_verb_futori() {
+        let sentence = "最近太りぎみだから、ダイエットしなきゃ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぎみ");
+        assert_pattern_range(&patterns, "ぎみ", 2, 7); // 太りぎみだ
+    }
+
+    // Test: Verb[stem] + ぎみ (疲れぎみ - feeling a little tired)
+    #[test]
+    fn test_gimi_verb_tsukare() {
+        let sentence = "今週は色々と忙しかったから疲れぎみだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぎみ");
+        assert_pattern_range(&patterns, "ぎみ", 13, 18); // 疲れぎみだ
+    }
+
+    // Test: Noun + ぎみ (風邪ぎみ - feeling a little sick)
+    #[test]
+    fn test_gimi_noun_kaze() {
+        let sentence = "今朝は風邪ぎみだったので、学校を休んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぎみ");
+        assert_pattern_range(&patterns, "ぎみ", 3, 7); // 風邪ぎみ
+    }
+
+    // Test: Verb[stem] + ぎみ (遅れぎみ - a bit late)
+    #[test]
+    fn test_gimi_verb_okure() {
+        let sentence = "電車が遅れぎみだから、待ち合わせ時間まで間に合わないかも";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぎみ");
+        assert_pattern_range(&patterns, "ぎみ", 3, 8); // 遅れぎみだ
+    }
+}
