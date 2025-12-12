@@ -3,19 +3,20 @@
 ## Session 61 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N5 pattern fully implemented (ます - polite auxiliary verb)
-**Patterns completed**: 1 stub pattern implementation
-**Tests added**: 5 comprehensive tests
-**Total tests**: 380 (was 375)
+**Status**: Two N5 patterns fully implemented (ます + へいく)
+**Patterns completed**: 2 stub pattern implementations
+**Tests added**: 9 comprehensive tests
+**Total tests**: 384 (was 375)
 
 ### Accomplishments
 1. ✅ Implemented ます (polite auxiliary verb) pattern (N5)
-2. ✅ All 5 test variants passing with proper range assertions
-3. ✅ No test regressions - all 380 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented へいく (going to a place) pattern (N5)
+3. ✅ All 9 test variants passing with proper range assertions
+4. ✅ No test regressions - all 384 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### ます (N5) ✓
 - **File**: grammar-lib/src/matchers/n5.rs
@@ -38,37 +39,64 @@
 - **Pattern priority**: 1 (construction pattern - N5 level)
 - **Note**: This was a stub pattern (declaration existed but matcher was `vec![]`)
 
-### Technical Details
+#### へいく (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing in n5_patterns.rs
+  - test_heiku_with_he (学校へ行く - へ particle)
+  - test_heiku_with_ni (病院に行く - に particle)
+  - test_heiku_natural_he (明日は東京へ行くつもりだ - natural sentence)
+  - test_heiku_polite_ni (毎週公園に行きます - polite form)
+- **Structures**:
+  - Place/Noun + へ + 行く (heading to - emphasizes journey)
+  - Place/Noun + に + 行く (going to - emphasizes destination)
+- **Tokenization**:
+  - Noun (place name)
+  - へ or に = 助詞/格助詞/一般
+  - 行く = 動詞/自立, base=行く (in any conjugation)
+- **Implementation**: 3-token matcher
+  - noun_matcher(): Matches any noun (place name)
+  - Custom HeNiParticleMatcher: Checks surface="へ" or "に", POS=助詞/格助詞
+  - Custom IkuMatcher: Checks base_form="行く", POS=動詞 (any conjugation)
+- **Meaning**: "to go/head to (a place)" - describes movement toward a destination
+- **Nuance**: へ emphasizes the journey/direction, に emphasizes the destination
 - **Pattern priority**: 1 (construction pattern - N5 level)
-- **Test coverage**: All major conjugation forms tested (present, past, negative, past-negative)
-- **Implementation approach**: Reuses flexible_verb_form() helper from mod.rs
-- **Pattern range**: Full construction from verb to ます auxiliary
-  - Examples: します (5-8), しました (5-9), 行きません (3-8), 食べます (2-6)
-- **Conjugation handling**: Single matcher handles all ます forms (ます, まし, ませ)
+- **Note**: This was a stub pattern (declaration existed but matcher was `vec![]`)
+
+### Technical Details
+- **Pattern priority**: Both patterns priority 1 (construction patterns - N5 level)
+- **Test coverage**:
+  - ます: All major conjugation forms (present, past, negative, past-negative)
+  - へいく: Both particle variants (へ and に) with different contexts
+- **Implementation approach**:
+  - ます: Reuses flexible_verb_form() helper from mod.rs
+  - へいく: Simple 3-token matcher with particle and verb matchers
+- **Pattern ranges**:
+  - ます: Full construction from verb to auxiliary (します, しました, 行きません, 食べます)
+  - へいく: Full construction from place to verb (学校へ行く, 病院に行く, 東京へ行く)
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N5 stub pattern)
-- **Tests written**: 5
-- **Tests passing**: 380/380 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~99 (tests + matcher + feature_list update)
+- **Patterns implemented**: 2 (N5 stub patterns)
+- **Tests written**: 9 (5 for ます + 4 for へいく)
+- **Tests passing**: 384/384 (100%)
+- **Commits**: 3 clean commits (ます impl + progress + へいく impl)
+- **Lines added**: ~191 (tests + matchers + feature_list updates)
 
 ### Next Priorities
 Continue with N5 stub patterns (many remaining):
 
 **High-priority stub patterns to check**:
 1. は - particle (topic marker) - check if stub
-2. の - particle (possession/nominalization) - confirmed stub but may be too broad
-3. へいく - Place + へ/に + 行く (going to a place)
-4. い-Adjectives - adjective forms (may be too broad)
-5. な-Adjectives - na-adjective forms (may be too broad)
-6. な-Adjective + Noun - na-adjective modifying noun
-7. Verb conjugation patterns (dictionary, negative, past, etc.)
+2. へ - particle (direction marker) - check if stub
+3. の - particle (possession/nominalization) - confirmed stub but may be too broad
+4. な-Adjective + Noun - na-adjective modifying noun
+5. い-Adjectives - adjective forms (may be too broad)
+6. な-Adjectives - na-adjective forms (may be too broad)
+7. Verb conjugation patterns (dictionary, negative, past, etc.) - may be too broad
 
-**Recommendation**: Focus on concrete, testable stub patterns like へいく before attempting broad patterns like の or adjective categories.
+**Recommendation**: Continue focusing on concrete, testable stub patterns before attempting overly broad patterns like adjective categories or basic verb conjugations.
 
 ### Environment Status
-- ✅ All 380 tests passing
+- ✅ All 384 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
