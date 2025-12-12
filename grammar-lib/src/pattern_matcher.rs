@@ -119,7 +119,7 @@ impl PatternMatcher {
         matches.sort_by(|a, b| {
             b.confidence
                 .partial_cmp(&a.confidence)
-                .unwrap_or(std::cmp::Ordering::Equal)  // Handle NaN by treating as equal
+                .unwrap_or(std::cmp::Ordering::Equal) // Handle NaN by treating as equal
                 .then((b.end_char - b.start_char).cmp(&(a.end_char - a.start_char)))
             // Prefer longer matches
         });
@@ -182,6 +182,11 @@ impl PatternMatcher {
         tokens: &[KagomeToken],
         start: usize,
     ) -> Option<PatternMatch> {
+        // Reject empty patterns (unimplemented or invalid)
+        if pattern.tokens.is_empty() {
+            return None;
+        }
+
         if start >= tokens.len() {
             return None;
         }

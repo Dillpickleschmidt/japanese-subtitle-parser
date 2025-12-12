@@ -188,7 +188,7 @@ declare_patterns! {
         name: "ます",
         matcher_fn: crate::matchers::n5::masu,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -196,7 +196,7 @@ declare_patterns! {
         name: "る-Verb (Negative)",
         matcher_fn: crate::matchers::n5::ru_verb_negative,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -204,7 +204,7 @@ declare_patterns! {
         name: "う-Verb (Negative)",
         matcher_fn: crate::matchers::n5::u_verb_negative,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -316,7 +316,7 @@ declare_patterns! {
         name: "い-Adjective (Past)",
         matcher_fn: crate::matchers::n5::i_adjective_past,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -388,7 +388,7 @@ declare_patterns! {
         name: "なくてはならない",
         matcher_fn: crate::matchers::n5::nakutewa_naranai,
         priority: 6,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -404,7 +404,7 @@ declare_patterns! {
         name: "る-Verb (Past)",
         matcher_fn: crate::matchers::n5::ru_verb_past,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -412,7 +412,7 @@ declare_patterns! {
         name: "う-Verb (Past)",
         matcher_fn: crate::matchers::n5::u_verb_past,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -452,7 +452,7 @@ declare_patterns! {
         name: "い-Adjectives くない",
         matcher_fn: crate::matchers::n5::i_adjectives_kunai,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -484,7 +484,7 @@ declare_patterns! {
         name: "る-Verb (Negative-Past)",
         matcher_fn: crate::matchers::n5::ru_verb_negative_past,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -492,7 +492,7 @@ declare_patterns! {
         name: "う-Verb (Negative-Past)",
         matcher_fn: crate::matchers::n5::u_verb_negative_past,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -500,7 +500,7 @@ declare_patterns! {
         name: "Verb + て",
         matcher_fn: crate::matchers::n5::verb_te,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -508,7 +508,7 @@ declare_patterns! {
         name: "ている①",
         matcher_fn: crate::matchers::n5::teiru_u2460,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -540,7 +540,7 @@ declare_patterns! {
         name: "い-Adjective (Predicate)",
         matcher_fn: crate::matchers::n5::i_adjective_predicate,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -548,7 +548,7 @@ declare_patterns! {
         name: "な-Adjective だ",
         matcher_fn: crate::matchers::n5::na_adjective_da,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -556,7 +556,7 @@ declare_patterns! {
         name: "だった・でした",
         matcher_fn: crate::matchers::n5::datta_u30fb_deshita,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -580,7 +580,7 @@ declare_patterns! {
         name: "い-Adjective くなかった",
         matcher_fn: crate::matchers::n5::i_adjective_kunakatta,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -644,7 +644,7 @@ declare_patterns! {
         name: "ている②",
         matcher_fn: crate::matchers::n5::teiru_u2461,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -700,7 +700,7 @@ declare_patterns! {
         name: "たい",
         matcher_fn: crate::matchers::n5::tai,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -804,7 +804,7 @@ declare_patterns! {
         name: "なにか・なにも",
         matcher_fn: crate::matchers::n5::nanika_u30fb_nanimo,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Construction, // only to combine these tokens
         jlpt: "n5",
     },
 
@@ -812,7 +812,7 @@ declare_patterns! {
         name: "誰か・どこか・誰も・どこも",
         matcher_fn: crate::matchers::n5::dareka_u30fb_dokoka_u30fb_daremo_u30fb_dokomo,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation, // only to combine these tokens
         jlpt: "n5",
     },
 
@@ -820,7 +820,7 @@ declare_patterns! {
         name: "ましょう",
         matcher_fn: crate::matchers::n5::mashou,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -828,7 +828,7 @@ declare_patterns! {
         name: "～ましょうか",
         matcher_fn: crate::matchers::n5::uff5e_mashouka,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -836,7 +836,7 @@ declare_patterns! {
         name: "ませんか",
         matcher_fn: crate::matchers::n5::masenka,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -876,7 +876,7 @@ declare_patterns! {
         name: "なくてはいけない",
         matcher_fn: crate::matchers::n5::nakutehaikenai,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -884,7 +884,7 @@ declare_patterns! {
         name: "なくてはならない",
         matcher_fn: crate::matchers::n5::nakutehanaranai,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -908,7 +908,7 @@ declare_patterns! {
         name: "なくちゃ・なきゃ",
         matcher_fn: crate::matchers::n5::nakucha_u30fb_nakya,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -916,7 +916,7 @@ declare_patterns! {
         name: "な",
         matcher_fn: crate::matchers::n5::na_prohibitive,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -940,7 +940,7 @@ declare_patterns! {
         name: "ている③",
         matcher_fn: crate::matchers::n5::teiru_u2462,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n5",
     },
 
@@ -1158,7 +1158,7 @@ declare_patterns! {
         name: "Verb［れる・られる］",
         matcher_fn: crate::matchers::n4::verb_uff3b_reru_u30fb_rareru_uff3d,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n4",
     },
 
@@ -1390,7 +1390,7 @@ declare_patterns! {
         name: "Verb[よう]",
         matcher_fn: crate::matchers::n4::verb_you,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n4",
     },
 
@@ -1470,7 +1470,7 @@ declare_patterns! {
         name: "かもしれない",
         matcher_fn: crate::matchers::n4::kamoshirenai,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation, // only to combine these tokens
         jlpt: "n4",
     },
 
@@ -1806,7 +1806,7 @@ declare_patterns! {
         name: "Verb［せる・させる］",
         matcher_fn: crate::matchers::n4::verb_uff3b_seru_u30fb_saseru_uff3d,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n4",
     },
 
@@ -1846,7 +1846,7 @@ declare_patterns! {
         name: "Causative-Passive",
         matcher_fn: crate::matchers::n4::causative_passive,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n4",
     },
 
@@ -2094,7 +2094,7 @@ declare_patterns! {
         name: "れる・られる (Potential)",
         matcher_fn: crate::matchers::n4::reru_u30fb_rareru_potential,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n4",
     },
 
@@ -2238,7 +2238,7 @@ declare_patterns! {
         name: "なければいけない",
         matcher_fn: crate::matchers::n4::nakerebaikenai,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n4",
     },
 
@@ -2246,7 +2246,7 @@ declare_patterns! {
         name: "なければならない",
         matcher_fn: crate::matchers::n4::nakerebanaranai,
         priority: 1,
-        category: PatternCategory::Construction,
+        category: PatternCategory::Conjugation,
         jlpt: "n4",
     },
 
