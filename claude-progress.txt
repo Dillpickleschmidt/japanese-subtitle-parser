@@ -3,16 +3,17 @@
 ## Session 35 - 2025-12-11
 
 ### ✅ Session Summary
-**Status**: まだ～ていません pattern fully implemented
-**Patterns completed**: 1 new pattern
-**Tests added**: 3 comprehensive tests
-**Total tests**: 176 (was 173)
+**Status**: Two patterns fully implemented (まだ～ていません + たり～たりする)
+**Patterns completed**: 2 new patterns
+**Tests added**: 6 comprehensive tests
+**Total tests**: 179 (was 173)
 
 ### Accomplishments
 1. ✅ Implemented まだ～ていません (haven't done yet / still haven't done) pattern
-2. ✅ All 3 test variants passing with proper range assertions
-3. ✅ No test regressions - all 176 tests pass
-4. ✅ Updated feature_list.json
+2. ✅ Implemented たり～たりする (listing non-ordered actions) pattern
+3. ✅ All 6 test variants passing with proper range assertions
+4. ✅ No test regressions - all 179 tests pass
+5. ✅ Updated feature_list.json for both patterns
 
 ### Completed Patterns
 
@@ -29,26 +30,42 @@
   - Pattern extends automatically for polite (ません) and casual (ない) negatives
   - Works with intervening adverbs like 何も, 全然
 
+#### たり～たりする (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_two_verbs_casual (見たり、寝たりする - two verbs with comma)
+  - test_two_verbs_polite (見たり本を読んだりします - polite form, no comma)
+  - test_single_verb_past (泳いだりした - single verb with past tense)
+- **Structure**: Verb[た]り + (0-15 tokens) + する
+- **Tokenization insights**:
+  - たり/だり tokenizes as 助詞/並立助詞 (parallel particle)
+  - だり is used after verbs that use だ for past tense (五段・マ行, etc.)
+  - Pattern automatically extends for する conjugations (する, した, します, etc.)
+  - Wildcard allows punctuation, nouns, particles between たり and する
+  - Framework finds multiple matches and scores longer matches higher
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern)
-- **Matcher approach**: Wildcard-based pattern with て-form detection
-- **Custom matchers**: TeDeParticleMatcher (て/で particles), IruAuxMatcher (いる auxiliary)
-- **Range**: Full construction from まだ through いない/いません
-- **Wildcard**: Allows 0-5 tokens to handle intervening words (adverbs, pronouns, etc.)
+- **Pattern priority**: 1 (construction patterns)
+- **Matcher approach**: Wildcard-based patterns for flexible matching
+- **Custom matchers**:
+  - まだ～ていません: TeDeParticleMatcher (て/で particles), IruAuxMatcher (いる auxiliary)
+  - たり～たりする: TariDariMatcher (たり/だり particles), SuruMatcher (する verb)
+- **Wildcards**: Configured to handle intervening words while maintaining pattern integrity
+- **Multiple matches**: Framework detects all valid たり matches and scores by length/confidence
 
 ### Next Priorities (N5 patterns still needed)
 High-value construction patterns from feature_list.json:
-1. たり～たりする - listing non-ordered actions
-2. たほうがいい - should do (advice)
-3. ないほうがいい - should not do
-4. てから - after doing
-5. てください - please do
-6. ないでください - please don't do
-7. ～んです・のです - explanatory のです
-8. ～ましょうか - shall we?
+1. たほうがいい - should do (advice)
+2. ないほうがいい - should not do
+3. てから - after doing
+4. てください - please do
+5. ないでください - please don't do
+6. ～んです・のです - explanatory のです
+7. ～ましょうか - shall we?
+8. ～になる・～くなる - become (change of state)
 
 ### Environment Status
-- ✅ All 176 tests passing
+- ✅ All 179 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
