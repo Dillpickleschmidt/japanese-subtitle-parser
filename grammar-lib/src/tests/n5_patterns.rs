@@ -5029,3 +5029,51 @@ mod nogasuki_tests {
         assert_pattern_range(&patterns, "のがすき", 6, 15); // 書くのが好きでした
     }
 }
+
+// ========== のがじょうず (Good at doing something) ==========
+// Pattern: のがじょうず (good at doing)
+// Data source: grammar_points_data.json["のがじょうず"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + の + が + 上手（じょうず）
+//   Past variants from about section:
+//     - Verb + の + が + 上手 + だった (past)
+//   Polite variants from examples:
+//     - Verb + の + が + 上手 + です (polite present)
+
+mod nogajouzu_tests {
+    use super::*;
+
+    // Present: Verb + の + が + 上手
+    #[test]
+    fn test_nogajouzu_present() {
+        let sentence = "彼は歌うのが上手だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがじょうず");
+        assert_pattern_range(&patterns, "のがじょうず", 2, 9); // 歌うのが上手だ
+    }
+
+    // Polite present: Verb + の + が + 上手 + です
+    #[test]
+    fn test_nogajouzu_polite_present() {
+        let sentence = "彼女は漢字を覚えるのが上手です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがじょうず");
+        assert_pattern_range(&patterns, "のがじょうず", 6, 15); // 覚えるのが上手です
+    }
+
+    // Past: Verb + の + が + 上手 + だった
+    #[test]
+    fn test_nogajouzu_past() {
+        let sentence = "母は若い頃、踊るのが上手だった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のがじょうず");
+        assert_pattern_range(&patterns, "のがじょうず", 6, 15); // 踊るのが上手だった
+    }
+}
