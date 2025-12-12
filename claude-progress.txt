@@ -1,21 +1,22 @@
 # Grammar-lib Development Progress
 
-## Session 83 - 2025-12-12
+## Session 83 - 2025-12-12 (Updated)
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (ことだ - should/ought to)
-**Patterns completed**: 1 new N3 pattern (advice/weak command construction)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 499 (was 495)
+**Status**: Two N3 patterns fully implemented (ことだ + ことがある)
+**Patterns completed**: 2 new N3 patterns (こと construction family)
+**Tests added**: 10 comprehensive tests (4 + 6)
+**Total tests**: 505 (was 495)
 
 ### Accomplishments
 1. ✅ Implemented ことだ pattern (N3) - advice/weak command construction
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 499 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented ことがある pattern (N3) - occasionally happens construction
+3. ✅ All 10 tests passing with proper range assertions
+4. ✅ No test regressions - all 505 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### ことだ (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 197)
@@ -47,42 +48,87 @@
   - 来ることです (chars 11-17, verb + こと + です)
   - ないことです (chars 10-16, negative verb + こと + です)
 
+#### ことがある (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 521)
+- **Tests**: 6 variants, all passing in n3_patterns.rs
+  - test_kotogaaru_verb (蹴ることがある - sometimes kicks)
+  - test_kotogaaru_i_adjective (楽しいことがある - sometimes fun)
+  - test_kotogaaru_na_adjective (楽なことがある - sometimes easy)
+  - test_kotogaaru_verb_negative (来ないこともある - sometimes doesn't come)
+  - test_kotomoaru_variant (なこともある - も variant)
+  - test_kotogaaru_polite (食べることがあります - polite form)
+- **Structures**:
+  - Verb[る] + こと + がある
+  - い-Adjective + こと + がある
+  - な-Adjective + な + こと + がある
+  - Verb[ない] + こと + がある/もある
+  - All forms + あります (polite)
+- **Tokenization insights**:
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - が = 助詞/格助詞/一般 (case particle)
+  - も = 助詞/係助詞 (binding particle, variant)
+  - ある = 動詞/自立/*/*/五段・ラ行 (verb in any conjugation)
+- **Implementation**: 4-token matcher
+  1. TokenMatcher::Any - Matches any preceding token (verb/adjective)
+  2. KotoMatcher - Matches こと as 名詞/非自立/一般
+  3. GaMoParticleMatcher - Matches が or も as 助詞
+  4. specific_verb("ある") - Matches ある in any conjugation
+- **Meaning**: "sometimes / occasionally / there are times when" - expresses recurring possibility
+- **Usage**: Common N3 construction for expressing occasional occurrences
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - 蹴ることがある (chars 6-13, verb + こと + が + ある)
+  - 楽しいことがある (chars 9-17, i-adj + こと + が + ある)
+  - 楽なことがある (chars 8-14, na-adj + な + こと + が + ある)
+  - 来ないこともある (chars 5-12, negative verb + こと + も + ある)
+  - 大変なこともある (chars 11-17, も variant)
+  - 食べることがあります (chars 14-24, polite with あります)
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern - N3 level in patterns.rs)
-- **Test coverage**: All 4 structure variants from grammar_points_data.json
-  - Verb[る] + ことだ (tested with 食べる)
-  - Verb[ない] + ことだ (tested with 諦めない)
-  - Verb[る] + ことです (tested with 来る)
-  - Verb[ない] + ことです (tested with しない)
+- **Pattern priority**: 1 for both patterns (construction patterns - N3 level in patterns.rs)
+- **Test coverage**:
+  - ことだ: All 4 structure variants from grammar_points_data.json
+    - Verb[る] + ことだ (tested with 食べる)
+    - Verb[ない] + ことだ (tested with 諦めない)
+    - Verb[る] + ことです (tested with 来る)
+    - Verb[ない] + ことです (tested with しない)
+  - ことがある: All 6 structure variants
+    - Verb[る] + ことがある (tested with 蹴る)
+    - い-Adjective + ことがある (tested with 楽しい)
+    - な-Adjective + な + ことがある (tested with 楽な)
+    - Verb[ない] + こともある (tested with 来ない)
+    - こともある variant (tested with 大変な)
+    - Polite form with あります (tested with 食べる)
 - **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
-- **Key insight**: Simple 3-token matcher with TokenMatcher::Any handles all verb forms elegantly
-- **Pattern range**: Includes full construction from verb through copula
-- **Authority nuance**: Pattern implies authority, used for rules/expectations, not casual advice
+- **Key insight**: Both patterns use similar 3-4 token matchers with TokenMatcher::Any for flexibility
+- **Pattern ranges**: Include full construction from preceding element through final particle/verb
+- **Similar structure**: Both are こと constructions with different endings (だ/です vs がある/もある)
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 499/499 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~98 (tests + matcher implementation + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 10 (4 + 6)
+- **Tests passing**: 505/505 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~213 (tests + 2 matchers + feature_list updates)
 
 ### Key Insights
-- Pattern is part of the こと construction family (ことか, ことから, ことだ)
-- All share similar structure (preceding element + こと + particle/copula)
+- Both patterns are part of the こと construction family (ことか, ことから, ことだ, ことがある)
+- All share similar structure (preceding element + こと + particle/copula/verb)
 - TokenMatcher::Any provides flexibility for matching diverse preceding elements
-- Test-first workflow successfully identified tokenization structure
+- ことだ implies authority/rules while ことがある expresses occasional occurrences
+- Test-first workflow successfully identified tokenization structure for both patterns
 - All test sentences are realistic and subtitle-quality
-- Pattern naturally handles both affirmative and negative verb forms
+- Patterns naturally handle affirmative, negative, and polite forms
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
-**High-value N3 こと-based patterns to implement**:
-1. ことがある - "sometimes happens" (another こと pattern)
-2. ことに - "to my..." (emotion expression)
-3. ことにする - "decide to"
-4. ことになる - "it has been decided that"
-5. ことはない - "there is no need to"
+**High-value N3 こと-based patterns to implement** (continue the family):
+1. ことに - "to my..." (emotion expression)
+2. ことにする - "decide to"
+3. ことになる - "it has been decided that"
+4. ことはない - "there is no need to"
+5. ことなの - "the thing is..."
 
 **Other high-value N3 patterns**:
 1. いくら〜でも - "no matter how much"
@@ -90,13 +136,13 @@ Continue with N3 patterns (high-priority incomplete patterns):
 3. から言うと - "from the perspective of"
 4. Noun＋型 - "type/style" suffix pattern
 
-**Recommendation**: Continue with こと-based patterns (ことがある, ことに, etc.) as they share similar structure and the KotoMatcher is already well-established. This will allow efficient implementation of related patterns.
+**Recommendation**: Continue with こと-based patterns (ことに, ことにする, etc.) as they share similar structure and the KotoMatcher is already well-established in the codebase. This allows efficient implementation of the entire こと construction family.
 
 ### Environment Status
-- ✅ All 499 tests passing
+- ✅ All 505 tests passing
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next session
 
 ---
