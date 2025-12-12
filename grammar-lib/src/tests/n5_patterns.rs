@@ -5387,3 +5387,4 @@ mod verb_ta_teiru_noun_tests {
         assert_pattern_range(&patterns, "Verb［た・ている］+ Noun", 2, 6); // 会った人
     }
 }
+
