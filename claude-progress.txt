@@ -1,21 +1,22 @@
 # Grammar-lib Development Progress
 
-## Session 82 - 2025-12-12
+## Session 82 - 2025-12-12 (Updated)
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (ことか - rhetorical question emphasis)
-**Patterns completed**: 1 new N3 pattern (particle construction)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 491 (was 487)
+**Status**: Two N3 patterns fully implemented (ことか + ことから)
+**Patterns completed**: 2 new N3 patterns (こと + particle constructions)
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 495 (was 487)
 
 ### Accomplishments
 1. ✅ Implemented ことか pattern (N3) - rhetorical question particle
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 491 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented ことから pattern (N3) - logical conclusion from facts
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 495 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### ことか (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 976)
@@ -46,47 +47,75 @@
   - なことか (chars 4-8, na-adjective connector + こと + か)
   - あることか (chars 21-26, auxiliary verb + こと + か)
 
+#### ことから (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (replaced stub at line 836)
+- **Tests**: 4 variants, all passing in n3_patterns.rs
+  - test_kotokara_verb (寝ていることから - from the fact that sleeping)
+  - test_kotokara_i_adjective (新しいことから - from the fact that new)
+  - test_kotokara_na_adjective (静かなことから - from the fact that quiet)
+  - test_kotokara_noun (のことから - from these facts)
+- **Structures**:
+  - Verb + ことから
+  - い-Adjective + ことから
+  - な-Adjective + な + ことから
+  - Noun + の + ことから
+- **Tokenization insights**:
+  - こと = 名詞/非自立/一般 (non-independent noun)
+  - から = 助詞/格助詞/一般 (case particle)
+  - Pattern accepts any preceding token (verb, adjective, particle)
+- **Implementation**: 3-token matcher
+  1. TokenMatcher::Any - Matches any preceding token
+  2. KotoMatcher - Matches こと as 名詞/非自立/一般
+  3. KaraParticleMatcher - Matches から as 助詞/格助詞/一般
+- **Meaning**: "from the fact that" - draws logical conclusion from facts
+- **Usage**: More formal reasoning than simple から, emphasizes factual basis for conclusion
+- **Pattern priority**: 1 (construction pattern - N3 level)
+- **Pattern ranges**:
+  - いることから (chars 12-18, verb phrase + こと + から)
+  - 新しいことから (chars 7-14, i-adjective + こと + から)
+  - なことから (chars 5-10, na-adjective connector + こと + から)
+  - のことから (chars 3-8, の connector + こと + から)
+
 ### Technical Details
-- **Pattern priority**: 1 (construction pattern - N3 level in patterns.rs)
-- **Test coverage**: All 4 structure variants from grammar_points_data.json
-  - Verb + ことか (tested with いった)
-  - い-Adjective + ことか (tested with 可愛い)
-  - な-Adjective + な + ことか (tested with 暇な)
-  - Noun + である + ことか (tested with 心配である)
+- **Pattern priority**: 1 for both patterns (construction patterns - N3 level in patterns.rs)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - ことか: Verb/い-Adj/な-Adj/Noun+である (4 variants)
+  - ことから: Verb/い-Adj/な-Adj/Noun+の (4 variants)
 - **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
-- **Key insight**: Simple 3-token matcher with TokenMatcher::Any handles all variants elegantly
-- **Pattern range**: Includes preceding element + こと + か (full rhetorical question)
-- **Common context**: Often used with extent/number words (どれだけ, なんて, 何回, どんなに)
+- **Key insight**: Both patterns use same こと matcher, different particle matchers
+- **Pattern ranges**: Include preceding element + こと + particle (full construction)
+- **Similarity**: Both are こと + particle constructions, making implementation straightforward
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 491/491 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~94 (tests + matcher implementation + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 495/495 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~188 (tests + 2 matchers + feature_list updates)
 
 ### Key Insights
-- Pattern expresses rhetorical emphasis - not a real question but dramatic exclamation
-- TokenMatcher::Any provides flexibility for all preceding elements
-- Simple structure makes this pattern reliable across contexts
-- Test-first workflow successfully identified tokenization structure
-- All test sentences are realistic and dramatic (as pattern requires)
+- Both patterns share similar structure (こと + particle) but different meanings/usage
+- ことか = rhetorical emphasis (dramatic/written), ことから = logical reasoning (formal)
+- TokenMatcher::Any provides flexibility for all preceding grammatical elements
+- Simple 3-token matchers make both patterns reliable across contexts
+- Test-first workflow successfully identified tokenization structure for both
+- All test sentences are realistic and appropriate for each pattern's register
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 construction patterns to implement**:
-1. いくら〜でも - "no matter how much"
-2. かけ - incomplete/unfinished action
-3. から言うと - "from the perspective of"
-4. ことから - "from the fact that"
-5. ことだ - advice/emphasis pattern
+1. ことだ - advice/emphasis pattern (similar こと construction)
+2. ことがある - "sometimes happens" (another こと pattern)
+3. いくら〜でも - "no matter how much"
+4. かけ - incomplete/unfinished action
+5. から言うと - "from the perspective of"
 6. Noun＋型 - "type/style" suffix pattern
 
-**Recommendation**: Continue with simple concrete N3 patterns. ことから would be a good next choice as it's similar to ことか in structure (こと + particle).
+**Recommendation**: Continue with こと-based patterns (ことだ, ことがある) as they share similar structure. Then move to other concrete N3 patterns.
 
 ### Environment Status
-- ✅ All 491 tests passing
+- ✅ All 495 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
