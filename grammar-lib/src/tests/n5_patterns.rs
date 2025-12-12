@@ -4027,3 +4027,40 @@ mod kuru_tests {
         assert_pattern_range(&patterns, "くる", 2, 3); // 来
     }
 }
+
+// ========== だ (Copula - is/are) ==========
+// Pattern: だ (casual copula - assertion/determination)
+// Data source: grammar_points_data.json["だ"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + だ
+//   standard[1]: な-Adjective + だ
+//
+// Note: だ is the casual copula. です is the polite equivalent.
+// だ CANNOT be used after い-Adjectives (unlike です).
+
+mod da_copula_tests {
+    use super::*;
+
+    // Noun + だ
+    #[test]
+    fn test_da_noun() {
+        let sentence = "これは私の本だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だ");
+        assert_pattern_range(&patterns, "だ", 5, 7); // 本だ
+    }
+
+    // な-Adjective + だ
+    #[test]
+    fn test_da_na_adjective() {
+        let sentence = "彼は真面目だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だ");
+        assert_pattern_range(&patterns, "だ", 2, 6); // 真面目だ
+    }
+}

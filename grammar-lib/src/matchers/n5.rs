@@ -5,9 +5,22 @@ use super::{Matcher, noun_matcher};
 
 // ========== たい (Want to do) ==========
 
-// Pattern: だ
+// Pattern: だ (casual copula - is/are)
+// Structures: Noun + だ, な-Adjective + だ
 pub fn da() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DaMatcher;
+    impl Matcher for DaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+    vec![
+        TokenMatcher::Any,  // Match any preceding token (noun or な-adjective)
+        TokenMatcher::Custom(Arc::new(DaMatcher)),
+    ]
 }
 
 // Pattern: です
