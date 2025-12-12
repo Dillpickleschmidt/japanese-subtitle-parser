@@ -1,4 +1,6 @@
 use crate::pattern_matcher::TokenMatcher;
+use std::sync::Arc;
+use super::Matcher;
 
 // Pattern: って
 pub fn tte() -> Vec<TokenMatcher> {
@@ -45,9 +47,21 @@ pub fn bekidehanai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern:  なかなか
+// Pattern: なかなか (quite/considerably/very)
+// Structures: なかなか + Adjective, なかなか + の + Noun
 pub fn nakanaka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NakanakaMatcher;
+    impl Matcher for NakanakaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なかなか"
+                && token.base_form == "なかなか"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NakanakaMatcher))]
 }
 
 // Pattern: あまり

@@ -4104,13 +4104,13 @@
   {
     "pattern_name": " なかなか",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "なかなか (or 中々（なかなか） in kanji) is an adverb in Japanese that is frequently translated as 'very', or 'considerably' [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
