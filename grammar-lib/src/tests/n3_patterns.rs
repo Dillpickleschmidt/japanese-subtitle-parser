@@ -124,3 +124,61 @@ mod okagede_tests {
         assert_pattern_range(&patterns, "おかげで", 3, 8); // のおかげで
     }
 }
+
+// ========== うちに (while/during) ==========
+// Pattern: うちに (while/during - temporal expression)
+// Data source: grammar_points_data.json["うちに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb［ている］+ うちに
+//   standard[1]: ［い］Adjective + うちに
+//   standard[2]: ［な］Adjective + な + うちに
+//   standard[3]: Noun + の + うちに
+
+mod uchini_tests {
+    use super::*;
+
+    // Test: Verb［ている］+ うちに
+    #[test]
+    fn test_uchini_verb_teiru() {
+        let sentence = "彼と毎日会ううちに、だんだんと彼のことが好きになってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "うちに");
+        assert_pattern_range(&patterns, "うちに", 4, 9); // 会ううちに
+    }
+
+    // Test: い-Adjective + うちに
+    #[test]
+    fn test_uchini_i_adjective() {
+        let sentence = "熱いうちに食べて！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "うちに");
+        assert_pattern_range(&patterns, "うちに", 0, 5); // 熱いうちに
+    }
+
+    // Test: な-Adjective + な + うちに
+    #[test]
+    fn test_uchini_na_adjective() {
+        let sentence = "お爺ちゃんがまだ元気なうちに家族皆で旅行に行こう！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "うちに");
+        assert_pattern_range(&patterns, "うちに", 10, 14); // なうちに
+    }
+
+    // Test: Noun + の + うちに
+    #[test]
+    fn test_uchini_noun() {
+        let sentence = "今のうちに明日の準備をしておこう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "うちに");
+        assert_pattern_range(&patterns, "うちに", 1, 5); // のうちに
+    }
+}

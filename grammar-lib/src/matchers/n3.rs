@@ -27,9 +27,62 @@ pub fn nomani() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: うちに
+// Pattern: うちに (while/during - temporal expression)
+// Structures: Verb[る] + うちに / い-Adj + うちに / な-Adj + な + うちに / Noun + の + うちに
 pub fn uchini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct AttributivePrecedingMatcher;
+    impl Matcher for AttributivePrecedingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Matches: Verb (基本形), い-Adjective (基本形), な (助動詞 体言接続), の (助詞 連体化)
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形") {
+                return true;
+            }
+            if token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形") {
+                return true;
+            }
+            if token.surface == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "体言接続") {
+                return true;
+            }
+            if token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") {
+                return true;
+            }
+            false
+        }
+    }
+
+    #[derive(Debug)]
+    struct UchiMatcher;
+    impl Matcher for UchiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "うち"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiCaseParticleMatcher;
+    impl Matcher for NiCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AttributivePrecedingMatcher)),
+        TokenMatcher::Custom(Arc::new(UchiMatcher)),
+        TokenMatcher::Custom(Arc::new(NiCaseParticleMatcher)),
+    ]
 }
 
 // Pattern: ないうちに

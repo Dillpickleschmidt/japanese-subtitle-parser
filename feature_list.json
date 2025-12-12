@@ -4286,13 +4286,13 @@
   {
     "pattern_name": "うちに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When うち, (sometimes seen using the kanji 内（うち）, or 裡（うち）) is paired with the case marking particle に , it expresses a... [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
