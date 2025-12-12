@@ -2707,3 +2707,64 @@ mod te_wa_ikenai_tests {
         assert_pattern_range(&patterns, "てはいけない", 6, 14); // 行っちゃいけない
     }
 }
+
+// ========== つもりだ (Intend to/Plan to) ==========
+// Pattern: つもりだ (intention/plan)
+// Data source: grammar_points_data.json["つもりだ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[る] + つもり + だ
+//   standard[1]: Verb[ない] + つもり + だ (intend not to)
+//   standard[2]: Verb + つもり + は/が + ない (no intention of)
+//   polite[0]: Verb[る] + つもり + です
+//   polite[1]: Verb[ない] + つもり + です
+//   polite[2]: Verb + つもり + は/が + ありません
+
+mod tsumori_da_tests {
+    use super::*;
+
+    // Basic intention: 食べるつもりです (intend to eat)
+    #[test]
+    fn test_tsumori_basic_polite() {
+        let sentence = "そのピザは今日の昼に食べるつもりです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つもりだ");
+        assert_pattern_range(&patterns, "つもりだ", 10, 18); // 食べるつもりです
+    }
+
+    // Negative intention: 行かないつもりだ (intend not to go)
+    #[test]
+    fn test_tsumori_nai_intention() {
+        let sentence = "今日は学校に行かないつもりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つもりだ");
+        assert_pattern_range(&patterns, "つもりだ", 6, 14); // 行かないつもりだ
+    }
+
+    // No intention: つもりはない (have no intention of)
+    // Note: This tests the basic pattern without だ/です extension
+    #[test]
+    fn test_tsumori_wa_nai() {
+        let sentence = "早く起きるつもりはない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つもりだ");
+        assert_pattern_range(&patterns, "つもりだ", 2, 8); // 起きるつもり
+    }
+
+    // Casual standard: 買うつもりだ (plan to buy)
+    #[test]
+    fn test_tsumori_casual() {
+        let sentence = "明日、新しい靴を買うつもりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つもりだ");
+        assert_pattern_range(&patterns, "つもりだ", 8, 14); // 買うつもりだ
+    }
+}

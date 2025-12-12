@@ -2160,9 +2160,49 @@ pub fn keredomo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(KeredomoMatcher))]
 }
 
-// Pattern: つもりだ
+// Pattern: つもりだ (intend to/plan to)
+// Structures:
+//   Verb[基本形] + つもり + だ/です
+//   Verb[未然形] + ない + つもり + だ/です
 pub fn tsumorida() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match つもり as non-independent noun
+    #[derive(Debug)]
+    struct TsumoriMatcher;
+    impl Matcher for TsumoriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "つもり"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match verb in any form (including 未然形 before ない)
+    #[derive(Debug)]
+    struct VerbMatcher;
+    impl Matcher for VerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ない auxiliary (optional, for negative intention)
+    #[derive(Debug)]
+    struct NaiAuxMatcher;
+    impl Matcher for NaiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaiAuxMatcher)))),
+        TokenMatcher::Custom(Arc::new(TsumoriMatcher)),
+        // だ/です extends automatically via auxiliary verb system
+    ]
 }
 
 // Pattern: ～になる・～くなる (become)
