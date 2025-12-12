@@ -360,6 +360,14 @@ declare_patterns! {
         jlpt: "n5",
     },
 
+    MaeNi {
+        name: "まえに",
+        matcher_fn: crate::matchers::n5::mae_ni,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
     Kuru {
         name: "くる",
         matcher_fn: crate::matchers::n5::kuru,

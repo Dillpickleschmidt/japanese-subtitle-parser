@@ -3254,3 +3254,53 @@ pub fn ni_suru() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(SuruVerbMatcher)),
     ]
 }
+
+// Pattern: まえに (before - time or location)
+// Structures: Verb + 前に, Noun + の + 前に
+pub fn mae_ni() -> Vec<TokenMatcher> {
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match 前 (noun/can-be-adverb)
+    #[derive(Debug)]
+    struct MaeMatcher;
+    impl Matcher for MaeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "前"
+                && token.base_form == "前"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Match の particle (連体化 - nominalizer)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match に particle (case particle)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Match verb or noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoParticleMatcher,
+        )))), // Optional の for noun phrases
+        TokenMatcher::Custom(Arc::new(MaeMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
+}

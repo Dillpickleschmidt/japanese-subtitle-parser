@@ -4399,3 +4399,60 @@ mod ni_suru_tests {
         assert_pattern_range(&patterns, "にする", 2, 8); // 緑茶にしよう
     }
 }
+
+// ========== まえに (Before) ==========
+// Pattern: まえに (before - time or location)
+// Data source: grammar_points_data.json["まえに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + 前（まえ）に
+//   standard[1]: Noun + の + 前（まえ）に
+//   polite: (none listed)
+
+mod mae_ni_tests {
+    use super::*;
+
+    // Verb + 前に (before doing)
+    #[test]
+    fn test_mae_ni_verb() {
+        let sentence = "家に入る前に靴を脱ぐ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まえに");
+        assert_pattern_range(&patterns, "まえに", 2, 6); // 入る前に
+    }
+
+    // Noun + の + 前に (in front of / before)
+    #[test]
+    fn test_mae_ni_noun_location() {
+        let sentence = "病院の前にあるコンビニ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まえに");
+        assert_pattern_range(&patterns, "まえに", 0, 5); // 病院の前に
+    }
+
+    // Verb + 前に (before - temporal)
+    #[test]
+    fn test_mae_ni_verb_temporal() {
+        let sentence = "寝る前に歯を磨いてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まえに");
+        assert_pattern_range(&patterns, "まえに", 0, 4); // 寝る前に
+    }
+
+    // Noun + の + 前に (in time context)
+    #[test]
+    fn test_mae_ni_noun_temporal() {
+        let sentence = "試験の前に復習しておこう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まえに");
+        assert_pattern_range(&patterns, "まえに", 0, 5); // 試験の前に
+    }
+}
