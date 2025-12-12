@@ -1,5 +1,96 @@
 # Grammar-lib Development Progress
 
+## Session 43 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: Two patterns fully implemented (じゃない + じゃなかった)
+**Patterns completed**: 2 new patterns
+**Tests added**: 11 comprehensive tests
+**Total tests**: 236 (was 225)
+
+### Accomplishments
+1. ✅ Implemented じゃない (is not - negative copula) pattern
+2. ✅ Implemented じゃなかった (was not - negative past copula) pattern
+3. ✅ All 11 test variants passing with proper range assertions
+4. ✅ No test regressions - all 236 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### じゃない (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 6 variants, all passing
+  - test_janai_noun_casual (食べ物じゃない - casual)
+  - test_janai_na_adjective_casual (便利じゃない - な-adjective casual)
+  - test_dewa_nai_noun (飲み物ではない - semi-polite)
+  - test_janai_arimasen_polite (本じゃありません - polite)
+  - test_dewa_arimasen_na_adjective (綺麗ではありません - な-adj polite)
+  - test_janai_desu_polite (学生じゃないです - polite casual)
+- **Structures**:
+  - Noun/な-Adj + じゃ + ない (casual)
+  - Noun/な-Adj + で + は + ない (semi-polite)
+  - Noun/な-Adj + じゃ + ありません (polite)
+  - Noun/な-Adj + で + は + ありません (polite formal)
+- **Tokenization insights**:
+  - After noun: で tokenizes as 助詞/格助詞 (particle), あり as 助動詞
+  - After な-adjective: で tokenizes as 助動詞 (base=だ), あり as 動詞/自立
+  - Pattern handles both tokenization paths seamlessly
+  - Polite forms include explicit ませ + ん matching
+
+#### じゃなかった (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 5 variants, all passing
+  - test_janakatta_noun_casual (病院じゃなかった - casual)
+  - test_janakatta_na_adjective_casual (便利じゃなかった - な-adj casual)
+  - test_dewa_nakatta_noun (猫ではなかった - semi-polite)
+  - test_janakatta_arimasen_deshita_polite (財布じゃありませんでした - polite)
+  - test_dewa_arimasen_deshita_na_adjective (綺麗ではありませんでした - polite)
+- **Structures**:
+  - Noun/な-Adj + じゃ + なかっ + た (casual)
+  - Noun/な-Adj + で + は + なかっ + た (semi-polite)
+  - Noun/な-Adj + じゃ + ありませんでした (polite)
+  - Noun/な-Adj + で + は + ありませんでした (polite formal)
+- **Tokenization insights**:
+  - なかっ tokenizes as 助動詞 (with じゃ) or 形容詞 (with では)
+  - Polite forms: あり + ませ + ん + でし + た chain
+  - Pattern handles both casual past and polite past forms
+
+### Technical Details
+- **Pattern priorities**: Both priority 1 (construction patterns)
+- **Complex tokenization handling**:
+  - で matches as both particle (助詞) and auxiliary verb (助動詞, base=だ)
+  - あり matches as both auxiliary verb and independent verb
+  - なかっ matches as both 助動詞 and 形容詞
+- **Custom matchers created**:
+  - JaDeParticleMatcher: Handles じゃ and で in all forms
+  - WaTopicParticleMatcher: Optional は particle
+  - NaiOrAriMatcher: Matches ない or あり (mutually exclusive)
+  - NakattaOrAriMatcher: Matches なかっ or あり
+  - MaseMatcher, NNegationMatcher, DeshiMatcher: Polite form components
+  - TaMatcher: Past tense た
+- **Implementation notes**:
+  - Fundamental N5 negative copula patterns
+  - Critical for basic Japanese negation
+  - Handle both noun and な-adjective contexts correctly
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. ～んです・のです - explanatory のです
+2. ～ましょうか - shall we?
+3. 誰か・どこか・誰も・どこも - question words + か/も
+4. より～のほうが - comparison pattern
+5. もらう - to receive (from someone)
+6. る-Verb conjugations (Dictionary, Negative, Past, Negative-Past)
+
+### Environment Status
+- ✅ All 236 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 42 - 2025-12-12
 
 ### ✅ Session Summary
