@@ -1416,9 +1416,34 @@ pub fn seide() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: くせに
+// Pattern: くせに (despite/even though)
+// Structures: Verb/Adjective/Noun + (な/の) + くせ + に
 pub fn kuseni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KuseMatcher;
+    impl Matcher for KuseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "くせ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(KuseMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: がち (tend to/prone to)

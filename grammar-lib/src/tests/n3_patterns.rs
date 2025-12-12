@@ -827,3 +827,61 @@ mod amarini_tests {
         assert_pattern_range(&patterns, "あまりに", 3, 7); // あまりに
     }
 }
+
+// ========== くせに (despite/even though) ==========
+// Pattern: くせに (despite/even though)
+// Data source: grammar_points_data.json["くせに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + くせに
+//   standard[1]: い-Adjective + くせに
+//   standard[2]: な-Adjective + な + くせに
+//   standard[3]: Noun + の + くせに
+
+mod kuseni_tests {
+    use super::*;
+
+    // Test: Verb + くせに (even though said going to sleep)
+    #[test]
+    fn test_kuseni_verb() {
+        let sentence = "さっき寝るって言ってたくせにまだ起きてるの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くせに");
+        assert_pattern_range(&patterns, "くせに", 10, 14); // たくせに
+    }
+
+    // Test: い-Adjective + くせに (even though young)
+    #[test]
+    fn test_kuseni_i_adjective() {
+        let sentence = "若いくせに何ダラダラしているんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くせに");
+        assert_pattern_range(&patterns, "くせに", 0, 5); // 若いくせに
+    }
+
+    // Test: な-Adjective + な + くせに (despite being unskilled)
+    #[test]
+    fn test_kuseni_na_adjective() {
+        let sentence = "自分だって下手なくせに何偉そうに言ってるんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くせに");
+        assert_pattern_range(&patterns, "くせに", 7, 11); // なくせに
+    }
+
+    // Test: Noun + の + くせに (even though a dog)
+    #[test]
+    fn test_kuseni_noun() {
+        let sentence = "この子は犬のくせにニャーと鳴く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "くせに");
+        assert_pattern_range(&patterns, "くせに", 5, 9); // のくせに
+    }
+}
