@@ -929,3 +929,77 @@ mod koso_tests {
         assert_pattern_range(&patterns, "こそ", 5, 8); // 私こそ
     }
 }
+
+// ========== きり (only/just/since) ==========
+// Pattern: きり (only/just/since - adverbial particle)
+// Data source: grammar_points_data.json["きり"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[た] + きり
+//   standard[1]: Noun + きり
+//   standard[2]: これ/それ + きり
+//   standard[3]: Number + Counter + きり
+//   Note: っきり is a variant of きり (more casual)
+
+mod kiri_tests {
+    use super::*;
+
+    // Test: Verb[past] + きり (since doing something)
+    #[test]
+    fn test_kiri_verb_past() {
+        let sentence = "昨日、晩ご飯食べたきり何も食べてないから、めちゃお腹が空いた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きり");
+        assert_pattern_range(&patterns, "きり", 8, 11); // たきり
+    }
+
+    // Test: Noun + Counter + きり (alone)
+    #[test]
+    fn test_kiri_noun() {
+        let sentence = "一人きりになれる時間が欲しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きり");
+        assert_pattern_range(&patterns, "きり", 1, 4); // 人きり
+    }
+
+    // Test: Number + Counter + っきり (only once - casual variant)
+    #[test]
+    fn test_kiri_counter_ikkiri() {
+        let sentence = "彼とは一度っきりしか会えていない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きり");
+        assert_pattern_range(&patterns, "きり", 4, 8); // 度っきり
+    }
+
+    // Test: Number + Counter + っきり (just two of us)
+    #[test]
+    fn test_kiri_counter_futari() {
+        let sentence = "二人っきりの時間はいいね！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きり");
+        assert_pattern_range(&patterns, "きり", 1, 5); // 人っきり
+    }
+
+    // TODO: Undetectable - 寝たきり is a lexicalized compound noun
+    // The example sentence "お祖母ちゃんは去年病気で倒れて、寝たきりになった"
+    // tokenizes 寝たきり as a single noun (名詞/一般) rather than 寝 + た + きり.
+    // This is a set expression meaning "bedridden" and cannot be detected by the
+    // きり pattern matcher which expects separate tokens.
+    //
+    // #[test]
+    // fn test_kiri_verb_past_bedridden() {
+    //     let sentence = "お祖母ちゃんは去年病気で倒れて、寝たきりになった";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     // 寝たきり is tokenized as single noun, not verb + た + きり
+    // }
+}

@@ -1316,9 +1316,25 @@ pub fn kirenai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: きり
+// Pattern: きり (only/just/since)
+// Structures: Verb[た] + きり, Noun/Counter + きり/っきり
 pub fn kiri() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KiriMatcher;
+    impl Matcher for KiriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Matches きり or っきり as 名詞/非自立/副詞可能 or 名詞/接尾/副詞可能
+            (token.surface == "きり" || token.surface == "っきり")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                    || token.pos.get(1).is_some_and(|pos| pos == "接尾"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Matches verb/noun/counter before きり
+        TokenMatcher::Custom(Arc::new(KiriMatcher)),
+    ]
 }
 
 // Pattern: かけ
