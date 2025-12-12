@@ -2457,3 +2457,66 @@ mod sate_tests {
         assert_pattern_range(&patterns, "さて", 0, 2); // さて
     }
 }
+
+// ========== すると (then/upon that) ==========
+// Pattern: すると (then/upon that/in that case)
+// Data source: grammar_points_data.json["すると"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase。すると + (Result) Phrase
+
+mod suruto_tests {
+    use super::*;
+
+    // Test: すると at sentence beginning - uncontrollable result
+    // Example: 押入れの掃除をした。すると、無くしたと思っていた服が出てきた
+    // (I cleaned my closet. Upon that, I found clothes I thought I had lost)
+    #[test]
+    fn test_suruto_uncontrollable_result() {
+        let sentence = "押入れの掃除をした。すると、無くしたと思っていた服が出てきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すると");
+        assert_pattern_range(&patterns, "すると", 10, 13); // すると
+    }
+
+    // Test: すると at sentence beginning - gathering monkeys
+    // Example: 猿にバナナをあげた。すると、猿がどんどん集まってきた
+    // (I gave a banana to a monkey. Having done that, more monkeys gathered)
+    #[test]
+    fn test_suruto_gathering() {
+        let sentence = "猿にバナナをあげた。すると、猿がどんどん集まってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すると");
+        assert_pattern_range(&patterns, "すると", 10, 13); // すると
+    }
+
+    // Test: すると drawing conclusion
+    // Example: １９歳なの？すると、大学１年生でしょう？
+    // (You are 19? So you mean to say that you are a freshman, right?)
+    #[test]
+    fn test_suruto_conclusion() {
+        let sentence = "１９歳なの？すると、大学１年生でしょう？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すると");
+        assert_pattern_range(&patterns, "すると", 6, 9); // すると
+    }
+
+    // Test: すると in story (like Momotaro)
+    // Example: お祖母ちゃんが川で洗濯をしていた。すると、川の向こうから桃が流れてきた
+    // (An old lady was washing clothes. Just then, a peach flowed down the river)
+    #[test]
+    fn test_suruto_story() {
+        let sentence = "お祖母ちゃんが川で洗濯をしていた。すると、川の向こうから桃が流れてきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すると");
+        assert_pattern_range(&patterns, "すると", 17, 20); // すると
+    }
+}

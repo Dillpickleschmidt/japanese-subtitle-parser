@@ -4678,13 +4678,13 @@
   {
     "pattern_name": "さて",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Acting as a conjunction , さて is a word used when one wants to change the topic of conversation, or is ready to move o... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4706,13 +4706,13 @@
   {
     "pattern_name": "すでに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As a formal alternative to もう, the adverb 既（すで）に is used in Japanese as 'already' [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4720,13 +4720,13 @@
   {
     "pattern_name": "すると",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "すると , a combination of する and the conjunction particle と, is generally considered to be an abbreviation of そうすると , an... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
