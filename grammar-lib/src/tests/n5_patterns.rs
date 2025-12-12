@@ -3316,3 +3316,58 @@ mod nodesu_tests {
         assert_pattern_range(&patterns, "～んです・のです", 2, 8); // 教師なんです
     }
 }
+
+// ========== ～ましょうか (Shall we?) ==========
+// Pattern: ～ましょうか (polite suggestion as question)
+// Data source: grammar_points_data.json["～ましょうか"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + ましょうか
+
+mod mashouka_tests {
+    use super::*;
+
+    // Verb stem + ましょうか (u-verb)
+    #[test]
+    fn test_mashouka_basic() {
+        let sentence = "レストランまで車で行きましょうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ましょうか");
+        assert_pattern_range(&patterns, "～ましょうか", 9, 16); // 行きましょうか
+    }
+
+    // Verb stem + ましょうか (u-verb, different verb)
+    #[test]
+    fn test_mashouka_run() {
+        let sentence = "今夜走りましょうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ましょうか");
+        assert_pattern_range(&patterns, "～ましょうか", 2, 9); // 走りましょうか
+    }
+
+    // Verb stem + ましょうか (u-verb)
+    #[test]
+    fn test_mashouka_u_verb() {
+        let sentence = "一緒に映画を見ましょうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ましょうか");
+        assert_pattern_range(&patterns, "～ましょうか", 6, 12); // 見ましょうか
+    }
+
+    // Verb stem + ましょうか (ru-verb)
+    #[test]
+    fn test_mashouka_ru_verb() {
+        let sentence = "昼ご飯を食べましょうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ましょうか");
+        assert_pattern_range(&patterns, "～ましょうか", 4, 11); // 食べましょうか
+    }
+}
