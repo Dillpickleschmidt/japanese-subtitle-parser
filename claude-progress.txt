@@ -3,19 +3,20 @@
 ## Session 95 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (すでに)
-**Patterns completed**: 1 new N3 pattern (already - formal)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 589 (was 585 at start)
+**Status**: Two N3 patterns fully implemented (すでに + さて)
+**Patterns completed**: 2 new N3 patterns (already + topic change conjunction)
+**Tests added**: 8 comprehensive tests
+**Total tests**: 593 (was 585 at start)
 
 ### Accomplishments
 1. ✅ Implemented すでに pattern (N3) - "already" (formal alternative to もう)
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 589 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented さて pattern (N3) - "well then" (topic change conjunction)
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 593 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### すでに (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (line 1944-1965)
@@ -46,38 +47,56 @@
 - **Key insight**: Very simple pattern - just match the adverb すでに itself
 - **Note**: Pattern was already declared in patterns.rs, only needed matcher implementation
 
+#### さて (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 1294-1315)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod sate_tests)
+  - test_sate_topic_change (さて、そろそろ出ますか - Well then, shall we head off?)
+  - test_sate_with_action (さて、とりあえず乾杯しましょう - Well, let's toast first)
+  - test_sate_with_question (さて、この問題の答えが分かる人はいますか - Now, does anyone know?)
+  - test_sate_casual (さて、次は何しようか - Well then, what shall we do next?)
+- **Structure**: さて + (New Topic) Phrase (only 1 structure variant)
+- **Tokenization insights**:
+  - さて = 接続詞 (conjunction)
+  - Pattern appears at sentence beginning before topic change
+- **Implementation**: Single-token matcher
+  - SateMatcher - Matches さて as 接続詞
+- **Meaning**: "well" or "well then" - used to change topic or move to new point
+- **Pattern priority**: 1 (standard N3 construction)
+- **Pattern ranges**: Just the conjunction さて itself
+  - さて (chars 0-2) - always at sentence start
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 589/589 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~67 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 593/593 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~150 (2 matcher implementations + 8 tests + feature_list updates)
 
 ### Key Insights
-- すでに is one of the simplest patterns - just a single adverb token
-- Formal alternative to もう, commonly used in written/formal contexts
-- Test-first workflow successfully identified the simple tokenization
+- Both patterns are extremely simple - just single-token matchers
+- すでに is formal adverb, さて is topic-change conjunction
+- Test-first workflow successfully identified both tokenization patterns
 - All test sentences are realistic and subtitle-quality
-- Pattern range is just the adverb itself (not including following phrase)
+- Pattern ranges are just the word itself (not including following phrases)
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
-1. さえ - emphasis particle "even" (6 structures - more complex)
-2. ずに - "without doing" (likely simpler)
-3. さて - "now then / well" (topic change, likely simple adverb)
-4. すると - "then/in that case" (likely simple)
-5. ずっと② - "by far" (different from ずっと① "continuously")
+1. すると - "then/in that case" (likely simple conjunction)
+2. ずに - "without doing" (verb conjugation pattern)
+3. さえ - emphasis particle "even" (6 structures - more complex)
+4. ずっと② - "by far" (different from ずっと① "continuously")
+5. せいで - "because of/due to" (causative pattern)
 
-**Recommendation**: Continue with "さて" or "すると" as they are likely simple adverb/conjunction patterns. Save "さえ" for later due to its complexity (6 structure variants).
+**Recommendation**: Continue with "すると" as it's likely a simple conjunction pattern similar to さて. Save "さえ" for later due to its complexity (6 structure variants).
 
 ### Environment Status
-- ✅ All 589 tests passing
+- ✅ All 593 tests passing
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
-- ✅ Ready for next session
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session or to continue implementing
 
 ---
 
