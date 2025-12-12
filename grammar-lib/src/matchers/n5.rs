@@ -1310,8 +1310,20 @@ fn te_de_conjunction() -> TokenMatcher {
 }
 
 // Pattern: もう
+// Pattern: もう (already/anymore - adverb)
+// Structures: もう + (Past) Phrase | もう + (Negative) Phrase
 pub fn mou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MouMatcher;
+    impl Matcher for MouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もう"
+                && token.pos.first().is_some_and(|p| p == "副詞")
+                && token.pos.get(1).is_some_and(|p| p == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(MouMatcher))]
 }
 
 // Pattern: まだ

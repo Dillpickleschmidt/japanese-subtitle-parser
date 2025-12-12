@@ -2990,3 +2990,48 @@ mod ya_tests {
         assert_pattern_range(&patterns, "や", 0, 7); // ビールやワイン
     }
 }
+
+// ========== もう (Already/Anymore) ==========
+// Pattern: もう (already - past, anymore - negative)
+// Data source: grammar_points_data.json["もう"]
+//
+// Structure variants to test:
+//   standard[0]: もう + (Past) Phrase
+//   standard[1]: もう + (Negative) Phrase
+
+mod mou_tests {
+    use super::*;
+
+    // もう + past phrase (already)
+    #[test]
+    fn test_mou_already_past() {
+        let sentence = "朝ごはんはもう食べた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もう");
+        assert_pattern_range(&patterns, "もう", 5, 7); // もう
+    }
+
+    // もう + negative phrase (anymore)
+    #[test]
+    fn test_mou_anymore_negative() {
+        let sentence = "もうお金がない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もう");
+        assert_pattern_range(&patterns, "もう", 0, 2); // もう
+    }
+
+    // もう in question (already?)
+    #[test]
+    fn test_mou_question() {
+        let sentence = "もうデザートを食べた？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もう");
+        assert_pattern_range(&patterns, "もう", 0, 2); // もう
+    }
+}
