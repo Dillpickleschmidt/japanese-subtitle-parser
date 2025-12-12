@@ -1,5 +1,110 @@
 # Grammar-lib Development Progress
 
+## Session 79 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (あまりに - excessively/so much)
+**Patterns completed**: 1 new N3 pattern with 3 variants (adverb pattern)
+**Tests added**: 6 comprehensive tests
+**Total tests**: 472 (was 466)
+
+### Accomplishments
+1. ✅ Implemented あまりに pattern (N3) - adverb pattern with 3 variants
+2. ✅ All 6 tests passing with proper range assertions
+3. ✅ No test regressions - all 472 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### あまりに (N3) ✓
+- **Files**:
+  - grammar-lib/src/matchers/n3.rs (replaced stub at line 595, added 3 functions)
+  - grammar-lib/src/patterns.rs (added 3 pattern declarations)
+- **Tests**: 6 variants, all passing in n3_patterns.rs
+  - test_amarini_i_adjective (楽過ぎて - so easy)
+  - test_amarini_adverb (遅く - so late)
+  - test_amarino_noun (恐怖 - so much fear)
+  - test_anmari_colloquial (あんまりつまらなくて - colloquial variant)
+  - test_amarinimo_emphasis (あまりにもつまらなくて - emphasis variant)
+  - test_amarini_na_adjective (静かで - so quiet)
+- **Structures**:
+  - あまりに + Adjective/Adverb (single token)
+  - あまり + の + Noun (3 tokens)
+  - あんまり + Adjective (colloquial, single token)
+  - あまりにも + Adjective (emphasis with も particle, 2 tokens)
+- **Tokenization insights**:
+  - あまりに = 副詞/助詞類接続 (single token)
+  - あまり = 副詞/助詞類接続 (when followed by の)
+  - あんまり = 副詞/助詞類接続 (colloquial variant)
+  - の = 助詞/連体化 (when connecting to noun)
+  - も = 助詞/係助詞 (emphasis particle)
+- **Implementation**: 3 matcher functions
+  1. amarini(): Matches あまりに or あんまり as 副詞/助詞類接続 (1 token)
+  2. amarino_noun(): Matches あまり + の + Noun (3 tokens)
+  3. amarinimo(): Matches あまりに + も for emphasis (2 tokens)
+- **Meaning**: "excessively / so much / way too much" - expresses excessive degree that causes a result
+- **Usage**: Common N3 adverb for expressing surprise/shock about excessive degree
+- **Pattern priority**:
+  - Amarini: 3 (basic adverb)
+  - AmarinoNoun: 4 (3-token construction)
+  - Amarinimo: 4 (emphasis variant)
+- **Pattern ranges**:
+  - あまりに (chars 6-10, single token)
+  - あまりの恐怖 (chars 3-9, full construction)
+  - あんまり (chars 5-9, colloquial variant)
+  - あまりにも (chars 5-10, emphasis with も)
+
+### Technical Details
+- **Pattern priority**: 3 for basic adverb, 4 for compound forms (construction patterns - N3 level in patterns.rs)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - あまりに + Adjective (tested with い-Adjective and な-Adjective)
+  - あまりに + Adverb (tested with 遅く)
+  - あまりの + Noun (tested with 恐怖)
+  - あんまり colloquial variant (tested with つまらなくて)
+  - あまりにも emphasis (tested with つまらなくて)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Pattern has 3 distinct forms requiring 3 separate matchers and pattern declarations
+- **Pattern range**: Single token for adverbs, full construction for の + Noun and も emphasis
+- **Multiple patterns**: Same base meaning but different tokenization patterns, all properly prioritized
+
+### Session Statistics
+- **Patterns implemented**: 1 concept (3 pattern variants)
+- **Tests written**: 6
+- **Tests passing**: 472/472 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~178 (tests + 3 matchers + 3 pattern declarations + feature_list update)
+
+### Key Insights
+- Pattern has multiple forms that require separate matchers (adverb, の + Noun, にも emphasis)
+- All variants express the same core meaning of "excessive degree"
+- Test-first workflow successfully identified all tokenization patterns
+- Colloquial variant (あんまり) uses same matcher as standard form (あまりに)
+- Pattern prioritization ensures あまりにも (6.0) > あまりに (5.0) > base patterns
+- All test sentences are realistic and subtitle-quality
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. いくら〜でも - "no matter how much"
+2. Verb[volitional] + としたが - related to volitional pattern already implemented
+3. かけ - incomplete/unfinished action
+4. から言うと - "from the perspective of"
+5. Noun＋型 - "type/style" suffix pattern
+6. ～と言っても - "even if (A) is said"
+
+**Recommendation**: Continue with concrete N3 patterns that have clear structure variants. Focus on patterns without Wildcard matchers for cleaner implementation.
+
+### Environment Status
+- ✅ All 472 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 78 - 2025-12-12
 
 ### ✅ Session Summary
