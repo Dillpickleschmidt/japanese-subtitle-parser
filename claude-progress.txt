@@ -3,20 +3,39 @@
 ## Session 49 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N4 pattern fully implemented (Number + も)
-**Patterns completed**: 1 new pattern
-**Tests added**: 3 comprehensive tests
-**Total tests**: 283 (was 281)
+**Status**: Two N4 patterns fully implemented (Number + も + ずっと ①)
+**Patterns completed**: 2 new patterns
+**Tests added**: 6 comprehensive tests
+**Total tests**: 286 (was 281)
 
 ### Accomplishments
 1. ✅ Implemented Number + も (as many as / not even) pattern
-2. ✅ Created first N4 test file (grammar-lib/src/tests/n4_patterns.rs)
-3. ✅ All 3 test variants passing with proper range assertions
-4. ✅ No test regressions - all 283 tests pass
-5. ✅ Updated feature_list.json
-6. ✅ Clean commit with full documentation
+2. ✅ Implemented ずっと ① (continuously/the whole time) pattern
+3. ✅ Created first N4 test file (grammar-lib/src/tests/n4_patterns.rs)
+4. ✅ All 6 test variants passing with proper range assertions
+5. ✅ No test regressions - all 286 tests pass
+6. ✅ Updated feature_list.json
+7. ✅ Clean commits with full documentation
 
 ### Completed Patterns
+
+#### ずっと ① (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs
+- **Tests**: 3 variants, all passing
+  - test_zutto_at_start (ずっとゲームをしないで - continuously)
+  - test_zutto_continuous_action (ずっと立ってた - whole time)
+  - test_zutto_after_kara (昨日からずっと - since yesterday)
+- **Structure**: ずっと + Phrase
+- **Tokenization insights**:
+  - ずっと tokenizes as single token: 副詞/一般 (adverb/general)
+  - surface='ずっと' base='ずっと'
+  - Can appear at sentence start or after particles
+- **Implementation notes**:
+  - Simple single-token matcher (ZuttoMatcher)
+  - Checks surface, base_form, and POS (副詞/一般)
+  - Emphasizes ongoing state without stopping
+  - Literal meaning: "unwavering" or "unfaltering"
+  - Translates as: continuously, the whole time, constantly, all along
 
 #### Number + も (N4) ✓
 - **File**: grammar-lib/src/matchers/n4.rs
@@ -47,21 +66,30 @@
   - Variable-length number sequences (solved with optional matchers)
   - First N4 pattern implementation (created new test file structure)
 
+### Technical Details
+- **Pattern priorities**: Both priority 1 (construction patterns - N4 level)
+- **Test coverage**:
+  - Number + も: Single structure variant (Number + Counter + も)
+  - ずっと ①: Single structure variant (ずっと + Phrase)
+- **Implementation approaches**:
+  - Number + も: Complex variable-length matching with optional matchers
+  - ずっと ①: Simple single-token adverb matching
+
 ### Next Priorities (N4 patterns still needed)
 High-value construction patterns from feature_list.json:
 1. Number + しか〜ない - only/not even
-2. Question-phrase + か - embedded questions
-3. あとで - after/later
-4. あまり～ない - not very
+2. あとで - after/later
+3. あまり～ない - not very
+4. Question-phrase + か - embedded questions
 5. Verb[よう] - volitional form
 6. てしまう・ちゃう - completion/regret
 
 ### Environment Status
-- ✅ All 283 tests passing
+- ✅ All 286 tests passing
 - ✅ No regressions
 - ✅ Clean git state
 - ✅ feature_list.json updated
-- ✅ First N4 test file created
+- ✅ N4 test file expanded (2 patterns)
 
 ---
 
