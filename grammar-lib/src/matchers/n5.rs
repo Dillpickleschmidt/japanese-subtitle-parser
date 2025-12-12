@@ -2405,7 +2405,7 @@ pub fn nonakade_uff5e_gaichiban_uff5e() -> Vec<TokenMatcher> {
 
 // Pattern: より～のほうが
 pub fn yori_uff5e_nohouga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![]  // TODO: Implement - requires fixing Wildcard matcher issues (see Session 63 & 66)
 }
 
 // Pattern: なにか・なにも

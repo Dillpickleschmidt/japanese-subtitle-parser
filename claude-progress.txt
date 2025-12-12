@@ -1,5 +1,115 @@
 # Grammar-lib Development Progress
 
+## Session 66 - 2025-12-12
+
+### ❌ Session Summary
+**Status**: Attempted より～のほうが pattern - encountered Wildcard/Optional matcher issues
+**Patterns completed**: 0 (reverted changes to maintain clean state)
+**Tests added**: 0 (reverted test changes)
+**Total tests**: 413 (unchanged)
+
+### Investigation & Findings
+1. ✅ Successfully identified より～のほうが as high-priority N5 pattern
+2. ✅ Analyzed tokenization for all 4 structure variants (noun, い-adj, な-adj, verb comparisons)
+3. ❌ Encountered critical issue with Wildcard and Optional(Any) matchers
+4. ✅ Confirmed Wildcard matcher issues from Session 63 still present
+5. ✅ Reverted all changes to maintain clean codebase state
+
+### Technical Investigation
+
+#### Pattern: より～のほうが (Comparative Construction - N5)
+**Data source**: `grammar_points_data.json["より～のほうが"]`
+
+**Structure variants analyzed**:
+1. Noun (A) + より + Noun (B) + の + 方 + が (e.g., 彼女より、私の方が)
+2. い-Adjective (A) + より + い-Adjective (B) + 方 + が (e.g., 怖いより、面白い方が)
+3. な-Adjective (A) + な + より + な-Adjective (B) + な + 方 + が (e.g., 静かなところより、賑やかな方が)
+4. Verb (A) + より + Verb (B) + 方 + が (e.g., 住むより、都会の方が)
+
+**Tokenization confirmed**:
+- より = 助詞/格助詞/一般
+- 方 = 名詞/非自立/一般
+- が = 助詞/格助詞/一般
+- Variable content between より and 方 (1-5 tokens including comma, particles, compared items)
+
+**Implementation attempts**:
+1. **Wildcard approach** (failed):
+   ```rust
+   TokenMatcher::Wildcard { min: 1, max: 8, stop_conditions: vec![...] }
+   ```
+   - Pattern not detected at all
+   - Same issue documented in Session 63
+
+2. **Fixed TokenMatcher::Any approach** (succeeded):
+   ```rust
+   vec![より, Any, Any, Any, 方, が]
+   ```
+   - Pattern detected successfully: `より～のほうが (confidence: 2.2) [chars 2-9]`
+   - But only works for exact 3-token sequences
+
+3. **Optional(Any) approach** (failed):
+   ```rust
+   vec![より, Any, Optional(Any), Optional(Any), ..., 方, が]
+   ```
+   - Pattern not detected at all
+   - Optional matcher appears broken or incompatible with pattern matching algorithm
+
+### Critical Issue: Wildcard/Optional Matcher Problems
+
+**Root cause**: The pattern matching engine has fundamental issues with:
+- `TokenMatcher::Wildcard` with variable min/max
+- `TokenMatcher::Optional` wrapping `TokenMatcher::Any`
+- Stop conditions on Wildcard matchers
+
+**Evidence**:
+- Fixed-size patterns with explicit `TokenMatcher::Any` work perfectly
+- Variable-size patterns with Wildcard or Optional fail silently
+- Same issue affects multiple patterns (より～のほうが, Session 63's attempts)
+
+**Impact**: Cannot implement patterns requiring variable-length token sequences without:
+1. Creating multiple fixed-size variants (not scalable)
+2. Fixing the Wildcard/Optional matcher implementation
+3. Using alternative matching strategies
+
+### Decisions Made
+1. **Reverted all より～のほうが changes** to maintain clean codebase
+2. **Left stub with TODO comment** referencing Sessions 63 & 66
+3. **Did not implement partial/broken solution** (per project standards)
+4. **Documented findings** for future sessions to address matcher issues
+
+### Next Priorities
+
+**Critical infrastructure issue to address**:
+- Fix Wildcard matcher implementation in pattern_matcher.rs
+- Fix Optional(Any) matching behavior
+- OR implement alternative variable-length matching strategy
+
+**Alternative N5 patterns to implement** (avoiding Wildcard dependency):
+1. **い-Adjective (Predicate)** - fixed-structure pattern, no Wildcard needed
+2. **Verbs (Non-past)** - dictionary form as non-past tense
+3. Other stub patterns with deterministic token sequences
+
+**Recommended approach for next session**:
+1. Either fix Wildcard matcher first, OR
+2. Choose patterns that don't require variable-length matching
+3. Focus on completing at least ONE pattern successfully (quality over quantity)
+
+### Environment Status
+- ✅ All 413 tests passing
+- ✅ No regressions introduced
+- ✅ Clean git state (reverted all work-in-progress changes)
+- ✅ Codebase ready for next session
+- ⚠️ Wildcard/Optional matcher issues remain unresolved
+
+### Key Learnings
+1. Always verify matcher capabilities before committing to pattern implementation
+2. Test-first workflow successfully identified tokenization patterns
+3. Fixed-size matchers work reliably; variable-size matchers do not
+4. Better to revert and leave clean state than commit broken/incomplete code
+5. Pattern implementation blocked on infrastructure issues (not pattern complexity)
+
+---
+
 ## Session 65 - 2025-12-12
 
 ### ✅ Session Summary
