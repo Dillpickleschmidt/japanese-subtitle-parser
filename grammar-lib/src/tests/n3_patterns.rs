@@ -2073,3 +2073,76 @@ mod toittemo_tests {
         assert_pattern_range(&patterns, " ～と言っても", 0, 9); // 新幹線だといっても
     }
 }
+
+// ========== あり (with/possible/exists) ==========
+// Pattern: あり (with/among other possibilities/exists)
+// Data source: grammar_points_data.json["あり"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase + あり
+//
+// Note: あり is the literary form of ある, used to indicate:
+//   - Something is "with (A), amongst other things"
+//   - A possibility among many possibilities
+//   - Standalone "that's possible/acceptable" in conversations
+//
+// Examples from data:
+//   - ラーメンもあり (Ramen is possible/acceptable)
+//   - 駐車場ありのホテル (hotel with parking lot)
+//   - 字幕ありで見たい (want to watch with subtitles)
+
+mod ari_tests {
+    use super::*;
+
+    // Test: Noun + も + あり (standalone agreement/possibility)
+    // Example: ラーメンもあり - ramen is possible too
+    // Pattern includes preceding particle も + あり
+    #[test]
+    fn test_ari_standalone_possibility() {
+        let sentence = "ラーメンもありじゃない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あり");
+        assert_pattern_range(&patterns, "あり", 4, 7); // もあり
+    }
+
+    // Test: Noun + あり + の + Noun (with, having)
+    // Example: 駐車場ありのホテル - hotel with parking lot
+    // Pattern includes preceding noun 場 + あり
+    #[test]
+    fn test_ari_with_modifier() {
+        let sentence = "駐車場ありのホテルを取っておいてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あり");
+        assert_pattern_range(&patterns, "あり", 2, 5); // 場あり
+    }
+
+    // Test: Noun + あり + で (with)
+    // Example: 字幕ありで見たい - want to watch with subtitles
+    // Pattern includes preceding noun 字幕 + あり (+ following で due to range calculation)
+    #[test]
+    fn test_ari_with_particle() {
+        let sentence = "字幕ありで見たいから字幕つけてもらえない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あり");
+        assert_pattern_range(&patterns, "あり", 0, 5); // 字幕ありで (includes following で)
+    }
+
+    // Test: あり as standalone response (very casual)
+    // Example: めっちゃありです - that's totally possible
+    // Pattern includes preceding adverb めっちゃ + あり (+ following です due to range calculation)
+    #[test]
+    fn test_ari_standalone_response() {
+        let sentence = "めっちゃありです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あり");
+        assert_pattern_range(&patterns, "あり", 0, 8); // めっちゃありです (includes following です)
+    }
+}

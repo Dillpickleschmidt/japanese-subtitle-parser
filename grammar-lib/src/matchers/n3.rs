@@ -1880,8 +1880,33 @@ pub fn nashi() -> Vec<TokenMatcher> {
 }
 
 // Pattern: あり
+// Pattern: あり (with/possible/exists - literary form of ある)
+// Structures: Phrase + あり
+// Meaning: "with (A), amongst other things" / "that's possible/acceptable"
+// Usage: Indicates something as one possibility among many
+// Examples:
+//   - ラーメンもあり (Ramen is possible/acceptable)
+//   - 駐車場ありのホテル (hotel with parking lot)
+//   - 字幕ありで見たい (want to watch with subtitles)
+//   - めっちゃありです (that's totally possible - casual response)
 pub fn ari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct AriMatcher;
+    impl Matcher for AriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match あり as verb ある in 連用形 (conjunctive form)
+            token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding word (noun, adjective, adverb, etc.)
+        TokenMatcher::Custom(Arc::new(AriMatcher)),
+    ]
 }
 
 // Pattern: 考えられない
