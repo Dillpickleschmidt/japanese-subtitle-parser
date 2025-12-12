@@ -1,5 +1,72 @@
 # Grammar-lib Development Progress
 
+## Session 48 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One pattern fully implemented (でしょう)
+**Patterns completed**: 1 new pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 277 (was 273)
+
+### Accomplishments
+1. ✅ Implemented でしょう (probably/right? - tentative/assumption) pattern
+2. ✅ All 4 test variants passing with proper range assertions
+3. ✅ No test regressions - all 277 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Patterns
+
+#### でしょう (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 4 variants, all passing
+  - test_deshou_noun (ハンバーガーでしょう - noun + でしょう)
+  - test_deshou_verb (踊るでしょう - verb + でしょう)
+  - test_deshou_i_adjective (良かったでしょう - i-adj past + でしょう)
+  - test_deshou_na_adjective (簡単でしょう - na-adj + でしょう)
+- **Structures**:
+  - Noun + でしょう
+  - Verb + でしょう
+  - い-Adjective + でしょう
+  - な-Adjective + でしょう
+- **Tokenization insights**:
+  - でしょう tokenizes as two tokens:
+    - でしょ (助動詞, base=です, 未然形)
+    - う (助動詞, 不変化型, 基本形)
+  - Can follow any noun, verb, or adjective in plain form
+  - For past tense adjectives (良かったでしょう), the pattern captures auxiliary た + でしょう
+- **Implementation notes**:
+  - Simple 3-token matcher: Any + でしょ + う
+  - Uses TokenMatcher::Any to match any preceding word
+  - Pattern correctly detects でしょう in all contexts (nouns, verbs, adjectives)
+  - Polite tentative form meaning "probably" or "right?"
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Test coverage**: All 4 structure variants from grammar_points_data.json
+  - Nouns, verbs, い-adjectives, な-adjectives all tested
+- **Implementation challenges**:
+  - Deciding pattern range for complex cases like 良かったでしょう
+  - Current approach captures minimal meaningful context (た + でしょう for past adjectives)
+  - This aligns with detecting the でしょう construction while including necessary preceding context
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. だろう - casual form of でしょう (probably/right? - casual)
+2. だ - copula (is/are)
+3. まだ - still/not yet adverb
+4. より～のほうが - comparison pattern
+5. もらう - to receive (from someone)
+6. くれる - to give (to me/us)
+
+### Environment Status
+- ✅ All 277 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 47 - 2025-12-12
 
 ### ✅ Session Summary
