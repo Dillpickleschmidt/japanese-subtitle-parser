@@ -1,5 +1,68 @@
 # Grammar-lib Development Progress
 
+## Session 36 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: ～になる・～くなる pattern fully implemented
+**Patterns completed**: 1 new pattern
+**Tests added**: 5 comprehensive tests
+**Total tests**: 184 (was 179)
+
+### Accomplishments
+1. ✅ Implemented ～になる・～くなる (become/change of state) pattern
+2. ✅ All 5 test variants passing with proper range assertions
+3. ✅ No test regressions - all 184 tests pass
+4. ✅ Updated feature_list.json
+
+### Completed Patterns
+
+#### ～になる・～くなる (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 5 variants, all passing
+  - test_i_adjective_ku_naru (冷たくなった - い-adj + く + なる)
+  - test_i_adjective_ku_naru_variant (温くなった - another い-adj)
+  - test_noun_ni_naru (医者にならない - noun + に + なる)
+  - test_ii_exception_yoku_naru (良くなる - いい exception → よく)
+  - test_na_adjective_ni_naru_polite (綺麗になります - な-adj + に + なる polite)
+- **Structures**:
+  - い-Adjective[連用テ接続] + なる (any conjugation)
+  - Noun/な-Adjective[形容動詞語幹] + に + なる (any conjugation)
+- **Tokenization insights**:
+  - い-adjectives in く form have conjugation form 連用テ接続
+  - な-adjectives tokenize as 名詞/形容動詞語幹
+  - に particle is 助詞/格助詞
+  - なる verb matches any conjugation (なる, なっ, なら, なり, etc.)
+  - Polite forms (なります) extend automatically via auxiliary verb system
+  - よい/いい uses stem よ (not い) for く form
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Matcher approach**: Combined matcher handles both い-adj and noun/な-adj patterns
+- **Custom matchers**:
+  - KuNaruOrNiNaruMatcher: Matches い-adj[連用テ接続] OR noun/な-adj
+  - NiParticleMatcher: Optional に particle (格助詞)
+  - NaruVerbMatcher: Matches なる verb with any conjugation
+- **Optional token**: に particle is optional to handle both patterns in one matcher
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. ～んです・のです - explanatory のです
+2. ～ましょうか - shall we?
+3. 好き - to like
+4. たほうがいい - should do (advice)
+5. ないほうがいい - should not do
+6. てから - after doing
+7. てください - please do
+8. ないでください - please don't do
+
+### Environment Status
+- ✅ All 184 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 35 - 2025-12-11
 
 ### ✅ Session Summary
