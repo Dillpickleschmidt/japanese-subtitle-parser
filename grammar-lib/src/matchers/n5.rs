@@ -3648,3 +3648,40 @@ pub fn nakutewa_naranai() -> Vec<TokenMatcher> {
         )))), // Optional ん (for ません)
     ]
 }
+
+// な (prohibitive): Don't do X
+// Pattern: Verb[基本形] + な
+// Structures: Verb[dictionary form] + な
+pub fn na_prohibitive() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match な as 助詞/終助詞 (final particle)
+    #[derive(Debug)]
+    struct NaProhibitiveMatcher;
+    impl super::Matcher for NaProhibitiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    // Match verb in 基本形 (dictionary form)
+    #[derive(Debug)]
+    struct DictionaryFormVerbMatcher;
+    impl super::Matcher for DictionaryFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "基本形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryFormVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NaProhibitiveMatcher)),
+    ]
+}

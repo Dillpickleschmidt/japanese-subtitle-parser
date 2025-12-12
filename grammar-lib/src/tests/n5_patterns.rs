@@ -4678,3 +4678,58 @@ mod nakucha_nakya_tests {
         assert_pattern_range(&patterns, "なくちゃ・なきゃ", 3, 8); // しなくちゃ
     }
 }
+
+// ========== な (Prohibitive - Don't do X) ==========
+// Pattern: な (prohibitive command - don't!)
+// Data source: grammar_points_data.json["な"]
+//
+// Structure: Verb[dictionary form] + な
+// Single structure variant (standard form only)
+
+mod na_prohibitive_tests {
+    use super::*;
+
+    // Standard prohibitive form
+    #[test]
+    fn test_na_prohibitive_danger() {
+        let sentence = "危険！触るな！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な");
+        assert_pattern_range(&patterns, "な", 3, 6); // 触るな
+    }
+
+    // Prohibitive in quoted speech
+    #[test]
+    fn test_na_prohibitive_mother() {
+        let sentence = "「家の中で走るな！」と母が言った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な");
+        assert_pattern_range(&patterns, "な", 5, 8); // 走るな
+    }
+
+    // Prohibitive with casual context
+    #[test]
+    fn test_na_prohibitive_casual() {
+        let sentence = "そんなこと言うな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な");
+        assert_pattern_range(&patterns, "な", 5, 8); // 言うな
+    }
+
+    // Prohibitive with different verb
+    #[test]
+    fn test_na_prohibitive_decide() {
+        let sentence = "勝手に決めるな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な");
+        assert_pattern_range(&patterns, "な", 3, 7); // 決めるな
+    }
+}

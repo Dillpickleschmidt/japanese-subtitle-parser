@@ -912,6 +912,14 @@ declare_patterns! {
         jlpt: "n5",
     },
 
+    NaProhibitive {
+        name: "な",
+        matcher_fn: crate::matchers::n5::na_prohibitive,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
     Ya {
         name: "や",
         matcher_fn: crate::matchers::n5::ya,
