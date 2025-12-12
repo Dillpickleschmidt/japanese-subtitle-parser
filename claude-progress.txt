@@ -1,5 +1,98 @@
 # Grammar-lib Development Progress
 
+## Session 70 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (あまり - excessive/so much that)
+**Patterns completed**: 1 new N3 pattern (causative expression)
+**Tests added**: 5 comprehensive tests
+**Total tests**: 434 (was 429)
+
+### Accomplishments
+1. ✅ Implemented あまり pattern (N3) - 5 structure variants
+2. ✅ All 5 tests passing with proper range assertions
+3. ✅ No test regressions - all 434 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### あまり (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs
+- **Tests**: 5 variants, all passing in n3_patterns.rs
+  - test_amari_verb (集中するあまり - Verb + あまり)
+  - test_amari_i_adj_sa (暑さのあまり - さ + の + あまり)
+  - test_amari_i_adj_mi (悲しみのあまり - mi-derived noun + の + あまり)
+  - test_amari_na_adj (好きなあまり - な-Adj + な + あまり)
+  - test_amari_noun (緊張のあまり - Noun + の + あまり)
+- **Structures**:
+  - Verb (基本形) + あまり
+  - Noun (including さ/み derived) + の + あまり
+  - な-Adjective + な + あまり
+- **Tokenization insights**:
+  - Verb: する(動詞/基本形) + あまり(名詞/非自立/副詞可能)
+  - さ suffix: 暑(形容詞) + さ(名詞/接尾) + の(助詞/連体化) + あまり
+  - mi-derived: 悲しみ(名詞/一般) + の(助詞/連体化) + あまり (standalone noun)
+  - な-adj: 好き(名詞/形容動詞語幹) + な(助動詞/体言接続) + あまり
+  - noun: 緊張(名詞) + の(助詞/連体化) + あまり
+- **Implementation**: 2-token matcher with flexible preceding matcher
+  - AmariPrecedingMatcher: Matches verb (基本形), の (助詞/連体化), or な (助動詞/体言接続)
+  - AmariMatcher: Matches あまり as 名詞/一般 or 名詞/非自立/副詞可能
+- **Meaning**: "so much that / to the extent that" - expresses excessive degree leading to (typically negative) result
+- **Usage**: Common N3 expression for showing cause/effect where excess leads to consequence
+- **Pattern priority**: 3 (construction pattern - N3 level, now priority 1 in patterns.rs)
+- **Pattern ranges**: Includes structural marker (verb/の/な) + あまり
+  - Examples: するあまり (7-12 but extends to 5-12), のあまり (5-9 or 6-10), なあまり (7-11)
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern - N3 level in patterns.rs)
+- **Test coverage**: All 5 structure variants from grammar_points_data.json
+  - Verb + あまり (tested with 集中する compound verb)
+  - い-Adj[さ] + の + あまり (tested with 暑さ)
+  - い-Adj[み] + の + あまり (tested with 悲しみ - standalone noun)
+  - な-Adj + な + あまり (tested with 好き)
+  - Noun + の + あまり (tested with 緊張)
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Pattern matches the connector (verb/の/な) immediately before あまり, forming a 2-token construction
+- **Pattern range**: Includes the structural marker (verb, の, or な) plus あまり
+- **Note**: Verb pattern range extends backward to include preceding noun in compound verbs (e.g., 集中する)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 5
+- **Tests passing**: 434/434 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~132 (tests + matcher + feature_list update)
+
+### Key Insights
+- Pattern has 3 main structural forms: verb+あまり, noun+の+あまり, な-adj+な+あまり
+- The さ/み variants are essentially noun+の+あまり (さ and み create nouns from adjectives)
+- 2-token matcher works well - matches the immediate connector before あまり
+- Range calculation includes preceding tokens in some cases (compound verbs)
+- Test-first workflow successfully identified all tokenization patterns
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. あるいは - "or / alternatively" conjunction
+2. いくら〜でも - "no matter how much"
+3. Verb[volitional]とする - "try to / be about to"
+4. かけ - incomplete/unfinished action
+5. あまりに - "excessively" (related to あまり but different usage)
+6. からこそ - "precisely because"
+
+**Recommendation**: Continue with concrete N3 patterns that have clear structure variants.
+
+### Environment Status
+- ✅ All 434 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 69 - 2025-12-12
 
 ### ✅ Session Summary
