@@ -494,9 +494,67 @@ pub fn ano() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(AnoMatcher))]
 }
 
-// Pattern: ～んです・のです
+// Pattern: ～んです・のです (explanatory/emphasis)
+// Structures:
+//   Verb/い-Adj + ん(の) + だ/です
+//   な-Adj/Noun + な + ん(の) + だ/です
 pub fn uff5e_ndesu_u30fb_nodesu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ん or の (名詞/非自立)
+    #[derive(Debug)]
+    struct NNoMatcher;
+    impl Matcher for NNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ん" || token.surface == "の")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ or です (助動詞)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match な (助動詞, base=だ) - for な-Adj/Noun forms
+    #[derive(Debug)]
+    struct NaAuxMatcher;
+    impl Matcher for NaAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    // Match any token EXCEPT な auxiliary (to avoid double matching)
+    #[derive(Debug)]
+    struct NonNaAuxMatcher;
+    impl Matcher for NonNaAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match any token that is NOT な(助動詞, base=だ)
+            !(token.surface == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ")
+        }
+    }
+
+    // Return two alternatives:
+    // 1. Non-な token + ん/の + だ/です (for verb/い-adj)
+    // 2. Non-な token + な + ん/の + だ/です (for な-adj/noun)
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NonNaAuxMatcher)),  // Preceding word (not な aux)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaAuxMatcher)))),  // Optional な for nouns/な-adj
+        TokenMatcher::Custom(Arc::new(NNoMatcher)),  // ん or の
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),  // だ or です
+    ]
 }
 
 // Pattern: い-Adjective (Past) - Adjective[い] + かった

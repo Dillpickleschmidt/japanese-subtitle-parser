@@ -3188,3 +3188,131 @@ mod janakatta_tests {
         assert_pattern_range(&patterns, "じゃなかった", 4, 16); // 綺麗ではありませんでした
     }
 }
+
+// ========== ～んです・のです (Explanatory) ==========
+// Pattern: ～んです・のです (explanatory/emphasis)
+// Data source: grammar_points_data.json["～んです・のです"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + ん(の) + だ
+//   standard[1]: い-Adjective + ん(の) + だ
+//   standard[2]: な-Adjective + な + ん(の) + だ
+//   standard[3]: Noun + な + ん(の) + だ
+//   polite[0]: Verb + の(ん) + です
+//   polite[1]: い-Adjective + の(ん) + です
+//   polite[2]: な-Adjective + な + の(ん) + です
+//   polite[3]: Noun + な + の(ん) + です
+
+mod nodesu_tests {
+    use super::*;
+
+    // Polite form - い-Adjective + んです
+    #[test]
+    fn test_nodesu_i_adj_polite_n() {
+        let sentence = "ここのコーヒーが美味しいんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 8, 15); // 美味しいんです
+    }
+
+    // Polite form - い-Adjective + のです
+    #[test]
+    fn test_nodesu_i_adj_polite_no() {
+        let sentence = "私が悪いのです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 2, 7); // 悪いのです
+    }
+
+    // Standard form - Verb + んだ
+    #[test]
+    fn test_nodesu_verb_casual_n() {
+        let sentence = "お腹が空いたんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 5, 8); // たんだ
+    }
+
+    // Standard form - な-Adjective + なんだ
+    #[test]
+    fn test_nodesu_na_adj_casual_n() {
+        let sentence = "彼は元気なんだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 2, 7); // 元気なんだ
+    }
+
+    // Standard form - Noun + なんだ
+    #[test]
+    fn test_nodesu_noun_casual_n() {
+        let sentence = "あいつは学生なんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 4, 9); // 学生なんだ
+    }
+
+    // Polite form - Verb + んです
+    #[test]
+    fn test_nodesu_verb_polite_n() {
+        let sentence = "明日は早く起きるんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 5, 11); // 起きるんです
+    }
+
+    // Polite form - Verb + のです (with question か)
+    #[test]
+    fn test_nodesu_verb_polite_no_question() {
+        let sentence = "あなたはこれが欲しいのですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 7, 13); // 欲しいのです
+    }
+
+    // Polite form - い-Adjective + んです (different sentence)
+    #[test]
+    fn test_nodesu_i_adj_polite_n_alt() {
+        let sentence = "この店のラーメンは美味しいんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 9, 16); // 美味しいんです
+    }
+
+    // Polite form - な-Adjective + なのです
+    #[test]
+    fn test_nodesu_na_adj_polite_no() {
+        let sentence = "彼女は親切なのです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 3, 9); // 親切なのです
+    }
+
+    // Polite form - Noun + なんです
+    #[test]
+    fn test_nodesu_noun_polite_n() {
+        let sentence = "私は教師なんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～んです・のです");
+        assert_pattern_range(&patterns, "～んです・のです", 2, 8); // 教師なんです
+    }
+}
