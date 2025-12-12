@@ -1,5 +1,60 @@
 # Grammar-lib Development Progress
 
+## Session 35 - 2025-12-11
+
+### ✅ Session Summary
+**Status**: まだ～ていません pattern fully implemented
+**Patterns completed**: 1 new pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 176 (was 173)
+
+### Accomplishments
+1. ✅ Implemented まだ～ていません (haven't done yet / still haven't done) pattern
+2. ✅ All 3 test variants passing with proper range assertions
+3. ✅ No test regressions - all 176 tests pass
+4. ✅ Updated feature_list.json
+
+### Completed Patterns
+
+#### まだ～ていません (N5) ✓
+- **File**: grammar-lib/src/matchers/n5.rs
+- **Tests**: 3 variants, all passing
+  - test_casual_negative (まだ何も決めていない - casual with intervening words)
+  - test_polite_negative (まだ見ていません - polite form)
+  - test_with_intervening_words (まだ全然終わっていない - with intervening adverb)
+- **Structure**: まだ + (0-5 tokens) + Verb[て] + いる/いない/いません
+- **Tokenization insights**:
+  - まだ tokenizes as 副詞/助詞類接続
+  - Wildcard matcher allows 0-5 tokens between まだ and verb
+  - Pattern extends automatically for polite (ません) and casual (ない) negatives
+  - Works with intervening adverbs like 何も, 全然
+
+### Technical Details
+- **Pattern priority**: 1 (construction pattern)
+- **Matcher approach**: Wildcard-based pattern with て-form detection
+- **Custom matchers**: TeDeParticleMatcher (て/で particles), IruAuxMatcher (いる auxiliary)
+- **Range**: Full construction from まだ through いない/いません
+- **Wildcard**: Allows 0-5 tokens to handle intervening words (adverbs, pronouns, etc.)
+
+### Next Priorities (N5 patterns still needed)
+High-value construction patterns from feature_list.json:
+1. たり～たりする - listing non-ordered actions
+2. たほうがいい - should do (advice)
+3. ないほうがいい - should not do
+4. てから - after doing
+5. てください - please do
+6. ないでください - please don't do
+7. ～んです・のです - explanatory のです
+8. ～ましょうか - shall we?
+
+### Environment Status
+- ✅ All 176 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+
+---
+
 ## Session 34 - 2025-12-11
 
 ### ✅ Session Summary
