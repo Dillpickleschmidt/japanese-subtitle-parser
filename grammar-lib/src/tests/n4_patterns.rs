@@ -2905,3 +2905,64 @@ mod kata_tests {
         assert_pattern_range(&patterns, "Noun＋型", 3, 7); // 運びかた
     }
 }
+
+// ========== てくれる (to do for me/us) ==========
+// Pattern: てくれる
+// Data source: grammar_points_data.json["てくれる"]
+//
+// Structures to test:
+//   - standard[0]: Verb[て] + くれる
+//   - standard[1]: Verb[ないで] + くれる
+//   - polite[0]: Verb[て] + くれますか
+//   - polite[1]: Verb[ないで] + くれますか
+//
+// Meaning: "to do (something) for me/us" - opposite of てあげる
+// The action benefits the speaker or someone in their inner circle
+#[cfg(test)]
+mod tekureru_tests {
+    use super::*;
+
+    // Structure: Verb[て] + くれる (standard form)
+    #[test]
+    fn te_form_kureru() {
+        let sentence = "おばあちゃんはいつも美味しいご飯を作ってくれる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれる");
+        assert_pattern_range(&patterns, "てくれる", 17, 23); // 作ってくれる
+    }
+
+    // Structure: Verb[て] + くれる (casual request)
+    #[test]
+    fn te_form_kureru_request() {
+        let sentence = "パパ、電気を消してくれる？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれる");
+        assert_pattern_range(&patterns, "てくれる", 6, 12); // 消してくれる
+    }
+
+    // Structure: Verb[て] + くれますか (polite request)
+    #[test]
+    fn te_form_kuremasu_ka() {
+        let sentence = "すみません、もう一度説明してくれますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれる");
+        assert_pattern_range(&patterns, "てくれる", 10, 18); // 説明してくれます
+    }
+
+    // Structure: Verb[ないで] + くれる (negative request - don't do)
+    #[test]
+    fn naide_kureru() {
+        let sentence = "お願いだから怒らないでくれる？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれる");
+        assert_pattern_range(&patterns, "てくれる", 6, 14); // 怒らないでくれる
+    }
+}

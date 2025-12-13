@@ -1824,7 +1824,61 @@ pub fn teageru() -> Vec<TokenMatcher> {
 
 // Pattern: てくれる
 pub fn tekureru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Match て/で particle OR ないで construction
+    // For て-form: Verb(連用形/連用タ接続) + て/で
+    // For ないで-form: Verb(未然形) + ない + で
+    #[derive(Debug)]
+    struct VerbFormMatcher;
+    impl Matcher for VerbFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.pos.first().is_none_or(|pos| pos != "動詞") {
+                false
+            } else {
+                let form = token.features.get(5);
+                // Match 連用形, 連用タ接続 (for て-form), or 未然形 (for ないで-form)
+                form.is_some_and(|f| f == "連用形" || f == "連用タ接続" || f == "未然形")
+            }
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KureruMatcher;
+    impl Matcher for KureruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "くれる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match both て-form and ないで-form
+    // て-form: Verb(連用形/連用タ接続) + て/で + くれる
+    // ないで-form: Verb(未然形) + ない + で + くれる
+    concat(vec![
+        vec![TokenMatcher::Custom(Arc::new(VerbFormMatcher))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher))))],
+        vec![TokenMatcher::Custom(Arc::new(TeDeFormMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(KureruMatcher))],
+    ])
 }
 
 // Pattern: てもらう
