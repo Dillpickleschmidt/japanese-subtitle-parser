@@ -3658,9 +3658,26 @@ pub fn totomoni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: につれて
+// Pattern: につれて (as, in proportion to)
+// Structures: Verb + につれて / Noun + につれて
 pub fn nitsurete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NitsureteMatcher;
+    impl Matcher for NitsureteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "につれて"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Can be verb or noun
+        TokenMatcher::Custom(Arc::new(NitsureteMatcher)),
+    ]
 }
 
 // Pattern: 直ちに (immediately/at once - formal/purposeful)

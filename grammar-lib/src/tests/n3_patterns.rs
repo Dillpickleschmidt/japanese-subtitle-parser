@@ -7131,3 +7131,36 @@ mod nioite_tests {
         assert_pattern_range(&patterns, "において・における", 2, 8); // 工事において
     }
 }
+
+// Pattern: につれて (as, in proportion to)
+// Data source: grammar_points_data.json["につれて"]
+// Testing structure variants:
+//   - standard[0]: Verb + につれて
+//   - standard[1]: Noun + につれて
+mod nitsurete_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + につれて
+    // Example from grammar data: 夏になるにつれて、日が昇るのが早くなってきた
+    #[test]
+    fn test_verb_nitsurete() {
+        let sentence = "毎日運転をするにつれて、どんどん運転が嫌いになってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "につれて");
+        assert_pattern_range(&patterns, "につれて", 5, 11); // するにつれて
+    }
+
+    // Testing: standard[1] - Noun + につれて
+    // Example from grammar data: 犬の成長につれて、食欲が変わる
+    #[test]
+    fn test_noun_nitsurete() {
+        let sentence = "時代の変化につれて、食文化も変わる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "につれて");
+        assert_pattern_range(&patterns, "につれて", 3, 9); // 変化につれて
+    }
+}
