@@ -5077,3 +5077,82 @@ Continue with N3 patterns (simple, high-value patterns):
 - ✅ feature_list.json updated for both patterns
 - ✅ 2 N3 patterns completed in this session
 - ✅ Ready for session termination
+
+---
+
+## Session 120 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (同士)
+**Patterns completed**: 1 new N3 noun suffix pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 751 (was 748 at session start)
+
+### Accomplishments
+1. ✅ Implemented 同士 pattern (N3) - "fellow/mutually/together"
+2. ✅ All 3 tests passing with proper range assertions
+3. ✅ No test regressions - all 751 tests pass
+4. ✅ Updated feature_list.json for the pattern
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### 同士 (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 3218-3236)
+- **Tests**: 3 tests in n3_patterns.rs (mod doushi_tests, lines 4810-4845)
+- **Structures tested**:
+  - standard[0]: Noun + 同士（どうし） ✓
+  - standard[1]: Noun + 同士（どうし） + の + Noun ✓
+- **Tokenization insights**:
+  - 同士 is always tokenized as 名詞/一般 (noun/general)
+  - surface='同士', base_form='同士'
+  - Follows another noun (名詞/一般, 名詞/代名詞/一般, etc.)
+  - May optionally be followed by の + Noun
+- **Implementation**: 2-token matcher
+  - super::noun_matcher(): Matches any noun
+  - DoushiMatcher: Custom matcher for 同士 as 名詞/一般
+- **Meaning**: "fellow/mutually/together"
+  - Used to express mutual relationships between people or things
+  - Most commonly used for people (e.g., 友達同士 - between friends)
+  - Can express type similarity or shared relationships
+- **Pattern priority**: 1 (N3 construction)
+- **Pattern ranges**: Include Noun + 同士 (core construction, not optional の + Noun)
+  - 友達同士 (chars 0-4) - friends together
+  - 兄弟同士 (chars 3-7) - between siblings
+  - 友達同士 (chars 0-4) - in 友達同士の約束
+
+### Test Examples
+All tests use realistic, subtitle-quality sentences:
+1. **Basic usage**: 友達同士で旅行に行くことになった
+   - Pattern detected: 友達同士 (chars 0-4)
+2. **Siblings**: これは兄弟同士の問題だから口出しするな
+   - Pattern detected: 兄弟同士 (chars 3-7)
+3. **With の + Noun**: 友達同士の約束は必ず守るべきだ
+   - Pattern detected: 友達同士 (chars 0-4)
+   - Note: Range includes only Noun + 同士, not the optional の + Noun extension
+
+### Implementation Notes
+- Pattern was already declared in patterns.rs with stub function
+- Simple noun suffix pattern - straightforward implementation
+- DoushiMatcher checks all criteria: surface, base_form, and POS (名詞/一般)
+- Pattern range includes the core grammatical construction (Noun + 同士)
+- Optional extensions like の + Noun are not included in the pattern range
+
+### Environment Status
+- ✅ All 751 tests passing (was 748, added 3 tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated: "同士" now marked as complete
+- ✅ Ready for next pattern implementation or session termination
+
+### Next Priorities
+Continue with simple, high-value N3 patterns with few structure variants:
+
+**Simple N3 patterns to consider next**:
+1. **左右する** - "influence/determine" (3 std, 4 pol) - verb pattern
+2. **では・それでは・じゃあ** - "well then/in that case" (2 std, 0 pol) - conjunctions
+3. **もしも～なら・もしも～でも** - "if/even if" (2 std, 0 pol) - conditionals
+4. **ほど～ない** - "not as much as" (3 std, 0 pol) - comparison pattern
+
+**Recommendation**: Continue with simple patterns before tackling complex multi-variant constructions.
+
