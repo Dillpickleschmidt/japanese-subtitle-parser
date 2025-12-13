@@ -4610,3 +4610,52 @@ mod moshi_tests {
         assert_pattern_range(&patterns, "もし", 0, 2); // もし
     }
 }
+
+// ========== ぜんぜん (not at all) ==========
+// Pattern: ぜんぜん
+// Data source: grammar_points_data.json["ぜんぜん"]
+//
+// Structures to test:
+//   - standard[0]: ぜんぜん + Phrase
+//   - standard[1]: ぜんぜん + (Negative) Phrase
+//
+// Note: ぜんぜん traditionally used with negative expressions (containing ない/ません)
+// Meaning: "not at all", "completely not"
+// Modern usage: Can also be used with positive expressions (not tested here)
+#[cfg(test)]
+mod zenzen_tests {
+    use super::*;
+
+    // Structure: ぜんぜん + Verb[ない]
+    #[test]
+    fn zenzen_with_nai() {
+        let sentence = "やばい、トイレットペーパーがぜんぜんない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぜんぜん");
+        assert_pattern_range(&patterns, "ぜんぜん", 14, 18); // ぜんぜん
+    }
+
+    // Structure: ぜんぜん + Verb[なかった]
+    #[test]
+    fn zenzen_with_nakatta() {
+        let sentence = "彼女は家事の手伝いをぜんぜんしなかったので別れました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぜんぜん");
+        assert_pattern_range(&patterns, "ぜんぜん", 10, 14); // ぜんぜん
+    }
+
+    // Structure: ぜんぜん + Verb[ません]
+    #[test]
+    fn zenzen_with_masen() {
+        let sentence = "今日はぜんぜん眠くありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぜんぜん");
+        assert_pattern_range(&patterns, "ぜんぜん", 3, 7); // ぜんぜん
+    }
+}

@@ -1120,9 +1120,19 @@ pub fn youda() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ぜんぜん
+// Pattern: ぜんぜん (not at all - with negative expressions)
+// Structure: ぜんぜん
 pub fn zenzen() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ZenzenMatcher;
+    impl super::Matcher for ZenzenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ぜんぜん"
+                && token.base_form == "ぜんぜん"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(ZenzenMatcher))]
 }
 
 // Pattern: かな (I wonder)
