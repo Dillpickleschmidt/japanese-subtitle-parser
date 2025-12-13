@@ -1,5 +1,105 @@
 # Grammar-lib Development Progress
 
+## Session 165 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N4 patterns fully implemented (かどうか + なるべく)
+**Patterns completed**: 2 new N4 patterns
+**Tests added**: 7 comprehensive tests (4 + 3)
+**Total tests**: 1082 (was 1075 at session start)
+
+### Accomplishments
+1. ✅ Implemented かどうか pattern (N4) - "whether or not"
+2. ✅ Implemented なるべく pattern (N4) - "as much as possible"
+3. ✅ All 7 tests passing with proper range assertions
+4. ✅ No test regressions - all 1082 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### かどうか (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (kadouka function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod kadouka_tests, 4 tests)
+- **Structures**:
+  - standard[0]: Verb + か + どう + か
+  - standard[1]: い-Adjective + か + どう + か
+  - standard[2]: な-Adjective + か + どう + か
+  - standard[3]: Noun + か + どう + か
+- **Tokenization**:
+  - Any token + か (助詞/副助詞) + どう (副詞) + か (助詞/副助詞)
+- **Implementation**: Four-token matcher
+  - TokenMatcher::Any (verb/adjective/noun)
+  - KaParticleMatcher - か particle
+  - DouAdverbMatcher - どう adverb
+  - KaParticleMatcher - か particle
+- **Meaning**: "whether or not"
+- **Pattern priority**: 2 (N4 construction)
+- **Pattern confidence**: 2.6
+- **Pattern ranges**:
+  - 付き合うかどうか (chars 4-12) - verb
+  - 深いかどうか (chars 4-10) - い-adjective
+  - 便利かどうか (chars 5-11) - な-adjective
+  - 父親かどうか (chars 8-14) - noun
+- **Test coverage**: All 4 structure variants tested
+
+#### なるべく (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (narubeku function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod narubeku_tests, 3 tests)
+- **Structure**:
+  - standard[0]: なるべく + (Action) Phrase
+- **Tokenization**:
+  - なるべく (副詞/助詞類接続)
+- **Implementation**: Single-token matcher
+  - NarubekuMatcher - surface == "なるべく", base_form == "なるべく", POS == "副詞"
+- **Meaning**: "as much as possible", "whenever possible"
+- **Pattern priority**: 2 (N4 construction)
+- **Pattern confidence**: 3.0
+- **Pattern ranges**:
+  - なるべく (chars 9-13) - with polite request
+  - なるべく (chars 10-14) - with conditional
+  - なるべく (chars 3-7) - casual
+- **Test coverage**: 3 tests covering different contexts
+
+### Implementation Notes
+- **かどうか**: Clean four-token matcher using TokenMatcher::Any for flexibility
+  - Overlaps with existing "か" pattern (intentional - both show)
+  - Handles all word types (verb/adjective/noun) uniformly
+- **なるべく**: Simple single-token adverb matcher
+  - Very straightforward implementation
+  - High confidence pattern (3.0)
+
+### Session Success
+- Successfully implemented 2 N4 patterns with existing stubs
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Very efficient session - completed 2 patterns quickly (7 tests total)
+
+### Next Priorities
+Continue with N4 patterns or shift to N5 foundational patterns:
+
+**Simple N4 patterns with stubs**:
+1. Other simple N4 constructions with existing stubs in n4.rs
+
+**N5 patterns** (foundational level - highest priority):
+- Basic particles: は, の, を
+- Basic verb forms: dictionary, negative, past
+- い-Adjectives, な-Adjectives
+
+**Recommendation**: Continue with simple N4 patterns to maintain momentum, then shift to N5 foundational patterns.
+
+### Environment Status
+- ✅ All 1082 tests passing (added 7 new tests this session)
+- ✅ No regressions
+- ✅ Clean git state (2 commits this session)
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 164 - 2025-12-13
 
 ### ✅ Session Summary
