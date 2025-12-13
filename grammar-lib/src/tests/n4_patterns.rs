@@ -2587,3 +2587,34 @@ mod sa_tests {
         assert_pattern_range(&patterns, "さ", 11, 14); // 大切さ
     }
 }
+
+// Pattern: ～代 (decade/era suffix)
+// Data source: grammar_points_data.json["～代"]
+// Testing both structure variants:
+//   - standard[0]: Decade of age + 代
+//   - standard[1]: Decade + 年代
+mod dai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Decade of age + 代
+    #[test]
+    fn age_decade_dai() {
+        let sentence = "私は２０代の頃に沢山旅行をしました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～代");
+        assert_pattern_range(&patterns, "～代", 2, 5); // ２０代
+    }
+
+    // Testing: standard[1] - Decade + 年代
+    #[test]
+    fn chronological_decade_nendai() {
+        let sentence = "７０年代の音楽が好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～代");
+        assert_pattern_range(&patterns, "～代", 0, 4); // ７０年代
+    }
+}

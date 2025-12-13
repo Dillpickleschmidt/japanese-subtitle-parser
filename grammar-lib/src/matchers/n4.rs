@@ -1225,9 +1225,42 @@ pub fn dasu() -> Vec<TokenMatcher> {
     vec![super::flexible_verb_form(), TokenMatcher::Custom(Arc::new(DasuMatcher))]
 }
 
-// Pattern: ～代
+// Pattern: ～代 (decade/era suffix)
+// Structures: Decade of age + 代 / Decade + 年代
 pub fn uff5e_dai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match number (名詞/数)
+    #[derive(Debug)]
+    struct NumberMatcher;
+    impl super::Matcher for NumberMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "数")
+        }
+    }
+
+    // Match 代 or 年代 suffix (名詞/接尾/助数詞)
+    #[derive(Debug)]
+    struct DaiSuffixMatcher;
+    impl super::Matcher for DaiSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "代" || token.surface == "年代")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助数詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NumberMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 3,
+            stop_conditions: vec![],
+        }, // Allow 0-3 more number tokens (for multi-digit numbers)
+        TokenMatcher::Custom(Arc::new(DaiSuffixMatcher)),
+    ]
 }
 
 // Pattern: Number + も (as many as / not even)
