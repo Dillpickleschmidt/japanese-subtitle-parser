@@ -898,6 +898,70 @@ mod nikui_tests {
     }
 }
 
+// ========== だんだん (gradually/steadily) ==========
+// Pattern: だんだん
+// Data source: grammar_points_data.json["だんだん"]
+//
+// Structure to test:
+//   - standard[0]: だんだん + (と) + Phrase
+//
+// Meaning: "gradually", "steadily", "step by step"
+// Note: The particle と is optional and often omitted
+// Different from どんどん (rapid progression)
+//
+// Examples from data:
+//   - だんだん寒くなってきた (It has gotten steadily colder)
+//   - だんだん仕事の環境に慣れてきた (I have steadily gotten used to work environment)
+//   - だんだんと暑くなってきたね (It has progressively gotten hotter)
+#[cfg(test)]
+mod dandan_tests {
+    use super::*;
+
+    // Testing: standard[0] - だんだん + Phrase (without と)
+    #[test]
+    fn test_dandan_getting_colder() {
+        let sentence = "12月になってからだんだん寒くなってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だんだん");
+        assert_pattern_range(&patterns, "だんだん", 9, 13); // だんだん
+    }
+
+    // Testing: standard[0] - だんだん + Phrase (getting used to)
+    #[test]
+    fn test_dandan_getting_used_to() {
+        let sentence = "だんだん仕事の環境に慣れてきたよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だんだん");
+        assert_pattern_range(&patterns, "だんだん", 0, 4); // だんだん
+    }
+
+    // Testing: standard[0] - だんだん + と + Phrase (with optional と)
+    #[test]
+    fn test_dandan_with_to() {
+        let sentence = "最近はだんだんと暑くなってきたね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だんだん");
+        assert_pattern_range(&patterns, "だんだん", 3, 8); // だんだんと
+    }
+
+    // Testing: standard[0] - だんだん + Phrase (raining)
+    #[test]
+    fn test_dandan_starting_to_rain() {
+        let sentence = "だんだん雨が降ってきたから傘を持っていこう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だんだん");
+        assert_pattern_range(&patterns, "だんだん", 0, 4); // だんだん
+    }
+}
+
 // ========== たとえば (for example) ==========
 // Pattern: たとえば
 // Data source: grammar_points_data.json["たとえば"]

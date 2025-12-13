@@ -86,9 +86,33 @@ pub fn nikui() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: だんだん
+// Pattern: だんだん (gradually/steadily)
+// Structures: だんだん + (と) + Phrase
 pub fn dandan() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DandanMatcher;
+    impl Matcher for DandanMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だんだん"
+                && token.pos.first().is_some_and(|p| p == "副詞")
+                && token.pos.get(1).is_some_and(|p| p == "助詞類接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副詞化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DandanMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ToParticleMatcher)))),
+    ]
 }
 
 // Pattern: どんどん
