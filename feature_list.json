@@ -6778,13 +6778,13 @@
   {
     "pattern_name": "左右する",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "左右（さゆう） is a noun that may literally be translated as 'left and right' [3 std, 4 pol]",
     "priority": 3,
     "skip_reason": null

@@ -4843,3 +4843,75 @@ mod doushi_tests {
         assert_pattern_range(&patterns, "同士", 0, 4); // 友達同士
     }
 }
+
+// ========== 左右する (influence/dictate/control) ==========
+// Pattern: 左右する (influence/dictate/control)
+// Data source: grammar_points_data.json["左右する"]
+//
+// Structure variants to test:
+//   standard[0]: 左右（さゆう） + する
+//   standard[1]: 左右（さゆう） + する + Noun
+//   standard[2]: される (passive)
+//   polite[0]: 左右（さゆう） + します
+//   polite[1]: 左右（さゆう） + する + Noun (same as standard)
+//   polite[2]: されます (polite passive)
+//   polite[3]: される (passive, same as standard)
+
+mod sayuusuru_tests {
+    use super::*;
+
+    // Test: 左右 + する (basic form - influences/dictates)
+    #[test]
+    fn test_sayuusuru_basic() {
+        let sentence = "この決定が会社の未来を大きく左右する";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "左右する");
+        assert_pattern_range(&patterns, "左右する", 14, 18); // 左右する
+    }
+
+    // Test: 左右 + する + Noun (modifying noun)
+    #[test]
+    fn test_sayuusuru_modifying_noun() {
+        let sentence = "天気が収穫を左右する要因の一つだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "左右する");
+        assert_pattern_range(&patterns, "左右する", 6, 10); // 左右する
+    }
+
+    // Test: 左右 + される (passive form)
+    #[test]
+    fn test_sayuusuru_passive() {
+        let sentence = "農業は天候に大きく左右される仕事だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "左右する");
+        assert_pattern_range(&patterns, "左右する", 9, 12); // 左右さ
+    }
+
+    // Test: 左右 + します (polite form)
+    #[test]
+    fn test_sayuusuru_polite() {
+        let sentence = "この選択が結果を左右します";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "左右する");
+        assert_pattern_range(&patterns, "左右する", 8, 13); // 左右します
+    }
+
+    // Test: 左右 + されます (polite passive)
+    #[test]
+    fn test_sayuusuru_passive_polite() {
+        let sentence = "彼の意見は周りの人に左右されます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "左右する");
+        assert_pattern_range(&patterns, "左右する", 10, 13); // 左右さ
+    }
+}

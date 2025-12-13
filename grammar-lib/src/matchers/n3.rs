@@ -3585,8 +3585,27 @@ pub fn uff5e_ha_uff5e_tonatteiru() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 左右する
+// Pattern: 左右する (influence/dictate/control)
+// Structures: 左右 + する (all conjugations including passive される)
 pub fn sayuusuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SayuuMatcher;
+    impl Matcher for SayuuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "左右"
+                && token.base_form == "左右"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SayuuMatcher)),
+        TokenMatcher::Verb {
+            conjugation_form: None,  // Any conjugation form
+            base_form: Some("する"),
+        },
+    ]
 }
 
 // Pattern: あるいは (or/alternatively)
