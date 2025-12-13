@@ -2997,9 +2997,64 @@ pub fn toiwareteiru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ばよかった
+// Pattern: ばよかった (should have / wish I had)
+// Structures: Verb［ば］+ よかった + (です)
 pub fn bayokatta() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ば conditional particle
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.base_form == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match よかっ (good, past form conjugation)
+    #[derive(Debug)]
+    struct YokattaMatcher;
+    impl Matcher for YokattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よかっ"
+                && token.base_form == "よい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match た past auxiliary
+    #[derive(Debug)]
+    struct TaPastMatcher;
+    impl Matcher for TaPastMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match です polite auxiliary (optional)
+    #[derive(Debug)]
+    struct DesuMatcher;
+    impl Matcher for DesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("仮定形"),
+        TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(YokattaMatcher)),
+        TokenMatcher::Custom(Arc::new(TaPastMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DesuMatcher)))),
+    ]
 }
 
 // Pattern: し～し (listing reasons with equal weight)

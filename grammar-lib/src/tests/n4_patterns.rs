@@ -4239,3 +4239,52 @@ mod fuu_tests {
         assert_pattern_range(&patterns, "風", 0, 3); // 広島風
     }
 }
+
+// ========== ばよかった (should have / wish I had) ==========
+// Pattern: ばよかった
+// Data source: grammar_points_data.json["ばよかった"]
+//
+// Structures to test:
+//   - standard[0]: Verb［ば］+ よかった
+//   - polite[0]: Verb［ば］+ よかった + です
+//
+// Examples from data:
+//   - 行けばよかった (I wish I had gone)
+//   - 寝ればよかった (I should have slept)
+#[cfg(test)]
+mod bayokatta_tests {
+    use super::*;
+
+    // Structure: Verb［ば］+ よかった
+    #[test]
+    fn verb_ba_yokatta() {
+        let sentence = "高速に乗る前にトイレに行けばよかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばよかった");
+        assert_pattern_range(&patterns, "ばよかった", 11, 18); // 行けばよかった
+    }
+
+    // Structure: Verb［ば］+ よかった (different verb)
+    #[test]
+    fn verb_ba_yokatta_sleep() {
+        let sentence = "昨日は早く寝ればよかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばよかった");
+        assert_pattern_range(&patterns, "ばよかった", 5, 12); // 寝ればよかった
+    }
+
+    // Structure: Verb［ば］+ よかった + です (polite)
+    #[test]
+    fn verb_ba_yokatta_polite() {
+        let sentence = "もっと勉強すればよかったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばよかった");
+        assert_pattern_range(&patterns, "ばよかった", 3, 14); // 勉強すればよかったです
+    }
+}
