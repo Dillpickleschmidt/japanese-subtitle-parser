@@ -1222,9 +1222,40 @@ pub fn sa_casual_yo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: それぞれ
+// Pattern: それぞれ (each/respectively)
+// Structures: それぞれ + Phrase, それぞれ + の + Noun
 pub fn sorezore() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches それぞれ as 名詞/副詞可能
+    #[derive(Debug)]
+    struct SoreZoreMatcher;
+    impl super::Matcher for SoreZoreMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "それぞれ"
+                && token.base_form == "それぞれ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Matches の as 助詞/連体化 (nominalizing particle)
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl super::Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SoreZoreMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoRentaikaMatcher,
+        )))),
+    ]
 }
 
 // Pattern: そこで (accordingly/as such)

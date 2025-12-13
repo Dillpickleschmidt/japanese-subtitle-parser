@@ -2591,6 +2591,70 @@ mod sousuruto_tests {
 // Structure variants to test:
 //   standard[0]: (Situation) Phrase。そこで + (Solution) Phrase
 
+// ========== それぞれ (each/respectively) ==========
+// Pattern: それぞれ (each/respectively)
+// Data source: grammar_points_data.json["それぞれ"]
+//
+// Structure variants to test:
+//   standard[0]: それぞれ + Phrase
+//   standard[1]: それぞれ + の + Noun
+
+mod sorezore_tests {
+    use super::*;
+
+    // Test: Everyone orders (adverbial use)
+    // Example: 皆それぞれ食べたいものを頼んでね
+    // (Everyone, please each order something you want to eat)
+    #[test]
+    fn test_sorezore_adverbial() {
+        let sentence = "皆それぞれ食べたいものを頼んでね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それぞれ");
+        assert_pattern_range(&patterns, "それぞれ", 1, 5); // それぞれ
+    }
+
+    // Test: Separate actions (adverbial use)
+    // Example: それぞれ別の行動をした
+    // (We each did our own separate things)
+    #[test]
+    fn test_sorezore_separate_actions() {
+        let sentence = "それぞれ別の行動をした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それぞれ");
+        assert_pattern_range(&patterns, "それぞれ", 0, 4); // それぞれ
+    }
+
+    // Test: Each person's way of thinking (の + Noun)
+    // Example: 人それぞれの考え方があるから、しょうがないよ
+    // (Each person has different ways of thinking, so there is nothing we can do)
+    #[test]
+    fn test_sorezore_no_noun() {
+        let sentence = "人それぞれの考え方があるから、しょうがないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それぞれ");
+        assert_pattern_range(&patterns, "それぞれ", 1, 6); // それぞれの
+    }
+
+    // Test: Each team (の + Noun)
+    // Example: それぞれのチームに分かれてから開始してください
+    // (Please start once you have divided yourselves into each separate team)
+    #[test]
+    fn test_sorezore_teams() {
+        let sentence = "それぞれのチームに分かれてから開始してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それぞれ");
+        assert_pattern_range(&patterns, "それぞれ", 0, 5); // それぞれの
+    }
+}
+
 mod sokode_tests {
     use super::*;
 
