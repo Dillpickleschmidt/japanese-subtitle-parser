@@ -213,9 +213,92 @@ pub fn tekuru() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: かた
+// Pattern: かた (how to/way of)
+// Structures: Verb[stem] + 方（かた） / Noun(サ変) + の + 仕方（しかた）
 pub fn kata() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for かた/方 as suffix (名詞/接尾)
+    #[derive(Debug)]
+    struct KataSuffixMatcher;
+    impl super::Matcher for KataSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "かた" || token.surface == "方")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Matcher for しかた/仕方 as noun
+    #[derive(Debug)]
+    struct ShikataMatcher;
+    impl super::Matcher for ShikataMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "しかた" || token.surface == "仕方")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Matcher for suru-verb nouns (名詞/サ変接続)
+    #[derive(Debug)]
+    struct SuruVerbNounMatcher;
+    impl super::Matcher for SuruVerbNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+        }
+    }
+
+    // Pattern 1: Verb (連用形) + かた/方
+    // Pattern 2: Suru-verb noun + の + しかた/仕方
+    // We'll use a custom matcher to handle both patterns
+
+    #[derive(Debug)]
+    struct KataPatternMatcher;
+    impl super::Matcher for KataPatternMatcher {
+        fn matches(&self, _token: &crate::KagomeToken) -> bool {
+            true // This is a placeholder - we'll use proper matchers below
+        }
+    }
+
+    // Pattern: Verb (連用形) + かた
+    vec![
+        TokenMatcher::verb_with_form("連用形"),
+        TokenMatcher::Custom(Arc::new(KataSuffixMatcher)),
+    ]
+}
+
+// Pattern: かた (shikata variant - suru-verb + の + しかた)
+// Structures: Noun(サ変) + の + 仕方（しかた）
+pub fn kata_shikata() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for suru-verb nouns (名詞/サ変接続)
+    #[derive(Debug)]
+    struct SuruVerbNounMatcher;
+    impl super::Matcher for SuruVerbNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+        }
+    }
+
+    // Matcher for しかた/仕方 as noun
+    #[derive(Debug)]
+    struct ShikataMatcher;
+    impl super::Matcher for ShikataMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "しかた" || token.surface == "仕方")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Pattern: Suru-verb noun + の + しかた
+    vec![
+        TokenMatcher::Custom(Arc::new(SuruVerbNounMatcher)),
+        TokenMatcher::Surface("の"),
+        TokenMatcher::Custom(Arc::new(ShikataMatcher)),
+    ]
 }
 
 // Pattern: だけで (just by/with only)

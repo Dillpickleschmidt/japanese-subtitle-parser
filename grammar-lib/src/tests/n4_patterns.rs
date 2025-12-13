@@ -2839,3 +2839,69 @@ mod teageru_tests {
         assert_pattern_range(&patterns, "てあげる", 5, 12); // 送ってあげます
     }
 }
+
+// ========== かた (how to/way of) ==========
+// Pattern: かた (how to do something)
+// Data source: grammar_points_data.json["かた"]
+// Structures: Verb[stem] + 方（かた） / Noun + の + 仕方（しかた）
+
+mod kata_tests {
+    use super::*;
+
+    // Structure: Verb[stem] + 方（かた）
+    #[test]
+    fn verb_stem_kata() {
+        let sentence = "その食べかた、口を閉じてよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かた");
+        assert_pattern_range(&patterns, "かた", 2, 6); // 食べかた
+    }
+
+    // Structure: Verb[stem] + 方（かた） (necktie example)
+    // Note: 結び is tokenized as Noun, not Verb, so detected by Noun＋型 (N3) pattern
+    #[test]
+    fn verb_stem_kata_tie() {
+        let sentence = "ネクタイの結びかたを教える";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun＋型");
+        assert_pattern_range(&patterns, "Noun＋型", 5, 9); // 結びかた
+    }
+
+    // Structure: [する]Verb + の + 仕方（しかた）
+    #[test]
+    fn suru_verb_no_shikata() {
+        let sentence = "外国語の勉強のしかたが分からない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かた");
+        assert_pattern_range(&patterns, "かた", 4, 10); // 勉強のしかた
+    }
+
+    // Structure: [する]Verb + の + 仕方（しかた） (fax example)
+    #[test]
+    fn suru_verb_shikata_fax() {
+        let sentence = "先輩、ファックスのしかたを教えてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かた");
+        assert_pattern_range(&patterns, "かた", 3, 12); // ファックスのしかた
+    }
+
+    // Structure: Noun + の + Verb[stem] + 方（かた）
+    // Note: 運び is tokenized as Noun, not Verb, so detected by Noun＋型 (N3) pattern
+    #[test]
+    fn noun_no_verb_kata() {
+        let sentence = "家具の運びかたを見て驚いた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Noun＋型");
+        assert_pattern_range(&patterns, "Noun＋型", 3, 7); // 運びかた
+    }
+}

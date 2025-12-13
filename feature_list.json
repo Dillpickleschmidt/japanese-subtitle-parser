@@ -2004,15 +2004,15 @@
   {
     "pattern_name": "かた",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "When 方（かた） is attached to the ます stem of a verb, it carries the nuance of the 'way of doing (A)' [6 std, 0 pol]",
-    "priority": 2,
+    "passes": true,
+    "description": "When 方（かた） is attached to the ます stem of a verb, it carries the nuance of the 'way of doing (A)'. This is id... [6 std, 0 pol]",
+    "priority": 1,
     "skip_reason": null
   },
   {

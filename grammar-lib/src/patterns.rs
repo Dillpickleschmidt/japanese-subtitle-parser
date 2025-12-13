@@ -1122,6 +1122,14 @@ declare_patterns! {
         jlpt: "n4",
     },
 
+    KataShikata {
+        name: "かた",
+        matcher_fn: crate::matchers::n4::kata_shikata,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
     Dakede {
         name: "だけで",
         matcher_fn: crate::matchers::n4::dakede,
