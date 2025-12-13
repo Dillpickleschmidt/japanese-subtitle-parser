@@ -1,5 +1,86 @@
 # Grammar-lib Development Progress
 
+## Session 157 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: てくれる pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 construction pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 1032 (was 1028 at session start)
+
+### Accomplishments
+1. ✅ Implemented てくれる pattern (N4) - "to do for me/us"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 1032 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### てくれる (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (tekureru function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod tekureru_tests, 4 tests)
+- **Structures**:
+  - standard[0]: Verb[て] + くれる
+  - standard[1]: Verb[ないで] + くれる
+  - polite[0]: Verb[て] + くれますか
+  - polite[1]: Verb[ないで] + くれますか
+- **Tokenization patterns**:
+  - て-form: Verb (連用形/連用タ接続) + て/で (助詞) + くれる (動詞)
+  - ないで-form: Verb (未然形) + ない (助動詞) + で (助詞) + くれる (動詞)
+- **Implementation**: Four custom matchers
+  - VerbFormMatcher: Matches verbs in 連用形, 連用タ接続, or 未然形
+  - TeDeFormMatcher: Matches て or で particles
+  - NaiAuxiliaryMatcher: Matches ない auxiliary (optional)
+  - KureruMatcher: Matches くれる verb (base_form check)
+- **Meaning**: "to do (something) for me/us" - opposite of てあげる
+- **Pattern priority**: 3 (N4 construction)
+- **Pattern ranges**:
+  - 作ってくれる (chars 17-23) - standard form
+  - 消してくれる (chars 6-12) - casual request
+  - 説明してくれます (chars 10-18) - polite request
+  - 怒らないでくれる (chars 6-14) - negative request (don't do)
+- **Test coverage**:
+  - Standard form: おばあちゃんはいつも美味しいご飯を作ってくれる
+  - Casual request: パパ、電気を消してくれる？
+  - Polite request: すみません、もう一度説明してくれますか
+  - Negative request: お願いだから怒らないでくれる？
+
+### Implementation Details
+- Similar to てあげる but matches くれる instead of あげる
+- Key difference: Handles both て-form and ないで-form
+- VerbFormMatcher accepts 未然形 to support ないで construction
+- Optional NaiAuxiliaryMatcher allows pattern to match both forms
+
+### Session Success
+- Successfully implemented a reciprocal pattern to てあげる
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern with excellent coverage
+
+### Next Priorities
+Continue with N4 patterns (simple て-form constructions recommended):
+
+**Simple N4 patterns to implement next**:
+1. **てもらう** - "to receive (action)" (already has stub, similar to てくれる/てあげる)
+2. **てある** - "state of completion" (1 std, 1 pol)
+3. **てみる** - "try to" (1 std, 1 pol)
+4. **ていた** - "was doing" (1 std, 1 pol)
+5. **てほしい** - "want someone to" (1 std, 1 pol)
+
+**Recommendation**: てもらう would be a natural next step (completes the trio of てあげる/てくれる/てもらう).
+
+### Environment Status
+- ✅ All 1032 tests passing (added 4 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 156 - 2025-12-13 (continued)
 
 ### ✅ Updated Session Summary
