@@ -4171,3 +4171,59 @@ mod tsuideni_tests {
         assert_pattern_range(&patterns, "ついでに", 11, 16); // 。ついでに
     }
 }
+
+// ========== たものだ (used to / would often - past habit) ==========
+// Pattern: たものだ (used to / would often)
+// Data source: grammar_points_data.json["たものだ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[た] + ものだ
+//   polite[0]: Verb[た] + ものです
+
+mod tamonoda_tests {
+    use super::*;
+
+    // Test: Verb[た] + ものだ (standard form - nostalgia about getting scolded)
+    #[test]
+    fn test_tamonoda_standard_scolded() {
+        let sentence = "子供の頃はよく先生に怒られたものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たものだ");
+        assert_pattern_range(&patterns, "たものだ", 12, 17); // れたものだ
+    }
+
+    // Test: Verb[た] + ものだ (standard form - nostalgia about fishing)
+    #[test]
+    fn test_tamonoda_standard_fishing() {
+        let sentence = "昔はよく親父と釣りに行ったものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たものだ");
+        assert_pattern_range(&patterns, "たものだ", 10, 16); // 行ったものだ
+    }
+
+    // Test: Verb[た] + ものだ (standard form - reminiscing about hardship)
+    #[test]
+    fn test_tamonoda_standard_hardship() {
+        let sentence = "若い頃は色々と苦労したものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たものだ");
+        assert_pattern_range(&patterns, "たものだ", 7, 14); // 苦労したものだ
+    }
+
+    // Test: Verb[た] + ものです (polite form)
+    #[test]
+    fn test_tamonoda_polite() {
+        let sentence = "学生時代はあそこのカフェでよく勉強したものです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たものだ");
+        assert_pattern_range(&patterns, "たものだ", 15, 23); // 勉強したものです
+    }
+}

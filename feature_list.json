@@ -4972,13 +4972,13 @@
   {
     "pattern_name": "たものだ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned the ものだ lesson, the combination of the noun 物（もの） 'thing', with the auxiliary verb だ forms a strong dete... [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null

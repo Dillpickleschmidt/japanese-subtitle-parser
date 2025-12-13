@@ -1593,8 +1593,36 @@ pub fn sae_u301c_ba() -> Vec<TokenMatcher> {
 }
 
 // Pattern: たものだ
+// Pattern: たものだ (used to / would often)
+// Structures: Verb[た] + ものだ, Verb[た] + ものです
 pub fn tamonoda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct MonoBoundNounMatcher;
+    impl Matcher for MonoBoundNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        super::past_auxiliary(),
+        TokenMatcher::Custom(Arc::new(MonoBoundNounMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: さて

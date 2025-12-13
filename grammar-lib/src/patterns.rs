@@ -3359,7 +3359,7 @@ declare_patterns! {
     Tamonoda {
         name: "たものだ",
         matcher_fn: crate::matchers::n3::tamonoda,
-        priority: 1,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },
