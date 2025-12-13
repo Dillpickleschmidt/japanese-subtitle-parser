@@ -2168,8 +2168,60 @@ pub fn okini() -> Vec<TokenMatcher> {
 }
 
 // Pattern: たびに
+// たびに: Every time / Whenever
+// Structures: Verb［る］+ たびに, Noun + の + たびに
 pub fn tabini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TabiNounMatcher;
+    impl super::Matcher for TabiNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match たび (名詞/非自立/副詞可能)
+            token.surface == "たび"
+                && token.base_form == "たび"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match に (助詞/格助詞/一般)
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl super::Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match の (助詞/連体化)
+            token.surface == "の"
+                && token.base_form == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        // Any token (verb in 基本形 or noun)
+        TokenMatcher::Any,
+        // Optional の (連体化 particle for nouns)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoRentaikaMatcher,
+        )))),
+        // たび (名詞/非自立/副詞可能)
+        TokenMatcher::Custom(Arc::new(TabiNounMatcher)),
+        // に (助詞/格助詞)
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: あるいは

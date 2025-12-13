@@ -3807,7 +3807,7 @@ declare_patterns! {
     Tabini {
         name: "たびに",
         matcher_fn: crate::matchers::n3::tabini,
-        priority: 1,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },

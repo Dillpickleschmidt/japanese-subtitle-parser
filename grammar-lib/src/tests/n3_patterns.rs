@@ -3283,3 +3283,59 @@ mod seide_tests {
         assert_pattern_range(&patterns, "せいで", 0, 6); // 大雪のせいで
     }
 }
+
+// ========== たびに (every time / whenever) ==========
+// Pattern: たびに (every time / whenever)
+// Data source: grammar_points_data.json["たびに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb［る］+ たびに
+//   standard[1]: Noun + の + たびに
+
+mod tabini_tests {
+    use super::*;
+
+    // Test: Verb［る］+ たびに - drinking example
+    #[test]
+    fn test_tabini_verb_drinking() {
+        let sentence = "タナカ君と飲みに行くたびに、二日酔いになる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たびに");
+        assert_pattern_range(&patterns, "たびに", 8, 13); // 行くたびに
+    }
+
+    // Test: Verb［る］+ たびに - milk example
+    #[test]
+    fn test_tabini_verb_milk() {
+        let sentence = "牛乳を飲むたびにお腹が痛くなる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たびに");
+        assert_pattern_range(&patterns, "たびに", 3, 8); // 飲むたびに
+    }
+
+    // Test: Noun + の + たびに - holiday example
+    #[test]
+    fn test_tabini_noun_holiday() {
+        let sentence = "私は休みのたびにハワイへ行きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たびに");
+        assert_pattern_range(&patterns, "たびに", 2, 8); // 休みのたびに
+    }
+
+    // Test: Noun + の + たびに - dishes example
+    #[test]
+    fn test_tabini_noun_dishes() {
+        let sentence = "彼は洗い物のたびに指を切る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たびに");
+        assert_pattern_range(&patterns, "たびに", 2, 9); // 洗い物のたびに
+    }
+}
