@@ -6609,3 +6609,58 @@ mod nishiteha_tests {
         assert_pattern_range(&patterns, "にしては", 6, 10); // にしては
     }
 }
+
+// ========== ないうちに (before/without happening) ==========
+// Pattern: ないうちに (before X happens / without X happening)
+// Data source: grammar_points_data.json["ないうちに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ない] + うちに + Phrase
+
+mod naiuchini_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[ない] + うちに (before meeting)
+    #[test]
+    fn test_verb_nai_uchini_meeting() {
+        let sentence = "全然会わないうちに、凄く大きくなったね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないうちに");
+        assert_pattern_range(&patterns, "ないうちに", 4, 9); // ないうちに
+    }
+
+    // Testing: standard[0] - Verb[ない] + うちに (before forgetting)
+    #[test]
+    fn test_verb_nai_uchini_forgetting() {
+        let sentence = "忘れないうちに電話しておかなきゃ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないうちに");
+        assert_pattern_range(&patterns, "ないうちに", 2, 7); // ないうちに
+    }
+
+    // Testing: standard[0] - Verb[ない] + うちに (without realizing)
+    #[test]
+    fn test_verb_nai_uchini_realizing() {
+        let sentence = "知らないうちに家の前にあるラーメン屋が潰れていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないうちに");
+        assert_pattern_range(&patterns, "ないうちに", 2, 7); // ないうちに
+    }
+
+    // Testing: standard[0] - Verb[ない] + うちに (before leaving)
+    #[test]
+    fn test_verb_nai_uchini_leaving() {
+        let sentence = "彼女が離れないうちにちゃんと謝っておこう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないうちに");
+        assert_pattern_range(&patterns, "ないうちに", 5, 10); // ないうちに
+    }
+}

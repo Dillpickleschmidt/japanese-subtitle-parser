@@ -308,9 +308,50 @@ pub fn uchini() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ないうちに
+// Pattern: ないうちに (before/without happening)
+// Structures: Verb[ない] + うちに
 pub fn naiuchini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ない auxiliary (negative form)
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match うち (non-independent noun)
+    #[derive(Debug)]
+    struct UchiMatcher;
+    impl Matcher for UchiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "うち"
+                && token.base_form == "うち"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(UchiMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: べき (ought to/should - moral obligation)
