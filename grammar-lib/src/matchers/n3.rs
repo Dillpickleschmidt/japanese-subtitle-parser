@@ -3482,9 +3482,46 @@ pub fn sekkaku() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: っけ
+// っけ: Recall/confirmation particle (trying to remember or confirm information)
+// Structures:
+//   - Verb[た] + っけ
+//   - Verb[る] + んだ + っけ
+//   - い-Adjective[た] + っけ
+//   - な-Adjective/Noun + だった + っけ
 pub fn kke() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for っけ as sentence-ending particle
+    #[derive(Debug)]
+    struct KkeParticleMatcher;
+    impl Matcher for KkeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match っけ as 助詞/終助詞 (sentence-ending particle)
+            token.surface == "っけ"
+                && token.base_form == "っけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    // Matcher for た or だ in base form (基本形) before っけ
+    #[derive(Debug)]
+    struct TaDaAuxiliaryMatcher;
+    impl Matcher for TaDaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match た (特殊・タ/基本形) or だ (特殊・ダ/基本形)
+            (token.surface == "た" || token.surface == "だ")
+                && (token.base_form == "た" || token.base_form == "だ")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Content word before auxiliary (verb, adjective, noun, etc.)
+        TokenMatcher::Custom(Arc::new(TaDaAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(KkeParticleMatcher)),
+    ]
 }
 
 // Pattern: 代わりに

@@ -5070,13 +5070,13 @@
   {
     "pattern_name": "っけ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "け is a sentence ending particle in Japanese that is used to convey when the speaker is trying to either remember, or ... [7 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

@@ -4684,3 +4684,73 @@ mod chanto_kichinto_tests {
         assert_pattern_range(&patterns, "ちゃんと・きちんと", 0, 4); // きちんと
     }
 }
+
+// ========== っけ (recall/confirmation particle) ==========
+// Pattern: っけ (trying to remember or confirm information)
+// Data source: grammar_points_data.json["っけ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[た] + っけ
+//   standard[1]: Verb[る] + んだ + っけ
+//   standard[2]: い-Adjective[た] + っけ
+//   standard[3]: な-Adjective + だった + っけ
+//   standard[4]: Noun + だった + っけ
+
+mod pkke_tests {
+    use super::*;
+
+    // Test: standard[0] - Verb[た] + っけ
+    #[test]
+    fn test_pkke_verb_past() {
+        let sentence = "今日の朝は朝ご飯を食べたっけ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っけ");
+        assert_pattern_range(&patterns, "っけ", 9, 14); // 食べたっけ
+    }
+
+    // Test: standard[1] - Verb[る] + んだ + っけ
+    #[test]
+    fn test_pkke_verb_nda() {
+        let sentence = "レポートの修正は君がやってるんだっけ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っけ");
+        assert_pattern_range(&patterns, "っけ", 14, 18); // んだっけ
+    }
+
+    // Test: standard[2] - い-Adjective[た] + っけ
+    #[test]
+    fn test_pkke_i_adjective_past() {
+        let sentence = "あれ、テイラーの車って青かったっけ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っけ");
+        assert_pattern_range(&patterns, "っけ", 11, 17); // 青かったっけ
+    }
+
+    // Test: standard[3] - な-Adjective + だった + っけ
+    #[test]
+    fn test_pkke_na_adjective_past() {
+        let sentence = "土曜日って暇だったっけ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っけ");
+        assert_pattern_range(&patterns, "っけ", 6, 11); // だったっけ
+    }
+
+    // Test: standard[4] - Noun + だった + っけ
+    #[test]
+    fn test_pkke_noun_past() {
+        let sentence = "あの人誰だったっけ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っけ");
+        assert_pattern_range(&patterns, "っけ", 4, 9); // だったっけ
+    }
+}
