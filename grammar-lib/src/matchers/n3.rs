@@ -1794,9 +1794,19 @@ pub fn darake() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: もっとも
+// Pattern: もっとも (although/however/with that said)
+// Structures: もっとも + Phrase
 pub fn mottomo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MottomoMatcher;
+    impl Matcher for MottomoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もっとも"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(MottomoMatcher))]
 }
 
 // Pattern: 再び

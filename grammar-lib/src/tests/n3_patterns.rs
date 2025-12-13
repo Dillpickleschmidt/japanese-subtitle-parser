@@ -3450,3 +3450,58 @@ mod darake_tests {
         assert_pattern_range(&patterns, "だらけ", 0, 5); // 泥だらけの
     }
 }
+
+// ========== もっとも (although/however) ==========
+// Pattern: もっとも (although/however/with that said)
+// Data source: grammar_points_data.json["もっとも"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase (A)。もっとも + Phrase (B)。
+
+mod mottomo_tests {
+    use super::*;
+
+    // Test: もっとも - piano example
+    #[test]
+    fn test_mottomo_piano() {
+        let sentence = "妹はピアノを弾くのが上手だ。もっとも、弾けるのは一曲だけだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もっとも");
+        assert_pattern_range(&patterns, "もっとも", 14, 18); // もっとも
+    }
+
+    // Test: もっとも - sukiyaki example
+    #[test]
+    fn test_mottomo_sukiyaki() {
+        let sentence = "俺はすき焼きが大好きだ。もっとも、毎日食べれる訳では無い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もっとも");
+        assert_pattern_range(&patterns, "もっとも", 12, 16); // もっとも
+    }
+
+    // Test: もっとも - Korea knowledge
+    #[test]
+    fn test_mottomo_korea() {
+        let sentence = "私は韓国についてものすごく詳しいです。もっとも、韓国には行った事が無いけど。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もっとも");
+        assert_pattern_range(&patterns, "もっとも", 19, 23); // もっとも
+    }
+
+    // Test: もっとも - computer example
+    #[test]
+    fn test_mottomo_computer() {
+        let sentence = "今日は会社に自分のパソコンを持ってきた。もっとも、自分のパソコンはいらないが。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もっとも");
+        assert_pattern_range(&patterns, "もっとも", 20, 24); // もっとも
+    }
+}
