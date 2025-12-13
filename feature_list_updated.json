@@ -4972,13 +4972,13 @@
   {
     "pattern_name": "たものだ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned the ものだ lesson, the combination of the noun 物（もの） 'thing', with the auxiliary verb だ forms a strong dete... [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5028,13 +5028,13 @@
   {
     "pattern_name": "だって",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "だって is a colloquial combination of the auxiliary verb だ , and the adverbial particle とて in Japanese (a combination of... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5098,13 +5098,13 @@
   {
     "pattern_name": "っぱなし",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "っぱなし is a suffix that originally comes from the う - Verb 放（はな）す 'to let loose' [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5112,13 +5112,13 @@
   {
     "pattern_name": "っぽい",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "っぽい (occasionally also seen as ぽい) is a suffix that may be attached to many different types of words, in order to cre... [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5140,13 +5140,13 @@
   {
     "pattern_name": "ついでに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "序（つい）でに is an adverb in Japanese that is used in a similar way to 'while you're at it', or 'on the occasion of (A)' i... [3 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5154,13 +5154,13 @@
   {
     "pattern_name": "つまり",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "つまり (or 詰（つ）まり) is a word in Japanese that is often used as an adverb [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

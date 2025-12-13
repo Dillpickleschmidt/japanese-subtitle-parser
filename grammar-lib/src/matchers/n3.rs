@@ -3605,3 +3605,37 @@ pub fn shikanai_polite() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NMatcher)),
     ]
 }
+
+// て初めて: Only after/not until
+// Structures: Verb[て] + 初めて
+pub fn te_hajimete() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for て/で as conjunction particle
+    #[derive(Debug)]
+    struct TeDeConjunctionMatcher;
+    impl Matcher for TeDeConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for 初めて as adverb
+    #[derive(Debug)]
+    struct HajimeteAdverbMatcher;
+    impl Matcher for HajimeteAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "初めて" || token.surface == "はじめて")
+                && token.base_form == "初めて"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeConjunctionMatcher)),
+        TokenMatcher::Custom(Arc::new(HajimeteAdverbMatcher)),
+    ]
+}

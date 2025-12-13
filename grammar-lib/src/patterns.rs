@@ -4028,6 +4028,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    TeHajimete {
+        name: "て初めて",
+        matcher_fn: crate::matchers::n3::te_hajimete,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Tatoetemo {
         name: "たとえ〜ても",
         matcher_fn: crate::matchers::n3::tatoetemo,

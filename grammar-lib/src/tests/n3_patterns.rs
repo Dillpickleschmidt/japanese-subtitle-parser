@@ -4227,3 +4227,63 @@ mod tamonoda_tests {
         assert_pattern_range(&patterns, "たものだ", 15, 23); // 勉強したものです
     }
 }
+
+// ========== て初めて (only after) ==========
+// Pattern: て初めて (only after/not until)
+// Data source: grammar_points_data.json["て初めて"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[て] + はじめて
+//
+// Note: This pattern uses 初めて (はじめて) as an adverb meaning "for the first time"
+// The tokenizer recognizes the kanji form 初めて as 副詞/一般 (adverb)
+// The hiragana form はじめて gets parsed as はじめる (auxiliary verb) + て
+// For reliable detection, we match the kanji form 初めて
+
+mod te_hajimete_tests {
+    use super::*;
+
+    // Test: Verb[て] + 初めて - basic example
+    #[test]
+    fn test_te_hajimete_basic() {
+        let sentence = "先生になって初めて、先生の大変さが分かった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て初めて");
+        assert_pattern_range(&patterns, "て初めて", 3, 9); // なって初めて
+    }
+
+    // Test: Verb[て] + 初めて - different verb
+    #[test]
+    fn test_te_hajimete_realize() {
+        let sentence = "好きなバンドのコンサートに行って初めて、歌手の人が男の人だと気づいた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て初めて");
+        assert_pattern_range(&patterns, "て初めて", 13, 19); // 行って初めて
+    }
+
+    // Test: Verb[て] + 初めて - train schedule example
+    #[test]
+    fn test_te_hajimete_know() {
+        let sentence = "駅にある時刻表を見て初めて、土日には電車が来ないことを知った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て初めて");
+        assert_pattern_range(&patterns, "て初めて", 8, 13); // 見て初めて
+    }
+
+    // Test: Verb[て] + 初めて - casual conversation
+    #[test]
+    fn test_te_hajimete_understand() {
+        let sentence = "海外に住んでみて初めて日本の良さが分かる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て初めて");
+        assert_pattern_range(&patterns, "て初めて", 6, 11); // みて初めて
+    }
+}
