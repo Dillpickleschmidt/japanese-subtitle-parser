@@ -2778,9 +2778,24 @@ pub fn renyoukei() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 向き
+// Pattern: 向き (suitable for / facing toward)
+// Structures: Noun + 向き
 pub fn muki() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Matcher for 向き as noun suffix
+    #[derive(Debug)]
+    struct MukiSuffixMatcher;
+    impl Matcher for MukiSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "向き"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun before 向き
+        TokenMatcher::Custom(Arc::new(MukiSuffixMatcher)),
+    ]
 }
 
 // Pattern: 向け

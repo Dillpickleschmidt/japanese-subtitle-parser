@@ -4287,3 +4287,68 @@ mod te_hajimete_tests {
         assert_pattern_range(&patterns, "て初めて", 6, 11); // みて初めて
     }
 }
+
+// ========== 向き (suitable for / facing) ==========
+// Pattern: 向き (suitable for / facing toward)
+// Data source: grammar_points_data.json["向き"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + 向き
+//
+// About: 向き is a noun/suffix meaning "suitable for" or "facing toward"
+// Comes from the intransitive verb 向く (to face)
+// Implies natural suitability rather than intentional design
+// Examples: 初心者向き (suitable for beginners), 南向き (south-facing), 前向き (forward-facing/positive)
+
+mod muki_tests {
+    use super::*;
+
+    // Test: Noun + 向き - beginners (suitability)
+    #[test]
+    fn test_muki_beginners() {
+        let sentence = "この本は初心者向きですか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "向き");
+        assert_pattern_range(&patterns, "向き", 4, 9); // 初心者向き
+    }
+
+    // Test: Noun + 向き - direction (south-facing)
+    #[test]
+    fn test_muki_direction() {
+        let sentence = "この部屋のベランダは南向きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "向き");
+        assert_pattern_range(&patterns, "向き", 10, 13); // 南向き
+    }
+
+    // Test: Noun + 向き - casual usage
+    #[test]
+    fn test_muki_casual() {
+        let sentence = "大人向きの映画だと思うけど";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "向き");
+        assert_pattern_range(&patterns, "向き", 0, 4); // 大人向き
+    }
+
+    // TODO: Undetectable - Compound word 前向き
+    // The word 前向き (forward-facing/positive) is tokenized as a single compound word
+    // (名詞/形容動詞語幹) rather than as 前 + 向き. This is a lexicalized compound that
+    // cannot be detected as a pattern. Similar to how 白っぽい tokenizes as a single
+    // adjective rather than 白 + っぽい.
+    //
+    // #[test]
+    // fn test_muki_personality() {
+    //     let sentence = "あなたは本当に前向きな人なのですね";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     // 前向き = 名詞/形容動詞語幹 (single token, not detectable as pattern)
+    //     assert!(!has_pattern(&patterns, "向き"));
+    // }
+}

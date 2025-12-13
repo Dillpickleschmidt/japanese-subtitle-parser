@@ -6750,13 +6750,13 @@
   {
     "pattern_name": "向き",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "向（む）き is another noun in Japanese that is frequently used as a suffix [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
