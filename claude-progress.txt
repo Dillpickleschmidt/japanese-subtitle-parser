@@ -1,5 +1,95 @@
 # Grammar-lib Development Progress
 
+## Session 112 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (ついでに)
+**Patterns completed**: 1 new N3 construction pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 706 (was 702 at session start)
+
+### Accomplishments
+1. ✅ Implemented ついでに pattern (N3) - "while you're at it / on the occasion of"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 706 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Updated pattern priority to 3 (similar to ため(に))
+6. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### ついでに (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 2237-2282)
+- **Tests**: 4 tests in n3_patterns.rs (mod tsuideni_tests)
+- **Structures**:
+  - standard[0]: Verb + ついでに
+  - standard[1]: Noun + の + ついでに
+  - standard[2]: Phrase。ついでに + Phrase
+- **Tokenization insights**:
+  - ついで = 名詞/一般 or 名詞/非自立/副詞可能 (bound noun)
+  - に = 助詞/格助詞/一般 (case particle)
+  - Optional の = 助詞/連体化 (nominalizing particle for nouns)
+  - Verbs in dictionary form (基本形) connect directly to ついで
+- **Implementation**: 4-token matcher with optional の
+  - TokenMatcher::Any for verb or noun
+  - Optional NoRentaikaMatcher for の particle
+  - TsuideMatcher matches ついで as bound noun
+  - NiParticleMatcher matches に as case particle
+- **Meaning**: "while you're at it / on the occasion of" - indicates doing something incidental with main action
+- **Pattern priority**: 3 (high-priority N3 construction, same as ため(に))
+- **Pattern ranges**: Include content word + optional の + ついで + に
+  - 行くついでに (chars 4-10) - Verb + ついでに
+  - 行くついでに (chars 14-20) - Verb + ついでに
+  - 散歩のついでに (chars 0-7) - Noun + の + ついでに
+  - 。ついでに (chars 11-16) - Standalone after period
+
+### Technical Details
+- **Pattern priority**: 3 (updated from placeholder priority 1)
+- **Test coverage**: All 3 structure variants from grammar_points_data.json
+  - standard[0]: Verb + ついでに (2 tests)
+  - standard[1]: Noun + の + ついでに (1 test)
+  - standard[2]: Phrase。ついでに + Phrase (1 test)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: TokenMatcher::Any matches verb, noun, or even punctuation - works for all use cases
+- **Pattern matching**: Uses Optional matcher to handle both verb and noun forms with single implementation
+- **Grammar note**: Implies (A) is instigator for (B) - perfect chance to do (B) while doing (A)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 706/706 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~108 (matcher implementation + 4 tests + priority update + feature_list update)
+
+### Key Insights
+- ついでに is a common "occasion" pattern using bound noun ついで (序)
+- Pattern successfully handles verbs, nouns, and standalone usage with TokenMatcher::Any
+- Optional の particle cleanly handled with Optional wrapper
+- Test sentences are realistic and cover different usage contexts
+- Pattern ranges include full construction for better context
+- Similar structure to ため(に), hence same priority (3)
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. さえ - "even" (emphasis particle, 6 structure variants - more complex)
+2. そうだ - hearsay/conjecture (4 standard + 4 polite = 8 variants)
+3. って - quotation/hearsay particle (multiple uses)
+4. たものだ - "used to / would often" (past habit pattern)
+5. たらいい・といい - "it would be good if" (suggestion pattern)
+
+**Recommendation**: Continue with concrete N3 patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 706 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 111 - 2025-12-13
 
 ### ✅ Session Summary
