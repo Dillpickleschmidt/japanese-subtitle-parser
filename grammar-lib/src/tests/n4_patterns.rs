@@ -3066,3 +3066,55 @@ mod teita_tests {
         assert_pattern_range(&patterns, "ていた ", 6, 13); // かけていました
     }
 }
+
+// ========== てある (state of completion / left in state) ==========
+// Pattern: てある
+// Data source: grammar_points_data.json["てある "]
+//
+// Structures to test:
+//   - standard[0]: (Transitive) Verb[て] + ある
+//   - polite[0]: (Transitive) Verb[て] + あります
+//
+// Examples from data:
+//   - 置いてある (is left/placed)
+//   - 止めてある (is parked/stopped)
+//   - 植えてある (is planted)
+//
+// Note: Only works with transitive verbs, focuses on the object's state
+#[cfg(test)]
+mod tearu_tests {
+    use super::*;
+
+    // Structure: (Transitive) Verb[て] + ある (standard form)
+    #[test]
+    fn te_aru_left_state() {
+        let sentence = "あなたの弁当は机の上に置いてあるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てある ");
+        assert_pattern_range(&patterns, "てある ", 11, 16); // 置いてある
+    }
+
+    // Structure: (Transitive) Verb[て] + ある (parked state)
+    #[test]
+    fn te_aru_parked() {
+        let sentence = "車は駐車場の真ん中に止めてある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てある ");
+        assert_pattern_range(&patterns, "てある ", 10, 15); // 止めてある
+    }
+
+    // Structure: (Transitive) Verb[て] + あります (polite form)
+    #[test]
+    fn te_arimasu_polite() {
+        let sentence = "庭にトウモロコシが植えてありますから気をつけてね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てある ");
+        assert_pattern_range(&patterns, "てある ", 9, 16); // 植えてあります
+    }
+}

@@ -1791,9 +1791,46 @@ pub fn verb_te_u30fb_noun_de_b() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てある 
+// Pattern: てある (state of completion / left in state)
+// Structures: (Transitive) Verb[て] + ある / (Transitive) Verb[て] + あります
 pub fn tearu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+        }
+    }
+
+    // Match ある as auxiliary verb (can be 自立 or 非自立)
+    #[derive(Debug)]
+    struct AruMatcher;
+    impl Matcher for AruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match ます (optional for polite form)
+    #[derive(Debug)]
+    struct MasuFormMatcher;
+    impl Matcher for MasuFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます" && token.base_form == "ます"
+        }
+    }
+
+    concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeDeFormMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(AruMatcher))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuFormMatcher))))], // Optional ます
+    ])
 }
 
 // Pattern: ように～てほしい
