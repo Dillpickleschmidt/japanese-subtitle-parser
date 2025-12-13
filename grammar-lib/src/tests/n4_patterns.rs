@@ -3551,3 +3551,55 @@ mod mazu_tests {
         assert_pattern_range(&patterns, "まず", 0, 2); // まず
     }
 }
+
+// ========== また (again/also) ==========
+// Pattern: また
+// Data source: grammar_points_data.json["また"]
+//
+// Structure to test:
+//   - standard[0]: また + Phrase
+//
+// Meaning: "again", "additionally", "also", "moreover"
+// Usage: Can be used as adverb or conjunction
+// Examples from data:
+//   - また遊ぼうね！ (Let's hang out again!)
+//   - また行こうね！ (Let's go again!)
+//   - またカンニングしたの？ (You cheated again?)
+//   - また、アナウンサーでもある (and also an announcer)
+#[cfg(test)]
+mod mata_tests {
+    use super::*;
+
+    // Structure: また + Phrase (standard[0]) - "again" meaning
+    #[test]
+    fn mata_again_volitional() {
+        let sentence = "また遊ぼうね！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "また");
+        assert_pattern_range(&patterns, "また", 0, 2); // また
+    }
+
+    // Structure: また + Phrase (standard[0]) - "again" with past
+    #[test]
+    fn mata_again_question() {
+        let sentence = "またカンニングしたの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "また");
+        assert_pattern_range(&patterns, "また", 0, 2); // また
+    }
+
+    // Structure: また + Phrase (standard[0]) - "also/additionally" as conjunction
+    #[test]
+    fn mata_also_conjunction() {
+        let sentence = "彼は宇宙飛行士であり、またアナウンサーでもある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "また");
+        assert_pattern_range(&patterns, "また", 11, 13); // また
+    }
+}

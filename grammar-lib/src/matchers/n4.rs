@@ -552,9 +552,19 @@ pub fn madeni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: また
+// Pattern: また (again/also)
+// Structures: また + Phrase
 pub fn mata() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MataMatcher;
+    impl Matcher for MataMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "また"
+                && token.base_form == "また"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(MataMatcher))]
 }
 
 // Pattern: はじめる (start doing)
