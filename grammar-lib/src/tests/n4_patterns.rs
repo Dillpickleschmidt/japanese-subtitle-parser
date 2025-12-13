@@ -1621,3 +1621,55 @@ mod shika_nai_tests {
         assert_pattern_range(&patterns, "しか～ない ", 2, 8); // これしかない
     }
 }
+
+// ========== それで (therefore/so/as a result) ==========
+// Pattern: それで
+// Data source: grammar_points_data.json["それで"]
+//
+// Structure to test:
+//   - standard[0]: Phrase (A)。それで + Phrase (B)
+//
+// Note: それで = それ (pronoun) + で (case marking particle)
+// Meaning: "therefore", "because of that", "as a result"
+// Used at the beginning of a second sentence to connect to previous information
+//
+// Examples from data:
+//   - 命を救われた。それで医者になろうと思った。(saved my life. Due to that, became determined to be a doctor)
+//   - 痴漢をした。それで彼は警察に捕まった。(groped someone. As a result, he got arrested)
+#[cfg(test)]
+mod sorede_tests {
+    use super::*;
+
+    // Testing: standard[0] - Phrase A。それで + Phrase B
+    #[test]
+    fn test_sorede_causal_connection() {
+        let sentence = "子供の頃に医者に命を救われた。それで医者になろうと思った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それで");
+        assert_pattern_range(&patterns, "それで", 15, 18); // それで
+    }
+
+    // Testing: standard[0] - それで at sentence start
+    #[test]
+    fn test_sorede_result() {
+        let sentence = "彼は電車で痴漢をした。それで警察に捕まった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それで");
+        assert_pattern_range(&patterns, "それで", 11, 14); // それで
+    }
+
+    // Testing: standard[0] - それで in natural dialogue
+    #[test]
+    fn test_sorede_natural_speech() {
+        let sentence = "昨日は雨が降ってた。それで家にいることにした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それで");
+        assert_pattern_range(&patterns, "それで", 10, 13); // それで
+    }
+}

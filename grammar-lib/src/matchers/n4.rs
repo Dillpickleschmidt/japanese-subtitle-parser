@@ -1711,9 +1711,20 @@ pub fn soreni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: それで
+// Pattern: それで (therefore/so/as a result)
+// Structure: Phrase (A)。それで + Phrase (B)
 pub fn sorede() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct SoredeMatcher;
+    impl super::Matcher for SoredeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "それで"
+                && token.base_form == "それで"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(SoredeMatcher))]
 }
 
 // Pattern: Question-phrase + か
