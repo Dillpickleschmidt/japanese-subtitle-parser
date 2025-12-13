@@ -1156,9 +1156,24 @@ pub fn ijou_u2460() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: いか
+// Pattern: いか (equal to or less than / the following)
+// Structures: Noun/Amount + 以下, standalone 以下
 pub fn ika() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match いか (noun or adverb)
+    #[derive(Debug)]
+    struct IkaMatcher;
+    impl super::Matcher for IkaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いか"
+                && token.base_form == "いか"
+                && (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    || token.pos.first().is_some_and(|pos| pos == "副詞"))
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(IkaMatcher))]
 }
 
 // いがい: Except/besides (except A, other than A)

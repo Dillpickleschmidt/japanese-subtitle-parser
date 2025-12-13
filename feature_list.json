@@ -1864,13 +1864,13 @@
   {
     "pattern_name": "いか",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to mark something as 'equal to, or less than (A)', 以下（いか） will be used [3 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

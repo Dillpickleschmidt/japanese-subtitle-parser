@@ -2280,3 +2280,66 @@ mod kamoshirenai_tests {
         assert_pattern_range(&patterns, "かもしれない", 3, 12); // 冗談かもしれません
     }
 }
+
+// ========== いか (equal to or less than) ==========
+// Pattern: いか
+// Data source: grammar_points_data.json["いか"]
+//
+// Structures to test:
+//   - standard[0]: Noun + Amount + 以下（いか）
+//   - standard[1]: それ + 以下（いか）
+//   - Note: standard[2] is just a note "(1) これ、あれ"
+//
+// Examples from data:
+//   - １７歳いか (17 years old and under)
+//   - ３０万円いか (under 300,000 yen)
+//   - いか同文 (the rest is the same)
+//   - いかのもの (the following)
+#[cfg(test)]
+mod ika_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + Amount + 以下
+    #[test]
+    fn test_ika_age() {
+        let sentence = "１７歳いかの方は保護者の方と来てください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いか");
+        assert_pattern_range(&patterns, "いか", 3, 5); // いか
+    }
+
+    // Testing: standard[0] - Noun + Amount + 以下 (money)
+    #[test]
+    fn test_ika_money() {
+        let sentence = "この車は３０万円いかだった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いか");
+        assert_pattern_range(&patterns, "いか", 8, 10); // いか
+    }
+
+    // Testing: standalone いか (the following/the rest)
+    #[test]
+    fn test_ika_following() {
+        let sentence = "空港にはいかのものを持って来てください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いか");
+        assert_pattern_range(&patterns, "いか", 4, 6); // いか
+    }
+
+    // Testing: いか同文 pattern
+    #[test]
+    fn test_ika_doubun() {
+        let sentence = "いか同文。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いか");
+        assert_pattern_range(&patterns, "いか", 0, 2); // いか
+    }
+}
