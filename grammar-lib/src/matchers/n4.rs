@@ -1141,9 +1141,21 @@ pub fn youni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: かしら
+// Pattern: かしら (I wonder)
+// Structures: Phrase + かしら
 pub fn kashira() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KashiraMatcher;
+    impl super::Matcher for KashiraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かしら"
+                && token.base_form == "かしら"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KashiraMatcher))]
 }
 
 // Pattern: らしい ②

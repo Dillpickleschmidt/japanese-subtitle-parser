@@ -514,3 +514,53 @@ mod gotoni_tests {
         assert_pattern_range(&patterns, "ごとに", 3, 8); // 時間ごとに
     }
 }
+
+// ========== かしら (I wonder) ==========
+// Pattern: かしら
+// Data source: grammar_points_data.json["かしら"]
+//
+// Structure to test:
+//   - standard[0]: Phrase + かしら
+//
+// Examples from data:
+//   - あそこにいるのはタケル君かしら (I wonder if that person is Takeru-kun)
+//   - 明日は晴れるかしら (I wonder if it will clear up tomorrow)
+//
+// Note: かしら is a feminine sentence-ending particle expressing uncertainty/wonder
+#[cfg(test)]
+mod kashira_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Phrase + かしら (with noun phrase)
+    #[test]
+    fn test_kashira_noun_phrase() {
+        let sentence = "あそこにいるのはタケル君かしら";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かしら");
+        assert_pattern_range(&patterns, "かしら", 12, 15); // かしら
+    }
+
+    // Testing: structure.standard[0] - Phrase + かしら (with verb phrase)
+    #[test]
+    fn test_kashira_verb_phrase() {
+        let sentence = "明日は晴れるかしら";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かしら");
+        assert_pattern_range(&patterns, "かしら", 6, 9); // かしら
+    }
+
+    // Testing: structure.standard[0] - Phrase + かしら (with adjective)
+    #[test]
+    fn test_kashira_adjective() {
+        let sentence = "この映画は面白いかしら";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かしら");
+        assert_pattern_range(&patterns, "かしら", 8, 11); // かしら
+    }
+}
