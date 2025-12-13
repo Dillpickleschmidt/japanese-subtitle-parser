@@ -3954,3 +3954,132 @@ mod tabakari_tests {
         assert_pattern_range(&patterns, "たばかり", 10, 17); // 買ったばかりな (includes auxiliary)
     }
 }
+
+// ========== なくて (negative て-form) ==========
+// Pattern: なくて
+// Data source: grammar_points_data.json["なくて"]
+//
+// Structures to test:
+//   - standard[0]: Verb［なくて］+ Phrase
+//   - standard[1]: ［い］Adjective［なくて］+ Phrase
+//   - standard[2]: ［な］Adjective + ではなくて + Phrase
+//   - standard[3]: Noun + ではなくて + Phrase
+//   - Note: ではなくて can also be じゃなくて or でなくて
+//
+// Examples from data:
+//   - 来れなくて残念です (unfortunate that you couldn't come)
+//   - 寒くはなくて暖かい (not cold but warm)
+//   - 便利ではなくて残念だ (unfortunate that it's not useful)
+//   - 虫歯ではなくて安心した (relieved because it wasn't a cavity)
+#[cfg(test)]
+mod nakute_tests {
+    use super::*;
+
+    // Structure: Verb［なくて］+ Phrase (standard[0])
+    #[test]
+    fn verb_negative_te_form() {
+        let sentence = "あなたが来れなくて残念です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくて");
+        assert_pattern_range(&patterns, "なくて", 6, 9); // なくて
+    }
+
+    // Structure: ［い］Adjective［なくて］+ Phrase (standard[1])
+    #[test]
+    fn i_adjective_negative_te_form() {
+        let sentence = "今日は寒くはなくて暖かいから、ジャケットを着なくてもいいね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // First なくて at chars 6-9 (寒くは + なくて)
+        assert_has_pattern(&patterns, "なくて");
+        assert_pattern_range(&patterns, "なくて", 6, 9); // なくて
+
+        // Second なくて at chars 22-25 (着 + なくて)
+        let nakute_matches: Vec<_> = patterns
+            .iter()
+            .filter(|p| p.pattern_name == "なくて")
+            .collect();
+        assert_eq!(nakute_matches.len(), 2, "Should detect two なくて patterns");
+
+        // Verify both ranges
+        let ranges: Vec<_> = nakute_matches
+            .iter()
+            .map(|m| (m.start_char, m.end_char))
+            .collect();
+        assert!(ranges.contains(&(6, 9)), "Should detect なくて at 6-9");
+        assert!(ranges.contains(&(22, 25)), "Should detect なくて at 22-25");
+    }
+
+    // Structure: ［な］Adjective + ではなくて + Phrase (standard[2])
+    #[test]
+    fn na_adjective_dewanakute() {
+        let sentence = "このスマホは便利ではなくて残念だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // なくて is detected as part of ではなくて
+        assert_has_pattern(&patterns, "なくて");
+        assert_pattern_range(&patterns, "なくて", 10, 13); // なくて
+
+        // Also verify ではなくて・じゃなくて pattern is detected
+        assert_has_pattern(&patterns, "ではなくて・じゃなくて");
+        assert_pattern_range(&patterns, "ではなくて・じゃなくて", 8, 13); // ではなくて
+    }
+
+    // Structure: Noun + ではなくて + Phrase (standard[3])
+    #[test]
+    fn noun_dewanakute() {
+        let sentence = "虫歯ではなくて安心した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // なくて is detected as part of ではなくて
+        assert_has_pattern(&patterns, "なくて");
+        assert_pattern_range(&patterns, "なくて", 4, 7); // なくて
+
+        // Also verify ではなくて・じゃなくて pattern is detected
+        assert_has_pattern(&patterns, "ではなくて・じゃなくて");
+        assert_pattern_range(&patterns, "ではなくて・じゃなくて", 2, 7); // ではなくて
+    }
+
+    // Variant: じゃなくて instead of ではなくて (casual)
+    #[test]
+    fn noun_janakute_casual() {
+        let sentence = "昨日は仕事じゃなくて嬉しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // なくて is detected as part of じゃなくて
+        assert_has_pattern(&patterns, "なくて");
+        assert_pattern_range(&patterns, "なくて", 7, 10); // なくて
+
+        // Also verify ではなくて・じゃなくて pattern is detected
+        assert_has_pattern(&patterns, "ではなくて・じゃなくて");
+        assert_pattern_range(&patterns, "ではなくて・じゃなくて", 5, 10); // じゃなくて
+    }
+
+    // Real example from data: Verb potential form negative
+    #[test]
+    fn verb_potential_negative() {
+        let sentence = "昨日は良く寝れなくて、疲れている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくて");
+        assert_pattern_range(&patterns, "なくて", 7, 10); // なくて
+    }
+
+    // Real example: Noun が + なくて
+    #[test]
+    fn noun_ga_nakute() {
+        let sentence = "明日は仕事がなくて嬉しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくて");
+        assert_pattern_range(&patterns, "なくて", 6, 9); // なくて
+    }
+}

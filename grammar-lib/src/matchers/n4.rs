@@ -437,9 +437,40 @@ pub fn daga_u30fb_desuga() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なくて
+// Pattern: なくて (negative て-form)
+// Structures: Verb/Adjective + なくて
+// Matches: Verb[未然形] + なく(助動詞) + て OR なく(形容詞) + て
 pub fn nakute() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match なく as auxiliary or adjective (from ない)
+    #[derive(Debug)]
+    struct NakuMatcher;
+    impl super::Matcher for NakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続")
+        }
+    }
+
+    // Match て as conjunction particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: ないで
