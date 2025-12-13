@@ -5586,3 +5586,57 @@ mod tokorode_tests {
         assert_pattern_range(&patterns, "ところで", 6, 10); // ところで
     }
 }
+
+// Pattern: でよければ (if...is okay)
+// Data source: grammar_points_data.json["でよければ"]
+// Structure: standard[0] - "Noun + でよければ"
+//
+// Meaning: "if (A) is ok" - used to politely offer help/advice/service
+// Note: Constructed with で (case particle) + よければ (potential form of いい)
+mod deyokereba_tests {
+    use super::*;
+
+    // Testing: standard[0] - "Noun + でよければ" (offering place/thing)
+    #[test]
+    fn test_deyokereba_place() {
+        let sentence = "焼き肉でよければ、うちの近くに美味しいところがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でよければ");
+        assert_pattern_range(&patterns, "でよければ", 0, 8); // 焼き肉でよければ
+    }
+
+    // Testing: standard[0] - "Noun + でよければ" (offering used item)
+    #[test]
+    fn test_deyokereba_used_item() {
+        let sentence = "中古でよければいいのが沢山ありますよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でよければ");
+        assert_pattern_range(&patterns, "でよければ", 0, 7); // 中古でよければ
+    }
+
+    // Testing: standard[0] - "Noun + でよければ" (offering oneself - common usage)
+    #[test]
+    fn test_deyokereba_self_offer() {
+        let sentence = "私でよければ手伝うよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でよければ");
+        assert_pattern_range(&patterns, "でよければ", 0, 6); // 私でよければ
+    }
+
+    // Testing: standard[0] - "Noun + でよければ" (polite self-offer)
+    #[test]
+    fn test_deyokereba_polite_offer() {
+        let sentence = "先生でよければ、先生が写真を撮ってあげるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でよければ");
+        assert_pattern_range(&patterns, "でよければ", 0, 7); // 先生でよければ
+    }
+}

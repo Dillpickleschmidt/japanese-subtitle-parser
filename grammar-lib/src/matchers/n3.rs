@@ -3535,9 +3535,55 @@ pub fn dekireba_u30fb_dekitara() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: でよければ
+// Pattern: でよければ (if...is okay)
+// Structures: Noun + で + よければ
+// Tokenization: で (助詞/格助詞) + よけれ (形容詞/自立, base: よい, 仮定形) + ば (助詞/接続助詞)
 pub fn deyokereba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match で as case particle
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match よけれ (仮定形 of よい)
+    #[derive(Debug)]
+    struct YokereMatcher;
+    impl super::Matcher for YokereMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よけれ"
+                && token.base_form == "よい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "仮定形")
+        }
+    }
+
+    // Match ば as conjunction particle
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl super::Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(YokereMatcher)),
+        TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
+    ]
 }
 
 // Pattern: 次第
