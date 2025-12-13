@@ -2105,3 +2105,66 @@ mod tsuzukeru_tests {
         assert_pattern_range(&patterns, "つづける", 9, 16); // 頑張り続けます
     }
 }
+
+// ========== たがる (wanting to do - third person) ==========
+// Pattern: たがる
+// Data source: grammar_points_data.json["たがる"]
+//
+// Structures to test:
+//   - standard[0]: Verb[たい] + がる (replace い with がる)
+//   - polite[0]: Verb[たい] + がります
+//
+// Meaning: "wanting to do" - expresses someone (3rd person) acts like they want to do something
+// Key difference: たい (1st person desire), たがる (3rd person observable desire)
+//
+// Examples from data:
+//   - 言いたがる (wants to say/talk)
+//   - 食べたがる (wants to eat)
+#[cfg(test)]
+mod tagaru_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[たい] + がる (talk badly)
+    #[test]
+    fn test_tagaru_standard() {
+        let sentence = "ジョンはなんでいつも悪口を言いたがるんだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たがる");
+        assert_pattern_range(&patterns, "たがる", 13, 18); // 言いたがる
+    }
+
+    // Testing: standard[0] - Verb[たい] + がる (eat)
+    #[test]
+    fn test_tagaru_eat() {
+        let sentence = "皆は彼が作ったケーキを食べたがる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たがる");
+        assert_pattern_range(&patterns, "たがる", 11, 16); // 食べたがる
+    }
+
+    // Testing: standard[0] - Verb[たい] + がる (past tense)
+    #[test]
+    fn test_tagaru_past() {
+        let sentence = "子供の時、みんな外で遊びたがった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たがる");
+        assert_pattern_range(&patterns, "たがる", 10, 16); // 遊びたがった
+    }
+
+    // Testing: polite[0] - Verb[たい] + がります
+    #[test]
+    fn test_tagaru_polite() {
+        let sentence = "彼女はいつも新しい服を買いたがります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たがる");
+        assert_pattern_range(&patterns, "たがる", 11, 18); // 買いたがります
+    }
+}

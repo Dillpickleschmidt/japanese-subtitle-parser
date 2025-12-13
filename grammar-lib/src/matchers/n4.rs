@@ -766,8 +766,34 @@ pub fn gasuru() -> Vec<TokenMatcher> {
 }
 
 // Pattern: たがる
+// Pattern: たがる - wanting to do (third person observable desire)
+// Structures: Verb[stem] + た (from たい) + がる
 pub fn tagaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TaiGaruMatcher;
+    impl Matcher for TaiGaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "たい"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct GaruMatcher;
+    impl Matcher for GaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "がる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TaiGaruMatcher)),
+        TokenMatcher::Custom(Arc::new(GaruMatcher)),
+    ]
 }
 
 // Pattern: かもしれない
