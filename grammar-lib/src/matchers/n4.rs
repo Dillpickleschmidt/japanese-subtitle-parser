@@ -473,9 +473,21 @@ pub fn toki() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: まず
+// Pattern: まず (first of all / to start with)
+// Structure: まず + Phrase
+//
+// Meaning: "first", "to begin with", "starting with" - indicates priority/sequence
 pub fn mazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MazuMatcher;
+    impl Matcher for MazuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まず"
+                && token.pos.first().is_some_and(|p| p == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(MazuMatcher))]
 }
 
 // Pattern: まで (even, to the extent)

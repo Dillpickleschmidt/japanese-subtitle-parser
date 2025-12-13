@@ -3504,3 +3504,50 @@ mod to_conditional_tests {
         assert_pattern_range(&patterns, "と", 3, 5); // だと
     }
 }
+
+// ========== まず (first of all / to start with) ==========
+// Pattern: まず - "first", "to start with", "before anything else"
+// Data source: grammar_points_data.json["まず"]
+//
+// Structures to test:
+//   - standard[0]: まず + Phrase
+//
+// Note: Used at beginning of statement to indicate priority/sequence
+// Meaning: "first", "to begin with", "starting with"
+#[cfg(test)]
+mod mazu_tests {
+    use super::*;
+
+    // Structure: まず + Phrase (standard[0]) - at sentence start
+    #[test]
+    fn mazu_at_start() {
+        let sentence = "まず宿題をしたほうがいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まず");
+        assert_pattern_range(&patterns, "まず", 0, 2); // まず
+    }
+
+    // Structure: まず + Phrase (standard[0]) - with て-form
+    #[test]
+    fn mazu_with_te_form() {
+        let sentence = "まずエンジンをかけて";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まず");
+        assert_pattern_range(&patterns, "まず", 0, 2); // まず
+    }
+
+    // Structure: まず + Phrase (standard[0]) - polite suggestion
+    #[test]
+    fn mazu_polite_suggestion() {
+        let sentence = "まず別れた方がいいと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まず");
+        assert_pattern_range(&patterns, "まず", 0, 2); // まず
+    }
+}
