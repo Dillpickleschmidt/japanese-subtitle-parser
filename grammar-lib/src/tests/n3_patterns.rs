@@ -6088,3 +6088,58 @@ mod wazawaza_tests {
         assert_pattern_range(&patterns, "わざわざ", 0, 4); // わざわざ
     }
 }
+
+// ========== 一体 (on earth/in the world) ==========
+// Pattern: 一体 (what the heck/on earth - with question words)
+// Data source: grammar_points_data.json["一体"]
+//
+// Structure variants to test:
+//   standard[0]: いったい + Question Word + Phrase
+
+mod ittai_tests {
+    use super::*;
+
+    // Testing: standard[0] - いったい + 何 (what)
+    #[test]
+    fn test_ittai_nani() {
+        let sentence = "いったいここで何が起きたんだ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一体");
+        assert_pattern_range(&patterns, "一体", 0, 4); // いったい
+    }
+
+    // Testing: standard[0] - いったい + どういう (what kind)
+    #[test]
+    fn test_ittai_douiu() {
+        let sentence = "これはいったいどういうことだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一体");
+        assert_pattern_range(&patterns, "一体", 3, 7); // いったい
+    }
+
+    // Testing: standard[0] - いったい + なんで (why)
+    #[test]
+    fn test_ittai_nande() {
+        let sentence = "いったいなんでこんな事になったの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一体");
+        assert_pattern_range(&patterns, "一体", 0, 4); // いったい
+    }
+
+    // Testing: standard[0] - いったい + なんで (why - dating context)
+    #[test]
+    fn test_ittai_nande_dating() {
+        let sentence = "いったいなんであんな奴と付き合おうと思ったの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一体");
+        assert_pattern_range(&patterns, "一体", 0, 4); // いったい
+    }
+}

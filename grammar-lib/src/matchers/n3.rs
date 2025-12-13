@@ -4209,9 +4209,19 @@ pub fn wazawaza() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(WazawazaMatcher))]
 }
 
-// Pattern: 一体
+// Pattern: 一体 (on earth/in the world)
+// Structures: いったい + Question Word + Phrase
 pub fn ittai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct IttaiMatcher;
+    impl Matcher for IttaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いったい"
+                && token.base_form == "いったい"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(IttaiMatcher))]
 }
 
 // Pattern: 折角 (with effort/specially/long-awaited)
