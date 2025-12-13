@@ -1673,3 +1673,55 @@ mod sorede_tests {
         assert_pattern_range(&patterns, "それで", 10, 13); // それで
     }
 }
+
+// ========== それでも (even so/nevertheless) ==========
+// Pattern: それでも
+// Data source: grammar_points_data.json["それでも"]
+//
+// Structure to test:
+//   - standard[0]: Phrase (A) + それでも + Phrase (B)
+//
+// Note: それでも = それ (pronoun) + でも (adverbial particle)
+// Meaning: "even so", "nevertheless", "even with that"
+// Used between phrases to show surprising additional information
+//
+// Examples from data:
+//   - 雨が降るよ、それでも釣りに行くの？ (It's going to rain, even so are you going fishing?)
+//   - 蹴られたりするのが嫌いです。それでも空手が好きなので辞めれないです。 (I don't like getting kicked. Even so, I like karate so can't quit)
+#[cfg(test)]
+mod soredemo_tests {
+    use super::*;
+
+    // Testing: standard[0] - Phrase A、それでも + Phrase B
+    #[test]
+    fn test_soredemo_contrary_action() {
+        let sentence = "今日は雨が降るよ、それでも釣りに行くの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それでも");
+        assert_pattern_range(&patterns, "それでも", 9, 13); // それでも
+    }
+
+    // Testing: standard[0] - それでも in complex sentence
+    #[test]
+    fn test_soredemo_despite_difficulty() {
+        let sentence = "殴られたり蹴られたりするのが嫌いです。それでも空手が好きなので辞めれない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それでも");
+        assert_pattern_range(&patterns, "それでも", 19, 23); // それでも
+    }
+
+    // Testing: standard[0] - それでも in natural dialogue
+    #[test]
+    fn test_soredemo_natural_speech() {
+        let sentence = "仕事が忙しいって言ったよね。それでも来てくれるの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それでも");
+        assert_pattern_range(&patterns, "それでも", 14, 18); // それでも
+    }
+}

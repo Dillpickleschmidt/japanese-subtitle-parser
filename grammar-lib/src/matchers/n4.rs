@@ -1732,9 +1732,20 @@ pub fn question_phrase_ka() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: それでも
+// Pattern: それでも (even so/nevertheless)
+// Structure: Phrase (A) + それでも + Phrase (B)
 pub fn soredemo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct SoredemoMatcher;
+    impl super::Matcher for SoredemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "それでも"
+                && token.base_form == "それでも"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(SoredemoMatcher))]
 }
 
 // Pattern: たらどう
