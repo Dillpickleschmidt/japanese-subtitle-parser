@@ -6664,3 +6664,61 @@ mod naiuchini_tests {
         assert_pattern_range(&patterns, "ないうちに", 5, 10); // ないうちに
     }
 }
+
+// ========== にしても (even if/even though) ==========
+// Pattern: にしても (even if / even though / even considering)
+// Data source: grammar_points_data.json["にしても"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + にしても
+//   standard[1]: い-Adjective + にしても
+//   standard[2]: な-Adjective + にしても
+//   standard[3]: Noun + にしても
+
+mod nishitemo_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + にしても
+    #[test]
+    fn test_verb_nishitemo() {
+        let sentence = "パーティーに行くにしても、一人で飲むことになる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしても");
+        assert_pattern_range(&patterns, "にしても", 8, 12); // にしても
+    }
+
+    // Testing: standard[1] - い-Adjective + にしても
+    #[test]
+    fn test_i_adjective_nishitemo() {
+        let sentence = "仕事で忙しいにしても、連絡はしてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしても");
+        assert_pattern_range(&patterns, "にしても", 6, 10); // にしても
+    }
+
+    // Testing: standard[2] - な-Adjective + にしても
+    #[test]
+    fn test_na_adjective_nishitemo() {
+        let sentence = "冗談にしても、言っていいことと悪いことがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしても");
+        assert_pattern_range(&patterns, "にしても", 2, 6); // にしても
+    }
+
+    // Testing: standard[3] - Noun + にしても
+    #[test]
+    fn test_noun_nishitemo() {
+        let sentence = "今は怠惰な私にしても、元々こうだったわけではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしても");
+        assert_pattern_range(&patterns, "にしても", 6, 10); // にしても
+    }
+}
