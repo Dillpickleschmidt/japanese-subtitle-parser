@@ -1,5 +1,96 @@
 # Grammar-lib Development Progress
 
+## Session 119 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (っけ)
+**Patterns completed**: 1 new N3 sentence-ending particle pattern
+**Tests added**: 5 comprehensive tests
+**Total tests**: 745 (was 740 at session start)
+
+### Accomplishments
+1. ✅ Implemented っけ pattern (N3) - "recall/confirmation particle"
+2. ✅ All 5 tests passing with proper range assertions
+3. ✅ No test regressions - all 745 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### っけ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 3491-3525)
+- **Tests**: 5 tests in n3_patterns.rs (mod pkke_tests)
+- **Structures**:
+  - standard[0]: Verb[た] + っけ
+  - standard[1]: Verb[る] + んだ + っけ
+  - standard[2]: い-Adjective[た] + っけ
+  - standard[3]: な-Adjective + だった + っけ
+  - standard[4]: Noun + だった + っけ
+- **Tokenization insights**:
+  - っけ = 助詞/終助詞 (sentence-ending particle) with base_form="っけ"
+  - た = 助動詞 with 特殊・タ, 基本形 (past auxiliary in base form)
+  - だ = 助動詞 with 特殊・ダ, 基本形 (copula in base form)
+  - Key: っけ always follows た or だ in their 基本形 (base form)
+- **Implementation**: 3-token matcher
+  - TokenMatcher::Any: Content word before auxiliary (verb, adjective, noun, etc.)
+  - TaDaAuxiliaryMatcher: Matches た or だ as 助動詞 in 基本形
+  - KkeParticleMatcher: Matches っけ as 助詞/終助詞
+- **Meaning**: "again / I wonder" - used when trying to remember or confirm forgotten information
+- **Pattern priority**: 1 (N3 particle pattern)
+- **Pattern ranges**: Include content word + auxiliary + っけ
+  - 食べたっけ (chars 9-14) - Verb[た] + っけ
+  - んだっけ (chars 14-18) - んだ + っけ
+  - 青かったっけ (chars 11-17) - い-Adjective[た] + っけ
+  - だったっけ (chars 6-11, 4-9) - な-Adjective/Noun + だった + っけ
+
+### Technical Details
+- **Pattern priority**: 1 (N3 particle construction)
+- **Test coverage**: All 5 structure variants from grammar_points_data.json
+  - standard[0]: Verb[た] + っけ (1 test)
+  - standard[1]: Verb[る] + んだ + っけ (1 test)
+  - standard[2]: い-Adjective[た] + っけ (1 test)
+  - standard[3]: な-Adjective + だった + っけ (1 test)
+  - standard[4]: Noun + だった + っけ (1 test)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Pattern matches any content word followed by た/だ in 基本形, then っけ
+- **Grammar note**: っけ is casual register, used when asking oneself or others about forgotten information
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 5
+- **Tests passing**: 745/745 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~116 (matcher implementation + 5 tests + feature_list update)
+
+### Key Insights
+- っけ is a sentence-ending particle specifically for recall/confirmation
+- Pattern successfully handles all conjugation types (verb, i-adj, na-adj, noun)
+- TokenMatcher::Any elegantly handles all content word types before the auxiliary
+- Test sentences are realistic and cover different usage contexts
+- Pattern ranges include full grammatical construction (not just っけ alone)
+- Session completed 1 pattern efficiently with comprehensive test coverage
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. さえ - "even" (emphasis particle, 6 structure variants - more complex)
+2. そうだ - hearsay/conjecture (4 standard + 4 polite = 8 variants)
+3. ことなの - "it's that" (explanatory pattern, multiple variants)
+4. たらいい・といい - "it would be good if" (suggestion pattern)
+5. さ (multiple variants) - casual particle/filler/interjection
+
+**Recommendation**: Continue with concrete N3 patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 745 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 118 - 2025-12-13
 
 ### ✅ Session Summary
