@@ -1,21 +1,22 @@
 # Grammar-lib Development Progress
 
-## Session 145 - 2025-12-13
+## Session 145 - 2025-12-13 (Updated)
 
 ### ✅ Session Summary
-**Status**: お～ください pattern fully implemented (N4 honorific request)
-**Patterns completed**: 1 new N4 construction pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 931 (was 927 at session start)
+**Status**: Two N4 patterns fully implemented (お～ください + ございます)
+**Patterns completed**: 2 new N4 construction patterns
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 935 (was 927 at session start)
 
 ### Accomplishments
 1. ✅ Implemented お～ください pattern (N4) - honorific request "please do (A) for me"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 931 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented ございます pattern (N4) - polite form of ある
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 935 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### お～ください (N4) ✓
 - **File**: grammar-lib/src/matchers/n4.rs (o_uff5e_kudasai function, lines 1256-1286)
@@ -42,39 +43,65 @@
   - Can be used with people of any status level, very polite
   - Pattern successfully detects all test cases from grammar_points_data.json
 
+#### ございます (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (gozaimasu function, lines 1293-1320)
+- **Tests**: 4 tests in n4_patterns.rs (mod gozaimasu_tests, lines 1441-1500)
+- **Structures**:
+  - standard[0]: ある ￫ ござる (historical/media usage)
+  - polite[0]: あります ￫ ございます (modern polite form)
+- **Tokenization**:
+  - ござる/ござい (助動詞 or 動詞/自立, base=ござる, conjugation varies)
+  - Optional: ます (助動詞)
+- **Implementation**: GozaruMatcher + Optional MasuMatcher
+  - GozaruMatcher: Matches base=ござる with pos=助動詞 or 動詞
+  - MasuMatcher: Matches ます (助動詞) - optional for historical form
+- **Meaning**: Polite form of ある/いる - "to exist/have" in polite speech
+- **Pattern priority**: 3 (declared in patterns.rs)
+- **Pattern ranges**: Include full ござる or ござい + ます construction
+  - ございます (chars 5-10) - polite form (ありがとうございます)
+  - ございます (chars 3-8) - polite existence (質問はございますか)
+  - ござる (chars 7-10) - historical form (家でござる)
+  - ございます (chars 4-9) - polite existence (お時間はございますか)
+- **Key insights**:
+  - ござる is the special-class verb meaning "to be"
+  - Almost never used in basic form in modern Japanese
+  - ございます (ござい + ます) is the standard polite form
+  - Can refer to both animate and inanimate objects
+  - Used in expressions like ありがとうございます
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N4)
-- **Tests written**: 4
-- **Tests passing**: 931/931 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~97 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N4)
+- **Tests written**: 8 (4 per pattern)
+- **Tests passing**: 935/935 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~188 (2 matcher implementations + 8 tests + 2 feature_list updates)
 
 ### Key Insights
-- お～ください is a fundamental N4 honorific pattern for polite requests
-- Simple 3-token matcher: お (prefix) + verb (連用形) + ください
-- Pattern correctly handles various verb stems (申込み, 使い, 閉め, 掛け)
-- Test sentences are realistic examples from grammar_points_data.json
-- Successfully implemented a core N4 honorific expression pattern
-- This brings total N4 passing patterns from 16 to 17
+- お～ください and ございます are fundamental N4 honorific/polite patterns
+- Both patterns use straightforward tokenization patterns
+- お～ください: 3-token matcher (お + verb連用形 + ください)
+- ございます: 2-token matcher with optional ます (ござる + [ます])
+- Successfully implemented 2 important N4 polite speech patterns
+- This brings total N4 passing patterns from 16 to 18
 
 ### Next Priorities
 Continue with N4 patterns (simple 1-2 structure patterns first):
 
 **Simple N4 patterns to implement next** (1-2 structures):
-1. **ございます** - polite form of ある (1 std + 1 pol)
-2. **じゃないか** - "isn't it?" (1 structure)
-3. **なおす** - "redo/fix" (similar to おわる/はじめる, 1 std + 1 pol)
-4. **ようだ** - "seems like/appears to be" (2-3 structures)
-5. **Question-phrase + か** - embedded questions (2 structures)
-6. **〜ようと思う・〜おうと思う** - "thinking of doing" (2 std + 2 pol)
+1. **じゃないか** - "isn't it?" (1 structure)
+2. **なおす** - "redo/fix" (similar to おわる/はじめる, 1 std + 1 pol)
+3. **ようだ** - "seems like/appears to be" (2-3 structures)
+4. **Question-phrase + か** - embedded questions (2 structures)
+5. **〜ようと思う・〜おうと思う** - "thinking of doing" (2 std + 2 pol)
+6. **かた** - "way of doing" (6 structures)
 
 **Recommendation**: Continue with simple auxiliary verb/particle patterns before tackling complex multi-structure patterns.
 
 ### Environment Status
-- ✅ All 931 tests passing (added 4 new tests)
+- ✅ All 935 tests passing (added 8 new tests)
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
