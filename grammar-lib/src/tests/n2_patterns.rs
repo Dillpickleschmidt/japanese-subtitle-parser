@@ -52,3 +52,35 @@ mod youdehanaika_tests {
         assert_pattern_range(&patterns, "〜ようではないか", 11, 20); // 食べようじゃないか
     }
 }
+
+// Pattern: いきなり (suddenly, all of a sudden)
+// Data source: grammar_points_data.json["いきなり"]
+// Testing: structure.standard[0] - "いきなり + (Action) Phrase"
+//
+// Structure variants:
+//   - standard[0]: いきなり + (Action) Phrase
+//   - No polite forms listed
+
+mod ikinari_tests {
+    use super::*;
+
+    #[test]
+    fn test_ikinari_before_verb() {
+        let sentence = "いきなり電話してごめん";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いきなり");
+        assert_pattern_range(&patterns, "いきなり", 0, 4); // いきなり
+    }
+
+    #[test]
+    fn test_ikinari_mid_sentence() {
+        let sentence = "ペットのワンちゃんがいきなり吠え出したからびっくりして起きた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いきなり");
+        assert_pattern_range(&patterns, "いきなり", 10, 14); // いきなり
+    }
+}

@@ -1,5 +1,6 @@
 use crate::pattern_matcher::TokenMatcher;
 use super::Matcher;
+use std::sync::Arc;
 
 // Pattern: 得る・得る
 pub fn eru_u30fb_eru() -> Vec<TokenMatcher> {
@@ -986,9 +987,23 @@ pub fn tachimachi() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: いきなり
+// Pattern: いきなり (suddenly, all of a sudden)
+// Structures: いきなり + (Action) Phrase
 pub fn ikinari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct IkinariMatcher;
+    impl Matcher for IkinariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いきなり"
+                && token.base_form == "いきなり"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token
+                    .pos
+                    .get(1)
+                    .is_some_and(|pos| pos == "助詞類接続")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(IkinariMatcher))]
 }
 
 // Pattern: といった
