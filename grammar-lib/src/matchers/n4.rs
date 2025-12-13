@@ -614,9 +614,22 @@ pub fn owaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ごろ
+// Pattern: ごろ (around/about time)
+// Structures: Noun + ごろ, Noun + の + ころ
 pub fn goro() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct GoroKoroMatcher;
+    impl Matcher for GoroKoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Matches both ごろ (接尾) and ころ (非自立)
+            (token.surface == "ごろ" || token.surface == "ころ")
+                && (token.base_form == "ごろ" || token.base_form == "ころ")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                    || token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(GoroKoroMatcher))]
 }
 
 // Pattern: こと (nominalization)

@@ -3603,3 +3603,58 @@ mod mata_tests {
         assert_pattern_range(&patterns, "また", 11, 13); // また
     }
 }
+
+// ========== ごろ (around/about) ==========
+// Pattern: ごろ
+// Data source: grammar_points_data.json["ごろ"]
+//
+// Structures to test:
+//   - standard[0]: Verb + ころ
+//   - standard[1]: い-Adjective + ころ
+//   - standard[2]: な-Adjective + な + ころ
+//   - standard[3]: Noun + ごろ
+//   - standard[4]: Noun + の + ころ
+//
+// Meaning: "around", "about" (for time spans, not distances)
+// Usage: Expresses a broad point/span of time
+// Examples from data:
+//   - １１時ごろに帰ってくる (around 11 o'clock)
+//   - 大学生のころに富士山を登りました (around when I was a college student)
+//   - 子供のころはよく親と動物園へ行きました (around when I was a child)
+#[cfg(test)]
+mod goro_tests {
+    use super::*;
+
+    // Structure: Noun + ごろ (standard[3])
+    #[test]
+    fn goro_noun_time() {
+        let sentence = "１１時ごろに帰ってくる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ごろ");
+        assert_pattern_range(&patterns, "ごろ", 3, 5); // ごろ
+    }
+
+    // Structure: Noun + の + ころ (standard[4])
+    #[test]
+    fn goro_noun_no_koro() {
+        let sentence = "大学生のころに富士山を登りました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ごろ");
+        assert_pattern_range(&patterns, "ごろ", 4, 6); // ころ
+    }
+
+    // Structure: Noun + の + ころ (standard[4]) - broader time
+    #[test]
+    fn goro_childhood() {
+        let sentence = "子供のころはよく親と動物園へ行きました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ごろ");
+        assert_pattern_range(&patterns, "ごろ", 3, 5); // ころ
+    }
+}
