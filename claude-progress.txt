@@ -1,5 +1,86 @@
 # Grammar-lib Development Progress
 
+## Session 100 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (直ちに)
+**Patterns completed**: 1 new N3 pattern (adverb for immediate action)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 631 (was 627 at start)
+
+### Accomplishments
+1. ✅ Implemented 直ちに (tadachini) pattern (N3) - "immediately/at once"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 631 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### 直ちに (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 2042-2055)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod tadachini_tests)
+  - test_tadachini_evacuation (ただちに避難所へ向かってください - Please head to the evacuation point immediately)
+  - test_tadachini_leave_mountain (この山から、ただちに出て行ってください。ここは私有地です - Please leave this mountain at once. This is private property)
+  - test_tadachini_earthquake (地震が起きたらただちに家を出てください - If an earthquake occurs, please leave the house immediately)
+  - test_tadachini_report (計画が変わったら、ただちに報告してください - If the plan changes, please notify me immediately)
+- **Structure**: ただちに + Phrase (only 1 structure variant)
+- **Tokenization insights**:
+  - Both ただちに (hiragana) and 直ちに (kanji) = 副詞/一般 (adverb/general)
+  - Pattern is simply the adverb itself, appearing before various phrases
+  - Very similar to すでに and 遂に patterns from previous sessions
+- **Implementation**: Single-token matcher
+  - TadachiniMatcher - Matches ただちに or 直ちに as 副詞/一般
+- **Meaning**: "immediately" or "at once" - emphasizes direct/purposeful action (not unintentional)
+- **Pattern priority**: 1 (standard N3 construction)
+- **Pattern ranges**: Just the adverb itself
+  - ただちに (chars 0-4, 6-10, 7-11, 9-13 in different contexts)
+
+### Technical Details
+- **Pattern priority**: 1 (standard N3 adverb)
+- **Test coverage**: 1 structure variant from grammar_points_data.json
+  - ただちに + Phrase (4 tests covering different contexts)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Very simple pattern - just match the adverb 直ちに/ただちに itself
+- **Note**: Pattern replaced TODO stub at line 2043 in n3.rs
+- **Comparison**: More formal than すぐ, emphasizes purposeful immediate action (not unintentional like 忽ち)
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 631/631 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~60 (matcher implementation + 4 tests + feature_list update)
+
+### Key Insights
+- 直ちに is a simple adverb pattern following the same structure as すでに and 遂に
+- Test-first workflow successfully identified tokenization pattern
+- All test sentences are realistic and subtitle-quality
+- Pattern range is just the word itself (not including following phrases)
+- Both hiragana and kanji forms handled in single matcher
+- Emphasizes intentional/purposeful action (different from unintentional immediacy)
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. 折角 (sekkaku) - "with effort/specially" - likely simple adverb (priority 3)
+2. 第一 (daiichi) - "first of all/primarily" - likely simple adverb (priority 3)
+3. 決して〜ない (kesshite~nai) - "never/by no means" (priority 3, 5 structures)
+4. 必ずしも (kanarazushimo) - "not necessarily" (priority 3)
+5. 最中に (saichuu ni) - "in the middle of" (priority 3)
+
+**Recommendation**: Continue with simple adverb patterns like "折角" or "第一" before tackling more complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 631 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 99 - 2025-12-12
 
 ### ✅ Session Summary
