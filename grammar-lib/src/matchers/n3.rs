@@ -2443,9 +2443,59 @@ pub fn kotokara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: というより
+// Pattern: というより (rather than saying, more like)
+// Structures: Verb/Adjective/Noun + (だ) + というより
 pub fn toiuyori() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    #[derive(Debug)]
+    struct IuMatcher;
+    impl Matcher for IuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct YoriMatcher;
+    impl Matcher for YoriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "より"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DaCopulaMatcher;
+    impl Matcher for DaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaCopulaMatcher)))),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(IuMatcher)),
+        TokenMatcher::Custom(Arc::new(YoriMatcher)),
+    ]
 }
 
 // Pattern: はもちろん

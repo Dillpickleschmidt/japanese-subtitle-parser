@@ -6990,3 +6990,65 @@ mod deiuto_tests {
         assert_pattern_range(&patterns, "で言うと", 0, 6); // 一言で言うと
     }
 }
+
+// ========== というより (rather than saying) ==========
+// Pattern: というより (rather than saying, more like)
+// Data source: grammar_points_data.json["というより"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + というより
+//   standard[1]: い-Adjective + というより
+//   standard[2]: な-Adjective + (だ) + というより
+//   standard[3]: Noun + (だ) + というより
+
+mod toiuyori_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + というより
+    // Example from grammar data: 仕事をしているというより、仕事をさせられている
+    #[test]
+    fn test_verb_toiuyori() {
+        let sentence = "あの人は仕事をしているというより、させられている感じがする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というより");
+        assert_pattern_range(&patterns, "というより", 9, 16); // いるというより
+    }
+
+    // Testing: standard[1] - い-Adjective + というより
+    // Example from grammar data: 天井が低いというより、身長が高いだけ
+    #[test]
+    fn test_i_adjective_toiuyori() {
+        let sentence = "日本の天井が低いというより、あなたの身長が高いだけだと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というより");
+        assert_pattern_range(&patterns, "というより", 6, 13); // 低いというより
+    }
+
+    // Testing: standard[2] - な-Adjective + だ + というより
+    // Example from grammar data: 暇だというより、何をすればいいか分からない
+    #[test]
+    fn test_na_adjective_toiuyori() {
+        let sentence = "僕は暇だというより、何をすればいいか分からないだけだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というより");
+        assert_pattern_range(&patterns, "というより", 2, 9); // 暇だというより
+    }
+
+    // Testing: standard[3] - Noun + だ + というより
+    // Example from grammar data: 公園というより、小さい広場みたいな物だ
+    #[test]
+    fn test_noun_toiuyori() {
+        let sentence = "ここは公園というより、小さい広場みたいなものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というより");
+        assert_pattern_range(&patterns, "というより", 3, 10); // 公園というより
+    }
+}
