@@ -282,9 +282,35 @@ pub fn yori() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ごとに
+// Pattern: ごとに (every/each time)
+// Structures: Verb/Noun + ごと + に
 pub fn gotoni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct GotoMatcher;
+    impl super::Matcher for GotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ごと"
+                && token.base_form == "ごと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Custom(Arc::new(GotoMatcher)), // ごと (名詞)
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)), // に (助詞/格助詞)
+    ]
 }
 
 // Pattern: なるべく

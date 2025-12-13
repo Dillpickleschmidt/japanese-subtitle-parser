@@ -476,3 +476,41 @@ mod shi_shi_tests {
         assert_pattern_range(&patterns, "し～し ", 3, 7); // 休みだし
     }
 }
+
+// ========== ごとに (every/each time) ==========
+// Pattern: ごとに
+// Data source: grammar_points_data.json["ごとに"]
+//
+// Structures to test:
+//   - standard[0]: Verb + ごとに
+//   - standard[1]: Noun + ごとに
+//
+// Examples from data:
+//   - 失敗をするごとに (every time you fail)
+//   - ３時間ごとに (every 3 hours)
+#[cfg(test)]
+mod gotoni_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb + ごとに
+    #[test]
+    fn test_gotoni_verb() {
+        let sentence = "失敗をする経験は無駄ではありません。失敗をするごとに上達します";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ごとに");
+        assert_pattern_range(&patterns, "ごとに", 21, 26); // するごとに
+    }
+
+    // Testing: structure.standard[1] - Noun + ごとに (time interval)
+    #[test]
+    fn test_gotoni_noun_time() {
+        let sentence = "私は３時間ごとにお菓子を食べます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ごとに");
+        assert_pattern_range(&patterns, "ごとに", 3, 8); // 時間ごとに
+    }
+}
