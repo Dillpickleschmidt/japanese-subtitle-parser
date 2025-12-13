@@ -1812,7 +1812,22 @@ pub fn sonna_u30fb_konna_u30fb_anna_u30fb_donna() -> Vec<TokenMatcher> {
 
 // Pattern: 各
 pub fn kaku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Match 各 as prefix (接頭詞/名詞接続)
+    #[derive(Debug)]
+    struct KakuPrefixMatcher;
+    impl super::Matcher for KakuPrefixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "各"
+                && token.base_form == "各"
+                && token.pos.first().is_some_and(|pos| pos == "接頭詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "名詞接続")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KakuPrefixMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: 以上 ①

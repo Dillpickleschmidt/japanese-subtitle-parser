@@ -4145,3 +4145,42 @@ mod tatokoroda_tests {
         assert_pattern_range(&patterns, "たところだ", 5, 13); // 着いたところです
     }
 }
+
+// Pattern: 各 (each/every)
+// Data source: grammar_points_data.json["各"]
+// Testing: structure.standard[0] - "各（かく） + Noun"
+//
+// Note: Only detects split form (各 as prefix + noun)
+// Compound nouns like 各階 (かくかい) and 各地 (かくち) are single tokens
+// and don't match this pattern
+mod kaku_tests {
+    use super::*;
+
+    // Structure: 各 + Noun (productive prefix usage)
+    #[test]
+    fn kaku_every_room() {
+        let sentence = "このホテルは各部屋に洗濯機がついている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "各");
+        assert_pattern_range(&patterns, "各", 6, 9); // 各部屋
+    }
+
+    // TODO: Undetectable - compound noun variants
+    // 各階 (each floor) and 各地 (each place) tokenize as single compound nouns
+    // rather than 各 (prefix) + noun, so they don't match this pattern.
+    // These are lexicalized compounds in the dictionary.
+    //
+    // #[test]
+    // fn kaku_each_floor() {
+    //     let sentence = "このエレベーターは各階で止まります";
+    //     // 各階 tokenizes as single noun (名詞/一般), not 各 + 階
+    // }
+    //
+    // #[test]
+    // fn kaku_each_place() {
+    //     let sentence = "正月になると日本各地からの観光客でいっぱいになる";
+    //     // 各地 tokenizes as single noun (名詞/一般), not 各 + 地
+    // }
+}
