@@ -2168,3 +2168,115 @@ mod tagaru_tests {
         assert_pattern_range(&patterns, "たがる", 11, 18); // 買いたがります
     }
 }
+
+// ========== かもしれない (might/maybe) ==========
+// Pattern: かもしれない
+// Data source: grammar_points_data.json["かもしれない"]
+//
+// Structures to test:
+//   - standard[0]: Verb + かもしれない
+//   - standard[1]: い-Adjective + かもしれない
+//   - standard[2]: な-Adjective + かもしれない
+//   - standard[3]: Noun + かもしれない
+//   - polite[0]: Verb + かもしれません
+//   - polite[1]: い-Adjective + かもしれません
+//   - polite[2]: な-Adjective + かもしれません
+//   - polite[3]: Noun + かもしれません
+//
+// Examples from data:
+//   - 増えるかもしれない (tourists might increase)
+//   - 深いかもしれない (might be deep)
+//   - 無理かもしれない (might not be possible)
+//   - 教会かもしれない (might be a church)
+#[cfg(test)]
+mod kamoshirenai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + かもしれない
+    #[test]
+    fn test_kamoshirenai_verb() {
+        let sentence = "来年から観光客が増えるかもしれない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かもしれない");
+        assert_pattern_range(&patterns, "かもしれない", 8, 17); // 増えるかもしれない
+    }
+
+    // Testing: standard[1] - い-Adjective + かもしれない
+    #[test]
+    fn test_kamoshirenai_i_adjective() {
+        let sentence = "そこの池は深いかもしれないから気をつけてね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かもしれない");
+        assert_pattern_range(&patterns, "かもしれない", 5, 13); // 深いかもしれない
+    }
+
+    // Testing: standard[2] - な-Adjective + かもしれない
+    #[test]
+    fn test_kamoshirenai_na_adjective() {
+        let sentence = "今日は無理かもしれないけど、明日ならいいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かもしれない");
+        assert_pattern_range(&patterns, "かもしれない", 3, 11); // 無理かもしれない
+    }
+
+    // Testing: standard[3] - Noun + かもしれない
+    #[test]
+    fn test_kamoshirenai_noun() {
+        let sentence = "あの建物は教会かもしれない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かもしれない");
+        assert_pattern_range(&patterns, "かもしれない", 5, 13); // 教会かもしれない
+    }
+
+    // Testing: polite[0] - Verb + かもしれません
+    #[test]
+    fn test_kamoshirenai_verb_polite() {
+        let sentence = "明日は休むかもしれません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かもしれない");
+        assert_pattern_range(&patterns, "かもしれない", 3, 12); // 休むかもしれません
+    }
+
+    // Testing: polite[1] - い-Adjective + かもしれません
+    #[test]
+    fn test_kamoshirenai_i_adjective_polite() {
+        let sentence = "この作業は難しいかもしれません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かもしれない");
+        assert_pattern_range(&patterns, "かもしれない", 5, 15); // 難しいかもしれません
+    }
+
+    // Testing: polite[2] - な-Adjective + かもしれません
+    #[test]
+    fn test_kamoshirenai_na_adjective_polite() {
+        let sentence = "彼は本気かもしれませんよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かもしれない");
+        assert_pattern_range(&patterns, "かもしれない", 2, 11); // 本気かもしれません
+    }
+
+    // Testing: polite[3] - Noun + かもしれません
+    #[test]
+    fn test_kamoshirenai_noun_polite() {
+        let sentence = "それは冗談かもしれません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かもしれない");
+        assert_pattern_range(&patterns, "かもしれない", 3, 12); // 冗談かもしれません
+    }
+}

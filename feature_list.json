@@ -2046,13 +2046,13 @@
   {
     "pattern_name": "かもしれない",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "かもしれない is an expression in Japanese that is often treated as a single word, but is actually the combination of the pa... [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null

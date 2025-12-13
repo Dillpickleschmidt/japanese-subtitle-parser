@@ -796,9 +796,75 @@ pub fn tagaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: かもしれない
+// Pattern: かもしれない (might/maybe)
+// Structures: Verb/Adjective/Noun + かもしれない/かもしれません
 pub fn kamoshirenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match かも (副助詞)
+    #[derive(Debug)]
+    struct KamoMatcher;
+    impl super::Matcher for KamoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かも"
+                && token.base_form == "かも"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match しれ (verb form of しれる)
+    #[derive(Debug)]
+    struct ShireMatcher;
+    impl super::Matcher for ShireMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しれ"
+                && token.base_form == "しれる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ない (auxiliary) or ません pattern
+    #[derive(Debug)]
+    struct NaiOrMasenMatcher;
+    impl super::Matcher for NaiOrMasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Either ない (助動詞) or ませ (for ません)
+            if token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // For ません pattern: ませ + ん
+            if token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match ん (auxiliary for ません)
+    #[derive(Debug)]
+    struct NMasenMatcher;
+    impl super::Matcher for NMasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, Adjective, or Noun
+        TokenMatcher::Custom(Arc::new(KamoMatcher)),
+        TokenMatcher::Custom(Arc::new(ShireMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiOrMasenMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMasenMatcher)))),
+    ]
 }
 
 // Pattern: みたいに・みたいな
