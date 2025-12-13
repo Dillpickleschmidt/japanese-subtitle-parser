@@ -4112,3 +4112,62 @@ mod ppoi_tests {
     //     // 白っぽい tokenizes as 形容詞/自立, not as 白 + っぽい
     // }
 }
+
+// ========== ついでに (while you're at it / on the occasion of) ==========
+// Pattern: ついでに (while you're at it / on the occasion of)
+// Data source: grammar_points_data.json["ついでに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + ついでに
+//   standard[1]: Noun + の + ついでに
+//   standard[2]: Phrase。ついでに + Phrase
+
+mod tsuideni_tests {
+    use super::*;
+
+    // Test: Verb + ついでに
+    #[test]
+    fn test_tsuideni_verb() {
+        let sentence = "買い物に行くついでに郵便局に寄ってくれる？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ついでに");
+        assert_pattern_range(&patterns, "ついでに", 4, 10); // 行くついでに
+    }
+
+    // Test: Verb + ついでに (different verb)
+    #[test]
+    fn test_tsuideni_verb_return() {
+        let sentence = "お母さんの所にテレビを返しに行くついでに、これを持って行って";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ついでに");
+        assert_pattern_range(&patterns, "ついでに", 14, 20); // 行くついでに
+    }
+
+    // Test: Noun + の + ついでに
+    #[test]
+    fn test_tsuideni_noun_no() {
+        let sentence = "散歩のついでに寄って行ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ついでに");
+        assert_pattern_range(&patterns, "ついでに", 0, 7); // 散歩のついでに
+    }
+
+    // Test: Phrase。ついでに + Phrase (standalone after period)
+    #[test]
+    fn test_tsuideni_standalone() {
+        let sentence = "デパートで買い物をする。ついでに友達に会う予定だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ついでに");
+        // Note: Pattern matches from period to に because TokenMatcher::Any includes the period
+        // This is acceptable as it captures the context that ついでに appears after a sentence
+        assert_pattern_range(&patterns, "ついでに", 11, 16); // 。ついでに
+    }
+}

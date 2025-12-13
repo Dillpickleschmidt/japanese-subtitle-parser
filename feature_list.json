@@ -5140,13 +5140,13 @@
   {
     "pattern_name": "ついでに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "序（つい）でに is an adverb in Japanese that is used in a similar way to 'while you're at it', or 'on the occasion of (A)' i... [3 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

@@ -2234,9 +2234,51 @@ pub fn mata_u301c_mo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ついでに
+// ついでに: While you're at it / on the occasion of
+// Structures: Verb + ついでに, Noun + の + ついでに, Phrase。ついでに + Phrase
 pub fn tsuideni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TsuideMatcher;
+    impl Matcher for TsuideMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ついで"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|p| p == "一般")
+                    || token.pos.get(1).is_some_and(|p| p == "非自立"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match の as 助詞/連体化 (nominalizing particle)
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,                                  // Verb or Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoRentaikaMatcher,
+        )))), // Optional の (for nouns)
+        TokenMatcher::Custom(Arc::new(TsuideMatcher)),      // ついで (名詞)
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),  // に (格助詞)
+    ]
 }
 
 // Pattern: と共に

@@ -3759,7 +3759,7 @@ declare_patterns! {
     Tsuideni {
         name: "ついでに",
         matcher_fn: crate::matchers::n3::tsuideni,
-        priority: 1,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },
