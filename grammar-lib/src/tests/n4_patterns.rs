@@ -1258,3 +1258,60 @@ mod koto_tests {
         assert_pattern_range(&patterns, "こと", 0, 5); // 食べること
     }
 }
+
+// ============================================================================
+// Verb[て] - Casual imperative/request (て-form at sentence end)
+// ============================================================================
+// Pattern: Verb[て] (casual imperative)
+// Data source: grammar_points_data.json["Verb[て]"]
+// Testing: structure.standard[0] - "Verb［て］。"
+//
+// Meaning: In casual speech, てください is shortened to て for friendly requests
+// Example: 片付けて。 (Please clean up.)
+mod verb_te_imperative_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[て] at sentence end (request)
+    #[test]
+    fn test_verb_te_imperative_request() {
+        let sentence = "部屋を片付けて。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]");
+        assert_pattern_range(&patterns, "Verb[て]", 3, 7); // 片付けて
+    }
+
+    // Testing: standard[0] - Verb[て] with lending request
+    #[test]
+    fn test_verb_te_imperative_lend() {
+        let sentence = "ペン貸して。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]");
+        assert_pattern_range(&patterns, "Verb[て]", 2, 5); // 貸して
+    }
+
+    // Testing: standard[0] - Verb[て] with motion verb
+    #[test]
+    fn test_verb_te_imperative_come() {
+        let sentence = "ちょっと来て。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]");
+        assert_pattern_range(&patterns, "Verb[て]", 4, 6); // 来て
+    }
+
+    // Testing: standard[0] - Verb[て] with waiting request
+    #[test]
+    fn test_verb_te_imperative_wait() {
+        let sentence = "待って。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]");
+        assert_pattern_range(&patterns, "Verb[て]", 0, 3); // 待って
+    }
+}
