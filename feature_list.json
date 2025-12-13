@@ -5266,13 +5266,13 @@
   {
     "pattern_name": "でもある",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As an extension of the formal version of the auxiliary verb だ, である , でもある simply conveys that something 'is also (B)' [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null

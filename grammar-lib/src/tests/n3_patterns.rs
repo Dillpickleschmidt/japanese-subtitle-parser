@@ -5700,3 +5700,94 @@ mod soumonai_tests {
         assert_pattern_range(&patterns, "そうもない", 37, 47); // られそうもありません
     }
 }
+
+// Pattern: でもある (is also)
+// Data source: grammar_points_data.json["でもある"]
+// Testing structure variants from grammar_points_data.json:
+//   - standard[0]: Noun + でもある
+//   - standard[1]: い-Adjective + くもある
+//   - standard[2]: な-Adjective + でもある
+//   - polite[0]: Noun + でもあります
+//   - polite[1]: い-Adjective + くもあります
+//   - polite[2]: な-Adjective + でもあります
+#[cfg(test)]
+mod demoaru_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + でもある
+    #[test]
+    fn test_demoaru_noun_standard() {
+        let sentence = "タナカさんは英語の先生だし、休みの日は船の船長でもあるから休む時間がない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもある");
+        assert_pattern_range(&patterns, "でもある", 21, 27); // 船長でもある
+    }
+
+    // Testing: standard[0] - Noun + でもある (another example)
+    #[test]
+    fn test_demoaru_noun_standard_2() {
+        let sentence = "これは洗濯機でもあるけど、同時に乾燥機でもある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもある");
+        assert_pattern_range(&patterns, "でもある", 5, 10); // 機でもある (first occurrence)
+    }
+
+    // Testing: standard[1] - い-Adjective + くもある
+    #[test]
+    fn test_demoaru_i_adj_standard() {
+        let sentence = "バンジージャンプは楽しいけれども、同時に危険でもある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもある");
+        assert_pattern_range(&patterns, "でもある", 20, 26); // 危険でもある
+    }
+
+    // Testing: standard[2] - な-Adjective + でもある
+    #[test]
+    fn test_demoaru_na_adj_standard() {
+        let sentence = "この機械は重くて邪魔だけど、同時に便利でもある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもある");
+        assert_pattern_range(&patterns, "でもある", 17, 23); // 便利でもある
+    }
+
+    // Testing: polite[0] - Noun + でもあります
+    #[test]
+    fn test_demoaru_noun_polite() {
+        let sentence = "彼は医者であり、科学者でもあります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもある");
+        assert_pattern_range(&patterns, "でもある", 10, 17); // 者でもあります
+    }
+
+    // Testing: polite[1] - い-Adjective + くもあります
+    #[test]
+    fn test_demoaru_i_adj_polite() {
+        let sentence = "この料理は美味しくもあります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもある");
+        assert_pattern_range(&patterns, "でもある", 5, 14); // 美味しくもあります
+    }
+
+    // Testing: polite[2] - な-Adjective + でもあります
+    #[test]
+    fn test_demoaru_na_adj_polite() {
+        let sentence = "彼女は親切でもあります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもある");
+        assert_pattern_range(&patterns, "でもある", 3, 11); // 親切でもあります
+    }
+}

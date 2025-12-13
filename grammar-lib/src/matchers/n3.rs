@@ -3708,8 +3708,71 @@ pub fn toori() -> Vec<TokenMatcher> {
 }
 
 // Pattern: でもある
+// Pattern: でもある (is also)
+// Structures:
+//   - Noun + でもある/でもあります (で can be separate or part of でも)
+//   - い-Adjective[く] + もある/もあります
+//   - な-Adjective + でもある/でもあります (で can be separate or part of でも)
 pub fn demoaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches で (格助詞), も (係助詞), or でも (副助詞 single token)
+    #[derive(Debug)]
+    struct DemoOrMoMatcher;
+    impl super::Matcher for DemoOrMoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // で = 助詞/格助詞
+            (token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                // OR も = 助詞/係助詞
+                || (token.surface == "も"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "係助詞"))
+                // OR でも = 助詞/副助詞 (single token)
+                || (token.surface == "でも"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+        }
+    }
+
+    // Matches ある verb (基本形 or 連用形)
+    #[derive(Debug)]
+    struct AruVerbMatcher;
+    impl super::Matcher for AruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.base_form == "ある"
+                && (token.surface == "ある" || token.surface == "あり")
+        }
+    }
+
+    // Matches ます
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl super::Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ます"
+        }
+    }
+
+    // Pattern: Any word + で/も/でも + optional も + ある + optional ます
+    // This handles:
+    //   - Noun + で + も + ある (4 tokens)
+    //   - Noun + でも + ある (3 tokens, でも as single token)
+    //   - い-Adj[く] + も + ある (3 tokens)
+    //   - な-Adj + でも + ある (3 tokens, でも as single token)
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(DemoOrMoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DemoOrMoMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(AruVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: どうしても
