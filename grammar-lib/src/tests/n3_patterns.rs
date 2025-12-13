@@ -3781,3 +3781,52 @@ mod tatoetemo_tests {
     //     assert_pattern_range(&patterns, "たとえ〜ても", 0, 7); // たとえ好きでも
     // }
 }
+
+// ========== つい (accidentally/unconsciously) ==========
+// Pattern: つい (accidentally/unconsciously/against one's better judgment)
+// Data source: grammar_points_data.json["つい"]
+//
+// Structure variants to test:
+//   standard[0]: つい + Phrase
+//
+// Note: Often paired with てしまう to emphasize unintentional action.
+// Can convey "uncalculated", "not thought about", or "small time gap" nuances.
+mod tsui_tests {
+    use super::*;
+
+    // Test: つい + Verb (with てしまう)
+    // Example from grammar data: つい食べてしまった (accidentally ate it)
+    #[test]
+    fn test_tsui_with_teshimau() {
+        let sentence = "ごめん、クッキーが目の前にあったからつい食べてしまった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つい");
+        assert_pattern_range(&patterns, "つい", 18, 20); // つい
+    }
+
+    // Test: つい + Verb (simple)
+    // Example: つい笑っちゃう (unconsciously laugh)
+    #[test]
+    fn test_tsui_with_verb() {
+        let sentence = "先生に怒られると、つい笑っちゃうんだよね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つい");
+        assert_pattern_range(&patterns, "つい", 9, 11); // つい
+    }
+
+    // Test: つい + Verb (casual form)
+    // Example: メールが来るとつい携帯を見ちゃう
+    #[test]
+    fn test_tsui_casual() {
+        let sentence = "メールが来るとつい携帯を見ちゃう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つい");
+        assert_pattern_range(&patterns, "つい", 7, 9); // つい
+    }
+}

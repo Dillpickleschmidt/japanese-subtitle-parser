@@ -2964,9 +2964,23 @@ pub fn zenshaha_u30fb_koushaha() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: つい
+// Pattern: つい (accidentally/unconsciously/against one's better judgment)
+// Structures: つい + Phrase
 pub fn tsui() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TsuiAdverbMatcher;
+    impl Matcher for TsuiAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match つい as adverb
+            token.surface == "つい"
+                && token.base_form == "つい"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(TsuiAdverbMatcher))]
 }
 
 // Pattern: せいで (because of / due to - negative result)
