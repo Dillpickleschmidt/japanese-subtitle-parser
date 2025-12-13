@@ -1,5 +1,88 @@
 # Grammar-lib Development Progress
 
+## Session 146 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: じゃないか pattern fully implemented (N4 sentence-ending particle)
+**Patterns completed**: 1 new N4 construction pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 939 (was 935 at session start)
+
+### Accomplishments
+1. ✅ Implemented じゃないか pattern (N4) - "isn't it?" sentence-ending particle
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 939 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### じゃないか (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (janaika function, lines 771-844)
+- **Tests**: 4 tests in n4_patterns.rs (mod janaika_tests, lines 1502-1562)
+- **Structure**:
+  - standard[0]: Phrase + じゃない + か
+- **Tokenization variants**:
+  - Casual: [ん] + じゃ + ない + か
+  - Formal: で + は + ない + か
+- **Implementation**: 5-token matcher with optional components
+  - NMatcher: Matches ん (名詞/非自立) - optional explanatory の
+  - JyaOrDeMatcher: Matches じゃ (助詞/副助詞) or で (助詞/格助詞)
+  - WaParticleMatcher: Matches は (助詞/係助詞) - optional for formal form
+  - NaiAuxMatcher: Matches ない (助動詞)
+  - KaEndingMatcher: Matches か (助詞/終助詞)
+- **Meaning**: Sentence-ending question particle "isn't it?" - similar to English tag questions
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Include full じゃないか or ではないか construction
+  - んじゃないか (chars 10-16) - verb + casual form
+  - んじゃないか (chars 8-14) - い-adj + casual form
+  - じゃないか (chars 7-12) - な-adj + casual form (no ん)
+  - ではないか (chars 8-13) - noun + formal form
+- **Key insights**:
+  - Pattern has two main forms: じゃないか (casual) and ではないか (formal)
+  - Can be preceded by ん (explanatory の) after verbs and い-adjectives
+  - な-adjectives typically don't use ん before じゃないか
+  - Used to confirm something or seek agreement, similar to "isn't it?" in English
+  - Pattern successfully detects all variants from grammar_points_data.json
+
+### Session Statistics
+- **Patterns implemented**: 1 (N4)
+- **Tests written**: 4
+- **Tests passing**: 939/939 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~141 (matcher implementation + 4 tests + feature_list update)
+
+### Key Insights
+- じゃないか is a fundamental N4 sentence-ending pattern for confirmation questions
+- Flexible matcher handles both casual (じゃ) and formal (で + は) forms
+- Optional ん matcher correctly handles explanatory の usage
+- Test sentences cover all major usage patterns (verb, い-adj, な-adj, noun)
+- Pattern ranges capture full grammatical construction for proper context
+- Successfully implemented common N4 question particle pattern
+- This brings total N4 passing patterns from 18 to 19
+
+### Next Priorities
+Continue with N4 patterns (simple 1-2 structure patterns first):
+
+**Simple N4 patterns to implement next** (1-2 structures):
+1. **しか～ない** - "only" (1 structure)
+2. **それで** - "so/therefore" (1 structure, conjunction)
+3. **それでも** - "even so" (1 structure, conjunction)
+4. **それに** - "besides/moreover" (1 structure, conjunction)
+5. **なおす** - "redo/fix" (similar to おわる/はじめる, 1 std + 1 pol)
+6. **〜ようと思う・〜おうと思う** - "thinking of doing" (2 std + 2 pol)
+
+**Recommendation**: Continue with simple auxiliary verb/particle/conjunction patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 939 tests passing (added 4 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 145 - 2025-12-13 (Updated)
 
 ### ✅ Session Summary
