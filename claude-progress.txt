@@ -1,5 +1,118 @@
 # Grammar-lib Development Progress
 
+## Session 152 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Three N4 patterns fully implemented (だけで + さ + ～代)
+**Patterns completed**: 3 new N4 construction patterns
+**Tests added**: 6 comprehensive tests (2 + 2 + 2)
+**Total tests**: 1006 (was 1000 at session start)
+
+### Accomplishments
+1. ✅ Implemented だけで pattern (N4) - "just by/with only"
+2. ✅ Implemented さ pattern (N4) - degree/amount suffix
+3. ✅ Implemented ～代 pattern (N4) - decade/era suffix
+4. ✅ All 6 tests passing with proper range assertions
+5. ✅ No test regressions - all 1006 tests pass
+6. ✅ Updated feature_list.json for all 3 patterns
+7. ✅ Three clean commits with full documentation
+
+### Completed Patterns
+
+#### だけで (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (dakede function, lines 221-253)
+- **Tests**: 2 tests in n4_patterns.rs (mod dakede_tests, lines 2529-2558)
+- **Structures**:
+  - standard[0]: Verb + だけで
+  - standard[1]: Noun + だけで
+- **Tokenization**:
+  - Verb/Noun + だけ (助詞/副助詞) + で (助詞/格助詞)
+- **Implementation**: 3-token matcher
+  - TokenMatcher::Any (Verb or Noun)
+  - DakeParticleMatcher: Match だけ (助詞/副助詞)
+  - DeParticleMatcher: Match で (助詞/格助詞)
+- **Meaning**: "just by", "with only"
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**:
+  - Verb + だけで: 話すだけで (chars 3-8)
+  - Noun + だけで: レンジだけで (chars 5-11)
+
+#### さ (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (sa function, lines 675-731)
+- **Tests**: 2 tests in n4_patterns.rs (mod sa_tests, lines 2560-2589)
+- **Structures**:
+  - standard[0]: い-Adjective[い] + さ
+  - standard[1]: な-Adjective + さ
+- **Tokenization**:
+  - い-adjective: 長 (形容詞, ガル接続) + さ (名詞/接尾/特殊)
+  - な-adjective: 大切 (名詞/形容動詞語幹) + さ (名詞/接尾/特殊)
+- **Implementation**: 2-token matcher
+  - AdjectiveStemMatcher: Match both い-adj stem (ガル接続) and な-adj (形容動詞語幹)
+  - SaSuffixMatcher: Match さ (名詞/接尾/特殊)
+- **Meaning**: Transforms adjectives into nouns expressing degree ("-ness")
+- **Pattern priority**: 3 (N4 construction)
+- **Pattern ranges**:
+  - い-Adjective + さ: 長さ (chars 4-6)
+  - な-Adjective + さ: 大切さ (chars 11-14)
+
+#### ～代 (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (uff5e_dai function, lines 1228-1264)
+- **Tests**: 2 tests in n4_patterns.rs (mod dai_tests, lines 2591-2620)
+- **Structures**:
+  - standard[0]: Decade of age + 代
+  - standard[1]: Decade + 年代
+- **Tokenization**:
+  - Number(s) (名詞/数) + 代 or 年代 (名詞/接尾/助数詞)
+  - Example: ２０代 → ２(名詞/数) + ０(名詞/数) + 代(名詞/接尾/助数詞)
+- **Implementation**: Number + Wildcard + Suffix matcher
+  - NumberMatcher: Match numbers (名詞/数)
+  - Wildcard: Allow 0-3 additional number tokens
+  - DaiSuffixMatcher: Match 代 or 年代 (名詞/接尾/助数詞)
+- **Meaning**: Expresses decades of age or chronological eras
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**:
+  - Age decade: ２０代 (chars 2-5)
+  - Chronological decade: ７０年代 (chars 0-4)
+
+### Final Session Statistics
+- **Patterns implemented**: 3 (N4: だけで + さ + ～代)
+- **Tests written**: 6 total (2 + 2 + 2)
+- **Tests passing**: 1006/1006 (100%)
+- **Commits**: 3 clean commits
+- **Lines added**: ~229 (3 matcher implementations + 6 tests + 3 feature_list updates)
+
+### Key Insights from Session
+1. **だけで** - Simple particle combination (だけ + で)
+2. **さ** - Adjective suffix transforming adjectives to degree nouns
+3. **～代** - Number suffix for decades/eras, uses Wildcard for multi-digit numbers
+
+### Session Success
+- Successfully implemented 3 simple N4 patterns
+- All patterns have realistic subtitle-quality test sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation throughout
+- Efficient session - completed 3 patterns with excellent test coverage
+
+### Next Priorities
+Continue with N4 patterns (simple patterns first):
+
+**Simple N4 patterns to implement next**:
+1. **かた** - "how to/way of" (verb stem + 方, 6 structures)
+2. **がる** - suffix showing observable emotion (2 std, 2 pol)
+3. **ごろ** - "around/about" for time (5 structures)
+4. More simple adverbs or particles
+
+**Recommendation**: Continue with simple N4 construction patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 1006 tests passing (added 6 new tests)
+- ✅ No regressions
+- ✅ Clean git state (3 commits)
+- ✅ feature_list.json updated for all 3 patterns
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 151 - 2025-12-13
 
 ### ✅ Session Summary
