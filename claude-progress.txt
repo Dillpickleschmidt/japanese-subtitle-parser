@@ -3,19 +3,20 @@
 ## Session 175 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: ばよかった pattern (N4) fully implemented
-**Patterns completed**: 1 new N4 conditional regret pattern
-**Tests added**: 3 comprehensive tests
-**Total tests**: 1119 (was 1116 at session start)
+**Status**: Two N4 patterns fully implemented (ばよかった + たらどう)
+**Patterns completed**: 2 new N4 conditional/suggestion patterns
+**Tests added**: 7 comprehensive tests (3 + 4)
+**Total tests**: 1123 (was 1116 at session start)
 
 ### Accomplishments
 1. ✅ Implemented ばよかった pattern (N4) - "should have / wish I had"
-2. ✅ All 3 tests passing with proper range assertions
-3. ✅ No test regressions - all 1119 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented たらどう pattern (N4) - "why don't you / how about"
+3. ✅ All 7 tests passing with proper range assertions
+4. ✅ No test regressions - all 1123 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### ばよかった (N4) ✓
 - **Files**:
@@ -43,21 +44,50 @@
 - **Test coverage**: 3 tests covering standard and polite forms
 - **Note**: For suru-verbs, the range includes the サ変接続 noun (勉強) as it's part of the verb unit
 
+#### たらどう (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (taradou function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod taradou_tests, 4 tests)
+- **Structures**:
+  - standard[0]: Verb［たら］+ どう + だ？
+  - standard[1]: Verb［たら］+ どう + （か）？
+  - polite[0]: Verb［たら］+ どう + です + か
+- **Tokenization**:
+  - Verb[連用形/連用タ接続] + たら (助動詞, 特殊・タ, 仮定形) + どう (副詞) + optional です/か/だ
+- **Implementation**: Six-token matcher with multiple optional components
+  1. flexible_verb_form() - verb in 連用形 or 連用タ接続
+  2. TaraConditionalMatcher - たら conditional auxiliary
+  3. DouAdverbMatcher - どう adverb
+  4. Optional DesuMatcher - です polite auxiliary
+  5. Optional KaParticleMatcher - か question particle
+  6. Optional DaCopulaMatcher - だ copula
+- **Meaning**: "Why don't you...", "How about..." - gives advice or suggestions
+- **Pattern priority**: 2 (N4 construction)
+- **Pattern confidence**: 2.0-2.7 depending on optional components
+- **Pattern ranges**:
+  - 減らしたらどう (chars 5-12) - why don't you reduce
+  - 入れたらどうか (chars 3-10) - why don't you add + か
+  - みたらどうですか (chars 7-15) - how about trying + polite
+  - 使ったらどうだ (chars 2-9) - why don't you use + だ
+- **Test coverage**: 4 tests covering all structure variants
+- **Note**: Can sound critical depending on tone, so used for giving advice
+
 ### Implementation Notes
-- **Conditional form**: Pattern matches verbs in 仮定形 (hypothetical/conditional form)
-- **Suru-verb handling**: The pattern matcher extends ranges backwards to include サ変接続 nouns
+- **Conditional form**: Both patterns use verbs in conditional forms (仮定形 for ば, たら auxiliary)
+- **Suru-verb handling**: ばよかった pattern extends ranges backwards to include サ変接続 nouns
   - Example: 勉強すれ → pattern includes 勉強 (chars 3-14, not 5-14)
   - This is correct because 勉強する is the verb unit
-- **Custom matchers**: All components (ば, よかっ, た, です) have custom matchers for precise POS checking
-- **Optional です**: Uses TokenMatcher::Optional for polite form
+- **Multiple optionals**: たらどう uses three optional matchers (です, か, だ) to handle all variants
+- **Custom matchers**: All components have custom matchers for precise POS checking
 - Test-first workflow with print_debug was very effective for understanding tokenization
 
 ### Session Success
-- Successfully implemented a conditional regret pattern
+- Successfully implemented 2 N4 conditional/suggestion patterns
+- Both patterns use conditional verb forms (仮定形 and たら)
 - All tests use realistic subtitle-quality Japanese sentences
 - Pattern ranges include full grammatical constructions
 - No test regressions - clean implementation
-- Efficient session - completed 1 pattern with clear understanding of suru-verb behavior
+- Very efficient session - completed 2 patterns quickly (7 tests total)
 
 ### Next Priorities
 Continue with simple N4 patterns with stubs:
@@ -65,19 +95,18 @@ Continue with simple N4 patterns with stubs:
 **Simple N4 patterns to implement next**:
 1. **し～し** - "and also / listing reasons" (already has implementation, check if complete)
 2. **Question-phrase + か** - embedded questions (has stub)
-3. **たらどう** - "how about / why don't you" suggestion pattern (has stub)
-4. Other simple N4 constructions with existing stubs in n4.rs
+3. Other simple N4 constructions with existing stubs in n4.rs
 
 **Or continue with N5 patterns** (foundational level - highest priority):
 - Basic particles and verb forms (though many are complex/broad)
 
-**Recommendation**: Continue with simple N4 patterns that have stubs to maintain momentum. Focus on patterns with clear, limited scope.
+**Recommendation**: Continue with simple N4 patterns that have stubs to maintain momentum. Both patterns this session were straightforward and efficient to implement.
 
 ### Environment Status
-- ✅ All 1119 tests passing (added 3 new tests)
+- ✅ All 1123 tests passing (added 7 new tests this session)
 - ✅ No regressions
-- ✅ Clean git state (1 commit)
-- ✅ feature_list.json updated
+- ✅ Clean git state (2 commits this session)
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next session or termination
 
 ---
