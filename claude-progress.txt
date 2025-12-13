@@ -3,19 +3,20 @@
 ## Session 134 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (では・それでは・じゃあ)
-**Patterns completed**: 1 new N3 conjunction pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 827 (was 823 at session start)
+**Status**: Two N3 patterns fully implemented (では・それでは・じゃあ + ではなくて・じゃなくて)
+**Patterns completed**: 2 new N3 construction patterns
+**Tests added**: 10 comprehensive tests (4 + 6)
+**Total tests**: 833 (was 823 at session start)
 
 ### Accomplishments
 1. ✅ Implemented では・それでは・じゃあ pattern (N3) - "well then, in that case"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 827 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented ではなくて・じゃなくて pattern (N3) - "not...but"
+3. ✅ All 10 tests passing with proper range assertions
+4. ✅ No test regressions - all 833 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### では・それでは・じゃあ (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (deha_u30fb_soredeha_u30fb_jaa function, lines 620-640)
@@ -40,47 +41,81 @@
   - じゃあ (chars 6-9) - casual
   - じゃ (chars 0-2) - most casual
 
+#### ではなくて・じゃなくて (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (dehanakute_u30fb_janakute function, lines 2194-2278)
+- **Tests**: 6 tests in n3_patterns.rs (mod dewanakute_janakute_tests, lines 5850-5928)
+- **Structures**:
+  - standard[0]: Verb + の + ではなく（て）
+  - standard[1]: い-Adjective + の + ではなく（て）
+  - standard[2]: な-Adjective + ではなく（て）
+  - standard[3]: Noun + ではなく（て）
+  - standard[4]: じゃなく（て） variant
+- **Tokenization insights**:
+  - Optional の (名詞/非自立) as nominalizer
+  - で (助動詞, base: だ) or で (助詞/格助詞) or じゃ (助詞/副助詞)
+  - Optional は (助詞/係助詞)
+  - なく (形容詞 or 助動詞, base: ない)
+  - Optional て (助詞/接続助詞)
+- **Implementation**: 5-token matcher with 3 optional tokens
+  - NoNominalizerMatcher: Optional の (nominalizer)
+  - DeJaMatcher: Matches で or じゃ (multiple POS possibilities)
+  - WaParticleMatcher: Optional は (contrast particle)
+  - NakuMatcher: Matches なく (negative form)
+  - TeConjunctionMatcher: Optional て (conjunction particle)
+- **Meaning**: "not...but" - negates (A) and contrasts with (B)
+- **Pattern priority**: 1 (N3 construction/negative copula)
+- **Pattern ranges**: Full negative copula construction
+  - のではなくて (chars 11-17, 2-8) - with nominalizer
+  - ではなくて (chars 4-9, 3-8) - standard with は
+  - でなくて (chars 5-9) - without は
+  - じゃなくて (chars 8-13) - casual variant
+
 ### Technical Details
-- **Pattern priority**: 1 (N3 construction/conjunction)
-- **Test coverage**: All 2 structure variants from grammar_points_data.json
-  - standard[0]: （それ）+ では + Phrase (2 tests: それでは, では)
-  - standard[1]: じゃあ、じゃ + Phrase (2 tests: じゃあ, じゃ)
+- **Pattern priorities**: Both patterns priority 1 (N3 construction)
+- **Test coverage**:
+  - では・それでは・じゃあ: All 2 structure variants (4 tests)
+  - ではなくて・じゃなくて: All 5 structure variants (6 tests)
 - **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
-- **Key insight**: All four variants are single tokens with identical POS tag (接続詞)
-- **Grammar note**: Formality order: それでは (formal) > では (neutral) > じゃあ > じゃ (casual)
+- **Key insights**:
+  - では・それでは・じゃあ: All four variants are single tokens (接続詞)
+  - ではなくて・じゃなくて: Complex pattern with multiple optional tokens and POS variations
+- **Grammar notes**:
+  - では・それでは・じゃあ: Formality order: それでは (formal) > では (neutral) > じゃあ > じゃ (casual)
+  - ではなくて・じゃなくて: で can appear with or without は; て is optional
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 827/827 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~74 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 10 (4 + 6)
+- **Tests passing**: 833/833 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~241 (2 matcher implementations + 10 tests + 2 feature_list updates)
 
 ### Key Insights
-- では・それでは・じゃあ is a straightforward conjunction pattern
-- All variants are single tokens, making implementation very simple
-- Pattern successfully handles formality differences with same matcher
+- では・それでは・じゃあ is a straightforward single-token conjunction pattern
+- ではなくて・じゃなくて is more complex with multiple tokenization variations
+- Successfully handled both simple (single token) and complex (multi-token with optionals) patterns
+- Optional token matchers are essential for flexible pattern matching (の, は, て)
+- で can be 助動詞 (copula), 助詞/格助詞, or part of じゃ compound
 - Test sentences are realistic examples from grammar_points_data.json
-- Pattern ranges include full conjunction token
-- Successfully implemented a common N3 conjunction pattern
+- Pattern ranges include full grammatical constructions for proper context
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
-1. **ではなくて・じゃなくて** - Negative copula te-form "not...but" (5 structures)
-2. **でもある** - Already completed (Session 133)
-3. **そうだ** - Hearsay/conjecture (4 standard + 4 polite = 8 variants)
-4. **たらいい・といい** - "it would be good if" (9 standard + 9 polite = 18 variants)
-5. **ために** - Already completed (Session 128)
+1. **そうだ** - Hearsay/conjecture (4 standard + 4 polite = 8 variants)
+2. **たらいい・といい** - "it would be good if" (9 standard + 9 polite = 18 variants)
+3. **ところだった①** - "almost did" (2 standard + 2 polite = 4 variants)
+4. **という理由で** - "for the reason that" (2 structures)
+5. **といえば** - "speaking of/when it comes to" (2 structures)
 
-**Recommendation**: Continue with simpler N3 construction patterns (ではなくて, etc.) before tackling complex multi-structure patterns.
+**Recommendation**: Continue with simpler 2-4 structure N3 patterns before tackling complex multi-structure patterns (たらいい with 18 variants).
 
 ### Environment Status
-- ✅ All 827 tests passing (added 4 new tests)
+- ✅ All 833 tests passing (added 10 new tests)
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
