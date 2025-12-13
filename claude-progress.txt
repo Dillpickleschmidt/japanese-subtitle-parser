@@ -1,5 +1,88 @@
 # Grammar-lib Development Progress
 
+## Session 169 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: だが・ですが pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 conjunction pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 1097 (was 1094 at session start)
+
+### Accomplishments
+1. ✅ Implemented だが・ですが pattern (N4) - "but/however" (formal)
+2. ✅ All 3 tests passing with proper range assertions
+3. ✅ No test regressions - all 1097 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### だが・ですが (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (daga_u30fb_desuga function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod daga_desuga_tests, 3 tests)
+- **Structures**:
+  - standard[0]: だが + Phrase
+  - polite[0]: ですが + Phrase
+- **Tokenization**:
+  - Two tokenization patterns:
+    1. Single token: だが (接続詞) - at sentence start/after punctuation
+    2. Split tokens: だ/です (助動詞) + が (助詞/接続助詞) - mid-sentence
+- **Implementation**: Two-token matcher with optional が
+  - DagaDesugaMatcher - matches both だが (接続詞) OR だ/です (助動詞)
+  - Optional GaConjunctionMatcher - matches が (助詞/接続助詞)
+  - Handles both tokenization cases elegantly
+- **Meaning**: "but", "however", "nevertheless" - formal conjunction
+- **Pattern priority**: 2 (N4 construction)
+- **Pattern ranges**:
+  - だが (chars 5-7) - mid-sentence split form
+  - だが (chars 12-14) - sentence-start conjunction form
+  - ですが (chars 8-11) - polite split form
+- **Test coverage**: 3 tests covering both structures and tokenization patterns
+  - Mid-sentence だが (split: だ + が)
+  - Sentence-start だが (single conjunction token)
+  - Polite ですが (split: です + が)
+
+### Implementation Notes
+- **Dual tokenization**: Pattern handles two distinct tokenization cases
+  1. **Sentence-start/after punctuation**: だが as single conjunction token (接続詞)
+  2. **Mid-sentence**: Split into だ/です (auxiliary) + が (conjunction particle)
+- **Elegant solution**: Using Optional matcher for が handles both cases:
+  - When だが is conjunction, が doesn't match (correct - no second token)
+  - When だ/です is auxiliary, が matches (correct - completes the pattern)
+- **Pattern overlap**: The split form (だ/です + が) also matches the existing "が" N5 pattern (intentional - both show)
+- Test-first workflow with print_debug was very effective for understanding tokenization
+
+### Session Success
+- Successfully implemented a pattern with dual tokenization (conjunction vs split form)
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern with excellent understanding of tokenization variants
+
+### Next Priorities
+Continue with simple N4 patterns with stubs:
+
+**Simple N4 patterns to implement next**:
+1. **なくて** - negative て-form construction (has stub)
+2. **ないで** - "without doing" (already implemented, check if complete)
+3. **とき** - "when/at the time" (temporal noun pattern)
+4. Other simple N4 constructions with stubs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles and verb forms (though many are complex/broad)
+
+**Recommendation**: Continue with simple N4 patterns that have stubs to maintain momentum. Focus on patterns with clear, limited scope.
+
+### Environment Status
+- ✅ All 1097 tests passing (added 3 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 168 - 2025-12-13
 
 ### ✅ Session Summary
