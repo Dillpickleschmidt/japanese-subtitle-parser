@@ -314,6 +314,55 @@ pub fn goro() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
+// Pattern: こと (nominalization)
+// Structure: Verb + こと
+//
+// こと is a bound noun (名詞/非自立) used for nominalization.
+// Converts verbs into noun phrases (e.g., "doing X", "the act of X")
+//
+// Examples:
+// - することが嫌い (dislike faxing / the act of faxing)
+// - 過ぎないことが大事 (not using too much is important)
+// - なることをして (do things that cause...)
+//
+// Tokenization:
+// - Verb (any form: basic, negative, past, etc.) OR auxiliary verb
+// - こと (名詞/非自立/一般)
+//
+// Note: Matches verbs and auxiliary verbs only (not nouns like 勉強)
+// For compound verbs like 勉強する, matches just "する + こと", not the whole phrase
+pub fn koto() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct VerbOrAuxiliaryMatcher;
+    impl Matcher for VerbOrAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verbs and auxiliary verbs only
+            // Exclude nouns (even if they're サ変接続)
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞");
+            let is_auxiliary = token.pos.first().is_some_and(|pos| pos == "助動詞");
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+
+            (is_verb || is_auxiliary) && !is_noun
+        }
+    }
+
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.base_form == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrAuxiliaryMatcher)), // Verb or auxiliary verb
+        TokenMatcher::Custom(Arc::new(KotoMatcher)), // こと (bound noun)
+    ]
+}
+
 // Pattern: あとで (after/later)
 // Structures:
 // - Verb[た] + あとで
@@ -459,12 +508,7 @@ pub fn mitai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: こと
-pub fn koto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
-}
-
-// Pattern: そう 
+// Pattern: そう
 pub fn sou() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }

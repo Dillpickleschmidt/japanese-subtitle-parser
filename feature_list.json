@@ -2144,13 +2144,13 @@
   {
     "pattern_name": "こと",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In a very similar way to のは , こと is used in Japanese for nominalization (creating a noun-like phrase) [1 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

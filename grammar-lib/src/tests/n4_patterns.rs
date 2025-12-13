@@ -1195,3 +1195,66 @@ mod hajimeru_tests {
         assert_pattern_range(&patterns, "はじめる", 8, 16); // ならいはじめます
     }
 }
+
+// ========== こと (nominalization) ==========
+// Pattern: こと
+// Data source: grammar_points_data.json["こと"]
+//
+// Structure to test:
+//   - standard[0]: Verb + こと
+//
+// Examples from data:
+//   - ファックスをすることが嫌い (dislike faxing)
+//   - お金を使い過ぎないことが大事 (not using too much money is important)
+//   - 近所の迷惑になること (things that cause trouble)
+//
+// Note: こと is a bound noun (名詞/非自立) used for nominalization,
+// similar to のは. Creates noun phrases from verbs (e.g., "doing X", "the act of X")
+#[cfg(test)]
+mod koto_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + こと (dictionary form)
+    #[test]
+    fn test_koto_dictionary_form() {
+        let sentence = "ファックスをすることが嫌い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こと");
+        assert_pattern_range(&patterns, "こと", 6, 10); // すること
+    }
+
+    // Testing: standard[0] - Auxiliary verb + こと (negative form)
+    #[test]
+    fn test_koto_negative_form() {
+        let sentence = "お金を使い過ぎないことが大事です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こと");
+        assert_pattern_range(&patterns, "こと", 7, 11); // ないこと
+    }
+
+    // Testing: standard[0] - Verb + こと (basic verb)
+    #[test]
+    fn test_koto_verb_form() {
+        let sentence = "近所の迷惑になることをしてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こと");
+        assert_pattern_range(&patterns, "こと", 6, 10); // なること
+    }
+
+    // Testing: standard[0] - Verb + こと (simple non-compound verb)
+    #[test]
+    fn test_koto_simple_verb() {
+        let sentence = "食べることが好き";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こと");
+        assert_pattern_range(&patterns, "こと", 0, 5); // 食べること
+    }
+}
