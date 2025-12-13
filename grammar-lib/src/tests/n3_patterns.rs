@@ -3394,3 +3394,59 @@ mod zutto_u2461_tests {
         assert_pattern_range(&patterns, "ずっと ②", 8, 11); // ずっと
     }
 }
+
+// ========== だらけ (covered with/full of) ==========
+// Pattern: だらけ (covered with/full of - scattered state)
+// Data source: grammar_points_data.json["だらけ"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + だらけ
+//   standard[1]: Noun + だらけ + の + Noun
+
+mod darake_tests {
+    use super::*;
+
+    // Test: Noun + だらけ (without の)
+    #[test]
+    fn test_darake_holes() {
+        let sentence = "パンケーキの裏側が穴だらけで気持ち悪い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だらけ");
+        assert_pattern_range(&patterns, "だらけ", 9, 13); // 穴だらけ
+    }
+
+    // Test: Noun + だらけ (without の) - garbage
+    #[test]
+    fn test_darake_garbage() {
+        let sentence = "この公園はゴミだらけだから子供を連れて来たくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だらけ");
+        assert_pattern_range(&patterns, "だらけ", 5, 10); // ゴミだらけ
+    }
+
+    // Test: Noun + だらけ + の + Noun - scratches
+    #[test]
+    fn test_darake_no_scratches() {
+        let sentence = "傷だらけの車に乗っているのを見られたくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だらけ");
+        assert_pattern_range(&patterns, "だらけ", 0, 5); // 傷だらけの
+    }
+
+    // Test: Noun + だらけ + の + Noun - mud
+    #[test]
+    fn test_darake_no_mud() {
+        let sentence = "泥だらけの服を洗濯機にいれないで！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だらけ");
+        assert_pattern_range(&patterns, "だらけ", 0, 5); // 泥だらけの
+    }
+}

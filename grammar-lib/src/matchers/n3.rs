@@ -1760,9 +1760,38 @@ pub fn zutto_u2461() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(ZuttoMatcher))]
 }
 
-// Pattern: だらけ
+// Pattern: だらけ (covered with/full of - scattered state)
+// Structures: Noun + だらけ, Noun + だらけ + の + Noun
 pub fn darake() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match だらけ suffix (名詞/接尾/一般)
+    #[derive(Debug)]
+    struct DarakeSuffixMatcher;
+    impl Matcher for DarakeSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だらけ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match optional の particle (連体化)
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(DarakeSuffixMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoRentaikaMatcher)))),
+    ]
 }
 
 // Pattern: もっとも
