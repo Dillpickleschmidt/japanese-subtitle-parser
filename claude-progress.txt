@@ -1,5 +1,117 @@
 # Grammar-lib Development Progress
 
+## Session 150 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N4 patterns fully implemented (かもしれない + いか)
+**Patterns completed**: 2 new N4 construction patterns
+**Tests added**: 12 comprehensive tests (8 + 4)
+**Total tests**: 988 (was 976 at session start)
+
+### Accomplishments
+1. ✅ Implemented かもしれない pattern (N4) - "might/maybe" modal expression
+2. ✅ Implemented いか pattern (N4) - "equal to or less than / the following"
+3. ✅ All 12 tests passing with proper range assertions
+4. ✅ No test regressions - all 988 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### かもしれない (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (kamoshirenai function, lines 799-868)
+- **Tests**: 8 tests in n4_patterns.rs (mod kamoshirenai_tests, lines 2172-2282)
+- **Structures**:
+  - standard[0-3]: Verb/い-Adj/な-Adj/Noun + かもしれない
+  - polite[0-3]: Verb/い-Adj/な-Adj/Noun + かもしれません
+- **Tokenization**:
+  - Any token (verb/adjective/noun)
+  - かも (助詞/副助詞)
+  - しれ (動詞/自立, base=しれる, 未然形 or 連用形)
+  - ない (助動詞) OR ませ+ん (for polite form)
+- **Implementation**: 5-token matcher with optional ん
+  - KamoMatcher: Matches かも (助詞/副助詞)
+  - ShireMatcher: Matches しれ (動詞, base=しれる)
+  - NaiOrMasenMatcher: Matches ない or ませ
+  - NMasenMatcher: Optional ん for ません form
+- **Meaning**: "might", "maybe", "perhaps" - expresses uncertainty
+- **Pattern priority**: 1 (N4 conjugation)
+- **Pattern ranges**: Include full word/phrase + かもしれない/ません
+  - 増えるかもしれない (chars 8-17) - might increase
+  - 深いかもしれない (chars 5-13) - might be deep
+  - 無理かもしれない (chars 3-11) - might not be possible
+  - 教会かもしれない (chars 5-13) - might be a church
+  - 休むかもしれません (chars 3-12) - might rest (polite)
+  - 難しいかもしれません (chars 5-15) - might be difficult (polite)
+  - 本気かもしれません (chars 2-11) - might be serious (polite)
+  - 冗談かもしれません (chars 3-12) - might be a joke (polite)
+- **Key insights**:
+  - One of the most common modal expressions in Japanese
+  - Works with all parts of speech (verbs, adjectives, nouns)
+  - Polite form uses ません instead of ない
+  - Pattern successfully handles both forms with optional ん matcher
+
+#### いか (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (ika function, lines 1159-1177)
+- **Tests**: 4 tests in n4_patterns.rs (mod ika_tests, lines 2284-2345)
+- **Structures**:
+  - standard[0]: Noun + Amount + 以下（いか）
+  - standard[1]: それ + 以下（いか）
+  - Standalone: 以下 (the following/the rest)
+- **Tokenization**:
+  - いか (名詞/一般 OR 副詞/一般, base=いか)
+- **Implementation**: Single-token matcher
+  - IkaMatcher: Matches いか with pos=名詞 or 副詞
+- **Meaning**: "equal to or less than", "under", "the following"
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Just the いか token (2 characters)
+  - いか (chars 3-5) - after 17歳 (age)
+  - いか (chars 8-10) - after 30万円 (money)
+  - いか (chars 4-6) - standalone "the following"
+  - いか (chars 0-2) - sentence-initial "the rest"
+- **Key insights**:
+  - Simple pattern matching just the いか token
+  - Can follow amounts/quantities or stand alone
+  - Tokenized as either 名詞 or 副詞 depending on context
+  - Opposite of 以上 (いじょう) "or more"
+
+### Session Statistics
+- **Patterns implemented**: 2 (N4)
+- **Tests written**: 12 (8 + 4)
+- **Tests passing**: 988/988 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~271 (2 matcher implementations + 12 tests + 2 feature_list updates)
+
+### Key Insights
+- かもしれない is a fundamental N4 modal expression with wide usage
+- いか is a simple but important comparison/reference pattern
+- Both patterns demonstrate different complexity levels (multi-token vs single-token)
+- かもしれない handles dual forms (casual/polite) elegantly with optional matcher
+- This brings total N4 passing patterns from 26 to 28
+
+### Next Priorities
+Continue with N4 patterns (simple 1-2 structure patterns first):
+
+**Simple N4 patterns remaining**:
+1. **いがい** - "except/besides" (2 structures: Verb + 以外, Noun + 以外)
+2. **いたす** - humble speech verb (similar to する)
+3. **いらっしゃる** - honorific verb (similar to いる/行く/来る)
+4. **お〜する** - humble speech pattern
+5. **お～になる** - honorific pattern
+6. **かい** - casual question particle
+7. **かた** - "way of doing" (6 structures)
+
+**Recommendation**: Continue with simple particle/expression patterns before tackling honorific/humble speech patterns or complex conjugations.
+
+### Environment Status
+- ✅ All 988 tests passing (added 12 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 149 - 2025-12-13
 
 ### ✅ Session Summary
