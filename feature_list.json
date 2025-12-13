@@ -5322,13 +5322,13 @@
   {
     "pattern_name": "というのは",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "というのは is a phrase that combines the case marking particle と,  the う - Verb 言（い）う,  and the nominalizing particle comb... [3 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

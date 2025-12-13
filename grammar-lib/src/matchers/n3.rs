@@ -1167,9 +1167,95 @@ pub fn toiukotoda() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: というのは
+// Pattern: というのは (the thing known as, what I mean is)
+// Structures: というのは / とは
+// Note: って variant is handled by separate って pattern
 pub fn toiunoha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match という (compound particle)
+    #[derive(Debug)]
+    struct ToiuMatcher;
+    impl Matcher for ToiuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "という"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    // Match の as noun (nominalizer)
+    #[derive(Debug)]
+    struct NoNounMatcher;
+    impl Matcher for NoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match は (topic particle)
+    #[derive(Debug)]
+    struct HaTopicMatcher;
+    impl Matcher for HaTopicMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match と as case particle (for abbreviated form とは)
+    #[derive(Debug)]
+    struct ToCaseMatcher;
+    impl Matcher for ToCaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Full form: という + の + は
+    vec![
+        TokenMatcher::Custom(Arc::new(ToiuMatcher)),
+        TokenMatcher::Custom(Arc::new(NoNounMatcher)),
+        TokenMatcher::Custom(Arc::new(HaTopicMatcher)),
+    ]
+}
+
+// Pattern: とは (abbreviated form of というのは)
+pub fn toha() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match と as case particle
+    #[derive(Debug)]
+    struct TohaToMatcher;
+    impl Matcher for TohaToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match は (topic particle)
+    #[derive(Debug)]
+    struct TohaHaMatcher;
+    impl Matcher for TohaHaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Abbreviated form: と + は
+    vec![
+        TokenMatcher::Custom(Arc::new(TohaToMatcher)),
+        TokenMatcher::Custom(Arc::new(TohaHaMatcher)),
+    ]
 }
 
 // Pattern: 的 (like / -ish / -ly)

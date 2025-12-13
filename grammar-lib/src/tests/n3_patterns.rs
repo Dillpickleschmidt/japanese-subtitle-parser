@@ -7289,3 +7289,48 @@ mod totemo_nai_tests {
         assert_pattern_range(&patterns, "とても～ない", 7, 14); // とても行けない
     }
 }
+
+// Pattern: というのは (the thing known as, what I mean is)
+// Data source: grammar_points_data.json["というのは"]
+// Testing all structure variants
+#[cfg(test)]
+mod toiunoha_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Phrase + というのは + Definition/Reason"
+    // Example: 筋肉というのは (the thing known as muscles)
+    #[test]
+    fn test_toiunoha_full_form() {
+        let sentence = "筋肉というのは鍛えないとすぐになくなる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というのは");
+        assert_pattern_range(&patterns, "というのは", 2, 7); // というのは
+    }
+
+    // Testing: abbreviated form "とは"
+    // Example: おかずとは (what are side dishes)
+    #[test]
+    fn test_toha_abbreviated() {
+        let sentence = "おかずとはなんですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というのは_abbreviated");
+        assert_pattern_range(&patterns, "というのは_abbreviated", 3, 5); // とは
+    }
+
+    // Testing: casual abbreviated form "って"
+    // Example: 夢って (dreams as we know them)
+    // Note: って is detected by the separate って pattern, not というのは
+    #[test]
+    fn test_tte_casual() {
+        let sentence = "夢って簡単に諦められないよね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "って");
+        assert_pattern_range(&patterns, "って", 0, 3); // 夢って
+    }
+}

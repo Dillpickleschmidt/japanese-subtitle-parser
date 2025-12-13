@@ -2813,6 +2813,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    ToiunohaAbbreviated {
+        name: "というのは_abbreviated",
+        matcher_fn: crate::matchers::n3::toha,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Teki {
         name: "的",
         matcher_fn: crate::matchers::n3::teki,
