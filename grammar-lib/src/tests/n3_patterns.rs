@@ -3947,3 +3947,58 @@ mod ppanashi_tests {
     //     // 開けっぱなし = single token (名詞/一般) - not detectable as pattern
     // }
 }
+
+// Pattern: だって (because/but/even)
+// Data source: grammar_points_data.json["だって"]
+// Testing structure variants
+mod datte_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + （なん） + だって"
+    // Example: 俺だって行きたくないよ。 (Even I don't want to go.)
+    #[test]
+    fn test_datte_noun_even() {
+        let sentence = "俺だって行きたくないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だって");
+        assert_pattern_range(&patterns, "だって", 0, 4); // 俺だって
+    }
+
+    // Testing: structure.standard[0] - "Noun + （なん） + だって"
+    // Example: 誰だって傷つくよ (Anyone would get hurt)
+    #[test]
+    fn test_datte_noun_anyone() {
+        let sentence = "そんなこと言ったら、誰だって傷つくよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だって");
+        assert_pattern_range(&patterns, "だって", 10, 14); // 誰だって
+    }
+
+    // Testing: structure.standard[1] - "だって + Phrase"
+    // Example: だって、サメとか怖いもん。 (It's because I'm afraid of things like sharks.)
+    #[test]
+    fn test_datte_because_beginning() {
+        let sentence = "だって、サメとか怖いもん。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だって");
+        assert_pattern_range(&patterns, "だって", 0, 3); // だって
+    }
+
+    // Testing: structure.standard[1] - "だって + Phrase"
+    // Example: だって、俺の元カノも誘ったんでしょう？ (It's because you also invited my ex-girlfriend, right?)
+    #[test]
+    fn test_datte_because_explanation() {
+        let sentence = "え〜行きたくないよ。だって、俺の元カノも誘ったんでしょう？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だって");
+        assert_pattern_range(&patterns, "だって", 10, 13); // だって
+    }
+}

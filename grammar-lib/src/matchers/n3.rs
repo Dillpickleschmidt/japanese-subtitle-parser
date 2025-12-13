@@ -1201,9 +1201,29 @@ pub fn tokorodatta_u2460() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: だって
+// Pattern: だって (because/but/even)
+// Structures: Noun + だって (particle "even") OR だって + Phrase (conjunction "because/but")
 pub fn datte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DatteMatcher;
+    impl Matcher for DatteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Matches だって as either:
+            // 1. 接続詞 (conjunction) - sentence beginning "because/but"
+            // 2. 助詞/副助詞 (adverbial particle) - after noun "even"
+            token.surface == "だって"
+                && (token.pos.first().is_some_and(|pos| pos == "接続詞")
+                    || (token.pos.first().is_some_and(|pos| pos == "助詞")
+                        && token.pos.get(1).is_some_and(|pos| pos == "副助詞")))
+        }
+    }
+
+    // For particle form (Noun + だって), optionally match preceding noun to include it in range
+    // For conjunction form (だって + Phrase), just match だって
+    vec![
+        TokenMatcher::Optional(Box::new(super::noun_matcher())),
+        TokenMatcher::Custom(Arc::new(DatteMatcher)),
+    ]
 }
 
 // Pattern: んだって

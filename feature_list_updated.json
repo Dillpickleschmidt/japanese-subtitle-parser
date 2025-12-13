@@ -2158,13 +2158,13 @@
   {
     "pattern_name": "ことができる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like ことがある , ことができる is an expression that nominalizes what comes before it (turns it into a noun-phrase), and then hi... [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null
@@ -2956,13 +2956,13 @@
   {
     "pattern_name": "ということ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the ways to perform nominalization (turning a phrase into a noun) in Japanese is through the use of the expres... [1 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -4118,13 +4118,13 @@
   {
     "pattern_name": " ～と言っても",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As a construction that combines と言（い）う (presenting the previous statement as a quotation) and ても, meaning 'even if (A... [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4132,13 +4132,13 @@
   {
     "pattern_name": "Noun＋型",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "型（がた） , or sometimes 形（がた）, are two kanji that are often used as a suffix , to identify that something is 'shaped', o... [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4146,13 +4146,13 @@
   {
     "pattern_name": "Particle + の",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In Japanese, many particles are often grouped together with the case marking particle の [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4202,13 +4202,13 @@
   {
     "pattern_name": "〜ようとしない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like ～ ようと思う 'I think that I shall do (A)', ～ようとしない is a combination of a verb that has been grouped with the auxilia... [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4244,13 +4244,13 @@
   {
     "pattern_name": "あり",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "あり itself is the literary form of the う-Verb 有（あ）る 'to be', and is used in a similar way to なし [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4272,13 +4272,13 @@
   {
     "pattern_name": "いくら〜でも",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In a similar way to どんなに～ても, いくら～でも is regularly translated to 'no matter how (A), (B)' [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4328,13 +4328,13 @@
   {
     "pattern_name": "かけ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Being an unofficial helper verb, かけ is what is known as a 造語（ぞうご） (neologism), and carries one specific meaning when ... [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4370,13 +4370,13 @@
   {
     "pattern_name": "から言うと",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "からいうと (appearing with or without kanji) is a phrase in Japanese that is used to express a particular viewpoint or sta... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4412,13 +4412,13 @@
   {
     "pattern_name": "きり",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As an adverbial particle , きり may convey that 'upon (A)', where (A) is usually a verb, that action was the 'first and... [6 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4440,13 +4440,13 @@
   {
     "pattern_name": "くせに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "癖（くせ） is a noun that means 'habit' or 'tendency' [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4454,13 +4454,13 @@
   {
     "pattern_name": "くらい ②",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Often, the noun くらい is used as an adverbial particle [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4468,13 +4468,13 @@
   {
     "pattern_name": "こそ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "こそ is an adverbial particle in Japanese that primarily replaces either を or が [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4482,13 +4482,13 @@
   {
     "pattern_name": "ことか",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことか is a combination of こと 'thing', and the case marking particle か, used to present a question [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4496,13 +4496,13 @@
   {
     "pattern_name": "ことから",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to come to a logical conclusion about something in Japanese, sometimes strong expressions like ことから will be ... [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4510,13 +4510,13 @@
   {
     "pattern_name": "ことがある",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことがある is an expression in Japanese that combines the noun こと with the case marking particle が, and the う - Verb, ある [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4524,13 +4524,13 @@
   {
     "pattern_name": "ことだ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As a sentence ending particle , こと has two primary functions [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4552,13 +4552,13 @@
   {
     "pattern_name": "ことに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When 事（こと） 'thing' is combined with the case-marking particle に following a statement, it highlights that something i... [3 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4566,13 +4566,13 @@
   {
     "pattern_name": "ことにする",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In a similar way to how にする means to 'decide on' something, ことにする means to decide on a situation, or course of action [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4580,13 +4580,13 @@
   {
     "pattern_name": "ことになる",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことになる is an expression that combines the nominalizing use of こと (creating a noun-phrase), with the case marking parti... [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4594,13 +4594,13 @@
   {
     "pattern_name": "ことはない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことはない is an expression that has two primary purposes in Japanese [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4678,13 +4678,13 @@
   {
     "pattern_name": "さて",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Acting as a conjunction , さて is a word used when one wants to change the topic of conversation, or is ready to move o... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4692,13 +4692,13 @@
   {
     "pattern_name": "しかない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "しかない is a commonly used expression in Japanese that is partnered with verbs [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4706,13 +4706,13 @@
   {
     "pattern_name": "すでに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As a formal alternative to もう, the adverb 既（すで）に is used in Japanese as 'already' [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4720,13 +4720,13 @@
   {
     "pattern_name": "すると",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "すると , a combination of する and the conjunction particle と, is generally considered to be an abbreviation of そうすると , an... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4734,13 +4734,13 @@
   {
     "pattern_name": "ずっと ②",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In addition to the ずっと used to mean 'always', or 'non-stop', this adverb may also convey that one thing is 'by far (A... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4748,13 +4748,13 @@
   {
     "pattern_name": "ずに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although it is not considered to be one of the primary 18 auxiliary verbs that are used in modern Japanese, ず is a cl... [3 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4762,13 +4762,13 @@
   {
     "pattern_name": "ずにはいられない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned in our ずに lesson, ず is an auxiliary verb that is not commonly used in modern Japanese, except for in set... [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4776,13 +4776,13 @@
   {
     "pattern_name": "せいで",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although written almost exclusively in hiragana, せい is a noun that may be better understood from its kanji, 所為（せい）, m... [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4790,13 +4790,13 @@
   {
     "pattern_name": "そうすると",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そうすると , a combination of 然（そ）う (an adverb meaning 'like that', or 'as such') する and the conjunction particle と, expre... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4832,13 +4832,13 @@
   {
     "pattern_name": "そこで",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そこで (very rarely seen as 其処（そこ）で) is a combination of そこ 'there', and the case marking particle で [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4846,13 +4846,13 @@
   {
     "pattern_name": "そのため(に)",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そのために is a frequently used conjunction in Japanese that utilizes その , the noun ため 'reason' (occasionally seen as 為（ため... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4860,13 +4860,13 @@
   {
     "pattern_name": "その結果",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "その結果（けっか） is a conjunction in Japanese that is used to highlight the result of something that has been previously said [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4874,13 +4874,13 @@
   {
     "pattern_name": "それぞれ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "それぞれ is a noun in Japanese that is used similarly to 'each' in English [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4888,13 +4888,13 @@
   {
     "pattern_name": "たて",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "たて, coming from the verb 立（た）てる 'to stand' is a suffix in Japanese that is often used after the conjunctive form of v... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4902,13 +4902,13 @@
   {
     "pattern_name": "たとえ〜ても",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "たとえ, coming from 仮令（たとえ）, an adverb meaning 'supposing that', is a word in Japanese that is often used with ても (or でも... [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4916,13 +4916,13 @@
   {
     "pattern_name": "たとたんに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "たとたんに , frequently seen using its kanji form た途端（とたん）に is a structure used to convey that something happens 'the inst... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4930,13 +4930,13 @@
   {
     "pattern_name": "たびに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "度（たび）に is the adverbial form of the noun 度（たび）, meaning 'time' (as in 'at the time of') [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4944,13 +4944,13 @@
   {
     "pattern_name": "ため(に)",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ため (or 為（ため） in its kanji form) is a noun in Japanese that can be translated quite closely to 'sake' in English [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5042,13 +5042,13 @@
   {
     "pattern_name": "だらけ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "だらけ is a suffix that is used in Japanese to express when one thing is 'covered in', or 'filled with' another thing [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5126,13 +5126,13 @@
   {
     "pattern_name": "つい",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Appearing most frequently at the beginning of sentences, つい is an adverb that may be translated as 'accidentally', 'u... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5308,13 +5308,13 @@
   {
     "pattern_name": "ということだ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like ということ, an expression used for nominalizing a phrase in the fashion of 'the ~ that ~', ということだ makes use of the au... [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5630,13 +5630,13 @@
   {
     "pattern_name": "ないことはない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ないことはない is an expression that utilizes either the auxiliary verb ない, or the い-Adjective ない, depending on what type of... [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6316,13 +6316,13 @@
   {
     "pattern_name": "もっとも",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "もっとも , sometimes also seen as 尤（もっと）も, is a conjunction that is used to clarify when (A) is not the only important th... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6596,13 +6596,13 @@
   {
     "pattern_name": "再び",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "再（ふたた）び is an adverb that means 'to repeat' [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6820,13 +6820,13 @@
   {
     "pattern_name": "折角",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "折角（せっかく） is an idiomatic adverb that is often used to express doing something 'with trouble', 'at great pains', or 't... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6904,13 +6904,13 @@
   {
     "pattern_name": "直ちに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The adverb 直（ただ）ちに is commonly used in Japanese to convey that something is happening 'immediately', or 'at once' [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -7002,13 +7002,13 @@
   {
     "pattern_name": "遂に",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like とうとう , 遂（つい）に is an adverb that is frequently used to mean 'finally', or 'at last' [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -7086,13 +7086,13 @@
   {
     "pattern_name": "～ても～なくても",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like かどうか , another way that Japanese conveys 'whether or not' is through the use of ～ても～なくても [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -7100,13 +7100,13 @@
   {
     "pattern_name": "～というのは事実だ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "～というのは事実（じじつ）だ is a phrase used to strongly express that (A) is something that is 'true', 'a fact', or has 'no doubt' [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null

@@ -3119,7 +3119,7 @@ declare_patterns! {
     Datte {
         name: "だって",
         matcher_fn: crate::matchers::n3::datte,
-        priority: 1,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },

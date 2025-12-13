@@ -5028,13 +5028,13 @@
   {
     "pattern_name": "だって",
     "jlpt_level": "n3",
-    "category": "complete",
+    "category": "needs_implementation",
     "tests": {
-      "exists": true,
-      "has_range_assertion": true,
+      "exists": false,
+      "has_range_assertion": false,
       "has_print_debug": false
     },
-    "passes": true,
+    "passes": false,
     "description": "だって is a colloquial combination of the auxiliary verb だ , and the adverbial particle とて in Japanese (a combination of... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5098,13 +5098,13 @@
   {
     "pattern_name": "っぱなし",
     "jlpt_level": "n3",
-    "category": "complete",
+    "category": "needs_implementation",
     "tests": {
-      "exists": true,
-      "has_range_assertion": true,
+      "exists": false,
+      "has_range_assertion": false,
       "has_print_debug": false
     },
-    "passes": true,
+    "passes": false,
     "description": "っぱなし is a suffix that originally comes from the う - Verb 放（はな）す 'to let loose' [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
