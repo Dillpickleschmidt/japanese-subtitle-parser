@@ -115,9 +115,33 @@ pub fn dandan() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: どんどん
+// Pattern: どんどん (rapidly/quickly)
+// Structures: どんどん + (と) + Phrase
 pub fn dondon() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DondonMatcher;
+    impl Matcher for DondonMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どんどん"
+                && token.pos.first().is_some_and(|p| p == "副詞")
+                && token.pos.get(1).is_some_and(|p| p == "助詞類接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副詞化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DondonMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ToParticleMatcher)))),
+    ]
 }
 
 // Pattern: ～ら

@@ -2343,3 +2343,63 @@ mod ika_tests {
         assert_pattern_range(&patterns, "いか", 0, 2); // いか
     }
 }
+
+// ========== どんどん (rapidly/quickly) ==========
+// Pattern: どんどん
+// Data source: grammar_points_data.json["どんどん"]
+//
+// Structure to test:
+//   - standard[0]: どんどん + (と) + Phrase
+//
+// Examples from data:
+//   - どんどんお金が減っていく (cash is rapidly decreasing)
+//   - どんどん頼んでね (quickly order)
+//   - どんどんと減っている (with と particle)
+#[cfg(test)]
+mod dondon_tests {
+    use super::*;
+
+    // Testing: standard[0] - どんどん + Phrase (without と)
+    #[test]
+    fn test_dondon_decreasing() {
+        let sentence = "彼女ができてからどんどんお金が減っていく";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どんどん");
+        assert_pattern_range(&patterns, "どんどん", 8, 12); // どんどん
+    }
+
+    // Testing: standard[0] - どんどん + Phrase (quickly order)
+    #[test]
+    fn test_dondon_order() {
+        let sentence = "どんどん頼んでね！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どんどん");
+        assert_pattern_range(&patterns, "どんどん", 0, 4); // どんどん
+    }
+
+    // Testing: standard[0] - どんどん + と + Phrase (with optional と)
+    #[test]
+    fn test_dondon_with_to() {
+        let sentence = "バスの運転手がどんどんと減っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どんどん");
+        assert_pattern_range(&patterns, "どんどん", 7, 12); // どんどんと
+    }
+
+    // Testing: standard[0] - どんどん + Phrase (increasing)
+    #[test]
+    fn test_dondon_increasing() {
+        let sentence = "最近どんどん人口が増えているらしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どんどん");
+        assert_pattern_range(&patterns, "どんどん", 2, 6); // どんどん
+    }
+}
