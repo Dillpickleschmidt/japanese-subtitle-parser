@@ -1,10 +1,10 @@
 ## Session 190 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented で言うと pattern (N3)
-**Patterns completed**: 1 (で言うと)
-**Tests added**: 3 (all passing)
-**Total tests**: 1205 (was 1202)
+**Status**: COMPLETE - Successfully implemented 2 N3 patterns
+**Patterns completed**: 2 (で言うと, というより)
+**Tests added**: 7 (all passing)
+**Total tests**: 1209 (was 1202)
 
 ### Pattern Implemented: で言うと (if said with, speaking of)
 
@@ -41,17 +41,55 @@
 9. ✅ Updated feature_list.json
 10. ✅ Committed changes with detailed commit message
 
+### Pattern Implemented: というより (rather than saying, more like)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Structures tested**:
+1. Verb + というより (しているというより)
+2. い-Adjective + というより (低いというより)
+3. な-Adjective + だ + というより (暇だというより)
+4. Noun + (だ) + というより (公園というより - だ optional)
+
+**Implementation details**:
+- Pattern: Any + Optional(だ) + と(引用) + いう(基本形) + より(格助詞)
+- Custom matchers for each component:
+  - ToQuotationMatcher: と as quotation particle (助詞/格助詞/引用)
+  - IuMatcher: いう as verb in base form
+  - YoriMatcher: より as case marking particle
+  - DaCopulaMatcher: だ as copula (optional, for nouns/な-adjectives)
+- TokenMatcher::Any allows matching verb, adjective, or noun before pattern
+- Optional だ handles both "公園というより" and "暇だというより" cases
+
+**Test file**: grammar-lib/src/tests/n3_patterns.rs (lines 6994-7055)
+**Matcher file**: grammar-lib/src/matchers/n3.rs (lines 2446-2499)
+
+### Workflow followed (both patterns)
+1. ✅ Read grammar_points_data.json to understand all structure variants
+2. ✅ Checked for existing stub functions (found stubs for both patterns)
+3. ✅ Wrote tests with print_debug for ALL structure variants
+4. ✅ Analyzed tokenization output to understand token structure
+5. ✅ Implemented matchers based on actual tokenization (not assumptions)
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug and added proper assertions with correct ranges
+8. ✅ Verified all 1209 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes with detailed commit messages
+
 ### Key Learnings
-1. **Simple patterns are reliable**: Fixed 4-token sequence with clear POS tags works consistently
+1. **Simple patterns are reliable**: Fixed token sequences with clear POS tags work consistently
 2. **Custom matchers for precision**: Each particle matcher checks both surface form and POS tags
-3. **Pattern already registered**: The stub was already in patterns.rs, just needed implementation
-4. **Realistic test sentences**: Used examples from grammar_points_data.json adapted to natural speech
+3. **Pattern already registered**: Stubs were already in patterns.rs, just needed implementation
+4. **Optional matchers work well**: TokenMatcher::Optional handles structural variants elegantly
+5. **Realistic test sentences**: Used examples from grammar_points_data.json adapted to natural speech
 
 ### Statistics
-- **Session time**: ~1 hour
-- **Patterns completed this session**: 1
-- **Test success rate**: 3/3 (100%)
-- **Total passing tests**: 1205
+- **Session time**: ~2 hours
+- **Patterns completed this session**: 2
+- **Test success rate**: 7/7 (100%)
+- **Total passing tests**: 1209
 
 ### Next Session Recommendations
 1. **Continue with N3 priority 3 patterns**: Look for other simple fixed-sequence patterns
@@ -59,11 +97,12 @@
    - Simple particle patterns with existing stubs
    - Fixed verb conjugation patterns
    - Patterns with clear, unambiguous structure from grammar_points_data.json
+   - Patterns using と + verb constructions (similar structure to completed patterns)
 
 3. **Avoid**: Patterns with wildcards, multiple optionals, or variable-length components (like ～は～の一つだ)
 
 ### Environment Status
-- ✅ All 1205 tests passing
+- ✅ All 1209 tests passing
 - ✅ No regressions
 - ✅ Clean git state (changes committed)
 - ✅ feature_list.json updated
