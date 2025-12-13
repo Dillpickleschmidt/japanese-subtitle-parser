@@ -1,5 +1,89 @@
 # Grammar-lib Development Progress
 
+## Session 124 - 2025-12-13
+
+### ⚠️ Session Summary
+**Status**: Attempted だけでなく(て)～も pattern - incomplete/reverted
+**Patterns completed**: 0
+**Tests added**: 0 (reverted)
+**Total tests**: 776 (unchanged)
+
+### Work Attempted
+1. ⚠️ Started implementation of だけでなく(て)～も pattern (N3) - "not only...but also"
+2. ⚠️ Created matcher function in matchers/n3.rs
+3. ⚠️ Registered pattern in patterns.rs
+4. ⚠️ Wrote 5 tests with print_debug
+5. ⚠️ Pattern detected in 1 out of 5 test cases
+6. ✅ Reverted all changes to leave codebase clean
+
+### Issues Encountered
+**Problem**: Pattern matching inconsistently - only 1 of 5 tests detected the pattern
+
+**Root Cause Investigation**:
+- Pattern structure: Noun + だけ + で/じゃ + optional は + なく + optional て + wildcard + も
+- Tokenization variations between test cases (で/じゃ, with/without は, with/without て)
+- Fixed Matcher trait implementation (changed from `impl Matcher` to `impl super::Matcher`)
+- Pattern was detected in test with "じゃなくて" but not in tests with "ではなく" or "でなく"
+- One successful detection: "地だけじゃなくて動物園にも" (chars 2-15, confidence 7.4)
+- Confidence 7.4 was unexpected (priority was set to 6, then changed from 1 to 6)
+- Possible conflict with existing だけ pattern (priority 1.8)
+
+**Debugging Steps Taken**:
+1. Analyzed tokenization output for all 5 test sentences
+2. Verified matcher logic matches actual token sequences
+3. Changed `impl Matcher` to `impl super::Matcher` for all custom matchers
+4. Adjusted priority from 1 to 6
+5. Checked pattern registration and build output
+6. Verified pattern count (remains 924, but pattern was added to patterns.rs)
+7. Traced through expected token matching sequence - logic appeared sound
+
+**Technical Details**:
+- Tokenization showed:
+  - だけ = 助詞/副助詞
+  - で = 助動詞 (base: だ) OR じゃ = 助詞/副助詞
+  - は = 助詞/係助詞 (optional)
+  - なく = 助動詞 OR 形容詞 (base: ない)
+  - て = 助詞/接続助詞 (optional)
+  - ... wildcard (0-10 tokens) ...
+  - も = 助詞/係助詞
+- Matcher appeared logically correct but did not match consistently
+
+### Decision
+Rather than commit incomplete/partially-working code, reverted all changes to maintain clean codebase state per guidelines:
+- **Step 10 requirement**: "Leave codebase clean"
+- All 776 tests passing after revert
+- No regressions
+- Clean git state
+
+### Lessons Learned
+1. Pattern matching with multiple optional tokens requires more careful debugging
+2. Overlapping patterns (だけ vs だけでなく) may cause conflicts
+3. Wildcard matching with punctuation (、) may have edge cases
+4. Need better systematic debugging approach for complex multi-token patterns
+5. Time management: Should have chosen simpler pattern or allocated more time
+
+### Next Session Recommendations
+**High-priority actionable patterns** (simpler than だけでなく(て)～も):
+1. **ちゃんと・きちんと** - Simple adverb pattern (N3, 3 structures)
+2. **てごらん** - Honorific construction (N3, 2 structures)
+3. **っけ** - Sentence-ending particle (N3, 5 structures)
+4. **的** - Noun suffix pattern (N3, 2 structures)
+5. **中** - Duration suffix (N3, 3 structures)
+
+**だけでなく(て)～も** - Consider re-attempting with different approach:
+- Simplify matcher (remove optional particles, test basic structure first)
+- Debug why pattern matches "じゃなくて" but not "ではなく"
+- Investigate potential conflict with existing だけ pattern
+- Consider whether pattern priority or pattern matcher algorithm needs adjustment
+
+### Environment Status
+- ✅ All 776 tests passing (no changes)
+- ✅ No regressions
+- ✅ Clean git state (all changes reverted)
+- ✅ Ready for next pattern implementation
+
+---
+
 ## Session 123 - 2025-12-13
 
 ### ✅ Session Summary
