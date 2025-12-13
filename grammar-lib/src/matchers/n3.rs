@@ -1426,9 +1426,28 @@ pub fn sa_filler() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: さ - Casual よ
+// さ - Casual よ: Sentence-ending particle (drawing attention with confidence)
+// Structures: Phrase + さ
 pub fn sa_casual_yo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for さ as sentence-ending particle
+    #[derive(Debug)]
+    struct SaCasualYoMatcher;
+    impl Matcher for SaCasualYoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match さ as 助詞/終助詞 (sentence-ending particle)
+            token.surface == "さ"
+                && token.base_form == "さ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Phrase/content word before さ
+        TokenMatcher::Custom(Arc::new(SaCasualYoMatcher)),
+    ]
 }
 
 // Pattern: それぞれ (each/respectively)

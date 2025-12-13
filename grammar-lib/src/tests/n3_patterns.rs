@@ -4754,3 +4754,47 @@ mod pkke_tests {
         assert_pattern_range(&patterns, "っけ", 4, 9); // だったっけ
     }
 }
+
+// ========== さ - Casual よ (sentence-ending particle) ==========
+// Pattern: さ (drawing attention with high confidence - casual よ)
+// Data source: grammar_points_data.json["さ - Casual よ"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase + さ
+
+mod sa_casual_yo_tests {
+    use super::*;
+
+    // Test: Phrase + さ (sentence-ending)
+    #[test]
+    fn test_sa_sentence_ending() {
+        let sentence = "彼氏がもう私のことを信用できないってさ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さ - Casual よ");
+        assert_pattern_range(&patterns, "さ - Casual よ", 16, 19); // ってさ
+    }
+
+    // Test: Phrase + さ (with だって before)
+    #[test]
+    fn test_sa_with_datte() {
+        let sentence = "キヨミの赤ちゃんが明日生まれるんだってさ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さ - Casual よ");
+        assert_pattern_range(&patterns, "さ - Casual よ", 16, 20); // だってさ
+    }
+
+    // Test: Phrase + さ (emphatic affirmation)
+    #[test]
+    fn test_sa_emphatic() {
+        let sentence = "そんなこと心配ないさ！俺に任せとけ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さ - Casual よ");
+        assert_pattern_range(&patterns, "さ - Casual よ", 7, 10); // ないさ
+    }
+}
