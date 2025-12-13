@@ -267,9 +267,27 @@ pub fn hajimeru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: おわる
+// Pattern: おわる (finish doing)
+// Structure: Verb[stem/連用形] + 終わる
+//
+// Example tokenizations:
+// - 払いおわる: 払い(動詞/連用形) + おわる(動詞/基本形)
+// - 飲みおわって: 飲み(動詞/連用形) + おわっ(動詞/連用タ接続) + て
+// - 読みおわりました: 読み(動詞/連用形) + おわり(動詞/連用形) + ました
 pub fn owaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct OwaruMatcher;
+    impl Matcher for OwaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "おわる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(), // Verb in 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(OwaruMatcher)), // おわる (auxiliary verb)
+    ]
 }
 
 // Pattern: ごろ

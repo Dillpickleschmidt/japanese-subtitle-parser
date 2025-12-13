@@ -1878,13 +1878,13 @@
   {
     "pattern_name": "いがい",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to mark something as 'except (A)', or 'besides (A)', 以外（いがい） will be used [2 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -1934,13 +1934,13 @@
   {
     "pattern_name": "おわる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "To express that actions are beginning, or ending in Japanese, the verbs 始（はじ）める (to commence), or 終（お）わる (to end) wil... [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null

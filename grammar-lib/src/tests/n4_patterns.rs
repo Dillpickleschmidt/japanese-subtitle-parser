@@ -946,3 +946,64 @@ mod kana_tests {
         assert_pattern_range(&patterns, "かな", 7, 9); // かな
     }
 }
+
+// ========== おわる (finish doing) ==========
+// Pattern: おわる
+// Data source: grammar_points_data.json["おわる"]
+//
+// Structures to test:
+//   - standard[0]: Verb［stem］+ 終（お）わる
+//   - polite[0]: Verb［stem］+ 終（お）わります
+//
+// Examples from data:
+//   - 届けおわりました (finished delivering)
+//   - 払いおわる (will finish paying)
+//   - 食べおわるまで (until you finish eating)
+//   - 飲みおわってない (haven't finished drinking)
+//   - 読みおわりました (finished reading)
+#[cfg(test)]
+mod owaru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb[stem] + 終わる
+    #[test]
+    fn test_owaru_nonpast() {
+        let sentence = "明日払いおわるから安心して";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おわる");
+        assert_pattern_range(&patterns, "おわる", 2, 7); // 払いおわる
+    }
+
+    #[test]
+    fn test_owaru_te_form() {
+        let sentence = "そのコーヒー、まだ飲みおわってないの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おわる");
+        assert_pattern_range(&patterns, "おわる", 9, 14); // 飲みおわっ
+    }
+
+    // Testing: structure.polite[0] - Verb[stem] + 終わります
+    #[test]
+    fn test_owaru_polite_past() {
+        let sentence = "長いレポートでしたが、今日やっと読みおわりました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おわる");
+        assert_pattern_range(&patterns, "おわる", 16, 24); // 読みおわりました
+    }
+
+    #[test]
+    fn test_owaru_polite_nonpast() {
+        let sentence = "やっと読みおわりました！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おわる");
+        assert_pattern_range(&patterns, "おわる", 3, 11); // 読みおわりました
+    }
+}
