@@ -6736,13 +6736,13 @@
   {
     "pattern_name": "同士",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "同士（どうし） 'fellow' is a noun that may be used in the same way as a suffix [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

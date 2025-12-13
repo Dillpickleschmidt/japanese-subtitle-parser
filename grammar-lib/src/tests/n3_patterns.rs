@@ -4798,3 +4798,48 @@ mod sa_casual_yo_tests {
         assert_pattern_range(&patterns, "さ - Casual よ", 7, 10); // ないさ
     }
 }
+
+// ========== 同士 (fellow/mutually) ==========
+// Pattern: 同士 (fellow/mutually/together)
+// Data source: grammar_points_data.json["同士"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + 同士（どうし）
+//   standard[1]: Noun + 同士（どうし） + の + Noun
+
+mod doushi_tests {
+    use super::*;
+
+    // Test: Noun + 同士 (basic usage - friends together)
+    #[test]
+    fn test_doushi_basic() {
+        let sentence = "友達同士で旅行に行くことになった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "同士");
+        assert_pattern_range(&patterns, "同士", 0, 4); // 友達同士
+    }
+
+    // Test: Noun + 同士 (siblings)
+    #[test]
+    fn test_doushi_siblings() {
+        let sentence = "これは兄弟同士の問題だから口出しするな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "同士");
+        assert_pattern_range(&patterns, "同士", 3, 7); // 兄弟同士
+    }
+
+    // Test: Noun + 同士 + の + Noun (promise between friends)
+    #[test]
+    fn test_doushi_no_noun() {
+        let sentence = "友達同士の約束は必ず守るべきだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "同士");
+        assert_pattern_range(&patterns, "同士", 0, 4); // 友達同士
+    }
+}

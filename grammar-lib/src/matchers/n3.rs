@@ -3215,8 +3215,24 @@ pub fn moshimo_uff5e_nara_u30fb_moshimo_uff5e_demo() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 同士
+// Pattern: 同士 (fellow/mutually/together)
+// Structures: Noun + 同士
 pub fn doushi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DoushiMatcher;
+    impl Matcher for DoushiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "同士"
+                && token.base_form == "同士"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(DoushiMatcher)),
+    ]
 }
 
 // Pattern: がたい (difficult to do)
