@@ -720,9 +720,36 @@ pub fn teoku() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: がほしい
+// Pattern: がほしい (want something)
+// Structures: Noun + が + ほしい (+ です)
 pub fn gahoshii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.base_form == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct HoshiiMatcher;
+    impl Matcher for HoshiiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほしい"
+                && token.base_form == "ほしい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),                               // Noun (犬, 車, 時間, etc.)
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),   // が (格助詞)
+        TokenMatcher::Custom(Arc::new(HoshiiMatcher)),       // ほしい (形容詞/自立)
+    ]
 }
 
 // Pattern: てほしい

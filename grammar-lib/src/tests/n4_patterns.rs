@@ -1078,3 +1078,61 @@ mod gasuru_tests {
         assert_pattern_range(&patterns, "がする", 2, 8); // 香りがします
     }
 }
+
+// ========== がほしい (want something) ==========
+// Pattern: がほしい
+// Data source: grammar_points_data.json["がほしい"]
+//
+// Structures to test:
+//   - standard[0]: Noun + が + ほしい
+//   - polite[0]: Noun + が + ほしい + です
+//
+// Examples from data:
+//   - 新しい車がほしい (I want a new car)
+//   - 犬がほしい (I want a dog)
+#[cfg(test)]
+mod gahoshii_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Noun + が + ほしい
+    #[test]
+    fn test_gahoshii_standard() {
+        let sentence = "新しい車がほしいけど、今はお金がないから買えない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がほしい");
+        assert_pattern_range(&patterns, "がほしい", 3, 8); // 車がほしい
+    }
+
+    #[test]
+    fn test_gahoshii_simple() {
+        let sentence = "犬がほしいけどスペースがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がほしい");
+        assert_pattern_range(&patterns, "がほしい", 0, 5); // 犬がほしい
+    }
+
+    // Testing: structure.polite[0] - Noun + が + ほしい + です
+    #[test]
+    fn test_gahoshii_polite() {
+        let sentence = "もっと時間がほしいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がほしい");
+        assert_pattern_range(&patterns, "がほしい", 3, 11); // 時間がほしいです
+    }
+
+    #[test]
+    fn test_gahoshii_polite_question() {
+        let sentence = "何がほしいですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がほしい");
+        assert_pattern_range(&patterns, "がほしい", 0, 7); // 何がほしいです
+    }
+}
