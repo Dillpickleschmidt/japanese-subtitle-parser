@@ -2872,13 +2872,13 @@
   {
     "pattern_name": "てよかった",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When て (or で when following ない) is paired with the past form of the い-Adjective , いい ; てよかった , なくて よかった , or ないで よかった... [11 std, 11 pol]",
     "priority": 2,
     "skip_reason": null

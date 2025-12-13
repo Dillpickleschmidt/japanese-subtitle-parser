@@ -1817,9 +1817,65 @@ pub fn verb_te_2() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: てよかった
+// Pattern: てよかった - "glad that" / "I'm glad that..."
+// Structures: Various + て/で + よかった (+ optional です)
+// Can attach to verbs, adjectives, nouns via て or で
 pub fn teyokatta() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て/で particle OR で copula
+    // て or で particle: after て-form verbs/adjectives or ない
+    // で copula: after nouns/な-adjectives
+    #[derive(Debug)]
+    struct TeDeOrCopulaMatcher;
+    impl super::Matcher for TeDeOrCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Case 1: て or で particle (after verbs/adjectives/ない)
+            let is_particle = (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞");
+
+            // Case 2: で copula (after nouns/な-adjectives)
+            let is_copula = token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞");
+
+            is_particle || is_copula
+        }
+    }
+
+    // Match よかっ (the te-connecting form of よい)
+    #[derive(Debug)]
+    struct YokattaMatcher;
+    impl super::Matcher for YokattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よかっ"
+                && token.base_form == "よい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    // Match です (optional polite ending)
+    #[derive(Debug)]
+    struct DesuMatcher;
+    impl super::Matcher for DesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        // Match either て/で particle OR で copula
+        TokenMatcher::Custom(Arc::new(TeDeOrCopulaMatcher)),
+        // よかっ
+        TokenMatcher::Custom(Arc::new(YokattaMatcher)),
+        // た
+        super::past_auxiliary(),
+        // Optional です
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DesuMatcher)))),
+    ]
 }
 
 // Pattern: Verb［せる・させる］

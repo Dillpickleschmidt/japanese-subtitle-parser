@@ -3288,3 +3288,111 @@ mod teoku_tests {
         assert_pattern_range(&patterns, "ておく", 5, 10); // 汲んでおく
     }
 }
+
+// ========== てよかった (glad that) ==========
+// Pattern: てよかった
+// Data source: grammar_points_data.json["てよかった"]
+//
+// Structures to test:
+//   - standard[0]: Verb[て] + よかった
+//   - standard[1]: い-Adjective[て] + よかった
+//   - standard[2]: な-Adjective + で + よかった
+//   - standard[3]: Noun + で + よかった
+//   - standard[4]: Verb[なくて] + よかった (literary)
+//   - standard[5]: Verb[ないで] + よかった (spoken)
+//   - standard[6]: い-Adjective[なくて] + よかった
+//   - polite variants: + です
+//
+// Meaning: "I'm glad that..." (positive) or "I'm glad that I didn't..." (negative)
+#[cfg(test)]
+mod teyokatta_tests {
+    use super::*;
+
+    // Structure: Verb[て] + よかった
+    #[test]
+    fn teyokatta_verb_positive() {
+        let sentence = "やっぱり今日来てよかったね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てよかった");
+        assert_pattern_range(&patterns, "てよかった", 7, 12); // てよかった
+    }
+
+    // Structure: Verb[て] + よかった + です (polite)
+    #[test]
+    fn teyokatta_verb_polite() {
+        let sentence = "この本を買ってよかったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てよかった");
+        assert_pattern_range(&patterns, "てよかった", 6, 13); // てよかったです
+    }
+
+    // Structure: い-Adjective[くて] + よかった
+    #[test]
+    fn teyokatta_i_adjective() {
+        let sentence = "天気が良くてよかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てよかった");
+        assert_pattern_range(&patterns, "てよかった", 5, 10); // てよかった
+    }
+
+    // Structure: な-Adjective + で + よかった
+    #[test]
+    fn teyokatta_na_adjective() {
+        let sentence = "部屋が静かでよかったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てよかった");
+        assert_pattern_range(&patterns, "てよかった", 5, 12); // でよかったです
+    }
+
+    // Structure: Noun + で + よかった
+    #[test]
+    fn teyokatta_noun() {
+        let sentence = "彼が先生でよかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てよかった");
+        assert_pattern_range(&patterns, "てよかった", 4, 9); // でよかった
+    }
+
+    // Structure: Verb[なくて] + よかった (literary/formal)
+    #[test]
+    fn teyokatta_verb_negative_nakute() {
+        let sentence = "あの携帯を買わなくてよかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てよかった");
+        assert_pattern_range(&patterns, "てよかった", 9, 14); // てよかった
+    }
+
+    // Structure: Verb[ないで] + よかった (casual spoken)
+    #[test]
+    fn teyokatta_verb_negative_naide() {
+        let sentence = "あの時に別れないでよかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てよかった");
+        assert_pattern_range(&patterns, "てよかった", 8, 13); // でよかった
+    }
+
+    // Structure: い-Adjective[なくて] + よかった
+    #[test]
+    fn teyokatta_i_adjective_negative() {
+        let sentence = "値段が高くなくてよかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てよかった");
+        assert_pattern_range(&patterns, "てよかった", 7, 12); // てよかった
+    }
+}
