@@ -6553,3 +6553,59 @@ mod toshite_tests {
         assert_pattern_range(&patterns, "として", 5, 8); // として
     }
 }
+
+// ========== にしては (considering / for) ==========
+// Pattern: にしては (considering / for)
+// Data source: grammar_points_data.json["にしては"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + にしては
+//   standard[1]: Noun + にしては
+
+mod nishiteha_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[ている] + にしては
+    #[test]
+    fn test_verb_teiru_nishiteha() {
+        let sentence = "毎日勉強をしているにしては全然漢字を読めない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしては");
+        assert_pattern_range(&patterns, "にしては", 9, 13); // にしては
+    }
+
+    // Testing: standard[0] - Verb[たばかり] + にしては
+    #[test]
+    fn test_verb_tabakari_nishiteha() {
+        let sentence = "始めたばかりにしては結構じょうずだね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしては");
+        assert_pattern_range(&patterns, "にしては", 6, 10); // にしては
+    }
+
+    // Testing: standard[1] - Noun + にしては
+    #[test]
+    fn test_noun_nishiteha() {
+        let sentence = "田舎にしてはコンビニがいっぱいあるね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしては");
+        assert_pattern_range(&patterns, "にしては", 2, 6); // にしては
+    }
+
+    // Testing: standard[1] - Noun + にしては (actor example)
+    #[test]
+    fn test_noun_nishiteha_actor() {
+        let sentence = "あの人は俳優にしてはあまりイケメンじゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしては");
+        assert_pattern_range(&patterns, "にしては", 6, 10); // にしては
+    }
+}

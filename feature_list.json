@@ -5742,13 +5742,13 @@
   {
     "pattern_name": "にしては",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like として , にして highlights an aspect of something from which another thing happens [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
