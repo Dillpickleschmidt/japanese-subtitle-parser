@@ -1001,9 +1001,41 @@ pub fn rutokoroda() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: のに 
+// Pattern: のに (despite)
+// Structures: Verb/い-Adj + のに, Noun/な-Adj + な + のに
 pub fn noni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match な (助動詞, 特殊・ダ, 体言接続) for nouns and な-adjectives
+    #[derive(Debug)]
+    struct NaAuxiliaryMatcher;
+    impl super::Matcher for NaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ダ")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match のに (助詞/接続助詞)
+    #[derive(Debug)]
+    struct NoniParticleMatcher;
+    impl super::Matcher for NoniParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "のに"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NaAuxiliaryMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(NoniParticleMatcher)),
+    ]
 }
 
 // Pattern: とおもう

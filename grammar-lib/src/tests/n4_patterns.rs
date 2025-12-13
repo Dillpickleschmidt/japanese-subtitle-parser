@@ -4778,3 +4778,61 @@ mod gahitsuyou_tests {
         assert_pattern_range(&patterns, "がひつよう", 14, 19); // がひつよう
     }
 }
+
+// Pattern: のに  (despite)
+// Data source: grammar_points_data.json["のに "]
+// Structures:
+//   - standard[0]: Verb + のに
+//   - standard[1]: い-Adjective + のに
+//   - standard[2]: な-Adjective + な + のに
+//   - standard[3]: Noun + な + のに
+//
+// Meaning: "despite", "even though", "in spite of" - shows that B is unexpected given A
+#[cfg(test)]
+mod noni_tests {
+    use super::*;
+
+    // Structure: Verb + のに
+    #[test]
+    fn verb_noni() {
+        let sentence = "明日テストがあるのに彼は勉強をしないでゲームをしている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のに ");
+        assert_pattern_range(&patterns, "のに ", 6, 10); // あるのに
+    }
+
+    // Structure: い-Adjective + のに
+    #[test]
+    fn i_adjective_noni() {
+        let sentence = "何で納豆は臭いのに美味しいの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のに ");
+        assert_pattern_range(&patterns, "のに ", 5, 9); // 臭いのに
+    }
+
+    // Structure: な-Adjective + な + のに
+    #[test]
+    fn na_adjective_noni() {
+        let sentence = "彼はイケメンなのにいつも汗臭い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のに ");
+        assert_pattern_range(&patterns, "のに ", 2, 9); // イケメンなのに
+    }
+
+    // Structure: Noun + な + のに
+    #[test]
+    fn noun_noni() {
+        let sentence = "この車はスポーツカーなのに遅い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のに ");
+        assert_pattern_range(&patterns, "のに ", 4, 13); // スポーツカーなのに
+    }
+}
