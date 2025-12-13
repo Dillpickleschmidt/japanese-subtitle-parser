@@ -4570,3 +4570,48 @@ mod teki_tests {
         assert_pattern_range(&patterns, "的", 4, 8); // 宗教的な
     }
 }
+
+// ========== てごらん (please try to) ==========
+// Pattern: てごらん (please try to - honorific suggestion)
+// Data source: grammar_points_data.json["てごらん"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[て] + ごらん
+//   standard[1]: Verb[て] + ごらんなさい
+
+mod tegoran_tests {
+    use super::*;
+
+    // Test: Verb[て] + ごらん (basic form)
+    #[test]
+    fn test_tegoran_basic() {
+        let sentence = "この本を読んでごらん";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てごらん");
+        assert_pattern_range(&patterns, "てごらん", 4, 10); // 読んでごらん
+    }
+
+    // Test: Verb[て] + ごらん (different verb)
+    #[test]
+    fn test_tegoran_look() {
+        let sentence = "外を見てごらん。虹が出ているよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てごらん");
+        assert_pattern_range(&patterns, "てごらん", 2, 7); // 見てごらん
+    }
+
+    // Test: Verb[て] + ごらんなさい (with なさい - stronger form)
+    #[test]
+    fn test_tegoran_nasai() {
+        let sentence = "見てごらんなさい、こんな酷いこと";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てごらん");
+        assert_pattern_range(&patterns, "てごらん", 0, 8); // 見てごらんなさい
+    }
+}

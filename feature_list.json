@@ -5168,13 +5168,13 @@
   {
     "pattern_name": "てごらん",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "てご覧（らん） is an honorific language expression in Japanese that is used in a similar way to なさい [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

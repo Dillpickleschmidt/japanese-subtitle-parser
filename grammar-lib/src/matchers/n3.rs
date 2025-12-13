@@ -426,9 +426,51 @@ pub fn nountasukata_compound() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(KataKeiCompoundMatcher))]
 }
 
-// Pattern: てごらん
+// てごらん: Please try to (honorific suggestion)
+// Structures: Verb[て] + ごらん, Verb[て] + ごらんなさい
 pub fn tegoran() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for て/で conjunction particle
+    #[derive(Debug)]
+    struct TeDeConjunctionMatcher;
+    impl Matcher for TeDeConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for ごらん as bound verb noun
+    #[derive(Debug)]
+    struct GoranMatcher;
+    impl Matcher for GoranMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ごらん"
+                && token.base_form == "ごらん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "動詞非自立的")
+        }
+    }
+
+    // Matcher for optional なさい (imperative form)
+    #[derive(Debug)]
+    struct NasaiMatcher;
+    impl Matcher for NasaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なさい"
+                && token.base_form == "なさる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeConjunctionMatcher)),
+        TokenMatcher::Custom(Arc::new(GoranMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NasaiMatcher)))),
+    ]
 }
 
 // Pattern: Particle + の (nominalization with particles)
