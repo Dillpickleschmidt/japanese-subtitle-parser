@@ -116,3 +116,35 @@ mod iyoiyo_tests {
         assert_pattern_range(&patterns, "いよいよ", 12, 16); // いよいよ
     }
 }
+
+// Pattern: おそらく (probably, perhaps)
+// Data source: grammar_points_data.json["おそらく"]
+// Testing: structure.standard[0] - "おそらく + Phrase"
+//
+// Structure variants:
+//   - standard[0]: おそらく + Phrase
+//   - No polite forms listed
+
+mod osoraku_tests {
+    use super::*;
+
+    #[test]
+    fn test_osoraku_with_conjecture() {
+        let sentence = "あいつの不自然な行動からして、おそらくあいつが犯人だろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おそらく");
+        assert_pattern_range(&patterns, "おそらく", 15, 19); // おそらく
+    }
+
+    #[test]
+    fn test_osoraku_at_start() {
+        let sentence = "おそらく明日は雨なので、ピクニックは中止しましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おそらく");
+        assert_pattern_range(&patterns, "おそらく", 0, 4); // おそらく
+    }
+}
