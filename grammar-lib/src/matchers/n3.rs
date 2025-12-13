@@ -2815,9 +2815,41 @@ pub fn younakigasuru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: とても～ない
+// Pattern: とても～ない (not at all)
+// Structures: とても + ... + ない (with at least one verb somewhere)
 pub fn totemo_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match とても (adverb)
+    #[derive(Debug)]
+    struct TotemoMatcher;
+    impl Matcher for TotemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "とても"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match ない (negative auxiliary)
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ない"
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(TotemoMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 8,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: 別に〜ない

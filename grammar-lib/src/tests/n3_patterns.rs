@@ -7245,3 +7245,47 @@ mod toiuriyuude_tests {
         assert_pattern_range(&patterns, "という理由で", 8, 15); // そういう理由で
     }
 }
+
+// Pattern: とても～ない (not at all)
+// Data source: grammar_points_data.json["とても～ない"]
+// Testing all structure variants
+#[cfg(test)]
+mod totemo_nai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "とても + Verb[ない]"
+    // Example: とても理解できない (cannot understand at all)
+    #[test]
+    fn test_totemo_nai_potential_verb() {
+        let sentence = "その考え方はとても理解できないんだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とても～ない");
+        assert_pattern_range(&patterns, "とても～ない", 6, 15); // とても理解できない
+    }
+
+    // Testing: structure.standard[0] - "とても + Verb[ない]"
+    // Example: とても信じられない (cannot believe at all)
+    #[test]
+    fn test_totemo_nai_potential_passive() {
+        let sentence = "彼はいつも嘘ばかりだからとても信じられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とても～ない");
+        assert_pattern_range(&patterns, "とても～ない", 12, 21); // とても信じられない
+    }
+
+    // Testing: とても + regular verb + ない
+    // Example: とても行けない
+    #[test]
+    fn test_totemo_nai_regular_negative() {
+        let sentence = "あんな場所にはとても行けないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とても～ない");
+        assert_pattern_range(&patterns, "とても～ない", 7, 14); // とても行けない
+    }
+}
