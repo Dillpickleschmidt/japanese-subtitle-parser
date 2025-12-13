@@ -1199,3 +1199,39 @@ pub fn toiwareteiru() -> Vec<TokenMatcher> {
 pub fn bayokatta() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
+
+// Pattern: し～し (listing reasons with equal weight)
+// Structures: Verb/い-Adj + し, な-Adj/Noun + だ + し
+pub fn shi_u301c_shi() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct ShiParticleMatcher;
+    impl super::Matcher for ShiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "し"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DaCopulaMatcher;
+    impl super::Matcher for DaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token
+                    .features
+                    .get(4)
+                    .is_some_and(|f| f == "特殊・ダ")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, い-Adjective, な-Adjective (名詞/形容動詞語幹), or Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaCopulaMatcher)))), // Optional だ (for na-adj/noun)
+        TokenMatcher::Custom(Arc::new(ShiParticleMatcher)), // し (接続助詞)
+    ]
+}

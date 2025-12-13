@@ -412,3 +412,67 @@ mod toiukoto_tests {
         assert_pattern_range(&patterns, "ということ", 3, 9); // 人工ってこと
     }
 }
+
+// ========== し～し (and, conjunction for listing reasons) ==========
+// Pattern: し～し
+// Data source: grammar_points_data.json["し～し "]
+//
+// Structures to test:
+//   - standard[0]: Verb (A) + し + （Verb (B) + し）
+//   - standard[1]: ［い］Adjective (A) + し + （［い］Adjective (B) + し）
+//   - standard[2]: ［な］Adjective (A) + だ + し + （［な］Adjective (B) + だ + し）
+//   - standard[3]: Noun (A) + だ + し + （Noun (B) + だ + し）
+//
+// Examples from data:
+//   - 弾けるし、できるし (can play and can do)
+//   - 高いし、まずいし (expensive and doesn't taste good)
+//   - 真面目だし、親切だし (serious and kind)
+//   - 休みだし、晴れだし (day off and sunny)
+#[cfg(test)]
+mod shi_shi_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb (A) + し + （Verb (B) + し）
+    #[test]
+    fn test_shi_shi_verb() {
+        let sentence = "彼女はピアノが弾けるし、スポーツができるし、彼女に出来ないことはないと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "し～し ");
+        assert_pattern_range(&patterns, "し～し ", 7, 11); // 弾けるし
+    }
+
+    // Testing: structure.standard[1] - ［い］Adjective (A) + し + （［い］Adjective (B) + し）
+    #[test]
+    fn test_shi_shi_i_adjective() {
+        let sentence = "このレストランは高いし、まずいし、何もいいところがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "し～し ");
+        assert_pattern_range(&patterns, "し～し ", 12, 16); // まずいし (first match)
+    }
+
+    // Testing: structure.standard[2] - ［な］Adjective (A) + だ + し + （［な］Adjective (B) + だ + し）
+    #[test]
+    fn test_shi_shi_na_adjective() {
+        let sentence = "彼は真面目だし、親切だし、彼と友達でよかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "し～し ");
+        assert_pattern_range(&patterns, "し～し ", 2, 7); // 真面目だし
+    }
+
+    // Testing: structure.standard[3] - Noun (A) + だ + し + （Noun (B) + だ + し）
+    #[test]
+    fn test_shi_shi_noun() {
+        let sentence = "今日は休みだし、晴れだし、今日は公園に行こう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "し～し ");
+        assert_pattern_range(&patterns, "し～し ", 3, 7); // 休みだし
+    }
+}

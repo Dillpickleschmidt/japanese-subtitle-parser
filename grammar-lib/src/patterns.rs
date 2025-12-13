@@ -2450,6 +2450,14 @@ declare_patterns! {
         jlpt: "n4",
     },
 
+    ShiU301cShi {
+        name: "し～し ",
+        matcher_fn: crate::matchers::n4::shi_u301c_shi,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
     // ========== N3 PATTERNS ==========
 
     Tte {
