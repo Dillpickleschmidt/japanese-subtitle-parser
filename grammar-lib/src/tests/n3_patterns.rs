@@ -3615,3 +3615,60 @@ mod tatotannini_tests {
         assert_pattern_range(&patterns, "たとたんに", 2, 8); // 閉じた途端に
     }
 }
+
+// ========== ため(に) (for the sake of / in order to) ==========
+// Pattern: ため(に) - purpose/goal expression
+// Data source: grammar_points_data.json["ため(に)"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[る] + ため(に)
+//   standard[1]: Noun + の + ため(に)
+
+mod tameni_purpose_tests {
+    use super::*;
+
+    // Test: Verb[る] + ために - purpose with に
+    #[test]
+    fn test_tameni_verb_purpose_ni() {
+        let sentence = "新しい家を建てるために、土地を買った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ため(に)");
+        assert_pattern_range(&patterns, "ため(に)", 5, 11); // 建てるために
+    }
+
+    // Test: Verb[る] + ため - purpose without に
+    #[test]
+    fn test_tameni_verb_purpose_no_ni() {
+        let sentence = "勉強をするため、親に机を買ってもらった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ため(に)");
+        assert_pattern_range(&patterns, "ため(に)", 3, 7); // するため
+    }
+
+    // Test: Noun + の + ために - purpose with に
+    #[test]
+    fn test_tameni_noun_purpose_ni() {
+        let sentence = "私のためにやって。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ため(に)");
+        assert_pattern_range(&patterns, "ため(に)", 0, 5); // 私のために
+    }
+
+    // Test: Noun + の + ため - purpose without に
+    #[test]
+    fn test_tameni_noun_purpose_no_ni() {
+        let sentence = "君のために買ってあげたのに、誰かにあげちゃったの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ため(に)");
+        assert_pattern_range(&patterns, "ため(に)", 0, 5); // 君のために
+    }
+}
+

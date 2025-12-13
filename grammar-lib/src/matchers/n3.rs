@@ -469,9 +469,53 @@ pub fn noni_2() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ため(に)
+// Pattern: ため(に) (for the sake of / in order to - purpose)
+// Structures: Verb[る] + ため(に) / Noun + の + ため(に)
 pub fn tame_ni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TameMatcher;
+    impl Matcher for TameMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ため as 名詞/非自立/副詞可能
+            token.surface == "ため"
+                && token.base_form == "ため"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match に as 助詞/格助詞
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match の as 助詞/連体化 (nominalizing particle)
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoRentaikaMatcher,
+        )))), // Optional の for nouns
+        TokenMatcher::Custom(Arc::new(TameMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiParticleMatcher,
+        )))), // Optional に
+    ]
 }
 
 // Pattern: ために

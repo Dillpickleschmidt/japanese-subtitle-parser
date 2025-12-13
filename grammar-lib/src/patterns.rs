@@ -2711,7 +2711,7 @@ declare_patterns! {
     TameNi {
         name: "ため(に)",
         matcher_fn: crate::matchers::n3::tame_ni,
-        priority: 1,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },
