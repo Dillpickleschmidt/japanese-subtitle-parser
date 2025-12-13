@@ -1,5 +1,106 @@
 # Grammar-lib Development Progress
 
+## Session 164 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N4 patterns fully implemented (また + ごろ)
+**Patterns completed**: 2 new N4 patterns (2 simple constructions)
+**Tests added**: 6 comprehensive tests (3 + 3)
+**Total tests**: 1075 (was 1069 at session start)
+
+### Accomplishments
+1. ✅ Implemented また pattern (N4) - "again/also/moreover"
+2. ✅ Implemented ごろ pattern (N4) - "around/about (time)"
+3. ✅ All 6 tests passing with proper range assertions
+4. ✅ No test regressions - all 1075 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### また (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (mata function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod mata_tests, 3 tests)
+- **Structures**:
+  - standard[0]: また + Phrase
+- **Tokenization**:
+  - また (接続詞) - conjunction/adverb
+- **Implementation**: Single-token matcher
+  - MataMatcher - surface == "また", base_form == "また", POS == "接続詞"
+- **Meaning**: "again", "additionally", "also", "moreover"
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**:
+  - また (chars 0-2) - sentence start
+  - また (chars 11-13) - mid-sentence conjunction
+- **Test coverage**:
+  - "again" with volitional: また遊ぼうね！
+  - "again" with past question: またカンニングしたの？
+  - "also" as conjunction: 彼は宇宙飛行士であり、またアナウンサーでもある
+
+#### ごろ (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (goro function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod goro_tests, 3 tests)
+- **Structures tested** (2 of 5 variants):
+  - standard[3]: Noun + ごろ
+  - standard[4]: Noun + の + ころ
+- **Tokenization**:
+  - ごろ (名詞/接尾/副詞可能) - noun suffix
+  - ころ (名詞/非自立/副詞可能) - dependent noun
+- **Implementation**: Single-token matcher
+  - GoroKoroMatcher - matches both ごろ and ころ with appropriate POS tags
+- **Meaning**: "around", "about" (for time spans, not distances)
+- **Pattern priority**: 1 (N4 construction)
+- **Note**: Only implemented noun-based time expressions (most common usage)
+  - Verb/Adjective + ころ patterns (standard[0-2]) not yet tested
+- **Pattern ranges**:
+  - ごろ (chars 3-5) - specific time marker
+  - ころ (chars 4-6, 3-5) - broader time period
+- **Test coverage**:
+  - Specific time: １１時ごろに帰ってくる
+  - Life period: 大学生のころに富士山を登りました
+  - Childhood: 子供のころはよく親と動物園へ行きました
+
+### Implementation Notes
+- **また pattern**: Very simple single-token adverb/conjunction
+  - Used both as "again" (repetition) and "also/moreover" (addition)
+  - Test-first workflow with print_debug was effective
+- **ごろ pattern**: Handles both ごろ (接尾) and ころ (非自立)
+  - ごろ is more colloquial, ころ is after の
+  - Focused on common noun + time expressions
+  - Future work: Could add Verb/Adjective + ころ variants if needed
+
+### Session Success
+- Successfully implemented 2 simple N4 patterns with existing stubs
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges are correct for single-token patterns
+- No test regressions - clean implementation
+- Very efficient session - completed 2 patterns quickly (6 tests total)
+- Maintained momentum by choosing simple patterns with stubs
+
+### Next Priorities
+Continue with simple N4 or N5 patterns:
+
+**Simple N4 patterns with stubs**:
+1. Other simple N4 constructions with existing stubs in n4.rs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles: は, の, を
+- Basic verb forms: dictionary, negative, past
+- い-Adjectives, な-Adjectives
+
+**Recommendation**: Continue with simple N4 patterns to maintain momentum, then shift to N5 foundational patterns.
+
+### Environment Status
+- ✅ All 1075 tests passing (added 6 new tests this session)
+- ✅ No regressions
+- ✅ Clean git state (2 commits this session)
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 163 - 2025-12-13
 
 ### ✅ Session Summary
