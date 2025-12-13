@@ -1,5 +1,98 @@
 # Grammar-lib Development Progress
 
+## Session 140 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N4 patterns fully implemented (たとえば + かな)
+**Patterns completed**: 2 new N4 construction patterns
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 898 (was 890 at session start)
+
+### Accomplishments
+1. ✅ Implemented たとえば pattern (N4) - "for example"
+2. ✅ Implemented かな pattern (N4) - "I wonder"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 898 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### たとえば (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (tatoeba function, lines 1068-1082)
+- **Tests**: 4 tests in n4_patterns.rs (mod tatoeba_tests, lines 848-891)
+- **Structure**: standard[0]: たとえば + Phrase
+- **Tokenization**: たとえば = 接続詞 (single token conjunction)
+- **Implementation**: Single-token matcher (TatoebaMatcher)
+- **Meaning**: "for example" - conjunction to introduce examples
+- **Pattern priority**: 1 (N4 construction/conjunction)
+- **Pattern ranges**: Full single token
+  - たとえば (chars 0-4, 8-12) - adverb at start or mid-sentence
+
+#### かな (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (kana function, lines 465-497)
+- **Tests**: 4 tests in n4_patterns.rs (mod kana_tests, lines 905-948)
+- **Structure**: standard[0]: Sentence + かな
+- **Tokenization**: Two separate tokens
+  - か = 助詞/副助詞／並立助詞／終助詞
+  - な = 助詞/終助詞
+- **Implementation**: 2-token matcher (KaParticleMatcher + NaEndingParticleMatcher)
+- **Meaning**: "I wonder" - sentence-ending particle expressing speaker's thoughts
+- **Pattern priority**: 1 (N4 construction/sentence-ending particle)
+- **Pattern ranges**: Full two-token sequence
+  - かな (chars 7-9, 12-14, 14-16) - sentence-ending particle
+
+### Technical Details
+- **Pattern priorities**: Both patterns priority 1 (N4 construction)
+- **Test coverage**: All structure variants from grammar_points_data.json (1 standard each, 0 polite)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insights**:
+  - たとえば: Simple single-token conjunction matcher
+  - かな: Two-token particle sequence (か + な)
+- **Pattern similarity**: Both are straightforward particle/conjunction patterns
+
+### Session Statistics
+- **Patterns implemented**: 2 (N4)
+- **Tests written**: 8 (4 per pattern)
+- **Tests passing**: 898/898 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~168 (2 matcher implementations + 8 tests + 2 feature_list updates)
+
+### Key Insights
+- Simple adverb/particle patterns follow consistent implementation pattern
+- たとえば is a single-token conjunction (接続詞)
+- かな tokenizes as two separate particles (か + な), not a single かな token
+- Both matchers check surface, base_form, and POS tags for accuracy
+- Test sentences are realistic examples from grammar_points_data.json
+- Pattern ranges include full grammatical constructions
+- Successfully implemented 2 common N4 patterns in one session
+
+### Next Priorities
+Continue with N4 patterns (simple 1-2 structure patterns first):
+
+**Simple N4 patterns to implement next** (1-2 structures):
+1. **それで** - "so/therefore" (1 structure, conjunction)
+2. **それでも** - "even so/nevertheless" (1 structure, conjunction)
+3. **それに** - "besides/moreover" (1 structure, conjunction)
+4. **だんだん** - "gradually" (1 structure, adverb)
+5. **とうとう** - "finally/at last" (1 structure, adverb)
+6. **どんどん** - "rapidly/steadily" (1 structure, adverb)
+7. **なるべく** - "as much as possible" (1 structure, adverb)
+8. **まず** - "first of all" (1 structure, adverb)
+9. **また** - "also/again" (1 structure, adverb)
+
+**Recommendation**: Continue with simple single-structure adverb/conjunction patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 898 tests passing (added 8 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next pattern implementation or session termination
+
+---
+# Grammar-lib Development Progress
+
 ## Session 138 - 2025-12-13
 
 ### ✅ Session Summary
