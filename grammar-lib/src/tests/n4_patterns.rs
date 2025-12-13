@@ -4836,3 +4836,59 @@ mod noni_tests {
         assert_pattern_range(&patterns, "のに ", 4, 13); // スポーツカーなのに
     }
 }
+
+// ============================================================================
+// なくてもいい - "don't have to / it's okay not to"
+// ============================================================================
+// Pattern: なくてもいい (don't have to)
+// Data source: grammar_points_data.json["なくてもいい"]
+// Structures to test:
+//   - standard[0]: Verb[なくて] + (も) + いい
+//   - polite[0]: Verb[なくて] + (も) + いい + です
+mod nakutemoii_tests {
+    use super::*;
+
+    // Structure: Verb[なくて] + も + いい (standard with も)
+    #[test]
+    fn verb_nakutemoii_with_mo() {
+        let sentence = "ミカは悪くないから謝らなくてもいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてもいい");
+        assert_pattern_range(&patterns, "なくてもいい", 9, 17); // 謝らなくてもいい
+    }
+
+    // Structure: Verb[なくて] + いい (casual without も)
+    #[test]
+    fn verb_nakuteii_without_mo() {
+        let sentence = "今日は会社に来なくていいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてもいい");
+        assert_pattern_range(&patterns, "なくてもいい", 6, 12); // 来なくていい
+    }
+
+    // Structure: Verb[なくて] + も + いい + です (polite)
+    #[test]
+    fn verb_nakutemoii_polite() {
+        let sentence = "その手紙はもう届けなくてもいいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてもいい");
+        assert_pattern_range(&patterns, "なくてもいい", 7, 17); // 届けなくてもいいです
+    }
+
+    // Structure: Verb[なくて] + も + いい (negative context)
+    #[test]
+    fn verb_nakutemoii_negative_permission() {
+        let sentence = "宿題をしなくてもいいと言われた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくてもいい");
+        assert_pattern_range(&patterns, "なくてもいい", 3, 10); // しなくてもいい
+    }
+}

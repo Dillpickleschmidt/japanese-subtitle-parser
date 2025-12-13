@@ -2270,9 +2270,63 @@ pub fn teiruaidani() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: なくてもいい
+// Pattern: なくてもいい (don't have to / it's okay not to)
+// Structures: Verb[なくて] + (も) + いい (+ です)
 pub fn nakutemoii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for なく (助動詞, 連用テ接続 form of ない)
+    #[derive(Debug)]
+    struct NakuAuxiliaryMatcher;
+    impl Matcher for NakuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|form| form == "連用テ接続")
+        }
+    }
+
+    // Matcher for て (助詞/接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for も (助詞/係助詞) - optional
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for いい (形容詞/非自立)
+    #[derive(Debug)]
+    struct IiAdjectiveMatcher;
+    impl Matcher for IiAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb in 未然形 (before なく)
+        TokenMatcher::Custom(Arc::new(NakuAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(IiAdjectiveMatcher)),
+    ]
 }
 
 // Pattern: てみる (try doing)
