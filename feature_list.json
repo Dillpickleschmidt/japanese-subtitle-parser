@@ -5000,13 +5000,13 @@
   {
     "pattern_name": "だけしか",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "だけしか is a combination of two adverbial particles , だけ 'only', and しか 'nothing but' [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null

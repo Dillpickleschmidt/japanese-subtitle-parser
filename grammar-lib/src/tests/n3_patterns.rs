@@ -5135,3 +5135,59 @@ mod sae_ba_tests {
         assert_pattern_range(&patterns, "さえ〜ば", 4, 10); // でさえあれば
     }
 }
+
+// ========== だけしか (only/nothing but) ==========
+// Pattern: だけしか (only/nothing but) - combination of だけ and しか
+// Data source: grammar_points_data.json["だけしか"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + だけしか + ない
+//   polite[0]: Noun + だけしか + ありません
+
+mod dakeshika_tests {
+    use super::*;
+
+    // Test: Noun + だけしか + Verb[ない]
+    #[test]
+    fn test_dakeshika_verb_nai() {
+        let sentence = "私は日本語だけしか話せないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけしか");
+        assert_pattern_range(&patterns, "だけしか", 2, 15); // 日本語だけしか話せないです
+    }
+
+    // Test: Noun + だけしか + Verb[られない]
+    #[test]
+    fn test_dakeshika_potential_nai() {
+        let sentence = "彼は野菜だけしか食べられません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけしか");
+        assert_pattern_range(&patterns, "だけしか", 2, 15); // 野菜だけしか食べられません
+    }
+
+    // Test: Noun + だけしか + ない (existential)
+    #[test]
+    fn test_dakeshika_existential() {
+        let sentence = "土曜日だけしか空いてる日がないから、出来たら土曜日がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけしか");
+        assert_pattern_range(&patterns, "だけしか", 0, 15); // 土曜日だけしか空いてる日がない
+    }
+
+    // Test: Noun + だけしか + じゃない (copula negative)
+    #[test]
+    fn test_dakeshika_janai() {
+        let sentence = "このコップだけしか５００円ではないの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけしか");
+        assert_pattern_range(&patterns, "だけしか", 2, 17); // コップだけしか５００円ではない
+    }
+}

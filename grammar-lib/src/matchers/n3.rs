@@ -1957,9 +1957,60 @@ pub fn dakedenaku_te_uff5e_mo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: だけしか
+// Pattern: だけしか (only/nothing but)
+// Structures: Noun + だけ + しか + ない
 pub fn dakeshika() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だけ as adverbial particle
+    #[derive(Debug)]
+    struct DakeParticleMatcher;
+    impl super::Matcher for DakeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match しか as bound particle
+    #[derive(Debug)]
+    struct ShikaParticleMatcher;
+    impl super::Matcher for ShikaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しか"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match negative forms: ない (助動詞 or 形容詞), ません, ん
+    #[derive(Debug)]
+    struct NegativeFormMatcher;
+    impl super::Matcher for NegativeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ない can be 助動詞 (auxiliary) or 形容詞 (i-adjective)
+            if token.base_form == "ない" {
+                token.pos.first().is_some_and(|pos| pos == "助動詞" || pos == "形容詞")
+            } else {
+                // ます or ん are always 助動詞
+                token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    && (token.base_form == "ます" || token.base_form == "ん")
+            }
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(DakeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ShikaParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NegativeFormMatcher)),
+    ]
 }
 
 // Pattern: は言うまでもない ①
