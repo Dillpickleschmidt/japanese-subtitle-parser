@@ -1,5 +1,84 @@
 # Grammar-lib Development Progress
 
+## Session 158 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: ていた pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 construction pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 1038 (was 1035 at session start)
+
+### Accomplishments
+1. ✅ Implemented ていた pattern (N4) - "was doing / past progressive"
+2. ✅ All 3 tests passing with proper range assertions
+3. ✅ No test regressions - all 1038 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### ていた (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (teita function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod teita_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Verb[ている] + た
+  - polite[0]: Verb[ている] + ました
+- **Tokenization**:
+  - Standard: Verb (連用形/連用タ接続) + て/で (助詞) + い (動詞/非自立, base=いる, 連用形) + た (助動詞)
+  - Polite: Verb (連用形) + て/で (助詞) + い (いる, 連用形) + まし (助動詞) + た (助動詞)
+- **Implementation**: Five-token matcher with optional まし
+  - flexible_verb_form: Matches verbs in 連用形 or 連用タ接続
+  - TeDeFormMatcher: Matches て or で particles
+  - IruRenyoukeiMatcher: Matches いる in 連用形 (い)
+  - Optional mashi_form: Matches まし for polite form
+  - past_auxiliary: Matches た
+- **Meaning**: "was doing", "past progressive/resultative"
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**:
+  - 歌っていた (chars 13-18) - was singing (action)
+  - 壊れていた (chars 5-10) - was broken (state)
+  - かけていました (chars 6-13) - was doing (polite)
+- **Test coverage**:
+  - Action: 昨日は夜遅くまでカラオケで歌っていたのでのどが痛い
+  - Resultative state: シャワーが壊れていたから二日間もシャワーを浴びれなかった
+  - Polite form: 昔はパーマをかけていました
+
+### Implementation Notes
+- Successfully used test-first workflow with print_debug to understand tokenization
+- Key insight: いる must be in 連用形 (い) before た/ました
+- Pattern correctly handles both progressive actions and resultative states
+- Optional matcher for まし handles polite form elegantly
+- Confidence: 2.6-3.0 (correctly prioritized with other ている patterns)
+
+### Session Success
+- Successfully implemented a fundamental N4 past progressive pattern
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern quickly with good test coverage
+
+### Next Priorities
+Continue with simple N4 て-form patterns:
+
+**Simple N4 patterns to implement next**:
+1. **てある** - "state of completion" (1 std, 1 pol)
+2. **てみる** - "try to" (1 std, 1 pol)
+3. **てほしい** - "want someone to" (1 std, 1 pol)
+4. **てよかった** - "glad that..." (simple pattern)
+5. Other simple N4 constructions with stubs
+
+**Recommendation**: Continue with て-form constructions. The ていた implementation shows good handling of compound auxiliary patterns.
+
+### Environment Status
+- ✅ All 1038 tests passing (added 3 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 157 - 2025-12-13 (continued)
 
 ### ✅ Updated Session Summary
