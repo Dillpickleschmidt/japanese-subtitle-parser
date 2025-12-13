@@ -1,17 +1,18 @@
 ## Session 182 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: として pattern (N3) fully implemented
-**Patterns completed**: 1 new N3 particle pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 1169 (was 1165 at session start)
+**Status**: TWO N3 patterns fully implemented (として + にしては)
+**Patterns completed**: 2 new N3 particle patterns
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 1173 (was 1165 at session start)
 
 ### Accomplishments
 1. ✅ Implemented として pattern (N3) - "as / in the capacity of" particle
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 1169 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented にしては pattern (N3) - "considering / for" particle
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 1173 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
 ### Pattern Implementation: として (As / In the capacity of)
 - **Structures**:
@@ -38,44 +39,75 @@
 - **Works with various following elements**: は, も, の, direct nouns, etc.
 - Test-first workflow with print_debug was very effective for confirming simple tokenization
 
-### Test-First Workflow Success
-This implementation followed the prescribed workflow perfectly:
-1. ✅ Created 4 tests with print_debug for all structure variants
-2. ✅ Analyzed tokenization output to confirm single-token structure
-3. ✅ Implemented simple matcher based on actual tokenization data
-4. ✅ All tests detected pattern on first iteration
+### Pattern Implementation: にしては (Considering / For)
+- **Structures**:
+  - standard[0]: Verb + にしては
+  - standard[1]: Noun + にしては
+- **Tokenization**:
+  - にしては tokenizes as FOUR separate tokens:
+    - に (助詞/格助詞/一般)
+    - し (動詞/自立, from する, 連用形)
+    - て (助詞/接続助詞)
+    - は (助詞/係助詞)
+- **Implementation**: Four custom matchers, one for each token component
+  - NiParticleMatcher - matches に (助詞/格助詞)
+  - ShiVerbMatcher - matches し from する verb
+  - TeParticleMatcher - matches て (助詞/接続助詞)
+  - HaParticleMatcher - matches は (助詞/係助詞)
+- **Meaning**: "considering (A), (B)" or "even for (A), (B)" - while (A), (B) happens/exists simultaneously
+- **Pattern priority**: 1 (N3 construction)
+- **Pattern ranges**:
+  - にしては (chars 9-13) - after ている
+  - にしては (chars 6-10) - after たばかり
+  - にしては (chars 2-6) - after Noun (田舎)
+  - にしては (chars 6-10) - after Noun (俳優)
+- **Test coverage**: 4 tests covering both structure variants with realistic subtitle-quality sentences
+
+### Test-First Workflow Success (Both Patterns)
+Both implementations followed the prescribed workflow perfectly:
+1. ✅ Created tests with print_debug for all structure variants
+2. ✅ Analyzed tokenization output to understand token structure
+3. ✅ Implemented matchers based on actual tokenization data
+4. ✅ All tests detected patterns on first iteration
 5. ✅ Removed print_debug and added proper assertions
 6. ✅ All tests pass with correct character ranges
+
+### Implementation Notes
+- **として**: Simplest possible pattern - single token matcher
+- **にしては**: More complex - four-token sequence showing particle decomposition
+- **Related patterns**: Both として and にしては use the にして base, but:
+  - として: Single compound particle (助詞/格助詞/連語)
+  - にしては: Decomposes to に + し + て + は (4 separate tokens)
+- Test-first workflow with print_debug was essential for understanding tokenization differences
 
 ### Next Priorities
 Continue with simple N3 patterns with stubs:
 
 **Simple N3 patterns to implement next**:
-1. **にしては** - "considering / for" (has stub: nishiteha function)
-2. **にしても** - "even if" (has stub: nishitemo function)
-3. **ないうちに** - "before / while not"
-4. **ながらも** - "while / although"
-5. Other simple construction patterns
+1. **にしても** - "even if" (has stub: nishitemo function - likely similar to にしては)
+2. **ないうちに** - "before / while not"
+3. **ながらも** - "while / although"
+4. Other simple construction patterns
 
 **Or continue with N4 patterns**:
 - Simple N4 constructions with existing stubs
 
-**Recommendation**: Continue with simple N3 patterns that have stubs. The として pattern was very straightforward (single token) and demonstrates excellent mastery of the test-first workflow.
+**Recommendation**: Continue with にしても next since it's likely very similar to にしては (probably に + し + て + も instead of は). This session demonstrates excellent efficiency completing two related N3 particle patterns.
 
 ### Environment Status
-- ✅ All 1169 tests passing (added 4 new tests this session)
+- ✅ All 1173 tests passing (added 8 new tests this session - 4 per pattern)
 - ✅ No regressions
-- ✅ Clean git state (1 commit)
-- ✅ feature_list.json updated
+- ✅ Clean git state (2 commits)
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next session or termination
 
 ### Session Statistics
-- **Patterns completed**: 1
-- **Tests added**: 4
-- **Commits**: 1 implementation commit
+- **Patterns completed**: 2 (として + にしては)
+- **Tests added**: 8 (4 per pattern)
+- **Commits**: 2 implementation commits
 - **Test success rate**: 100% (all tests pass)
 - **Regressions**: 0
-- **Time efficiency**: Excellent (simple single-token pattern completed quickly)
+- **Time efficiency**: Excellent (completed 2 related N3 patterns efficiently)
 
 ---
 
