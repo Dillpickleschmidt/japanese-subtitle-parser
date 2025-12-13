@@ -527,8 +527,48 @@ pub fn particle_no() -> Vec<TokenMatcher> {
 }
 
 // Pattern: である
+// Pattern: である (formal copula - formal equivalent of だ)
+// Structures: Noun/な-Adjective + である / Noun/な-Adjective + であります
 pub fn dearu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct DeAuxiliaryMatcher;
+    impl Matcher for DeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct AruAuxiliaryMatcher;
+    impl Matcher for AruAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ある" || token.surface == "あり")
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun or na-Adjective
+        TokenMatcher::Custom(Arc::new(DeAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(AruAuxiliaryMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: ところが

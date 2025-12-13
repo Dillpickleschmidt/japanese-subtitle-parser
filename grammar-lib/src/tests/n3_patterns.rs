@@ -5297,3 +5297,83 @@ mod temo_kamawanai_tests {
         assert_pattern_range(&patterns, "てもかまわない", 3, 12); // なくてもかまわない
     }
 }
+
+// ========== である (formal copula) ==========
+// Pattern: である (formal equivalent of だ)
+// Data source: grammar_points_data.json["である"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + である
+//   standard[1]: な-Adjective + である
+//   polite[0]: Noun + であります
+//   polite[1]: な-Adjective + であります
+
+mod dearu_tests {
+    use super::*;
+
+    // Test: standard[0] - Noun + である (sentence-ending)
+    #[test]
+    fn test_noun_dearu_sentence_ending() {
+        let sentence = "日本一デカイ博物館はこの博物館である";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "である");
+        assert_pattern_range(&patterns, "である", 12, 18); // 博物館である
+    }
+
+    // Test: standard[1] - な-Adjective + である (attributive form)
+    #[test]
+    fn test_na_adjective_dearu_attributive() {
+        let sentence = "重要である箇所をまとめた資料がこちらです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "である");
+        assert_pattern_range(&patterns, "である", 0, 5); // 重要である
+    }
+
+    // Test: standard[0] - Noun + である (mid-sentence)
+    #[test]
+    fn test_noun_dearu_mid_sentence() {
+        let sentence = "ここから悲しいことが起きるのである";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "である");
+        assert_pattern_range(&patterns, "である", 13, 17); // のである
+    }
+
+    // Test: polite[0] - Noun + であります
+    #[test]
+    fn test_noun_dearimasu() {
+        let sentence = "名前はタナカであります！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "である");
+        assert_pattern_range(&patterns, "である", 3, 11); // タナカであります
+    }
+
+    // Test: polite[0] - Noun + であります (topic marker)
+    #[test]
+    fn test_noun_dearimasu_topic() {
+        let sentence = "私達が会えたのは運命であります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "である");
+        assert_pattern_range(&patterns, "である", 8, 15); // 運命であります
+    }
+
+    // Test: polite[1] - な-Adjective + であります
+    #[test]
+    fn test_na_adjective_dearimasu() {
+        let sentence = "この問題は極めて重要であります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "である");
+        assert_pattern_range(&patterns, "である", 8, 15); // 重要であります
+    }
+}
