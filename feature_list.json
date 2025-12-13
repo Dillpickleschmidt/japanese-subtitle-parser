@@ -5238,13 +5238,13 @@
   {
     "pattern_name": "ではなくて・じゃなくて",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the auxiliary verb だ is seen in its negative conjugated form, it states that (A) is not correct, but (B) is [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

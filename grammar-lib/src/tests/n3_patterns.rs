@@ -5846,3 +5846,83 @@ mod deha_soredewa_jaa_tests {
         assert_pattern_range(&patterns, "では・それでは・じゃあ", 0, 2); // じゃ
     }
 }
+
+// Pattern: ではなくて・じゃなくて (negative copula te-form)
+// Data source: grammar_points_data.json["ではなくて・じゃなくて"]
+// Testing: structure.standard[0] - Verb + の + ではなく（て）
+//          structure.standard[1] - い-Adjective + の + ではなく（て）
+//          structure.standard[2] - な-Adjective + ではなく（て）
+//          structure.standard[3] - Noun + ではなく（て）
+//          structure.standard[4] - じゃなく（て） variant
+//
+// Meaning: "not...but" - negates (A) and contrasts with (B)
+// Note: で can be は+で or just で; て is optional
+mod dewanakute_janakute_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + の + ではなくて
+    #[test]
+    fn test_verb_no_dewanakute() {
+        let sentence = "事故を起こしたら逃げるのではなくて、警察に電話をしてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ではなくて・じゃなくて");
+        assert_pattern_range(&patterns, "ではなくて・じゃなくて", 11, 17); // のではなくて
+    }
+
+    // Testing: standard[1] - い-Adjective + の + ではなくて
+    #[test]
+    fn test_i_adj_no_dewanakute() {
+        let sentence = "赤いのではなくて、青いのをください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ではなくて・じゃなくて");
+        assert_pattern_range(&patterns, "ではなくて・じゃなくて", 2, 8); // のではなくて
+    }
+
+    // Testing: standard[2] - な-Adjective + ではなくて
+    #[test]
+    fn test_na_adj_dewanakute() {
+        let sentence = "今日は暇ではなくて忙しいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ではなくて・じゃなくて");
+        assert_pattern_range(&patterns, "ではなくて・じゃなくて", 4, 9); // ではなくて
+    }
+
+    // Testing: standard[3] - Noun + ではなくて
+    #[test]
+    fn test_noun_dewanakute() {
+        let sentence = "メールではなくて、ファックスで送ってください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ではなくて・じゃなくて");
+        assert_pattern_range(&patterns, "ではなくて・じゃなくて", 3, 8); // ではなくて
+    }
+
+    // Testing: standard[3] - Noun + でなくて (without は)
+    #[test]
+    fn test_noun_denakute() {
+        let sentence = "彼は正社員でなくて、アルバイトです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ではなくて・じゃなくて");
+        assert_pattern_range(&patterns, "ではなくて・じゃなくて", 5, 9); // でなくて
+    }
+
+    // Testing: standard[4] - Noun + じゃなくて (casual)
+    #[test]
+    fn test_noun_janakute() {
+        let sentence = "その建物は刑務所じゃなくて、学校です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ではなくて・じゃなくて");
+        assert_pattern_range(&patterns, "ではなくて・じゃなくて", 8, 13); // じゃなくて
+    }
+}
