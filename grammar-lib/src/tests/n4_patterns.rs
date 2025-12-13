@@ -1315,3 +1315,64 @@ mod verb_te_imperative_tests {
         assert_pattern_range(&patterns, "Verb[て]", 0, 3); // 待って
     }
 }
+
+// ============================================================================
+// Number + しか〜ない - "only (number)" with negative verb
+// ============================================================================
+// Pattern: Number + しか〜ない (only number)
+// Data source: grammar_points_data.json["Number + しか〜ない"]
+// Testing: structure.standard[0] - "Number + しか + Verb［ない］"
+//
+// Meaning: "only (number)" - しか must be used with negative verbs
+// Example: 五キロしか走れない。 (I can only run 5 km.)
+mod number_shika_nai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Number + しか + Verb[ない] (can only run 5km)
+    #[test]
+    fn test_number_shika_nai_distance() {
+        let sentence = "今日は五キロしか走れない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Number + しか〜ない");
+        // Pattern starts from counter (キロ) rather than number (五)
+        assert_pattern_range(&patterns, "Number + しか〜ない", 4, 12); // キロしか走れない
+    }
+
+    // Testing: standard[0] - Number + しか + Verb[ていない] (have only 100 yen)
+    #[test]
+    fn test_number_shika_nai_money() {
+        let sentence = "今日は１００円しか持っていない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Number + しか〜ない");
+        // Pattern starts from counter (円) rather than numbers (１００)
+        assert_pattern_range(&patterns, "Number + しか〜ない", 6, 15); // 円しか持っていない
+    }
+
+    // Testing: standard[0] - Number + しか + Verb[べない] (can only play 2 hours)
+    #[test]
+    fn test_number_shika_nai_time() {
+        let sentence = "２時間しか遊べない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Number + しか〜ない");
+        // Pattern starts from counter (時間)
+        assert_pattern_range(&patterns, "Number + しか〜ない", 1, 9); // 時間しか遊べない
+    }
+
+    // Testing: standard[0] - Number + しか + ありません (polite negative)
+    #[test]
+    fn test_number_shika_arimasen() {
+        let sentence = "３個しかありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Number + しか〜ない");
+        // Pattern starts from counter (個)
+        assert_pattern_range(&patterns, "Number + しか〜ない", 1, 9); // 個しかありません
+    }
+}

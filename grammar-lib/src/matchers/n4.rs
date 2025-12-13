@@ -1016,8 +1016,69 @@ pub fn ma() -> Vec<TokenMatcher> {
 }
 
 // Pattern: Number + しか〜ない
+// Pattern: Number + しか〜ない - "only (number)" with negative verb
+// Structures: Number + しか + Verb[ない]
+// Meaning: "only (number)" - しか must be used with negative verbs
+// Example: 五キロしか走れない。 (I can only run 5 km.)
 pub fn number_shika_u301c_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for numbers (名詞/数)
+    #[derive(Debug)]
+    struct NumberMatcher;
+    impl super::Matcher for NumberMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "数")
+        }
+    }
+
+    // Matcher for counters (名詞/接尾/助数詞)
+    #[derive(Debug)]
+    struct CounterMatcher;
+    impl super::Matcher for CounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助数詞")
+        }
+    }
+
+    // Matcher for しか particle (助詞/係助詞)
+    #[derive(Debug)]
+    struct ShikaMatcher;
+    impl super::Matcher for ShikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しか"
+                && token.base_form == "しか"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for negative auxiliary ない or ん (for ません)
+    #[derive(Debug)]
+    struct NegativeAuxiliaryMatcher;
+    impl super::Matcher for NegativeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && ((token.base_form == "ない") || (token.base_form == "ん"))
+        }
+    }
+
+    vec![
+        // Match the counter (which comes after numbers in sequences like 五キロ, １００円)
+        // The pattern starts matching from the counter token for simplicity
+        TokenMatcher::Custom(Arc::new(CounterMatcher)),
+        TokenMatcher::Custom(Arc::new(ShikaMatcher)),
+        // Wildcard to allow various verb forms before negative (0-10 tokens)
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NegativeAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: ～は～の一つだ
