@@ -1,10 +1,10 @@
 ## Session 192 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented といえば pattern (N3)
-**Patterns completed**: 1 (といえば)
-**Tests added**: 3 (all passing)
-**Total tests**: 1219 (was 1216)
+**Status**: COMPLETE - Successfully implemented 2 N3 patterns
+**Patterns completed**: 2 (といえば, という理由で)
+**Tests added**: 6 (all passing)
+**Total tests**: 1222 (was 1216)
 
 ### Pattern Implemented: といえば (speaking of, when it comes to)
 
@@ -51,22 +51,67 @@
 3. **Clean implementation**: Using EndingMatcher with OR conditions keeps the code simple
 4. **Semantic differences**: といえば (hypothetical), というと (concrete), といったら (situational) - all structurally identical
 
+### Pattern Implemented: という理由で (for that reason, being that)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Structures tested**:
+1. という理由で (という + 理由 + で)
+2. そういう理由で (そういう + 理由 + で)
+
+**Implementation details**:
+- Pattern: (という or そういう) + 理由 + で
+- という is a single compound particle (助詞/格助詞/連語), NOT split into と + いう
+- そういう is an adnominal (連体詞) - pre-noun adjective
+- Both variants matched with single pattern using OR logic in custom matcher
+- Custom matchers for each component:
+  - ToiuOrSoiuMatcher: という or そういう (OR condition)
+  - RiyuuMatcher: 理由 as noun
+  - DeMatcher: で as case marking particle
+- Simple 3-token pattern works for both variants
+- という appears as compound particle (not split) when used in set phrases
+
+**Test file**: grammar-lib/src/tests/n3_patterns.rs (lines 7209-7247)
+**Matcher file**: grammar-lib/src/matchers/n3.rs (lines 5058-5127)
+
+### Workflow followed (both patterns)
+1. ✅ Read grammar_points_data.json to understand all structure variants
+2. ✅ Checked for existing stub functions (found both stubs)
+3. ✅ Wrote tests with print_debug for all variants
+4. ✅ Analyzed tokenization output to understand token structure
+5. ✅ Implemented matchers based on actual tokenization
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug and added proper assertions with correct ranges
+8. ✅ Verified all 1222 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes with detailed commit messages
+
+### Key Learnings
+1. **Compound particles**: という can appear as:
+   - Compound particle (助詞/格助詞/連語) in set phrases like という理由で
+   - Split tokens (と + いう) in other contexts like といえば
+2. **OR matching**: Both patterns use OR logic in custom matchers for variant forms
+3. **Similar structure**: Both patterns use と-based constructions with consistent tokenization
+4. **Efficient implementation**: Both completed in same session due to similar structure
+
 ### Statistics
-- **Session time**: ~1.5 hours
-- **Patterns completed this session**: 1
-- **Test success rate**: 3/3 (100%)
-- **Total passing tests**: 1219
+- **Session time**: ~2.5 hours
+- **Patterns completed this session**: 2
+- **Test success rate**: 6/6 (100%)
+- **Total passing tests**: 1222
 
 ### Next Session Recommendations
-1. **Continue with N3 priority 3 patterns**: Look for other simple patterns with existing stubs
+1. **Continue with N3 priority 3 patterns**: More と-based patterns available
 2. **Good candidates**:
-   - という理由で (という + reason construction)
    - とても～ない (not at all)
-   - Other と-based patterns with similar structure
+   - と同じで・と違って (same as / different from)
+   - と並んで (alongside)
 3. **Avoid**: Complex patterns with wildcards or multiple optionals
 
 ### Environment Status
-- ✅ All 1219 tests passing
+- ✅ All 1222 tests passing
 - ✅ No regressions
 - ✅ Clean git state (changes committed)
 - ✅ feature_list.json updated
