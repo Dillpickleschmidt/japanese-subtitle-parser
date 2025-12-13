@@ -1,5 +1,90 @@
 # Grammar-lib Development Progress
 
+## Session 162 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: まで pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 construction pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 1062 (was 1059 at session start)
+
+### Accomplishments
+1. ✅ Implemented まで pattern (N4) - "even, to the extent"
+2. ✅ All 3 tests passing with proper range assertions
+3. ✅ No test regressions - all 1062 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### まで (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (made function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod made_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Noun + まで(も)
+- **Tokenization**:
+  - Noun + まで (助詞/副助詞)
+  - まで + も tokenize as separate particles (not a compound)
+- **Implementation**: Two-token matcher
+  - noun_matcher() - matches any noun
+  - MadeParticleMatcher - surface == "まで", POS == "助詞/副助詞"
+- **Meaning**: "even", "to the extent" - emphatic/unexpected usage
+- **Pattern priority**: 1 (N4 construction)
+- **Important note**: This pattern tokenizes **identically** to N5 "Noun + まで" (until/to)
+  - Only difference is semantic: N5 = temporal/spatial limit, N4 = emphatic/extent
+  - Both patterns match the same text and show with confidence 3.0
+  - Application should display both grammar explanations to user
+  - User determines meaning from context
+- **Pattern ranges**:
+  - バイクまで (chars 0-5) - even a bike
+  - バナナまで (chars 13-18) - even banana
+  - スポーツカーまで (chars 2-10) - even a sports car
+- **Test coverage**:
+  - Basic "even": バイクまで持っているの？
+  - Emphatic extent: お腹が空きすぎて、大嫌いなバナナまで食べた
+  - With も: 私はスポーツカーまでも持っています
+
+### Implementation Notes
+- Successfully identified semantic ambiguity with N5 まで pattern
+- Both patterns coexist and match the same structures (intentional design)
+- Pattern detection shows both: "Noun + まで" (N5) and "まで" (N4)
+- This allows application to present both grammar points for user context determination
+- Similar to らしい① vs らしい② ambiguity documented in REFERENCE_EXAMPLES.md
+
+### Session Success
+- Successfully implemented a pattern with semantic ambiguity
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions (Noun + まで)
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern with excellent coverage and documentation
+
+### Next Priorities
+Continue with simple N4 or N5 patterns:
+
+**Simple N4 patterns to implement next**:
+1. **と** - "if (result is definite)" - conditional particle (has stub)
+2. **まず** - "first of all" (has stub)
+3. **また** - "again/also" (has stub)
+4. **ごろ** - "approximately" (has stub)
+5. Other simple N4 constructions with stubs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles: は, の, を
+- Basic verb forms: dictionary, negative, past
+- い-Adjectives, な-Adjectives
+
+**Recommendation**: Focus on N5 patterns next as they are the foundation. Many N5 patterns like は, の are complex and may require careful scoping.
+
+### Environment Status
+- ✅ All 1062 tests passing (added 3 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 161 - 2025-12-13
 
 ### ✅ Session Summary
