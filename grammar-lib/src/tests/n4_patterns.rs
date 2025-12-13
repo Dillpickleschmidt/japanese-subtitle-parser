@@ -3015,3 +3015,54 @@ mod temorau_tests {
         assert_pattern_range(&patterns, "てもらう", 11, 19); // 持ってもらいます
     }
 }
+
+// ========== ていた (was doing / past progressive) ==========
+// Pattern: ていた
+// Data source: grammar_points_data.json["ていた "]
+//
+// Structures to test:
+//   - standard[0]: Verb[ている] + た
+//   - polite[0]: Verb[ている] + ました
+//
+// Examples from data:
+//   - 歌っていた (was singing)
+//   - 座っていた (was sitting)
+//   - 壊れていた (was broken - resultative state)
+//   - 歌っていました (was singing - polite)
+#[cfg(test)]
+mod teita_tests {
+    use super::*;
+
+    // Structure: Verb[ている] + た (standard form - action)
+    #[test]
+    fn te_iru_ta_action() {
+        let sentence = "昨日は夜遅くまでカラオケで歌っていたのでのどが痛い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていた ");
+        assert_pattern_range(&patterns, "ていた ", 13, 18); // 歌っていた
+    }
+
+    // Structure: Verb[ている] + た (standard form - resultative state)
+    #[test]
+    fn te_iru_ta_state() {
+        let sentence = "シャワーが壊れていたから二日間もシャワーを浴びれなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていた ");
+        assert_pattern_range(&patterns, "ていた ", 5, 10); // 壊れていた
+    }
+
+    // Structure: Verb[ている] + ました (polite form)
+    #[test]
+    fn te_iru_mashita() {
+        let sentence = "昔はパーマをかけていました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていた ");
+        assert_pattern_range(&patterns, "ていた ", 6, 13); // かけていました
+    }
+}

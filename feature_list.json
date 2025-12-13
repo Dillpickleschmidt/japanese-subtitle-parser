@@ -2662,13 +2662,13 @@
   {
     "pattern_name": "ていた ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "To convey that '(A) was happening', or that somebody 'was doing (A)' in Japanese, ていた (or ていました) will be used [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null

@@ -669,9 +669,39 @@ pub fn atode() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ていた 
+// Pattern: ていた (was doing / past progressive)
+// Structures: Verb[ている] + た / Verb[ている] + ました
 pub fn teita() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+        }
+    }
+
+    // Match いる in 連用形 (い)
+    #[derive(Debug)]
+    struct IruRenyoukeiMatcher;
+    impl Matcher for IruRenyoukeiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeDeFormMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(IruRenyoukeiMatcher))],
+        vec![TokenMatcher::Optional(Box::new(super::mashi_form()))], // Optional まし for polite form
+        vec![super::past_auxiliary()], // た
+    ])
 }
 
 // Pattern: に (Frequency)
