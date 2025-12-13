@@ -1541,8 +1541,78 @@ pub fn shikanai() -> Vec<TokenMatcher> {
 }
 
 // Pattern: てもかまわない
+// てもかまわない: Doesn't matter / don't mind
+// Structures: Verb[ても] + かまわない, Adj[ても] + かまわない, Noun/な-Adj + でも + かまわない
+// Also polite forms: かまいません
 pub fn temokamawanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for ても or でも particle sequences
+    // Can be either:
+    //   - て (助詞/接続助詞) + も (助詞/係助詞) for verbs/i-adjectives
+    //   - で (助詞/接続助詞) + も (助詞/係助詞) for verbs in negative て-form
+    //   - で (助詞/格助詞) + も (助詞/係助詞) for nouns (when tokenized separately)
+    //   - でも (助詞/副助詞) as single token for nouns/na-adjectives
+    #[derive(Debug)]
+    struct TemoOrDemoMatcher;
+    impl super::Matcher for TemoOrDemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match て/で as conjunction/case particle OR でも as single adverbial particle
+            if token.surface == "でも"
+                && token.base_form == "でも"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞") {
+                // でも as single token (副助詞) - for nouns/na-adjectives
+                return true;
+            }
+
+            // て or で as conjunction/case particle followed by も
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    // Matcher for も particle (only needed when て/で are separate tokens)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for かまう verb (かまわ, かまい forms)
+    #[derive(Debug)]
+    struct KamauVerbMatcher;
+    impl super::Matcher for KamauVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "かまう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.surface == "かまわ" || token.surface == "かまい")
+        }
+    }
+
+    // Matcher for negative forms: ない, ませ, ん
+    #[derive(Debug)]
+    struct NegativeFormMatcher;
+    impl super::Matcher for NegativeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "ない" || token.base_form == "ます" || token.base_form == "ん")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Content word before ても/でも
+        TokenMatcher::Custom(Arc::new(TemoOrDemoMatcher)), // て/で or でも
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))), // も (optional - not present for でも single token)
+        TokenMatcher::Custom(Arc::new(KamauVerbMatcher)), // かまう verb
+        TokenMatcher::Custom(Arc::new(NegativeFormMatcher)), // ない or ます
+    ]
 }
 
 // Pattern: ～ても～なくても

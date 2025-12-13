@@ -5182,13 +5182,13 @@
   {
     "pattern_name": "てもかまわない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ても構（かま）わない is often used to express that something 'doesn't matter', or that the speaker 'doesn't mind' [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null

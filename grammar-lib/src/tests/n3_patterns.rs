@@ -5191,3 +5191,109 @@ mod dakeshika_tests {
         assert_pattern_range(&patterns, "だけしか", 2, 17); // コップだけしか５００円ではない
     }
 }
+
+// ========== てもかまわない (doesn't matter / don't mind) ==========
+// Pattern: てもかまわない (doesn't matter / don't mind)
+// Data source: grammar_points_data.json["てもかまわない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ても] + かまわない
+//   standard[1]: い-Adjective[ても] + かまわない
+//   standard[2]: な-Adjective + でも + かまわない
+//   standard[3]: Noun + でも + かまわない
+//   polite[0]: Verb[ても] + かまいません
+//   polite[1]: い-Adjective[ても] + かまいません
+//   polite[2]: な-Adjective + でも + かまいません
+//   polite[3]: Noun + でも + かまいません
+
+mod temo_kamawanai_tests {
+    use super::*;
+
+    // Test: standard[0] - Verb[ても] + かまわない
+    #[test]
+    fn test_verb_temo_kamawanai() {
+        let sentence = "君が行きたくないなら行かなくてもかまわないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもかまわない");
+        assert_pattern_range(&patterns, "てもかまわない", 12, 21); // なくてもかまわない
+    }
+
+    // Test: polite[0] - い-Adjective[ても] + かまいません
+    #[test]
+    fn test_i_adj_temo_kamawanai() {
+        let sentence = "運転手さん、遅くてもかまいませんので、安全運転でお願いします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもかまわない");
+        assert_pattern_range(&patterns, "てもかまわない", 6, 16); // 遅くてもかまいません
+    }
+
+    // Test: polite[2] - な-Adjective + でも + かまいません
+    #[test]
+    fn test_na_adj_demo_kamawanai() {
+        let sentence = "仕事はどんなに大変でもかまいません、仕事が出来ればうれしいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもかまわない");
+        assert_pattern_range(&patterns, "てもかまわない", 7, 17); // 大変でもかまいません
+    }
+
+    // Test: standard[0] - Verb[て] + も + かまわない (multiple in sentence)
+    #[test]
+    fn test_noun_demo_kamawanai() {
+        let sentence = "君が払うなら、ピザでも寿司でも何を頼んでもかまわないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもかまわない");
+        assert_pattern_range(&patterns, "てもかまわない", 17, 26); // 頼んでもかまわない
+    }
+
+    // Test: polite[3] - Noun + でも + かまいません
+    #[test]
+    fn test_noun_demo_kamaimasen() {
+        let sentence = "アルバイト募集中。未経験者でもかまいません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもかまわない");
+        assert_pattern_range(&patterns, "てもかまわない", 12, 21); // 者でもかまいません
+    }
+
+    // Test: Verb[て] + も + かまわない (simplified sentence)
+    #[test]
+    fn test_multiple_instances() {
+        let sentence = "ピザでも寿司でも何を頼んでもかまわないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもかまわない");
+        assert_pattern_range(&patterns, "てもかまわない", 10, 19); // 頼んでもかまわない
+    }
+
+    // Test: Negative - かまわない without ても should NOT match
+    #[test]
+    fn test_temo_kamau_affirmative() {
+        let sentence = "そんな細かいことは構わないから、早く終わらせよう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT match てもかまわない (missing ても)
+        assert!(!has_pattern(&patterns, "てもかまわない"));
+    }
+
+    // Test: Verb[ない] + て + も + かまわない
+    #[test]
+    fn test_verb_nai_form_temo() {
+        let sentence = "別に来なくてもかまわないけど、来てくれたら嬉しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもかまわない");
+        assert_pattern_range(&patterns, "てもかまわない", 3, 12); // なくてもかまわない
+    }
+}
