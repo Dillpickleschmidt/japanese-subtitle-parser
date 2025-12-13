@@ -1498,3 +1498,65 @@ mod gozaimasu_tests {
         assert_pattern_range(&patterns, "ございます", 4, 9); // ございます
     }
 }
+
+// ========== じゃないか (isn't it?) ==========
+// Pattern: じゃないか
+// Data source: grammar_points_data.json["じゃないか"]
+//
+// Structure to test:
+//   - standard[0]: Phrase + じゃない + か
+//
+// Examples from data:
+//   - 来るんじゃないか (coming soon, isn't it?)
+//   - 高いんじゃないか (expensive, isn't it?)
+//   - 綺麗じゃないか (beautiful, isn't it?)
+//   - 速いじゃないか (faster, isn't it?)
+//   - 影響ではないか (typhoon's effect, isn't it? - formal)
+#[cfg(test)]
+mod janaika_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + んじゃないか
+    #[test]
+    fn test_janaika_verb() {
+        let sentence = "キヨコはもうすぐ来るんじゃないか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃないか");
+        assert_pattern_range(&patterns, "じゃないか", 10, 16); // んじゃないか
+    }
+
+    // Testing: standard[0] - い-Adj + んじゃないか
+    #[test]
+    fn test_janaika_i_adj() {
+        let sentence = "そのカメラは高いんじゃないか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃないか");
+        assert_pattern_range(&patterns, "じゃないか", 8, 14); // んじゃないか
+    }
+
+    // Testing: standard[0] - な-Adj + じゃないか (no ん)
+    #[test]
+    fn test_janaika_na_adj() {
+        let sentence = "この着物は綺麗じゃないか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃないか");
+        assert_pattern_range(&patterns, "じゃないか", 7, 12); // じゃないか
+    }
+
+    // Testing: standard[0] - ではないか (formal)
+    #[test]
+    fn test_dewa_naika_formal() {
+        let sentence = "これは台風の影響ではないか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃないか");
+        assert_pattern_range(&patterns, "じゃないか", 8, 13); // ではないか
+    }
+}

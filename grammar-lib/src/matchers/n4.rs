@@ -768,9 +768,79 @@ pub fn mai_uff5e_noyouni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: じゃないか
+// Pattern: じゃないか (isn't it?)
+// Structures: Phrase + じゃない + か OR Phrase + ではない + か
 pub fn janaika() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ん (explanatory の) - optional
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match じゃ (casual) or で (formal)
+    #[derive(Debug)]
+    struct JyaOrDeMatcher;
+    impl Matcher for JyaOrDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "じゃ" && token.base_form == "じゃ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+            || (token.surface == "で" && token.base_form == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    // Match は (only for ではないか formal form)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ない (auxiliary verb)
+    #[derive(Debug)]
+    struct NaiAuxMatcher;
+    impl Matcher for NaiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match か (sentence-ending particle)
+    #[derive(Debug)]
+    struct KaEndingMatcher;
+    impl Matcher for KaEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.base_form == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos.contains("終助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))),
+        TokenMatcher::Custom(Arc::new(JyaOrDeMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(NaiAuxMatcher)),
+        TokenMatcher::Custom(Arc::new(KaEndingMatcher)),
+    ]
 }
 
 // Pattern: らしい ①
