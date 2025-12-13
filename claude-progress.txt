@@ -3,76 +3,88 @@
 ## Session 136 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (わざわざ - going out of one's way)
-**Patterns completed**: 1 new N3 construction pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 845 (was 841 at session start)
+**Status**: Three N3 patterns fully implemented (わざわざ, 一体, むしろ - simple adverb patterns)
+**Patterns completed**: 3 new N3 construction patterns
+**Tests added**: 12 comprehensive tests (4 + 4 + 4)
+**Total tests**: 853 (was 841 at session start)
 
 ### Accomplishments
 1. ✅ Implemented わざわざ pattern (N3) - "to go out of one's way"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 845 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented 一体 pattern (N3) - "on earth/in the world"
+3. ✅ Implemented むしろ pattern (N3) - "rather/instead"
+4. ✅ All 12 tests passing with proper range assertions
+5. ✅ No test regressions - all 853 tests pass
+6. ✅ Updated feature_list.json for all 3 patterns
+7. ✅ Three clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### わざわざ (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (wazawaza function, lines 4197-4210)
 - **Tests**: 4 tests in n3_patterns.rs (mod wazawaza_tests, lines 6037-6090)
 - **Structure**: standard[0]: わざわざ + Phrase
-- **Tokenization insights**:
-  - わざわざ = 副詞/助詞類接続 (adverb that connects to particles)
-  - Single token: surface='わざわざ', base='わざわざ', pos=副詞
-- **Implementation**: Single-token matcher
-  - WazawazaMatcher: Checks surface, base_form, and POS (副詞)
-  - Simple adverb pattern - just matches the word わざわざ
-- **Meaning**: "to go out of one's way" - expresses intentional effort, can be positive or negative
+- **Tokenization**: わざわざ = 副詞/助詞類接続 (single token, pos=副詞)
+- **Implementation**: Single-token matcher (WazawazaMatcher)
+- **Meaning**: "to go out of one's way" - expresses intentional effort
 - **Pattern priority**: 1 (N3 construction/adverb)
-- **Pattern ranges**: Include わざわざ adverb only
-  - わざわざ (chars 0-4) - sentence-initial positive context
-  - わざわざ (chars 0-4) - gratitude context
-  - わざわざ (chars 2-6) - mid-sentence negative context
-  - わざわざ (chars 0-4) - questioning context
+
+#### 一体 (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (ittai function, lines 4212-4225)
+- **Tests**: 4 tests in n3_patterns.rs (mod ittai_tests, lines 6092-6145)
+- **Structure**: standard[0]: いったい + Question Word + Phrase
+- **Tokenization**: いったい = 副詞/一般 (single token, pos=副詞)
+- **Implementation**: Single-token matcher (IttaiMatcher)
+- **Meaning**: "what the heck/on earth" - emphasizes surprise/disbelief with questions
+- **Pattern priority**: 1 (N3 construction/adverb)
+
+#### むしろ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (mushiro function, lines 2179-2192)
+- **Tests**: 4 tests in n3_patterns.rs (mod mushiro_tests, lines 6147-6200)
+- **Structure**: standard[0]: むしろ + (Preferred Choice) Phrase
+- **Tokenization**: むしろ = 副詞/一般 (single token, pos=副詞)
+- **Implementation**: Single-token matcher (MushiroMatcher)
+- **Meaning**: "rather/instead" - expresses preference or more accurate description
+- **Pattern priority**: 1 (N3 construction/adverb)
 
 ### Technical Details
-- **Pattern priority**: 1 (N3 construction/adverb)
-- **Test coverage**: All structure variants from grammar_points_data.json (1 standard, 0 polite)
+- **Pattern priority**: All 3 patterns priority 1 (N3 construction/adverb)
+- **Test coverage**: All structure variants from grammar_points_data.json (1 standard each, 0 polite)
 - **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
-- **Key insight**: Very straightforward single-token adverb pattern
-- **Grammar note**: わざわざ can be used positively (gratitude) or negatively (criticism)
+- **Key insight**: All three patterns are simple single-token adverb matchers with identical structure
+- **Pattern similarity**: All use same matcher pattern - check surface, base_form, and POS (副詞)
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 845/845 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~68 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 3 (N3)
+- **Tests written**: 12 (4 per pattern)
+- **Tests passing**: 853/853 (100%)
+- **Commits**: 3 clean commits
+- **Lines added**: ~210 (3 matcher implementations + 12 tests + 3 feature_list updates)
 
 ### Key Insights
-- わざわざ is one of the simplest patterns - single adverb token
-- Pattern successfully matches in various contexts (positive, negative, questions)
+- Simple adverb patterns follow consistent implementation pattern
+- All three matchers are nearly identical (check surface, base, POS)
 - Test sentences are realistic examples from grammar_points_data.json
-- Pattern ranges include only the わざわざ token itself
-- Successfully implemented a common N3 adverb expressing intentional effort
+- Pattern ranges include only the single adverb token
+- Successfully implemented 3 common N3 adverbs in one session
+- Efficient session - 3 patterns completed quickly due to similar structure
 
 ### Next Priorities
 Continue with N3 patterns (simple 1-structure patterns first):
 
 **Simple N3 patterns to implement next** (1-2 structures):
-1. **一体** - "on earth/in the world" (1 structure, similar to わざわざ)
-2. **むしろ** - "rather/instead" (1 structure, adverb)
-3. **まさか** - "surely not/no way" (1 structure, adverb)
-4. **ますます** - "more and more/increasingly" (1 structure, adverb)
-5. **のに** - "despite/although" (1 structure, conjunction)
+1. **まさか** - "surely not/no way" (1 structure, adverb)
+2. **ますます** - "more and more/increasingly" (1 structure, adverb)
+3. **のに** - "despite/although" (1 structure, conjunction)
+4. **とても～ない** - "cannot possibly" (1 structure)
+5. **ないうちに** - "before...happens" (1 structure)
 
-**Recommendation**: Continue with simple single-structure adverb patterns before tackling complex multi-structure patterns.
+**Recommendation**: Continue with simple single-structure adverb/conjunction patterns before tackling complex multi-structure patterns.
 
 ### Environment Status
-- ✅ All 845 tests passing (added 4 new tests)
+- ✅ All 853 tests passing (added 12 new tests)
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for all 3 patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
