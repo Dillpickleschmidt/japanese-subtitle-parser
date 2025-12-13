@@ -1,5 +1,113 @@
 # Grammar-lib Development Progress
 
+## Session 166 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N5 patterns fully implemented (ている② + ている③)
+**Patterns completed**: 2 new N5 semantic variant patterns
+**Tests added**: 7 comprehensive tests (4 + 3)
+**Total tests**: 1089 (was 1082 at session start)
+
+### Accomplishments
+1. ✅ Implemented ている② pattern (N5) - "resultative/completed state"
+2. ✅ Implemented ている③ pattern (N5) - "habitual/repeated action"
+3. ✅ All 7 tests passing with proper range assertions
+4. ✅ No test regressions - all 1089 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commit with full documentation
+
+### Completed Patterns
+
+#### ている② (N5) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n5.rs (teiru_u2461 function)
+  - Tests: grammar-lib/src/tests/n5_patterns.rs (mod teiru_u2461_tests, 4 tests)
+- **Structures**:
+  - standard[0]: Verb[て] + いる (same as ている①)
+  - standard[1]: Verb[て] + る (contracted)
+  - polite[0]: Verb[て] + います
+  - polite[1]: Verb[て] + ます (contracted)
+- **Tokenization**:
+  - Identical to ている① - only semantic difference
+- **Implementation**: Reuses teiru_u2460() matcher
+  - All three patterns (ている①, ている②, ている③) match simultaneously
+  - Application displays all three grammar explanations
+  - User determines meaning from context (like らしい① vs らしい②)
+- **Meaning**: "has done and the result continues" (resultative state)
+- **Pattern priority**: 1 (N5 conjugation)
+- **Pattern ranges**:
+  - 始まっている (chars 4-10) - has started
+  - 行っています (chars 10-16) - has gone (polite)
+  - 死んでいるだろう (chars 4-12) - is dead (includes だろう)
+  - 怒っている (chars 6-11) - is angry
+- **Test coverage**: All 4 structure variants tested
+
+#### ている③ (N5) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n5.rs (teiru_u2462 function)
+  - Tests: grammar-lib/src/tests/n5_patterns.rs (mod teiru_u2462_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Verb[て] + いる (same as ている①)
+  - standard[1]: Verb[て] + る (contracted)
+  - standard[2]: Verb[て] + とる (dialectal - not tested)
+  - polite[0]: Verb[て] + います
+  - polite[1]: Verb[て] + ます (contracted)
+  - polite[2]: Verb[て] + とります (dialectal - not tested)
+- **Tokenization**:
+  - Identical to ている① - only semantic difference
+- **Implementation**: Reuses teiru_u2460() matcher
+  - All three patterns (ている①, ている②, ている③) match simultaneously
+  - Application displays all three grammar explanations
+  - User determines meaning from context (like らしい① vs らしい②)
+- **Meaning**: "regularly does" (habitual/repeated action)
+- **Pattern priority**: 1 (N5 conjugation)
+- **Pattern ranges**:
+  - 弾いている (chars 8-13) - play (habitual)
+  - 寝ている (chars 5-9) - sleep (habitual)
+  - 働いています (chars 5-11) - work (habitual, polite)
+- **Test coverage**: 3 tests covering different habitual contexts
+
+### Implementation Notes
+- **Key insight**: ている①, ている②, ている③ are semantically distinct but structurally identical
+- **Design pattern**: Follow REFERENCE_EXAMPLES.md guidance for ambiguous patterns
+- All three reuse the same matcher (teiru_u2460) from ている①
+- When detected, all three patterns appear with confidence 3.0
+- This is intentional - user needs context to determine meaning:
+  - ている① = progressive/continuous ("am doing")
+  - ている② = resultative state ("has done and result continues")
+  - ている③ = habitual action ("regularly does")
+- Similar to らしい① vs らしい② semantic ambiguity documented in REFERENCE_EXAMPLES.md
+- Test-first workflow with print_debug was very effective for understanding tokenization
+
+### Session Success
+- Successfully implemented 2 foundational N5 semantic variant patterns
+- Patterns follow established best practices for semantic ambiguity
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Efficient session - completed 2 patterns with semantic variants (7 tests total)
+
+### Next Priorities
+Continue with other N5 foundational patterns:
+
+**High-priority N5 patterns to implement**:
+1. **の** - possessive/replacement particle (very common, complex)
+2. **Verbs (Non-past)** - basic verb conjugation
+3. **い-Adjectives** - basic adjective forms
+4. **な-Adjectives** - basic adjective forms
+5. **う-Verb** forms (Dictionary/Negative/Past)
+
+**Recommendation**: Focus on fundamental N5 patterns. Many are complex and require careful scoping. Consider starting with simpler patterns like basic verb/adjective forms before tackling particles like の which have many usages.
+
+### Environment Status
+- ✅ All 1089 tests passing (added 7 new tests this session)
+- ✅ No regressions
+- ✅ Clean git state (1 commit this session)
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 165 - 2025-12-13
 
 ### ✅ Session Summary
