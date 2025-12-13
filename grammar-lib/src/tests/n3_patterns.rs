@@ -4996,3 +4996,60 @@ mod sae_tests {
         assert_pattern_range(&patterns, "さえ", 0, 3); // 水さえ
     }
 }
+
+// ========== とおり (in that way / just like) ==========
+// Pattern: とおり (in that way / just like)
+// Data source: grammar_points_data.json["とおり"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[る] + とおり (also Verb[た] + とおり)
+//   standard[1]: Noun + どおり
+//   standard[2]: Noun + の + とおり
+
+mod toori_tests {
+    use super::*;
+
+    // Test: Verb[る] + とおり
+    #[test]
+    fn test_toori_verb_plain() {
+        let sentence = "お客様のおっしゃるとおりです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおり");
+        assert_pattern_range(&patterns, "とおり", 4, 14); // おっしゃるとおりです
+    }
+
+    // Test: Verb[た] + とおり
+    #[test]
+    fn test_toori_verb_past() {
+        let sentence = "彼は僕の思ったとおりの時間に帰ってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおり");
+        assert_pattern_range(&patterns, "とおり", 6, 10); // たとおり
+    }
+
+    // Test: Noun + どおり
+    #[test]
+    fn test_toori_noun_doori() {
+        let sentence = "計画どおりに進めて行きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおり");
+        assert_pattern_range(&patterns, "とおり", 0, 5); // 計画どおり
+    }
+
+    // Test: Noun + の + とおり
+    #[test]
+    fn test_toori_noun_no_toori() {
+        let sentence = "ご覧のとおり、私の手には何もありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおり");
+        assert_pattern_range(&patterns, "とおり", 0, 6); // ご覧のとおり
+    }
+}

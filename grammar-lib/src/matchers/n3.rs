@@ -3228,9 +3228,42 @@ pub fn shidai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: とおり
+// とおり: in that way / just like
+// Structures:
+//   - Verb + とおり
+//   - Noun + どおり
+//   - Noun + の + とおり
 pub fn toori() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match とおり or どおり as noun suffix or bound noun
+    #[derive(Debug)]
+    struct TooriDooriMatcher;
+    impl super::Matcher for TooriDooriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "とおり" || token.surface == "どおり")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                    || token.pos.get(1).is_some_and(|pos| pos == "接尾"))
+        }
+    }
+
+    // Match の as 助詞/連体化
+    #[derive(Debug)]
+    struct NoRentaiMatcher;
+    impl super::Matcher for NoRentaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Content word (verb or noun)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoRentaiMatcher)))),
+        TokenMatcher::Custom(Arc::new(TooriDooriMatcher)),
+    ]
 }
 
 // Pattern: でもある
