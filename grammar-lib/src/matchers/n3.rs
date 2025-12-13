@@ -2176,9 +2176,19 @@ pub fn sate() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SateMatcher))]
 }
 
-// Pattern: むしろ
+// Pattern: むしろ (rather/instead)
+// Structures: むしろ + (Preferred Choice) Phrase
 pub fn mushiro() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MushiroMatcher;
+    impl Matcher for MushiroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "むしろ"
+                && token.base_form == "むしろ"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(MushiroMatcher))]
 }
 
 // Pattern: つまり (in other words/in short)

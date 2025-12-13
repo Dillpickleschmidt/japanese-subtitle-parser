@@ -6143,3 +6143,58 @@ mod ittai_tests {
         assert_pattern_range(&patterns, "一体", 0, 4); // いったい
     }
 }
+
+// ========== むしろ (rather/instead) ==========
+// Pattern: むしろ (rather/instead - expressing preference)
+// Data source: grammar_points_data.json["むしろ"]
+//
+// Structure variants to test:
+//   standard[0]: むしろ + (Preferred Choice) Phrase
+
+mod mushiro_tests {
+    use super::*;
+
+    // Testing: standard[0] - むしろ + Phrase (preference)
+    #[test]
+    fn test_mushiro_preference() {
+        let sentence = "何でそっちが怒ってるの？むしろこっちが怒りたいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "むしろ");
+        assert_pattern_range(&patterns, "むしろ", 12, 15); // むしろ
+    }
+
+    // Testing: standard[0] - むしろ + Phrase (buying choice)
+    #[test]
+    fn test_mushiro_buying() {
+        let sentence = "むしろ、安い方を買った方がいいとおもう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "むしろ");
+        assert_pattern_range(&patterns, "むしろ", 0, 3); // むしろ
+    }
+
+    // Testing: standard[0] - むしろ + Phrase (with より comparison)
+    #[test]
+    fn test_mushiro_yori_car() {
+        let sentence = "車をリースするより、むしろ中古の車を買った方が安く済む。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "むしろ");
+        assert_pattern_range(&patterns, "むしろ", 10, 13); // むしろ
+    }
+
+    // Testing: standard[0] - むしろ + Phrase (game preference)
+    #[test]
+    fn test_mushiro_yori_games() {
+        let sentence = "俺はMMOよりむしろシングルプレイヤーのゲームの方が好きだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "むしろ");
+        assert_pattern_range(&patterns, "むしろ", 7, 10); // むしろ
+    }
+}
