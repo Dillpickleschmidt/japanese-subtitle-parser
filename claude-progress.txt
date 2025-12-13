@@ -1,5 +1,93 @@
 # Grammar-lib Development Progress
 
+## Session 163 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: と pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 conditional pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 1066 (was 1062 at session start)
+
+### Accomplishments
+1. ✅ Implemented と pattern (N4) - "if/when (definite result)"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 1066 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### と (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (to function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod to_conditional_tests, 4 tests)
+- **Structures**:
+  - standard[0]: Verb + と
+  - standard[1]: い-Adjective + と
+  - standard[2]: な-Adjective + だ + と
+  - standard[3]: Noun + だ + と
+- **Tokenization**:
+  - All structures end with: と (助詞/接続助詞)
+  - Verb: 食べる (動詞/基本形) + と
+  - い-Adjective: 汚い (形容詞/基本形) + と
+  - な-Adjective: 静か (名詞/形容動詞語幹) + だ (助動詞) + と
+  - Noun: 地下鉄 (名詞) + だ (助動詞) + と
+- **Implementation**: Two-token matcher
+  - TokenMatcher::Any - matches any preceding token (verb, adjective, or だ auxiliary)
+  - ToConditionalMatcher - surface == "と", POS == "助詞/接続助詞"
+- **Meaning**: "if/when (A), then (B) will definitely happen"
+- **Pattern priority**: 2 (N4 construction)
+- **Key distinction**: と implies definite/inevitable result, different from hypothetical conditionals (ば, なら, たら)
+- **Pattern ranges**:
+  - 食べると (chars 9-13) - verb + と
+  - 汚いと (chars 3-6) - い-adjective + と
+  - だと (chars 5-7) - な-adjective + だ + と
+  - だと (chars 3-5) - noun + だ + と
+- **Test coverage**:
+  - Verb conditional: 甘いものをいっぱい食べると、太る
+  - い-Adjective: 部屋が汚いと、お母さんに怒られる
+  - な-Adjective: 部屋が静かだと、眠れない
+  - Noun: 地下鉄だと、五分早く着く
+
+### Implementation Notes
+- Simple and elegant implementation using TokenMatcher::Any
+- と as conjunction particle (接続助詞) vs と as case-marking particle (格助詞) for "and"
+- Pattern confidence: 2.2 (appropriate for this level)
+- Successfully handles all 4 structure variants with single matcher
+- Test-first workflow with print_debug was very effective
+
+### Session Success
+- Successfully implemented a fundamental conditional pattern
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include the full grammatical construction
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern with excellent coverage (4 tests)
+
+### Next Priorities
+Continue with simple N4 patterns with stubs:
+
+**Simple N4 patterns to implement next**:
+1. **まず** - "first of all" (has stub)
+2. **また** - "again/also" (has stub)
+3. **ごろ** - "approximately" (has stub)
+4. Other simple N4 constructions with stubs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles: は, の, を
+- Basic verb forms: dictionary, negative, past
+- い-Adjectives, な-Adjectives
+
+**Recommendation**: Continue with simple N4 patterns that have stubs to maintain momentum, then move to foundational N5 patterns.
+
+### Environment Status
+- ✅ All 1066 tests passing (added 4 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 162 - 2025-12-13
 
 ### ✅ Session Summary
