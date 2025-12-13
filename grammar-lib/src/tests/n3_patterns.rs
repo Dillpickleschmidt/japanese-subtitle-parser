@@ -7052,3 +7052,36 @@ mod toiuyori_tests {
         assert_pattern_range(&patterns, "というより", 3, 10); // 公園というより
     }
 }
+
+// Pattern: について (about, concerning)
+// Data source: grammar_points_data.json["について"]
+// Testing structure variants:
+//   - standard[0]: Noun + について
+//   - standard[1]: Noun + について + の + Noun
+mod nitsuite_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + について
+    // Example from grammar data: 彼女と別れたことについて話したいんだけど時間ある？
+    #[test]
+    fn test_noun_nitsuite() {
+        let sentence = "彼女と別れたことについて話したいんだけど時間ある？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "について");
+        assert_pattern_range(&patterns, "について", 6, 12); // ことについて
+    }
+
+    // Testing: standard[1] - Noun + について + の + Noun
+    // Example from grammar data: 契約についてのパンフレットは明日届くので
+    #[test]
+    fn test_nitsuite_no_noun() {
+        let sentence = "契約についてのパンフレットは明日届くので、しっかりと読んでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "について");
+        assert_pattern_range(&patterns, "について", 0, 6); // 契約について
+    }
+}

@@ -5770,13 +5770,13 @@
   {
     "pattern_name": "について",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "について is a combination of the case marking particle に , the う-Verb 就（つ）く 'to assume a position', and the conjunction p... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

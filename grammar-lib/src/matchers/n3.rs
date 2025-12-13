@@ -1571,9 +1571,26 @@ pub fn niawasete_u30fb_niatta() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: について
+// Pattern: について (about, concerning)
+// Structures: Noun + について / Noun + について + の + Noun
 pub fn nitsuite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NitsuiteMatcher;
+    impl Matcher for NitsuiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "について"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NitsuiteMatcher)),
+    ]
 }
 
 // Pattern: ～(の)姿
