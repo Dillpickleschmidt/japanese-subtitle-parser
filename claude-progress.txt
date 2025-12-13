@@ -1,5 +1,106 @@
 # Grammar-lib Development Progress
 
+## Session 106 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N3 patterns fully implemented (ため(に) + たて)
+**Patterns completed**: 2 new N3 patterns (purpose/cause + freshly/just finished)
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 679 (was 675 at session start, includes 4 from previous session)
+
+### Accomplishments
+1. ✅ Implemented ため(に) pattern (N3) - "for the sake of / in order to"
+2. ✅ Implemented たて pattern (N3) - "freshly / just finished"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 679 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
+
+### Completed Patterns
+
+#### ため(に) (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 469-519)
+- **Tests**: 4 tests in n3_patterns.rs (mod tameni_purpose_tests)
+- **Structures**:
+  - standard[0]: Verb[る] + ため(に)
+  - standard[1]: Noun + の + ため(に)
+- **Tokenization insights**:
+  - ため = 名詞/非自立/副詞可能 (bound noun with adverbial use)
+  - Optional に = 助詞/格助詞 (case particle)
+  - Optional の = 助詞/連体化 (nominalizing particle for nouns)
+  - Verbs in dictionary form connect directly to ため
+- **Implementation**: 4-token matcher with optional particles
+  - TameMatcher: Matches ため as 名詞/非自立
+  - NiParticleMatcher (optional): Matches に as 助詞/格助詞
+  - NoRentaikaMatcher (optional): Matches の as 助詞/連体化
+  - TokenMatcher::Any for content word (verb or noun)
+- **Meaning**: "for the sake of / in order to" - indicates purpose or goal
+- **Pattern priority**: 3 (high-priority N3 construction)
+- **Pattern ranges**: Include content word + optional の + ため + optional に
+  - 建てるために (chars 5-11) - Verb + ために
+  - するため (chars 3-7) - Verb + ため (no に)
+  - 私のために (chars 0-5) - Noun + の + ために
+  - 君のために (chars 0-5) - Noun + の + ために (different context)
+
+#### たて (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 2787-2820)
+- **Tests**: 4 tests in n3_patterns.rs (mod tate_tests)
+- **Structures**:
+  - standard[0]: Verb[stem] + たて
+  - standard[1]: Verb[stem] + たて + の + Noun
+- **Tokenization insights**:
+  - たて = 名詞/接尾/一般 (noun suffix)
+  - Optional の = 助詞/連体化 (nominalizing particle)
+  - Appears after verb stems (連用形) or nouns
+  - NOTE: Some words like 揚げたて, 生まれたて tokenize as single compound nouns - these cannot be detected
+- **Implementation**: 3-token matcher with optional の
+  - TateSuffixMatcher: Matches たて as 名詞/接尾/一般
+  - NoRentaikaMatcher (optional): Matches の as 助詞/連体化
+  - TokenMatcher::Any for content word (verb or noun)
+- **Meaning**: "freshly / just finished" - indicates something just completed
+- **Usage note**: Used with verbs indicating time-based importance (quality degrades over time)
+- **Pattern priority**: 3 (high-priority N3 suffix)
+- **Pattern ranges**: Include content word + たて + optional の
+  - 釣りたて (chars 0-4) - Noun + たて
+  - 出来たての (chars 2-7) - Verb + たて + の
+  - 採りたての (chars 0-5) - Verb + たて + の
+  - 焼きたての (chars 0-5) - Noun + たて + の
+
+### Session Statistics
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 679/679 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~206 (2 matcher implementations + 8 tests + 2 feature_list updates + 2 priority updates)
+
+### Key Insights
+- ため(に) is a purpose/cause pattern using bound noun ため with optional particles
+- たて is a suffix pattern that only detects split tokenization (not compound nouns)
+- Both patterns handle optional particles (に for ため, の for たて)
+- Test sentences are realistic and cover different usage contexts
+- Pattern ranges include full constructions for better context
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. たとえ〜ても - "even if" (conditional pattern, 4 structures)
+2. さえ - "even" (emphasis particle, 6 structure variants - more complex)
+3. そうだ - hearsay/conjecture (4 standard + 4 polite = 8 variants)
+4. わけだ - "it means that / no wonder" (explanatory pattern)
+5. ことなの - "it's that" (explanatory pattern, 8 standard + 8 polite = 16 variants)
+
+**Recommendation**: たとえ〜ても seems like a good next target - complex but concrete pattern.
+
+### Environment Status
+- ✅ All 679 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 105 - 2025-12-13
 
 ### ✅ Session Summary
