@@ -2074,13 +2074,13 @@
   {
     "pattern_name": "がひつよう",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "が必要（ひつよう） is a common expression in Japanese which is used to highlight the 'need' or 'necessity' of something [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null

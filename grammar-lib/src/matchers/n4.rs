@@ -2530,9 +2530,46 @@ pub fn hokani_mo_u30fb_hoka_ni_ha() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: がひつよう
+// Pattern: がひつよう (is necessary)
+// Structure: が + ひつ + よう (+ だ/です optional)
 pub fn gahitsuyou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl super::Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.base_form == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct HitsuMatcher;
+    impl super::Matcher for HitsuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ひつ"
+                && token.base_form == "ひつ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct YouSuffixMatcher;
+    impl super::Matcher for YouSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.base_form == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(HitsuMatcher)),
+        TokenMatcher::Custom(Arc::new(YouSuffixMatcher)),
+    ]
 }
 
 // Pattern: そんなに

@@ -4718,3 +4718,63 @@ mod sukoshimo_nai_tests {
         assert_pattern_range(&patterns, "すこしも～ない", 6, 10); // すこしも
     }
 }
+
+// ========== がひつよう (is necessary) ==========
+// Pattern: がひつよう
+// Data source: grammar_points_data.json["がひつよう"]
+//
+// Structures to test:
+//   - standard[0]: Noun + が + 必要 + だ
+//   - standard[1]: Verb + こと + が + 必要 + だ
+//   - polite[0]: Noun + が + 必要 + です
+//   - polite[1]: Verb + こと + が + 必要 + です
+//
+// Meaning: "is necessary", "need"
+#[cfg(test)]
+mod gahitsuyou_tests {
+    use super::*;
+
+    // Structure: Noun + が + 必要 + だ
+    #[test]
+    fn noun_ga_hitsuyou_da() {
+        let sentence = "プールで泳ぐときは水着がひつようだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がひつよう");
+        assert_pattern_range(&patterns, "がひつよう", 11, 16); // がひつよう
+    }
+
+    // Structure: Noun + が + 必要 (without だ - casual)
+    #[test]
+    fn noun_ga_hitsuyou_casual() {
+        let sentence = "私は運転するときは眼鏡がひつよう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がひつよう");
+        assert_pattern_range(&patterns, "がひつよう", 11, 16); // がひつよう
+    }
+
+    // Structure: Verb + こと + が + 必要 + だ
+    #[test]
+    fn verb_koto_ga_hitsuyou_da() {
+        let sentence = "彼は車を持っていないから迎えに行くことがひつようだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がひつよう");
+        assert_pattern_range(&patterns, "がひつよう", 19, 24); // がひつよう
+    }
+
+    // Structure: Noun + が + 必要 + です (polite)
+    #[test]
+    fn noun_ga_hitsuyou_desu() {
+        let sentence = "バスを運転するには特別な免許がひつようです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がひつよう");
+        assert_pattern_range(&patterns, "がひつよう", 14, 19); // がひつよう
+    }
+}
