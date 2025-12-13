@@ -1706,9 +1706,58 @@ pub fn u301c_demo_u301c_demo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: それに
+// Pattern: それに (moreover/in addition/what's more)
+// Structure: それに + (Additional Information) Phrase
+// Note: Can be tokenized as single conjunction token OR as それ + に (two tokens)
 pub fn soreni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher that handles BOTH tokenizations:
+    // 1. Single token: それに (接続詞)
+    // 2. First token of two-token sequence: それ (名詞/代名詞)
+    #[derive(Debug)]
+    struct SoreniOrSoreMatcher;
+    impl super::Matcher for SoreniOrSoreMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match single-token それに (接続詞)
+            if token.surface == "それに"
+                && token.base_form == "それに"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+            {
+                return true;
+            }
+
+            // Match それ (pronoun) - first token of two-token sequence
+            if token.surface == "それ"
+                && token.base_form == "それ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "代名詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Matcher for に (case particle) - only used for two-token sequence
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SoreniOrSoreMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: それで (therefore/so/as a result)

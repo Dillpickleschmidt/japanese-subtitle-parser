@@ -1725,3 +1725,56 @@ mod soredemo_tests {
         assert_pattern_range(&patterns, "それでも", 14, 18); // それでも
     }
 }
+
+// ========== それに (moreover/in addition/what's more) ==========
+// Pattern: それに
+// Data source: grammar_points_data.json["それに"]
+//
+// Structure to test:
+//   - standard[0]: それに + (Additional Information) Phrase
+//
+// Note: それに = それ (pronoun) + に (case marking particle)
+// Meaning: "moreover", "in addition", "what's more", "and to that"
+// Used to add information logically related to previous statement
+// Both pieces of information must have same connotation (both positive or both negative)
+//
+// Examples from data:
+//   - それに彼は家事もしないんでしょう？ (In addition, he doesn't do house chores either, right?)
+//   - 会社には残業がない。それに給料もいい。 (Company doesn't have overtime. What's more, salary is good too)
+#[cfg(test)]
+mod soreni_tests {
+    use super::*;
+
+    // Testing: standard[0] - それに at sentence start (single token)
+    #[test]
+    fn test_soreni_additional_negative() {
+        let sentence = "それに彼は家事もしないんでしょう？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それに");
+        assert_pattern_range(&patterns, "それに", 0, 3); // それに
+    }
+
+    // Testing: standard[0] - それに connecting two sentences (two tokens)
+    #[test]
+    fn test_soreni_positive_addition() {
+        let sentence = "会社には残業がない。それに給料もいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それに");
+        assert_pattern_range(&patterns, "それに", 10, 13); // それに
+    }
+
+    // Testing: standard[0] - それに in complex natural dialogue (two tokens)
+    #[test]
+    fn test_soreni_natural_speech() {
+        let sentence = "最近は雨がいっぱい降るし、それに風も強いし、外に出れなくて寂しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それに");
+        assert_pattern_range(&patterns, "それに", 13, 16); // それに
+    }
+}
