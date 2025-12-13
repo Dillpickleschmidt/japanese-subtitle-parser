@@ -1,4 +1,5 @@
 use crate::pattern_matcher::TokenMatcher;
+use super::Matcher;
 
 // Pattern: 得る・得る
 pub fn eru_u30fb_eru() -> Vec<TokenMatcher> {
@@ -735,9 +736,104 @@ pub fn toka() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 〜ようではないか
+// Pattern: 〜ようではないか (why don't we, let's)
+// Structures: Verb[volitional] + (で/じゃ) + は? + ない + か
+// Two tokenization patterns:
+//   1. Godan verbs: Verb[未然ウ接続] + う(助動詞) + ...
+//   2. Ichidan verbs: Verb[連用形] + よう(名詞/接尾) + ...
 pub fn u301c_youdehanaika() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in volitional form - handles both tokenization patterns
+    #[derive(Debug)]
+    struct VolitionalVerbMatcher;
+    impl Matcher for VolitionalVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.features.get(5).is_some_and(|f| f == "未然ウ接続") // Godan: 戦お
+                    || token.features.get(5).is_some_and(|f| f == "連用形"))  // Ichidan: 考え
+        }
+    }
+
+    // Match う auxiliary (for godan) or よう suffix (for ichidan)
+    #[derive(Debug)]
+    struct VolitionalAuxiliaryMatcher;
+    impl Matcher for VolitionalAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // う auxiliary (godan verbs: 戦おう)
+            (token.surface == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "う")
+            ||
+            // よう suffix (ichidan verbs: 考えよう)
+            (token.surface == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾"))
+        }
+    }
+
+    // Match で (copula da in te-form) or じゃ (abbreviated)
+    #[derive(Debug)]
+    struct DeOrJaMatcher;
+    impl Matcher for DeOrJaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // で from だ (copula) - used after godan verbs
+            (token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            ||
+            // で as case particle - used after よう (noun suffix) in ichidan verbs
+            (token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+            ||
+            // じゃ (abbreviated)
+            (token.surface == "じゃ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+        }
+    }
+
+    // Match は (only for ではないか, not for じゃないか)
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ない auxiliary
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ない"
+        }
+    }
+
+    // Match か ending particle
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VolitionalVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(VolitionalAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(DeOrJaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(HaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+    ]
 }
 
 // Pattern: かのようだ
