@@ -1,5 +1,108 @@
 # Grammar-lib Development Progress
 
+## Session 142 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N4 patterns fully implemented (がほしい + はじめる)
+**Patterns completed**: 2 new N4 construction patterns
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 915 (was 907 at session start)
+
+### Accomplishments
+1. ✅ Implemented がほしい pattern (N4) - "want something"
+2. ✅ Implemented はじめる pattern (N4) - "start doing"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 915 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### がほしい (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (gahoshii function, lines 723-753)
+- **Tests**: 4 tests in n4_patterns.rs (mod gahoshii_tests, lines 1082-1138)
+- **Structure**:
+  - standard[0]: Noun + が + ほしい
+  - polite[0]: Noun + が + ほしい + です
+- **Tokenization**:
+  - Noun (e.g., 犬, 車, 時間, 何)
+  - が (base=が, pos=助詞/格助詞/一般)
+  - ほしい (base=ほしい, pos=形容詞/自立)
+  - Optional: です (助動詞)
+- **Implementation**: noun_matcher() + GaParticleMatcher + HoshiiMatcher
+- **Meaning**: "want (something)" - desire for nouns (not actions)
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Include full Noun + が + ほしい (+ です) construction
+  - 犬がほしい (chars 0-5) - standard
+  - 車がほしい (chars 3-8) - standard
+  - 時間がほしいです (chars 3-11) - polite
+  - 何がほしいです (chars 0-7) - polite question
+
+#### はじめる (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (hajimeru function, lines 265-287)
+- **Tests**: 4 tests in n4_patterns.rs (mod hajimeru_tests, lines 1140-1197)
+- **Structure**:
+  - standard[0]: Verb［stem］+ はじめる
+  - polite[0]: Verb［stem］+ はじめます
+- **Tokenization**:
+  - Verb in 連用形 (e.g., 歌い, ならい, ため)
+  - はじめる/はじめ (base=はじめる, pos=動詞/非自立)
+- **Implementation**: flexible_verb_form() + HajimeruMatcher (checks base=はじめる, pos=動詞/非自立)
+- **Meaning**: "start doing" - expresses beginning of an action (opposite of おわる)
+- **Pattern priority**: 1 (N4 construction/auxiliary verb)
+- **Pattern ranges**: Include full verb stem + はじめる construction
+  - 歌いはじめる (chars 2-8) - nonpast
+  - ためはじめます (chars 7-14) - polite
+  - ならいはじめた (chars 10-17) - past
+  - ならいはじめます (chars 8-16) - polite
+
+### Technical Details
+- **Pattern priorities**: Both patterns priority 1 (N4 construction)
+- **Test coverage**: All structure variants from grammar_points_data.json (2 variants each)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insights**:
+  - がほしい: Simple 3-token pattern (Noun + が + ほしい), polite form adds です naturally
+  - はじめる: Auxiliary verb pattern (same structure as おわる), checks pos=動詞/非自立
+  - Both patterns were already declared in patterns.rs with stub functions
+
+### Session Statistics
+- **Patterns implemented**: 2 (N4)
+- **Tests written**: 8 (4 per pattern)
+- **Tests passing**: 915/915 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~145 (2 matcher implementations + 8 tests + 2 feature_list updates)
+
+### Key Insights
+- がほしい is a fundamental N4 pattern for expressing desire for objects
+- はじめる mirrors おわる implementation (start vs finish)
+- Both patterns successfully handle polite forms (です, ます)
+- Test sentences are realistic examples from grammar_points_data.json
+- Pattern ranges include full grammatical constructions for proper context
+- Successfully implemented 2 common N4 patterns in one session
+- This brings total N4 passing patterns from 12 to 14
+
+### Next Priorities
+Continue with N4 patterns (simple 1-2 structure patterns first):
+
+**Simple N4 patterns to implement next** (1-2 structures):
+1. **こと** - nominalization (1 structure)
+2. **ございます** - polite form of ある (1 std + 1 pol)
+3. **しか～ない** - "only" (1 structure)
+4. **じゃないか** - "isn't it?" (1 structure)
+5. **お～ください** - honorific request (1 structure)
+6. **なおす** - "redo/fix" (similar to おわる/はじめる, 1 std + 1 pol)
+
+**Recommendation**: Continue with simple auxiliary verb/particle patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 915 tests passing (added 8 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 141 - 2025-12-13
 
 ### ✅ Session Summary
