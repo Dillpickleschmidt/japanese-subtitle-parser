@@ -1,5 +1,94 @@
 # Grammar-lib Development Progress
 
+## Session 171 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: なくて pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 negative construction pattern
+**Tests added**: 7 comprehensive tests
+**Total tests**: 1107 (was 1100 at session start)
+
+### Accomplishments
+1. ✅ Implemented なくて pattern (N4) - negative て-form construction
+2. ✅ All 7 tests passing with proper range assertions
+3. ✅ No test regressions - all 1107 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### なくて (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (nakute function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod nakute_tests, 7 tests)
+- **Structures**:
+  - standard[0]: Verb［なくて］+ Phrase
+  - standard[1]: ［い］Adjective［なくて］+ Phrase
+  - standard[2]: ［な］Adjective + ではなくて + Phrase
+  - standard[3]: Noun + ではなくて + Phrase
+  - Note: ではなくて can also be じゃなくて or でなくて
+- **Tokenization**:
+  - Two main patterns:
+    1. Verb + なく(助動詞) + て: Verb[未然形] + なく (base='ない', pos=助動詞) + て (particle)
+    2. Adjective + なく(形容詞) + て: なく (base='ない', pos=形容詞) + て (particle)
+- **Implementation**: Single matcher handles both cases
+  - NakuMatcher - matches なく with base='ない', can be either 助動詞 OR 形容詞, with 連用テ接続
+  - TeParticleMatcher - matches て as conjunction particle (助詞/接続助詞)
+  - Matcher is simple and covers all use cases elegantly
+- **Meaning**: Negative て-form, "because not", "not...and", "without being"
+- **Pattern priority**: 1 (basic N4 construction)
+- **Pattern ranges**:
+  - なくて (chars 6-9) - verb negative: 来れなくて
+  - なくて (chars 6-9, 22-25) - adjective negative (two instances in one sentence)
+  - なくて (chars 10-13) - part of ではなくて
+  - なくて (chars 4-7) - part of noun + ではなくて
+  - なくて (chars 7-10) - part of じゃなくて
+- **Test coverage**: 7 tests covering all structure variants
+  1. Verb negative て-form (来れなくて)
+  2. い-Adjective negative て-form with multiple instances (寒くはなくて, 着なくて)
+  3. な-Adjective + ではなくて (便利ではなくて)
+  4. Noun + ではなくて (虫歯ではなくて)
+  5. Noun + じゃなくて casual variant (仕事じゃなくて)
+  6. Verb potential negative (寝れなくて)
+  7. Noun が + なくて (仕事がなくて)
+
+### Implementation Notes
+- **Dual POS handling**: The pattern cleverly matches なく as either 助動詞 (after verbs) OR 形容詞 (adjective usage)
+- **Relation to other patterns**: Works alongside "ではなくて・じゃなくて" pattern - both can match the same text
+- **Test-first workflow**: Used print_debug in all tests initially to understand tokenization before implementing
+- **Comprehensive coverage**: Tests cover verb forms, i-adjectives, な-adjectives, nouns, and both formal/casual variants
+- All tests use realistic subtitle-quality Japanese sentences
+
+### Session Success
+- Successfully implemented a pattern that handles multiple parts of speech (助動詞 and 形容詞)
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges are correct and include only the なくて construction
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern with 7 comprehensive tests
+
+### Next Priorities
+Continue with simple N4 patterns with stubs:
+
+**Simple N4 patterns to implement next**:
+1. **ないで** - "without doing" (stub exists, check if tests exist)
+2. **なくてもいい** - "don't have to" (stub exists)
+3. **とき** - "when/at the time" (temporal noun pattern)
+4. Other simple N4 constructions with stubs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles and verb forms (though many are complex/broad)
+
+**Recommendation**: Continue with simple N4 patterns that have stubs to maintain momentum. なくてもいい would be a good next target as it builds on the なくて pattern.
+
+### Environment Status
+- ✅ All 1107 tests passing (added 7 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 169 - 2025-12-13
 
 ### ✅ Session Summary
