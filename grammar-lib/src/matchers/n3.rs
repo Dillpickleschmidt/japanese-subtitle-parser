@@ -655,9 +655,104 @@ pub fn tame_ni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ために
+// Pattern: ために (due to, because of, for the sake of)
+// Structures: Verb + ため(に) / い-Adjective + ため(に) / な-Adjective + な + ため(に) / Noun + の + ため(に)
 pub fn tameni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TameMatcher;
+    impl Matcher for TameMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ため as 名詞/非自立/副詞可能
+            token.surface == "ため"
+                && token.base_form == "ため"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match に as 助詞/格助詞
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaAdjectiveStemMatcher;
+    impl Matcher for NaAdjectiveStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match な-adjective stem: 名詞/形容動詞語幹
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match な as auxiliary verb だ in 体言接続 form
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match の as 助詞/連体化
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // We need to handle 4 cases:
+    // 1. Verb + ため(に)
+    // 2. い-Adjective + ため(に)
+    // 3. な-Adjective + な + ため(に)
+    // 4. Noun + の + ため(に)
+    //
+    // The challenge is that な-adjective needs TWO tokens before ため (stem + な),
+    // while the others need only ONE token.
+    // We'll use a custom matcher that handles all cases:
+
+    #[derive(Debug)]
+    struct PreTameMatcherAny;
+    impl Matcher for PreTameMatcherAny {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match Verb, い-Adjective, な-Adjective stem, Noun, or particles の/な
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞");
+            let is_i_adj = token.pos.first().is_some_and(|pos| pos == "形容詞");
+            let is_na_adj_stem = token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹");
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+            let is_na = token.surface == "な" && token.base_form == "だ";
+            let is_no = token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化");
+
+            is_verb || is_i_adj || is_na_adj_stem || is_noun || is_na || is_no
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(PreTameMatcherAny)), // Verb/Adj/Noun or particle
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            PreTameMatcherAny,
+        )))), // Optional second token (for な-Adj or Noun+の)
+        TokenMatcher::Custom(Arc::new(TameMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiParticleMatcher,
+        )))), // Optional に
+    ]
 }
 
 // Pattern: ということだ (it is said that / it means that - hearsay/conclusion with certainty)

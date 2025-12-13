@@ -5377,3 +5377,70 @@ mod dearu_tests {
         assert_pattern_range(&patterns, "である", 8, 15); // 重要であります
     }
 }
+
+// Pattern: ために (due to, because of, for the sake of)
+// Data source: grammar_points_data.json["ために"]
+// Structures:
+//   - standard[0]: Verb + ため(に)
+//   - standard[1]: い-Adjective + ため(に)
+//   - standard[2]: な-Adjective + な + ため(に)
+//   - standard[3]: Noun + の + ため(に)
+//
+// Note: For Verb, い-Adjective, and Noun cases, the existing "ため(に)" pattern
+// (with higher priority) will also match. The unique contribution of this pattern
+// is the な-Adjective case which includes the adjective stem in the range.
+mod tameni_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + ため(に)"
+    // Note: Also matches "ため(に)" pattern which has higher priority
+    #[test]
+    fn test_verb_tameni() {
+        let sentence = "空手の試合で勝つために、毎日夜遅くまで練習しています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // "ため(に)" pattern matches with higher priority
+        assert_has_pattern(&patterns, "ため(に)");
+        assert_pattern_range(&patterns, "ため(に)", 6, 11); // 勝つために
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + ため(に)"
+    // Note: Also matches "ため(に)" pattern which has higher priority
+    #[test]
+    fn test_i_adjective_tameni() {
+        let sentence = "暑いために、職場で何人かが倒れた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // "ため(に)" pattern matches with higher priority
+        assert_has_pattern(&patterns, "ため(に)");
+        assert_pattern_range(&patterns, "ため(に)", 0, 5); // 暑いために
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + な + ため(に)"
+    // This is the unique case where "ために" pattern includes the adjective stem
+    #[test]
+    fn test_na_adjective_tameni() {
+        let sentence = "このアプリは便利なために、ユーザーがどんどん増えてきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // "ために" pattern uniquely captures the full な-adjective + な + ために
+        assert_has_pattern(&patterns, "ために");
+        assert_pattern_range(&patterns, "ために", 6, 12); // 便利なために
+    }
+
+    // Testing: structure.standard[3] - "Noun + の + ため(に)"
+    // Note: Also matches "ため(に)" pattern which has higher priority
+    #[test]
+    fn test_noun_no_tameni() {
+        let sentence = "大雨のため、サッカーの試合を中止します";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // "ため(に)" pattern matches with higher priority
+        assert_has_pattern(&patterns, "ため(に)");
+        assert_pattern_range(&patterns, "ため(に)", 0, 5); // 大雨のため
+    }
+}
