@@ -2185,9 +2185,38 @@ pub fn tadachini() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(TadachiniMatcher))]
 }
 
-// Pattern: たとたんに
+// Pattern: たとたんに (the instant/the moment)
+// Structures: Verb［た］+ とたん(に)
 pub fn tatotanni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::{flexible_verb_form, past_auxiliary};
+
+    #[derive(Debug)]
+    struct TotanNounMatcher;
+    impl Matcher for TotanNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "とたん" || token.surface == "途端")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        flexible_verb_form(),
+        past_auxiliary(),
+        TokenMatcher::Custom(Arc::new(TotanNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiParticleMatcher)))),
+    ]
 }
 
 // Pattern: おきに (at intervals of / every X)

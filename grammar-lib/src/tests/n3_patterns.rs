@@ -3560,3 +3560,58 @@ mod futatabi_tests {
         assert_pattern_range(&patterns, "再び", 5, 7); // 再び
     }
 }
+
+// ========== たとたんに (the instant/the moment) ==========
+// Pattern: たとたんに (the instant/the moment)
+// Data source: grammar_points_data.json["たとたんに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb［た］+ とたん(に)
+
+mod tatotannini_tests {
+    use super::*;
+
+    // Test: たとたんに - highway tire puncture (hiragana with に)
+    #[test]
+    fn test_tatotannini_highway() {
+        let sentence = "高速に乗ったとたんに、タイヤがパンクした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たとたんに");
+        assert_pattern_range(&patterns, "たとたんに", 3, 10); // 乗ったとたんに
+    }
+
+    // Test: たとたんに - futon phone call (hiragana with に)
+    #[test]
+    fn test_tatotannini_futon() {
+        let sentence = "布団に入ったとたんに先輩から電話がかかってきた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たとたんに");
+        assert_pattern_range(&patterns, "たとたんに", 3, 10); // 入ったとたんに
+    }
+
+    // Test: たとたん - without に (kanji form)
+    #[test]
+    fn test_tatotan_no_ni() {
+        let sentence = "家を出た途端、雨が降り出した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たとたんに");
+        assert_pattern_range(&patterns, "たとたんに", 2, 6); // 出た途端
+    }
+
+    // Test: た途端に - kanji form with に
+    #[test]
+    fn test_tatotan_kanji_ni() {
+        let sentence = "目を閉じた途端に眠ってしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たとたんに");
+        assert_pattern_range(&patterns, "たとたんに", 2, 8); // 閉じた途端に
+    }
+}
