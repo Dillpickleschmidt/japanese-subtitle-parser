@@ -3,19 +3,20 @@
 ## Session 100 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (直ちに)
-**Patterns completed**: 1 new N3 pattern (adverb for immediate action)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 631 (was 627 at start)
+**Status**: Two N3 patterns fully implemented (直ちに + 折角)
+**Patterns completed**: 2 new N3 patterns (adverbs for immediate action and effort)
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 635 (was 627 at start)
 
 ### Accomplishments
 1. ✅ Implemented 直ちに (tadachini) pattern (N3) - "immediately/at once"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 631 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented 折角 (sekkaku) pattern (N3) - "with effort/specially/long-awaited"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 635 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### 直ちに (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (line 2042-2055)
@@ -45,38 +46,76 @@
 - **Note**: Pattern replaced TODO stub at line 2043 in n3.rs
 - **Comparison**: More formal than すぐ, emphasizes purposeful immediate action (not unintentional like 忽ち)
 
+#### 折角 (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 2754-2781)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod sekkaku_tests)
+  - test_sekkaku_shoes (せっかく君が欲しかった靴を買ってあげたのに友達にあげたの？最悪 - I took great trouble to get you the shoes that you wanted, but you gave them to your friend? How inconsiderate)
+  - test_sekkaku_day_off (せっかく休みを取ったのに雨が降ったから予定が台無しだ - I went through the trouble to get a day off, but it rained, so my plans were ruined)
+  - test_sekkaku_no_birthday (せっかくの誕生日会を台無しにしてごめんなさい - Sorry for ruining your long awaited birthday party)
+  - test_sekkaku_no_vacation (台風のせいで、せっかくの休暇が中止になった - Due to the typhoon, my long awaited vacation has been canceled)
+- **Structures**:
+  - Standard: せっかく + Phrase
+  - Nominalizing: せっかく + の + Noun
+- **Tokenization insights**:
+  - せっかく = 副詞/一般 (adverb)
+  - Optional の = 助詞/連体化 (nominalizing particle)
+  - Pattern can be just the adverb or adverb + の when modifying nouns
+- **Implementation**: 2-token matcher with optional の
+  - SekkakuMatcher - Matches せっかく or 折角 as 副詞/一般
+  - NoRentaika (optional) - Matches の as 助詞/連体化
+- **Meaning**: "with trouble/at great pains/to be a rare/long-awaited occasion" - emphasizes effort or special nature of event
+- **Pattern priority**: 1 (standard N3 adverb)
+- **Pattern ranges**: Includes adverb and optional の
+  - せっかく (chars 0-4 without の)
+  - せっかくの (chars 0-5, 7-12 with の)
+
+### Technical Details
+- **Pattern priority**: Both patterns priority 1 (standard N3 adverbs)
+- **Test coverage**: All structure variants from grammar_points_data.json
+  - 直ちに: 1 structure (ただちに + Phrase) - 4 tests
+  - 折角: 2 structures (せっかく + Phrase, せっかく + の + Noun) - 4 tests (2 + 2)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insights**:
+  - Both are simple adverb patterns similar to previous implementations
+  - 折角 has an optional nominalizing particle の for modifying nouns
+  - Both emphasize intentionality and purposefulness
+- **Notes**:
+  - 直ちに replaced TODO stub at line 2043 in n3.rs
+  - 折角 replaced TODO stub at line 2755 in n3.rs
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 631/631 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~60 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 635/635 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~146 (2 matcher implementations + 8 tests + 2 feature_list updates)
 
 ### Key Insights
-- 直ちに is a simple adverb pattern following the same structure as すでに and 遂に
-- Test-first workflow successfully identified tokenization pattern
+- Both patterns are straightforward adverbs with simple implementations
+- 直ちに emphasizes immediate purposeful action (more formal than すぐ)
+- 折角 emphasizes effort or special nature ("with trouble" or "long-awaited")
+- Test-first workflow successfully identified all tokenization patterns
 - All test sentences are realistic and subtitle-quality
-- Pattern range is just the word itself (not including following phrases)
-- Both hiragana and kanji forms handled in single matcher
-- Emphasizes intentional/purposeful action (different from unintentional immediacy)
+- Pattern ranges include full construction (adverb + optional particle)
+- Both hiragana and kanji forms handled in matchers
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
-1. 折角 (sekkaku) - "with effort/specially" - likely simple adverb (priority 3)
-2. 第一 (daiichi) - "first of all/primarily" - likely simple adverb (priority 3)
-3. 決して〜ない (kesshite~nai) - "never/by no means" (priority 3, 5 structures)
-4. 必ずしも (kanarazushimo) - "not necessarily" (priority 3)
-5. 最中に (saichuu ni) - "in the middle of" (priority 3)
+1. 第一 (daiichi) - "first of all/primarily" - likely simple adverb/noun (priority 3)
+2. 必ずしも (kanarazushimo) - "not necessarily" - adverb phrase (priority 3)
+3. 決して〜ない (kesshite~nai) - "never/by no means" (priority 3, 5 structures - more complex)
+4. 最中に (saichuu ni) - "in the middle of" (priority 3)
+5. 次第 (shidai) - "depending on/as soon as" (priority 3, multiple meanings)
 
-**Recommendation**: Continue with simple adverb patterns like "折角" or "第一" before tackling more complex multi-structure patterns.
+**Recommendation**: Continue with simple adverb patterns like "第一" or "必ずしも" before tackling more complex multi-structure patterns like 決して〜ない.
 
 ### Environment Status
-- ✅ All 631 tests passing
+- ✅ All 635 tests passing
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
