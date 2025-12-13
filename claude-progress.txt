@@ -1,6 +1,108 @@
 # Grammar-lib Development Progress
 
-## Session 144 - 2025-12-13
+## Session 144 - 2025-12-13 (Updated)
+
+### ✅ Session Summary
+**Status**: Two N4 patterns fully implemented (Verb[て] + Number + しか〜ない)
+**Patterns completed**: 2 new N4 construction patterns
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 927 (was 919 at session start)
+
+### Accomplishments
+1. ✅ Implemented Verb[て] pattern (N4) - casual imperative/request
+2. ✅ Implemented Number + しか〜ない pattern (N4) - "only (number)"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 927 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### Verb[て] (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (verb_te_2 function, lines 1048-1071)
+- **Tests**: 4 tests in n4_patterns.rs (mod verb_te_imperative_tests, lines 1262-1317)
+- **Structure**:
+  - standard[0]: Verb［て］。
+- **Tokenization**:
+  - Verb (連用形 or 連用タ接続)
+  - て (助詞/接続助詞)
+- **Implementation**: flexible_verb_form() + TeParticleMatcher
+  - TeParticleMatcher: Matches て (助詞/接続助詞) with exact surface and base_form checks
+- **Meaning**: Casual imperative/request - shortened form of てください for friendly requests
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Include full verb + て construction
+  - 片付けて (chars 3-7) - clean up (please)
+  - 貸して (chars 2-5) - lend (please)
+  - 来て (chars 4-6) - come (please)
+  - 待って (chars 0-3) - wait (please)
+
+#### Number + しか〜ない (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (number_shika_u301c_nai function, lines 1019-1082)
+- **Tests**: 4 tests in n4_patterns.rs (mod number_shika_nai_tests, lines 1319-1378)
+- **Structure**:
+  - standard[0]: Number + しか + Verb［ない］
+- **Tokenization**:
+  - Number tokens (名詞/数): e.g., 五, １, ０, ２, ３
+  - Counter (名詞/接尾/助数詞): e.g., キロ, 円, 時間, 個
+  - しか (助詞/係助詞)
+  - Verb/Auxiliary ending in ない/ません
+- **Implementation**: CounterMatcher + ShikaMatcher + Wildcard + NegativeAuxiliaryMatcher
+  - CounterMatcher: Matches 名詞/接尾/助数詞
+  - ShikaMatcher: Matches しか (助詞/係助詞)
+  - NegativeAuxiliaryMatcher: Matches ない or ん (for ません)
+- **Meaning**: "only (number)" - しか requires negative verbs, implies no other choice
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Start from counter token (includes counter + しか + negative verb)
+  - キロしか走れない (chars 4-12) - can only run (km)
+  - 円しか持っていない (chars 6-15) - only have (yen)
+  - 時間しか遊べない (chars 1-9) - can only play (hours)
+  - 個しかありません (chars 1-9) - only have (pieces/items)
+- **Key insights**:
+  - Pattern matches from counter rather than number for simpler implementation
+  - Handles both ない and ません negative forms
+  - Wildcard allows various verb conjugations before negative (ていない, べない, etc.)
+  - しか differs from だけ: しか implies no alternatives exist, だけ implies choice among options
+
+### Session Statistics
+- **Patterns implemented**: 2 (N4)
+- **Tests written**: 8 (4 per pattern)
+- **Tests passing**: 927/927 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~194 (2 matcher implementations + 8 tests + 2 feature_list updates)
+
+### Key Insights
+- Verb[て] is structurally identical to N5 "Verb + て" but represents specific imperative usage
+- Number + しか〜ない is a fundamental N4 negative expression pattern
+- Counter tokens effectively represent "number + unit" combinations in Japanese
+- Both patterns successfully handle multiple conjugation/verb forms
+- Test sentences use realistic contexts from grammar_points_data.json
+- Pattern ranges capture full grammatical constructions for proper context
+- Successfully implemented 2 common N4 patterns in one session
+- This brings total N4 passing patterns from 14 to 16
+
+### Next Priorities
+Continue with N4 patterns (simple 1-2 structure patterns first):
+
+**Simple N4 patterns to implement next** (1-2 structures):
+1. **ございます** - polite form of ある (1 std + 1 pol)
+2. **じゃないか** - "isn't it?" (1 structure)
+3. **お～ください** - honorific request (1 structure)
+4. **なおす** - "redo/fix" (similar to おわる/はじめる, 1 std + 1 pol)
+5. **ようだ** - "seems like/appears to be" (2-3 structures)
+6. **Question-phrase + か** - embedded questions (2 structures)
+
+**Recommendation**: Continue with simple auxiliary verb/particle patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 927 tests passing (added 8 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
+## Session 144 - 2025-12-13 (Initial)
 
 ### ✅ Session Summary
 **Status**: Verb[て] pattern fully implemented (N4 casual imperative)
