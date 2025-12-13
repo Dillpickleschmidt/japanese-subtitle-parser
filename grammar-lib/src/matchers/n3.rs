@@ -4291,3 +4291,43 @@ pub fn chuu() -> Vec<TokenMatcher> {
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiParticleMatcher)))),
     ]
 }
+
+// Pattern: できれば・できたら (if possible)
+// Structures: できれば/できたら + Phrase
+pub fn dekireba_dekitara() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // できれ (仮定形 of できる) OR でき (連用形 of できる)
+    #[derive(Debug)]
+    struct DekirebaDekiraraMatcher;
+    impl Matcher for DekirebaDekiraraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "できる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.features.get(5).is_some_and(|form| form == "仮定形")
+                    || token.features.get(5).is_some_and(|form| form == "連用形"))
+        }
+    }
+
+    // ば (接続助詞) OR たら (た in 仮定形)
+    #[derive(Debug)]
+    struct BaTaraMatcher;
+    impl Matcher for BaTaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ば (接続助詞)
+            (token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+            // OR たら (た in 仮定形)
+            || (token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|form| form == "仮定形"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DekirebaDekiraraMatcher)),
+        TokenMatcher::Custom(Arc::new(BaTaraMatcher)),
+    ]
+}

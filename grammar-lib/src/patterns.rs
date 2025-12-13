@@ -4078,8 +4078,8 @@ declare_patterns! {
 
     DekirebaU30fbDekitara {
         name: "できれば・できたら",
-        matcher_fn: crate::matchers::n3::dekireba_u30fb_dekitara,
-        priority: 1,
+        matcher_fn: crate::matchers::n3::dekireba_dekitara,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },

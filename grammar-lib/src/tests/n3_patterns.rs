@@ -5444,3 +5444,59 @@ mod tameni_tests {
         assert_pattern_range(&patterns, "ため(に)", 0, 5); // 大雨のため
     }
 }
+
+// ========== できれば・できたら (if possible) ==========
+// Pattern: できれば・できたら (if possible)
+// Data source: grammar_points_data.json["できれば・できたら"]
+//
+// Structure variants to test:
+//   standard[0]: できれば + Phrase
+//   standard[1]: できたら + Phrase
+
+mod dekireba_dekitara_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "できれば + Phrase"
+    #[test]
+    fn test_dekireba_phrase() {
+        let sentence = "できれば車で行きたいけど、電車で行った方が早いかもしれない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "できれば・できたら");
+        assert_pattern_range(&patterns, "できれば・できたら", 0, 4); // できれば
+    }
+
+    // Testing: structure.standard[0] - "できれば + Phrase" (different example)
+    #[test]
+    fn test_dekireba_meeting() {
+        let sentence = "できれば今週中にもう一度会って話したいんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "できれば・できたら");
+        assert_pattern_range(&patterns, "できれば・できたら", 0, 4); // できれば
+    }
+
+    // Testing: structure.standard[1] - "できたら + Phrase"
+    #[test]
+    fn test_dekitara_pharmacy() {
+        let sentence = "できたら薬局に行って頭痛薬を買って来てくれる？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "できれば・できたら");
+        assert_pattern_range(&patterns, "できれば・できたら", 0, 4); // できたら
+    }
+
+    // Testing: structure.standard[1] - "できたら + Phrase" (different example)
+    #[test]
+    fn test_dekitara_tomorrow() {
+        let sentence = "できたら明日の朝までに返事をください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "できれば・できたら");
+        assert_pattern_range(&patterns, "できれば・できたら", 0, 4); // できたら
+    }
+}
