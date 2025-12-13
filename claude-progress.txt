@@ -1,10 +1,10 @@
 ## Session 191 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: IN PROGRESS - Successfully implemented 2 N3 patterns so far
-**Patterns completed**: 2 (について, において・における)
-**Tests added**: 5 (all passing)
-**Total tests**: 1214 (was 1209)
+**Status**: COMPLETE - Successfully implemented 3 N3 patterns
+**Patterns completed**: 3 (について, において・における, につれて)
+**Tests added**: 7 (all passing)
+**Total tests**: 1216 (was 1209)
 
 ### Pattern Implemented: について (about, concerning)
 
@@ -83,10 +83,41 @@
 3. **Formal vs common**: について is common in all contexts, において/における are formal/written only
 4. **Consistent tokenization**: These compound particles never split into components
 
+### Pattern Implemented: につれて (as, in proportion to)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Structures tested**:
+1. Verb + につれて (as verb happens, simultaneous change)
+2. Noun + につれて (in proportion to noun)
+
+**Implementation details**:
+- につれて is tokenized as single particle: 助詞/格助詞/連語
+- Literal meaning: "being taken along with" (に + 連れる + て)
+- Uses TokenMatcher::Any to match both verb and noun forms
+- Expresses proportional or simultaneous change: as A changes/happens, B changes
+- Implies (A) is causing (B) to happen simultaneously (domino effect)
+
+**Test file**: grammar-lib/src/tests/n3_patterns.rs (lines 7135-7166)
+**Matcher file**: grammar-lib/src/matchers/n3.rs (lines 3661-3681)
+
 ### Statistics
-- **Patterns completed this session**: 2 (について, において・における)
-- **Test success rate**: 5/5 (100%)
-- **Total passing tests**: 1214
+- **Patterns completed this session**: 3 (について, において・における, につれて)
+- **Test success rate**: 7/7 (100%)
+- **Total passing tests**: 1216
+
+### Session Notes
+- **Pattern discovery**: All three patterns are compound particles tokenized identically (助詞/格助詞/連語)
+- **Implementation efficiency**: Simple, consistent structure across all three patterns
+- **Common theme**: について and において/における are location/topic markers; につれて expresses proportional change
+- **Time spent**: ~2 hours for 3 complete patterns (average: 40 min/pattern)
+
+### Next Session Recommendations
+1. **Continue with N3 patterns**: Many more compound particle patterns available
+2. **Good candidates**: Other compound particles with similar structure (に関して, にかけて, etc.)
+3. **Avoid**: Complex patterns with wildcards or multiple optionals
 
 ---
 
