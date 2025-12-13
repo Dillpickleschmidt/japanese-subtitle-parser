@@ -579,9 +579,29 @@ pub fn toiukoto() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とき
+// Pattern: とき (when / at the time)
+// Structures:
+//   - Verb + とき
+//   - い-Adjective + とき
+//   - な-Adjective + な + とき
+//   - Noun + の + とき
+//
+// Meaning: "when", "at the time" - temporal noun indicating when something happens
 pub fn toki() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TokiMatcher;
+    impl Matcher for TokiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "とき"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(TokiMatcher)),
+    ]
 }
 
 // Pattern: まず (first of all / to start with)

@@ -4410,3 +4410,67 @@ mod gamirareru_tests {
         assert_pattern_range(&patterns, "がみられる", 10, 17); // 種も見られます
     }
 }
+
+// ========== とき (when/at the time) ==========
+// Pattern: とき
+// Data source: grammar_points_data.json["とき"]
+//
+// Structures to test:
+//   - standard[0]: Verb + とき
+//   - standard[1]: い-Adjective + とき
+//   - standard[2]: な-Adjective + な + とき
+//   - standard[3]: Noun + の + とき
+//
+// Examples from data:
+//   - 開けたときに (when I opened)
+//   - 暑いとき (when it's hot)
+//   - 暇なときに (when [he is] bored)
+//   - 雨のとき (when it rains)
+#[cfg(test)]
+mod toki_tests {
+    use super::*;
+
+    // Structure: Verb + とき
+    #[test]
+    fn verb_toki() {
+        let sentence = "狭い駐車場で車のドアを開けたときにドアを壁にぶつけた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とき");
+        assert_pattern_range(&patterns, "とき", 13, 16); // たとき
+    }
+
+    // Structure: い-Adjective + とき
+    #[test]
+    fn i_adjective_toki() {
+        let sentence = "暑いときはエアコンを点けましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とき");
+        assert_pattern_range(&patterns, "とき", 0, 4); // 暑いとき
+    }
+
+    // Structure: な-Adjective + な + とき
+    #[test]
+    fn na_adjective_toki() {
+        let sentence = "彼は暇なときに本を読みます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とき");
+        assert_pattern_range(&patterns, "とき", 3, 6); // なとき
+    }
+
+    // Structure: Noun + の + とき
+    #[test]
+    fn noun_no_toki() {
+        let sentence = "雨のときは家でゴロゴロしています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とき");
+        assert_pattern_range(&patterns, "とき", 1, 4); // のとき
+    }
+}
