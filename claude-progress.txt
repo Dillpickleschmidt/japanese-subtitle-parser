@@ -1,5 +1,101 @@
 # Grammar-lib Development Progress
 
+## Session 129 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (できれば・できたら)
+**Patterns completed**: 1 new N3 construction pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 802 (was 798 at session start)
+
+### Accomplishments
+1. ✅ Implemented できれば・できたら pattern (N3) - "if possible"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 802 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### できれば・できたら (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (dekireba_dekitara function, lines 4295-4333)
+- **Tests**: 4 tests in n3_patterns.rs (mod dekireba_dekitara_tests, lines 5448-5502)
+- **Structures**:
+  - standard[0]: できれば + Phrase
+  - standard[1]: できたら + Phrase
+- **Tokenization insights**:
+  - できれば = できれ (動詞, 一段, 仮定形 of できる) + ば (助詞/接続助詞)
+  - できたら = でき (動詞, 一段, 連用形 of できる) + たら (助動詞, 仮定形 of た)
+- **Implementation**: 2-token matcher handling both forms
+  - DekirebaDekiraraMatcher: Matches できる in 仮定形 (できれ) OR 連用形 (でき)
+  - BaTaraMatcher: Matches ば (接続助詞) OR たら (た in 仮定形)
+- **Meaning**: "if possible" - conditional expressing hypothetical possibility
+- **Pattern priority**: 3 (N3 construction pattern)
+- **Pattern ranges**: Include full できれば or できたら
+  - できれば (chars 0-4) - できれ + ば
+  - できたら (chars 0-4) - でき + たら
+
+### Technical Details
+- **Pattern priority**: 3 (N3 construction/conditional)
+- **Test coverage**: All 2 structure variants from grammar_points_data.json
+  - standard[0]: できれば + Phrase (2 tests)
+  - standard[1]: できたら + Phrase (2 tests)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Single 2-token matcher elegantly handles both できれば and できたら forms
+- **Grammar note**: Both express "if possible", with できれば being hypothetical conditional and できたら being past-conditional
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 802/802 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~96 (matcher implementation + 4 tests + feature_list update)
+
+### Key Insights
+- できれば・できたら is a straightforward conditional pattern with two forms
+- Pattern successfully handles both ば and たら conditional particles
+- Elegant implementation using OR logic within custom matchers
+- Test sentences are realistic examples from grammar_points_data.json
+- Pattern ranges include full grammatical construction (できる verb + conditional particle)
+- Successfully implemented a common N3 conditional expression pattern
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. **ではなくて・じゃなくて** - Negative copula te-form "not...but" (5 structures)
+2. **では・それでは・じゃあ** - Conjunction/transition (2 structures)
+3. **でもある** - "is also" (3 standard + 3 polite = 6 variants)
+4. **でよければ** - "if it's okay with" (1 structure)
+5. **そうだ** - Hearsay/conjecture (4 standard + 4 polite = 8 variants)
+
+**Recommendation**: Continue with simpler N3 construction patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 802 tests passing (added 4 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
+## Session 128 - 2025-12-13 (Previous session)
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (ために)
+**Total tests**: 798 (was 794 at session start)
+
+---
+
+## Session 127 - 2025-12-13 (Previous session)
+
+### ✅ Session Summary
+**Status**: One N5 pattern fully implemented (より～のほうが)
+**Total tests**: 794 (was 790 at session start)
+
+---
+
 ## Session 126 - 2025-12-13
 
 ### ✅ Session Summary
