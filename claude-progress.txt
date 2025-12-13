@@ -5156,3 +5156,100 @@ Continue with simple, high-value N3 patterns with few structure variants:
 
 **Recommendation**: Continue with simple patterns before tackling complex multi-variant constructions.
 
+
+---
+
+## Session 120 UPDATE - Second Pattern Complete
+
+### Additional Pattern Implemented: 左右する (N3)
+
+#### 左右する (N3) ✓ (All variants)
+- **File**: grammar-lib/src/matchers/n3.rs (lines 3588-3609)
+- **Tests**: 5 tests in n3_patterns.rs (mod sayuusuru_tests, lines 4860-4917)
+- **Structures tested**:
+  - standard[0]: 左右（さゆう） + する ✓
+  - standard[1]: 左右（さゆう） + する + Noun ✓
+  - standard[2]: される (passive) ✓
+  - polite[0]: 左右（さゆう） + します ✓
+  - polite[1]: 左右（さゆう） + する + Noun (same as standard) ✓
+  - polite[2]: されます (polite passive) ✓
+  - polite[3]: される (passive, same as standard) ✓
+- **Tokenization insights**:
+  - 左右 is always tokenized as 名詞/サ変接続 (サ変 noun)
+  - surface='左右', base_form='左右'
+  - Followed by する verb in various conjugations:
+    - する (基本形 - dictionary form)
+    - し/します (連用形 + ます)
+    - さ/される (未然レル接続 + れる passive)
+    - さ/れ/ます (未然レル接続 + れる連用形 + ます)
+- **Implementation**: 2-token matcher
+  - SayuuMatcher: Custom matcher for 左右 as 名詞/サ変接続
+  - TokenMatcher::Verb with base_form="する" and any conjugation
+- **Meaning**: "influence/dictate/control"
+  - Expresses the level of control something has over a situation
+  - Stronger than 影響 (affect) - implies direct control, like "dominate"
+  - Frequently used in passive form (される) to show being controlled/affected
+- **Pattern priority**: 1 (N3 construction)
+- **Pattern confidence**: 4.0 (higher than generic する pattern at 3.0)
+- **Pattern ranges**: Include 左右 + conjugated する form
+  - 左右する (chars 14-18) - dictionary form
+  - 左右する (chars 6-10) - modifying noun
+  - 左右さ (chars 9-12) - passive (just the verb part before れる)
+  - 左右します (chars 8-13) - polite form
+  - 左右さ (chars 10-13) - polite passive (just verb part before れます)
+
+### Test Examples
+All tests use realistic, subtitle-quality sentences:
+1. **Basic form**: この決定が会社の未来を大きく左右する
+   - Pattern detected: 左右する (chars 14-18)
+2. **Modifying noun**: 天気が収穫を左右する要因の一つだ
+   - Pattern detected: 左右する (chars 6-10)
+3. **Passive form**: 農業は天候に大きく左右される仕事だ
+   - Pattern detected: 左右さ (chars 9-12)
+4. **Polite form**: この選択が結果を左右します
+   - Pattern detected: 左右します (chars 8-13)
+5. **Polite passive**: 彼の意見は周りの人に左右されます
+   - Pattern detected: 左右さ (chars 10-13)
+
+### Implementation Notes
+- Pattern was already declared in patterns.rs with stub function
+- する verb pattern - matches サ変 noun + する
+- SayuuMatcher checks all criteria for 左右: surface, base_form, and POS (名詞/サ変接続)
+- TokenMatcher::Verb with base_form="する" handles all conjugations automatically
+- Pattern has higher confidence (4.0) than generic する pattern (3.0) for specificity
+
+### Final Session Statistics
+- **Patterns implemented**: 2 (N3: 同士, 左右する)
+- **Tests written**: 8 total (3 + 5, all passing)
+- **Tests passing**: 756 (was 748, added 8 tests)
+- **Commits**: 3 clean commits (2 implementations + 1 progress update)
+- **Lines added**: ~165 total (both matchers + tests + feature_list updates)
+
+### Environment Status (FINAL)
+- ✅ All 756 tests passing (was 748, added 8 tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ 2 N3 patterns completed in this session
+- ✅ Ready for session termination or continue with more patterns
+
+### Key Insights from Both Patterns
+- 同士: Simple noun suffix pattern (Noun + 同士)
+- 左右する: サ変 verb pattern (サ変 noun + する in all conjugations)
+- Both patterns demonstrate different aspects of Japanese grammar:
+  - 同士: Noun suffixation for expressing mutual relationships
+  - 左右する: サ変 verb construction for expressing control/influence
+- Both are high-value N3 patterns commonly seen in formal/written Japanese
+
+### Next Priorities
+Continue with simple, high-value N3 patterns:
+
+**Simple N3 patterns to consider next**:
+1. **という理由で** - "for that reason/being that" (2 std, 0 pol)
+2. **では・それでは・じゃあ** - "well then/in that case" (2 std, 0 pol)
+3. **もしも～なら・もしも～でも** - "if/even if" (2 std, 0 pol)
+4. **ほど～ない** - "not as much as" (3 std, 0 pol)
+5. **とおり** - "just like/as" (4 std, 0 pol)
+
+**Recommendation**: Continue with patterns that have 2-4 structure variants for steady progress.
+
