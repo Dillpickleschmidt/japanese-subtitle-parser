@@ -1,5 +1,101 @@
 # Grammar-lib Development Progress
 
+## Session 135 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (そうだ - hearsay)
+**Patterns completed**: 1 new N3 construction pattern
+**Tests added**: 8 comprehensive tests
+**Total tests**: 841 (was 833 at session start)
+
+### Accomplishments
+1. ✅ Implemented そうだ pattern (N3) - "I heard that" (hearsay)
+2. ✅ All 8 tests passing with proper range assertions
+3. ✅ No test regressions - all 841 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### そうだ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (souda function, lines 285-335)
+- **Tests**: 8 tests in n3_patterns.rs (mod souda_hearsay_tests, lines 5930-6035)
+- **Structures**:
+  - standard[0]: Verb + そうだ
+  - standard[1]: い-Adjective + そうだ
+  - standard[2]: Noun + だそうだ
+  - standard[3]: な-Adjective + だそうだ
+  - polite[0]: Verb + そうです
+  - polite[1]: い-Adjective + そうです
+  - polite[2]: Noun + だそうです
+  - polite[3]: な-Adjective + だそうです
+- **Tokenization insights**:
+  - Verb/i-Adj: Content word + そう (名詞/特殊/助動詞語幹 OR 名詞/接尾/助動詞語幹) + だ/です (助動詞)
+  - Noun/na-Adj: Content word + だ (助動詞) + そう + だ/です
+  - Key: Optional だ before そう distinguishes noun/na-adj from verb/i-adj
+- **Implementation**: 4-token matcher
+  - TokenMatcher::Any: Content word (Verb, i-Adj, Noun, na-Adj)
+  - Optional DaCopulaMatcher: Matches だ (助動詞) for Noun/na-Adj
+  - SouAuxiliaryMatcher: Matches そう (名詞/特殊 OR 名詞/接尾)
+  - DaDesuMatcher: Matches だ or です (助動詞)
+- **Meaning**: "I heard that" - hearsay (reporting information from others)
+- **Pattern priority**: 1 (N3 construction/hearsay auxiliary)
+- **Pattern ranges**: Include full grammatical construction
+  - 鳴くそうだ (chars 9-14) - Verb + そうだ
+  - たそうです (chars 14-19) - Verb + そうです
+  - 美味しいそうだ (chars 9-16) - i-Adj + そうだ
+  - 寒いそうです (chars 5-11) - i-Adj + そうです
+  - 仕事だそうだ (chars 6-12) - Noun + だそうだ
+  - 医者だそうです (chars 4-11) - Noun + だそうです
+  - 綺麗だそうだ (chars 10-16) - na-Adj + だそうだ
+  - 有名だそうです (chars 5-12) - na-Adj + だそうです
+- **Note**: This is HEARSAY そうだ, different from APPEARANCE そうだ
+  - Hearsay: 降るそうだ (plain form + そう)
+  - Appearance: 降りそうだ (verb stem + そう) - different pattern
+
+### Technical Details
+- **Pattern priority**: 1 (N3 construction/hearsay)
+- **Test coverage**: All 8 structure variants from grammar_points_data.json (4 standard + 4 polite)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Optional だ matcher elegantly handles both Verb/i-Adj (no だ) and Noun/na-Adj (with だ) cases
+- **Grammar note**: そうだ hearsay implies speaker is not 100% certain about information validity
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 8
+- **Tests passing**: 841/841 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~156 (matcher implementation + 8 tests + feature_list update)
+
+### Key Insights
+- そうだ hearsay pattern has 8 variants (4 standard + 4 polite forms)
+- Pattern successfully distinguishes hearsay from appearance そうだ by matching plain forms
+- Optional token matcher is key to handling both Verb/i-Adj and Noun/na-Adj cases
+- Test sentences are realistic examples from grammar_points_data.json
+- Pattern ranges include full grammatical constructions for proper context
+- Successfully implemented a fundamental N3 hearsay expression pattern
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. **たらいい・といい** - "it would be good if" (9 standard + 9 polite = 18 variants)
+2. **だけでなく(て)～も** - "not only...but also" (extension pattern)
+3. **ことなの** - Explanatory "it's that" (4+ variants)
+4. **というのは** - "what is called / the reason is" (complex construction)
+5. **で言うと** - "speaking in terms of" (question/information expression)
+
+**Recommendation**: Continue with simpler N3 construction patterns before tackling complex multi-structure patterns (たらいい with 18 variants).
+
+### Environment Status
+- ✅ All 841 tests passing (added 8 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 134 - 2025-12-13
 
 ### ✅ Session Summary
