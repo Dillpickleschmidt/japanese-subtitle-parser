@@ -1,5 +1,119 @@
 # Grammar-lib Development Progress
 
+## Session 141 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Three N4 patterns fully implemented (いがい metadata + おわる + がする)
+**Patterns completed**: 2 new N4 construction patterns + 1 metadata update
+**Tests added**: 9 comprehensive tests (4 + 5)
+**Total tests**: 907 (was 898 at session start)
+
+### Accomplishments
+1. ✅ Updated いがい pattern (N4) - already had tests, updated metadata to mark as complete
+2. ✅ Implemented おわる pattern (N4) - "finish doing"
+3. ✅ Implemented がする pattern (N4) - "sensory experience"
+4. ✅ All 9 tests passing with proper range assertions
+5. ✅ No test regressions - all 907 tests pass
+6. ✅ Updated feature_list.json for all 3 patterns
+7. ✅ Three clean commits with full documentation
+
+### Completed Patterns
+
+#### いがい (N4) ✓
+- **File**: Already implemented in n4.rs
+- **Tests**: 4 tests in n4_patterns.rs (mod igai_tests)
+- **Structure**:
+  - standard[0]: Verb + 以外（いがい）
+  - standard[1]: Noun + 以外（いがい）
+- **Meaning**: "except/besides" - marks exclusion
+- **Pattern priority**: 2 (N4 construction)
+- **Note**: Pattern already had implementation and tests, just updated metadata
+
+#### おわる (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (owaru function, lines 270-291)
+- **Tests**: 4 tests in n4_patterns.rs (mod owaru_tests, lines 950-1009)
+- **Structure**:
+  - standard[0]: Verb［stem］+ 終（お）わる
+  - polite[0]: Verb［stem］+ 終（お）わります
+- **Tokenization**:
+  - Verb in 連用形 (e.g., 払い, 飲み, 読み)
+  - おわる/おわっ/おわり (base=おわる, pos=動詞)
+- **Implementation**: flexible_verb_form() + OwaruMatcher (checks base=おわる, pos=動詞)
+- **Meaning**: "finish doing" - expresses completion of an action
+- **Pattern priority**: 1 (N4 construction/auxiliary verb)
+- **Pattern ranges**: Include full verb stem + おわる construction
+  - 払いおわる (chars 2-7) - nonpast
+  - 飲みおわっ (chars 9-14) - te-form
+  - 読みおわりました (chars 16-24, 3-11) - polite past
+
+#### がする (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (gasuru function, lines 618-651)
+- **Tests**: 5 tests in n4_patterns.rs (mod gasuru_tests, lines 1011-1080)
+- **Structure**:
+  - standard[0]: Noun + が + する
+  - polite[0]: Noun + が + します
+- **Tokenization**:
+  - Noun (e.g., 匂い, 音, 味, 気, 香り)
+  - が (base=が, pos=助詞/格助詞/一般)
+  - する/し (base=する, pos=動詞/サ変・スル)
+- **Implementation**: noun_matcher() + GaParticleMatcher + SuruVerbMatcher
+- **Meaning**: "sensory experience" - describes smells, sounds, tastes, feelings
+- **Pattern priority**: 2 (N4 construction)
+- **Common sensory nouns**: 匂い (smell), 音 (sound), 味 (taste), 感じ (feeling), 気 (sense)
+- **Pattern ranges**: Include full Noun + が + する construction
+  - 匂いがする (chars 8-13) - smell
+  - 音がする (chars 12-16) - sound
+  - 味がする (chars 8-12) - taste
+  - 気がする (chars 3-7) - feeling
+  - 香りがします (chars 2-8) - polite form
+
+### Technical Details
+- **Pattern priorities**: おわる (priority 1), いがい (priority 2), がする (priority 2)
+- **Test coverage**: All structure variants from grammar_points_data.json
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insights**:
+  - おわる: Auxiliary verb pattern, uses flexible_verb_form() for verb stem matching
+  - がする: Sensory expression pattern, matches Noun + が + する verb
+  - Both patterns work with polite forms (ます) automatically
+
+### Session Statistics
+- **Patterns implemented**: 3 (2 new + 1 metadata update)
+- **Tests written**: 9 (4 for おわる + 5 for がする)
+- **Tests passing**: 907/907 (100%)
+- **Commits**: 3 clean commits
+- **Lines added**: ~175 (2 matcher implementations + 9 tests + 3 feature_list updates)
+
+### Key Insights
+- おわる and がする are common N4 auxiliary patterns
+- Both patterns successfully handle multiple conjugation forms
+- Test sentences are realistic examples from grammar_points_data.json
+- Pattern ranges include full grammatical constructions for proper context
+- Successfully implemented 2 important N4 patterns in one session
+
+### Next Priorities
+Continue with N4 patterns (simple 1-2 structure patterns first):
+
+**Simple N4 patterns to implement next** (1-2 structures):
+1. **がほしい** - "want (noun)" (1 std + 1 pol structures)
+2. **こと** - nominalization (1 structure)
+3. **ございます** - polite form of ある (1 std + 1 pol)
+4. **しか～ない** - "only" (1 structure)
+5. **じゃないか** - "isn't it?" (1 structure)
+6. **お～ください** - honorific request (1 structure)
+7. **はじめる** - "begin doing" (similar to おわる, 1 std + 1 pol)
+
+**Recommendation**: Continue with simple auxiliary verb/particle patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 907 tests passing (added 9 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for all 3 patterns
+- ✅ Ready for next pattern implementation or session termination
+
+---
+# Grammar-lib Development Progress
+
 ## Session 140 - 2025-12-13
 
 ### ✅ Session Summary
