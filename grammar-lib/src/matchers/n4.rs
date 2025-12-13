@@ -958,8 +958,19 @@ pub fn mieru() -> Vec<TokenMatcher> {
 }
 
 // Pattern: だす
+// Pattern: だす - suddenly start doing (unintentional/uncontrolled)
+// Structures: Verb[stem] + だす/だし
 pub fn dasu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DasuMatcher;
+    impl Matcher for DasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "だす"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+    vec![super::flexible_verb_form(), TokenMatcher::Custom(Arc::new(DasuMatcher))]
 }
 
 // Pattern: ～代

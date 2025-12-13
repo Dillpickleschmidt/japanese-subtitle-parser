@@ -1976,3 +1976,67 @@ mod soreni_tests {
         assert_pattern_range(&patterns, "それに", 13, 16); // それに
     }
 }
+
+// ========== だす (suddenly start doing) ==========
+// Pattern: だす
+// Data source: grammar_points_data.json["だす"]
+//
+// Structures to test:
+//   - standard[0]: Verb[stem] + だす
+//   - polite[0]: Verb[stem] + だします
+//
+// Meaning: "suddenly do (A)", "burst into (A)" - unintentional/uncontrolled
+// Key difference: はじめる = intentional start, だす = sudden/unintentional
+//
+// Examples from data:
+//   - 走りだす (suddenly start running)
+//   - 泣きだす (burst into tears)
+//   - 歌いだした (burst into song)
+#[cfg(test)]
+mod dasu_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + だす (nonpast)
+    #[test]
+    fn test_dasu_standard_nonpast() {
+        let sentence = "最初から速く走りだすのは体に良くない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だす");
+        assert_pattern_range(&patterns, "だす", 6, 10); // 走りだす
+    }
+
+    // Testing: standard[0] - Verb[stem] + だす (past tense)
+    #[test]
+    fn test_dasu_standard_past() {
+        let sentence = "最近、友達が授業中に歌いだした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だす");
+        assert_pattern_range(&patterns, "だす", 10, 15); // 歌いだした
+    }
+
+    // Testing: standard[0] - Verb[stem] + だす (before ～前に)
+    #[test]
+    fn test_dasu_before_mae() {
+        let sentence = "転んだ息子が泣きだす前に、あめをあげる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だす");
+        assert_pattern_range(&patterns, "だす", 6, 10); // 泣きだす
+    }
+
+    // Testing: polite[0] - Verb[stem] + だします
+    #[test]
+    fn test_dasu_polite() {
+        let sentence = "赤ちゃんがすぐに泣きだしますから静かにしてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だす");
+        assert_pattern_range(&patterns, "だす", 8, 14); // 泣きだします
+    }
+}
