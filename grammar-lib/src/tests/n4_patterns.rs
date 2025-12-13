@@ -3905,3 +3905,52 @@ mod daga_desuga_tests {
         assert_pattern_range(&patterns, "だが・ですが", 8, 11); // ですが
     }
 }
+
+// ========== たばかり (just finished) ==========
+// Pattern: たばかり
+// Data source: grammar_points_data.json["たばかり"]
+//
+// Structure to test:
+//   - standard[0]: Verb[た] + ばかり
+//
+// Examples from data:
+//   - 着いたばかりの時 (just as I arrived)
+//   - 買ったばかりなのに (even though I just bought it)
+//   - 食べたばかりだから (because I just ate)
+#[cfg(test)]
+mod tabakari_tests {
+    use super::*;
+
+    // Structure: Verb[た] + ばかり (standard[0])
+    #[test]
+    fn verb_ta_bakari_basic() {
+        let sentence = "駅に着いたばかりの時に友達からメッセージが来た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たばかり");
+        assert_pattern_range(&patterns, "たばかり", 2, 8); // 着いたばかり
+    }
+
+    // Structure: Verb[た] + ばかり + だ (standard[0])
+    #[test]
+    fn verb_ta_bakari_with_da() {
+        let sentence = "さっき食べたばかりだからお腹はまだ空いていない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たばかり");
+        assert_pattern_range(&patterns, "たばかり", 3, 10); // 食べたばかりだ (includes auxiliary)
+    }
+
+    // Structure: Verb[た] + ばかり + のに (standard[0])
+    #[test]
+    fn verb_ta_bakari_with_noni() {
+        let sentence = "スマホが壊れた。昨日買ったばかりなのに";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たばかり");
+        assert_pattern_range(&patterns, "たばかり", 10, 17); // 買ったばかりな (includes auxiliary)
+    }
+}

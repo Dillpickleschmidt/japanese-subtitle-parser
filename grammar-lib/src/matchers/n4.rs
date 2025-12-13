@@ -2704,9 +2704,27 @@ pub fn youniinoru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たばかり
+// Pattern: Just finished doing (買ったばかり - just bought)
+// Structures: Verb[た] + ばかり
+fn bakari_particle() -> TokenMatcher {
+    #[derive(Debug)]
+    struct BakariParticleMatcher;
+    impl Matcher for BakariParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ばかり"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(BakariParticleMatcher))
+}
+
 pub fn tabakari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![
+        super::flexible_verb_form(),
+        super::past_auxiliary(),
+        bakari_particle(),
+    ]
 }
 
 // Pattern: 化する
