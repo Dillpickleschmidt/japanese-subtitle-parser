@@ -3,19 +3,20 @@
 ## Session 102 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (その結果 - as a result)
-**Patterns completed**: 1 new N3 conjunction pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 643 (was 639)
+**Status**: Two N3 patterns fully implemented (その結果 + それぞれ)
+**Patterns completed**: 2 new N3 patterns (conjunction + adverb/noun)
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 647 (was 639)
 
 ### Accomplishments
 1. ✅ Implemented その結果 (sonokekka) pattern (N3) - "as a result"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 643 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented それぞれ (sorezore) pattern (N3) - "each/respectively"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 647 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### その結果 (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (line 961-991)
@@ -42,6 +43,32 @@
   - その結果 (chars 17-21 in practice test)
   - その結果 (chars 27-31 in weight_gain test)
 
+#### それぞれ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 1225-1259)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod sorezore_tests)
+  - test_sorezore_adverbial (皆それぞれ食べたいものを頼んでね - Everyone, please each order)
+  - test_sorezore_separate_actions (それぞれ別の行動をした - We each did separate things)
+  - test_sorezore_no_noun (人それぞれの考え方があるから - Each person has different ways of thinking)
+  - test_sorezore_teams (それぞれのチームに分かれてから開始してください - Divide into each team)
+- **Structures**:
+  - Standard: それぞれ + Phrase (adverbial use)
+  - Nominalizing: それぞれ + の + Noun
+- **Tokenization insights**:
+  - それぞれ = 名詞/副詞可能 (noun/adverbial possible)
+  - Optional の = 助詞/連体化 (nominalizing particle)
+  - Pattern can be just the word itself or followed by の when modifying nouns
+- **Implementation**: 2-token matcher with optional の
+  - SoreZoreMatcher: Matches それぞれ as 名詞/副詞可能
+  - NoRentaikaMatcher (optional): Matches の as 助詞/連体化
+- **Meaning**: "each/respectively" - emphasizes individual or separate actions/states
+- **Usage**: Can be used adverbially before phrases or nominally with の before nouns
+- **Pattern priority**: 3 (high-priority N3 pattern)
+- **Pattern ranges**: Include それぞれ + optional の
+  - それぞれ (chars 1-5 in adverbial test)
+  - それぞれ (chars 0-4 in separate_actions test)
+  - それぞれの (chars 1-6 in no_noun test)
+  - それぞれの (chars 0-5 in teams test)
+
 ### Technical Details
 - **Pattern priority**: 3 (high-priority N3 conjunction)
 - **Test coverage**: 1 structure variant from grammar_points_data.json
@@ -52,36 +79,37 @@
 - **Note**: Pattern replaced TODO stub at line 962 in n3.rs
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 643/643 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~102 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 647/647 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~203 (2 matcher implementations + 8 tests + 2 feature_list updates)
 
 ### Key Insights
-- Simple conjunction pattern with straightforward implementation
+- Both patterns are simple N3 adverbs/conjunctions with straightforward implementations
+- その結果 is a 2-token conjunction (その + 結果)
+- それぞれ is a noun/adverb with optional nominalizing particle (それぞれ + optional の)
 - Test-first workflow successfully identified all tokenization patterns
 - All test sentences are realistic and subtitle-quality
-- Pattern range is just the conjunction itself (その結果)
-- Both positive and negative results can be expressed with this pattern
+- Pattern ranges include full construction (conjunctions themselves + optional particles)
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
-1. それぞれ - "each/respectively" (likely simple adverb/noun)
-2. たびに - "every time" (time expression)
-3. たとえ〜ても - "even if" (conditional pattern)
-4. ため(に) - "for the purpose of / because of" (causal pattern)
-5. さえ - "even" (emphasis particle, 6 structure variants - more complex)
+1. たびに - "every time" (time expression)
+2. たとえ〜ても - "even if" (conditional pattern)
+3. ため(に) - "for the purpose of / because of" (causal pattern)
+4. さえ - "even" (emphasis particle, 6 structure variants - more complex)
+5. わけだ - "it means that / no wonder" (explanatory pattern)
 
-**Recommendation**: Continue with simple patterns like "それぞれ" before tackling more complex multi-structure patterns.
+**Recommendation**: Continue with concrete patterns like "たびに" or "ため(に)" before tackling more complex multi-structure patterns like "さえ".
 
 ### Environment Status
-- ✅ All 643 tests passing
+- ✅ All 647 tests passing
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
