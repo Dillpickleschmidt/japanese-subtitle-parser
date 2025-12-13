@@ -282,9 +282,55 @@ pub fn kotoda() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: そうだ 
+// Pattern: そうだ (hearsay - I heard that)
+// Structures:
+//   - Verb + そうだ/そうです
+//   - い-Adjective + そうだ/そうです
+//   - Noun + だそうだ/だそうです
+//   - な-Adjective + だそうだ/だそうです
 pub fn souda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だ (助動詞, 基本形) - optional for Verb/i-Adj, required for Noun/na-Adj
+    #[derive(Debug)]
+    struct DaCopulaMatcher;
+    impl Matcher for DaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match そう (名詞/特殊/助動詞語幹 OR 名詞/接尾/助動詞語幹)
+    #[derive(Debug)]
+    struct SouAuxiliaryMatcher;
+    impl Matcher for SouAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そう"
+                && token.base_form == "そう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "特殊" || pos == "接尾"))
+        }
+    }
+
+    // Match だ or です (助動詞, 基本形)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && (token.base_form == "だ" || token.base_form == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Content word (Verb, i-Adj, Noun, na-Adj)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaCopulaMatcher)))), // Optional だ (for Noun/na-Adj)
+        TokenMatcher::Custom(Arc::new(SouAuxiliaryMatcher)), // そう
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)), // だ or です
+    ]
 }
 
 // Pattern: すると (then/upon that/in that case)

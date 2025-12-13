@@ -5926,3 +5926,110 @@ mod dewanakute_janakute_tests {
         assert_pattern_range(&patterns, "ではなくて・じゃなくて", 8, 13); // じゃなくて
     }
 }
+
+// Pattern: そうだ (hearsay - I heard that)
+// Data source: grammar_points_data.json["そうだ "]
+// Testing: Hearsay そうだ (reporting information from others)
+//   - standard[0]: Verb + そうだ
+//   - standard[1]: い-Adjective + そうだ
+//   - standard[2]: Noun + だそうだ
+//   - standard[3]: な-Adjective + だそうだ
+//   - polite[0]: Verb + そうです
+//   - polite[1]: い-Adjective + そうです
+//   - polite[2]: Noun + だそうです
+//   - polite[3]: な-Adjective + だそうです
+//
+// NOTE: This is HEARSAY そうだ, different from APPEARANCE そうだ
+// Hearsay: 降るそうだ (plain form + そう)
+// Appearance: 降りそうだ (verb stem + そう) - different pattern
+mod souda_hearsay_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + そうだ
+    #[test]
+    fn test_verb_souda() {
+        let sentence = "この種類の鳥はよく鳴くそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうだ ");
+        assert_pattern_range(&patterns, "そうだ ", 9, 14); // 鳴くそうだ
+    }
+
+    // Testing: polite[0] - Verb + そうです
+    #[test]
+    fn test_verb_soudesu() {
+        let sentence = "次の患者さんは酷い事故にあったそうです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうだ ");
+        assert_pattern_range(&patterns, "そうだ ", 14, 19); // たそうです
+    }
+
+    // Testing: standard[1] - い-Adjective + そうだ
+    #[test]
+    fn test_i_adj_souda() {
+        let sentence = "あの店のラーメンは美味しいそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうだ ");
+        assert_pattern_range(&patterns, "そうだ ", 9, 16); // 美味しいそうだ
+    }
+
+    // Testing: polite[1] - い-Adjective + そうです
+    #[test]
+    fn test_i_adj_soudesu() {
+        let sentence = "今年の冬は寒いそうです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうだ ");
+        assert_pattern_range(&patterns, "そうだ ", 5, 11); // 寒いそうです
+    }
+
+    // Testing: standard[2] - Noun + だそうだ
+    #[test]
+    fn test_noun_dasouda() {
+        let sentence = "先輩は明日も仕事だそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうだ ");
+        assert_pattern_range(&patterns, "そうだ ", 6, 12); // 仕事だそうだ
+    }
+
+    // Testing: polite[2] - Noun + だそうです
+    #[test]
+    fn test_noun_dasoudesu() {
+        let sentence = "あの人は医者だそうです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうだ ");
+        assert_pattern_range(&patterns, "そうだ ", 4, 11); // 医者だそうです
+    }
+
+    // Testing: standard[3] - な-Adjective + だそうだ
+    #[test]
+    fn test_na_adj_dasouda() {
+        let sentence = "あそこから見る夕日は綺麗だそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうだ ");
+        assert_pattern_range(&patterns, "そうだ ", 10, 16); // 綺麗だそうだ
+    }
+
+    // Testing: polite[3] - な-Adjective + だそうです
+    #[test]
+    fn test_na_adj_dasoudesu() {
+        let sentence = "この映画は有名だそうです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうだ ");
+        assert_pattern_range(&patterns, "そうだ ", 5, 12); // 有名だそうです
+    }
+}
