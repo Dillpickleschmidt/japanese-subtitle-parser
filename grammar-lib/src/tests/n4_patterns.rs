@@ -1376,3 +1376,64 @@ mod number_shika_nai_tests {
         assert_pattern_range(&patterns, "Number + しか〜ない", 1, 9); // 個しかありません
     }
 }
+
+// ========== お～ください (honorific request) ==========
+// Pattern: お～ください
+// Data source: grammar_points_data.json["お～ください "]
+//
+// Structure to test:
+//   - standard[0]: お + Verb［stem］+ ください
+//
+// Examples from data:
+//   - お申込みください (please register)
+//   - お使いください (please use)
+//   - お閉めください (please close)
+//   - お掛けください (please sit)
+#[cfg(test)]
+mod o_kudasai_tests {
+    use super::*;
+
+    // Testing: standard[0] - お + Verb[stem] + ください (register)
+    #[test]
+    fn test_o_kudasai_register() {
+        let sentence = "こちらのサービスを使うにはインターネットでお申込みください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～ください ");
+        assert_pattern_range(&patterns, "お～ください ", 21, 29); // お申込みください
+    }
+
+    // Testing: standard[0] - お + Verb[stem] + ください (use)
+    #[test]
+    fn test_o_kudasai_use() {
+        let sentence = "こちらのスリッパをお使いください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～ください ");
+        assert_pattern_range(&patterns, "お～ください ", 9, 16); // お使いください
+    }
+
+    // Testing: standard[0] - お + Verb[stem] + ください (close)
+    #[test]
+    fn test_o_kudasai_close() {
+        let sentence = "後ろの扉をお閉めください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～ください ");
+        assert_pattern_range(&patterns, "お～ください ", 5, 12); // お閉めください
+    }
+
+    // Testing: standard[0] - お + Verb[stem] + ください (sit)
+    #[test]
+    fn test_o_kudasai_sit() {
+        let sentence = "どうぞ、こちらにお掛けください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～ください ");
+        assert_pattern_range(&patterns, "お～ください ", 8, 15); // お掛けください
+    }
+}

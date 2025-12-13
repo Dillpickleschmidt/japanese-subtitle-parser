@@ -1253,9 +1253,36 @@ pub fn nasaru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: お～ください 
+// Pattern: お～ください (honorific request)
+// Structures: お + Verb[連用形] + ください
 pub fn o_uff5e_kudasai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct OPrefixMatcher;
+    impl super::Matcher for OPrefixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "お"
+                && token.base_form == "お"
+                && token.pos.first().is_some_and(|pos| pos == "接頭詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "名詞接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KudasaiMatcher;
+    impl super::Matcher for KudasaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ください"
+                && token.base_form == "くださる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(OPrefixMatcher)),
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(KudasaiMatcher)),
+    ]
 }
 
 // Pattern: いらっしゃる
