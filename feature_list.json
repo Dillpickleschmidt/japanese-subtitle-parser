@@ -2452,13 +2452,13 @@
   {
     "pattern_name": "たとえば",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "たとえば (or 例（たと）えば in its kanji form) is an adverb in Japanese that is used at the beginning of a sentence, or an indiv... [1 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

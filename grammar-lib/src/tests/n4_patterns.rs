@@ -833,3 +833,59 @@ mod yasui_tests {
         assert_pattern_range(&patterns, "やすい", 18, 25); // 読みやすいです
     }
 }
+
+// ========== たとえば (for example) ==========
+// Pattern: たとえば
+// Data source: grammar_points_data.json["たとえば"]
+//
+// Structure to test:
+//   - standard[0]: たとえば + Phrase
+//
+// Examples from data:
+//   - たとえば、ドイツとかは？ (For example, how about Germany?)
+//   - たとえば、冷たい物を食べたときに歯が痛いです (For example, my teeth hurt when I eat cold things)
+#[cfg(test)]
+mod tatoeba_tests {
+    use super::*;
+
+    // Testing: standard[0] - たとえば + Phrase
+    #[test]
+    fn test_tatoeba_at_start() {
+        let sentence = "たとえば、ドイツとかは？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たとえば");
+        assert_pattern_range(&patterns, "たとえば", 0, 4); // たとえば
+    }
+
+    #[test]
+    fn test_tatoeba_giving_example() {
+        let sentence = "たとえば、冷たい物を食べたときに歯が痛いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たとえば");
+        assert_pattern_range(&patterns, "たとえば", 0, 4); // たとえば
+    }
+
+    #[test]
+    fn test_tatoeba_mid_sentence() {
+        let sentence = "具体的に言うと、たとえば魚とか野菜とかですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たとえば");
+        assert_pattern_range(&patterns, "たとえば", 8, 12); // たとえば
+    }
+
+    #[test]
+    fn test_tatoeba_suggestion() {
+        let sentence = "たとえばこんな感じでやってみたらどうですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たとえば");
+        assert_pattern_range(&patterns, "たとえば", 0, 4); // たとえば
+    }
+}

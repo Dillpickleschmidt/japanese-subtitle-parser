@@ -1065,9 +1065,20 @@ pub fn hitsuyougaaru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たとえば
+// Pattern: たとえば (for example)
+// Structure: たとえば + Phrase
 pub fn tatoeba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TatoebaMatcher;
+    impl super::Matcher for TatoebaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たとえば"
+                && token.base_form == "たとえば"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(TatoebaMatcher))]
 }
 
 // Pattern: れる・られる (Potential)
