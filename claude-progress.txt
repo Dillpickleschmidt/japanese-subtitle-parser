@@ -1,10 +1,10 @@
 ## Session 193 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N3 pattern
-**Patterns completed**: 1 (とても～ない)
-**Tests added**: 3 (all passing)
-**Total tests**: 1225 (was 1222)
+**Status**: COMPLETE - Successfully implemented 2 N3 patterns
+**Patterns completed**: 2 (とても～ない, というのは)
+**Tests added**: 6 (all passing)
+**Total tests**: 1228 (was 1222)
 
 ### Pattern Implemented: とても～ない (not at all)
 
@@ -50,22 +50,68 @@
 3. **Pattern structure**: とても always appears directly before the verb phrase, making it reliable to match
 4. **Single structure variant**: Only one main structure in grammar_points_data.json, but multiple real-world usage patterns
 
+### Pattern Implemented: というのは (the thing known as, what I mean is)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1
+
+**Structures tested**:
+1. Phrase + というのは - full form (筋肉というのは)
+2. Phrase + とは - abbreviated form (おかずとは)
+3. Phrase + って - casual form (already handled by existing って pattern)
+
+**Implementation details**:
+- Two pattern variants registered as separate patterns:
+  - というのは: という(compound particle) + の(noun) + は(topic particle)
+  - というのは_abbreviated (とは): と(case particle) + は(topic particle)
+- という is tokenized as single compound particle (助詞/格助詞/連語)
+- の functions as nominalizer (名詞/非自立/一般)
+- とは is simpler 2-token sequence
+- って variant already detected by existing って pattern (N5 level)
+- Custom matchers verify exact POS tag sequences for precision
+
+**Test file**: grammar-lib/src/tests/n3_patterns.rs (lines 7293-7336)
+**Matcher file**: grammar-lib/src/matchers/n3.rs (lines 1170-1259)
+**Pattern registration**: grammar-lib/src/patterns.rs (lines 2808-2822)
+
+### Workflow followed (both patterns)
+1. ✅ Read grammar_points_data.json to understand all structure variants
+2. ✅ Checked for existing stub function (found toiunoha at line 1170)
+3. ✅ Wrote 3 tests with print_debug for all variants
+4. ✅ Analyzed tokenization output - discovered という is compound particle
+5. ✅ Implemented toiunoha() and toha() matchers
+6. ✅ Registered toha as ToiunohaAbbreviated (avoided N1 Toha conflict)
+7. ✅ Fixed duplicate struct names in matchers (ToCaseMatcher, HaTopicMatcher)
+8. ✅ Verified all tests detect patterns correctly
+9. ✅ Removed print_debug and added proper assertions with correct ranges
+10. ✅ Verified all 1228 tests pass (no regressions)
+11. ✅ Updated feature_list.json
+12. ✅ Committed changes with detailed commit message
+
+### Key Learnings
+1. **Multiple variants as separate patterns**: When one grammar concept has multiple forms with different tokenizations, register each as a separate pattern (see GRAMMAR_PATTERN_STANDARDS.md)
+2. **Enum variant naming**: Had to use ToiunohaAbbreviated instead of Toha due to existing N1 Toha pattern (different grammar concept)
+3. **Unique struct names**: Each custom matcher struct must have unique name within file scope - renamed to TohaToMatcher, TohaHaMatcher
+4. **Compound particles**: という tokenizes as single compound particle (助詞/格助詞/連語), not split into と + いう
+5. **Existing patterns**: って casual form already handled by separate N5 pattern - tested to verify coverage
+
 ### Statistics
-- **Session time**: ~1 hour
-- **Patterns completed this session**: 1
-- **Test success rate**: 3/3 (100%)
-- **Total passing tests**: 1225
+- **Session time**: ~2.5 hours
+- **Patterns completed this session**: 2
+- **Test success rate**: 6/6 (100%)
+- **Total passing tests**: 1228
 
 ### Next Session Recommendations
-1. **Continue with N3 priority 3 patterns**: Look for similar simple patterns
+1. **Continue with N3 patterns**: More simple particle/adverb patterns available
 2. **Good candidates**:
-   - 別に～ない (stub already exists, similar structure to とても～ない)
-   - Other adverb + negative patterns
+   - 別に～ない (N3, priority 3, similar to とても～ない)
+   - Other と-based patterns (similar structure to completed patterns)
    - Simple particle patterns with existing stubs
-3. **Avoid**: Complex patterns with multiple optional matchers or ambiguous structures
+3. **Avoid**: Complex patterns with wildcards, multiple optionals, or ambiguous structures
 
 ### Environment Status
-- ✅ All 1225 tests passing
+- ✅ All 1228 tests passing
 - ✅ No regressions
 - ✅ Clean git state (changes committed)
 - ✅ feature_list.json updated
