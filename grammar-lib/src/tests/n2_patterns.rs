@@ -84,3 +84,35 @@ mod ikinari_tests {
         assert_pattern_range(&patterns, "いきなり", 10, 14); // いきなり
     }
 }
+
+// Pattern: いよいよ (finally, at last, more and more)
+// Data source: grammar_points_data.json["いよいよ"]
+// Testing: structure.standard[0] - "いよいよ + Phrase"
+//
+// Structure variants:
+//   - standard[0]: いよいよ + Phrase
+//   - No polite forms listed
+
+mod iyoiyo_tests {
+    use super::*;
+
+    #[test]
+    fn test_iyoiyo_finally() {
+        let sentence = "いよいよ明日で卒業か";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いよいよ");
+        assert_pattern_range(&patterns, "いよいよ", 0, 4); // いよいよ
+    }
+
+    #[test]
+    fn test_iyoiyo_more_and_more() {
+        let sentence = "彼の話を聞いていると彼がいよいよ怪しくなってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いよいよ");
+        assert_pattern_range(&patterns, "いよいよ", 12, 16); // いよいよ
+    }
+}

@@ -567,9 +567,20 @@ pub fn nukide() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: いよいよ
+// Pattern: いよいよ (finally, at last, more and more)
+// Structures: いよいよ + Phrase
 pub fn iyoiyo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct IyoiyoMatcher;
+    impl Matcher for IyoiyoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いよいよ"
+                && token.base_form == "いよいよ"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(IyoiyoMatcher))]
 }
 
 // Pattern: ずに済む
