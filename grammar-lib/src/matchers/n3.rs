@@ -313,9 +313,26 @@ pub fn naiuchini() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: べき
+// Pattern: べき (ought to/should - moral obligation)
+// Structures: Verb + べき + だ, Verb + べき + Noun
 pub fn beki() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match べき auxiliary verb
+    #[derive(Debug)]
+    struct BekiMatcher;
+    impl super::Matcher for BekiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "べき"
+                && token.base_form == "べし"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb (基本形 or 文語基本形)
+        TokenMatcher::Custom(Arc::new(BekiMatcher)),
+    ]
 }
 
 // Pattern: べきではない
@@ -1763,9 +1780,42 @@ pub fn todoujini() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ところだった ①
+// Pattern: ところだった ① (was about to / almost happened)
+// Structures: Verb[る/ない] + ところ + だった/でした
 pub fn tokorodatta_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for ところ as 名詞/非自立
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for だった (だ + た) or でした (です + た)
+    // This matches the だっ/でし part
+    #[derive(Debug)]
+    struct DaDattaMatcher;
+    impl Matcher for DaDattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            ((token.surface == "だっ" && token.base_form == "だ")
+                || (token.surface == "でし" && token.base_form == "です"))
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: Verb/Negation + ところ + だった/でした
+    // Using TokenMatcher::Any to catch both Verb[基本形] and ない[基本形]
+    vec![
+        TokenMatcher::Any,  // Catches verb in 基本形 or ない auxiliary
+        TokenMatcher::Custom(Arc::new(TokoroMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDattaMatcher)),
+        super::past_auxiliary(),  // た
+    ]
 }
 
 // Pattern: だって (because/but/even)

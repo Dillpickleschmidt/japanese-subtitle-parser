@@ -6374,3 +6374,126 @@ mod baii_tests {
         assert_pattern_range(&patterns, "ばいい", 0, 7); // 勉強すればいい
     }
 }
+
+// ========== べき (ought to/should - moral obligation) ==========
+// Pattern: べき (ought to/should)
+// Data source: grammar_points_data.json["べき"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + べき + だ
+//   standard[1]: Verb + べき + Noun
+//   polite[0]: Verb + べき + です
+//   Exception: する → すべき (optional る)
+//
+// Complex structures (skip for now):
+//   standard[2-4]: い/な-Adj/Noun + である + べき + だ
+
+mod beki_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + べき + だ
+    // Note: Pattern range extends to include following だ auxiliary
+    #[test]
+    fn test_verb_beki_da() {
+        let sentence = "そういう事は本人に言うべきだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べき");
+        assert_pattern_range(&patterns, "べき", 9, 14); // 言うべきだ (includes だ)
+    }
+
+    // Testing: standard[1] - Verb + べき + Noun
+    // Note: For suru-verbs, pattern extends backwards to include the サ変接続 noun
+    #[test]
+    fn test_verb_beki_noun() {
+        let sentence = "ハマサキさんは尊敬するべき人だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べき");
+        assert_pattern_range(&patterns, "べき", 7, 13); // 尊敬するべき (includes サ変接続 noun)
+    }
+
+    // Testing: Exception - する → すべき (without る)
+    // Note: Pattern range extends to include following だ auxiliary
+    #[test]
+    fn test_suru_subeki_exception() {
+        let sentence = "家族は何があっても大切にすべきだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べき");
+        assert_pattern_range(&patterns, "べき", 12, 16); // すべきだ (includes だ)
+    }
+
+    // Testing: polite[0] - Verb + べき + です
+    // Note: Pattern detects Verb + べき, not including です
+    #[test]
+    fn test_verb_beki_desu() {
+        let sentence = "あなたに教えるべき事はこれで全部です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べき");
+        assert_pattern_range(&patterns, "べき", 4, 9); // 教えるべき
+    }
+}
+
+// ========== ところだった ① (was about to / almost) ==========
+// Pattern: ところだった ① (was about to / almost happened)
+// Data source: grammar_points_data.json["ところだった ①"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[る] + ところだった
+//   standard[1]: Verb[ない] + ところだった
+//   polite[0]: Verb[る] + ところでした
+//   polite[1]: Verb[ない] + ところでした
+
+mod tokorodatta_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[る] + ところだった
+    #[test]
+    fn test_verb_ru_tokorodatta() {
+        let sentence = "やばい、大事な書類を捨てるところだった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところだった ①");
+        assert_pattern_range(&patterns, "ところだった ①", 10, 19); // 捨てるところだった
+    }
+
+    // Testing: standard[1] - Verb[ない] + ところだった
+    #[test]
+    fn test_verb_nai_tokorodatta() {
+        let sentence = "もう少しで待ち合わせ時間に間に合わないところだった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところだった ①");
+        assert_pattern_range(&patterns, "ところだった ①", 17, 25); // ないところだった
+    }
+
+    // Testing: polite[0] - Verb[る] + ところでした
+    #[test]
+    fn test_verb_ru_tokorodeshita() {
+        let sentence = "危うく電車に乗り遅れるところでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところだった ①");
+        assert_pattern_range(&patterns, "ところだった ①", 6, 17); // 乗り遅れるところでした
+    }
+
+    // Testing: polite[1] - Verb[ない] + ところでした
+    #[test]
+    fn test_verb_nai_tokorodeshita() {
+        let sentence = "現金が足りなくて家賃が払えないところでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところだった ①");
+        assert_pattern_range(&patterns, "ところだった ①", 13, 21); // ないところでした
+    }
+}

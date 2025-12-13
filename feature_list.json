@@ -5406,13 +5406,13 @@
   {
     "pattern_name": "ところだった ①",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As explained in the ところ grammar point, ところ is a noun that is often used to highlight the situation within which a ver... [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6148,13 +6148,13 @@
   {
     "pattern_name": "べき",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The auxiliary verb べき , being the attributive form of べし, is a structure in Japanese that is often paired with verbs ... [7 std, 7 pol]",
     "priority": 3,
     "skip_reason": null
