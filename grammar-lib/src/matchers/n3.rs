@@ -1159,9 +1159,20 @@ pub fn sorezore() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: そこで
+// Pattern: そこで (accordingly/as such)
+// Structures: (Situation) Phrase。そこで + (Solution) Phrase
 pub fn sokode() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SokodeMatcher;
+    impl super::Matcher for SokodeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match そこで as 接続詞 (conjunction)
+            token.surface == "そこで"
+                && token.base_form == "そこで"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(SokodeMatcher))]
 }
 
 // Pattern: しかない (no choice but to / there is only)

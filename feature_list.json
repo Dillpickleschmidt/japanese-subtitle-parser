@@ -4832,13 +4832,13 @@
   {
     "pattern_name": "そこで",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そこで (very rarely seen as 其処（そこ）で) is a combination of そこ 'there', and the case marking particle で [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

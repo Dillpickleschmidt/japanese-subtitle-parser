@@ -2584,6 +2584,69 @@ mod sousuruto_tests {
     }
 }
 
+// ========== そこで (accordingly/as such) ==========
+// Pattern: そこで (accordingly/as such/to that end)
+// Data source: grammar_points_data.json["そこで"]
+//
+// Structure variants to test:
+//   standard[0]: (Situation) Phrase。そこで + (Solution) Phrase
+
+mod sokode_tests {
+    use super::*;
+
+    // Test: そこで for controllable solution - giving umbrella
+    // Example: 彼は雨の中、傘なしで立っている。そこで、私は車から出て彼に私の傘をあげた
+    // (He is standing in the rain without an umbrella. As such, I got out of the car and gave him mine)
+    #[test]
+    fn test_sokode_umbrella() {
+        let sentence = "彼は雨の中、傘なしで立っている。そこで、私は車から出て彼に私の傘をあげた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そこで");
+        assert_pattern_range(&patterns, "そこで", 16, 19); // そこで
+    }
+
+    // Test: そこで for controllable solution - marriage decision
+    // Example: 彼女と結婚をすることにした。そこで、彼女の親の実家に行って挨拶をすることに決めた
+    // (I have decided to marry my girlfriend. To that end, I have decided to go to her parents' place to talk to them)
+    #[test]
+    fn test_sokode_marriage() {
+        let sentence = "彼女と結婚をすることにした。そこで、彼女の親の実家に行って挨拶をすることに決めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そこで");
+        assert_pattern_range(&patterns, "そこで", 14, 17); // そこで
+    }
+
+    // Test: そこで for controllable solution - anti-theft window
+    // Example: うちには泥棒が３回も入っている。そこで、防犯ガラスを買うことにした
+    // (Our house has been burgled 3 times already. As such, I have decided to buy an anti-theft window)
+    #[test]
+    fn test_sokode_security() {
+        let sentence = "うちには泥棒が３回も入っている。そこで、防犯ガラスを買うことにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そこで");
+        assert_pattern_range(&patterns, "そこで", 16, 19); // そこで
+    }
+
+    // Test: そこで for controllable solution - calming child
+    // Example: 子供が泣き始めた。そこで、子供に飴をあげて落ち着かせた
+    // (My kid started to cry. As such, I gave them some candy to calm them down)
+    #[test]
+    fn test_sokode_child() {
+        let sentence = "子供が泣き始めた。そこで、子供に飴をあげて落ち着かせた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そこで");
+        assert_pattern_range(&patterns, "そこで", 9, 12); // そこで
+    }
+}
+
 // ========== ずに (without doing) ==========
 // Pattern: ずに (without doing)
 // Data source: grammar_points_data.json["ずに"]
