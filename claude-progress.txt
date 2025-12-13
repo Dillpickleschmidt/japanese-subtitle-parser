@@ -3,19 +3,20 @@
 ## Session 117 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (なかなか～ない)
-**Patterns completed**: 1 new N3 construction pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 728 (was 724 at session start)
+**Status**: Two N3 patterns fully implemented (なかなか～ない + 的)
+**Patterns completed**: 2 new N3 construction patterns
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 732 (was 724 at session start)
 
 ### Accomplishments
 1. ✅ Implemented なかなか～ない pattern (N3) - "hardly/not easily/far from"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 728 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented 的 pattern (N3) - "like / -ish / -ly"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 732 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### なかなか～ない (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (lines 197-235)
@@ -39,7 +40,29 @@
   - なかなか来ない (chars 0-7) - sentence beginning
   - なかなか解決しません (chars 5-15) - polite form
 
-### Technical Details
+#### 的 (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 629-666)
+- **Tests**: 4 tests in n3_patterns.rs (mod teki_tests)
+- **Structures**:
+  - standard[0]: Noun + 的（てき） + に
+  - standard[1]: Noun + 的（てき） + な + Noun
+- **Tokenization insights**:
+  - 的 = 名詞/接尾/形容動詞語幹 (noun/suffix/na-adjective stem)
+  - に = 助詞/副詞化 (adverbializing particle)
+  - な = 助動詞 with 体言接続 (copula for na-adjectives)
+- **Implementation**: 3-token matcher
+  - noun_matcher(): Matches any noun
+  - TekiSuffixMatcher: Matches 的 as 名詞/接尾
+  - NiOrNaMatcher: Matches に (副詞化) or な (体言接続)
+- **Meaning**: "like / -ish / -ly" - creates English-like adjective/adverb endings from nouns
+- **Pattern priority**: 1 (N3 construction/suffix pattern)
+- **Pattern ranges**: Include noun + 的 + に/な
+  - 定期的に (chars 0-4) - regularly (adverbial)
+  - 感情的に (chars 3-7) - emotionally (adverbial)
+  - 個人的な (chars 3-7) - personal (na-adjective)
+  - 宗教的な (chars 4-8) - religious (na-adjective)
+
+### Technical Details - なかなか～ない
 - **Pattern priority**: 1 (N3 construction)
 - **Test coverage**: 1 structure variant from grammar_points_data.json
   - standard[0]: なかなか + Phrase + Verb[ない] (4 tests covering different contexts)
@@ -47,37 +70,48 @@
 - **Key insight**: Wildcard matcher allows flexible phrase insertion between なかなか and negative verb
 - **Grammar note**: Negative usage of なかなか (contrasts with positive usage meaning "quite/very")
 
+### Technical Details - 的
+- **Pattern priority**: 1 (N3 construction/suffix)
+- **Test coverage**: All 2 structure variants from grammar_points_data.json
+  - standard[0]: Noun + 的 + に (2 tests - adverbial forms)
+  - standard[1]: Noun + 的 + な + Noun (2 tests - na-adjective forms)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Single matcher handles both adverbial and adjectival forms with OR logic
+- **Grammar note**: 的 is commonly used with sino-japanese compound nouns to create adjectives/adverbs
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 728/728 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~100 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 732/732 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~198 (2 matcher implementations + 8 tests + 2 feature_list updates)
 
 ### Key Insights
 - なかなか～ない uses wildcard matching to handle flexible Japanese word order
 - Pattern successfully handles both casual (ない) and polite (ません) negative forms
 - Matcher allows up to 10 intervening tokens between なかなか and the negative
-- Test sentences are realistic and cover different phrase structures
-- Pattern ranges include full construction from なかなか to the negative auxiliary
+- 的 pattern cleverly uses OR logic to handle both adverbial (に) and adjectival (な) forms in one matcher
+- Both patterns use realistic subtitle-quality sentences for testing
+- Pattern ranges include full constructions for proper grammatical context
+- Single session completed 2 patterns with different complexity levels (wildcard vs suffix)
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
-1. 的 - "like / -ish / -ly" (2 structure variants - very simple!)
-2. 同士 - "together / between" (2 structure variants - simple suffix)
-3. とおり - "in that way / just like" (4 structure variants)
-4. ほど～ない - "not as much as" (3 structure variants)
-5. では・それでは・じゃあ - "well then" (2 structure variants)
+1. 同士 - "together / between" (2 structure variants - simple suffix pattern)
+2. とおり - "in that way / just like" (4 structure variants)
+3. ほど～ない - "not as much as" (3 structure variants)
+4. では・それでは・じゃあ - "well then" (2 structure variants)
+5. どころか - "far from / let alone" (5 structure variants)
 
-**Recommendation**: Continue with simple patterns like 的 and 同士 (2 structures each) before tackling more complex multi-structure patterns.
+**Recommendation**: Continue with simple suffix pattern 同士 (2 structures) before tackling more complex multi-structure patterns.
 
 ### Environment Status
-- ✅ All 728 tests passing (added 4 new tests)
+- ✅ All 732 tests passing (added 8 new tests)
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
