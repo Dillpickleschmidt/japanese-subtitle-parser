@@ -1606,9 +1606,24 @@ pub fn mushiro() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: つまり
+// Pattern: つまり (in other words/in short)
+// Structures: Phrase (A)。つまり + (Summary) Phrase (B)
 pub fn tsumari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TsumariMatcher;
+    impl Matcher for TsumariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match つまり as either noun (名詞/一般) or conjunction (接続詞)
+            token.surface == "つまり"
+                && token.base_form == "つまり"
+                && (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    || token.pos.first().is_some_and(|pos| pos == "接続詞"))
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(TsumariMatcher))]
 }
 
 // Pattern: 即ち

@@ -3830,3 +3830,52 @@ mod tsui_tests {
         assert_pattern_range(&patterns, "つい", 7, 9); // つい
     }
 }
+
+// ========== つまり (in other words/in short) ==========
+// Pattern: つまり (in other words/in short/condensed summary)
+// Data source: grammar_points_data.json["つまり"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase (A)。つまり + (Summary) Phrase (B)
+//
+// Note: Used to summarize or rephrase a previous statement.
+// Can be tokenized as either 名詞/一般 or 接続詞 depending on context.
+mod tsumari_tests {
+    use super::*;
+
+    // Test: つまり after question (noun form)
+    // Example: つまり、また無断欠勤ということですね (in other words, ditched work again)
+    #[test]
+    fn test_tsumari_noun_form() {
+        let sentence = "ハマサキさんはまた休んだのですか？つまり、また無断欠勤ということですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つまり");
+        assert_pattern_range(&patterns, "つまり", 17, 20); // つまり
+    }
+
+    // Test: つまり as conjunction
+    // Example: つまり、もう関わらなくていいということ？
+    #[test]
+    fn test_tsumari_conjunction() {
+        let sentence = "彼氏と別れたの？つまり、もう関わらなくていいということ？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つまり");
+        assert_pattern_range(&patterns, "つまり", 8, 11); // つまり
+    }
+
+    // Test: つまり summarizing statement
+    // Example: つまり一日中ダラダラしていたということですね
+    #[test]
+    fn test_tsumari_summarizing() {
+        let sentence = "ゲームばかりしていた。つまり一日中ダラダラしていたということですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つまり");
+        assert_pattern_range(&patterns, "つまり", 11, 14); // つまり
+    }
+}
