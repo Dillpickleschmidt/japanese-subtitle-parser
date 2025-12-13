@@ -845,9 +845,24 @@ pub fn gotoni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なるべく
+// Pattern: なるべく (as much as possible)
+// Structure: なるべく + Phrase
 pub fn narubeku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match なるべく adverb
+    #[derive(Debug)]
+    struct NarubekuMatcher;
+    impl Matcher for NarubekuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なるべく"
+                && token.base_form == "なるべく"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NarubekuMatcher))]
 }
 
 // Pattern: るところだ

@@ -3713,3 +3713,44 @@ mod kadouka_tests {
         assert_pattern_range(&patterns, "かどうか", 8, 14); // 父親かどうか
     }
 }
+
+// Pattern: なるべく - "as much as possible"
+// Data source: grammar_points_data.json["なるべく"]
+// Testing structure:
+//   - standard[0]: なるべく + (Action) Phrase
+mod narubeku_tests {
+    use super::*;
+
+    // Structure: なるべく + Phrase (standard[0]) - with polite request
+    #[test]
+    fn narubeku_with_request() {
+        let sentence = "外に出かけるときはなるべくドアのカギをかけてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なるべく");
+        assert_pattern_range(&patterns, "なるべく", 9, 13); // なるべく
+    }
+
+    // Structure: なるべく + Phrase (standard[0]) - with conditional
+    #[test]
+    fn narubeku_with_conditional() {
+        let sentence = "仕事で疲れていても、なるべく夕食は食べてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なるべく");
+        assert_pattern_range(&patterns, "なるべく", 10, 14); // なるべく
+    }
+
+    // Structure: なるべく + Phrase (standard[0]) - casual
+    #[test]
+    fn narubeku_casual() {
+        let sentence = "明日はなるべく早く来てね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なるべく");
+        assert_pattern_range(&patterns, "なるべく", 3, 7); // なるべく
+    }
+}
