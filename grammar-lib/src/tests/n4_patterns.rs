@@ -834,6 +834,70 @@ mod yasui_tests {
     }
 }
 
+// ========== にくい (difficult to) ==========
+// Pattern: にくい
+// Data source: grammar_points_data.json["にくい"]
+//
+// Structures to test:
+//   - standard[0]: Verb[stem] + にくい
+//   - polite[0]: Verb[stem] + にくい + です
+//
+// Meaning: "difficult to (A)" due to skill level or inherent difficulty
+// Note: Different from づらい (hard to endure/unbearable)
+//
+// Examples from data:
+//   - 止めにくい (difficult to park)
+//   - しにくい (hard to breathe)
+//   - 言いにくい (hard to say)
+#[cfg(test)]
+mod nikui_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + にくい (difficult due to skill)
+    #[test]
+    fn test_nikui_difficult_to_park() {
+        let sentence = "この駐車場は狭いから止めにくいんだよね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にくい");
+        assert_pattern_range(&patterns, "にくい", 10, 15); // 止めにくい
+    }
+
+    // Testing: standard[0] - Verb[stem] + にくい (difficult physical action)
+    #[test]
+    fn test_nikui_hard_to_breathe() {
+        let sentence = "今日は具合が悪いから呼吸がしにくい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にくい");
+        assert_pattern_range(&patterns, "にくい", 13, 17); // しにくい
+    }
+
+    // Testing: standard[0] - Verb[stem] + にくい (difficult pronunciation)
+    #[test]
+    fn test_nikui_hard_to_say() {
+        let sentence = "英語の「Literally」って単語がとても言いにくい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にくい");
+        assert_pattern_range(&patterns, "にくい", 22, 27); // 言いにくい
+    }
+
+    // Testing: polite[0] - Verb[stem] + にくい + です
+    #[test]
+    fn test_nikui_polite() {
+        let sentence = "このペンは壊れているから書きにくいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にくい");
+        assert_pattern_range(&patterns, "にくい", 12, 19); // 書きにくいです
+    }
+}
+
 // ========== たとえば (for example) ==========
 // Pattern: たとえば
 // Data source: grammar_points_data.json["たとえば"]

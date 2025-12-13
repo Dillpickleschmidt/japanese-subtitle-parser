@@ -67,9 +67,23 @@ pub fn yasui() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にくい
+// Pattern: にくい (difficult to)
+// Structures: Verb[stem] + にくい/にくいです
 pub fn nikui() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NikuiMatcher;
+    impl Matcher for NikuiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "にくい"
+                && token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),  // Verb in 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(NikuiMatcher)),
+    ]
 }
 
 // Pattern: だんだん

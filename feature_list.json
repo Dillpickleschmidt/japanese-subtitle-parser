@@ -3362,13 +3362,13 @@
   {
     "pattern_name": "にくい",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like 易（やす）い , にくい is an い-Adjective that is regularly attached to the ます stem of verbs [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null
