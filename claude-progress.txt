@@ -3,19 +3,20 @@
 ## Session 99 - 2025-12-12
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (そこで)
-**Patterns completed**: 1 new N3 pattern (conjunction for controllable solutions)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 623 (was 619 at start)
+**Status**: Two N3 patterns fully implemented (そこで + そのため(に))
+**Patterns completed**: 2 new N3 patterns (conjunctions for solutions/reasons)
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 627 (was 619 at start)
 
 ### Accomplishments
 1. ✅ Implemented そこで (sokode) pattern (N3) - "accordingly/as such/to that end"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 623 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented そのため(に) (sonotame_ni) pattern (N3) - "for that reason/to that end"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 627 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### そこで (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (line 1162-1176)
@@ -39,46 +40,80 @@
   - そこで (chars 16-19 in test_sokode_security)
   - そこで (chars 9-12 in test_sokode_child)
 
+#### そのため(に) (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 915-959)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod sonotameni_tests)
+  - test_sonotame_fishing (ハマダさんはとても釣りが好きです。そのため毎朝仕事に行く前に、釣りに行っています - Hamada-san loves fishing. For that reason, he does it every morning before he goes to work - without に)
+  - test_sonotame_population (日本では高齢化が進んでいる。そのため、子供が生まれたら政府からお金がもらえる - Japan's population continues to age. To that end, when a child is born, you receive money from the government - without に)
+  - test_sonotameni_children (子供達にはなんの不自由もない生活をしてほしい。そのために毎日夜遅くまで仕事をしている - I want my kids to have a life without any struggles. For the sake of that, I work until late at night every day - with に)
+  - test_sonotameni_car (新しい車が欲しいけど今は住宅ローンで精一杯。そのために車を買うのを我慢している - I want a new car, but I am struggling to pay my mortgage. For that reason, I am holding off on doing it - with に)
+- **Structure**: そのため + (に) + Phrase (only 1 structure variant)
+- **Tokenization insights**:
+  - その = 連体詞 (prenominal)
+  - ため = 名詞/非自立 (bound noun)
+  - Optional に = 助詞/格助詞 (case particle)
+  - Pattern is 2-3 tokens depending on whether に is present
+- **Implementation**: 3-token matcher
+  - SonoRentaishiMatcher - Matches その as 連体詞
+  - TameNounMatcher - Matches ため as 名詞/非自立
+  - NiParticleMatcher (optional) - Matches に as 格助詞
+- **Meaning**: "for that reason/to that end" - explains reason or purpose based on previous sentence
+- **Pattern priority**: 3 (high-priority N3 pattern)
+- **Pattern ranges**: Include その + ため + optional に
+  - そのため (chars 17-21 in test_sonotame_fishing)
+  - そのため (chars 14-18 in test_sonotame_population)
+  - そのために (chars 23-28 in test_sonotameni_children)
+  - そのために (chars 22-27 in test_sonotameni_car)
+
 ### Technical Details
-- **Pattern priority**: 3 (high-priority N3 conjunction)
-- **Test coverage**: 1 structure variant from grammar_points_data.json
-  - (Situation) Phrase。そこで + (Solution) Phrase (4 tests covering different controllable solutions)
+- **Pattern priority**: Both patterns priority 3 (high-priority N3 conjunctions)
+- **Test coverage**: 1 structure variant each from grammar_points_data.json
+  - そこで: (Situation) Phrase。そこで + (Solution) Phrase (4 tests)
+  - そのため(に): そのため + (に) + Phrase (4 tests - 2 without に, 2 with に)
 - **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
-- **Key insight**: Very simple pattern - just match the conjunction そこで itself
-- **Note**: Pattern replaced TODO stub at line 1162 in n3.rs
-- **Usage constraint**: Should only be used for controllable actions (not uncontrollable results)
+- **Key insights**:
+  - そこで is very simple - single-token conjunction matcher
+  - そのため(に) is slightly more complex - 3-token matcher with optional particle
+  - Both patterns appear at sentence beginning after previous statement
+- **Notes**:
+  - そこで replaced TODO stub at line 1162 in n3.rs
+  - そのため(に) replaced TODO stub at line 915 in n3.rs
+- **Usage notes**:
+  - そこで should only be used for controllable actions (not uncontrollable results)
+  - そのため(に) is similar to ため but uses その to reference previous situation
 
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 623/623 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~78 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 627/627 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~188 (2 matchers + 8 tests + 2 feature_list updates)
 
 ### Key Insights
-- そこで is a simple conjunction pattern following same structure as さて and すると
-- Test-first workflow successfully identified tokenization pattern
+- Both patterns are conjunctions that reference previous sentences
+- そこで is simpler (1 token), そのため(に) is slightly more complex (2-3 tokens)
+- Test-first workflow successfully identified all tokenization patterns
 - All test sentences are realistic and subtitle-quality
-- Pattern range is just the word itself (not including following phrases)
-- Used to introduce controllable solutions, not uncontrollable results
+- Optional に particle in そのため(に) adds flexibility
+- Both patterns used for explaining consequences/reasons based on prior context
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
-1. そのため(に) - "for that reason/therefore" (likely simple conjunction)
-2. その結果 - "as a result" (conjunction, similar to そこで)
-3. それぞれ - "each/respectively" (adverb/noun)
-4. べき - "should/ought to" (auxiliary verb, multiple structures)
-5. ばいい - "it would be good if" (conditional pattern)
+1. その結果 - "as a result" (conjunction, similar to そこで and そのため)
+2. それぞれ - "each/respectively" (adverb/noun)
+3. たびに - "every time" (time expression)
+4. たとえ〜ても - "even if" (conditional pattern)
+5. べき - "should/ought to" (auxiliary verb, multiple structures - complex)
 
-**Recommendation**: Continue with "そのため(に)" or "その結果" as they're likely simple conjunctions similar to そこで, or explore other simple adverb/conjunction patterns before tackling complex ones like べき.
+**Recommendation**: Continue with "その結果" as it's likely a simple conjunction similar to そこで/そのため, or "それぞれ" which might be a simple adverb. Save complex patterns like べき and たとえ〜ても for later.
 
 ### Environment Status
-- ✅ All 623 tests passing
+- ✅ All 627 tests passing
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
