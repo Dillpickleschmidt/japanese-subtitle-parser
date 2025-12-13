@@ -2556,3 +2556,34 @@ mod dakede_tests {
         assert_pattern_range(&patterns, "だけで", 5, 11); // レンジだけで
     }
 }
+
+// Pattern: さ (degree/amount suffix)
+// Data source: grammar_points_data.json["さ"]
+// Testing both structure variants:
+//   - standard[0]: い-Adjective[い] + さ
+//   - standard[1]: な-Adjective + さ
+mod sa_tests {
+    use super::*;
+
+    // Testing: standard[0] - い-Adjective[い] + さ
+    #[test]
+    fn i_adjective_sa() {
+        let sentence = "私が道の長さを測ります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さ");
+        assert_pattern_range(&patterns, "さ", 4, 6); // 長さ
+    }
+
+    // Testing: standard[1] - な-Adjective + さ
+    #[test]
+    fn na_adjective_sa() {
+        let sentence = "大人になってから家族の大切さが分かってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さ");
+        assert_pattern_range(&patterns, "さ", 11, 14); // 大切さ
+    }
+}

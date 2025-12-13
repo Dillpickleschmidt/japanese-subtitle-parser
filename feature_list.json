@@ -2214,13 +2214,13 @@
   {
     "pattern_name": "さ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "さ is a suffix in Japanese that can be attached to the stem form of い-Adjectives and な-Adjectives [2 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

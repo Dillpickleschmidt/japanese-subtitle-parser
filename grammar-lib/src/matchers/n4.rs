@@ -672,9 +672,62 @@ pub fn sou() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: さ
+// Pattern: さ (degree/amount suffix)
+// Structures: い-Adjective[い] + さ / な-Adjective + さ
 pub fn sa() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match い-adjective in ガル接続 form (stem without い)
+    #[derive(Debug)]
+    struct IAdjectiveStemMatcher;
+    impl super::Matcher for IAdjectiveStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続")
+        }
+    }
+
+    // Match な-adjective (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct NaAdjectiveStemMatcher;
+    impl super::Matcher for NaAdjectiveStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Match さ suffix (名詞/接尾/特殊)
+    #[derive(Debug)]
+    struct SaSuffixMatcher;
+    impl super::Matcher for SaSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "特殊")
+        }
+    }
+
+    // Match either い-adjective stem or な-adjective stem
+    #[derive(Debug)]
+    struct AdjectiveStemMatcher;
+    impl super::Matcher for AdjectiveStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // い-adjective stem (ガル接続)
+            (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続"))
+            ||
+            // な-adjective (形容動詞語幹)
+            (token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AdjectiveStemMatcher)),
+        TokenMatcher::Custom(Arc::new(SaSuffixMatcher)),
+    ]
 }
 
 // Pattern: とか～とか
