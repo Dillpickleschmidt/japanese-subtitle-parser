@@ -3656,13 +3656,13 @@
   {
     "pattern_name": "もし",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "もし is an adverb used to emphasize the nuance of 'if', with expressions like と , ば , なら , たら , and ても [2 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

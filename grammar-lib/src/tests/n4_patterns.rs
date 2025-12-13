@@ -4543,3 +4543,70 @@ mod kai_tests {
         assert_pattern_range(&patterns, "かい", 3, 9); // 綺麗なのかい
     }
 }
+
+// ========== もし (if/suppose) ==========
+// Pattern: もし
+// Data source: grammar_points_data.json["もし"]
+//
+// Structures to test:
+//   - standard[0]: もし + Phrase［たら］
+//   - Also works with: Phrase［ば］、Phrase［と］、Phrase［ても］
+//
+// Notes:
+//   - Adverb emphasizing the conditional "if" nuance
+//   - Means "while slight/small" (low probability)
+//   - Used at beginning of conditional phrases
+//
+// Examples from data:
+//   - もし彼を動物に例えると (If we were to compare him to an animal)
+//   - もし今日来られれば (If you can come today)
+//   - もし買い物に行ったら (If you go shopping)
+//   - もし雨が降っても (Even if it rains)
+#[cfg(test)]
+mod moshi_tests {
+    use super::*;
+
+    // Structure: もし + Phrase + たら (standard[0])
+    #[test]
+    fn moshi_with_tara() {
+        let sentence = "もし買い物に行ったら、お菓子を買ってきて";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もし");
+        assert_pattern_range(&patterns, "もし", 0, 2); // もし
+    }
+
+    // Structure: もし + Phrase + と
+    #[test]
+    fn moshi_with_to() {
+        let sentence = "もし彼を動物に例えると、猫に似ています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もし");
+        assert_pattern_range(&patterns, "もし", 0, 2); // もし
+    }
+
+    // Structure: もし + Phrase + ば
+    #[test]
+    fn moshi_with_ba() {
+        let sentence = "もし今日来られれば来てね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もし");
+        assert_pattern_range(&patterns, "もし", 0, 2); // もし
+    }
+
+    // Structure: もし + Phrase + ても
+    #[test]
+    fn moshi_with_temo() {
+        let sentence = "もし雨が降っても遊園地に行きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もし");
+        assert_pattern_range(&patterns, "もし", 0, 2); // もし
+    }
+}

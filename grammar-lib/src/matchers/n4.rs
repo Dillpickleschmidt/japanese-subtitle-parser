@@ -2734,9 +2734,24 @@ pub fn kai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: もし
+// Pattern: もし (if/suppose - conditional emphasis)
+// Structure: もし (as 副詞)
 pub fn moshi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches もし as 副詞/一般
+    #[derive(Debug)]
+    struct MoshiMatcher;
+    impl super::Matcher for MoshiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もし"
+                && token.base_form == "もし"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(MoshiMatcher))]
 }
 
 // Pattern: し～し 
