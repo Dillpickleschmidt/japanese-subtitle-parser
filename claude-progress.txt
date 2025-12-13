@@ -1,5 +1,86 @@
 # Grammar-lib Development Progress
 
+## Session 174 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N4 patterns fully implemented (各 + 風)
+**Patterns completed**: 2 new N4 patterns (prefix + suffix)
+**Tests added**: 5 comprehensive tests (1 + 4)
+**Total tests**: 1116 (was 1111 at session start)
+
+### Accomplishments
+1. ✅ Implemented 各 pattern (N4) - "each/every" formal prefix
+2. ✅ Implemented 風 pattern (N4) - "style/manner" suffix
+3. ✅ All 5 tests passing with proper range assertions
+4. ✅ No test regressions - all 1116 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### 各 (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (kaku function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod kaku_tests, 1 test)
+- **Structure**: 各（かく） + Noun
+- **Tokenization**:
+  - Two patterns: (1) Compound nouns (各階, 各地), (2) Split form (各 + 部屋)
+  - Implementation detects split form only
+- **Meaning**: "each", "every" - formal prefix
+- **Pattern priority**: 2 (N4 construction)
+
+#### 風 (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (kaze function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod fuu_tests, 4 tests)
+- **Structures**:
+  - standard[0]: Noun + 風（ふう）
+  - standard[1]: Noun + 風（ふう） + （の） + Noun
+- **Tokenization**:
+  - 風 always tokenizes as suffix (名詞/接尾/一般)
+  - Consistent across all contexts
+- **Implementation**: Two-token matcher (noun + 風 suffix)
+- **Meaning**: "in the style of", "in the fashion of"
+- **Pattern priority**: 2 (N4 construction)
+- **Note**: Always pronounced ふう, not かぜ
+- **Test coverage**: 4 tests covering both structures
+
+### Implementation Notes
+- **Pattern similarities**: Both 各 and 風 are Noun + affix patterns
+  - 各 is a prefix (接頭詞/名詞接続)
+  - 風 is a suffix (名詞/接尾/一般)
+- **Compound noun handling**: 各 has lexicalized compounds (各階, 各地) that don't match
+- **Simple implementations**: Both use straightforward custom matchers
+- Test-first workflow with print_debug was very effective
+
+### Session Success
+- Successfully implemented 2 simple N4 affix patterns
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Very efficient session - completed 2 patterns quickly (5 tests total)
+- Good momentum with related pattern types
+
+### Next Priorities
+Continue with simple N4 patterns or shift to N5 foundational patterns:
+
+**Simple N4 patterns to implement next**:
+1. Other simple N4 constructions with existing stubs in n4.rs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles and verb forms (though many are complex/broad)
+
+**Recommendation**: Continue with simple N4 patterns that have stubs, or shift to N5 foundational patterns. Both 各 and 風 were straightforward implementations - look for similar simple affix/particle patterns.
+
+### Environment Status
+- ✅ All 1116 tests passing (added 5 new tests this session)
+- ✅ No regressions
+- ✅ Clean git state (2 commits this session)
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 173 - 2025-12-13
 
 ### ✅ Session Summary
