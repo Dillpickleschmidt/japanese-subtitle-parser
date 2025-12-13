@@ -1708,9 +1708,35 @@ pub fn tesumimasen() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てあげる
+// Pattern: てあげる (to do for someone)
+// Structures: Verb[て] + あげる/あげます
 pub fn teageru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct AgeruMatcher;
+    impl Matcher for AgeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "あげる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeDeFormMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(AgeruMatcher))],
+    ])
 }
 
 // Pattern: てくれる

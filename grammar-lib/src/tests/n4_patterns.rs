@@ -2790,3 +2790,52 @@ mod yori_tests {
         assert_pattern_range(&patterns, "より", 2, 4); // より
     }
 }
+
+// ========== てあげる (to do for someone) ==========
+// Pattern: てあげる
+// Data source: grammar_points_data.json["てあげる"]
+//
+// Structures to test:
+//   - standard[0]: Verb[て] + あげる
+//   - polite[0]: Verb[て] + あげます
+//
+// Note: Expresses doing something for someone else's benefit. Can sound patronizing
+// if used with people of higher status. Receiver marked with に.
+// Meaning: "to do (something) for (someone)", "to do as a favor"
+#[cfg(test)]
+mod teageru_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[て] + あげる
+    #[test]
+    fn standard_form() {
+        let sentence = "父が妹にお菓子を買ってあげる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てあげる");
+        assert_pattern_range(&patterns, "てあげる", 8, 14); // 買ってあげる
+    }
+
+    // Testing: standard[0] - Verb[て] + あげる (casual)
+    #[test]
+    fn casual_favor() {
+        let sentence = "いいよ、俺がやってあげるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てあげる");
+        assert_pattern_range(&patterns, "てあげる", 6, 12); // やってあげる
+    }
+
+    // Testing: polite[0] - Verb[て] + あげます
+    #[test]
+    fn polite_form() {
+        let sentence = "明日は私が送ってあげます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てあげる");
+        assert_pattern_range(&patterns, "てあげる", 5, 12); // 送ってあげます
+    }
+}

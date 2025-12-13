@@ -2620,13 +2620,13 @@
   {
     "pattern_name": "てあげる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When joining the conjunction particle て , with the る-Verb あげる (to give), it implies that someone is doing something f... [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null
