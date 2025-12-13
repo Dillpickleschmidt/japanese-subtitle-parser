@@ -1,5 +1,85 @@
 # Grammar-lib Development Progress
 
+## Session 160 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: ておく pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 construction pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 1051 (was 1047 at session start)
+
+### Accomplishments
+1. ✅ Implemented ておく pattern (N4) - "do in advance/leave as is"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 1051 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### ておく (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (teoku function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod teoku_tests, 4 tests)
+- **Structures**:
+  - standard[0]: Verb[て] + おく
+  - standard[1]: Verb[て] + とく (casual contraction)
+  - polite[0]: Verb[て] + おきます
+  - polite[1]: Verb[て] + ときます (casual contraction)
+- **Tokenization**:
+  - Standard: Verb (連用形/連用タ接続) + て/で (助詞/接続助詞) + おく (動詞/非自立, base=おく)
+  - Polite: Verb (連用形) + て/で (助詞) + おき (動詞/非自立, 連用形) + ます (助動詞)
+  - Contraction: Verb (連用タ接続) + とく (動詞/非自立, base=とく) - NO て particle!
+- **Implementation**: Four-token matcher with optionals
+  - flexible_verb_form: Matches verbs in 連用形 or 連用タ接続
+  - Optional TeDeFormMatcher: Matches て or で particles (optional for とく contraction)
+  - OkuMatcher: Matches おく or とく (both 動詞/非自立)
+  - Optional MasuFormMatcher: Matches ます for polite form
+- **Meaning**: "do something in advance", "leave something as is", "do and leave until later"
+- **Pattern priority**: 2 (N4 construction)
+- **Pattern ranges**:
+  - 洗っておく (chars 7-12) - wash in advance
+  - 入れておきます (chars 9-16) - will put in advance (polite)
+  - 置いとく (chars 10-14) - leave it (casual contraction)
+  - 汲んでおく (chars 5-10) - fill up in advance (で-form)
+- **Test coverage**:
+  - Standard: 寝る前に食器を洗っておく
+  - Polite: あなたの財布を鞄に入れておきます
+  - Casual contraction: 机の上にパスポートを置いとくね
+  - で-form: 水筒に水を汲んでおく
+
+### Implementation Notes
+- Key insight: The とく contraction does NOT have a て particle - it goes directly from verb to とく
+- Made て/で particle optional to handle both standard (Verb + て + おく) and contraction (Verb + とく) forms
+- Both おく and とく tokenize as 動詞/非自立 with their respective base forms
+- Pattern confidence ranges from 2.0-3.0 depending on form
+
+### Session Success
+- Successfully implemented a て-form pattern with casual contraction variant
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern with excellent coverage (4 tests total)
+
+### Next Priorities
+Continue with N4 て-form patterns or simple constructions:
+
+**Simple N4 patterns to implement next**:
+1. **てしまう** - "to finish/end up doing" (similar て-form pattern)
+2. **てよかった** - "glad that..." (simple pattern)
+3. Other simple N4 constructions with stubs
+
+**Recommendation**: Continue with て-form constructions to build momentum. Six て-form patterns completed in recent sessions (てくれる, てもらう, ていた, てある, てみる, てほしい, てあげる, ておく).
+
+### Environment Status
+- ✅ All 1051 tests passing (added 4 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 159 - 2025-12-13
 
 ### ✅ Session Summary
