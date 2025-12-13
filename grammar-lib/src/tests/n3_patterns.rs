@@ -4615,3 +4615,72 @@ mod tegoran_tests {
         assert_pattern_range(&patterns, "てごらん", 0, 8); // 見てごらんなさい
     }
 }
+
+// ========== ちゃんと・きちんと (properly/neatly) ==========
+// Pattern: ちゃんと・きちんと (properly/neatly - adverbs)
+// Data source: grammar_points_data.json["ちゃんと・きちんと"]
+//
+// Structure variants to test:
+//   standard[0]: ちゃんと + Phrase
+//   standard[1]: ちゃんと + した + Noun
+//   standard[2]: ちゃんと + している
+//   Note: (1) きちんと - same structures apply to きちんと
+
+mod chanto_kichinto_tests {
+    use super::*;
+
+    // Test: ちゃんと + Verb (modifying verb phrase)
+    #[test]
+    fn test_chanto_verb() {
+        let sentence = "ちゃんと宿題したか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ちゃんと・きちんと");
+        assert_pattern_range(&patterns, "ちゃんと・きちんと", 0, 4); // ちゃんと
+    }
+
+    // Test: ちゃんと + した + Noun (proper/neat noun)
+    #[test]
+    fn test_chanto_shita_noun() {
+        let sentence = "今度からはもっとちゃんとした車を買おう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ちゃんと・きちんと");
+        assert_pattern_range(&patterns, "ちゃんと・きちんと", 8, 12); // ちゃんと
+    }
+
+    // Test: ちゃんと + している (doing properly)
+    #[test]
+    fn test_chanto_shiteiru() {
+        let sentence = "みんなちゃんとしているか確認しろ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ちゃんと・きちんと");
+        assert_pattern_range(&patterns, "ちゃんと・きちんと", 3, 7); // ちゃんと
+    }
+
+    // Test: きちんと + Verb (modifying verb phrase)
+    #[test]
+    fn test_kichinto_verb() {
+        let sentence = "結婚式にはきちんとした服装で来てください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ちゃんと・きちんと");
+        assert_pattern_range(&patterns, "ちゃんと・きちんと", 5, 9); // きちんと
+    }
+
+    // Test: きちんと + Verb (sentence start)
+    #[test]
+    fn test_kichinto_sentence_start() {
+        let sentence = "きちんと部屋の掃除をしなさい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ちゃんと・きちんと");
+        assert_pattern_range(&patterns, "ちゃんと・きちんと", 0, 4); // きちんと
+    }
+}

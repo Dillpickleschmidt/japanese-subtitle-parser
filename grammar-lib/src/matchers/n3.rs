@@ -1082,9 +1082,23 @@ pub fn toieru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ちゃんと・きちんと
+// ちゃんと・きちんと: Properly/neatly (adverbs)
+// Structures: ちゃんと/きちんと + Phrase
 pub fn chanto_u30fb_kichinto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for ちゃんと or きちんと as adverbs
+    #[derive(Debug)]
+    struct ChantoKichintoMatcher;
+    impl Matcher for ChantoKichintoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ちゃんと" || token.surface == "きちんと")
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(ChantoKichintoMatcher))]
 }
 
 // Pattern: そのため(に) (for that reason/to that end)
