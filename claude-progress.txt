@@ -1,6 +1,110 @@
 # Grammar-lib Development Progress
 
-## Session 156 - 2025-12-13
+## Session 156 - 2025-12-13 (continued)
+
+### ✅ Updated Session Summary
+**Status**: Two patterns fully implemented (へ + かた)
+**Patterns completed**: 1 N5 + 1 N4 pattern
+**Tests added**: 3 + 5 = 8 comprehensive tests
+**Total tests**: 1028 (was 1020 at session start)
+
+### Accomplishments
+1. ✅ Implemented へ pattern (N5) - "to/toward" directional particle
+2. ✅ Implemented かた pattern (N4) - "how to/way of"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 1028 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### へ (N5) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n5.rs (he function)
+  - Tests: grammar-lib/src/tests/n5_patterns.rs (mod he_tests, 3 tests)
+- **Structures**: standard[0]: Noun + へ
+- **Tokenization**: Noun + へ (助詞/格助詞/一般)
+- **Implementation**: Two-token matcher (noun_matcher + HeParticleMatcher)
+- **Meaning**: "to/toward" - directional particle
+- **Pattern priority**: 1 (N5 construction)
+- **Test coverage**: Direction to France, welcome to Osaka, casual direction to library
+
+#### かた (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (kata & kata_shikata functions)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod kata_tests, 5 tests)
+- **Structures**:
+  - standard[0]: Verb[stem] + 方（かた）
+  - standard[1]: [する]Verb + の + 仕方（しかた）
+  - standard[2]: Noun + の + Verb[stem] + 方（かた）
+- **Tokenization patterns**:
+  - Verb (連用形) + かた (名詞/接尾)
+  - Suru-verb noun (サ変接続) + の + しかた (名詞)
+  - Noun + かた → detected by existing Noun＋型 (N3) pattern
+- **Implementation**: Two separate matchers
+  1. kata(): Verb (連用形) + かた suffix
+  2. kata_shikata(): Suru-verb noun + の + しかた
+- **Meaning**: "how to/way of doing something"
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**:
+  - 食べかた (chars 2-6) - verb stem + かた
+  - 勉強のしかた (chars 4-10) - suru-verb + の + しかた
+  - ファックスのしかた (chars 3-12) - suru-verb + の + しかた
+- **Test coverage**:
+  - Verb stem + かた: 食べかた
+  - Noun + かた: 結びかた (detected by Noun＋型)
+  - Suru-verb + の + しかた: 勉強のしかた, ファックスのしかた
+  - Noun + の + noun + かた: 運びかた (detected by Noun＋型)
+
+### Final Session Statistics
+- **Patterns implemented**: 2 (N5: へ, N4: かた)
+- **Tests written**: 8 total (3 + 5)
+- **Tests passing**: 1028/1028 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~215 (2 matcher implementations + 8 tests + feature_list updates)
+
+### Key Insights from Session
+1. **Simple particle first**: へ was a straightforward particle pattern - good warmup
+2. **Complex かた pattern**: Required understanding dual tokenization (verb+かた vs noun+かた)
+3. **Pattern interaction**: Noun + かた cases already handled by N3 Noun＋型 pattern
+4. **Two matcher variants**: Created kata() and kata_shikata() for different structures
+5. **Test-first workflow**: print_debug was essential for understanding tokenization differences
+6. **Tokenization surprises**: 結び and 運び tokenize as nouns, not verbs
+
+### Session Success
+- Successfully implemented 2 diverse patterns (simple particle + complex construction)
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges are correct and verified
+- No test regressions - clean implementation
+- Efficient session - completed 2 patterns with excellent test coverage (8 tests total)
+- Good understanding of pattern interactions (N4 かた vs N3 Noun＋型)
+
+### Next Priorities
+Continue with N5 patterns (prioritize N5 → N4 → N3 → N2 → N1):
+
+**Simple N5 patterns to implement next**:
+1. Continue with basic N5 particles or constructions
+2. Focus on patterns with existing stubs in n5.rs
+3. Avoid complex patterns like は, の that might over-match
+
+**Or continue with N4 patterns** (many simple ones available):
+- てくれる - "to do for me" (similar to てあげる, already has stub)
+- てある - "state of completion"
+- てみる - "try to"
+- Other simple constructions
+
+**Recommendation**: The session has been very productive with 2 patterns complete. Continue with either N5 foundational patterns or more N4 patterns.
+
+### Environment Status
+- ✅ All 1028 tests passing (added 8 new tests)
+- ✅ No regressions
+- ✅ Clean git state (2 commits)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
+## Session 156 - 2025-12-13 (initial)
 
 ### ✅ Session Summary
 **Status**: へ pattern (N5) fully implemented
