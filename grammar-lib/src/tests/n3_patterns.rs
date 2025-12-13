@@ -6943,3 +6943,50 @@ mod dokoroka_tests {
         assert_pattern_range(&patterns, "どころか", 3, 9); // ないどころか
     }
 }
+
+// ========== で言うと (if said with, speaking of) ==========
+// Pattern: で言うと (if said with, speaking of)
+// Data source: grammar_points_data.json["で言うと"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + で言うと
+
+mod deiuto_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + で言うと
+    // Example from grammar data: この車でいうとランボルギーニみたいなもの
+    #[test]
+    fn test_simple_noun_deiuto() {
+        let sentence = "このバイクは、車で言うとランボルギーニみたいなものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "で言うと");
+        assert_pattern_range(&patterns, "で言うと", 7, 12); // 車で言うと
+    }
+
+    // Testing: standard[0] - Noun + で言うと (location context)
+    // Example from grammar data: 日本でいうとパンみたいなもの？
+    #[test]
+    fn test_location_noun_deiuto() {
+        let sentence = "日本で言うとパンみたいなものですか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "で言うと");
+        assert_pattern_range(&patterns, "で言うと", 0, 6); // 日本で言うと
+    }
+
+    // Testing: standard[0] - Noun + で言うと (one word expression)
+    // Example from grammar data: 一言でいうと彼は本当に凄い人だ
+    #[test]
+    fn test_hitokoto_deiuto() {
+        let sentence = "一言で言うと彼は本当に凄い人だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "で言うと");
+        assert_pattern_range(&patterns, "で言うと", 0, 6); // 一言で言うと
+    }
+}

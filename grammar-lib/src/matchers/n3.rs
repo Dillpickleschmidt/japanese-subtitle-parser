@@ -2925,9 +2925,47 @@ pub fn uff5e_katoiuto_u2461() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: で言うと
+// Pattern: で言うと (if said with, speaking of)
+// Structures: Noun + で言うと
 pub fn deiuto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct IuMatcher;
+    impl Matcher for IuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "言う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(DeMatcher)),
+        TokenMatcher::Custom(Arc::new(IuMatcher)),
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+    ]
 }
 
 // Pattern: ～ずつ
