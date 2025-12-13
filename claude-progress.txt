@@ -1,6 +1,79 @@
 # Grammar-lib Development Progress
 
-## Session 157 - 2025-12-13
+## Session 157 - 2025-12-13 (continued)
+
+### ✅ Updated Session Summary
+**Status**: Two patterns fully implemented (てくれる + てもらう)
+**Patterns completed**: 2 N4 construction patterns
+**Tests added**: 4 + 3 = 7 comprehensive tests
+**Total tests**: 1035 (was 1028 at session start)
+
+### Accomplishments
+1. ✅ Implemented てくれる pattern (N4) - "to do for me/us"
+2. ✅ Implemented てもらう pattern (N4) - "to have/get someone to do"
+3. ✅ All 7 tests passing with proper range assertions
+4. ✅ No test regressions - all 1035 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns (Session 157)
+
+#### てもらう (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (temorau function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod temorau_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Verb[て] + もらう
+  - polite[0]: Verb[て] + もらいます
+- **Tokenization**: Verb (連用形/連用タ接続) + て/で (助詞) + もらう (動詞/非自立)
+- **Implementation**: Three custom matchers
+  - flexible_verb_form: Matches verbs in 連用形 or 連用タ接続
+  - TeDeFormMatcher: Matches て or で particles
+  - MorauMatcher: Matches もらう verb (base_form check)
+- **Meaning**: "to have/get someone to do (something)", "to receive the action of"
+- **Pattern priority**: 3 (N4 construction)
+- **Difference from てくれる**: More direct - focuses on receiving vs bestowing
+- **Pattern ranges**:
+  - 聞いてもらう (chars 17-23) - having someone do
+  - 見てもらった (chars 17-23) - receiving service
+  - 持ってもらいます (chars 11-19) - polite form
+- **Test coverage**:
+  - Having someone do: 日本語が話せないから友達に行き方を聞いてもらう
+  - Receiving service: 昨日は朝から頭が痛かったから医者に見てもらった
+  - Polite form: すみません、この荷物を持ってもらいますか
+
+### Session Success
+- Successfully completed the benefactive trio: てあげる/てくれる/てもらう
+- てあげる: Give (action to others)
+- てくれる: Receive (action from others, emphasis on giver's kindness)
+- てもらう: Have done (action received, emphasis on receiver)
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Very efficient session - completed 2 related patterns
+
+### Next Priorities
+Continue with simple N4 て-form patterns:
+
+**Simple N4 patterns to implement next**:
+1. **てある** - "state of completion" (1 std, 1 pol)
+2. **てみる** - "try to" (1 std, 1 pol)
+3. **ていた** - "was doing" (1 std, 1 pol)
+4. **てほしい** - "want someone to" (1 std, 1 pol)
+5. **てよかった** - "glad that..." (simple pattern)
+
+**Recommendation**: Continue with simple て-form constructions to build momentum.
+
+### Environment Status
+- ✅ All 1035 tests passing (added 7 new tests this session)
+- ✅ No regressions
+- ✅ Clean git state (2 commits this session)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
+## Session 157 - 2025-12-13 (initial)
 
 ### ✅ Session Summary
 **Status**: てくれる pattern (N4) fully implemented
