@@ -3805,3 +3805,53 @@ mod uff5e_ra_tests {
         assert_pattern_range(&patterns, "～ら", 0, 2); // 私ら
     }
 }
+
+// ========== など (such as, and so on, things like) ==========
+// Pattern: など
+// Data source: grammar_points_data.json["など"]
+//
+// Structures to test:
+//   - standard[0]: Noun + など
+//   - standard[1]: Noun + など + の + Noun
+//
+// Examples from data:
+//   - 石など (rocks and so on)
+//   - ルームメイトなどの悪口 (badmouthing people like his roommates)
+//   - 鞄や靴等 (things such as bags and shoes)
+#[cfg(test)]
+mod nado_tests {
+    use super::*;
+
+    // Structure: Noun + など (standard[0])
+    #[test]
+    fn noun_nado_basic() {
+        let sentence = "この公園では石などを投げないでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "など");
+        assert_pattern_range(&patterns, "など", 6, 9); // 石など
+    }
+
+    // Structure: Noun + など + の + Noun (standard[1])
+    #[test]
+    fn noun_nado_no_noun() {
+        let sentence = "彼はいつもルームメイトなどの悪口を言っています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "など");
+        assert_pattern_range(&patterns, "など", 5, 13); // ルームメイトなど
+    }
+
+    // Structure: Noun + など (standard[0]) - with や listing
+    #[test]
+    fn noun_nado_with_ya() {
+        let sentence = "鞄や靴などを川に捨ててはならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "など");
+        assert_pattern_range(&patterns, "など", 2, 5); // 靴など
+    }
+}

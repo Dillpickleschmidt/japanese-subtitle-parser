@@ -912,9 +912,25 @@ pub fn toomou() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: など
+// Pattern: など (such as, and so on)
+// Structures: Noun + など
 pub fn nado() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NadoMatcher;
+    impl super::Matcher for NadoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "など"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NadoMatcher)),
+    ]
 }
 
 // Pattern: みたい
