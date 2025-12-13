@@ -1,5 +1,106 @@
 # Grammar-lib Development Progress
 
+## Session 159 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N4 patterns fully implemented (てみる + てほしい)
+**Patterns completed**: 2 new N4 construction patterns
+**Tests added**: 3 + 3 = 6 comprehensive tests
+**Total tests**: 1047 (was 1041 at session start)
+
+### Accomplishments
+1. ✅ Implemented てみる pattern (N4) - "try to do"
+2. ✅ Implemented てほしい pattern (N4) - "want someone to do"
+3. ✅ All 6 tests passing with proper range assertions
+4. ✅ No test regressions - all 1047 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### てみる (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (temiru function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod temiru_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Verb[て] + みる
+  - polite[0]: Verb[て] + みます
+- **Tokenization**:
+  - Verb (連用形/連用タ接続) + て/で (助詞) + みる (動詞/非自立, base_form=みる)
+- **Implementation**: Three-token matcher
+  - flexible_verb_form: Matches verbs in 連用形 or 連用タ接続
+  - TeDeFormMatcher: Matches て or で particles
+  - MiruMatcher: Matches みる verb (base_form=みる, 動詞/非自立)
+- **Meaning**: "try to do", "do and see the result" - used for trying something for the first time
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**:
+  - 食べてみる (chars 11-16) - try eating (dictionary form)
+  - 飲んでみる (chars 2-7) - try drinking (question)
+  - 切ってみ (chars 7-11) - try (polite, conjugated with てください)
+- **Test coverage**:
+  - Dictionary form: 本当においしいの？今度食べてみるよ！
+  - Casual question: これ飲んでみる？
+  - Polite request: もう一度電源を切ってみてください
+
+#### てほしい (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (tehoshii function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod tehoshii_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Verb[て] + ほしい
+  - polite[0]: Verb[て] + ほしい + です
+- **Tokenization**:
+  - Verb (連用形/連用タ接続) + て/で (助詞) + ほしい (形容詞/非自立)
+- **Implementation**: Three-token matcher
+  - flexible_verb_form: Matches verbs in 連用形 or 連用タ接続
+  - TeDeFormMatcher: Matches て or で particles  
+  - HoshiiMatcher: Matches ほしい adjective (base_form=ほしい, 形容詞/非自立)
+- **Meaning**: "want someone to do something"
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**:
+  - 帰ってほしいです (chars 4-12) - want you to come home (polite, includes です)
+  - 読んでほしい (chars 10-16) - want you to read
+  - 手伝ってほしい (chars 0-7) - want you to help
+- **Test coverage**:
+  - Polite form: 毎日早く帰ってほしいです
+  - Casual: 皆に俺が書いた漫画を読んでほしい
+  - Question: 手伝ってほしいの？
+- **Note**: Polite form ranges include です due to pattern overlap with です pattern (intentional, similar to てあげます)
+
+### Implementation Notes
+1. **Test-first workflow**: Successfully used print_debug to understand tokenization before implementing both patterns
+2. **Common structure**: Both patterns follow the same structure (Verb[て] + auxiliary)
+3. **Polite forms**: Pattern ranges for polite forms include the polite marker (です/ます) - this is consistent with other patterns like てあげる
+4. **Pattern confidence**: Both patterns have priority 1 and confidence 3.0
+
+### Session Success
+- Successfully implemented 2 related N4 て-form construction patterns
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Very efficient session - completed 2 patterns in one session
+
+### Next Priorities
+Continue with simple N4 て-form patterns:
+
+**Simple N4 patterns to implement next**:
+1. **ておく** - "to do in advance" (similar て-form pattern)
+2. **てしまう** - "to finish/end up doing"
+3. **てよかった** - "glad that..."
+4. Other simple N4 constructions with stubs
+
+**Recommendation**: Continue with て-form constructions to build momentum. Five て-form patterns completed in recent sessions (てくれる, てもらう, ていた, てある, てみる, てほしい, てあげる).
+
+### Environment Status
+- ✅ All 1047 tests passing (added 6 new tests this session)
+- ✅ No regressions
+- ✅ Clean git state (2 commits this session)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
+
 ## Session 158 - 2025-12-13 (continued)
 
 ### ✅ Updated Session Summary
