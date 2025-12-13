@@ -3829,9 +3829,26 @@ pub fn nagaramo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: において・における
+// Pattern: において・における (at, in, on, regarding)
+// Structures: Noun + において / Noun + における + Noun / Noun + においての + Noun
 pub fn nioite_u30fb_niokeru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NioiteMatcher;
+    impl Matcher for NioiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "において" || token.surface == "における")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NioiteMatcher)),
+    ]
 }
 
 // Pattern: 第一

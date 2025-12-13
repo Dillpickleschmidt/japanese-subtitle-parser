@@ -7085,3 +7085,49 @@ mod nitsuite_tests {
         assert_pattern_range(&patterns, "について", 0, 6); // 契約について
     }
 }
+
+// Pattern: において・における (at, in, on, regarding)
+// Data source: grammar_points_data.json["において・における"]
+// Testing structure variants:
+//   - standard[0]: Noun + において
+//   - standard[1]: Noun + における + Noun
+//   - standard[2]: においての (variant of における)
+mod nioite_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + において
+    // Example from grammar data: 現代においてインターネットなしの生活は考えられない
+    #[test]
+    fn test_noun_nioite() {
+        let sentence = "現代において、インターネットなしの生活は考えられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "において・における");
+        assert_pattern_range(&patterns, "において・における", 0, 6); // 現代において
+    }
+
+    // Testing: standard[1] - Noun + における + Noun
+    // Example from grammar data: 自分の住んでいる地域における井戸水の汚染について研究をしている
+    #[test]
+    fn test_nioite_niokeru_noun() {
+        let sentence = "田舎における高齢化の問題は深刻です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "において・における");
+        assert_pattern_range(&patterns, "において・における", 0, 6); // 田舎における
+    }
+
+    // Testing: standard[2] - Noun + においての + Noun
+    // Example from grammar data: この工事においての難しい作業になります
+    #[test]
+    fn test_nioite_nioiteno() {
+        let sentence = "この工事においての難しい作業になります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "において・における");
+        assert_pattern_range(&patterns, "において・における", 2, 8); // 工事において
+    }
+}
