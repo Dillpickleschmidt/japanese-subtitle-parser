@@ -1,5 +1,85 @@
 # Grammar-lib Development Progress
 
+## Session 168 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: など pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 adverbial particle pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 1094 (was 1091 at session start)
+
+### Accomplishments
+1. ✅ Implemented など pattern (N4) - "such as, and so on, things like"
+2. ✅ All 3 tests passing with proper range assertions
+3. ✅ No test regressions - all 1094 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### など (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (nado function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod nado_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Noun + など
+  - standard[1]: Noun + など + の + Noun
+- **Tokenization**:
+  - など tokenizes as single particle: など (助詞/副助詞)
+  - Pattern matches: Noun + など
+  - When followed by の, it's a separate token (の is not part of the pattern range)
+- **Implementation**: Two-token matcher
+  - noun_matcher() - matches any noun
+  - NadoMatcher - surface == "など", POS == "助詞/副助詞"
+- **Meaning**: "such as", "and so on", "things like" - presents examples from a category
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**:
+  - 石など (chars 6-9) - rocks and so on
+  - ルームメイトなど (chars 5-13) - people like roommates
+  - 靴など (chars 2-5) - things like shoes
+- **Test coverage**: 3 tests covering both structure variants
+  - Basic Noun + など
+  - Noun + など + の + Noun (range includes only Noun + など)
+  - Noun + など with や listing
+
+### Implementation Notes
+- **Simple particle pattern**: など is a straightforward adverbial particle
+- **Consistent tokenization**: Always tokenizes as 助詞/副助詞
+- **Pattern boundaries**: など pattern does NOT include the の that may follow
+- **Examples**: Works with や listings (鞄や靴など) and standalone nouns
+- Test-first workflow with print_debug was effective for understanding tokenization
+
+### Session Success
+- Successfully implemented a simple N4 particle pattern
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions (Noun + など)
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern quickly with good test coverage
+
+### Next Priorities
+Continue with simple N4 patterns with stubs:
+
+**Simple N4 patterns to implement next**:
+1. **だが・ですが** - "but/however" (conjunctive particle)
+2. **なくて** - negative て-form construction
+3. **のに** - "in spite of/even though" (N3 pattern)
+4. **とき** - "when/at the time" (temporal noun pattern)
+5. Other simple N4 constructions with stubs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles and verb forms (though many are complex/broad)
+
+**Recommendation**: Continue with simple N4 patterns that have stubs to maintain momentum. Focus on patterns with clear, limited scope.
+
+### Environment Status
+- ✅ All 1094 tests passing (added 3 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 167 - 2025-12-13
 
 ### ✅ Session Summary
