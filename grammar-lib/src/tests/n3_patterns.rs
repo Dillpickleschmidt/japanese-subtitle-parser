@@ -3042,3 +3042,59 @@ mod tadachini_tests {
         assert_pattern_range(&patterns, "直ちに", 9, 13); // ただちに
     }
 }
+
+// ========== 折角 (with effort/specially) ==========
+// Pattern: 折角 (with effort/specially/long-awaited)
+// Data source: grammar_points_data.json["折角"]
+//
+// Structure variants to test:
+//   standard[0]: せっかく + Phrase
+//   standard[1]: せっかく + の + Noun (of Event)
+
+mod sekkaku_tests {
+    use super::*;
+
+    // Test: せっかく + Phrase (at great pains)
+    #[test]
+    fn test_sekkaku_shoes() {
+        let sentence = "せっかく君が欲しかった靴を買ってあげたのに友達にあげたの？最悪";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "折角");
+        assert_pattern_range(&patterns, "折角", 0, 4); // せっかく
+    }
+
+    // Test: せっかく + Phrase (with trouble)
+    #[test]
+    fn test_sekkaku_day_off() {
+        let sentence = "せっかく休みを取ったのに雨が降ったから予定が台無しだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "折角");
+        assert_pattern_range(&patterns, "折角", 0, 4); // せっかく
+    }
+
+    // Test: せっかく + の + Noun (long-awaited event)
+    #[test]
+    fn test_sekkaku_no_birthday() {
+        let sentence = "せっかくの誕生日会を台無しにしてごめんなさい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "折角");
+        assert_pattern_range(&patterns, "折角", 0, 5); // せっかくの
+    }
+
+    // Test: せっかく + の + Noun (long-awaited vacation)
+    #[test]
+    fn test_sekkaku_no_vacation() {
+        let sentence = "台風のせいで、せっかくの休暇が中止になった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "折角");
+        assert_pattern_range(&patterns, "折角", 7, 12); // せっかくの
+    }
+}

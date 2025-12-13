@@ -2751,9 +2751,33 @@ pub fn ittai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 折角
+// Pattern: 折角 (with effort/specially/long-awaited)
+// Structures: せっかく + Phrase OR せっかく + の + Noun
 pub fn sekkaku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SekkakuMatcher;
+    impl Matcher for SekkakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "せっかく" || token.surface == "折角")
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoRentaika;
+    impl Matcher for NoRentaika {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SekkakuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoRentaika)))),
+    ]
 }
 
 // Pattern: っけ
