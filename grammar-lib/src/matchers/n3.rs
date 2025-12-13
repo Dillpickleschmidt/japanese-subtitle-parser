@@ -2032,9 +2032,39 @@ pub fn wakedehanai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: と同時に
+// Pattern: と同時に (at the same time as)
+// Structures: Verb/Adj/Noun + と + 同時に
 pub fn todoujini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と as connective or case particle
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl super::Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    // Match 同時に as adverb
+    #[derive(Debug)]
+    struct DoujiniMatcher;
+    impl super::Matcher for DoujiniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "同時に"
+                && token.base_form == "同時に"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+        TokenMatcher::Custom(Arc::new(DoujiniMatcher)),
+    ]
 }
 
 // Pattern: ところだった ① (was about to / almost happened)

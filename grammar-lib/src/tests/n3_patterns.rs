@@ -7415,3 +7415,64 @@ mod totomoni_tests {
         assert_pattern_range(&patterns, "と共に", 0, 4); // 私と共に
     }
 }
+
+// Pattern: と同時に (at the same time as)
+// Data source: grammar_points_data.json["と同時に"]
+mod todoujini_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[る] + と同時に"
+    #[test]
+    fn test_verb_todoujini() {
+        let sentence = "サイレンが鳴ったと同時に、犯人は逃げた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同時に");
+        assert_pattern_range(&patterns, "と同時に", 7, 12); // たと同時に
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + と同時に"
+    #[test]
+    fn test_i_adjective_todoujini() {
+        let sentence = "新しいと同時に便利な機械だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同時に");
+        assert_pattern_range(&patterns, "と同時に", 0, 7); // 新しいと同時に
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + である + と同時に"
+    #[test]
+    fn test_na_adjective_dearu_todoujini() {
+        let sentence = "この機械は便利であると同時に危険である為、気をつけて使用してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同時に");
+        assert_pattern_range(&patterns, "と同時に", 8, 14); // あると同時に
+    }
+
+    // Testing: structure.standard[3] - "Noun + である + と同時に"
+    #[test]
+    fn test_noun_dearu_todoujini() {
+        let sentence = "その人は博士であると同時に宇宙飛行士でもある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同時に");
+        assert_pattern_range(&patterns, "と同時に", 7, 13); // あると同時に
+    }
+
+    // Testing: structure.standard[3] - "Noun + と同時に" (である optional)
+    #[test]
+    fn test_noun_todoujini() {
+        let sentence = "私の家は自宅と同時にオフィスでもある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同時に");
+        assert_pattern_range(&patterns, "と同時に", 4, 10); // 自宅と同時に
+    }
+}
