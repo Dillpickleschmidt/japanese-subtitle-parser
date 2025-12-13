@@ -4194,9 +4194,19 @@ pub fn ppanashi() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: わざわざ
+// Pattern: わざわざ (to go out of one's way)
+// Structures: わざわざ + Phrase
 pub fn wazawaza() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct WazawazaMatcher;
+    impl Matcher for WazawazaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わざわざ"
+                && token.base_form == "わざわざ"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(WazawazaMatcher))]
 }
 
 // Pattern: 一体

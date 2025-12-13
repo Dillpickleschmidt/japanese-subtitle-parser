@@ -6033,3 +6033,58 @@ mod souda_hearsay_tests {
         assert_pattern_range(&patterns, "そうだ ", 5, 12); // 有名だそうです
     }
 }
+
+// ========== わざわざ (going out of one's way) ==========
+// Pattern: わざわざ (to go out of one's way to do something)
+// Data source: grammar_points_data.json["わざわざ"]
+//
+// Structure variants to test:
+//   standard[0]: わざわざ + Phrase
+
+mod wazawaza_tests {
+    use super::*;
+
+    // Testing: standard[0] - わざわざ + Phrase (positive usage)
+    #[test]
+    fn test_wazawaza_positive() {
+        let sentence = "わざわざ私が好きな饅頭を買いに行ってくれたの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わざわざ");
+        assert_pattern_range(&patterns, "わざわざ", 0, 4); // わざわざ
+    }
+
+    // Testing: standard[0] - わざわざ + Phrase (thank you context)
+    #[test]
+    fn test_wazawaza_thank_you() {
+        let sentence = "わざわざここまで来てくれてありがとうございます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わざわざ");
+        assert_pattern_range(&patterns, "わざわざ", 0, 4); // わざわざ
+    }
+
+    // Testing: standard[0] - わざわざ + Phrase (negative context)
+    #[test]
+    fn test_wazawaza_negative() {
+        let sentence = "何でわざわざそういうひどいこと言うの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わざわざ");
+        assert_pattern_range(&patterns, "わざわざ", 2, 6); // わざわざ
+    }
+
+    // Testing: standard[0] - わざわざ + Phrase (questioning context)
+    #[test]
+    fn test_wazawaza_question() {
+        let sentence = "わざわざ会社に行って仕事しなきゃいけない理由がわからない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わざわざ");
+        assert_pattern_range(&patterns, "わざわざ", 0, 4); // わざわざ
+    }
+}
