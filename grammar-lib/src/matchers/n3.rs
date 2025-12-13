@@ -1809,9 +1809,18 @@ pub fn mottomo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(MottomoMatcher))]
 }
 
-// Pattern: 再び
+// Pattern: 再び (again/once more/a second time)
+// Structures: ふたたび + Phrase
 pub fn futatabi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct FutatabiMatcher;
+    impl Matcher for FutatabiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ふたたび" || token.surface == "再び")
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(FutatabiMatcher))]
 }
 
 // Pattern: み

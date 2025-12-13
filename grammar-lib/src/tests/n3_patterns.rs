@@ -3505,3 +3505,58 @@ mod mottomo_tests {
         assert_pattern_range(&patterns, "もっとも", 20, 24); // もっとも
     }
 }
+
+// ========== 再び (again/once more) ==========
+// Pattern: 再び (again/once more/a second time)
+// Data source: grammar_points_data.json["再び"]
+//
+// Structure variants to test:
+//   standard[0]: ふたたび + Phrase
+
+mod futatabi_tests {
+    use super::*;
+
+    // Test: 再び - crime example (hiragana form)
+    #[test]
+    fn test_futatabi_crime() {
+        let sentence = "彼は刑務所から出て、ふたたび犯罪を犯した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "再び");
+        assert_pattern_range(&patterns, "再び", 10, 14); // ふたたび
+    }
+
+    // Test: 再び - hometown example (hiragana form, sentence start)
+    #[test]
+    fn test_futatabi_hometown() {
+        let sentence = "ふたたびふるさとに戻りたいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "再び");
+        assert_pattern_range(&patterns, "再び", 0, 4); // ふたたび
+    }
+
+    // Test: 再び - meet again (kanji form)
+    #[test]
+    fn test_futatabi_meet_kanji() {
+        let sentence = "あなたに再び会えて嬉しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "再び");
+        assert_pattern_range(&patterns, "再び", 4, 6); // 再び
+    }
+
+    // Test: 再び - start over (kanji form)
+    #[test]
+    fn test_futatabi_start_over() {
+        let sentence = "この仕事を再び始めることにした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "再び");
+        assert_pattern_range(&patterns, "再び", 5, 7); // 再び
+    }
+}
