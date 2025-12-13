@@ -1,3 +1,91 @@
+## Session 195 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented first N2 pattern
+**Patterns completed**: 1 (〜ようではないか)
+**Tests added**: 4 (all passing)
+**Total tests**: 1238 (was 1234)
+
+### Pattern Implemented: 〜ようではないか (why don't we, let's)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**:
+1. Godan verb + う + ではないか (戦おうではないか)
+2. Ichidan verb + よう + ではないか (考えようではないか)
+3. Godan verb + う + じゃないか (助け合おうじゃないか)
+4. Ichidan verb + よう + じゃないか (食べようじゃないか)
+
+**Implementation details**:
+- Pattern: Verb[volitional] + (で/じゃ) + は? + ない + か
+- Handles two tokenization patterns:
+  * Godan verbs: Verb[未然ウ接続] + う(助動詞) + ...
+  * Ichidan verbs: Verb[連用形] + よう(名詞/接尾) + ...
+- Custom matchers for each component:
+  - VolitionalVerbMatcher: matches both 未然ウ接続 and 連用形
+  - VolitionalAuxiliaryMatcher: matches う(助動詞) OR よう(名詞/接尾)
+  - DeOrJaMatcher: matches で(助動詞/copula), で(助詞/格助詞), OR じゃ(助詞/副助詞)
+  - HaParticleMatcher: optional は for ではないか form
+  - NaiAuxiliaryMatcher: ない auxiliary
+  - KaParticleMatcher: か ending particle
+- Added `use super::Matcher;` import to n2.rs (was missing)
+- Created new test file n2_patterns.rs
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (new file)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 739-832)
+
+### Workflow followed
+1. ✅ Read grammar_points_data.json to understand structure variants
+2. ✅ Checked for existing stub function (found u301c_youdehanaika at line 739)
+3. ✅ Created n2_patterns.rs test file (first N2 test file!)
+4. ✅ Wrote 4 tests with print_debug for all structure variants
+5. ✅ Analyzed tokenization output - discovered two tokenization patterns
+6. ✅ Implemented initial matcher for godan verbs only
+7. ✅ Fixed compilation error (missing `use super::Matcher;` import)
+8. ✅ Updated matcher to handle ichidan verbs (よう as noun suffix)
+9. ✅ Fixed DeOrJaMatcher to handle で as case particle (not just copula)
+10. ✅ Verified all 4 tests detect the pattern correctly
+11. ✅ Removed print_debug and added proper assertions with correct ranges
+12. ✅ Verified all 1238 tests pass (no regressions)
+13. ✅ Updated feature_list.json
+14. ✅ Committed changes with detailed commit message
+
+### Key Learnings
+1. **Tokenization varies by verb type**: Godan vs ichidan verbs tokenize volitional forms differently
+   - Godan: 戦お (未然ウ接続) + う (助動詞)
+   - Ichidan: 考え (連用形) + よう (名詞/接尾)
+2. **で has multiple roles**: After volitional forms, で can be:
+   - Copula だ in te-form (助動詞) - after godan verbs
+   - Case particle (助詞/格助詞) - after よう suffix in ichidan verbs
+3. **Module organization**: Created first N2 test file, added to mod.rs
+4. **Import requirements**: N2 matchers need `use super::Matcher;` for custom matchers
+5. **Pattern handles 4 variants**: Single pattern handles both verb types and both で/じゃ forms
+
+### Statistics
+- **Session time**: ~1.5 hours
+- **Patterns completed this session**: 1
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1238
+
+### Next Session Recommendations
+1. **Continue with N2 priority 4 patterns**: More patterns at same priority level
+2. **Good candidates**:
+   - いきなり (suddenly) - adverb, simple pattern
+   - いよいよ (finally, at last) - adverb, simple pattern
+   - おそらく (probably) - adverb, simple pattern
+3. **Avoid**: Complex conditional or verb-heavy patterns initially
+
+### Environment Status
+- ✅ All 1238 tests passing
+- ✅ No regressions
+- ✅ Clean git state (changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 194 - 2025-12-13
 
 ### ✅ Session Summary
