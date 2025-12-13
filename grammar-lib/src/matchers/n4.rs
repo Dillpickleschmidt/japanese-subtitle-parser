@@ -2040,9 +2040,19 @@ pub fn uff5e_nai_uff5e_hanai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: すこしも～ない
+// Pattern: すこしも～ない (not even a little)
+// Structure: すこしも
 pub fn sukoshimo_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SukoshimoMatcher;
+    impl super::Matcher for SukoshimoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "すこしも"
+                && token.base_form == "すこしも"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(SukoshimoMatcher))]
 }
 
 // Pattern: すくなくない

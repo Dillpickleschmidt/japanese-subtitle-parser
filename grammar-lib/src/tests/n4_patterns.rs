@@ -4659,3 +4659,62 @@ mod zenzen_tests {
         assert_pattern_range(&patterns, "ぜんぜん", 3, 7); // ぜんぜん
     }
 }
+
+// ========== すこしも～ない (not even a little) ==========
+// Pattern: すこしも～ない
+// Data source: grammar_points_data.json["すこしも～ない"]
+//
+// Structures to test:
+//   - standard[0]: すこしも + Verb［ない］
+//   - standard[1]: すこしも + ［い］Adjective［ない］
+//   - standard[2]: すこしも + ［な］Adjective + ではない (or じゃない)
+//
+// Meaning: "not even a little bit", "not at all"
+#[cfg(test)]
+mod sukoshimo_nai_tests {
+    use super::*;
+
+    // Structure: すこしも + Verb[ない]
+    #[test]
+    fn sukoshimo_with_verb_nai() {
+        let sentence = "今日は人が多いからすこしも離れないでね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すこしも～ない");
+        assert_pattern_range(&patterns, "すこしも～ない", 9, 13); // すこしも
+    }
+
+    // Structure: すこしも + い-Adjective[ない]
+    #[test]
+    fn sukoshimo_with_i_adj_nai() {
+        let sentence = "何このケーキ、すこしもおいしくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すこしも～ない");
+        assert_pattern_range(&patterns, "すこしも～ない", 7, 11); // すこしも
+    }
+
+    // Structure: すこしも + な-Adjective + ではない
+    #[test]
+    fn sukoshimo_with_na_adj_dewa_nai() {
+        let sentence = "彼女の彼氏はすこしもイケメンではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すこしも～ない");
+        assert_pattern_range(&patterns, "すこしも～ない", 6, 10); // すこしも
+    }
+
+    // Structure: すこしも + な-Adjective + じゃない
+    #[test]
+    fn sukoshimo_with_na_adj_ja_nai() {
+        let sentence = "このドラマはすこしも面白じゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すこしも～ない");
+        assert_pattern_range(&patterns, "すこしも～ない", 6, 10); // すこしも
+    }
+}
