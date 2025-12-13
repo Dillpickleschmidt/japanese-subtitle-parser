@@ -2710,6 +2710,69 @@ mod sonotameni_tests {
     }
 }
 
+// ========== その結果 (as a result) ==========
+// Pattern: その結果 (as a result)
+// Data source: grammar_points_data.json["その結果"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase。その結果（けっか） + Phrase
+
+mod sonokekka_tests {
+    use super::*;
+
+    // Test: School absence result
+    // Example: 学校を３ヶ月休んだ。その結果、皆と卒業することができなかった
+    // (I took three months off from school. As a result, I was not able to graduate with everyone)
+    #[test]
+    fn test_sonokekka_school() {
+        let sentence = "学校を３ヶ月休んだ。その結果、皆と卒業することができなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "その結果");
+        assert_pattern_range(&patterns, "その結果", 10, 14); // その結果
+    }
+
+    // Test: Sunburn result
+    // Example: 日焼け止めを塗らずにビーチで一日過ごした。その結果凄く日焼けをして、しばらくシャワーに入るのが辛かった
+    // (I spent the whole day at the beach without sunscreen. As a result, I got a bad sunburn and it was painful to take a shower for a while)
+    #[test]
+    fn test_sonokekka_sunburn() {
+        let sentence = "日焼け止めを塗らずにビーチで一日過ごした。その結果凄く日焼けをして、しばらくシャワーに入るのが辛かった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "その結果");
+        assert_pattern_range(&patterns, "その結果", 21, 25); // その結果
+    }
+
+    // Test: Practice result (positive)
+    // Example: 毎日朝早くから夜遅くまで練習した。その結果、試合で優勝することができた
+    // (We practiced every day from early in the morning to late at night. As a result, we were able to win the tournament)
+    #[test]
+    fn test_sonokekka_practice() {
+        let sentence = "毎日朝早くから夜遅くまで練習した。その結果、試合で優勝することができた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "その結果");
+        assert_pattern_range(&patterns, "その結果", 17, 21); // その結果
+    }
+
+    // Test: Weight gain result
+    // Example: タナカ君は一年間運動をしないでゲームばっかりしていた。その結果２０キロも太った
+    // (Tanaka-kun only played video games without exercising for a year. As a result, he gained 20 kilograms)
+    #[test]
+    fn test_sonokekka_weight_gain() {
+        let sentence = "タナカ君は一年間運動をしないでゲームばっかりしていた。その結果２０キロも太った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "その結果");
+        assert_pattern_range(&patterns, "その結果", 27, 31); // その結果
+    }
+}
+
 // ========== ずに (without doing) ==========
 // Pattern: ずに (without doing)
 // Data source: grammar_points_data.json["ずに"]

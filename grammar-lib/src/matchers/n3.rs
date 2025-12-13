@@ -958,9 +958,36 @@ pub fn sonotame_ni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: その結果
+// Pattern: その結果 (as a result)
+// Structure: その + 結果
 pub fn sonokekka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches その as 連体詞
+    #[derive(Debug)]
+    struct SonoRentaishiMatcher;
+    impl super::Matcher for SonoRentaishiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "その" && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        }
+    }
+
+    // Matches 結果 as 名詞/副詞可能
+    #[derive(Debug)]
+    struct KekkaFukushiKanouMatcher;
+    impl super::Matcher for KekkaFukushiKanouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "結果"
+                && token.base_form == "結果"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SonoRentaishiMatcher)),
+        TokenMatcher::Custom(Arc::new(KekkaFukushiKanouMatcher)),
+    ]
 }
 
 // Pattern: に比べて
