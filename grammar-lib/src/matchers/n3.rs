@@ -3901,9 +3901,27 @@ pub fn tsuideni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: と共に
+// Pattern: と共に (together with, at the same time as)
+// Structures: Verb/Adj/Noun + と共に (single compound particle)
 pub fn totomoni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // と共に as compound particle
+    #[derive(Debug)]
+    struct TotomoniMatcher;
+    impl Matcher for TotomoniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と共に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(TotomoniMatcher)),
+    ]
 }
 
 // Pattern: につれて (as, in proportion to)

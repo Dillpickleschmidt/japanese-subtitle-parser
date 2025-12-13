@@ -7363,3 +7363,55 @@ mod tonarande_tests {
         assert_pattern_range(&patterns, "と並んで", 3, 11); // トヨタと並ぶほど
     }
 }
+
+// Pattern: と共に (together with, at the same time as)
+// Data source: grammar_points_data.json["と共に"]
+// Testing: structure.standard[0-3] - Verb/い-Adj/な-Adj+である/Noun + と共に
+#[cfg(test)]
+mod totomoni_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + と共に"
+    #[test]
+    fn test_totomoni_verb() {
+        let sentence = "風が強くなると共に雨が降ってきます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と共に");
+        assert_pattern_range(&patterns, "と共に", 4, 9); // なると共に
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + と共に"
+    #[test]
+    fn test_totomoni_i_adjective() {
+        let sentence = "あの先生は厳しいが厳しいと共に優しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と共に");
+        assert_pattern_range(&patterns, "と共に", 9, 15); // 厳しいと共に
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + である + と共に"
+    #[test]
+    fn test_totomoni_na_adjective_dearu() {
+        let sentence = "僕が住んでいる場所は静かであると共に空気が綺麗だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と共に");
+        assert_pattern_range(&patterns, "と共に", 13, 18); // あると共に
+    }
+
+    // Testing: structure.standard[3] - "Noun + と共に"
+    #[test]
+    fn test_totomoni_noun() {
+        let sentence = "私と共に人生を歩んでくれませんか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と共に");
+        assert_pattern_range(&patterns, "と共に", 0, 4); // 私と共に
+    }
+}
