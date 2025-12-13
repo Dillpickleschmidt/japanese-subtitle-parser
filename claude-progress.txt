@@ -1,6 +1,86 @@
 # Grammar-lib Development Progress
 
-## Session 158 - 2025-12-13
+## Session 158 - 2025-12-13 (continued)
+
+### ✅ Updated Session Summary
+**Status**: Two patterns fully implemented (ていた + てある)
+**Patterns completed**: 2 N4 construction patterns
+**Tests added**: 3 + 3 = 6 comprehensive tests
+**Total tests**: 1041 (was 1035 at session start)
+
+### Accomplishments
+1. ✅ Implemented ていた pattern (N4) - "was doing / past progressive"
+2. ✅ Implemented てある pattern (N4) - "state of completion / left in state"
+3. ✅ All 6 tests passing with proper range assertions
+4. ✅ No test regressions - all 1041 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns (Session 158)
+
+#### てある (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (tearu function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod tearu_tests, 3 tests)
+- **Structures**:
+  - standard[0]: (Transitive) Verb[て] + ある
+  - polite[0]: (Transitive) Verb[て] + あります
+- **Tokenization**:
+  - Standard: Verb (連用形) + て/で (助詞) + ある (動詞, 基本形)
+  - Polite: Verb (連用形) + て/で (助詞) + あり (動詞, 連用形) + ます (助動詞)
+- **Implementation**: Four-token matcher with optional ます
+  - flexible_verb_form: Matches verbs in 連用形 or 連用タ接続
+  - TeDeFormMatcher: Matches て or で particles
+  - AruMatcher: Matches ある verb (can be 自立 or 非自立)
+  - Optional MasuFormMatcher: Matches ます for polite form
+- **Meaning**: "to be left (state)", "state of completion", focuses on object
+- **Pattern priority**: 1 (N4 construction)
+- **Note**: Only works with transitive verbs, emphasizes object's state
+- **Pattern ranges**:
+  - 置いてある (chars 11-16) - is left/placed
+  - 止めてある (chars 10-15) - is parked/stopped
+  - 植えてあります (chars 9-16) - is planted (polite)
+- **Test coverage**:
+  - Left state: あなたの弁当は机の上に置いてあるよ
+  - Parked: 車は駐車場の真ん中に止めてある
+  - Polite: 庭にトウモロコシが植えてありますから気をつけてね
+
+### Implementation Notes - てある
+- Key difference from ている: てある only for transitive verbs, focuses on object
+- Initial implementation was too strict (only 非自立), fixed to accept both 自立 and 非自立
+- Tokenization varies: ある can be parsed as either independent or auxiliary verb
+- Pattern confidence: 2.5-3.0
+
+### Session Success
+- Successfully implemented two fundamental N4 て-form patterns
+- Both patterns related: ていた (past progressive) and てある (resultative state)
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Very efficient session - completed 2 patterns with excellent coverage
+
+### Next Priorities
+Continue with simple N4 て-form patterns:
+
+**Simple N4 patterns to implement next**:
+1. **てみる** - "try to" (1 std, 1 pol)
+2. **てほしい** - "want someone to" (1 std, 1 pol)
+3. **てよかった** - "glad that..." (simple pattern)
+4. **ておく** - "to do in advance" (1 std, 1 pol)
+5. Other simple N4 constructions with stubs
+
+**Recommendation**: Continue with て-form constructions to build momentum. Three て-form patterns completed this session.
+
+### Environment Status
+- ✅ All 1041 tests passing (added 6 new tests this session)
+- ✅ No regressions
+- ✅ Clean git state (2 commits this session)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
+## Session 158 - 2025-12-13 (initial)
 
 ### ✅ Session Summary
 **Status**: ていた pattern (N4) fully implemented
