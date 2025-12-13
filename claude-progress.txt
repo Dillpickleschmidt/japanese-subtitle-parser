@@ -1,5 +1,91 @@
 # Grammar-lib Development Progress
 
+## Session 176 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: とき pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 temporal noun pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 1131 (was 1127 at session start)
+
+### Accomplishments
+1. ✅ Implemented とき pattern (N4) - "when/at the time"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 1131 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### とき (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (toki function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod toki_tests, 4 tests)
+- **Structures**:
+  - standard[0]: Verb + とき
+  - standard[1]: い-Adjective + とき
+  - standard[2]: な-Adjective + な + とき
+  - standard[3]: Noun + の + とき
+- **Tokenization**:
+  - とき always tokenizes as 名詞/非自立/副詞可能
+  - Preceded by various elements: verbs, adjectives, な, の
+- **Implementation**: Two-token matcher
+  - TokenMatcher::Any - matches any preceding token
+  - TokiMatcher - matches とき (名詞/非自立)
+- **Meaning**: "when", "at the time" - temporal noun indicating when something happens
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern confidence**: 2.2
+- **Pattern ranges**:
+  - たとき (chars 13-16) - verb + とき
+  - 暑いとき (chars 0-4) - i-adjective + とき (full construction)
+  - なとき (chars 3-6) - な + とき
+  - のとき (chars 1-4) - の + とき
+- **Test coverage**: 4 tests covering all structure variants
+- **Note**: Works alongside existing patterns like "い-Adjective + Noun" and "Verb［た・ている］+ Noun"
+
+### Implementation Notes
+- **Simple approach**: Uses TokenMatcher::Any to match preceding element
+- **Pattern overlap**: Overlaps with "い-Adjective + Noun" (暑いとき) and "Verb［た・ている］+ Noun" (開けたとき)
+  - This is intentional - provides multiple grammar explanations to users
+  - Similar to how らしい① and らしい② work for semantic ambiguity
+- **Range variation**: Pattern captures connecting element + とき
+  - For i-adjectives: Full adjective + とき (TokenMatcher::Any matches single i-adj token)
+  - For verbs: Last auxiliary + とき (た + とき, not full verb stem)
+  - For な-adjectives: な + とき
+  - For nouns: の + とき
+- Test-first workflow with print_debug was effective for understanding tokenization
+
+### Session Success
+- Successfully implemented a straightforward N4 temporal noun pattern
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges correctly identify the とき construction
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern with 4 comprehensive tests
+
+### Next Priorities
+Continue with simple N4 patterns with stubs:
+
+**Simple N4 patterns to implement next**:
+1. **のに** - "in spite of/even though" (has stub: noni function)
+2. **みたい** - "looks like/seems like" (has stub: mitai function)
+3. **そう** - "looks/seems" appearance (has stub: sou function)
+4. **ようだ** - "it seems/appears" (has stub: youda function)
+5. Other simple N4 constructions with existing stubs in n4.rs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles and verb forms (though many are complex/broad)
+
+**Recommendation**: Continue with simple N4 patterns that have stubs. Patterns like みたい and そう are common and well-scoped for implementation.
+
+### Environment Status
+- ✅ All 1131 tests passing (added 4 new tests this session)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 175 - 2025-12-13
 
 ### ✅ Session Summary
