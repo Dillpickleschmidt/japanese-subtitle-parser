@@ -2102,13 +2102,13 @@
   {
     "pattern_name": "がみられる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Unlike 見（み）える 'to be visible', which focuses on whether something can be seen or not, 見（み）られる (the potential form of ... [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null

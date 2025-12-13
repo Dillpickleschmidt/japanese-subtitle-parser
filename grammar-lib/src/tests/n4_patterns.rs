@@ -4349,3 +4349,64 @@ mod taradou_tests {
         assert_pattern_range(&patterns, "たらどう", 2, 9); // 使ったらどうだ
     }
 }
+
+// ========== がみられる (can be seen/observed) ==========
+// Pattern: がみられる
+// Data source: grammar_points_data.json["がみられる"]
+//
+// Structures to test:
+//   - standard[0]: Noun + が + 見られる
+//   - standard[1]: Noun + も + 見られる
+//   - polite[0]: Noun + が + 見られます
+//   - polite[1]: Noun + も + 見られます
+//
+// Meaning: "can be seen", "can be observed" (requires effort to see, like trends/changes)
+// Unlike 見える (naturally visible), 見られる focuses on viewer's ability to observe
+#[cfg(test)]
+mod gamirareru_tests {
+    use super::*;
+
+    // Structure: Noun + が + 見られる
+    #[test]
+    fn noun_ga_mirareru() {
+        let sentence = "この部屋からは富士山が見られる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がみられる");
+        assert_pattern_range(&patterns, "がみられる", 7, 15); // 富士山が見られる
+    }
+
+    // Structure: Noun + も + 見られる
+    #[test]
+    fn noun_mo_mirareru() {
+        let sentence = "奈良に行くと横断歩道を渡るシカも見られる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がみられる");
+        assert_pattern_range(&patterns, "がみられる", 13, 20); // シカも見られる
+    }
+
+    // Structure: Noun + が + 見られます (polite)
+    #[test]
+    fn noun_ga_miraremasu_polite() {
+        let sentence = "最近はタッチパネル付きの冷蔵庫が見られます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がみられる");
+        assert_pattern_range(&patterns, "がみられる", 12, 21); // 冷蔵庫が見られます
+    }
+
+    // Structure: Noun + も + 見られます (polite)
+    #[test]
+    fn noun_mo_miraremasu_polite() {
+        let sentence = "この地域では絶滅危惧種も見られます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がみられる");
+        assert_pattern_range(&patterns, "がみられる", 10, 17); // 種も見られます
+    }
+}

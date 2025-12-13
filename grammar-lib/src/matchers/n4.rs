@@ -2871,9 +2871,68 @@ pub fn kaze() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: がみられる
+// Pattern: がみられる (can be seen/observed)
+// Structures: Noun + が/も + 見られる/見られます
 pub fn gamirareru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match が or も particle
+    #[derive(Debug)]
+    struct GaMoParticleMatcher;
+    impl Matcher for GaMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "が" || token.surface == "も")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match 見 verb in 未然形
+    #[derive(Debug)]
+    struct MiruVerbMatcher;
+    impl Matcher for MiruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "見"
+                && token.base_form == "見る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "未然形")
+        }
+    }
+
+    // Match られる/られ suffix
+    #[derive(Debug)]
+    struct RareruSuffixMatcher;
+    impl Matcher for RareruSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "られる" || token.surface == "られ")
+                && token.base_form == "られる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match ます auxiliary (optional for polite form)
+    #[derive(Debug)]
+    struct MasuAuxiliaryMatcher;
+    impl Matcher for MasuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(GaMoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MiruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(RareruSuffixMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MasuAuxiliaryMatcher,
+        )))),
+    ]
 }
 
 // Pattern: にきがつく
