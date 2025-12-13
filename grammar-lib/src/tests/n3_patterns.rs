@@ -2987,3 +2987,58 @@ mod toiunohajijitsuda_tests {
         assert_pattern_range(&patterns, "～というのは事実だ", 8, 14); // のは事実です
     }
 }
+
+// ========== 直ちに (immediately/at once) ==========
+// Pattern: 直ちに (immediately/at once)
+// Data source: grammar_points_data.json["直ちに"]
+//
+// Structure variants to test:
+//   standard[0]: 直（ただ）ちに + Phrase
+
+mod tadachini_tests {
+    use super::*;
+
+    // Test: 直ちに at sentence start with verb phrase
+    #[test]
+    fn test_tadachini_evacuation() {
+        let sentence = "ただちに避難所へ向かってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "直ちに");
+        assert_pattern_range(&patterns, "直ちに", 0, 4); // ただちに
+    }
+
+    // Test: 直ちに in middle of sentence
+    #[test]
+    fn test_tadachini_leave_mountain() {
+        let sentence = "この山から、ただちに出て行ってください。ここは私有地です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "直ちに");
+        assert_pattern_range(&patterns, "直ちに", 6, 10); // ただちに
+    }
+
+    // Test: 直ちに with earthquake example
+    #[test]
+    fn test_tadachini_earthquake() {
+        let sentence = "地震が起きたらただちに家を出てください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "直ちに");
+        assert_pattern_range(&patterns, "直ちに", 7, 11); // ただちに
+    }
+
+    // Test: 直ちに with reporting example (intentional action)
+    #[test]
+    fn test_tadachini_report() {
+        let sentence = "計画が変わったら、ただちに報告してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "直ちに");
+        assert_pattern_range(&patterns, "直ちに", 9, 13); // ただちに
+    }
+}

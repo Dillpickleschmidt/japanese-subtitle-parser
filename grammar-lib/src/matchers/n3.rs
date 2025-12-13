@@ -2039,9 +2039,19 @@ pub fn nitsurete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 直ちに
+// Pattern: 直ちに (immediately/at once - formal/purposeful)
+// Structures: ただちに + Phrase
 pub fn tadachini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TadachiniMatcher;
+    impl Matcher for TadachiniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ただちに" || token.surface == "直ちに")
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(TadachiniMatcher))]
 }
 
 // Pattern: たとたんに
