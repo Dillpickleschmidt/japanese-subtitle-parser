@@ -1,5 +1,83 @@
 # Grammar-lib Development Progress
 
+## Session 144 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Verb[て] pattern fully implemented (N4 casual imperative)
+**Patterns completed**: 1 new N4 construction pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 923 (was 919 at session start)
+
+### Accomplishments
+1. ✅ Implemented Verb[て] pattern (N4) - casual imperative/request
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 923 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### Verb[て] (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (verb_te_2 function, lines 1048-1071)
+- **Tests**: 4 tests in n4_patterns.rs (mod verb_te_imperative_tests, lines 1262-1317)
+- **Structure**:
+  - standard[0]: Verb［て］。
+- **Tokenization**:
+  - Verb (連用形 or 連用タ接続)
+  - て (助詞/接続助詞)
+- **Implementation**: flexible_verb_form() + TeParticleMatcher
+  - TeParticleMatcher: Matches て (助詞/接続助詞) with exact surface and base_form checks
+- **Meaning**: Casual imperative/request - shortened form of てください for friendly requests
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Include full verb + て construction
+  - 片付けて (chars 3-7) - clean up (please)
+  - 貸して (chars 2-5) - lend (please)
+  - 来て (chars 4-6) - come (please)
+  - 待って (chars 0-3) - wait (please)
+- **Key insights**:
+  - Pattern structurally identical to N5 "Verb + て" but represents specific grammatical usage
+  - Used at sentence end as polite imperative (replaces てください in casual speech)
+  - Can sound like soft order, best used with friends or toward people of lower status
+  - Pattern coexists with N5 "Verb + て" pattern - both can match same tokens
+
+### Session Statistics
+- **Patterns implemented**: 1 (N4)
+- **Tests written**: 4
+- **Tests passing**: 923/923 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~67 (matcher implementation + 4 tests + feature_list update)
+
+### Key Insights
+- Verb[て] is a fundamental N4 imperative pattern for casual speech
+- Simple 2-token matcher: verb (連用形/連用タ接続) + て (接続助詞)
+- Test sentences use realistic imperative contexts from grammar_points_data.json
+- Pattern ranges include full verb + て for proper grammatical context
+- Successfully implemented common N4 casual request pattern
+- This brings total N4 passing patterns from 14 to 15
+
+### Next Priorities
+Continue with N4 patterns (simple 1-2 structure patterns first):
+
+**Simple N4 patterns to implement next** (1-2 structures):
+1. **Number + しか〜ない** - "only (number)" (1 structure)
+2. **ございます** - polite form of ある (1 std + 1 pol)
+3. **しか～ない** - "only" (1 structure)
+4. **じゃないか** - "isn't it?" (1 structure)
+5. **お～ください** - honorific request (1 structure)
+6. **なおす** - "redo/fix" (similar to おわる/はじめる, 1 std + 1 pol)
+7. **ようだ** - "seems like/appears to be" (2-3 structures)
+
+**Recommendation**: Continue with simple auxiliary verb/particle patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 923 tests passing (added 4 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 143 - 2025-12-13
 
 ### ✅ Session Summary
