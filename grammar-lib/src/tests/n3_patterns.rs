@@ -3672,3 +3672,58 @@ mod tameni_purpose_tests {
     }
 }
 
+// ========== たて (freshly/just finished) ==========
+// Pattern: たて - indicates something just finished/freshly done
+// Data source: grammar_points_data.json["たて"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + たて
+//   standard[1]: Verb[stem] + たて + の + Noun
+
+mod tate_tests {
+    use super::*;
+
+    // Test: Verb[stem] + たて - just fished (split tokenization)
+    #[test]
+    fn test_tate_fished() {
+        let sentence = "釣りたてだから新鮮だよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たて");
+        assert_pattern_range(&patterns, "たて", 0, 4); // 釣りたて
+    }
+
+    // Test: Verb[stem] + たて + の + Noun - freshly made (split tokenization)
+    #[test]
+    fn test_tate_no_noun_made() {
+        let sentence = "私は出来たてのパンを食べるのが大好きです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たて");
+        assert_pattern_range(&patterns, "たて", 2, 7); // 出来たての
+    }
+
+    // Test: Noun + たて + の - just picked (split tokenization)
+    #[test]
+    fn test_tate_picked() {
+        let sentence = "採りたての野菜で作るサラダは美味しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たて");
+        assert_pattern_range(&patterns, "たて", 0, 5); // 採りたての
+    }
+
+    // Test: Noun + たて + の + Noun - freshly baked (split tokenization)
+    #[test]
+    fn test_tate_no_noun_baked() {
+        let sentence = "焼きたてのパンケーキが食べたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たて");
+        assert_pattern_range(&patterns, "たて", 0, 5); // 焼きたての
+    }
+}

@@ -4023,7 +4023,7 @@ declare_patterns! {
     Tate {
         name: "たて",
         matcher_fn: crate::matchers::n3::tate,
-        priority: 1,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },

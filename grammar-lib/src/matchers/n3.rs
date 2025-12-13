@@ -2784,9 +2784,39 @@ pub fn nikakete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たて
+// Pattern: たて (freshly/just finished)
+// Structures: Verb[stem] + たて / Verb[stem] + たて + の + Noun
 pub fn tate() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TateSuffixMatcher;
+    impl Matcher for TateSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match たて as 名詞/接尾/一般 (noun suffix)
+            token.surface == "たて"
+                && token.base_form == "たて"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match の as 助詞/連体化 (nominalizing particle)
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb (連用形) or Noun
+        TokenMatcher::Custom(Arc::new(TateSuffixMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoRentaikaMatcher,
+        )))), // Optional の for noun modification
+    ]
 }
 
 // Pattern: 込む ①
