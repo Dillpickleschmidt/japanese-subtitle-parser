@@ -1,5 +1,100 @@
 # Grammar-lib Development Progress
 
+## Session 101 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (せいで - because of/due to with negative result)
+**Patterns completed**: 1 new N3 pattern (causal construction)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 639 (was 635)
+
+### Accomplishments
+1. ✅ Implemented せいで pattern (N3) - "because of/due to" (negative result)
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 639 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### せいで (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 2625-2664)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod seide_tests)
+  - test_seide_verb (起きていたせいで寝坊した - Verb + せいで)
+  - test_seide_i_adjective (寒いせいで風邪を引いてしまった - い-Adj + せいで)
+  - test_seide_na_adjective (心配なせいで今日は寝れなさそう - な-Adj + な + せいで)
+  - test_seide_noun (大雪のせいで道が渋滞している - Noun + の + せいで)
+- **Structures**:
+  - Verb + せいで
+  - い-Adjective + せいで
+  - な-Adjective + な + せいで
+  - Noun + の + せいで
+- **Tokenization insights**:
+  - せい = 名詞/非自立/一般 (dependent noun)
+  - で = 助詞/格助詞/一般 (case particle)
+  - の/な connectors appear between content word and せい for nouns/な-adjectives
+  - Verbs and い-adjectives connect directly to せい
+- **Implementation**: 4-token matcher with optional connector
+  - SeiMatcher: Matches せい as 名詞/非自立
+  - DeParticleMatcher: Matches で as 助詞/格助詞
+  - NoNaConnectorMatcher: Matches の (particle) or な (auxiliary) - Optional
+  - TokenMatcher::Any for the content word before せい
+- **Meaning**: "because of / due to / fault of" - indicates negative result from actions/state
+- **Usage**: Expresses negative outcomes attributed to a cause (similar to "doings" in English blame)
+- **Pattern priority**: 3 (N3 construction pattern in patterns.rs)
+- **Pattern ranges**: Full construction including content word + connector + せいで
+  - 大雪のせいで (chars 0-6) - Noun + の + せいで
+  - 寒いせいで (chars 2-7) - い-Adj + せいで
+  - 心配なせいで (chars 8-14) - な-Adj + な + せいで
+  - たせいで (chars 11-15) - Verb + せいで
+
+### Technical Details
+- **Pattern priority**: 3 (N3 construction - updated from placeholder priority 1)
+- **Test coverage**: All 4 structure variants from grammar_points_data.json
+  - standard[0]: Verb + せいで
+  - standard[1]: い-Adjective + せいで
+  - standard[2]: な-Adjective + な + せいで
+  - standard[3]: Noun + の + せいで
+- **Implementation approach**: Test-first workflow (print_debug → analyze tokenization → implement → finalize)
+- **Key insight**: Pattern varies 3-4 tokens depending on presence of connector (の/な)
+- **Pattern range**: Includes full grammatical construction (content word + optional connector + せい + で)
+- **Similar pattern**: くせに (despite/even though) uses same 名詞/非自立 structure
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 639/639 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~100 (tests + matcher + pattern update + feature_list update)
+
+### Key Insights
+- Pattern successfully captures all 4 structure variants with a single matcher
+- Optional connector (の/な) handled cleanly with TokenMatcher::Optional
+- Range includes full construction for better context (not just せいで alone)
+- Higher confidence scores (4.6) correctly favor matches with content word included
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 construction patterns to implement**:
+1. さえ - "even" (complex pattern with 6 structure variants)
+2. たびに - "every time"
+3. ため(に) - "for the purpose of / because of"
+4. そうだ - hearsay/conjecture
+5. たて - "just did / freshly"
+6. たとえ〜ても - "even if"
+
+**Recommendation**: Continue with concrete N3 patterns that have clear, testable structures.
+
+### Environment Status
+- ✅ All 639 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 100 - 2025-12-12
 
 ### ✅ Session Summary
