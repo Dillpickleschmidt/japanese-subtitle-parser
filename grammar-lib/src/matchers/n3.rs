@@ -572,8 +572,19 @@ pub fn dearu() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ところが
+// Pattern: ところが (however, but unexpectedly)
+// Structures: ところが (conjunction showing unexpected result)
 pub fn tokoroga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TokorogaMatcher;
+    impl super::Matcher for TokorogaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところが"
+                && token.base_form == "ところが"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(TokorogaMatcher))]
 }
 
 // Pattern: ところで

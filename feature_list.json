@@ -5392,13 +5392,13 @@
   {
     "pattern_name": "ところが",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ところが is a conjunction in Japanese that is a combination of the noun, ところ 'place', and the conjunction particle が [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

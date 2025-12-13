@@ -5500,3 +5500,46 @@ mod dekireba_dekitara_tests {
         assert_pattern_range(&patterns, "できれば・できたら", 0, 4); // できたら
     }
 }
+
+// Pattern: ところが (however, but unexpectedly)
+// Data source: grammar_points_data.json["ところが"]
+// Testing: structure.standard[0] - "(Expectation) Phrase + ところが + (Unexpected Result) Phrase"
+//
+// Meaning: Conjunction showing unexpected result contrary to expectation
+// Note: Usually used at beginning of sentence to contrast with previous statement
+mod tokoroga_tests {
+    use super::*;
+
+    // Testing: ところが at sentence beginning (standard usage)
+    #[test]
+    fn test_tokoroga_sentence_beginning() {
+        let sentence = "９時に寝た。ところが、目覚ましがならなかったから寝坊した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところが");
+        assert_pattern_range(&patterns, "ところが", 6, 10); // ところが
+    }
+
+    // Testing: ところが mid-sentence (after phrase)
+    #[test]
+    fn test_tokoroga_after_phrase() {
+        let sentence = "新しい洗濯機を買った。ところが、洗濯機が大きすぎて家に入らなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところが");
+        assert_pattern_range(&patterns, "ところが", 11, 15); // ところが
+    }
+
+    // Testing: ところが with positive unexpected result
+    #[test]
+    fn test_tokoroga_positive_result() {
+        let sentence = "嫌がると思っていた。ところが、喜んで手伝ってくれた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところが");
+        assert_pattern_range(&patterns, "ところが", 10, 14); // ところが
+    }
+}
