@@ -2403,3 +2403,64 @@ mod dondon_tests {
         assert_pattern_range(&patterns, "どんどん", 2, 6); // どんどん
     }
 }
+
+// ========== ていく (to go on to) ==========
+// Pattern: ていく
+// Data source: grammar_points_data.json["ていく"]
+//
+// Structure to test:
+//   - standard[0]: Verb[て] + いく
+//   - polite[0]: Verb[て] + いきます
+//
+// Examples from data:
+//   - 食べていく (go and eat)
+//   - 上手くなっていく (will get better)
+//   - 持っていった (took)
+#[cfg(test)]
+mod teiku_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[て] + いく (present)
+    #[test]
+    fn test_teiku_getting_better() {
+        let sentence = "毎日ゴルフの練習をしたらだんだんと上手くなっていく";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていく");
+        assert_pattern_range(&patterns, "ていく", 20, 25); // なっていく
+    }
+
+    // Testing: standard[0] - Verb[て] + いく (invitation/question)
+    #[test]
+    fn test_teiku_eat() {
+        let sentence = "今日はうちで食べていく？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていく");
+        assert_pattern_range(&patterns, "ていく", 6, 11); // 食べていく
+    }
+
+    // Testing: standard[0] - Verb[て] + いった (past)
+    #[test]
+    fn test_teiku_past() {
+        let sentence = "雨が降ると聞いたから傘を持っていった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていく");
+        assert_pattern_range(&patterns, "ていく", 12, 18); // 持っていった
+    }
+
+    // Testing: polite[0] - Verb[て] + いきます
+    #[test]
+    fn test_teiku_polite() {
+        let sentence = "これからもっと頑張っていきます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていく");
+        assert_pattern_range(&patterns, "ていく", 7, 15); // 頑張っていきます
+    }
+}

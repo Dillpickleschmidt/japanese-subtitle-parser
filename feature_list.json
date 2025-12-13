@@ -2648,13 +2648,13 @@
   {
     "pattern_name": "ていく",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "This grammar construction is a mix of the conjunction particle て , and the verb 行（い）く 'to go' [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null
