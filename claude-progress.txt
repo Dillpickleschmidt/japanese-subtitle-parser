@@ -1,5 +1,129 @@
 # Grammar-lib Development Progress
 
+## Session 121 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Two N3 patterns fully implemented (さえ + とおり)
+**Patterns completed**: 2 new N3 construction patterns
+**Tests added**: 10 comprehensive tests (6 + 4)
+**Total tests**: 766 (was 756 at session start)
+
+### Accomplishments
+1. ✅ Implemented さえ pattern (N3) - "even" adverbial particle
+2. ✅ Implemented とおり pattern (N3) - "in that way / just like"
+3. ✅ All 10 tests passing with proper range assertions
+4. ✅ No test regressions - all 766 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
+
+### Completed Patterns
+
+#### さえ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 1749-1786)
+- **Tests**: 6 tests in n3_patterns.rs (mod sae_tests)
+- **Structures**:
+  - standard[0]: Noun + (で) + さえ
+  - standard[1]: Noun + Particle + さえ
+  - standard[2]: Verb + こと(の) + さえ
+  - standard[3]: Verb[stem] + さえ
+  - standard[4]: Verb[て] + さえ
+- **Tokenization insights**:
+  - さえ = 助詞/係助詞 (bound particle)
+  - で/に/を = 助詞/格助詞 (case particles, optional)
+  - Pattern uses optional case particle matcher
+- **Implementation**: 3-token matcher with optional case particle
+  - TokenMatcher::Any: Content word before さえ
+  - Optional CaseParticleMatcher: Matches で, に, を, etc.
+  - SaeParticleMatcher: Matches さえ as 助詞/係助詞
+- **Meaning**: "even" - adverbial particle emphasizing something existing in certain state
+- **Pattern priority**: 1 (N3 construction pattern)
+- **Pattern ranges**: Include content word + optional particle + さえ
+  - 彼でさえ (chars 4-8) - Noun + で + さえ
+  - 親にさえ (chars 3-7) - Noun + に + さえ
+  - ことさえ (chars 17-21) - こと + さえ
+  - 謝りさえ (chars 20-24) - Verb[stem] + さえ
+  - てさえ (chars 9-12) - て + さえ
+  - 水さえ (chars 0-3) - Noun + さえ (no particle)
+
+#### とおり (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 3231-3267)
+- **Tests**: 4 tests in n3_patterns.rs (mod toori_tests)
+- **Structures**:
+  - standard[0]: Verb[る/た] + とおり
+  - standard[1]: Noun + どおり
+  - standard[2]: Noun + の + とおり
+- **Tokenization insights**:
+  - とおり = 名詞/非自立/副詞可能 (bound noun) OR 名詞/接尾/一般 (suffix)
+  - どおり = 名詞/接尾/一般 (suffix)
+  - の = 助詞/連体化 (attributive particle, optional)
+- **Implementation**: 3-token matcher with optional の
+  - TokenMatcher::Any: Content word (verb or noun)
+  - Optional NoRentaiMatcher: Matches の as 助詞/連体化
+  - TooriDooriMatcher: Matches とおり or どおり as 名詞/非自立 or 名詞/接尾
+- **Meaning**: "in that way / just like" - indicates sameness or exact manner
+- **Pattern priority**: 3 (N3 construction pattern)
+- **Pattern ranges**: Include content word + optional の + とおり/どおり
+  - おっしゃるとおりです (chars 4-14) - Verb + とおり + です
+  - たとおり (chars 6-10) - Past auxiliary + とおり
+  - 計画どおり (chars 0-5) - Noun + どおり
+  - ご覧のとおり (chars 0-6) - Noun + の + とおり
+
+### Technical Details - さえ
+- **Pattern priority**: 1 (N3 construction/adverbial particle)
+- **Test coverage**: 5 structure variants from grammar_points_data.json (6 tests total)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Single matcher handles all variants using TokenMatcher::Any + optional case particle
+- **Grammar note**: さえ presents unexpected/unusual situations, translated as "even", "let alone", "not to mention"
+
+### Technical Details - とおり
+- **Pattern priority**: 3 (N3 construction)
+- **Test coverage**: 3 structure variants from grammar_points_data.json (4 tests total)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Single matcher handles both とおり and どおり by checking multiple POS patterns
+- **Grammar note**: Comes from 通り (street/way), indicates level of "sameness" with something
+
+### Session Statistics
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 10 (6 + 4)
+- **Tests passing**: 766/766 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~276 (2 matcher implementations + 10 tests + 2 feature_list updates)
+
+### Key Insights
+- Both patterns use flexible TokenMatcher::Any to match various content words
+- さえ is an adverbial particle emphasizing extreme/unexpected situations
+- とおり/どおり patterns indicate exact sameness or manner of doing something
+- Optional matchers (case particle for さえ, の for とおり) provide flexibility
+- Test sentences are realistic subtitle-quality examples
+- Pattern ranges include full grammatical constructions for proper context
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. さえ〜ば - "if only / as long as" (2-3 structure variants)
+2. そうだ - hearsay/conjecture (4 standard + 4 polite = 8 variants)
+3. ために - "for the purpose of / because of" (multiple variants)
+4. たらいい・といい - "it would be good if" (suggestion pattern)
+5. ことなの - "it's that" (explanatory pattern, 4+ variants)
+
+**Recommendation**: Continue with さえ〜ば (related to さえ) or simpler construction patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 766 tests passing (added 10 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for both patterns
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
+## Session 120 - 2025-12-13
+
+[Previous session content...]
+
+---
+
 ## Session 119 - 2025-12-13
 
 ### ✅ Session Summary
