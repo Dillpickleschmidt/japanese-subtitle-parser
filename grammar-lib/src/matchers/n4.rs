@@ -1883,7 +1883,32 @@ pub fn tekureru() -> Vec<TokenMatcher> {
 
 // Pattern: てもらう
 pub fn temorau() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MorauMatcher;
+    impl Matcher for MorauMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "もらう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeDeFormMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(MorauMatcher))],
+    ])
 }
 
 // Pattern: なさい

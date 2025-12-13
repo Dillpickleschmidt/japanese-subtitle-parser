@@ -2966,3 +2966,52 @@ mod tekureru_tests {
         assert_pattern_range(&patterns, "てくれる", 6, 14); // 怒らないでくれる
     }
 }
+
+// ========== てもらう (to receive/have someone do) ==========
+// Pattern: てもらう
+// Data source: grammar_points_data.json["てもらう"]
+//
+// Structures to test:
+//   - standard[0]: Verb[て] + もらう
+//   - polite[0]: Verb[て] + もらいます
+//
+// Meaning: "to have/get someone to do (something)", "to receive the action of"
+// More direct than てくれる - focuses on receiving rather than bestowing
+// Often used for receiving services
+#[cfg(test)]
+mod temorau_tests {
+    use super::*;
+
+    // Structure: Verb[て] + もらう (standard form - having someone do)
+    #[test]
+    fn te_form_morau() {
+        let sentence = "日本語が話せないから友達に行き方を聞いてもらう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもらう");
+        assert_pattern_range(&patterns, "てもらう", 17, 23); // 聞いてもらう
+    }
+
+    // Structure: Verb[て] + もらう (receiving service)
+    #[test]
+    fn te_form_morau_service() {
+        let sentence = "昨日は朝から頭が痛かったから医者に見てもらった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもらう");
+        assert_pattern_range(&patterns, "てもらう", 17, 23); // 見てもらった
+    }
+
+    // Structure: Verb[て] + もらいます (polite form)
+    #[test]
+    fn te_form_moraimasu() {
+        let sentence = "すみません、この荷物を持ってもらいますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てもらう");
+        assert_pattern_range(&patterns, "てもらう", 11, 19); // 持ってもらいます
+    }
+}

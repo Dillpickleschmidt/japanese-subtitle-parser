@@ -2858,13 +2858,13 @@
   {
     "pattern_name": "てもらう",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Being slightly more direct than てくれる , てもらう removes the meaning of 'to bestow' (to the speaker), and focuses on the m... [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null
