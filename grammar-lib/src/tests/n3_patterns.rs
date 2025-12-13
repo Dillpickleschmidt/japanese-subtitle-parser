@@ -6722,3 +6722,55 @@ mod nishitemo_tests {
         assert_pattern_range(&patterns, "にしても", 6, 10); // にしても
     }
 }
+
+// Pattern: の間に (during/while/between)
+// Data source: grammar_points_data.json["の間に"]
+// Testing: All structure variants
+#[cfg(test)]
+mod nomani_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + 間（あいだ）に
+    #[test]
+    fn test_verb_nomani() {
+        let sentence = "彼女が寝ている間に部屋を片付けておいた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の間に");
+        assert_pattern_range(&patterns, "の間に", 7, 9); // 間に
+    }
+
+    // Testing: standard[1] - い-Adjective + 間（あいだ）に
+    #[test]
+    fn test_i_adjective_nomani() {
+        let sentence = "若い間に色々な経験をした方がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の間に");
+        assert_pattern_range(&patterns, "の間に", 2, 4); // 間に
+    }
+
+    // Testing: standard[2] - な-Adjective + な + 間（あいだ）に
+    #[test]
+    fn test_na_adjective_nomani() {
+        let sentence = "暇な間に、部屋の掃除をしておこう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の間に");
+        assert_pattern_range(&patterns, "の間に", 2, 4); // 間に
+    }
+
+    // Testing: standard[3] - Noun + の + 間（あいだ）に
+    #[test]
+    fn test_noun_nomani() {
+        let sentence = "冬休みの間に地元へ帰ろうと思っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の間に");
+        assert_pattern_range(&patterns, "の間に", 4, 6); // 間に
+    }
+}

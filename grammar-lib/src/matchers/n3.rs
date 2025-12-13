@@ -245,9 +245,33 @@ pub fn naka() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: の間に
+// Pattern: の間に (during/while/between)
+// Structures: Verb + 間に / い-Adj + 間に / な-Adj + な + 間に / Noun + の + 間に
 pub fn nomani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MaMatcher;
+    impl Matcher for MaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "間"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MaMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: うちに (while/during - temporal expression)
