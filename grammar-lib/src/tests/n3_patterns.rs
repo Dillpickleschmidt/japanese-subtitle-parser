@@ -3879,3 +3879,71 @@ mod tsumari_tests {
         assert_pattern_range(&patterns, "つまり", 11, 14); // つまり
     }
 }
+
+// ========== っぱなし (left in a state) ==========
+// Pattern: っぱなし (left in a state / left unchecked)
+// Data source: grammar_points_data.json["っぱなし"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + っぱなし
+
+mod ppanashi_tests {
+    use super::*;
+
+    // Test: Verb stem + っぱなし (light left on)
+    // Example: 電気を点けっぱなしにするな
+    #[test]
+    fn test_ppanashi_light_on() {
+        let sentence = "電気を点けっぱなしにするな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぱなし");
+        assert_pattern_range(&patterns, "っぱなし", 3, 9); // 点けっぱなし
+    }
+
+    // Test: Verb stem + っぱなし (water running)
+    // Example: 水を出しっぱなしにしていたら、お母さんに怒られた
+    #[test]
+    fn test_ppanashi_water_running() {
+        let sentence = "歯を磨いている間、水を出しっぱなしにしていたら、お母さんに怒られた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぱなし");
+        assert_pattern_range(&patterns, "っぱなし", 11, 17); // 出しっぱなし
+    }
+
+    // Test: Verb stem + っぱなし (tap running)
+    // Example: 蛇口を開きっぱなしにするな
+    #[test]
+    fn test_ppanashi_tap_running() {
+        let sentence = "蛇口を開きっぱなしにするな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぱなし");
+        assert_pattern_range(&patterns, "っぱなし", 3, 9); // 開きっぱなし
+    }
+
+    // Test: Verb stem + っぱなし (winning streak)
+    // Example: 勝ちっぱなしだとつまらないね
+    #[test]
+    fn test_ppanashi_winning_streak() {
+        let sentence = "勝ちっぱなしだとつまらないね、たまには負けを味わいたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぱなし");
+        assert_pattern_range(&patterns, "っぱなし", 0, 6); // 勝ちっぱなし
+    }
+
+    // TODO: Compound form tests - These tokenize as single noun (名詞/一般) and cannot be detected
+    // as grammar patterns. They are lexicalized compounds.
+    //
+    // #[test]
+    // fn test_ppanashi_compound_form() {
+    //     let sentence = "冷蔵庫を開けっぱなしにしないでください";
+    //     // 開けっぱなし = single token (名詞/一般) - not detectable as pattern
+    // }
+}

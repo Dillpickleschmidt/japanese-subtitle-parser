@@ -5098,13 +5098,13 @@
   {
     "pattern_name": "っぱなし",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "っぱなし is a suffix that originally comes from the う - Verb 放（はな）す 'to let loose' [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

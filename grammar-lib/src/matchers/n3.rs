@@ -3148,9 +3148,29 @@ pub fn ppoi() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: っぱなし
+// Pattern: っぱなし (left in a state / left unchecked)
+// Structures: Verb[stem] + っぱなし
+//
+// Tokenization:
+//   Split form: Verb/Noun (any form) + っぱなし (名詞/接尾/一般) - detectable
+//   Compound form: 開けっぱなし (名詞/一般) - not detectable as pattern
+//
+// Note: Sometimes verb stems are tokenized as nouns (勝ち, つけ), so we match both
 pub fn ppanashi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct PpanashiSuffixMatcher;
+    impl Matcher for PpanashiSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "っぱなし"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Match verbs or nouns (verb stems can be nouns)
+        TokenMatcher::Custom(Arc::new(PpanashiSuffixMatcher)),
+    ]
 }
 
 // Pattern: わざわざ
