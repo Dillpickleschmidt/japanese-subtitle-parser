@@ -564,3 +564,144 @@ mod kashira_tests {
         assert_pattern_range(&patterns, "かしら", 8, 11); // かしら
     }
 }
+
+// Pattern: いがい (except/besides)
+// Data source: grammar_points_data.json["いがい"]
+// Testing: structure.standard[0] - "Verb + 以外（いがい）"
+//          structure.standard[1] - "Noun + 以外（いがい）"
+mod igai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + 以外
+    #[test]
+    fn test_igai_verb() {
+        let sentence = "ここで泳ぐ以外に方法はないだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いがい");
+        assert_pattern_range(&patterns, "いがい", 3, 7); // 泳ぐ以外
+    }
+
+    // Testing: standard[1] - Noun + 以外
+    #[test]
+    fn test_igai_noun_wa() {
+        let sentence = "今日は和食以外のものが食べたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いがい");
+        assert_pattern_range(&patterns, "いがい", 3, 7); // 和食以外
+    }
+
+    // Testing: standard[1] - Noun + 以外 (variation)
+    #[test]
+    fn test_igai_noun_ni() {
+        let sentence = "タロウはゲーム以外に趣味はあるの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いがい");
+        assert_pattern_range(&patterns, "いがい", 4, 9); // ゲーム以外
+    }
+
+    // Testing: standard[1] - Noun + 以外 (negative context)
+    #[test]
+    fn test_igai_noun_negative() {
+        let sentence = "お前以外には頼めないんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いがい");
+        assert_pattern_range(&patterns, "いがい", 0, 4); // お前以外
+    }
+}
+
+// ========== でも (even, or something, any-) ==========
+// Pattern: でも
+// Data source: grammar_points_data.json["でも"]
+//
+// Structures to test:
+//   - standard[0]: Noun + でも + Suggestion
+//   - standard[1]: だれでも - Anyone
+//   - standard[2]: なんでも - Anything
+//   - standard[3]: どこでも - Anywhere
+//   - standard[4]: いつでも - Anytime
+//
+// Examples from data:
+//   - お茶でも飲みましょうか (Shall we drink some tea, or something?)
+//   - お前でも出来るよ (Even you can do it)
+//   - だれでも分かるよ (Everyone knows)
+//   - どこでもいいよ (Anywhere is fine)
+//   - なんでも食べるね (You eat anything)
+//   - いつでも電話してね (Call me anytime)
+#[cfg(test)]
+mod demo_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + でも + Suggestion
+    #[test]
+    fn test_demo_noun_suggestion() {
+        let sentence = "お茶でも飲みましょうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でも");
+        assert_pattern_range(&patterns, "でも", 0, 4); // お茶でも
+    }
+
+    // Testing: standard[0] - Noun + でも (even)
+    #[test]
+    fn test_demo_noun_even() {
+        let sentence = "大丈夫だよ、お前でも出来るよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でも");
+        assert_pattern_range(&patterns, "でも", 6, 10); // お前でも
+    }
+
+    // Testing: standard[1] - だれでも (anyone)
+    #[test]
+    fn test_demo_daredemo() {
+        let sentence = "この簡単な漢字はだれでも分かるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でも");
+        assert_pattern_range(&patterns, "でも", 8, 12); // だれでも
+    }
+
+    // Testing: standard[2] - なんでも (anything)
+    #[test]
+    fn test_demo_nandemo() {
+        let sentence = "お前は本当になんでも食べるね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でも");
+        assert_pattern_range(&patterns, "でも", 6, 10); // なんでも
+    }
+
+    // Testing: standard[3] - どこでも (anywhere)
+    #[test]
+    fn test_demo_dokodemo() {
+        let sentence = "明日はどこに行きたい？どこでもいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でも");
+        assert_pattern_range(&patterns, "でも", 11, 15); // どこでも
+    }
+
+    // Testing: standard[4] - いつでも (anytime)
+    #[test]
+    fn test_demo_itsudemo() {
+        let sentence = "いつでも電話してね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でも");
+        assert_pattern_range(&patterns, "でも", 0, 4); // いつでも
+    }
+}

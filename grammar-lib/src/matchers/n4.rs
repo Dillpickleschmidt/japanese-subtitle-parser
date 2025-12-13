@@ -1,4 +1,5 @@
 use crate::pattern_matcher::TokenMatcher;
+use crate::matchers::Matcher;
 use std::sync::Arc;
 
 // Pattern: と
@@ -6,9 +7,42 @@ pub fn to() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: でも
+// Pattern: でも (even, or something, any-)
+// Structures: Noun + でも (or Noun + で + も when split)
+//
+// Two tokenization patterns:
+// 1. Noun + で (助詞/格助詞) + も (助詞/係助詞) - お茶でも, だれでも
+// 2. Noun + でも (助詞/副助詞) - なんでも, どこでも, いつでも
 pub fn demo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DemoMatcher;
+    impl Matcher for DemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match either "で" (格助詞) or "でも" (副助詞)
+            (token.surface == "で"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞"))
+                || (token.surface == "でも"
+                    && token.pos.first().is_some_and(|p| p == "助詞")
+                    && token.pos.get(1).is_some_and(|p| p == "副助詞"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(DemoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+    ]
 }
 
 // Pattern: やすい
@@ -690,9 +724,26 @@ pub fn ika() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: いがい
+// いがい: Except/besides (except A, other than A)
+// Structures: Verb + 以外, Noun + 以外
 pub fn igai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    #[derive(Debug)]
+    struct IgaiMatcher;
+    impl Matcher for IgaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "以外"
+                && token.base_form == "以外"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Custom(Arc::new(IgaiMatcher)), // 以外 (名詞/非自立/副詞可能)
+    ]
 }
 
 // Pattern: ずっと ① (continuously/the whole time)
