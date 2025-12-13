@@ -3224,3 +3224,67 @@ mod tehoshii_tests {
         assert_pattern_range(&patterns, "てほしい", 0, 7); // 手伝ってほしい
     }
 }
+
+// ========== ておく (do in advance/leave as is) ==========
+// Pattern: ておく
+// Data source: grammar_points_data.json["ておく"]
+//
+// Structures to test:
+//   - standard[0]: Verb[て] + おく
+//   - standard[1]: Verb[て] + とく (casual contraction)
+//   - polite[0]: Verb[て] + おきます
+//   - polite[1]: Verb[て] + ときます (casual contraction)
+//
+// Meaning: "do something in advance", "leave something as is"
+// Examples from data:
+//   - 洗っておく - wash in advance
+//   - 入れておきます - will put in advance
+//   - 置いとく - leave it (casual)
+#[cfg(test)]
+mod teoku_tests {
+    use super::*;
+
+    // Structure: Verb[て] + おく (standard form)
+    #[test]
+    fn teoku_standard() {
+        let sentence = "寝る前に食器を洗っておく";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ておく");
+        assert_pattern_range(&patterns, "ておく", 7, 12); // 洗っておく
+    }
+
+    // Structure: Verb[て] + おきます (polite form)
+    #[test]
+    fn teoku_polite() {
+        let sentence = "あなたの財布を鞄に入れておきます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ておく");
+        assert_pattern_range(&patterns, "ておく", 9, 16); // 入れておきます
+    }
+
+    // Structure: Verb[て] + とく (casual contraction)
+    #[test]
+    fn teoku_casual_contraction() {
+        let sentence = "机の上にパスポートを置いとくね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ておく");
+        assert_pattern_range(&patterns, "ておく", 10, 14); // 置いとく
+    }
+
+    // Structure: Verb[で] + おく (て becomes で after certain verbs)
+    #[test]
+    fn teoku_de_form() {
+        let sentence = "水筒に水を汲んでおく";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ておく");
+        assert_pattern_range(&patterns, "ておく", 5, 10); // 汲んでおく
+    }
+}

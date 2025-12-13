@@ -1339,9 +1339,51 @@ pub fn rashii_u2460() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ておく
+// Pattern: ておく (do in advance, leave as is)
+// Structures: Verb[て] + おく/とく (casual), polite forms with ます
 pub fn teoku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match おく or とく as auxiliary verb
+    #[derive(Debug)]
+    struct OkuMatcher;
+    impl Matcher for OkuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "おく" || token.base_form == "とく")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match ます (optional for polite form)
+    #[derive(Debug)]
+    struct MasuFormMatcher;
+    impl Matcher for MasuFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます" && token.base_form == "ます"
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        // て or で particle is optional because of the とく contraction
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeDeFormMatcher)))),
+        TokenMatcher::Custom(Arc::new(OkuMatcher)),
+        // Optional ます for polite form
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuFormMatcher)))),
+    ]
 }
 
 // Pattern: がほしい (want something)
