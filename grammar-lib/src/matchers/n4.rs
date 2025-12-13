@@ -1290,9 +1290,33 @@ pub fn irassharu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ございます
+// Pattern: ございます (polite form of ある)
+// Structures: ござる (historical) / ござい + ます (modern polite)
 pub fn gozaimasu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct GozaruMatcher;
+    impl super::Matcher for GozaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ござる"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl super::Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(GozaruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: でございます

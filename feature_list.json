@@ -2172,13 +2172,13 @@
   {
     "pattern_name": "ございます",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ございます is a combination of the (special-class) verb, ござる ( 御座（ござ）る in its kanji form), and the auxiliary verb ます [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null

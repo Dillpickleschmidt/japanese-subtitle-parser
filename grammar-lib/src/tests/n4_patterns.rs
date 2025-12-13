@@ -1437,3 +1437,64 @@ mod o_kudasai_tests {
         assert_pattern_range(&patterns, "お～ください ", 8, 15); // お掛けください
     }
 }
+
+// ========== ございます (polite form of ある) ==========
+// Pattern: ございます
+// Data source: grammar_points_data.json["ございます"]
+//
+// Structures to test:
+//   - standard[0]: ある ￫ ござる (historical/media)
+//   - polite[0]: あります ￫ ございます (modern polite)
+//
+// Examples from data:
+//   - ありがとうございます (thank you very much)
+//   - 質問はございますか (do you have any questions?)
+//   - ここは私の家でござる (this is my humble abode - historical)
+#[cfg(test)]
+mod gozaimasu_tests {
+    use super::*;
+
+    // Testing: polite[0] - ございます (thank you very much)
+    #[test]
+    fn test_gozaimasu_arigatou() {
+        let sentence = "ありがとうございます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ございます");
+        assert_pattern_range(&patterns, "ございます", 5, 10); // ございます
+    }
+
+    // Testing: polite[0] - ございます (have questions)
+    #[test]
+    fn test_gozaimasu_question() {
+        let sentence = "質問はございますか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ございます");
+        assert_pattern_range(&patterns, "ございます", 3, 8); // ございます
+    }
+
+    // Testing: standard[0] - ござる (historical form)
+    #[test]
+    fn test_gozaru_historical() {
+        let sentence = "ここは私の家でござる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ございます");
+        assert_pattern_range(&patterns, "ございます", 7, 10); // ござる
+    }
+
+    // Testing: polite[0] - ございます (polite existence)
+    #[test]
+    fn test_gozaimasu_existence() {
+        let sentence = "お時間はございますか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ございます");
+        assert_pattern_range(&patterns, "ございます", 4, 9); // ございます
+    }
+}
