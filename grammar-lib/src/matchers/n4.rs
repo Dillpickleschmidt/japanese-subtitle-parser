@@ -209,9 +209,23 @@ pub fn tadoushi_u30fb_jidoushi() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: なおす
+// Pattern: なおす (to redo/fix) - split tokenization
+// Structures: Verb[stem] + なおす/なおします
 pub fn naosu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NaosuMatcher;
+    impl Matcher for NaosuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "なおす"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),  // Verb in 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(NaosuMatcher)),
+    ]
 }
 
 // Pattern: ということ (that means / you mean)
