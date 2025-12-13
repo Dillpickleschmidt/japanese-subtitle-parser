@@ -1265,9 +1265,23 @@ pub fn teiru_u2460() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: へ
+// Pattern: へ (directional particle - to/toward)
+// Structures: Noun + へ
 pub fn he() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct HeParticleMatcher;
+    impl Matcher for HeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "へ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(HeParticleMatcher)),
+    ]
 }
 
 // Pattern: にいく (go to do something)

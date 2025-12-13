@@ -5510,3 +5510,45 @@ mod yori_no_hou_ga_tests {
     }
 }
 
+// ========== へ (Direction particle) ==========
+// Pattern: へ (to/toward)
+// Data source: grammar_points_data.json["へ"]
+// Structure: Noun + へ
+
+mod he_tests {
+    use super::*;
+
+    // Standard: Noun + へ (direction/destination)
+    #[test]
+    fn test_he_direction_france() {
+        let sentence = "私はフランスへ行く。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "へ");
+        assert_pattern_range(&patterns, "へ", 2, 7); // フランスへ
+    }
+
+    // Noun + へ (welcome expression)
+    #[test]
+    fn test_he_welcome_osaka() {
+        let sentence = "大阪へようこそ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "へ");
+        assert_pattern_range(&patterns, "へ", 0, 3); // 大阪へ
+    }
+
+    // Noun + へ (casual usage)
+    #[test]
+    fn test_he_direction_casual() {
+        let sentence = "今日は図書館へ勉強しに行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "へ");
+        assert_pattern_range(&patterns, "へ", 3, 7); // 図書館へ
+    }
+}
+
