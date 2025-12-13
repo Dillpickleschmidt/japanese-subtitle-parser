@@ -5920,3 +5920,132 @@ Continue with incomplete N5 patterns:
 **Note**: ている②/③ are semantic variants of ている① - difficult to distinguish by tokenization alone. May need semantic analysis or skip with TODO.
 
 **Recommendation**: Focus on patterns with clear structural distinctions that can be detected via tokenization.
+
+---
+
+## Session 128: 2025-12-13 - ために Pattern Implementation
+
+### Pattern Completed: ために (N3)
+
+**Pattern**: ために (due to, because of, for the sake of)
+**JLPT Level**: N3
+**Priority**: 3
+**Category**: Construction
+
+### Structure Variants Tested (4 total)
+All variants from `grammar_points_data.json["ために"]`:
+
+1. **Verb + ため(に)**: 空手の試合で勝つために (chars 6-11)
+2. **い-Adjective + ため(に)**: 暑いために (chars 0-5)
+3. **な-Adjective + な + ため(に)**: 便利なために (chars 6-12) ✓ Unique case
+4. **Noun + の + ため(に)**: 大雨のため (chars 0-5)
+
+### Implementation Details
+
+**Matcher Location**: `grammar-lib/src/matchers/n3.rs::tameni()`
+**Test Location**: `grammar-lib/src/tests/n3_patterns.rs::tameni_tests`
+
+**Key Implementation Challenge**: Variable token count before ため
+- Verb/い-Adj cases: 1 token before ため
+- な-Adj/Noun cases: 2 tokens before ため (stem + な, or noun + の)
+
+**Solution**: Custom `PreTameMatcherAny` matcher
+```rust
+vec![
+    TokenMatcher::Custom(Arc::new(PreTameMatcherAny)), // Required first token
+    TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        PreTameMatcherAny,
+    )))), // Optional second token for な-Adj or Noun+の
+    TokenMatcher::Custom(Arc::new(TameMatcher)), // ため
+    TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        NiParticleMatcher,
+    )))), // Optional に
+]
+```
+
+The `PreTameMatcherAny` matches:
+- Verbs (動詞)
+- い-Adjectives (形容詞)
+- な-Adjective stems (名詞/形容動詞語幹)
+- Nouns (名詞)
+- Particles の and な
+
+### Pattern Priority Notes
+
+**Observation**: The existing "ため(に)" pattern (priority 4.1) also matches Verb, い-Adj, and Noun cases
+- Both patterns detect the same grammatical concept
+- "ため(に)" covers 2 structures (Verb, Noun)
+- "ために" covers 4 structures (Verb, い-Adj, な-Adj, Noun)
+
+**Unique Contribution**: The な-adjective case
+- "ため(に)" detects: `なために` (chars 8-12) - missing adjective stem
+- "ために" detects: `便利なために` (chars 6-12) - includes full な-adjective
+
+This is the critical improvement: properly capturing the な-adjective stem in the pattern range.
+
+### Test Results
+
+**All 4 tests passing**:
+- `test_verb_tameni`: Matches "ため(に)" pattern (higher priority)
+- `test_i_adjective_tameni`: Matches "ため(に)" pattern (higher priority)
+- `test_na_adjective_tameni`: Matches "ために" pattern uniquely ✓
+- `test_noun_no_tameni`: Matches "ため(に)" pattern (higher priority)
+
+**Sentence Quality**: Realistic subtitle-quality Japanese
+- 空手の試合で勝つために、毎日夜遅くまで練習しています
+- 暑いために、職場で何人かが倒れた
+- このアプリは便利なために、ユーザーがどんどん増えてきた
+- 大雨のため、サッカーの試合を中止します
+
+### Session Statistics
+
+- **Patterns implemented**: 1 (N3: ために)
+- **Tests written**: 4 (all with range assertions)
+- **Tests passing**: 798 (was 794, added 4 tests)
+- **Commits**: 1 clean commit
+- **Lines added**: ~171 (matcher + tests + feature_list update)
+
+### Environment Status (FINAL)
+
+- ✅ All 798 tests passing (was 794, added 4 tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ 1 N3 pattern completed in this session
+- ✅ Ready for session termination
+
+### Key Learnings
+
+1. **Pattern Overlap**: Multiple patterns can detect the same structure
+   - Use priority to determine which pattern is selected
+   - Lower priority patterns can still provide value (better ranges)
+
+2. **Variable Token Matching**: Use Optional matchers for flexible sequences
+   - `Optional(matcher)` handles cases where token may or may not be present
+   - Works better than Wildcard for small variations
+
+3. **な-Adjective Detection**: Requires special handling
+   - Tokenizes as TWO tokens: stem (名詞/形容動詞語幹) + な (助動詞)
+   - Must include both tokens in pattern range for proper detection
+
+4. **Matcher Reusability**: Created general-purpose `PreTameMatcherAny`
+   - Matches multiple POS types with OR logic
+   - Can be reused in Optional contexts
+
+### Next Priorities
+
+Continue with incomplete N3 patterns:
+
+**High-value N3 patterns** (clear structural markers):
+1. **たらいい・といい** - Conditional + いい (advice/wish)
+2. **そうもない** - そう + も + ない (unlikely)
+3. **ことなの** - こと + なの (explanatory)
+
+**Lower priority**: Semantic patterns
+- **さ - Filler/Interjection** - Requires context analysis
+- **そうだ** - Multiple meanings (appearance vs. hearsay)
+- **ている②/③** - Semantic variants of ている①
+
+**Recommendation**: Focus on N3/N2 patterns with unique structural markers that can be reliably detected via tokenization.
+
+---
