@@ -1,5 +1,85 @@
 # Grammar-lib Development Progress
 
+## Session 114 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (て初めて)
+**Patterns completed**: 1 new N3 construction pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 714 (was 710 at session start)
+
+### Accomplishments
+1. ✅ Implemented て初めて pattern (N3) - "only after / not until"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 714 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### て初めて (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 3609-3641)
+- **Tests**: 4 tests in n3_patterns.rs (mod te_hajimete_tests)
+- **Structures**:
+  - standard[0]: Verb[て] + 初めて
+- **Tokenization insights**:
+  - て/で = 助詞/接続助詞 (conjunction particle)
+  - 初めて = 副詞/一般 (adverb meaning "for the first time")
+  - Important: Kanji form 初めて tokenizes as adverb; hiragana はじめて tokenizes as はじめる verb + て
+- **Implementation**: 3-token matcher
+  - flexible_verb_form(): Matches verb in 連用形 or 連用タ接続
+  - TeDeConjunctionMatcher: Matches て/で as 助詞/接続助詞
+  - HajimeteAdverbMatcher: Matches 初めて as 副詞 (adverb)
+- **Meaning**: "only after / not until" - highlights one verb as catalyst for a result/state
+- **Pattern priority**: 3 (N3 construction pattern)
+- **Pattern ranges**: Include full construction Verb + て + 初めて
+  - なって初めて (chars 3-9) - basic example
+  - 行って初めて (chars 13-19) - different verb
+  - 見て初めて (chars 8-13) - know example
+  - みて初めて (chars 6-11) - understand example
+
+### Technical Details
+- **Pattern priority**: 3 (high-priority N3 construction)
+- **Test coverage**: 1 structure variant from grammar_points_data.json
+  - standard[0]: Verb[て] + 初めて (4 tests with different verbs)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Kanji 初めて is essential - hiragana はじめて gets parsed as auxiliary verb はじめる
+- **Grammar note**: Literally "with (A) done, for the first time (B)" - emphasizes catalyst relationship
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 714/714 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~98 (matcher implementation + 4 tests + pattern declaration + feature_list update)
+
+### Key Insights
+- て初めて requires kanji form 初 for reliable detection by tokenizer
+- Pattern successfully captures full construction including verb stem
+- Test sentences use realistic examples from grammar_points_data.json
+- Pattern ranges correctly include Verb + て + 初めて for full grammatical context
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. っけ - "again/I wonder" (confirmation/recall particle, 5 structures)
+2. てごらん - "please try to" (honorific suggestion, 2 structures)
+3. ちゃんと・きちんと - "properly/neatly" (adverbs, 3 structures)
+4. さえ - "even" (emphasis particle, 6 structure variants - complex)
+5. そうだ - hearsay/conjecture (4 standard + 4 polite = 8 variants)
+
+**Recommendation**: Continue with simpler N3 patterns like っけ or てごらん before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 714 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 113 - 2025-12-13
 
 ### ✅ Session Summary
