@@ -1848,9 +1848,33 @@ pub fn nakutemoii() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てみる
+// Pattern: てみる (try doing)
+// Structures: Verb[て] + みる
 pub fn temiru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MiruMatcher;
+    impl Matcher for MiruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "みる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeFormMatcher)),
+        TokenMatcher::Custom(Arc::new(MiruMatcher)),
+    ]
 }
 
 // Pattern: てすみません

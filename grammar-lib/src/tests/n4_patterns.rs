@@ -3118,3 +3118,57 @@ mod tearu_tests {
         assert_pattern_range(&patterns, "てある ", 9, 16); // 植えてあります
     }
 }
+
+// ========== てみる (try to / try doing) ==========
+// Pattern: てみる
+// Data source: grammar_points_data.json["てみる"]
+//
+// Structures to test:
+//   - standard[0]: Verb[て] + みる
+//   - polite[0]: Verb[て] + みます
+//
+// Examples from data:
+//   - 食べてみる (try eating)
+//   - 飲んでみる (try drinking)
+//   - 投げてみ (try throwing - casual)
+//   - 行ってみた (tried going - past)
+//   - 切ってみてください (please try turning off)
+//
+// Note: Used for trying something for the first time, "do and see the result"
+#[cfg(test)]
+mod temiru_tests {
+    use super::*;
+
+    // Structure: Verb[て] + みる (standard form - dictionary)
+    #[test]
+    fn temiru_standard_dictionary() {
+        let sentence = "本当においしいの？今度食べてみるよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てみる");
+        assert_pattern_range(&patterns, "てみる", 11, 16); // 食べてみる
+    }
+
+    // Structure: Verb[て] + みる (casual question)
+    #[test]
+    fn temiru_casual_question() {
+        let sentence = "これ飲んでみる？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てみる");
+        assert_pattern_range(&patterns, "てみる", 2, 7); // 飲んでみる
+    }
+
+    // Structure: Verb[て] + みます (polite form - conjugated)
+    #[test]
+    fn temiru_polite() {
+        let sentence = "もう一度電源を切ってみてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てみる");
+        assert_pattern_range(&patterns, "てみる", 7, 11); // 切ってみ
+    }
+}
