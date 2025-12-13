@@ -1,5 +1,87 @@
 # Grammar-lib Development Progress
 
+## Session 175 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: ばよかった pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 conditional regret pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 1119 (was 1116 at session start)
+
+### Accomplishments
+1. ✅ Implemented ばよかった pattern (N4) - "should have / wish I had"
+2. ✅ All 3 tests passing with proper range assertions
+3. ✅ No test regressions - all 1119 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### ばよかった (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (bayokatta function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod bayokatta_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Verb［ば］+ よかった
+  - polite[0]: Verb［ば］+ よかった + です
+- **Tokenization**:
+  - Verb[仮定形] + ば (助詞/接続助詞) + よかっ (形容詞/非自立, 連用タ接続) + た (助動詞) + (です optional)
+  - For suru-verbs, the pattern includes the サ変接続 noun (e.g., 勉強すれば)
+- **Implementation**: Five-token matcher
+  1. TokenMatcher::verb_with_form("仮定形") - conditional form verb
+  2. BaParticleMatcher - ば conditional particle
+  3. YokattaMatcher - よかっ adjective in past conjugation
+  4. TaPastMatcher - た past auxiliary
+  5. Optional DesuMatcher - です polite auxiliary
+- **Meaning**: "I wish I had...", "I should have..." - expresses regret about past actions
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern confidence**: 2.8 (without です), 3.2 (with です)
+- **Pattern ranges**:
+  - 行けばよかった (chars 11-18) - wish I had gone
+  - 寝ればよかった (chars 5-12) - should have slept
+  - 勉強すればよかったです (chars 3-14) - should have studied (polite, includes noun)
+- **Test coverage**: 3 tests covering standard and polite forms
+- **Note**: For suru-verbs, the range includes the サ変接続 noun (勉強) as it's part of the verb unit
+
+### Implementation Notes
+- **Conditional form**: Pattern matches verbs in 仮定形 (hypothetical/conditional form)
+- **Suru-verb handling**: The pattern matcher extends ranges backwards to include サ変接続 nouns
+  - Example: 勉強すれ → pattern includes 勉強 (chars 3-14, not 5-14)
+  - This is correct because 勉強する is the verb unit
+- **Custom matchers**: All components (ば, よかっ, た, です) have custom matchers for precise POS checking
+- **Optional です**: Uses TokenMatcher::Optional for polite form
+- Test-first workflow with print_debug was very effective for understanding tokenization
+
+### Session Success
+- Successfully implemented a conditional regret pattern
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern with clear understanding of suru-verb behavior
+
+### Next Priorities
+Continue with simple N4 patterns with stubs:
+
+**Simple N4 patterns to implement next**:
+1. **し～し** - "and also / listing reasons" (already has implementation, check if complete)
+2. **Question-phrase + か** - embedded questions (has stub)
+3. **たらどう** - "how about / why don't you" suggestion pattern (has stub)
+4. Other simple N4 constructions with existing stubs in n4.rs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles and verb forms (though many are complex/broad)
+
+**Recommendation**: Continue with simple N4 patterns that have stubs to maintain momentum. Focus on patterns with clear, limited scope.
+
+### Environment Status
+- ✅ All 1119 tests passing (added 3 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 174 - 2025-12-13
 
 ### ✅ Session Summary
