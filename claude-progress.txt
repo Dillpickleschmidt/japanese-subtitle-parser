@@ -3,17 +3,18 @@
 ## Session 163 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: と pattern (N4) fully implemented
-**Patterns completed**: 1 new N4 conditional pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 1066 (was 1062 at session start)
+**Status**: Two N4 patterns fully implemented (と + まず)
+**Patterns completed**: 2 new N4 patterns (1 conditional + 1 adverb)
+**Tests added**: 7 comprehensive tests (4 + 3)
+**Total tests**: 1069 (was 1062 at session start)
 
 ### Accomplishments
 1. ✅ Implemented と pattern (N4) - "if/when (definite result)"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 1066 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented まず pattern (N4) - "first of all"
+3. ✅ All 7 tests passing with proper range assertions
+4. ✅ No test regressions - all 1069 tests pass
+5. ✅ Updated feature_list.json
+6. ✅ Two clean commits with full documentation
 
 ### Completed Pattern
 
@@ -49,28 +50,51 @@
   - な-Adjective: 部屋が静かだと、眠れない
   - Noun: 地下鉄だと、五分早く着く
 
+#### まず (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (mazu function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod mazu_tests, 3 tests)
+- **Structures**:
+  - standard[0]: まず + Phrase
+- **Tokenization**:
+  - まず (副詞/一般) - simple adverb
+- **Implementation**: Single-token matcher
+  - MazuMatcher - surface == "まず", POS == "副詞"
+- **Meaning**: "first", "to begin with", "starting with"
+- **Pattern priority**: 3 (N4 construction)
+- **Note**: Used at beginning of statement to indicate priority/sequence
+- **Pattern ranges**:
+  - まず (chars 0-2) - all test cases start with まず
+- **Test coverage**:
+  - At sentence start: まず宿題をしたほうがいい
+  - With て-form: まずエンジンをかけて
+  - Polite suggestion: まず別れた方がいいと思う
+
 ### Implementation Notes
-- Simple and elegant implementation using TokenMatcher::Any
-- と as conjunction particle (接続助詞) vs と as case-marking particle (格助詞) for "and"
-- Pattern confidence: 2.2 (appropriate for this level)
-- Successfully handles all 4 structure variants with single matcher
-- Test-first workflow with print_debug was very effective
+- **と pattern**: Simple and elegant implementation using TokenMatcher::Any
+  - と as conjunction particle (接続助詞) vs と as case-marking particle (格助詞) for "and"
+  - Pattern confidence: 2.2 (appropriate for this level)
+  - Successfully handles all 4 structure variants with single matcher
+- **まず pattern**: Very simple single-token adverb matcher
+  - Straightforward implementation - just matches surface and POS
+  - Pattern confidence: 3.0 (high priority adverb)
+- Test-first workflow with print_debug was very effective for both patterns
 
 ### Session Success
-- Successfully implemented a fundamental conditional pattern
+- Successfully implemented 2 diverse N4 patterns (conditional + adverb)
 - All tests use realistic subtitle-quality Japanese sentences
-- Pattern ranges include the full grammatical construction
+- Pattern ranges include the full grammatical constructions
 - No test regressions - clean implementation
-- Efficient session - completed 1 pattern with excellent coverage (4 tests)
+- Very efficient session - completed 2 patterns with excellent coverage (7 tests total)
+- Maintained momentum by choosing simple patterns with existing stubs
 
 ### Next Priorities
 Continue with simple N4 patterns with stubs:
 
 **Simple N4 patterns to implement next**:
-1. **まず** - "first of all" (has stub)
-2. **また** - "again/also" (has stub)
-3. **ごろ** - "approximately" (has stub)
-4. Other simple N4 constructions with stubs
+1. **また** - "again/also" (has stub)
+2. **ごろ** - "approximately" (has stub)
+3. Other simple N4 constructions with stubs
 
 **Or continue with N5 patterns** (foundational level - highest priority):
 - Basic particles: は, の, を
@@ -80,9 +104,9 @@ Continue with simple N4 patterns with stubs:
 **Recommendation**: Continue with simple N4 patterns that have stubs to maintain momentum, then move to foundational N5 patterns.
 
 ### Environment Status
-- ✅ All 1066 tests passing (added 4 new tests)
+- ✅ All 1069 tests passing (added 7 new tests)
 - ✅ No regressions
-- ✅ Clean git state (1 commit)
+- ✅ Clean git state (2 commits)
 - ✅ feature_list.json updated
 - ✅ Ready for next session or termination
 
