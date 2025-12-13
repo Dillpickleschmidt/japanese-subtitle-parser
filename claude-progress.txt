@@ -1,5 +1,89 @@
 # Grammar-lib Development Progress
 
+## Session 153 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: がる pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 construction pattern
+**Tests added**: 5 comprehensive tests
+**Total tests**: 1011 (was 1006 at session start)
+
+### Accomplishments
+1. ✅ Implemented がる pattern (N4) - "to show signs of / to act like"
+2. ✅ All 5 tests passing with proper range assertions
+3. ✅ No test regressions - all 1011 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### がる (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (garu_compound & garu_split functions)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod garu_tests, 5 tests)
+- **Structures**:
+  - standard[0]: い-Adjective[い] + がる
+  - standard[1]: な-Adjective + がる
+  - polite[0]: い-Adjective[い] + がります
+  - polite[1]: な-Adjective + がります
+- **Tokenization patterns**:
+  - Dictionary form (compound): 強がる → 強がる (動詞, base_form=強がる) - single token
+  - Split conjugated form: 欲しがります → 欲し (形容詞, ガル接続) + がり (動詞/接尾) + ます
+- **Implementation**: Two separate matchers to handle both tokenization cases
+  - **garu_compound**: Matches verbs where base_form ends with "がる" (強がる, 嫌がる, 怖がり)
+    - Single-token matcher for dictionary and conjugated forms
+  - **garu_split**: Matches adjective stem + がる suffix (欲しがります, 暑がって)
+    - Two-token matcher: Adjective (ガル接続 form) + がる (動詞/接尾)
+- **Meaning**: Shows observable signs/behavior of an emotion or state
+- **Pattern priority**: 3 (N4 construction)
+- **Pattern ranges**:
+  - 強がる (chars 12-15) - dictionary form
+  - 怖がり (chars 10-13) - 連用形 conjugation
+  - 嫌がる (chars 2-5) - dictionary form
+  - 欲しがります (chars 15-21) - polite conjugated split form
+  - 暑がっ (chars 4-7) - て-form conjugation split form
+
+### Final Session Statistics
+- **Patterns implemented**: 1 (N4: がる)
+- **Tests written**: 5 total
+- **Tests passing**: 1011/1011 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~150 (2 matcher implementations + 5 tests + feature_list update + pattern declarations)
+
+### Key Insights from Session
+1. **Dual tokenization**: がる has two distinct tokenization patterns depending on conjugation
+2. **Dictionary forms** tokenize as single compound verbs (強がる, 嫌がる)
+3. **Conjugated forms** split into adjective stem + がる suffix when not in dictionary form
+4. **ガル接続**: Special adjective conjugation form used for attaching がる
+5. **Pattern splitting approach**: Using two separate matchers (compound + split) handles both cases cleanly
+
+### Session Success
+- Successfully implemented a pattern with complex dual tokenization
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges include full grammatical constructions
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern with excellent test coverage
+
+### Next Priorities
+Continue with N4 patterns (simple patterns first):
+
+**Simple N4 patterns to implement next**:
+1. **かた** - "how to/way of" (verb stem + 方, 6 structures)
+2. **ごろ** - "around/about" for time (5 structures)
+3. **こそ** - emphasis particle (simple pattern)
+4. More simple adverbs or particles
+
+**Recommendation**: Continue with simple N4 construction patterns. The がる implementation demonstrates good handling of dual tokenization cases.
+
+### Environment Status
+- ✅ All 1011 tests passing (added 5 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 152 - 2025-12-13
 
 ### ✅ Session Summary
@@ -17,99 +101,11 @@
 6. ✅ Updated feature_list.json for all 3 patterns
 7. ✅ Three clean commits with full documentation
 
-### Completed Patterns
-
-#### だけで (N4) ✓
-- **File**: grammar-lib/src/matchers/n4.rs (dakede function, lines 221-253)
-- **Tests**: 2 tests in n4_patterns.rs (mod dakede_tests, lines 2529-2558)
-- **Structures**:
-  - standard[0]: Verb + だけで
-  - standard[1]: Noun + だけで
-- **Tokenization**:
-  - Verb/Noun + だけ (助詞/副助詞) + で (助詞/格助詞)
-- **Implementation**: 3-token matcher
-  - TokenMatcher::Any (Verb or Noun)
-  - DakeParticleMatcher: Match だけ (助詞/副助詞)
-  - DeParticleMatcher: Match で (助詞/格助詞)
-- **Meaning**: "just by", "with only"
-- **Pattern priority**: 1 (N4 construction)
-- **Pattern ranges**:
-  - Verb + だけで: 話すだけで (chars 3-8)
-  - Noun + だけで: レンジだけで (chars 5-11)
-
-#### さ (N4) ✓
-- **File**: grammar-lib/src/matchers/n4.rs (sa function, lines 675-731)
-- **Tests**: 2 tests in n4_patterns.rs (mod sa_tests, lines 2560-2589)
-- **Structures**:
-  - standard[0]: い-Adjective[い] + さ
-  - standard[1]: な-Adjective + さ
-- **Tokenization**:
-  - い-adjective: 長 (形容詞, ガル接続) + さ (名詞/接尾/特殊)
-  - な-adjective: 大切 (名詞/形容動詞語幹) + さ (名詞/接尾/特殊)
-- **Implementation**: 2-token matcher
-  - AdjectiveStemMatcher: Match both い-adj stem (ガル接続) and な-adj (形容動詞語幹)
-  - SaSuffixMatcher: Match さ (名詞/接尾/特殊)
-- **Meaning**: Transforms adjectives into nouns expressing degree ("-ness")
-- **Pattern priority**: 3 (N4 construction)
-- **Pattern ranges**:
-  - い-Adjective + さ: 長さ (chars 4-6)
-  - な-Adjective + さ: 大切さ (chars 11-14)
-
-#### ～代 (N4) ✓
-- **File**: grammar-lib/src/matchers/n4.rs (uff5e_dai function, lines 1228-1264)
-- **Tests**: 2 tests in n4_patterns.rs (mod dai_tests, lines 2591-2620)
-- **Structures**:
-  - standard[0]: Decade of age + 代
-  - standard[1]: Decade + 年代
-- **Tokenization**:
-  - Number(s) (名詞/数) + 代 or 年代 (名詞/接尾/助数詞)
-  - Example: ２０代 → ２(名詞/数) + ０(名詞/数) + 代(名詞/接尾/助数詞)
-- **Implementation**: Number + Wildcard + Suffix matcher
-  - NumberMatcher: Match numbers (名詞/数)
-  - Wildcard: Allow 0-3 additional number tokens
-  - DaiSuffixMatcher: Match 代 or 年代 (名詞/接尾/助数詞)
-- **Meaning**: Expresses decades of age or chronological eras
-- **Pattern priority**: 1 (N4 construction)
-- **Pattern ranges**:
-  - Age decade: ２０代 (chars 2-5)
-  - Chronological decade: ７０年代 (chars 0-4)
-
-### Final Session Statistics
-- **Patterns implemented**: 3 (N4: だけで + さ + ～代)
-- **Tests written**: 6 total (2 + 2 + 2)
-- **Tests passing**: 1006/1006 (100%)
-- **Commits**: 3 clean commits
-- **Lines added**: ~229 (3 matcher implementations + 6 tests + 3 feature_list updates)
-
-### Key Insights from Session
-1. **だけで** - Simple particle combination (だけ + で)
-2. **さ** - Adjective suffix transforming adjectives to degree nouns
-3. **～代** - Number suffix for decades/eras, uses Wildcard for multi-digit numbers
-
-### Session Success
-- Successfully implemented 3 simple N4 patterns
-- All patterns have realistic subtitle-quality test sentences
-- Pattern ranges include full grammatical constructions
-- No test regressions - clean implementation throughout
-- Efficient session - completed 3 patterns with excellent test coverage
-
-### Next Priorities
-Continue with N4 patterns (simple patterns first):
-
-**Simple N4 patterns to implement next**:
-1. **かた** - "how to/way of" (verb stem + 方, 6 structures)
-2. **がる** - suffix showing observable emotion (2 std, 2 pol)
-3. **ごろ** - "around/about" for time (5 structures)
-4. More simple adverbs or particles
-
-**Recommendation**: Continue with simple N4 construction patterns before tackling complex multi-structure patterns.
-
 ### Environment Status
-- ✅ All 1006 tests passing (added 6 new tests)
+- ✅ All 1006 tests passing (was 1000)
 - ✅ No regressions
-- ✅ Clean git state (3 commits)
-- ✅ feature_list.json updated for all 3 patterns
-- ✅ Ready for next session or termination
+- ✅ Clean git state
+- ✅ Ready for next session
 
 ---
 
@@ -131,116 +127,8 @@ Continue with N4 patterns (simple patterns first):
 7. ✅ Three clean commits with full documentation
 8. ✅ Reached 1000-test milestone!
 
-### Completed Patterns
-
-#### どんどん (N4) ✓
-- **File**: grammar-lib/src/matchers/n4.rs (dondon function, lines 118-145)
-- **Tests**: 4 tests in n4_patterns.rs (mod dondon_tests, lines 2347-2405)
-- **Structures**:
-  - standard[0]: どんどん + (と) + Phrase
-- **Tokenization**:
-  - どんどん (副詞/助詞類接続)
-  - Optional と (助詞/副詞化)
-- **Implementation**: Similar to だんだん pattern
-  - DondonMatcher: Matches どんどん (副詞/助詞類接続)
-  - ToParticleMatcher: Optional と (助詞/副詞化)
-- **Meaning**: "rapidly", "quickly", "steadily" (fast progression)
-- **Pattern priority**: 1 (N4 construction)
-- **Pattern ranges**: Include どんどん + optional と
-  - どんどん (chars 8-12) - rapidly (without と)
-  - どんどん (chars 0-4) - rapidly (sentence start)
-  - どんどんと (chars 7-12) - rapidly (with と particle)
-  - どんどん (chars 2-6) - rapidly (mid-sentence)
-- **Key difference from だんだん**: Represents faster/more energetic progression
-
-#### ていく (N4) ✓
-- **File**: grammar-lib/src/matchers/n4.rs (teiku function, lines 152-182)
-- **Tests**: 4 tests in n4_patterns.rs (mod teiku_tests, lines 2407-2466)
-- **Structures**:
-  - standard[0]: Verb[て] + いく
-  - polite[0]: Verb[て] + いきます
-- **Tokenization**:
-  - Verb in 連用形 or 連用タ接続
-  - て or で (助詞/接続助詞)
-  - いく (動詞, base_form=いく)
-- **Implementation**: 3-token matcher
-  - flexible_verb_form(): Match verb stem
-  - TeDeFormMatcher: Match て/で particle
-  - IkuMatcher: Match いく (動詞, base_form=いく)
-- **Meaning**: "to go on to", progression away from speaker (time/space)
-- **Pattern priority**: 1 (N4 construction)
-- **Pattern ranges**: Include full verb + て + いく
-  - 食べていく (chars 6-11) - go and eat
-  - なっていく (chars 20-25) - will get (better)
-  - 持っていった (chars 12-18) - took (past)
-  - 頑張っていきます (chars 7-15) - will work hard (polite)
-- **Key insight**: Opposite of てくる - progression away from current state
-
-#### てくる (N4) ✓
-- **File**: grammar-lib/src/matchers/n4.rs (tekuru function, lines 184-214)
-- **Tests**: 4 tests in n4_patterns.rs (mod tekuru_tests, lines 2468-2527)
-- **Structures**:
-  - standard[0]: Verb[て] + くる
-  - polite[0]: Verb[て] + きます
-- **Tokenization**:
-  - Verb in 連用形 or 連用タ接続
-  - て or で (助詞/接続助詞)
-  - くる (動詞, base_form=くる, カ変・クル)
-- **Implementation**: 3-token matcher (identical structure to ていく)
-  - flexible_verb_form(): Match verb stem
-  - TeDeFormMatcher: Match て/で particle
-  - KuruMatcher: Match くる (動詞, base_form=くる)
-- **Meaning**: "to come to", "to have become", progression toward speaker
-- **Pattern priority**: 1 (N4 construction)
-- **Pattern ranges**: Include full verb + て + くる
-  - 持ってくる (chars 6-11) - bring
-  - 買ってきた (chars 8-13) - bought and came with
-  - なってきた (chars 10-15) - have become/gotten
-  - 来てきます (chars 4-9) - will come (polite)
-- **Key insight**: Opposite of ていく - progression toward current state
-
-### Final Session Statistics
-- **Patterns implemented**: 3 (N4: どんどん + ていく + てくる)
-- **Tests written**: 12 total (4 + 4 + 4)
-- **Tests passing**: 1000/1000 (100%) 🎉
-- **Commits**: 3 clean commits
-- **Lines added**: ~282 (3 matcher implementations + 12 tests + 3 feature_list updates)
-
-### Key Insights from Session
-1. **どんどん** - Onomatopoeia pattern identical in structure to だんだん
-2. **ていく & てくる** - Complementary te-form extensions, same structure different verbs
-3. **Efficient implementation** - Te-form extensions reuse flexible_verb_form() helper
-4. **Milestone reached** - 1000 tests is a significant achievement for code quality
-
-### Session Success
-- Successfully implemented 3 high-value N4 patterns
-- All patterns have realistic subtitle-quality test sentences
-- Pattern ranges include full grammatical constructions
-- No test regressions - clean implementation throughout
-- Efficient session - completed 3 patterns with excellent test coverage
-- Reached the 1000-test milestone - demonstrates comprehensive coverage
-
-### Next Priorities
-Continue with N4 patterns (simple patterns first):
-
-**Simple N4 patterns to implement next**:
-1. **だけで** - "just by/with only" (2-token construction)
-2. **かた** - "how to/way of" (verb stem + 方, multiple structures)
-3. **～ら** - plural/group marker (simple suffix)
-4. More simple adverbs or particles
-
-**Recommendation**: Continue with simple N4 construction patterns before tackling complex multi-structure patterns.
-
 ### Environment Status
-- ✅ All 1000 tests passing (added 12 new tests)
+- ✅ All 1000 tests passing
 - ✅ No regressions
-- ✅ Clean git state (3 commits)
-- ✅ feature_list.json updated for all 3 patterns
-- ✅ Ready for next session or termination
-
-### Milestone Achievement
-**1000 Tests Passing** - This is a significant milestone demonstrating:
-- Comprehensive pattern coverage across JLPT levels
-- High code quality with extensive test coverage
-- Solid foundation for Japanese grammar pattern detection
-- Commitment to test-driven development
+- ✅ Clean git state
+- ✅ Ready for next session
