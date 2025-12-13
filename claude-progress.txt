@@ -1,3 +1,95 @@
+## Session 191 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: IN PROGRESS - Successfully implemented 2 N3 patterns so far
+**Patterns completed**: 2 (について, において・における)
+**Tests added**: 5 (all passing)
+**Total tests**: 1214 (was 1209)
+
+### Pattern Implemented: について (about, concerning)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Structures tested**:
+1. Noun + について (standalone)
+2. Noun + について + の + Noun (before の construction)
+
+**Implementation details**:
+- Pattern: Noun + について (single token)
+- について is always tokenized as single particle: 助詞/格助詞/連語
+- Custom matcher verifies both surface form and full POS tag sequence
+- Simple two-token pattern works for both structures
+- について range includes the noun before it (e.g., "ことについて", "契約について")
+
+**Test file**: grammar-lib/src/tests/n3_patterns.rs (lines 7056-7087)
+**Matcher file**: grammar-lib/src/matchers/n3.rs (lines 1574-1594)
+
+### Workflow followed
+1. ✅ Read grammar_points_data.json to understand structure
+2. ✅ Checked for existing stub function (found nitsuite stub at line 1575)
+3. ✅ Wrote 2 tests with print_debug for both structure variants
+4. ✅ Analyzed tokenization output (について is single token, not split)
+5. ✅ Implemented matcher based on actual tokenization
+6. ✅ Verified both tests detect the pattern correctly
+7. ✅ Removed print_debug and added proper assertions with correct ranges
+8. ✅ Verified all 1211 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes with detailed commit message
+
+### Key Learnings
+1. **Simple pattern**: について is consistently tokenized as a single particle (助詞/格助詞/連語), making it very straightforward
+2. **No splitting**: Unlike some patterns, について never splits into に + つい + て
+3. **Works for both structures**: Same matcher handles both "Noun + について" and "Noun + について + の + Noun"
+4. **Common pattern**: について is frequently used and reliable to detect
+
+### Pattern Implemented: において・における (at, in, on, regarding)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Structures tested**:
+1. Noun + において (formal: at/in location or context)
+2. Noun + における + Noun (formal: before noun construction)
+3. Noun + においての + Noun (において + の variant)
+
+**Implementation details**:
+- において and における are both single tokens: 助詞/格助詞/連語
+- においての = において + の (two tokens, only において is matched by pattern)
+- Custom matcher checks for both において and における surface forms with OR condition
+- Simple two-token pattern works for all three structures
+- Formal register, primarily used in written/formal Japanese
+
+**Test file**: grammar-lib/src/tests/n3_patterns.rs (lines 7089-7133)
+**Matcher file**: grammar-lib/src/matchers/n3.rs (lines 3832-3852)
+
+### Workflow followed (both patterns)
+1. ✅ Read grammar_points_data.json to understand all structure variants
+2. ✅ Checked for existing stub functions (found both stubs)
+3. ✅ Wrote tests with print_debug for ALL structure variants
+4. ✅ Analyzed tokenization output (both are single tokens, not split)
+5. ✅ Implemented matchers based on actual tokenization
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug and added proper assertions with correct ranges
+8. ✅ Verified all 1214 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes with detailed commit messages
+
+### Key Learnings
+1. **Compound particles**: Both について and において/における are tokenized as single compound particles (助詞/格助詞/連語)
+2. **OR matching**: において・における uses OR condition in custom matcher to handle both variants
+3. **Formal vs common**: について is common in all contexts, において/における are formal/written only
+4. **Consistent tokenization**: These compound particles never split into components
+
+### Statistics
+- **Patterns completed this session**: 2 (について, において・における)
+- **Test success rate**: 5/5 (100%)
+- **Total passing tests**: 1214
+
+---
+
 ## Session 190 - 2025-12-13
 
 ### ✅ Session Summary
