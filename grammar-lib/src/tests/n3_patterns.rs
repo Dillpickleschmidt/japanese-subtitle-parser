@@ -3339,3 +3339,58 @@ mod tabini_tests {
         assert_pattern_range(&patterns, "たびに", 2, 9); // 洗い物のたびに
     }
 }
+
+// ========== ずっと ② (by far/much more) ==========
+// Pattern: ずっと ② (by far/much more - comparison)
+// Data source: grammar_points_data.json["ずっと ②"]
+//
+// Structure variants to test:
+//   standard[0]: ずっと + Phrase (comparative context)
+
+mod zutto_u2461_tests {
+    use super::*;
+
+    // Test: ずっと + Comparative Adjective (より comparison)
+    #[test]
+    fn test_zutto_u2461_comparison_bird() {
+        let sentence = "さっき見た鳥よりずっと大きかったよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずっと ②");
+        assert_pattern_range(&patterns, "ずっと ②", 8, 11); // ずっと
+    }
+
+    // Test: ずっと + Temporal comparison (より comparison)
+    #[test]
+    fn test_zutto_u2461_comparison_time() {
+        let sentence = "それよりずっと昔だよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずっと ②");
+        assert_pattern_range(&patterns, "ずっと ②", 4, 7); // ずっと
+    }
+
+    // Test: ずっと + Comparative (no より visible)
+    #[test]
+    fn test_zutto_u2461_much_better() {
+        let sentence = "こっちの方がずっとすごいよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずっと ②");
+        assert_pattern_range(&patterns, "ずっと ②", 6, 9); // ずっと
+    }
+
+    // Test: ずっと + Comparative adjective (違う context)
+    #[test]
+    fn test_zutto_u2461_different() {
+        let sentence = "あの人の考え方はずっと違うと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずっと ②");
+        assert_pattern_range(&patterns, "ずっと ②", 8, 11); // ずっと
+    }
+}

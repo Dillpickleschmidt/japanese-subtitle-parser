@@ -1730,9 +1730,34 @@ pub fn uff5e_zutsu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ずっと ②
+// Pattern: ずっと ② (by far/much more - comparative)
+// NOTE: Tokenization is identical to ずっと ① (continuously).
+// Both patterns use 副詞/一般. The difference is semantic context:
+// - ずっと ① = temporal continuity ("continuously", "the whole time")
+// - ずっと ② = comparative degree ("by far", "much more")
+//
+// According to the Fun Fact in grammar_points_data.json, both meanings
+// derive from the same core concept of "unwavering/unfaltering" and
+// "far more (A)" / "to the maximum amount possible".
+//
+// Since we cannot reliably distinguish these structurally, both patterns
+// will be detected when ずっと appears. The user should determine the
+// meaning from context.
 pub fn zutto_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match ずっと adverb (副詞/一般) - identical to ずっと ①
+    #[derive(Debug)]
+    struct ZuttoMatcher;
+    impl Matcher for ZuttoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ずっと"
+                && token.base_form == "ずっと"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(ZuttoMatcher))]
 }
 
 // Pattern: だらけ
