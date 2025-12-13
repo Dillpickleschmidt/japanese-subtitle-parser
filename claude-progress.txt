@@ -1,5 +1,132 @@
 # Grammar-lib Development Progress
 
+## Session 149 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Three N4 auxiliary verb patterns fully implemented (だす + つづける + たがる)
+**Patterns completed**: 3 new N4 construction patterns
+**Tests added**: 12 comprehensive tests (4 + 4 + 4)
+**Total tests**: 976 (was 964 at session start)
+
+### Accomplishments
+1. ✅ Implemented だす pattern (N4) - "suddenly start doing" (unintentional)
+2. ✅ Implemented つづける pattern (N4) - "continue doing"
+3. ✅ Implemented たがる pattern (N4) - "wanting to do" (3rd person observable)
+4. ✅ All 12 tests passing with proper range assertions
+5. ✅ No test regressions - all 976 tests pass
+6. ✅ Updated feature_list.json for all three patterns
+7. ✅ Three clean commits with full documentation
+
+### Completed Patterns
+
+#### だす (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (dasu function)
+- **Tests**: 4 tests in n4_patterns.rs (mod dasu_tests)
+- **Structure**: Verb[stem] + だす/だし
+- **Tokenization**: Verb連用形 + だす (動詞/非自立, base=だす)
+- **Implementation**: flexible_verb_form() + DasuMatcher
+  - DasuMatcher: checks base=だす, pos=動詞/非自立
+- **Meaning**: "suddenly do (A)", "burst into (A)" - unintentional/uncontrolled action
+- **Pattern priority**: 3 (N4 construction)
+- **Conjugations**: だす/だし/だした/だします
+- **Pattern ranges**: Full verb stem + だす construction
+  - 走りだす (chars 6-10) - suddenly start running
+  - 歌いだした (chars 10-15) - burst into song (past)
+  - 泣きだす (chars 6-10) - burst into tears
+  - 泣きだします (chars 8-14) - polite form
+- **Key insights**:
+  - Differs from はじめる (intentional start) - だす implies sudden/uncontrolled
+  - Non-independent auxiliary verb (動詞/非自立)
+  - Works with all verb conjugations
+
+#### つづける (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (tsuzukeru function)
+- **Tests**: 4 tests in n4_patterns.rs (mod tsuzukeru_tests)
+- **Structure**: Verb[stem] + 続ける/つづける
+- **Tokenization**: Verb連用形 + つづける/続ける (動詞/非自立)
+- **Implementation**: flexible_verb_form() + TsuzukeruMatcher
+  - TsuzukeruMatcher: checks base=つづける OR 続ける, pos=動詞/非自立
+  - Handles both hiragana and kanji forms
+- **Meaning**: "continue doing" - emphasis on continuation of action
+- **Pattern priority**: 3 (N4 construction)
+- **Conjugations**: つづける/続け/続けた/続けます
+- **Pattern ranges**: Full verb stem + つづける construction
+  - 走りつづける (chars 10-16) - continue running
+  - 書きつづける (chars 16-22) - continue writing
+  - 頑張り続けた (chars 13-19) - continued trying hard (kanji + past)
+  - 頑張り続けます (chars 9-16) - will continue (kanji + polite)
+- **Key insights**:
+  - Verb stem + つづける emphasizes continuation of action itself
+  - Differs from Verb て + つづける which emphasizes sequence
+  - Both hiragana (つづける) and kanji (続ける) have same base_form
+
+#### たがる (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (tagaru function)
+- **Tests**: 4 tests in n4_patterns.rs (mod tagaru_tests)
+- **Structure**: Verb[stem] + た (from たい) + がる
+- **Tokenization**:
+  - Verb連用形 + た (助動詞, base=たい, conjugation=ガル接続) + がる (動詞/接尾)
+- **Implementation**: flexible_verb_form() + TaiGaruMatcher + GaruMatcher
+  - TaiGaruMatcher: checks base=たい, pos=助動詞, features[5]=ガル接続
+  - GaruMatcher: checks base=がる, pos=動詞/接尾
+  - 3-token pattern for たがる construction
+- **Meaning**: "wanting to do" - 3rd person observable desire/intention
+- **Pattern priority**: 3 (N4 construction)
+- **Conjugations**: がる/がっ/がり/がった/がります
+- **Pattern ranges**: Full verb stem + たがる construction
+  - 言いたがる (chars 13-18) - wants to say
+  - 食べたがる (chars 11-16) - wants to eat
+  - 遊びたがった (chars 10-16) - wanted to play (past)
+  - 買いたがります (chars 11-18) - wants to buy (polite)
+- **Key insights**:
+  - たい (1st person desire) vs たがる (3rd person observable desire)
+  - Differs from てほしい (want someone to do something)
+  - Special ガル接続 conjugation form for たい + がる combination
+  - がる is suffix verb (動詞/接尾)
+
+### Session Statistics
+- **Patterns implemented**: 3 (N4)
+- **Tests written**: 12 (4 per pattern)
+- **Tests passing**: 976/976 (100%)
+- **Commits**: 3 clean commits
+- **Lines added**: ~260 (3 matcher implementations + 12 tests + 3 feature_list updates)
+
+### Key Insights
+- All three patterns are auxiliary verbs that attach to verb stems (連用形)
+- だす, つづける, and たがる are all non-independent verbs (非自立 or 接尾)
+- だす and つづける follow similar pattern to はじめる/おわる
+- たがる has unique 3-token structure with special ガル接続 form
+- Successfully implemented 3 fundamental N4 auxiliary verb patterns
+- This brings total N4 passing patterns from 23 to 26
+
+### Next Priorities
+Continue with N4 patterns (simple 1-2 structure auxiliary verbs first):
+
+**Simple N4 auxiliary verbs remaining** (1-2 structures):
+1. **てあげる** - "do for someone" (1 std + 1 pol)
+2. **てある** - "has been done" (1 std + 1 pol)
+3. **ていく** - "go on doing" (1 std + 1 pol)
+4. **てくる** - "come to do/start doing" (1 std + 1 pol)
+5. **たばかり** - "just did" (1 structure)
+6. **だが・ですが** - "but/however" (1 std + 1 pol)
+
+**Recommendation**: Continue with て-form auxiliary verbs before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 976 tests passing (added 12 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated for all three patterns
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
+## Session 148 - 2025-12-13 (Previous)
+
+(Content from previous session 148...)
+
+---
+
 ## Session 147 - 2025-12-13
 
 ### ✅ Session Summary
