@@ -2693,3 +2693,51 @@ mod garu_tests {
         assert_pattern_range(&patterns, "がる", 4, 7); // 暑がっ
     }
 }
+
+// ========== とうとう (finally/at last) ==========
+// Pattern: とうとう
+// Data source: grammar_points_data.json["とうとう"]
+//
+// Structure to test:
+//   - standard[0]: とうとう + Phrase
+//
+// Note: Used to express that something 'finally' happens after a long time or effort.
+// Can be used for both positive and negative outcomes.
+// Meaning: "finally", "at last", "after all"
+#[cfg(test)]
+mod toutou_tests {
+    use super::*;
+
+    // Testing: standard[0] - とうとう + Phrase (positive outcome)
+    #[test]
+    fn positive_outcome() {
+        let sentence = "とうとう大学生か";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とうとう");
+        assert_pattern_range(&patterns, "とうとう", 0, 4); // とうとう
+    }
+
+    // Testing: standard[0] - とうとう + Phrase (negative outcome)
+    #[test]
+    fn negative_outcome() {
+        let sentence = "とうとう夏休みが終わる日が来た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とうとう");
+        assert_pattern_range(&patterns, "とうとう", 0, 4); // とうとう
+    }
+
+    // Testing: standard[0] - とうとう + Phrase (achievement context)
+    #[test]
+    fn achievement_context() {
+        let sentence = "とうとうロシアに行くことができた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とうとう");
+        assert_pattern_range(&patterns, "とうとう", 0, 4); // とうとう
+    }
+}

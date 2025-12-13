@@ -596,9 +596,18 @@ pub fn ni_frequency() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: とうとう
+// Pattern: とうとう (finally/at last)
+// Structures: とうとう + Phrase
 pub fn toutou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ToutouMatcher;
+    impl Matcher for ToutouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "とうとう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(ToutouMatcher))]
 }
 
 // Pattern: より
