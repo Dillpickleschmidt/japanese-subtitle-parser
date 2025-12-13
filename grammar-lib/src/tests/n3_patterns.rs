@@ -7164,3 +7164,44 @@ mod nitsurete_tests {
         assert_pattern_range(&patterns, "につれて", 3, 9); // 変化につれて
     }
 }
+
+// Pattern: といえば (speaking of, when it comes to)
+// Data source: grammar_points_data.json["といえば"]
+// Testing all structure variants:
+//   - standard[0]: Noun + といえば
+//   - standard[1]: Noun + というと (variant)
+//   - standard[1]: Noun + といったら (variant)
+#[cfg(test)]
+mod toieba_tests {
+    use super::*;
+
+    #[test]
+    fn test_toieba_variant1() {
+        let sentence = "夏といえばスイカバーでしょ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といえば");
+        assert_pattern_range(&patterns, "といえば", 0, 5); // 夏といえば
+    }
+
+    #[test]
+    fn test_toiuto_variant() {
+        let sentence = "タナカさんというと、先月銀行強盗で捕まった人ですよね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といえば");
+        assert_pattern_range(&patterns, "といえば", 3, 9); // さんというと
+    }
+
+    #[test]
+    fn test_toittara_variant() {
+        let sentence = "日本といったら寿司の方が人気でしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といえば");
+        assert_pattern_range(&patterns, "といえば", 0, 7); // 日本といったら
+    }
+}

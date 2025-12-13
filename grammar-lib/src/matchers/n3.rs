@@ -1556,9 +1556,98 @@ pub fn uff5e_toittemo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: といえば
+// Pattern: といえば (speaking of, when it comes to)
+// Structures: Noun + といえば/というと/といったら
 pub fn toieba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for と as quotation particle
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Matcher for いう verb in various forms
+    #[derive(Debug)]
+    struct IuVerbMatcher;
+    impl Matcher for IuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Matcher for ば (connective particle)
+    #[derive(Debug)]
+    struct BaMatcher;
+    impl Matcher for BaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for と as connective particle
+    #[derive(Debug)]
+    struct ToConnectiveMatcher;
+    impl Matcher for ToConnectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for たら (auxiliary in hypothetical form)
+    #[derive(Debug)]
+    struct TaraMatcher;
+    impl Matcher for TaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // This pattern needs to match three variants:
+    // 1. Noun + と + いう(仮定形) + ば = といえば
+    // 2. Noun + と + いう(基本形) + と = というと
+    // 3. Noun + と + いう(連用タ接続) + たら = といったら
+    //
+    // We'll match: Noun + と(引用) + いう + (ば or と or たら)
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(IuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(EndingMatcher)),
+    ]
+}
+
+// Helper matcher for the ending (ば, と, or たら)
+#[derive(Debug)]
+struct EndingMatcher;
+impl Matcher for EndingMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        // Match ば (接続助詞)
+        (token.surface == "ば"
+            && token.pos.first().is_some_and(|pos| pos == "助詞")
+            && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+        // Match と (接続助詞)
+        || (token.surface == "と"
+            && token.pos.first().is_some_and(|pos| pos == "助詞")
+            && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+        // Match たら (auxiliary)
+        || (token.surface == "たら"
+            && token.base_form == "た"
+            && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+    }
 }
 
 // Pattern: 合う

@@ -5364,13 +5364,13 @@
   {
     "pattern_name": "といえば",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "と言（い）えば, と言（い）うと, and と言（い）ったら are all expressions that are translated quite closely to 'speaking of (A)', or 'if it ... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
