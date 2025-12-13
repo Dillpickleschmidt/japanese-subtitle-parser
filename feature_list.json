@@ -7226,13 +7226,13 @@
   {
     "pattern_name": "いわゆる",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "いわゆる , occasionally seen in its kanji form 所謂（いわゆる） , is a word that is used before nouns to indicate that something ... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

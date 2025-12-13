@@ -1098,9 +1098,21 @@ pub fn sorenanoni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: いわゆる
+// Pattern: いわゆる (so-called, what is called)
+// Structure: いわゆる + Noun
 pub fn iwayuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct IwayuruMatcher;
+    impl super::Matcher for IwayuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いわゆる"
+                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(IwayuruMatcher))]
 }
 
 // Pattern: にすぎない

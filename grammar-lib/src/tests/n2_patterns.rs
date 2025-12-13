@@ -148,3 +148,34 @@ mod osoraku_tests {
         assert_pattern_range(&patterns, "おそらく", 0, 4); // おそらく
     }
 }
+
+// Pattern: いわゆる (so-called, what is called)
+// Data source: grammar_points_data.json["いわゆる"]
+// Testing: structure.standard[0] - "いわゆる + Noun"
+//
+// Structure variants:
+//   - standard[0]: いわゆる + Noun
+
+mod iwayuru_tests {
+    use super::*;
+
+    #[test]
+    fn test_iwayuru_before_noun() {
+        let sentence = "ハンバーガーやフライドポテトはいわゆるジャンクフードだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いわゆる");
+        assert_pattern_range(&patterns, "いわゆる", 15, 19); // いわゆる
+    }
+
+    #[test]
+    fn test_iwayuru_conspiracy_theory() {
+        let sentence = "それはいわゆる陰謀論というものですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いわゆる");
+        assert_pattern_range(&patterns, "いわゆる", 3, 7); // いわゆる
+    }
+}
