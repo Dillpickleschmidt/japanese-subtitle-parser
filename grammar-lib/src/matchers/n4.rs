@@ -161,9 +161,41 @@ pub fn dondon() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～ら
+// Pattern: ～ら (pluralizing suffix for pronouns)
+// Structures: Pronoun + ら
+//
+// Note: Some pronouns like 彼ら tokenize as single tokens (名詞/代名詞/一般)
+// but most like 私ら/お前ら split into Pronoun + ら(名詞/接尾).
+// This matcher handles the split pattern (Pronoun + ら suffix).
 pub fn uff5e_ra() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for pronouns (名詞/代名詞)
+    #[derive(Debug)]
+    struct PronounMatcher;
+    impl super::Matcher for PronounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "代名詞")
+        }
+    }
+
+    // Matcher for ら suffix (名詞/接尾)
+    #[derive(Debug)]
+    struct RaSuffixMatcher;
+    impl super::Matcher for RaSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ら"
+                && token.base_form == "ら"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(PronounMatcher)),
+        TokenMatcher::Custom(Arc::new(RaSuffixMatcher))
+    ]
 }
 
 // Pattern: ていく (to go on to)

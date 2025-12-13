@@ -3754,3 +3754,54 @@ mod narubeku_tests {
         assert_pattern_range(&patterns, "なるべく", 3, 7); // なるべく
     }
 }
+
+// ========== ～ら (pluralizing suffix for pronouns) ==========
+// Pattern: ～ら
+// Data source: grammar_points_data.json["～ら"]
+//
+// Structure to test:
+//   - standard[0]: Pronoun + ら
+//
+// Examples from data:
+//   - 彼ら (they - masculine)
+//   - お前ら (you guys - casual/rough)
+//
+// Note: ら is a pluralizing suffix that implies "more than one" or "(A) etc"
+// Can be considered dismissive/rude, so 達 is often preferred
+#[cfg(test)]
+mod uff5e_ra_tests {
+    use super::*;
+
+    // TODO: Undetectable - 彼ら tokenizes as single compound token
+    // 彼ら tokenizes as: 彼ら (名詞/代名詞/一般, base_form=彼ら) - single token
+    // This is different from the productive pattern Pronoun + ら(名詞/接尾)
+    // which applies to most pronouns like 私ら, お前ら, etc.
+    //
+    // #[test]
+    // fn karera_they_compound() {
+    //     let sentence = "彼らは日本語を勉強しに来た";
+    //     // 彼ら is a lexicalized compound in the dictionary
+    // }
+
+    // Structure: Pronoun + ら (standard[0]) - お前ら (you guys)
+    #[test]
+    fn omaera_you_guys() {
+        let sentence = "お前ら、アニメを見ないの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ら");
+        assert_pattern_range(&patterns, "～ら", 0, 3); // お前ら
+    }
+
+    // Structure: Pronoun + ら (standard[0]) - 私ら (we - casual)
+    #[test]
+    fn watashira_we() {
+        let sentence = "私らもそれ知ってるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ら");
+        assert_pattern_range(&patterns, "～ら", 0, 2); // 私ら
+    }
+}
