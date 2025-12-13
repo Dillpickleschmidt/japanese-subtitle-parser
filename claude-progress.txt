@@ -1,6 +1,109 @@
 # Grammar-lib Development Progress
 
-## Session 146 - 2025-12-13 (Updated)
+## Session 147 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Three N4 conjunction patterns fully implemented (それで + それでも + それに)
+**Patterns completed**: 3 new N4 construction patterns
+**Tests added**: 9 comprehensive tests (3 + 3 + 3)
+**Total tests**: 952 (was 943 at session start)
+
+### Accomplishments
+1. ✅ Implemented それで pattern (N4) - "therefore/so/as a result" conjunction
+2. ✅ Implemented それでも pattern (N4) - "even so/nevertheless" conjunction
+3. ✅ Implemented それに pattern (N4) - "moreover/in addition" conjunction
+4. ✅ All 9 tests passing with proper range assertions
+5. ✅ No test regressions - all 952 tests pass
+6. ✅ Updated feature_list.json for all three patterns
+7. ✅ Three clean commits with full documentation
+8. ✅ それに handles dual tokenization (single token OR two tokens)
+
+### Completed Patterns
+
+#### それで (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (sorede function)
+- **Tests**: 3 tests in n4_patterns.rs (mod sorede_tests)
+- **Structure**: Phrase (A)。それで + Phrase (B)
+- **Tokenization**: Single token それで (接続詞)
+- **Implementation**: SoredeMatcher - checks surface + base_form + POS (接続詞)
+- **Meaning**: "therefore", "because of that", "as a result"
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Full それで conjunction (3 characters)
+  - それで (chars 15-18) - connecting causal relationship
+  - それで (chars 11-14) - showing result
+  - それで (chars 10-13) - natural dialogue context
+- **Key insights**:
+  - Used at beginning of second sentence to connect to previous information
+  - Indicates causal relationship or consequence
+  - Always tokenized as single conjunction token
+
+#### それでも (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (soredemo function)
+- **Tests**: 3 tests in n4_patterns.rs (mod soredemo_tests)
+- **Structure**: Phrase (A) + それでも + Phrase (B)
+- **Tokenization**: Single token それでも (接続詞)
+- **Implementation**: SoredemoMatcher - checks surface + base_form + POS (接続詞)
+- **Meaning**: "even so", "nevertheless", "even with that"
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Full それでも conjunction (4 characters)
+  - それでも (chars 9-13) - contrary action despite condition
+  - それでも (chars 19-23) - despite difficulty
+  - それでも (chars 14-18) - natural dialogue context
+- **Key insights**:
+  - Shows surprising additional information despite previous statement
+  - Expresses "even with that" situation
+  - Always tokenized as single conjunction token
+
+#### それに (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (soreni function)
+- **Tests**: 3 tests in n4_patterns.rs (mod soreni_tests)
+- **Structure**: それに + (Additional Information) Phrase
+- **Tokenization variants**:
+  - Single token: それに (接続詞)
+  - Two tokens: それ (名詞/代名詞) + に (助詞/格助詞)
+- **Implementation**: SoreniOrSoreMatcher + optional NiParticleMatcher
+  - Handles BOTH tokenization variants in single matcher
+  - First matcher checks for either single-token それに OR それ pronoun
+  - Second matcher (optional) matches に particle for two-token variant
+- **Meaning**: "moreover", "in addition", "what's more", "and to that"
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Full それに conjunction (3 characters)
+  - それに (chars 0-3) - single token at sentence start
+  - それに (chars 10-13) - two tokens connecting sentences
+  - それに (chars 13-16) - two tokens in complex sentence
+- **Key insights**:
+  - Adds logically related information to previous statement
+  - Both pieces of info must have same connotation (both positive or both negative)
+  - Tokenization varies: sometimes single conjunction, sometimes pronoun + particle
+  - Dual-variant matcher successfully handles both tokenizations
+
+### Session Statistics
+- **Patterns implemented**: 3 (N4)
+- **Tests written**: 9 (3 per pattern)
+- **Tests passing**: 952/952 (100%)
+- **Commits**: 3 clean commits
+- **Lines added**: ~290 (3 matcher implementations + 9 tests + 3 feature_list updates)
+
+### Key Insights
+- All three patterns are related conjunctions (それで, それでも, それに)
+- それで and それでも: Always single-token conjunctions (接続詞)
+- それに: Can be single token OR two tokens (それ + に)
+- Dual tokenization handling: Use flexible matcher that checks for both variants
+- Simple conjunction patterns are straightforward to implement
+- Pattern detection works across varied sentence structures
+- This brings total N4 passing patterns to 23 (was 20)
+
+### Next Priorities
+Continue with N4 patterns (simple patterns first):
+
+**Simple N4 patterns remaining**:
+1. Simple conjunctions or particles with 1-2 structures
+2. Focus on patterns without complex conjugation requirements
+3. Prioritize patterns with clear tokenization
+
+---
+
+## Session 146 - 2025-12-13 (Previous)
 
 ### ✅ Session Summary
 **Status**: Two N4 patterns fully implemented (じゃないか + しか～ない)
