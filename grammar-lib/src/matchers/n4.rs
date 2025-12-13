@@ -2,9 +2,26 @@ use crate::pattern_matcher::TokenMatcher;
 use crate::matchers::{Matcher, noun_matcher};
 use std::sync::Arc;
 
-// Pattern: と
+// Pattern: と (conditional - definite result)
+// Structures: Verb + と / い-Adjective + と / な-Adjective + だ + と / Noun + だ + と
+//
+// Meaning: "if/when (A), then (B) will definitely happen"
+// Note: Implies a definite/inevitable result, different from hypothetical conditionals
 pub fn to() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ToConditionalMatcher;
+    impl Matcher for ToConditionalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Matches verb, adjective, or noun/な-adj + だ before と
+        TokenMatcher::Custom(Arc::new(ToConditionalMatcher)),
+    ]
 }
 
 // Pattern: でも (even, or something, any-)

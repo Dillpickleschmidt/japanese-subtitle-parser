@@ -3442,3 +3442,65 @@ mod made_tests {
         assert_pattern_range(&patterns, "まで", 2, 10); // スポーツカーまで
     }
 }
+
+// ========== と (conditional - definite result) ==========
+// Pattern: と - "if/when (definite result)"
+// Data source: grammar_points_data.json["と"]
+//
+// Structures to test:
+//   - standard[0]: Verb + と
+//   - standard[1]: い-Adjective + と
+//   - standard[2]: な-Adjective + だ + と
+//   - standard[3]: Noun + だ + と
+//
+// Note: と as conditional implies a definite/inevitable result
+// Different from hypothetical conditionals (ば, なら, たら)
+// Meaning: "if/when (A), then (B) will definitely happen"
+#[cfg(test)]
+mod to_conditional_tests {
+    use super::*;
+
+    // Structure: Verb + と (standard[0])
+    #[test]
+    fn verb_to_definite_result() {
+        let sentence = "甘いものをいっぱい食べると、太る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と");
+        assert_pattern_range(&patterns, "と", 9, 13); // 食べると
+    }
+
+    // Structure: い-Adjective + と (standard[1])
+    #[test]
+    fn i_adjective_to_condition() {
+        let sentence = "部屋が汚いと、お母さんに怒られる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と");
+        assert_pattern_range(&patterns, "と", 3, 6); // 汚いと
+    }
+
+    // Structure: な-Adjective + だ + と (standard[2])
+    #[test]
+    fn na_adjective_dato_condition() {
+        let sentence = "部屋が静かだと、眠れない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と");
+        assert_pattern_range(&patterns, "と", 5, 7); // だと
+    }
+
+    // Structure: Noun + だ + と (standard[3])
+    #[test]
+    fn noun_dato_condition() {
+        let sentence = "地下鉄だと、五分早く着く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と");
+        assert_pattern_range(&patterns, "と", 3, 5); // だと
+    }
+}
