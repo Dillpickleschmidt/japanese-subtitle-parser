@@ -769,3 +769,67 @@ mod madeni_tests {
         assert_pattern_range(&patterns, "までに", 0, 5); // 来月までに
     }
 }
+
+// ========== やすい (easy to / prone to) ==========
+// Pattern: やすい
+// Data source: grammar_points_data.json["やすい"]
+//
+// Structures to test:
+//   - standard[0]: Verb[stem] + やすい
+//   - polite[0]: Verb[stem] + やすい + です
+//
+// Examples from data:
+//   - 食べやすいサイズ (size that's easy to eat)
+//   - 読みやすいです (it's easy to read)
+//   - 怒りやすいから (prone to getting angry)
+//   - 泣きやすいから (likely to cry)
+//
+// Note: やすい attaches to verb stem (ます形 without ます)
+#[cfg(test)]
+mod yasui_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + やすい (easy to)
+    #[test]
+    fn test_yasui_easy_to_eat() {
+        let sentence = "私は食べやすいサイズにステーキを切る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やすい");
+        assert_pattern_range(&patterns, "やすい", 2, 7); // 食べやすい
+    }
+
+    // Testing: standard[0] - Verb[stem] + やすい (prone to)
+    #[test]
+    fn test_yasui_prone_to_anger() {
+        let sentence = "あの先輩は怒りやすいからめんどくさい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やすい");
+        assert_pattern_range(&patterns, "やすい", 5, 10); // 怒りやすい
+    }
+
+    // Testing: standard[0] - Verb[stem] + やすい (likely to)
+    #[test]
+    fn test_yasui_likely_to_cry() {
+        let sentence = "カスミちゃんは泣きやすいから優しくしてね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やすい");
+        assert_pattern_range(&patterns, "やすい", 7, 12); // 泣きやすい
+    }
+
+    // Testing: polite[0] - Verb[stem] + やすい + です
+    #[test]
+    fn test_yasui_polite() {
+        let sentence = "この漫画にはフリガナがついているから読みやすいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やすい");
+        assert_pattern_range(&patterns, "やすい", 18, 25); // 読みやすいです
+    }
+}

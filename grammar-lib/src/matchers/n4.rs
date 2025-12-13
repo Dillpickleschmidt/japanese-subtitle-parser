@@ -45,9 +45,26 @@ pub fn demo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: やすい
+// Pattern: やすい (easy to / prone to)
+// Structure: Verb[stem/連用形] + やすい
+//
+// Tokenization: Verb (連用形) + やすい (形容詞/非自立)
+// Meaning: "easy to (A)" or "prone to (A)" (with emotion verbs)
 pub fn yasui() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct YasuiMatcher;
+    impl Matcher for YasuiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "やすい"
+                && token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),  // Verb in 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(YasuiMatcher)),
+    ]
 }
 
 // Pattern: にくい

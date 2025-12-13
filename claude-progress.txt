@@ -7043,3 +7043,38 @@ Continue with N4 patterns (simple patterns first):
 - ✅ feature_list.json updated
 - ✅ Ready for next pattern implementation or session termination
 
+
+---
+
+## Session 139 continued
+
+### Second Pattern Completed
+
+#### までに (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (madeni function, lines 210-241)
+- **Tests**: 4 tests in n4_patterns.rs (mod madeni_tests, lines 709-771)
+- **Structures**:
+  - standard[0]: Verb + までに
+  - standard[1]: Noun + までに
+- **Tokenization insights**:
+  - Verb/Noun + まで (助詞/副助詞) + に (助詞/格助詞)
+  - Consistent pattern across all cases
+- **Implementation**: 3-token matcher
+  - TokenMatcher::Any: Content word (Verb or Noun)
+  - MadeParticleMatcher: Matches まで (助詞/副助詞)
+  - NiParticleMatcher: Matches に (助詞/格助詞)
+- **Meaning**: "by" (deadline), NOT "until" (continuous action)
+- **Pattern priority**: 1 (N4 construction/deadline particle)
+- **Pattern ranges**: Include full content + までに construction
+  - 行くまでに (chars 3-8) - by the time (verb)
+  - 終わるまでに (chars 2-8) - by the time (verb)
+  - 時までに (chars 1-5) - by (time noun)
+  - 来月までに (chars 0-5) - by (deadline noun)
+
+### Updated Session Statistics
+- **Patterns implemented**: 2 (N4: でも + までに)
+- **Tests written**: 10 (6 + 4)
+- **Tests passing**: 886/886 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~386 (2 matcher implementations + 10 tests + 2 feature_list updates)
+
