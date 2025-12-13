@@ -462,9 +462,38 @@ pub fn zenzen() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: かな
+// Pattern: かな (I wonder)
+// Structure: Sentence + か + な
 pub fn kana() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl super::Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.base_form == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token
+                    .pos
+                    .get(1)
+                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaEndingParticleMatcher;
+    impl super::Matcher for NaEndingParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaEndingParticleMatcher)),
+    ]
 }
 
 // Pattern: あまり～ない (not very)

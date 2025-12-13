@@ -889,3 +889,60 @@ mod tatoeba_tests {
         assert_pattern_range(&patterns, "たとえば", 0, 4); // たとえば
     }
 }
+
+// ========== かな (I wonder) ==========
+// Pattern: かな
+// Data source: grammar_points_data.json["かな"]
+//
+// Structure to test:
+//   - standard[0]: Sentence + かな
+//
+// Examples from data:
+//   - 大丈夫かな (I wonder if they are okay)
+//   - 入るかな？ (I wonder if it will fit?)
+//   - 本当に弁護士なのかな (I wonder if that person is really a lawyer)
+#[cfg(test)]
+mod kana_tests {
+    use super::*;
+
+    // Testing: standard[0] - Sentence + かな
+    #[test]
+    fn test_kana_verb() {
+        let sentence = "このコンロにこの魚が入るかな？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かな");
+        assert_pattern_range(&patterns, "かな", 12, 14); // かな
+    }
+
+    #[test]
+    fn test_kana_na_adjective() {
+        let sentence = "あの人が倒れてるけど、大丈夫かな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かな");
+        assert_pattern_range(&patterns, "かな", 14, 16); // かな
+    }
+
+    #[test]
+    fn test_kana_with_noka() {
+        let sentence = "あの人は本当に弁護士なのかな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かな");
+        assert_pattern_range(&patterns, "かな", 12, 14); // かな
+    }
+
+    #[test]
+    fn test_kana_casual_wonder() {
+        let sentence = "明日も雨が降るかな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かな");
+        assert_pattern_range(&patterns, "かな", 7, 9); // かな
+    }
+}
