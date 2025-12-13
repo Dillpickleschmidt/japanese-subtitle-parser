@@ -4454,3 +4454,61 @@ mod tte_tests {
         assert_pattern_range(&patterns, "って", 2, 5); // 人って
     }
 }
+
+// ========== なかなか～ない (hardly/not easily/far from) ==========
+// Pattern: なかなか～ない (hardly/not easily/far from)
+// Data source: grammar_points_data.json["なかなか～ない"]
+//
+// Structure variants to test:
+//   standard[0]: なかなか + Phrase + Verb[ない]
+//
+// Note: This is the negative usage of なかなか, expressing frustration
+// that something expected should happen but doesn't.
+
+mod nakanaka_nai_tests {
+    use super::*;
+
+    // Test: なかなか + Verb[ない] (basic example)
+    #[test]
+    fn test_nakanaka_nai_basic() {
+        let sentence = "風邪がなかなか治らないんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なかなか～ない");
+        assert_pattern_range(&patterns, "なかなか～ない", 3, 11); // なかなか治らない
+    }
+
+    // Test: なかなか + Phrase + Verb[ない] (with intervening phrase)
+    #[test]
+    fn test_nakanaka_nai_with_phrase() {
+        let sentence = "仕事が忙しくてなかなか休みが取れないんだよね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なかなか～ない");
+        assert_pattern_range(&patterns, "なかなか～ない", 7, 18); // なかなか休みが取れない
+    }
+
+    // Test: なかなか + Verb[ない] (sentence beginning)
+    #[test]
+    fn test_nakanaka_nai_sentence_start() {
+        let sentence = "なかなか来ないね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なかなか～ない");
+        assert_pattern_range(&patterns, "なかなか～ない", 0, 7); // なかなか来ない
+    }
+
+    // Test: なかなか + Polite negative form
+    #[test]
+    fn test_nakanaka_nai_polite() {
+        let sentence = "この問題はなかなか解決しません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なかなか～ない");
+        assert_pattern_range(&patterns, "なかなか～ない", 5, 15); // なかなか解決しません
+    }
+}

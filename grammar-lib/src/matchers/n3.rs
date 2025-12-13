@@ -194,9 +194,44 @@ pub fn amari() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なかなか～ない
+// Pattern: なかなか～ない (hardly/not easily/far from)
+// Structures: なかなか + Phrase + Verb[ない]
 pub fn nakanaka_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match なかなか as adverb
+    #[derive(Debug)]
+    struct NakanakaMatcher;
+    impl super::Matcher for NakanakaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なかなか"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match negative auxiliary ない or ません/ん
+    #[derive(Debug)]
+    struct NegativeMatcher;
+    impl super::Matcher for NegativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない auxiliary
+            (token.surface == "ない" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+                // Or ません (polite negative)
+                || (token.surface == "ませ" && token.base_form == "ます" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+                // Or ん (negative contraction after ませ)
+                || (token.surface == "ん" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NakanakaMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10, // Allow up to 10 tokens between なかなか and negative
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NegativeMatcher)),
+    ]
 }
 
 // Pattern: によると・によれば
