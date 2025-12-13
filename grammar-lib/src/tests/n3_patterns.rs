@@ -5543,3 +5543,46 @@ mod tokoroga_tests {
         assert_pattern_range(&patterns, "ところが", 10, 14); // ところが
     }
 }
+
+// Pattern: ところで (by the way, incidentally)
+// Data source: grammar_points_data.json["ところで"]
+// Testing: structure.standard[0] - "ところで + (New Topic) Phrase"
+//
+// Meaning: Conjunction for introducing new topics (not continuing same topic)
+// Note: Usually used at beginning of sentence before unrelated statement/question
+mod tokorode_tests {
+    use super::*;
+
+    // Testing: ところで at sentence beginning (topic change)
+    #[test]
+    fn test_tokorode_topic_change() {
+        let sentence = "ところで、昨日の話はどうなった？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところで");
+        assert_pattern_range(&patterns, "ところで", 0, 4); // ところで
+    }
+
+    // Testing: ところで with polite question
+    #[test]
+    fn test_tokorode_polite_question() {
+        let sentence = "ところで、お宅の旦那さんは元気にしていますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところで");
+        assert_pattern_range(&patterns, "ところで", 0, 4); // ところで
+    }
+
+    // Testing: ところで mid-conversation
+    #[test]
+    fn test_tokorode_mid_conversation() {
+        let sentence = "そうですね。ところで、明日の予定は決まりましたか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところで");
+        assert_pattern_range(&patterns, "ところで", 6, 10); // ところで
+    }
+}
