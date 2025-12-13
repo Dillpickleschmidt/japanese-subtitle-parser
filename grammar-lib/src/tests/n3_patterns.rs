@@ -4352,3 +4352,60 @@ mod muki_tests {
     //     assert!(!has_pattern(&patterns, "向き"));
     // }
 }
+
+// ============================================================================
+// 中 (ちゅう/じゅう) - "during / in the middle of / throughout"
+// ============================================================================
+// Pattern: During/throughout (in the middle of)
+// Data source: grammar_points_data.json["中"]
+// Structure: Noun + 中（ちゅう/じゅう）（に）
+//
+// ちゅう - Specific/variable time/space, process-focused
+// じゅう - Fixed time/space, duration-focused
+mod chuu_tests {
+    use super::*;
+
+    // Test: Noun + 中 (process/ongoing - ちゅう reading)
+    #[test]
+    fn test_chuu_process() {
+        let sentence = "今は仕事中なんだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "中");
+        assert_pattern_range(&patterns, "中", 2, 5); // 仕事中
+    }
+
+    // Test: Noun + 中 + に (during - ちゅう reading with に)
+    #[test]
+    fn test_chuu_ni_during() {
+        let sentence = "彼は休憩中に本を読む。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "中");
+        assert_pattern_range(&patterns, "中", 2, 6); // 休憩中に
+    }
+
+    // Test: Noun + じゅう + に (throughout/by deadline - じゅう reading)
+    #[test]
+    fn test_juu_ni_deadline() {
+        let sentence = "今日じゅうにレポートを提出してください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "中");
+        assert_pattern_range(&patterns, "中", 0, 6); // 今日じゅうに
+    }
+
+    // Test: Noun + じゅう + に (throughout space - じゅう reading)
+    #[test]
+    fn test_juu_space() {
+        let sentence = "ゴミが家じゅうに広がっていて歩くスペースがない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "中");
+        assert_pattern_range(&patterns, "中", 3, 8); // 家じゅうに
+    }
+}

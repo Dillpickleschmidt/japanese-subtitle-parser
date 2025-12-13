@@ -3654,3 +3654,41 @@ pub fn te_hajimete() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(HajimeteAdverbMatcher)),
     ]
 }
+
+// 中: During/throughout/in the middle of
+// Structures: Noun + 中（ちゅう/じゅう）（に）
+pub fn chuu() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for 中 or じゅう as suffix
+    #[derive(Debug)]
+    struct ChuuJuuSuffixMatcher;
+    impl Matcher for ChuuJuuSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match 中 (kanji) or じゅう (hiragana) as noun suffix
+            // 中 = 名詞/接尾/副詞可能 (ちゅう reading)
+            // じゅう = 名詞/接尾/副詞可能 or 名詞/接尾/一般
+            ((token.surface == "中" && token.base_form == "中")
+                || (token.surface == "じゅう" && token.base_form == "じゅう"))
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Matcher for optional に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun before 中/じゅう
+        TokenMatcher::Custom(Arc::new(ChuuJuuSuffixMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiParticleMatcher)))),
+    ]
+}

@@ -4028,6 +4028,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    Chuu {
+        name: "中",
+        matcher_fn: crate::matchers::n3::chuu,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     TeHajimete {
         name: "て初めて",
         matcher_fn: crate::matchers::n3::te_hajimete,
