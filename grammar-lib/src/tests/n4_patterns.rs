@@ -2040,3 +2040,68 @@ mod dasu_tests {
         assert_pattern_range(&patterns, "だす", 8, 14); // 泣きだします
     }
 }
+
+// ========== つづける (continue doing) ==========
+// Pattern: つづける
+// Data source: grammar_points_data.json["つづける"]
+//
+// Structures to test:
+//   - standard[0]: Verb[stem] + 続ける
+//   - polite[0]: Verb[stem] + 続けます
+//
+// Meaning: "continue doing" - emphasis on continuation of action
+// Note: Verb stem + つづける emphasizes continuation of the action itself
+//       vs Verb て + つづける emphasizes sequence (do and then continue)
+//
+// Examples from data:
+//   - 走りつづける (continue running)
+//   - 書きつづける (continue writing)
+//   - 頑張り続ける (continue trying hard)
+#[cfg(test)]
+mod tsuzukeru_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + つづける (until dark)
+    #[test]
+    fn test_tsuzukeru_standard() {
+        let sentence = "サリーは暗くなるまで走りつづける。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つづける");
+        assert_pattern_range(&patterns, "つづける", 10, 16); // 走りつづける
+    }
+
+    // Testing: standard[0] - Verb[stem] + つづける (memorization)
+    #[test]
+    fn test_tsuzukeru_writing() {
+        let sentence = "私は漢字を覚えるまで、同じ漢字を書きつづける。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つづける");
+        assert_pattern_range(&patterns, "つづける", 16, 22); // 書きつづける
+    }
+
+    // Testing: standard[0] - Verb[stem] + 続ける with kanji (past tense)
+    #[test]
+    fn test_tsuzukeru_kanji_past() {
+        let sentence = "日本語は難しいけど、勉強を頑張り続けた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つづける");
+        assert_pattern_range(&patterns, "つづける", 13, 19); // 頑張り続けた
+    }
+
+    // Testing: polite[0] - Verb[stem] + 続けます
+    #[test]
+    fn test_tsuzukeru_polite() {
+        let sentence = "この仕事を最後まで頑張り続けます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つづける");
+        assert_pattern_range(&patterns, "つづける", 9, 16); // 頑張り続けます
+    }
+}

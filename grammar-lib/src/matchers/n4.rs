@@ -1678,8 +1678,19 @@ pub fn nakerebanaranai() -> Vec<TokenMatcher> {
 }
 
 // Pattern: つづける
+// Pattern: つづける - continue doing
+// Structures: Verb[stem] + 続ける/つづける
 pub fn tsuzukeru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TsuzukeruMatcher;
+    impl Matcher for TsuzukeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "つづける" || token.base_form == "続ける")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+    vec![super::flexible_verb_form(), TokenMatcher::Custom(Arc::new(TsuzukeruMatcher))]
 }
 
 // Pattern: ようにいう
