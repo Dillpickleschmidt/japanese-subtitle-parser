@@ -4151,7 +4151,7 @@ declare_patterns! {
     Seide {
         name: "せいで",
         matcher_fn: crate::matchers::n3::seide,
-        priority: 1,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },

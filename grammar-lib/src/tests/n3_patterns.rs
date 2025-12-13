@@ -3098,3 +3098,61 @@ mod sekkaku_tests {
         assert_pattern_range(&patterns, "折角", 7, 12); // せっかくの
     }
 }
+
+// ========== せいで (because of / due to - negative result) ==========
+// Pattern: せいで (because of / due to - negative result)
+// Data source: grammar_points_data.json["せいで"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + せいで
+//   standard[1]: い-Adjective + せいで
+//   standard[2]: な-Adjective + な + せいで
+//   standard[3]: Noun + の + せいで
+
+mod seide_tests {
+    use super::*;
+
+    // Test: Verb + せいで
+    #[test]
+    fn test_seide_verb() {
+        let sentence = "昨日夜遅くまで起きていたせいで寝坊した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "せいで");
+        assert_pattern_range(&patterns, "せいで", 11, 15); // たせいで
+    }
+
+    // Test: い-Adjective + せいで
+    #[test]
+    fn test_seide_i_adjective() {
+        let sentence = "外が寒いせいで風邪を引いてしまった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "せいで");
+        assert_pattern_range(&patterns, "せいで", 2, 7); // 寒いせいで
+    }
+
+    // Test: な-Adjective + な + せいで
+    #[test]
+    fn test_seide_na_adjective() {
+        let sentence = "犬の手術のことが心配なせいで今日は寝れなさそう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "せいで");
+        assert_pattern_range(&patterns, "せいで", 8, 14); // 心配なせいで
+    }
+
+    // Test: Noun + の + せいで
+    #[test]
+    fn test_seide_noun() {
+        let sentence = "大雪のせいで道が渋滞している";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "せいで");
+        assert_pattern_range(&patterns, "せいで", 0, 6); // 大雪のせいで
+    }
+}

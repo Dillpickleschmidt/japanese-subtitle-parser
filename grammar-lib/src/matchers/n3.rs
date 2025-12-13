@@ -2622,9 +2622,45 @@ pub fn tsui() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: せいで
+// Pattern: せいで (because of / due to - negative result)
+// Structures: Verb/Adjective/Noun + (な/の) + せい + で
 pub fn seide() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SeiMatcher;
+    impl Matcher for SeiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "せい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoNaConnectorMatcher;
+    impl Matcher for NoNaConnectorMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match の (particle) or な (auxiliary)
+            (token.surface == "の" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+                || (token.surface == "な" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Verb/Adjective/Noun before せい
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoNaConnectorMatcher)))),
+        TokenMatcher::Custom(Arc::new(SeiMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+    ]
 }
 
 // Pattern: くせに (despite/even though)

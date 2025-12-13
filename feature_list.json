@@ -4776,13 +4776,13 @@
   {
     "pattern_name": "せいで",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although written almost exclusively in hiragana, せい is a noun that may be better understood from its kanji, 所為（せい）, m... [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
