@@ -1136,3 +1136,62 @@ mod gahoshii_tests {
         assert_pattern_range(&patterns, "がほしい", 0, 7); // 何がほしいです
     }
 }
+
+// ========== はじめる (start doing) ==========
+// Pattern: はじめる
+// Data source: grammar_points_data.json["はじめる"]
+//
+// Structures to test:
+//   - standard[0]: Verb［stem］+ はじめる
+//   - polite[0]: Verb［stem］+ はじめます
+//
+// Examples from data:
+//   - ためはじめます (start saving)
+//   - 歌いはじめる (start singing)
+//   - ならいはじめる (start learning)
+#[cfg(test)]
+mod hajimeru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb[stem] + はじめる
+    #[test]
+    fn test_hajimeru_nonpast() {
+        let sentence = "来月からお金をためはじめます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はじめる");
+        assert_pattern_range(&patterns, "はじめる", 7, 14); // ためはじめます
+    }
+
+    #[test]
+    fn test_hajimeru_basic() {
+        let sentence = "歌を歌いはじめる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はじめる");
+        assert_pattern_range(&patterns, "はじめる", 2, 8); // 歌いはじめる
+    }
+
+    #[test]
+    fn test_hajimeru_past() {
+        let sentence = "高校生の時に日本語をならいはじめた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はじめる");
+        assert_pattern_range(&patterns, "はじめる", 10, 17); // ならいはじめた
+    }
+
+    // Testing: structure.polite[0] - Verb[stem] + はじめます
+    #[test]
+    fn test_hajimeru_polite() {
+        let sentence = "明日から日本語をならいはじめます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はじめる");
+        assert_pattern_range(&patterns, "はじめる", 8, 16); // ならいはじめます
+    }
+}

@@ -262,9 +262,28 @@ pub fn mata() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: はじめる
+// Pattern: はじめる (start doing)
+// Structure: Verb[stem/連用形] + はじめる
+//
+// Example tokenizations:
+// - ためはじめます: ため(動詞/連用形) + はじめ(動詞/非自立/連用形) + ます
+// - 歌いはじめる: 歌い(動詞/連用形) + はじめる(動詞/非自立/基本形)
+// - ならいはじめた: ならい(動詞/連用形) + はじめ(動詞/非自立/連用形) + た
 pub fn hajimeru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct HajimeruMatcher;
+    impl Matcher for HajimeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "はじめる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(), // Verb in 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(HajimeruMatcher)), // はじめる (auxiliary verb)
+    ]
 }
 
 // Pattern: おわる (finish doing)
