@@ -4846,13 +4846,13 @@
   {
     "pattern_name": "そのため(に)",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そのために is a frequently used conjunction in Japanese that utilizes その , the noun ため 'reason' (occasionally seen as 為（ため... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

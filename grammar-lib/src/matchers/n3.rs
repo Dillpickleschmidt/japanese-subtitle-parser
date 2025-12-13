@@ -912,9 +912,50 @@ pub fn chanto_u30fb_kichinto() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: そのため(に)
+// Pattern: そのため(に) (for that reason/to that end)
+// Structures: そのため + (に) + Phrase
 pub fn sonotame_ni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SonoRentaishiMatcher;
+    impl super::Matcher for SonoRentaishiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match その as 連体詞 (prenominal)
+            token.surface == "その"
+                && token.base_form == "その"
+                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TameNounMatcher;
+    impl super::Matcher for TameNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ため as 名詞/非自立
+            token.surface == "ため"
+                && token.base_form == "ため"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match に as 格助詞
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SonoRentaishiMatcher)),
+        TokenMatcher::Custom(Arc::new(TameNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: その結果

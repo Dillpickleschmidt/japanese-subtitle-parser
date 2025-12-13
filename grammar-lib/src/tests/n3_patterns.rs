@@ -2647,6 +2647,69 @@ mod sokode_tests {
     }
 }
 
+// ========== そのため(に) (for that reason/to that end) ==========
+// Pattern: そのため(に) (for that reason/to that end)
+// Data source: grammar_points_data.json["そのため(に)"]
+//
+// Structure variants to test:
+//   standard[0]: そのため + (に) + Phrase
+
+mod sonotameni_tests {
+    use super::*;
+
+    // Test: そのため without に - fishing example
+    // Example: ハマダさんはとても釣りが好きです。そのため毎朝仕事に行く前に、釣りに行っています
+    // (Hamada-san loves fishing. For that reason, he does it every morning before he goes to work)
+    #[test]
+    fn test_sonotame_fishing() {
+        let sentence = "ハマダさんはとても釣りが好きです。そのため毎朝仕事に行く前に、釣りに行っています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そのため(に)");
+        assert_pattern_range(&patterns, "そのため(に)", 17, 21); // そのため
+    }
+
+    // Test: そのため without に - aging population
+    // Example: 日本では高齢化が進んでいる。そのため、子供が生まれたら政府からお金がもらえる
+    // (Japan's population continues to age. To that end, when a child is born, you receive money from the government)
+    #[test]
+    fn test_sonotame_population() {
+        let sentence = "日本では高齢化が進んでいる。そのため、子供が生まれたら政府からお金がもらえる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そのため(に)");
+        assert_pattern_range(&patterns, "そのため(に)", 14, 18); // そのため
+    }
+
+    // Test: そのために with に - children's sake
+    // Example: 子供達にはなんの不自由もない生活をしてほしい。そのために毎日夜遅くまで仕事をしている
+    // (I want my kids to have a life without any struggles. For the sake of that, I work until late at night every day)
+    #[test]
+    fn test_sonotameni_children() {
+        let sentence = "子供達にはなんの不自由もない生活をしてほしい。そのために毎日夜遅くまで仕事をしている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そのため(に)");
+        assert_pattern_range(&patterns, "そのため(に)", 23, 28); // そのために
+    }
+
+    // Test: そのために with に - car purchase
+    // Example: 新しい車が欲しいけど今は住宅ローンで精一杯。そのために車を買うのを我慢している
+    // (I want a new car, but I am struggling to pay my mortgage. For that reason, I am holding off on doing it)
+    #[test]
+    fn test_sonotameni_car() {
+        let sentence = "新しい車が欲しいけど今は住宅ローンで精一杯。そのために車を買うのを我慢している";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そのため(に)");
+        assert_pattern_range(&patterns, "そのため(に)", 22, 27); // そのために
+    }
+}
+
 // ========== ずに (without doing) ==========
 // Pattern: ずに (without doing)
 // Data source: grammar_points_data.json["ずに"]
