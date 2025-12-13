@@ -3,19 +3,20 @@
 ## Session 104 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (ずっと ②)
-**Patterns completed**: 1 new N3 pattern (comparative adverb)
-**Tests added**: 4 comprehensive tests
-**Total tests**: 655 (was 651)
+**Status**: Two N3 patterns fully implemented (ずっと ② + だらけ)
+**Patterns completed**: 2 new N3 patterns (comparative adverb + suffix)
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 659 (was 651)
 
 ### Accomplishments
 1. ✅ Implemented ずっと ② pattern (N3) - "by far/much more"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 655 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented だらけ pattern (N3) - "covered with/full of"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 659 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### ずっと ② (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (line 1733-1761)
@@ -52,37 +53,64 @@
 - **Pattern range**: Just the word ずっと itself
 - **Grammar note**: According to Fun Fact in grammar_points_data.json, both meanings derive from the same core concept of "unwavering/unfaltering" and "far more (A)" / "to the maximum amount possible"
 
+#### だらけ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 1763-1795)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod darake_tests)
+  - test_darake_holes (パンケーキの裏側が穴だらけで気持ち悪い - The pancake underside is covered in holes)
+  - test_darake_garbage (この公園はゴミだらけだから子供を連れて来たくない - This park is covered in garbage)
+  - test_darake_no_scratches (傷だらけの車に乗っているのを見られたくない - A car covered in scratches)
+  - test_darake_no_mud (泥だらけの服を洗濯機にいれないで！ - Don't put mud-covered shirts in the washer)
+- **Structures**:
+  - standard[0]: Noun + だらけ
+  - standard[1]: Noun + だらけ + の + Noun
+- **Tokenization insights**:
+  - だらけ = 名詞/接尾/一般 (noun/suffix/general)
+  - Optional の = 助詞/連体化 (nominalizing particle)
+  - Appears after a noun to express "covered in/filled with" (scattered state)
+- **Implementation**: 3-token matcher with optional の
+  - noun_matcher(): Matches any noun
+  - DarakeSuffixMatcher: Matches だらけ as 名詞/接尾
+  - NoRentaikaMatcher (optional): Matches の as 助詞/連体化
+- **Meaning**: "covered with / full of" - expresses scattered state
+- **Pattern priority**: 3 (N3 suffix pattern)
+- **Pattern ranges**: Include noun + だらけ + optional の
+  - 穴だらけ (chars 9-13) - without の
+  - ゴミだらけ (chars 5-10) - without の
+  - 傷だらけの (chars 0-5) - with の
+  - 泥だらけの (chars 0-5) - with の
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 655/655 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~90 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (4 + 4)
+- **Tests passing**: 659/659 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~181 (2 matcher implementations + 8 tests + 2 feature_list updates)
 
 ### Key Insights
 - ずっと ① and ずっと ② have identical tokenization - semantic ambiguity case
 - Both patterns detected simultaneously when ずっと appears (like らしい①/②)
-- Test sentences cover different comparative contexts (with/without より particle)
-- Implementation follows same pattern as ずっと ① (simple adverb matcher)
-- Documentation clearly explains the ambiguity and detection approach
+- だらけ is a suffix pattern with optional の for noun modification
+- Both patterns follow straightforward implementations (simple adverb + suffix)
+- Test sentences are realistic and cover different usage contexts
+- Pattern ranges include full constructions for proper context
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
-1. だらけ - "covered with/full of" (likely simple pattern, TODO stub exists at line 1763)
-2. もっとも - "although/however" (conjunction, TODO stub at line 1744)
-3. 再び - "again/once more" (adverb, stub at line 1749)
-4. ため(に) - "for the purpose of / because of" (causal pattern, 2 structures)
-5. さえ - "even" (emphasis particle, 6 structure variants - more complex)
+1. もっとも - "although/however" (conjunction, TODO stub at line 1797)
+2. 再び - "again/once more" (adverb, stub at line 1774)
+3. ため(に) - "for the purpose of / because of" (causal pattern, 2 structures)
+4. さえ - "even" (emphasis particle, 6 structure variants - more complex)
+5. わけだ - "it means that / no wonder" (explanatory pattern)
 
-**Recommendation**: Continue with simple adverb/conjunction patterns like "だらけ" or "もっとも" before tackling complex multi-structure patterns.
+**Recommendation**: Continue with simple adverb/conjunction patterns like "もっとも" or "再び" before tackling complex multi-structure patterns.
 
 ### Environment Status
-- ✅ All 655 tests passing
+- ✅ All 659 tests passing
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
