@@ -705,3 +705,67 @@ mod demo_tests {
         assert_pattern_range(&patterns, "でも", 0, 4); // いつでも
     }
 }
+
+// ========== までに (by/until - deadline) ==========
+// Pattern: までに
+// Data source: grammar_points_data.json["までに"]
+//
+// Structures to test:
+//   - standard[0]: Verb + までに
+//   - standard[1]: Noun + までに
+//
+// Examples from data:
+//   - ５時までに駅に来てください (Please come to the station by 5 o'clock)
+//   - 遊びに行くまでに片付けてね (Please tidy up by the time you go out to play)
+//   - 来月までにレポートを書く (I will write a report by next month)
+//
+// Note: までに = まで (adverbial particle) + に (case marking particle)
+// Meaning: "by" (deadline), NOT "until" (continuous action)
+#[cfg(test)]
+mod madeni_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + までに
+    #[test]
+    fn test_madeni_verb() {
+        let sentence = "遊びに行くまでに片付けてね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "までに");
+        assert_pattern_range(&patterns, "までに", 3, 8); // 行くまでに
+    }
+
+    // Testing: standard[0] - Verb + までに (ending)
+    #[test]
+    fn test_madeni_verb_ending() {
+        let sentence = "冬が終わるまでにスキーをしたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "までに");
+        assert_pattern_range(&patterns, "までに", 2, 8); // 終わるまでに
+    }
+
+    // Testing: standard[1] - Noun + までに (time)
+    #[test]
+    fn test_madeni_noun_time() {
+        let sentence = "５時までに駅に来てください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "までに");
+        assert_pattern_range(&patterns, "までに", 1, 5); // 時までに
+    }
+
+    // Testing: standard[1] - Noun + までに (deadline)
+    #[test]
+    fn test_madeni_noun_deadline() {
+        let sentence = "来月までにレポートを書く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "までに");
+        assert_pattern_range(&patterns, "までに", 0, 5); // 来月までに
+    }
+}

@@ -207,9 +207,37 @@ pub fn made() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: までに
+// Pattern: までに (by/until - deadline)
+// Structures: Verb/Noun + まで + に
+//
+// Tokenization: Content word + まで (助詞/副助詞) + に (助詞/格助詞)
+// Meaning: "by" (deadline), NOT "until" (continuous action)
 pub fn madeni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Verb or Noun
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: また
