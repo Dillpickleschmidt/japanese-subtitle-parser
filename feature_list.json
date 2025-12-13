@@ -3810,13 +3810,13 @@
   {
     "pattern_name": "より",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In N5, we learned about the use of より that is seen when making comparisons in より～のほうが [2 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

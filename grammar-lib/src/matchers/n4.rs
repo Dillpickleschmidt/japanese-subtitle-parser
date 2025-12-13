@@ -610,9 +610,19 @@ pub fn toutou() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(ToutouMatcher))]
 }
 
-// Pattern: より
+// Pattern: より (than/more than)
+// Structures: Noun + より, Verb + より
 pub fn yori() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct YoriMatcher;
+    impl Matcher for YoriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "より"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(YoriMatcher))]
 }
 
 // Pattern: ごとに (every/each time)

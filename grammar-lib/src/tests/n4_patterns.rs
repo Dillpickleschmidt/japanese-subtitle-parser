@@ -2741,3 +2741,52 @@ mod toutou_tests {
         assert_pattern_range(&patterns, "とうとう", 0, 4); // とうとう
     }
 }
+
+// ========== より (than/more than) ==========
+// Pattern: より
+// Data source: grammar_points_data.json["より"]
+//
+// Structures to test:
+//   - standard[0]: Verb + より + Adjective
+//   - standard[1]: Noun + より + Adjective
+//
+// Note: より is a comparison particle. The word that より is attached to is "less than"
+// the comparison being made. Used to express "more/er than" comparisons.
+// Meaning: "than", "more than", "compared to"
+#[cfg(test)]
+mod yori_tests {
+    use super::*;
+
+    // Testing: standard[1] - Noun + より + Adjective
+    #[test]
+    fn noun_comparison() {
+        let sentence = "パンダはバナナより重い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "より");
+        assert_pattern_range(&patterns, "より", 7, 9); // より
+    }
+
+    // Testing: standard[1] - Noun + より + Adjective
+    #[test]
+    fn noun_comparison_brightness() {
+        let sentence = "太陽はロウソクより明るい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "より");
+        assert_pattern_range(&patterns, "より", 7, 9); // より
+    }
+
+    // Testing: standard[0] - Verb + より + Adjective
+    #[test]
+    fn verb_comparison() {
+        let sentence = "走るより歩く方が健康的だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "より");
+        assert_pattern_range(&patterns, "より", 2, 4); // より
+    }
+}
