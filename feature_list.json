@@ -5112,13 +5112,13 @@
   {
     "pattern_name": "っぽい",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "っぽい (occasionally also seen as ぽい) is a suffix that may be attached to many different types of words, in order to cre... [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null

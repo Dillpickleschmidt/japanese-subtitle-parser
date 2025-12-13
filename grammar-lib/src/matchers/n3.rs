@@ -3163,9 +3163,29 @@ pub fn gimi() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: っぽい
+// Pattern: っぽい (ish/like/tendency to)
+// Structures: Verb[stem]/Adjective/Noun + っぽい
+//
+// Tokenization:
+//   Split form: Content word + っぽい (形容詞/接尾) - detectable
+//   Compound form: 白っぽい, 安っぽい (形容詞/自立) - not detectable (lexicalized)
+//
+// Note: っぽい creates い-Adjectives, so it conjugates (っぽい, っぽく, っぽかった, etc.)
 pub fn ppoi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct PpoiSuffixMatcher;
+    impl Matcher for PpoiSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "っぽい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Verb, Noun, or な-Adjective
+        TokenMatcher::Custom(Arc::new(PpoiSuffixMatcher)),
+    ]
 }
 
 // Pattern: っぱなし (left in a state / left unchecked)

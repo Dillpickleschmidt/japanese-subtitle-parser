@@ -4002,3 +4002,113 @@ mod datte_tests {
         assert_pattern_range(&patterns, "だって", 10, 13); // だって
     }
 }
+
+// ========== っぽい (ish/like/tendency to) ==========
+// Pattern: っぽい (ish/like/tendency to)
+// Data source: grammar_points_data.json["っぽい"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + っぽい
+//   standard[1]: い-Adjective[い] + っぽい
+//   standard[2]: な-Adjective + っぽい
+//   standard[3]: Noun + っぽい
+//   polite[0-3]: Same + です
+//
+// Meaning: Exhibits characteristics of (A), -ish, -like, tendency to
+// Often carries negative connotation
+
+mod ppoi_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[stem] + っぽい"
+    // Example: 飽きっぽい (tendency to get bored)
+    #[test]
+    fn test_ppoi_verb_stem() {
+        let sentence = "私は飽きっぽいから、何も続かない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぽい");
+        assert_pattern_range(&patterns, "っぽい", 2, 7); // 飽きっぽい
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + っぽい"
+    // Example: 有名っぽい (seems famous)
+    #[test]
+    fn test_ppoi_na_adjective() {
+        let sentence = "タナカ君はファッション業界では有名っぽいよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぽい");
+        assert_pattern_range(&patterns, "っぽい", 15, 20); // 有名っぽい
+    }
+
+    // Testing: structure.standard[3] - "Noun + っぽい"
+    // Example: 嘘っぽい (seems like a lie)
+    #[test]
+    fn test_ppoi_noun() {
+        let sentence = "今の話は嘘っぽいけど本当の話なの";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぽい");
+        assert_pattern_range(&patterns, "っぽい", 4, 8); // 嘘っぽい
+    }
+
+    // Testing: polite form - "Noun + っぽい + です"
+    // Example: 紫っぽいです (it's purplish)
+    #[test]
+    fn test_ppoi_polite() {
+        let sentence = "昔は紫っぽかったのに今はなぜか赤っぽいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぽい");
+        // Two instances detected
+        assert_pattern_range(&patterns, "っぽい", 2, 8); // 紫っぽかった (first match)
+    }
+
+    // Testing: conjugated form - "Noun + っぽかった" (past tense)
+    // Example: 紫っぽかった (was purplish)
+    #[test]
+    fn test_ppoi_conjugated_past() {
+        let sentence = "昔は紫っぽかったよね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぽい");
+        assert_pattern_range(&patterns, "っぽい", 2, 8); // 紫っぽかった
+    }
+
+    // Testing: negative form - "Noun + っぽく + ない"
+    // Example: 子供っぽくない (not childish)
+    #[test]
+    fn test_ppoi_negative() {
+        let sentence = "彼女は全然子供っぽくないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っぽい");
+        assert_pattern_range(&patterns, "っぽい", 5, 12); // 子供っぽくない
+    }
+
+    // TODO: UNDETECTABLE - い-Adjective[い] + っぽい (lexicalized compounds)
+    // Common combinations like 安っぽい and 白っぽい are lexicalized as single tokens
+    // Tokenization: 安っぽい (形容詞/自立) - NOT 安 + っぽい
+    // Tokenization: 白っぽい (形容詞/自立) - NOT 白 + っぽい
+    // These tokenize as standalone い-adjectives (形容詞/自立), not as suffix patterns (形容詞/接尾)
+    // Cannot be detected as the っぽい pattern since there's no split tokenization
+    //
+    // #[test]
+    // fn test_ppoi_i_adjective_undetectable() {
+    //     let sentence = "この靴なんか安っぽくない？";
+    //     // 安っぽく tokenizes as 形容詞/自立, not as 安 + っぽい
+    // }
+    //
+    // #[test]
+    // fn test_ppoi_noun_color_undetectable() {
+    //     let sentence = "白っぽいやつをください";
+    //     // 白っぽい tokenizes as 形容詞/自立, not as 白 + っぽい
+    // }
+}
