@@ -626,9 +626,43 @@ pub fn toiunoha() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 的
+// Pattern: 的 (like / -ish / -ly)
+// Structures: Noun + 的 + に / Noun + 的 + な + Noun
 pub fn teki() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 的 as suffix (名詞/接尾/形容動詞語幹)
+    #[derive(Debug)]
+    struct TekiSuffixMatcher;
+    impl super::Matcher for TekiSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "的"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match に as adverbializing particle OR な as copula
+    #[derive(Debug)]
+    struct NiOrNaMatcher;
+    impl super::Matcher for NiOrNaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // に as adverbializing particle (助詞/副詞化)
+            (token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化"))
+                // OR な as copula (助動詞) with 体言接続
+                || (token.surface == "な"
+                    && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    && token.features.get(5).is_some_and(|f| f == "体言接続"))
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(TekiSuffixMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrNaMatcher)),
+    ]
 }
 
 // Pattern: もの・もん

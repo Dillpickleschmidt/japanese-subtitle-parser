@@ -6890,13 +6890,13 @@
   {
     "pattern_name": "的",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "的（てき） is a 接語尾（せつごび） (suffix) in Japanese that has two primary uses [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

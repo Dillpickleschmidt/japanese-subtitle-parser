@@ -4512,3 +4512,61 @@ mod nakanaka_nai_tests {
         assert_pattern_range(&patterns, "なかなか～ない", 5, 15); // なかなか解決しません
     }
 }
+
+// ========== 的 (like / -ish / -ly) ==========
+// Pattern: 的 (like / -ish / -ly)
+// Data source: grammar_points_data.json["的"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + 的（てき） + に
+//   standard[1]: Noun + 的（てき） + な + Noun
+//
+// Note: 的 creates adverbs (with に) or na-adjectives (with な)
+
+mod teki_tests {
+    use super::*;
+
+    // Test: Noun + 的 + に (adverbial form)
+    #[test]
+    fn test_teki_adverbial_form() {
+        let sentence = "定期的に掃除してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "的");
+        assert_pattern_range(&patterns, "的", 0, 4); // 定期的に
+    }
+
+    // Test: Noun + 的 + に (another adverbial example)
+    #[test]
+    fn test_teki_adverbial_emotional() {
+        let sentence = "そんな感情的にならなくてもいいのに";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "的");
+        assert_pattern_range(&patterns, "的", 3, 7); // 感情的に
+    }
+
+    // Test: Noun + 的 + な + Noun (na-adjective form)
+    #[test]
+    fn test_teki_na_adjective_form() {
+        let sentence = "それは個人的な考えですよね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "的");
+        assert_pattern_range(&patterns, "的", 3, 7); // 個人的な
+    }
+
+    // Test: Noun + 的 + な + Noun (another na-adj example)
+    #[test]
+    fn test_teki_na_adjective_religious() {
+        let sentence = "なんかの宗教的な人たちが来た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "的");
+        assert_pattern_range(&patterns, "的", 4, 8); // 宗教的な
+    }
+}
