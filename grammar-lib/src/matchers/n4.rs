@@ -2674,9 +2674,39 @@ pub fn nagara() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たところだ
+// Pattern: たところだ (just did)
+// Structures: Verb[た] + ところ (+ だ/です)
 pub fn tatokoroda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for ところ as 名詞/非自立/副詞可能
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl super::Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for だ or です as auxiliary
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl super::Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: Verb (連用形/連用タ接続) + た + ところ (+ optional だ/です)
+    vec![
+        super::flexible_verb_form(),
+        super::past_auxiliary(),
+        TokenMatcher::Custom(Arc::new(TokoroMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaDesuMatcher)))),
+    ]
 }
 
 // Pattern: ているところだ

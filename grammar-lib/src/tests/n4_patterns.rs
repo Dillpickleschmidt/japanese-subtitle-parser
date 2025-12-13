@@ -4083,3 +4083,65 @@ mod nakute_tests {
         assert_pattern_range(&patterns, "なくて", 6, 9); // なくて
     }
 }
+
+// ========== たところだ (just did) ==========
+// Pattern: たところだ (just finished doing)
+// Data source: grammar_points_data.json["たところだ"]
+// Structures to test:
+//   - standard[0]: Verb[た] + ところ + だ (just did)
+//   - standard[1]: Verb[ていた] + ところ (just was doing)
+//   - polite[0]: Verb[た] + ところ + です (just did - polite)
+//   - polite[1]: Verb[ていた] + ところ + です (just was doing - polite)
+//
+// Examples from data:
+//   - 今、先生に聞いたところ (I just asked the teacher)
+//   - 仕事は今終わったところ (I just finished work)
+//   - 休みを楽しんでいたところで (just as I was enjoying my day off)
+#[cfg(test)]
+mod tatokoroda_tests {
+    use super::*;
+
+    // Structure: Verb[た] + ところ
+    #[test]
+    fn ta_tokoro_plain() {
+        let sentence = "今、先生に聞いたところ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たところだ");
+        assert_pattern_range(&patterns, "たところだ", 5, 11); // 聞いたところ
+    }
+
+    // Structure: Verb[た] + ところ + だ
+    #[test]
+    fn ta_tokoro_da() {
+        let sentence = "仕事は今終わったところだ。もうすぐ帰る。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たところだ");
+        assert_pattern_range(&patterns, "たところだ", 4, 12); // 終わったところだ
+    }
+
+    // Structure: Verb[ていた] + ところ (just was doing)
+    #[test]
+    fn teita_tokoro() {
+        let sentence = "休みを楽しんでいたところで上司から電話が来た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たところだ");
+        assert_pattern_range(&patterns, "たところだ", 7, 12); // いたところ
+    }
+
+    // Structure: Verb[た] + ところ + です (polite)
+    #[test]
+    fn ta_tokoro_desu() {
+        let sentence = "ちょうど今着いたところです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たところだ");
+        assert_pattern_range(&patterns, "たところだ", 5, 13); // 着いたところです
+    }
+}
