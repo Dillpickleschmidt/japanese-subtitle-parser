@@ -4915,3 +4915,84 @@ mod sayuusuru_tests {
         assert_pattern_range(&patterns, "左右する", 10, 13); // 左右さ
     }
 }
+
+// ========== さえ (even) ==========
+// Pattern: さえ (even)
+// Data source: grammar_points_data.json["さえ"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + (で) + さえ
+//   standard[1]: Noun + Particle + さえ
+//   standard[2]: Verb + こと(の) + さえ + (する)
+//   standard[3]: Verb[stem] + さえ + (する)
+//   standard[4]: Verb[て] + さえ + (いる)
+
+mod sae_tests {
+    use super::*;
+
+    // Test: Noun + でさえ
+    #[test]
+    fn test_sae_noun_de_sae() {
+        let sentence = "上級者の彼でさえ出来ないのに、あなたが出来るわけがないでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ");
+        assert_pattern_range(&patterns, "さえ", 4, 8); // 彼でさえ
+    }
+
+    // Test: Noun + に + さえ
+    #[test]
+    fn test_sae_noun_particle_sae() {
+        let sentence = "彼女は親にさえ知らせずに彼氏と結婚をした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ");
+        assert_pattern_range(&patterns, "さえ", 3, 7); // 親にさえ
+    }
+
+    // Test: Verb + こと + さえ
+    #[test]
+    fn test_sae_verb_koto_sae() {
+        let sentence = "彼はストレスのせいで、晩飯を食べることさえ出来なくなった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ");
+        assert_pattern_range(&patterns, "さえ", 17, 21); // ことさえ
+    }
+
+    // Test: Verb[stem] + さえ + する
+    #[test]
+    fn test_sae_verb_stem_sae_suru() {
+        let sentence = "タナカ君は酷くない？彼女を傷つけたのに、謝りさえしなかったらしいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ");
+        assert_pattern_range(&patterns, "さえ", 20, 24); // 謝りさえ
+    }
+
+    // Test: Verb[て] + さえ + いる
+    #[test]
+    fn test_sae_verb_te_sae_iru() {
+        let sentence = "そんなの放っておいてさえいたら、すぐ直るよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ");
+        assert_pattern_range(&patterns, "さえ", 9, 12); // てさえ
+    }
+
+    // Test: Noun + さえ (without particle)
+    #[test]
+    fn test_sae_noun_sae() {
+        let sentence = "水さえあれば三日は生きられる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ");
+        assert_pattern_range(&patterns, "さえ", 0, 3); // 水さえ
+    }
+}

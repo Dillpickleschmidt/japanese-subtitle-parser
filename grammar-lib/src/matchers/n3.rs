@@ -1746,9 +1746,43 @@ pub fn tehajimete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: さえ
+// さえ: even
+// Structures:
+//   - Noun + (Particle) + さえ
+//   - Verb[stem] + さえ
+//   - Verb[て] + さえ
+//   - Verb + こと/の + さえ
 pub fn sae() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match さえ as 助詞/係助詞
+    #[derive(Debug)]
+    struct SaeParticleMatcher;
+    impl super::Matcher for SaeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さえ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match any case particle (で, に, を, etc.)
+    #[derive(Debug)]
+    struct CaseParticleMatcher;
+    impl super::Matcher for CaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Content word (noun, verb, adjective, etc.)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CaseParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(SaeParticleMatcher)),
+    ]
 }
 
 // Pattern: さえ〜ば

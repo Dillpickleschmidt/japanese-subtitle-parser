@@ -4608,13 +4608,13 @@
   {
     "pattern_name": "さ - Casual よ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "さ is a 感動詞（かんどうし） (interjection) in Japanese that has three primary uses [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -4650,13 +4650,13 @@
   {
     "pattern_name": "さえ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "さえ is an adverbial particle in Japanese that is used to place emphasis on something existing in certain state [6 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5056,13 +5056,13 @@
   {
     "pattern_name": "ちゃんと・きちんと",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In Japanese, two 副詞（ふくし） (adverbs) that are used to express very similar ideas are ちゃんと , and きちんと [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5070,13 +5070,13 @@
   {
     "pattern_name": "っけ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "け is a sentence ending particle in Japanese that is used to convey when the speaker is trying to either remember, or ... [7 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5084,13 +5084,13 @@
   {
     "pattern_name": "って",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although って can be used as a casual quotation marker in Japanese (replacing と), it is also frequently used as a casua... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5168,13 +5168,13 @@
   {
     "pattern_name": "てごらん",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "てご覧（らん） is an honorific language expression in Japanese that is used in a similar way to なさい [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5196,13 +5196,13 @@
   {
     "pattern_name": "て初めて",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "て初（はじ）めて is an expression in Japanese that highlights one verb as being the catalyst for some particular result/state [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5644,13 +5644,13 @@
   {
     "pattern_name": "なかなか～ない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used positively, なかなか means to be 'very', or 'considerably' something [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6554,13 +6554,13 @@
   {
     "pattern_name": "中",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As a suffix , 中（ちゅう） is frequently used to highlight a period of time (or space) [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6736,13 +6736,13 @@
   {
     "pattern_name": "同士",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "同士（どうし） 'fellow' is a noun that may be used in the same way as a suffix [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6750,13 +6750,13 @@
   {
     "pattern_name": "向き",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "向（む）き is another noun in Japanese that is frequently used as a suffix [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6778,13 +6778,13 @@
   {
     "pattern_name": "左右する",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "左右（さゆう） is a noun that may literally be translated as 'left and right' [3 std, 4 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6890,13 +6890,13 @@
   {
     "pattern_name": "的",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "的（てき） is a 接語尾（せつごび） (suffix) in Japanese that has two primary uses [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
