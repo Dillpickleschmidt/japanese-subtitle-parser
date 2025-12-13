@@ -5791,3 +5791,58 @@ mod demoaru_tests {
         assert_pattern_range(&patterns, "でもある", 3, 11); // 親切でもあります
     }
 }
+
+// Pattern: では・それでは・じゃあ (conjunction/transition)
+// Data source: grammar_points_data.json["では・それでは・じゃあ"]
+// Testing: structure.standard[0] - （それ）+ では + Phrase
+//          structure.standard[1] - じゃあ、じゃ + Phrase
+//
+// Meaning: "well then, in that case" - conjunction showing result/conclusion or topic change
+// Usage: それでは (formal) > では (neutral) > じゃあ/じゃ (casual)
+mod deha_soredewa_jaa_tests {
+    use super::*;
+
+    // Testing: standard[0] - それでは (most formal)
+    #[test]
+    fn test_soredewa_formal() {
+        let sentence = "それでは、あなたは行きたくないという事ですか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "では・それでは・じゃあ");
+        assert_pattern_range(&patterns, "では・それでは・じゃあ", 0, 4); // それでは
+    }
+
+    // Testing: standard[0] - では (neutral formality)
+    #[test]
+    fn test_deha_neutral() {
+        let sentence = "では、こちらの商品はどうでしょう？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "では・それでは・じゃあ");
+        assert_pattern_range(&patterns, "では・それでは・じゃあ", 0, 2); // では
+    }
+
+    // Testing: standard[1] - じゃあ (casual)
+    #[test]
+    fn test_jaa_casual() {
+        let sentence = "用意できた？じゃあ、５分で出よう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "では・それでは・じゃあ");
+        assert_pattern_range(&patterns, "では・それでは・じゃあ", 6, 9); // じゃあ
+    }
+
+    // Testing: standard[1] - じゃ (most casual)
+    #[test]
+    fn test_ja_most_casual() {
+        let sentence = "じゃ、また明日ね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "では・それでは・じゃあ");
+        assert_pattern_range(&patterns, "では・それでは・じゃあ", 0, 2); // じゃ
+    }
+}

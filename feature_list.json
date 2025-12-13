@@ -5252,13 +5252,13 @@
   {
     "pattern_name": "では・それでは・じゃあ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "では and じゃあ are both abbreviations of それでは , and used as conjunctions in Japanese [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

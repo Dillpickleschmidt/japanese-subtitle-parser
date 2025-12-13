@@ -617,9 +617,26 @@ pub fn hodo_uff5e_nai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: では・それでは・じゃあ
+// Pattern: では・それでは・じゃあ (conjunction/transition)
+// Structures: それでは/では/じゃあ/じゃ + Phrase
 pub fn deha_u30fb_soredeha_u30fb_jaa() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match それでは, では, じゃあ, or じゃ as conjunction
+    #[derive(Debug)]
+    struct DehaJaaMatcher;
+    impl super::Matcher for DehaJaaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // All variants tokenize as 接続詞 (conjunction)
+            token.pos.first().is_some_and(|pos| pos == "接続詞")
+                && (token.surface == "それでは"
+                    || token.surface == "では"
+                    || token.surface == "じゃあ"
+                    || token.surface == "じゃ")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(DehaJaaMatcher))]
 }
 
 // Pattern: のに
