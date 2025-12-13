@@ -7205,3 +7205,43 @@ mod toieba_tests {
         assert_pattern_range(&patterns, "といえば", 0, 7); // 日本といったら
     }
 }
+
+// Pattern: という理由で (for that reason, being that)
+// Data source: grammar_points_data.json["という理由で"]
+// Testing all structure variants:
+//   - standard[0]: (Reason) + という理由で + Phrase
+//   - standard[1]: (Reason)。 そういう理由で + Phrase
+#[cfg(test)]
+mod toiuriyuude_tests {
+    use super::*;
+
+    #[test]
+    fn test_toiu_riyuu_de_variant1() {
+        let sentence = "コストコは安く沢山買い物が出来るという理由で人気がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という理由で");
+        assert_pattern_range(&patterns, "という理由で", 16, 22); // という理由で
+    }
+
+    #[test]
+    fn test_toiu_riyuu_de_variant2() {
+        let sentence = "大変だという理由で彼は仕事を辞めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という理由で");
+        assert_pattern_range(&patterns, "という理由で", 3, 9); // という理由で
+    }
+
+    #[test]
+    fn test_soiu_riyuu_de_variant() {
+        let sentence = "一人では危険だ。そういう理由でみんなで行くことにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という理由で");
+        assert_pattern_range(&patterns, "という理由で", 8, 15); // そういう理由で
+    }
+}

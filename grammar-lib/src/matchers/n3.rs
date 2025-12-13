@@ -5055,9 +5055,75 @@ pub fn dokoroka() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: という理由で
+// Pattern: という理由で (for that reason, being that)
+// Structures: という理由で / そういう理由で
 pub fn toiuriyuude() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for という as quotation particle
+    #[derive(Debug)]
+    struct ToiuMatcher;
+    impl Matcher for ToiuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "という"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    // Matcher for そういう as adnominal
+    #[derive(Debug)]
+    struct SoiuMatcher;
+    impl Matcher for SoiuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そういう"
+                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        }
+    }
+
+    // Matcher for either という or そういう
+    #[derive(Debug)]
+    struct ToiuOrSoiuMatcher;
+    impl Matcher for ToiuOrSoiuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "という"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語"))
+            || (token.surface == "そういう"
+                && token.pos.first().is_some_and(|pos| pos == "連体詞"))
+        }
+    }
+
+    // Matcher for 理由 as noun
+    #[derive(Debug)]
+    struct RiyuuMatcher;
+    impl Matcher for RiyuuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "理由"
+                && token.base_form == "理由"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Matcher for で as case marking particle
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Pattern: (という or そういう) + 理由 + で
+    vec![
+        TokenMatcher::Custom(Arc::new(ToiuOrSoiuMatcher)),
+        TokenMatcher::Custom(Arc::new(RiyuuMatcher)),
+        TokenMatcher::Custom(Arc::new(DeMatcher)),
+    ]
 }
 
 // Pattern: ～は～となっている
