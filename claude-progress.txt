@@ -1,5 +1,86 @@
 # Grammar-lib Development Progress
 
+## Session 156 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: へ pattern (N5) fully implemented
+**Patterns completed**: 1 new N5 construction pattern
+**Tests added**: 3 comprehensive tests
+**Total tests**: 1023 (was 1020 at session start)
+
+### Accomplishments
+1. ✅ Implemented へ pattern (N5) - "to/toward" directional particle
+2. ✅ All 3 tests passing with proper range assertions
+3. ✅ No test regressions - all 1023 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### へ (N5) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n5.rs (he function)
+  - Tests: grammar-lib/src/tests/n5_patterns.rs (mod he_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Noun + へ
+- **Tokenization**:
+  - Noun + へ (助詞/格助詞/一般)
+  - Base form: へ
+  - Character range: 1 character particle
+- **Implementation**: Two-token matcher
+  - noun_matcher() - matches any noun
+  - HeParticleMatcher - surface == "へ", POS == "助詞/格助詞"
+- **Meaning**: "to/toward" - directional particle indicating movement toward a destination
+- **Pattern priority**: 1 (N5 construction, basic particle)
+- **Pattern ranges**:
+  - フランスへ (chars 2-7) - direction to country
+  - 大阪へ (chars 0-3) - welcome expression
+  - 図書館へ (chars 3-7) - casual direction
+- **Test coverage**:
+  - Direction to country: 私はフランスへ行く
+  - Welcome expression: 大阪へようこそ！
+  - Casual direction: 今日は図書館へ勉強しに行く
+
+### Final Session Statistics
+- **Patterns implemented**: 1 (N5: へ)
+- **Tests written**: 3 total
+- **Tests passing**: 1023/1023 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~50 (matcher implementation + 3 tests + feature_list update)
+
+### Key Insights from Session
+1. **Simple particle pattern**: へ is a straightforward directional particle
+2. **Consistent tokenization**: Always tokenizes as 助詞/格助詞/一般
+3. **Fixed character range**: Always 1 character (へ)
+4. **Basic N5 pattern**: Fundamental directional particle used with movement verbs
+5. **Test-first approach**: Successfully used print_debug to understand tokenization before implementation
+
+### Session Success
+- Successfully implemented a fundamental N5 particle pattern
+- All tests use realistic subtitle-quality Japanese sentences
+- Pattern ranges are correct and include noun + particle
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern quickly with good test coverage
+
+### Next Priorities
+Continue with N5 patterns (prioritize N5 → N4 → N3 → N2 → N1):
+
+**Simple N5 patterns to implement next**:
+1. **は** - topic particle (fundamental N5, likely needs careful implementation to avoid over-matching)
+2. Other basic N5 particles or verb patterns from needs_implementation list
+3. Continue working through N5 incomplete patterns before moving to N4
+
+**Recommendation**: Continue with fundamental N5 patterns. The project prioritizes completing N5 patterns first before moving to higher levels.
+
+### Environment Status
+- ✅ All 1023 tests passing (added 3 new tests)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 155 - 2025-12-13
 
 ### ✅ Session Summary
