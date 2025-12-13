@@ -1,5 +1,81 @@
 # Grammar-lib Development Progress
 
+## Session 173 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: 各 pattern (N4) fully implemented
+**Patterns completed**: 1 new N4 prefix pattern
+**Tests added**: 1 comprehensive test
+**Total tests**: 1112 (was 1111 at session start)
+
+### Accomplishments
+1. ✅ Implemented 各 pattern (N4) - "each/every" formal prefix
+2. ✅ Test passing with proper range assertion
+3. ✅ No test regressions - all 1112 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### 各 (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (kaku function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod kaku_tests, 1 test)
+- **Structure**:
+  - standard[0]: 各（かく） + Noun
+- **Tokenization**:
+  - Two tokenization patterns exist:
+    1. **Compound nouns**: 各階 (かくかい), 各地 (かくち) - single token (名詞/一般)
+    2. **Split form**: 各 (接頭詞/名詞接続) + Noun - productive usage
+  - Implementation detects split form only (productive prefix usage)
+- **Implementation**: Two-token matcher
+  - KakuPrefixMatcher - matches 各 (接頭詞/名詞接続)
+  - noun_matcher() - matches any noun
+- **Meaning**: "each", "every" - formal prefix for sequences/categories
+- **Pattern priority**: 2 (N4 construction)
+- **Pattern ranges**:
+  - 各部屋 (chars 6-9) - each room
+- **Test coverage**: 1 test covering split form (各部屋)
+- **Undetectable variants**: Compound nouns (各階, 各地) documented with TODO
+  - These are lexicalized compounds in the dictionary
+  - Don't match the pattern because they tokenize as single nouns
+
+### Implementation Notes
+- **Tokenization insight**: 各 can appear as:
+  1. Part of compound noun (各階, 各地) - single dictionary entry
+  2. Productive prefix (各 + 部屋, 各 + 会社) - separate tokens
+- **Pattern scope**: Only detects productive prefix usage
+- Simple, straightforward implementation using custom matcher
+- Test-first workflow with print_debug was effective
+
+### Session Success
+- Successfully implemented a simple N4 prefix pattern
+- Test uses realistic subtitle-quality Japanese sentence
+- Pattern range includes full grammatical construction (各 + Noun)
+- No test regressions - clean implementation
+- Efficient session - completed 1 pattern quickly
+
+### Next Priorities
+Continue with simple N4 patterns with stubs:
+
+**Simple N4 patterns to implement next**:
+1. **風** - "style/manner" suffix (has stub: kaze function)
+2. Other simple N4 constructions with existing stubs
+
+**Or continue with N5 patterns** (foundational level - highest priority):
+- Basic particles and verb forms (though many are complex/broad)
+
+**Recommendation**: Continue with simple N4 patterns that have stubs to maintain momentum. 風 would be a good next target (Noun + 風).
+
+### Environment Status
+- ✅ All 1112 tests passing (added 1 new test)
+- ✅ No regressions
+- ✅ Clean git state (1 commit)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 171 - 2025-12-13
 
 ### ✅ Session Summary
