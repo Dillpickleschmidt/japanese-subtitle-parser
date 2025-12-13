@@ -1785,9 +1785,49 @@ pub fn sae() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: さえ〜ば
+// Pattern: さえ〜ば (if only / as long as)
+// Structures:
+//   Verb[stem] + さえ + すれば
+//   Verb[て] + さえ + いれば
+//   Noun + さえ + Verb[ば]
+//   い-Adjective[く] + さえ + あれば
+//   Noun + さえ + い-Adjective[ば]
+//   な-Adjective + (で) + さえ + あれば
 pub fn sae_u301c_ba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match さえ as 助詞/係助詞 (reuse from sae() pattern)
+    #[derive(Debug)]
+    struct SaeParticleMatcher;
+    impl super::Matcher for SaeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さえ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ば as 助詞/接続助詞
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl super::Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Content word before さえ (verb, noun, adjective, etc.)
+        TokenMatcher::Custom(Arc::new(SaeParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 6,
+            stop_conditions: vec![],
+        }, // 0-6 tokens between さえ and ば (e.g., すれ, いれ, あれ, verb in 仮定形, etc.)
+        TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
+    ]
 }
 
 // Pattern: たものだ

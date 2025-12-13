@@ -5053,3 +5053,85 @@ mod toori_tests {
         assert_pattern_range(&patterns, "とおり", 0, 6); // ご覧のとおり
     }
 }
+
+// ========== さえ〜ば (if only / as long as) ==========
+// Pattern: さえ〜ば (if only / as long as - extreme limitation hypothetical)
+// Data source: grammar_points_data.json["さえ〜ば"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + さえ + すれば
+//   standard[1]: Verb[て] + さえ + いれば
+//   standard[2]: Noun + さえ + Verb[ば]
+//   standard[3]: い-Adjective[く] + さえ + あれば
+//   standard[4]: Noun + さえ + い-Adjective[ば]
+//   standard[5]: な-Adjective + (で) + さえ + あれば
+
+mod sae_ba_tests {
+    use super::*;
+
+    // Test: Verb[stem] + さえ + すれば
+    #[test]
+    fn test_sae_ba_verb_stem_sureba() {
+        let sentence = "この薬を毎日飲みさえすれば、すぐに治りますよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ〜ば");
+        assert_pattern_range(&patterns, "さえ〜ば", 6, 13); // 飲みさえすれば
+    }
+
+    // Test: Verb[て] + さえ + いれば
+    #[test]
+    fn test_sae_ba_verb_te_ireba() {
+        let sentence = "もっと早くから貯めてさえいれば、今頃デカい家を買えてたかも";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ〜ば");
+        assert_pattern_range(&patterns, "さえ〜ば", 9, 15); // てさえいれば
+    }
+
+    // Test: Noun + さえ + Verb[ば]
+    #[test]
+    fn test_sae_ba_noun_verb_ba() {
+        let sentence = "あの背が高い人さえ横にずれてくれれば、ちゃんと見えるのにな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ〜ば");
+        assert_pattern_range(&patterns, "さえ〜ば", 6, 18); // 人さえ横にずれてくれれば
+    }
+
+    // Test: い-Adjective[く] + さえ + あれば
+    #[test]
+    fn test_sae_ba_i_adj_ku_areba() {
+        let sentence = "タナカさんは若くさえあれば、あんな人でも雇う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ〜ば");
+        assert_pattern_range(&patterns, "さえ〜ば", 6, 13); // 若くさえあれば
+    }
+
+    // Test: Noun + さえ + い-Adjective[ば]
+    #[test]
+    fn test_sae_ba_noun_i_adj_ba() {
+        let sentence = "家の前の道さえ広ければSUVが買えたのに";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ〜ば");
+        assert_pattern_range(&patterns, "さえ〜ば", 4, 11); // 道さえ広ければ
+    }
+
+    // Test: な-Adjective + (で) + さえ + あれば
+    #[test]
+    fn test_sae_ba_na_adj_de_areba() {
+        let sentence = "僕は静かでさえあればどこでも寝れます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さえ〜ば");
+        assert_pattern_range(&patterns, "さえ〜ば", 4, 10); // でさえあれば
+    }
+}
