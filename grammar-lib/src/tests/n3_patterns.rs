@@ -4409,3 +4409,48 @@ mod chuu_tests {
         assert_pattern_range(&patterns, "中", 3, 8); // 家じゅうに
     }
 }
+
+// ============================================================================
+// って - Casual topic marker (replacing は)
+// ============================================================================
+// Pattern: Sentence topic + って
+// Data source: grammar_points_data.json["って"]
+// Structure: Sentence topic + って
+//
+// Note: This is the TOPIC MARKER usage (replacing は), not the quotation marker
+mod tte_tests {
+    use super::*;
+
+    // Test: Noun + って (topic marker - from grammar_points_data.json)
+    #[test]
+    fn test_tte_topic_marker() {
+        let sentence = "私って皆に嫌われている？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "って");
+        assert_pattern_range(&patterns, "って", 0, 3); // 私って
+    }
+
+    // Test: Noun + って (question about tomatoes - from grammar_points_data.json)
+    #[test]
+    fn test_tte_topic_question() {
+        let sentence = "トマトって野菜なの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "って");
+        assert_pattern_range(&patterns, "って", 0, 5); // トマトって
+    }
+
+    // Test: Noun + って in casual conversation
+    #[test]
+    fn test_tte_casual_topic() {
+        let sentence = "あの人って誰？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "って");
+        assert_pattern_range(&patterns, "って", 2, 5); // 人って
+    }
+}

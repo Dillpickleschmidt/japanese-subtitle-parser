@@ -2,9 +2,29 @@ use crate::pattern_matcher::TokenMatcher;
 use std::sync::Arc;
 use super::Matcher;
 
-// Pattern: って
+// って: Casual topic marker (replacing は)
+// Structures: Sentence topic + って
 pub fn tte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for って as topic marker particle
+    #[derive(Debug)]
+    struct TteParticleMatcher;
+    impl Matcher for TteParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match って as 助詞/格助詞/連語 (particle/case particle/compound)
+            token.surface == "って"
+                && token.base_form == "って"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Sentence topic (usually a noun)
+        TokenMatcher::Custom(Arc::new(TteParticleMatcher)),
+    ]
 }
 
 // Pattern: ばいい
