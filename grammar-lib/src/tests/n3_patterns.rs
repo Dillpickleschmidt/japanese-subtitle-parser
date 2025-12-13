@@ -6198,3 +6198,133 @@ mod mushiro_tests {
         assert_pattern_range(&patterns, "むしろ", 7, 10); // むしろ
     }
 }
+
+// ========== たらいい・といい (it would be good if) ==========
+// Pattern: たらいい・といい (conditional + いい - expressing desire/advice)
+// Data source: grammar_points_data.json["たらいい・といい"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[たら] + いい
+//   standard[1]: Verb[ば] + いい
+//   standard[2]: Verb + と + いい
+//   standard[3]: い-Adjective[た] + ら + いい
+//   standard[4]: い-Adjective[い] + ければ + いい
+//   standard[5]: い-Adjective + と + いい
+//   standard[6]: な-Adjective + だった + ら + いい
+//   standard[7]: な-Adjective + であれば + いい
+//   standard[8]: な-Adjective + だ + といい
+//   polite[0-8]: Same forms + です
+
+mod tara_ii_to_ii_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[たら] + いい
+    #[test]
+    fn test_verb_tara_ii() {
+        let sentence = "私もあんなに早く走れたらいいな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_たら連用");
+        assert_pattern_range(&patterns, "たらいい・といい_たら連用", 8, 14); // 走れたらいい
+    }
+
+    // Testing: standard[1] - Verb[ば] + いい
+    #[test]
+    fn test_verb_ba_ii() {
+        let sentence = "もっと時間があればいいのに";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_ば");
+        assert_pattern_range(&patterns, "たらいい・といい_ば", 6, 11); // あればいい
+    }
+
+    // Testing: standard[2] - Verb + と + いい
+    #[test]
+    fn test_verb_to_ii() {
+        let sentence = "来年は海外旅行に行けるといいね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_と");
+        assert_pattern_range(&patterns, "たらいい・といい_と", 8, 14); // 行けるといい
+    }
+
+    // Testing: standard[3] - い-Adjective[た] + ら + いい
+    #[test]
+    fn test_i_adj_tara_ii() {
+        let sentence = "もっと安かったらいいのに";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_たら連用タ");
+        assert_pattern_range(&patterns, "たらいい・といい_たら連用タ", 3, 10); // 安かったらいい
+    }
+
+    // Testing: standard[4] - い-Adjective[い] + ければ + いい
+    #[test]
+    fn test_i_adj_kereba_ii() {
+        let sentence = "天気が良ければいいね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_ば");
+        assert_pattern_range(&patterns, "たらいい・といい_ば", 3, 9); // 良ければいい
+    }
+
+    // Testing: standard[5] - い-Adjective + と + いい
+    #[test]
+    fn test_i_adj_to_ii() {
+        let sentence = "もっと早いといいんだけど";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_と");
+        assert_pattern_range(&patterns, "たらいい・といい_と", 3, 8); // 早いといい
+    }
+
+    // Testing: standard[6] - な-Adjective + だった + ら + いい
+    #[test]
+    fn test_na_adj_dattara_ii() {
+        let sentence = "もっと静かだったらいいのに";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_な形だったら");
+        assert_pattern_range(&patterns, "たらいい・といい_な形だったら", 3, 11); // 静かだったらいい
+    }
+
+    // Testing: standard[7] - な-Adjective + であれば + いい
+    #[test]
+    fn test_na_adj_deareba_ii() {
+        let sentence = "仕事が楽であればいいというわけではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_な形であれば");
+        assert_pattern_range(&patterns, "たらいい・といい_な形であれば", 3, 10); // 楽であればいい
+    }
+
+    // Testing: standard[8] - な-Adjective + だ + といい
+    #[test]
+    fn test_na_adj_da_to_ii() {
+        let sentence = "部屋が綺麗だといいね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_な形だと");
+        assert_pattern_range(&patterns, "たらいい・といい_な形だと", 3, 9); // 綺麗だといい
+    }
+
+    // Testing: polite[0] - Verb[たら] + いい + です
+    #[test]
+    fn test_verb_tara_ii_desu() {
+        let sentence = "もっと早く来られたらいいですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらいい・といい_たら連用");
+        assert_pattern_range(&patterns, "たらいい・といい_たら連用", 6, 14); // られたらいいです
+    }
+}

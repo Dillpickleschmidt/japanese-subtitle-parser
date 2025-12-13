@@ -2476,10 +2476,59 @@ declare_patterns! {
         jlpt: "n3",
     },
 
-    TaraiiU30fbToii {
-        name: "たらいい・といい",
-        matcher_fn: crate::matchers::n3::taraii_u30fb_toii,
-        priority: 1,
+    // たらいい・といい variants - 7 separate patterns for different conditional forms
+    TaraiiU30fbToiiBa {
+        name: "たらいい・といい_ば",
+        matcher_fn: crate::matchers::n3::taraii_u30fb_toii_ba,
+        priority: 6,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TaraiiU30fbToiiTaraTa {
+        name: "たらいい・といい_たら連用タ",
+        matcher_fn: crate::matchers::n3::taraii_u30fb_toii_tara_ta,
+        priority: 6,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TaraiiU30fbToiiTaraRen {
+        name: "たらいい・といい_たら連用",
+        matcher_fn: crate::matchers::n3::taraii_u30fb_toii_tara_ren,
+        priority: 6,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TaraiiU30fbToiiTo {
+        name: "たらいい・といい_と",
+        matcher_fn: crate::matchers::n3::taraii_u30fb_toii_to,
+        priority: 6,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TaraiiU30fbToiiNaDattara {
+        name: "たらいい・といい_な形だったら",
+        matcher_fn: crate::matchers::n3::taraii_u30fb_toii_na_dattara,
+        priority: 6,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TaraiiU30fbToiiNaDeareba {
+        name: "たらいい・といい_な形であれば",
+        matcher_fn: crate::matchers::n3::taraii_u30fb_toii_na_deareba,
+        priority: 6,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    TaraiiU30fbToiiNaDato {
+        name: "たらいい・といい_な形だと",
+        matcher_fn: crate::matchers::n3::taraii_u30fb_toii_na_dato,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },

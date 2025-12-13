@@ -32,9 +32,207 @@ pub fn baii() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たらいい・といい
+// たらいい・といい: Conditional + いい (it would be good if)
+// This pattern has multiple structural variants that will be registered separately
+
+// Helper matchers for conditional forms
+#[derive(Debug)]
+struct TaraConditionalMatcher;
+impl Matcher for TaraConditionalMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.surface == "たら"
+            && token.base_form == "た"
+            && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            && token.features.get(5).is_some_and(|f| f == "仮定形")
+    }
+}
+
+#[derive(Debug)]
+struct BaConditionalMatcher;
+impl Matcher for BaConditionalMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.surface == "ば"
+            && token.base_form == "ば"
+            && token.pos.first().is_some_and(|pos| pos == "助詞")
+            && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+    }
+}
+
+#[derive(Debug)]
+struct ToConditionalMatcher;
+impl Matcher for ToConditionalMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.surface == "と"
+            && token.base_form == "と"
+            && token.pos.first().is_some_and(|pos| pos == "助詞")
+            && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+    }
+}
+
+#[derive(Debug)]
+struct VerbOrIAdjKateiMatcher;
+impl Matcher for VerbOrIAdjKateiMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.features.get(5).is_some_and(|f| f == "仮定形")
+            && (token.pos.first().is_some_and(|pos| pos == "動詞")
+                || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+    }
+}
+
+#[derive(Debug)]
+struct VerbOrIAdjRenyouTaMatcher;
+impl Matcher for VerbOrIAdjRenyouTaMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.features.get(5).is_some_and(|f| f == "連用タ接続")
+            && (token.pos.first().is_some_and(|pos| pos == "動詞")
+                || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+    }
+}
+
+#[derive(Debug)]
+struct VerbOrIAdjRenyouMatcher;
+impl Matcher for VerbOrIAdjRenyouMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.features.get(5).is_some_and(|f| f == "連用形")
+            && (token.pos.first().is_some_and(|pos| pos == "動詞")
+                || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+    }
+}
+
+#[derive(Debug)]
+struct VerbOrIAdjKihonMatcher;
+impl Matcher for VerbOrIAdjKihonMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.features.get(5).is_some_and(|f| f == "基本形")
+            && (token.pos.first().is_some_and(|pos| pos == "動詞")
+                || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+    }
+}
+
+#[derive(Debug)]
+struct NaAdjStemMatcher;
+impl Matcher for NaAdjStemMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.pos.first().is_some_and(|pos| pos == "名詞")
+            && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+    }
+}
+
+#[derive(Debug)]
+struct DaRenyouTaMatcher;
+impl Matcher for DaRenyouTaMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.surface == "だっ"
+            && token.base_form == "だ"
+            && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+    }
+}
+
+#[derive(Debug)]
+struct DeRenyouMatcher;
+impl Matcher for DeRenyouMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.surface == "で"
+            && token.base_form == "だ"
+            && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            && token.features.get(5).is_some_and(|f| f == "連用形")
+    }
+}
+
+#[derive(Debug)]
+struct AreKateiMatcher;
+impl Matcher for AreKateiMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.surface == "あれ"
+            && token.base_form == "ある"
+            && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            && token.features.get(5).is_some_and(|f| f == "仮定形")
+    }
+}
+
+#[derive(Debug)]
+struct DaKihonMatcher;
+impl Matcher for DaKihonMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        token.surface == "だ"
+            && token.base_form == "だ"
+            && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            && token.features.get(5).is_some_and(|f| f == "基本形")
+    }
+}
+
+// Variant 1: Verb/い-Adj(仮定形) + ば + いい
+pub fn taraii_u30fb_toii_ba() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrIAdjKateiMatcher)),
+        TokenMatcher::Custom(Arc::new(BaConditionalMatcher)),
+        super::ii_form(),
+    ]
+}
+
+// Variant 2: Verb/い-Adj(連用タ接続) + たら + いい
+pub fn taraii_u30fb_toii_tara_ta() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrIAdjRenyouTaMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraConditionalMatcher)),
+        super::ii_form(),
+    ]
+}
+
+// Variant 3: Verb/い-Adj(連用形) + たら + いい
+pub fn taraii_u30fb_toii_tara_ren() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrIAdjRenyouMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraConditionalMatcher)),
+        super::ii_form(),
+    ]
+}
+
+// Variant 4: Verb/い-Adj(基本形) + と + いい
+pub fn taraii_u30fb_toii_to() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrIAdjKihonMatcher)),
+        TokenMatcher::Custom(Arc::new(ToConditionalMatcher)),
+        super::ii_form(),
+    ]
+}
+
+// Variant 5: な-Adj + だっ + たら + いい
+pub fn taraii_u30fb_toii_na_dattara() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Custom(Arc::new(NaAdjStemMatcher)),
+        TokenMatcher::Custom(Arc::new(DaRenyouTaMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraConditionalMatcher)),
+        super::ii_form(),
+    ]
+}
+
+// Variant 6: な-Adj + で + あれ + ば + いい
+pub fn taraii_u30fb_toii_na_deareba() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Custom(Arc::new(NaAdjStemMatcher)),
+        TokenMatcher::Custom(Arc::new(DeRenyouMatcher)),
+        TokenMatcher::Custom(Arc::new(AreKateiMatcher)),
+        TokenMatcher::Custom(Arc::new(BaConditionalMatcher)),
+        super::ii_form(),
+    ]
+}
+
+// Variant 7: な-Adj + だ + と + いい
+pub fn taraii_u30fb_toii_na_dato() -> Vec<TokenMatcher> {
+    vec![
+        TokenMatcher::Custom(Arc::new(NaAdjStemMatcher)),
+        TokenMatcher::Custom(Arc::new(DaKihonMatcher)),
+        TokenMatcher::Custom(Arc::new(ToConditionalMatcher)),
+        super::ii_form(),
+    ]
+}
+
+// Legacy function for backward compatibility (if patterns.rs uses it)
 pub fn taraii_u30fb_toii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Return the most common variant (たら form)
+    taraii_u30fb_toii_tara_ta()
 }
 
 // Pattern: 中

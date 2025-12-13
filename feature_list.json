@@ -4986,13 +4986,13 @@
   {
     "pattern_name": "たらいい・といい",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When any of the conjunction particles that carry the meaning of 'if' ( たら , ば , or と ) are paired with the い-Adjectiv... [9 std, 9 pol]",
     "priority": 3,
     "skip_reason": null
