@@ -1,21 +1,22 @@
 # Grammar-lib Development Progress
 
-## Session 146 - 2025-12-13
+## Session 146 - 2025-12-13 (Updated)
 
 ### ✅ Session Summary
-**Status**: じゃないか pattern fully implemented (N4 sentence-ending particle)
-**Patterns completed**: 1 new N4 construction pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 939 (was 935 at session start)
+**Status**: Two N4 patterns fully implemented (じゃないか + しか～ない)
+**Patterns completed**: 2 new N4 construction patterns
+**Tests added**: 8 comprehensive tests (4 + 4)
+**Total tests**: 943 (was 935 at session start)
 
 ### Accomplishments
 1. ✅ Implemented じゃないか pattern (N4) - "isn't it?" sentence-ending particle
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 939 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented しか～ない pattern (N4) - "only/nothing but" with negative verbs
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 943 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### じゃないか (N4) ✓
 - **File**: grammar-lib/src/matchers/n4.rs (janaika function, lines 771-844)
@@ -45,40 +46,70 @@
   - Used to confirm something or seek agreement, similar to "isn't it?" in English
   - Pattern successfully detects all variants from grammar_points_data.json
 
+#### しか～ない (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (shika_uff5e_nai function, lines 1483-1521)
+- **Tests**: 4 tests in n4_patterns.rs (mod shika_nai_tests, lines 1564-1623)
+- **Structure**:
+  - standard[0]: Noun + しか + Verb[ない]
+- **Tokenization**:
+  - Noun (名詞) before しか
+  - しか (助詞/係助詞)
+  - Wildcard (0-5 tokens) for various verb forms
+  - ない (助動詞 or 形容詞) or ん (助動詞 for ません)
+- **Implementation**: 4-token matcher
+  - noun_matcher(): Matches any noun
+  - ShikaMatcher: Matches しか (助詞/係助詞)
+  - Wildcard: Allows flexible verb conjugations (て forms, polite forms, etc.)
+  - NegativeAuxiliaryMatcher: Matches ない or ん (for ません)
+- **Meaning**: "only/nothing but" - expresses limitation, must use with negative verbs
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Include full Noun + しか + verb + ない construction
+  - 丼しか置いていない (chars 5-14) - noun + て form negative
+  - 匹しか釣れない (chars 8-15) - counter + simple negative
+  - コーヒーしかありません (chars 0-11) - noun + polite negative
+  - これしかない (chars 2-8) - pronoun + adjective ない
+- **Key insights**:
+  - ない can be 助動詞 (auxiliary verb) or 形容詞 (adjective) depending on context
+  - Pattern works with all negative forms: ない, ていない, ません, etc.
+  - Coexists with "Number + しか～ない" pattern (both can match counter nouns like 匹)
+  - Wildcard allows various verb conjugations before negative ending
+  - Different from だけ which doesn't require negative verbs
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N4)
-- **Tests written**: 4
-- **Tests passing**: 939/939 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~141 (matcher implementation + 4 tests + feature_list update)
+- **Patterns implemented**: 2 (N4)
+- **Tests written**: 8 (4 per pattern)
+- **Tests passing**: 943/943 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~246 (2 matcher implementations + 8 tests + 2 feature_list updates)
 
 ### Key Insights
-- じゃないか is a fundamental N4 sentence-ending pattern for confirmation questions
-- Flexible matcher handles both casual (じゃ) and formal (で + は) forms
-- Optional ん matcher correctly handles explanatory の usage
-- Test sentences cover all major usage patterns (verb, い-adj, な-adj, noun)
-- Pattern ranges capture full grammatical construction for proper context
-- Successfully implemented common N4 question particle pattern
-- This brings total N4 passing patterns from 18 to 19
+- じゃないか and しか～ない are fundamental N4 particle patterns
+- Both patterns demonstrate flexible matching strategies
+- じゃないか handles both casual (じゃ) and formal (で + は) forms
+- しか～ない requires negative verbs and works with multiple conjugation forms
+- Test sentences cover diverse usage patterns for each construction
+- Pattern ranges capture full grammatical constructions for proper context
+- Successfully implemented 2 common N4 patterns in one session
+- This brings total N4 passing patterns from 18 to 20
 
 ### Next Priorities
 Continue with N4 patterns (simple 1-2 structure patterns first):
 
 **Simple N4 patterns to implement next** (1-2 structures):
-1. **しか～ない** - "only" (1 structure)
-2. **それで** - "so/therefore" (1 structure, conjunction)
-3. **それでも** - "even so" (1 structure, conjunction)
-4. **それに** - "besides/moreover" (1 structure, conjunction)
-5. **なおす** - "redo/fix" (similar to おわる/はじめる, 1 std + 1 pol)
+1. **それで** - "so/therefore" (1 structure, conjunction)
+2. **それでも** - "even so" (1 structure, conjunction)
+3. **それに** - "besides/moreover" (1 structure, conjunction)
+4. **なおす** - "redo/fix" (similar to おわる/はじめる, 1 std + 1 pol)
+5. **さ** - nominalizer suffix for adjectives (2 std structures)
 6. **〜ようと思う・〜おうと思う** - "thinking of doing" (2 std + 2 pol)
 
 **Recommendation**: Continue with simple auxiliary verb/particle/conjunction patterns before tackling complex multi-structure patterns.
 
 ### Environment Status
-- ✅ All 939 tests passing (added 4 new tests)
+- ✅ All 943 tests passing (added 8 new tests)
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
