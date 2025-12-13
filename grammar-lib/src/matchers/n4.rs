@@ -1376,9 +1376,33 @@ pub fn gahoshii() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: てほしい
+// Pattern: てほしい (want someone to do)
+// Structures: Verb[て] + ほしい
 pub fn tehoshii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct HoshiiMatcher;
+    impl Matcher for HoshiiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ほしい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeFormMatcher)),
+        TokenMatcher::Custom(Arc::new(HoshiiMatcher)),
+    ]
 }
 
 // Pattern: ときいた

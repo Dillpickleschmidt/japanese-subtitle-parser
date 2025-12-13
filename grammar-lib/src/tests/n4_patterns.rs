@@ -3172,3 +3172,55 @@ mod temiru_tests {
         assert_pattern_range(&patterns, "てみる", 7, 11); // 切ってみ
     }
 }
+
+// ========== てほしい (want someone to do) ==========
+// Pattern: てほしい
+// Data source: grammar_points_data.json["てほしい"]
+//
+// Structures to test:
+//   - standard[0]: Verb[て] + ほしい
+//   - polite[0]: Verb[て] + ほしい + です
+//
+// Examples from data:
+//   - してほしい (want you to do)
+//   - 読んでほしい (want you to read)
+//   - 手伝ってほしい (want you to help)
+//
+// Note: Expresses "I want someone to do something"
+#[cfg(test)]
+mod tehoshii_tests {
+    use super::*;
+
+    // Structure: Verb[て] + ほしい + です (polite form)
+    #[test]
+    fn tehoshii_polite() {
+        let sentence = "毎日早く帰ってほしいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てほしい");
+        assert_pattern_range(&patterns, "てほしい", 4, 12); // 帰ってほしいです (includes です due to pattern overlap)
+    }
+
+    // Structure: Verb[て] + ほしい (casual)
+    #[test]
+    fn tehoshii_casual() {
+        let sentence = "皆に俺が書いた漫画を読んでほしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てほしい");
+        assert_pattern_range(&patterns, "てほしい", 10, 16); // 読んでほしい
+    }
+
+    // Structure: Verb[て] + ほしい + の (question)
+    #[test]
+    fn tehoshii_question() {
+        let sentence = "手伝ってほしいの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てほしい");
+        assert_pattern_range(&patterns, "てほしい", 0, 7); // 手伝ってほしい
+    }
+}
