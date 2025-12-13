@@ -1007,3 +1007,74 @@ mod owaru_tests {
         assert_pattern_range(&patterns, "おわる", 3, 11); // 読みおわりました
     }
 }
+
+// ========== がする (sensory experience) ==========
+// Pattern: がする
+// Data source: grammar_points_data.json["がする"]
+//
+// Structures to test:
+//   - standard[0]: Noun + が + する
+//   - polite[0]: Noun + が + します
+//
+// Examples from data:
+//   - 匂いがする (smells like)
+//   - 音がする (sounds like)
+//   - 味がする (tastes like)
+//   - 感じがする (feels like)
+//   - 気がする (I feel like)
+#[cfg(test)]
+mod gasuru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Noun + が + する
+    #[test]
+    fn test_gasuru_smell() {
+        let sentence = "この石鹸はバラの匂いがするから好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がする");
+        assert_pattern_range(&patterns, "がする", 8, 13); // 匂いがする
+    }
+
+    #[test]
+    fn test_gasuru_sound() {
+        let sentence = "誰かが階段を上がっている音がする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がする");
+        assert_pattern_range(&patterns, "がする", 12, 16); // 音がする
+    }
+
+    #[test]
+    fn test_gasuru_taste() {
+        let sentence = "このバナナが変な味がする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がする");
+        assert_pattern_range(&patterns, "がする", 8, 12); // 味がする
+    }
+
+    #[test]
+    fn test_gasuru_feeling() {
+        let sentence = "忘れた気がするんだけど";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がする");
+        assert_pattern_range(&patterns, "がする", 3, 7); // 気がする
+    }
+
+    // Testing: structure.polite[0] - Noun + が + します
+    #[test]
+    fn test_gasuru_polite() {
+        let sentence = "いい香りがしますね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がする");
+        assert_pattern_range(&patterns, "がする", 2, 8); // 香りがします
+    }
+}

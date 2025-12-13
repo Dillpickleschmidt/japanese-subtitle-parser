@@ -615,9 +615,39 @@ pub fn garu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: がする
+// Pattern: がする (sensory experience)
+// Structure: Noun + が + する/します
+//
+// Example tokenizations:
+// - 匂いがする: 匂い(名詞) + が(助詞/格助詞) + する(動詞/サ変・スル)
+// - 音がします: 音(名詞) + が(助詞/格助詞) + し(動詞/連用形) + ます(助動詞)
+//
+// Common sensory nouns: 匂い (smell), 音 (sound), 味 (taste), 感じ (feeling), 気 (sense/feeling)
 pub fn gasuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct SuruVerbMatcher;
+    impl Matcher for SuruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(), // Sensory noun (匂い, 音, 味, 感じ, 気, etc.)
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)), // が (格助詞)
+        TokenMatcher::Custom(Arc::new(SuruVerbMatcher)), // する (verb)
+    ]
 }
 
 // Pattern: たがる
