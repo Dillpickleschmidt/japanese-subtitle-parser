@@ -1,5 +1,114 @@
 # Grammar-lib Development Progress
 
+## Session 155 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: Three N4 patterns fully implemented (とうとう + より + てあげる)
+**Patterns completed**: 3 new N4 construction patterns
+**Tests added**: 9 comprehensive tests (3 + 3 + 3)
+**Total tests**: 1020 (was 1011 at session start)
+
+### Accomplishments
+1. ✅ Implemented とうとう pattern (N4) - "finally/at last"
+2. ✅ Implemented より pattern (N4) - "than/more than"
+3. ✅ Implemented てあげる pattern (N4) - "to do for someone"
+4. ✅ All 9 tests passing with proper range assertions
+5. ✅ No test regressions - all 1020 tests pass
+6. ✅ Updated feature_list.json for all 3 patterns
+7. ✅ Three clean commits with full documentation
+
+### Completed Patterns
+
+#### とうとう (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (toutou function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod toutou_tests, 3 tests)
+- **Structures**: standard[0]: とうとう + Phrase
+- **Tokenization**: Single token, 副詞/一般 (adverb)
+- **Implementation**: Simple adverb matcher (surface == "とうとう", POS == "副詞")
+- **Meaning**: "finally", "at last", "after all"
+- **Pattern priority**: 1
+- **Test coverage**: Positive outcome, negative outcome, achievement context
+
+#### より (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (yori function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod yori_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Verb + より + Adjective
+  - standard[1]: Noun + より + Adjective
+- **Tokenization**: Single token, 助詞/格助詞/一般 (case-marking particle)
+- **Implementation**: Particle matcher (surface == "より", POS == "助詞/格助詞")
+- **Meaning**: "than", "more than", "compared to"
+- **Pattern priority**: 1
+- **Test coverage**: Noun comparisons (2 tests), verb comparison
+
+#### てあげる (N4) ✓
+- **Files**:
+  - Matchers: grammar-lib/src/matchers/n4.rs (teageru function)
+  - Tests: grammar-lib/src/tests/n4_patterns.rs (mod teageru_tests, 3 tests)
+- **Structures**:
+  - standard[0]: Verb[て] + あげる
+  - polite[0]: Verb[て] + あげます
+- **Tokenization**: Verb (連用タ接続) + て/で (助詞) + あげる (動詞)
+- **Implementation**: Three-token matcher (flexible_verb_form + て/で + あげる)
+  - TeDeFormMatcher: て or で particle
+  - AgeruMatcher: base_form == "あげる", POS == "動詞"
+- **Meaning**: "to do (something) for (someone)", "to do as a favor"
+- **Pattern priority**: 1
+- **Test coverage**: Standard form, casual favor, polite form
+- **Pattern ranges**:
+  - 買ってあげる (chars 8-14)
+  - やってあげる (chars 6-12)
+  - 送ってあげます (chars 5-12)
+
+### Final Session Statistics
+- **Patterns implemented**: 3 (N4: とうとう, より, てあげる)
+- **Tests written**: 9 total (3 per pattern)
+- **Tests passing**: 1020/1020 (100%)
+- **Commits**: 3 clean commits
+- **Lines added**: ~210 (3 matcher implementations + 9 tests + feature_list updates)
+
+### Key Insights from Session
+1. **Simple patterns first**: とうとう and より were straightforward single-token matchers
+2. **て-form composition**: てあげる required combining flexible_verb_form + て/で particle + あげる
+3. **Consistent approach**: All patterns followed test-first workflow with print_debug
+4. **Efficient session**: Completed 3 patterns in one session (adverb + particle + て-form construction)
+5. **Good test coverage**: Each pattern tested with realistic subtitle-quality sentences
+6. **Pattern ranges verified**: All ranges include full grammatical constructions
+
+### Session Success
+- Successfully implemented 3 diverse N4 patterns (adverb, particle, て-form)
+- All tests use realistic Japanese sentences
+- Pattern ranges are correct and verified
+- No test regressions - clean implementation
+- Very efficient session - completed 3 patterns with excellent test coverage
+
+### Next Priorities
+Continue with simple N4 patterns:
+
+**Recommended next patterns** (simple て-form constructions):
+1. **てくれる** - "to do for me" (similar to てあげる, already has stub)
+2. **てある** - "state of completion" (1 std, 1 pol)
+3. **ていた** - "was doing" (1 std, 1 pol)
+4. **てみる** - "try to" (1 std, 1 pol)
+5. **てほしい** - "want someone to" (1 std, 1 pol)
+
+**Other simple patterns**:
+- **こそ** - emphasis particle
+- **ごろ** - "around/about" for time
+
+**Recommendation**: てくれる would be a natural next step (similar to てあげる just implemented).
+
+### Environment Status
+- ✅ All 1020 tests passing (added 9 new tests)
+- ✅ No regressions
+- ✅ Clean git state (3 commits)
+- ✅ feature_list.json updated
+- ✅ Ready for next session or termination
+
+---
+
 ## Session 154 - 2025-12-13
 
 ### ✅ Session Summary
