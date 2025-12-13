@@ -1,5 +1,99 @@
 # Grammar-lib Development Progress
 
+## Session 111 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (っぽい)
+**Patterns completed**: 1 new N3 suffix pattern
+**Tests added**: 6 comprehensive tests
+**Total tests**: 702 (was 696 at session start)
+
+### Accomplishments
+1. ✅ Implemented っぽい pattern (N3) - "ish/like/tendency to"
+2. ✅ All 6 tests passing with proper range assertions
+3. ✅ No test regressions - all 702 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### っぽい (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 3166-3189)
+- **Tests**: 6 tests in n3_patterns.rs (mod ppoi_tests)
+- **Structures**:
+  - standard[0]: Verb[stem] + っぽい
+  - standard[2]: な-Adjective + っぽい
+  - standard[3]: Noun + っぽい
+  - polite forms: + です
+  - conjugated: っぽかった, っぽくない
+- **Tokenization insights**:
+  - Split form: Content word + っぽい (形容詞/接尾) - detectable ✓
+  - Compound form: 白っぽい, 安っぽい (形容詞/自立) - NOT detectable (lexicalized)
+  - Common words like 白っぽい and 安っぽい are lexicalized as single tokens
+- **Implementation**: Simple 2-token matcher
+  - PpoiSuffixMatcher: Matches っぽい as 形容詞/接尾 with base_form="っぽい"
+  - TokenMatcher::Any for content word (verb, noun, or な-adjective)
+  - Pattern range includes content word + っぽい suffix
+- **Meaning**: "ish/like/tendency to" - exhibits characteristics of (A), often negative connotation
+- **Pattern priority**: 1 (standard N3 suffix pattern, same as がち/ぎみ)
+- **Pattern ranges**: Include content word + っぽい
+  - 飽きっぽい (chars 2-7) - Verb + っぽい
+  - 有名っぽい (chars 15-20) - な-Adj + っぽい
+  - 嘘っぽい (chars 4-8) - Noun + っぽい
+  - 紫っぽかった (chars 2-8) - Past conjugation
+  - 子供っぽくない (chars 5-12) - Negative conjugation
+  - 赤っぽいです (chars 15-21) - Polite form
+
+### Technical Details
+- **Pattern priority**: 1 (N3 suffix construction)
+- **Test coverage**: 4 main structure variants from grammar_points_data.json
+  - standard[0]: Verb[stem] + っぽい (1 test)
+  - standard[2]: な-Adjective + っぽい (1 test)
+  - standard[3]: Noun + っぽい (3 tests - basic, polite, conjugated)
+  - NOTE: standard[1] (い-Adjective + っぽい) is undetectable - see below
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Lexicalized compounds (白っぽい, 安っぽい) tokenize as 形容詞/自立, not as suffix patterns
+- **Undetectable variants**: Common い-Adjective combinations are lexicalized
+  - 安っぽい (cheap-ish) → 形容詞/自立 (NOT 安 + っぽい)
+  - 白っぽい (whitish) → 形容詞/自立 (NOT 白 + っぽい)
+  - These are treated as standalone adjectives by the tokenizer
+  - Documented in TODO comments in test file
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 6 (covering detectable variants)
+- **Tests passing**: 702/702 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~139 (matcher implementation + 6 tests + TODO comments + feature_list update)
+
+### Key Insights
+- っぽい creates い-Adjectives, so it conjugates like い-Adjectives (っぽい, っぽく, っぽかった)
+- Pattern successfully detects split tokenization (content word + っぽい suffix)
+- Common combinations become lexicalized and cannot be detected as patterns
+- Test sentences are realistic and cover different usage contexts
+- Pattern includes full construction (content word + suffix) for proper context
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. さえ - "even" (emphasis particle, 6 structure variants - more complex)
+2. そうだ - hearsay/conjecture (4 standard + 4 polite = 8 variants)
+3. って - quotation/hearsay particle (multiple uses)
+4. ついでに - "while you're at it / on the occasion of"
+5. わけだ - "it means that / no wonder" (explanatory pattern)
+
+**Recommendation**: Continue with concrete N3 patterns before tackling more complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 702 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 110 - 2025-12-13
 
 ### ✅ Session Summary
