@@ -1933,9 +1933,18 @@ pub fn dono() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(DonoMatcher))]
 }
 
-// Pattern: ている②
+// Pattern: ている② (resultative/completed state)
+// Structures: Verb[て] + いる (same as ている①)
+// NOTE: This pattern tokenizes IDENTICALLY to ている① and ている③.
+// The difference is only SEMANTIC:
+//   - ている① = progressive ("am doing")
+//   - ている② = resultative ("has done and the result continues")
+//   - ている③ = habitual ("regularly does")
+// All three patterns use the same matcher and will match simultaneously.
+// The application displays all three grammar explanations, allowing the user
+// to determine meaning from context (similar to らしい① vs らしい②).
 pub fn teiru_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    teiru_u2460()  // Same matcher as ている①
 }
 
 // てから: After doing
@@ -3377,9 +3386,18 @@ pub fn takotogaaru() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: ている③
+// Pattern: ている③ (habitual/repeated action)
+// Structures: Verb[て] + いる (same as ている①)
+// NOTE: This pattern tokenizes IDENTICALLY to ている① and ている②.
+// The difference is only SEMANTIC:
+//   - ている① = progressive ("am doing")
+//   - ている② = resultative ("has done and the result continues")
+//   - ている③ = habitual ("regularly does")
+// All three patterns use the same matcher and will match simultaneously.
+// The application displays all three grammar explanations, allowing the user
+// to determine meaning from context (similar to らしい① vs らしい②).
 pub fn teiru_u2462() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    teiru_u2460()  // Same matcher as ている①
 }
 
 // Pattern: Adjective + て・Noun + で (basic linking form)

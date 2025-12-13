@@ -109,6 +109,131 @@ mod te_iru_tests {
     }
 }
 
+// ========== ている② (Resultative State) ==========
+// Pattern: ている② (resultative/completed state)
+// Data source: grammar_points_data.json["ている②"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[て] + いる
+//   standard[1]: Verb[て] + る (contracted)
+//   polite[0]: Verb[て] + います
+//   polite[1]: Verb[て] + ます (contracted)
+//
+// NOTE: This pattern tokenizes IDENTICALLY to ている① and ている③.
+// The difference is only SEMANTIC:
+//   - ている① = progressive ("am doing")
+//   - ている② = resultative ("has done and the result continues")
+//   - ている③ = habitual ("regularly does")
+// When Verb[て] + いる is detected, ALL THREE patterns will match.
+// The application shows all three grammar explanations to the user,
+// who determines meaning from context (similar to らしい① vs らしい②).
+
+mod teiru_u2461_tests {
+    use super::*;
+
+    #[test]
+    fn test_state_has_started() {
+        // Class has started (and is ongoing)
+        let sentence = "クラスは始まっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている②");
+        assert_pattern_range(&patterns, "ている②", 4, 10); // 始まっている
+    }
+
+    #[test]
+    fn test_state_has_gone() {
+        // Mom went (and is still gone)
+        let sentence = "お母さんは今買い物に行っています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている②");
+        assert_pattern_range(&patterns, "ている②", 10, 16); // 行っています
+    }
+
+    #[test]
+    fn test_state_is_dead() {
+        // Dog is dead (has died and remains dead)
+        let sentence = "あの犬は死んでいるだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている②");
+        assert_pattern_range(&patterns, "ている②", 4, 12); // 死んでいるだろう (includes だろう)
+    }
+
+    #[test]
+    fn test_state_is_angry() {
+        // Teacher is angry (got angry and remains angry)
+        let sentence = "先生がめちゃ怒っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている②");
+        assert_pattern_range(&patterns, "ている②", 6, 11); // 怒っている
+    }
+}
+
+// ========== ている③ (Habitual Action) ==========
+// Pattern: ている③ (habitual/repeated action)
+// Data source: grammar_points_data.json["ている③"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[て] + いる
+//   standard[1]: Verb[て] + る (contracted)
+//   standard[2]: Verb[て] + とる (dialectal)
+//   polite[0]: Verb[て] + います
+//   polite[1]: Verb[て] + ます (contracted)
+//   polite[2]: Verb[て] + とります (dialectal)
+//
+// NOTE: This pattern tokenizes IDENTICALLY to ている① and ている②.
+// The difference is only SEMANTIC:
+//   - ている① = progressive ("am doing")
+//   - ている② = resultative ("has done and the result continues")
+//   - ている③ = habitual ("regularly does")
+// When Verb[て] + いる is detected, ALL THREE patterns will match.
+// The application shows all three grammar explanations to the user,
+// who determines meaning from context (similar to らしい① vs らしい②).
+
+mod teiru_u2462_tests {
+    use super::*;
+
+    #[test]
+    fn test_habitual_play_guitar() {
+        // I play guitar every day (habitual activity)
+        let sentence = "私は毎日ギターを弾いている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている③");
+        assert_pattern_range(&patterns, "ている③", 8, 13); // 弾いている
+    }
+
+    #[test]
+    fn test_habitual_sleep_time() {
+        // I sleep at 9 every night (habitual pattern)
+        let sentence = "毎晩９時に寝ている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている③");
+        assert_pattern_range(&patterns, "ている③", 5, 9); // 寝ている
+    }
+
+    #[test]
+    fn test_habitual_work_at_school() {
+        // He works at a school (regular activity)
+        let sentence = "彼は学校で働いています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ている③");
+        assert_pattern_range(&patterns, "ている③", 5, 11); // 働いています
+    }
+}
+
 // ========== も (Also/Too) ==========
 // Pattern: も (also/too/even)
 // Data source: grammar_points_data.json["も"]
