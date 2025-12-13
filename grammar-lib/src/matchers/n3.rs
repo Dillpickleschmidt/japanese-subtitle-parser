@@ -2107,9 +2107,19 @@ pub fn toshitara_u30fb_tosureba_u30fb_tosuruto() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: として
+// Pattern: として (as / in the capacity of)
+// Structures: Noun + として
 pub fn toshite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ToshiteMatcher;
+    impl Matcher for ToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "として"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(ToshiteMatcher))]
 }
 
 // Pattern: にしては

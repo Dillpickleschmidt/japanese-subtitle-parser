@@ -6497,3 +6497,59 @@ mod tokorodatta_tests {
         assert_pattern_range(&patterns, "ところだった ①", 13, 21); // ないところでした
     }
 }
+
+// ========== として (as / in the capacity of) ==========
+// Pattern: として (as / in the capacity of)
+// Data source: grammar_points_data.json["として"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + として
+//   standard[1]: Noun + として + Noun
+
+mod toshite_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + として
+    #[test]
+    fn test_noun_toshite() {
+        let sentence = "ミキは友達としては最高だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "として");
+        assert_pattern_range(&patterns, "として", 5, 8); // として
+    }
+
+    // Testing: standard[0] - Noun + として (different example)
+    #[test]
+    fn test_noun_toshite_dvd_player() {
+        let sentence = "このゲーム機はＤＶＤプレイヤーとしても使えます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "として");
+        assert_pattern_range(&patterns, "として", 15, 18); // として
+    }
+
+    // Testing: standard[1] - Noun + として + Noun (失格)
+    #[test]
+    fn test_noun_toshite_noun() {
+        let sentence = "動物を傷つける奴は人間として失格だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "として");
+        assert_pattern_range(&patterns, "として", 11, 14); // として
+    }
+
+    // Testing: standard[1] - Noun + として + の + Noun
+    #[test]
+    fn test_noun_toshite_no_noun() {
+        let sentence = "これは会社としての目標です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "として");
+        assert_pattern_range(&patterns, "として", 5, 8); // として
+    }
+}
