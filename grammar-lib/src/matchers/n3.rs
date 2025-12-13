@@ -4806,9 +4806,25 @@ pub fn nikawatte() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: どころか
+// Pattern: どころか (far from, let alone, anything but)
+// Structures: Verb/Adjective/Noun/な + どころか
 pub fn dokoroka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct DokorokaMatcher;
+    impl Matcher for DokorokaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どころか"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(DokorokaMatcher)),
+    ]
 }
 
 // Pattern: という理由で

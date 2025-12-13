@@ -6872,3 +6872,74 @@ mod tohakagiranai_tests {
         assert_pattern_range(&patterns, "とは限らない", 9, 18); // 若いとは限りません
     }
 }
+
+
+// ========== どころか (far from, let alone) ==========
+// Pattern: どころか (far from, let alone, anything but)
+// Data source: grammar_points_data.json["どころか"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + どころか
+//   standard[1]: い-Adjective + どころか
+//   standard[2]: な-Adjective + な + どころか
+//   standard[3]: Noun + どころか
+//   standard[4]: Verb[ない] + どころか
+
+mod dokoroka_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + どころか
+    #[test]
+    fn test_verb_dokoroka() {
+        let sentence = "疲れるどころか、楽しくてたまらなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころか");
+        assert_pattern_range(&patterns, "どころか", 0, 7); // 疲れるどころか
+    }
+
+    // Testing: standard[1] - い-Adjective + どころか
+    #[test]
+    fn test_i_adjective_dokoroka() {
+        let sentence = "このカレーは甘いどころか、めちゃくちゃ辛かった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころか");
+        assert_pattern_range(&patterns, "どころか", 6, 12); // 甘いどころか
+    }
+
+    // Testing: standard[2] - な-Adjective + な + どころか
+    #[test]
+    fn test_na_adjective_dokoroka() {
+        let sentence = "昨日の仕事は楽などころか、本当に大変だったよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころか");
+        assert_pattern_range(&patterns, "どころか", 7, 12); // などころか
+    }
+
+    // Testing: standard[3] - Noun + どころか
+    #[test]
+    fn test_noun_dokoroka() {
+        let sentence = "彼女は酎ハイどころかビールも飲まない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころか");
+        assert_pattern_range(&patterns, "どころか", 4, 10); // ハイどころか
+    }
+
+    // Testing: standard[4] - Verb[ない] + どころか
+    #[test]
+    fn test_negative_verb_dokoroka() {
+        let sentence = "勉強しないどころか、遊んでばかりいる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころか");
+        assert_pattern_range(&patterns, "どころか", 3, 9); // ないどころか
+    }
+}
