@@ -3,19 +3,20 @@
 ## Session 118 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (てごらん)
-**Patterns completed**: 1 new N3 honorific suggestion pattern
-**Tests added**: 3 comprehensive tests
-**Total tests**: 735 (was 732 at session start)
+**Status**: Two N3 patterns fully implemented (てごらん + ちゃんと・きちんと)
+**Patterns completed**: 2 new N3 patterns (1 honorific + 1 adverb)
+**Tests added**: 8 comprehensive tests (3 + 5)
+**Total tests**: 740 (was 732 at session start)
 
 ### Accomplishments
 1. ✅ Implemented てごらん pattern (N3) - "please try to"
-2. ✅ All 3 tests passing with proper range assertions
-3. ✅ No test regressions - all 735 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented ちゃんと・きちんと pattern (N3) - "properly/neatly"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 740 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### てごらん (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (lines 429-474)
@@ -39,7 +40,29 @@
   - 見てごらん (chars 2-7) - different verb
   - 見てごらんなさい (chars 0-8) - with なさい (stronger/command-like)
 
-### Technical Details
+#### ちゃんと・きちんと (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 1085-1102)
+- **Tests**: 5 tests in n3_patterns.rs (mod chanto_kichinto_tests)
+- **Structures**:
+  - standard[0]: ちゃんと + Phrase
+  - standard[1]: ちゃんと + した + Noun
+  - standard[2]: ちゃんと + している
+  - Note: きちんと has same structures
+- **Tokenization insights**:
+  - ちゃんと = 副詞/一般 with base_form="ちゃんと"
+  - きちんと = 副詞/一般 with base_form="きちんと"
+- **Implementation**: Single-token matcher (simple adverb)
+  - ChantoKichintoMatcher: Matches ちゃんと or きちんと as 副詞/一般
+- **Meaning**: "properly/neatly" - adverbs expressing doing something correctly/without dawdling
+- **Pattern priority**: 3 (N3 adverb pattern)
+- **Pattern ranges**: Just the adverb itself
+  - ちゃんと (chars 0-4) - sentence start
+  - ちゃんと (chars 8-12) - mid-sentence with もっと
+  - ちゃんと (chars 3-7) - before している
+  - きちんと (chars 5-9) - mid-sentence
+  - きちんと (chars 0-4) - sentence start
+
+### Technical Details - てごらん
 - **Pattern priority**: 3 (high-priority N3 honorific construction)
 - **Test coverage**: All 2 structure variants from grammar_points_data.json
   - standard[0]: Verb[て] + ごらん (2 tests)
@@ -48,38 +71,51 @@
 - **Key insight**: ごらん is a bound verb noun (名詞/動詞非自立的), not a regular verb
 - **Grammar note**: Honorific language - only for suggestions to others, never for own actions
 
+### Technical Details - ちゃんと・きちんと
+- **Pattern priority**: 3 (high-priority N3 adverb pattern)
+- **Test coverage**: All 3 structure variants from grammar_points_data.json
+  - standard[0]: ちゃんと/きちんと + Phrase (2 tests)
+  - standard[1]: ちゃんと/きちんと + した + Noun (1 test)
+  - standard[2]: ちゃんと/きちんと + している (1 test)
+  - きちんと variants (1 test covering sentence-start usage)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Simple adverb pattern - just match the surface form as 副詞/一般
+- **Grammar note**: Historically ちゃんと also meant "quickly", but now both primarily mean "properly/without dawdling"
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 3
-- **Tests passing**: 735/735 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~96 (matcher implementation + 3 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (3 + 5)
+- **Tests passing**: 740/740 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~185 (2 matcher implementations + 8 tests + 2 feature_list updates)
 
 ### Key Insights
 - てごらん is an honorific expression using ご覧 (御覧, "to look/peruse")
 - Pattern correctly handles optional なさい suffix for stronger imperative tone
 - ごらん tokenizes as bound verb noun, not as standalone verb
+- ちゃんと・きちんと are simple adverb patterns - no complex token matching needed
+- Both adverbs can appear at sentence start or mid-sentence before verbs/phrases
 - Test sentences use realistic examples from grammar_points_data.json
-- Pattern ranges include full construction for proper grammatical context
-- Primarily used in spoken/casual Japanese by superiors to subordinates
+- Pattern ranges include full constructions for proper grammatical context
+- Session completed 2 patterns with different complexity levels (compound construction vs simple adverb)
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
 
 **High-value N3 patterns to implement**:
-1. ちゃんと・きちんと - "properly/neatly" (adverbs, 3 structures)
-2. っけ - "again/I wonder" (confirmation/recall particle, 5 structures)
-3. さえ - "even" (emphasis particle, 6 structure variants - complex)
-4. そうだ - hearsay/conjecture (4 standard + 4 polite = 8 variants)
-5. ために - "for the purpose of / because of" (multiple variants)
+1. っけ - "again/I wonder" (confirmation/recall particle, 5 structures)
+2. さえ - "even" (emphasis particle, 6 structure variants - complex)
+3. そうだ - hearsay/conjecture (4 standard + 4 polite = 8 variants)
+4. ために - "for the purpose of / because of" (multiple variants)
+5. わけだ - "it means that / no wonder" (explanatory pattern)
 
-**Recommendation**: Continue with simpler N3 patterns like ちゃんと・きちんと before tackling complex multi-structure patterns.
+**Recommendation**: Continue with simpler N3 patterns like っけ before tackling complex multi-structure patterns like さえ or そうだ.
 
 ### Environment Status
-- ✅ All 735 tests passing (added 3 new tests)
+- ✅ All 740 tests passing (added 8 new tests)
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
