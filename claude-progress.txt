@@ -1,5 +1,81 @@
 # Grammar-lib Development Progress
 
+## Session 143 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: こと pattern fully implemented (N4 nominalization)
+**Patterns completed**: 1 new N4 construction pattern
+**Tests added**: 4 comprehensive tests
+**Total tests**: 919 (was 915 at session start)
+
+### Accomplishments
+1. ✅ Implemented こと pattern (N4) - nominalization ("the thing that...")
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 919 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### こと (N4) ✓
+- **File**: grammar-lib/src/matchers/n4.rs (koto function, lines 333-363)
+- **Tests**: 4 tests in n4_patterns.rs (mod koto_tests, lines 1199-1260)
+- **Structure**:
+  - standard[0]: Verb + こと
+- **Tokenization**:
+  - Verb (any form: 基本形, negative, past, etc.) OR auxiliary verb
+  - こと (名詞/非自立/一般)
+- **Implementation**: VerbOrAuxiliaryMatcher + KotoMatcher
+  - VerbOrAuxiliaryMatcher: Matches tokens with pos=動詞 or 助動詞 (not 名詞)
+  - KotoMatcher: Matches こと (名詞/非自立)
+- **Meaning**: Nominalization - creates noun phrases from verbs (e.g., "doing X", "the act of X")
+- **Pattern priority**: 1 (N4 construction)
+- **Pattern ranges**: Include verb/auxiliary + こと
+  - すること (chars 6-10) - dictionary form verb + こと
+  - ないこと (chars 7-11) - auxiliary verb + こと
+  - なること (chars 6-10) - basic verb + こと
+  - 食べること (chars 0-5) - simple verb + こと
+- **Key insights**:
+  - Pattern matches verb/auxiliary verbs only (excludes nouns like 勉強)
+  - For compound verbs like 勉強する, matches just "する + こと", not the whole phrase
+  - こと is a bound noun (名詞/非自立) used for nominalization, similar to のは
+
+### Session Statistics
+- **Patterns implemented**: 1 (N4)
+- **Tests written**: 4
+- **Tests passing**: 919/919 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~121 (matcher implementation + 4 tests + feature_list update)
+
+### Key Insights
+- こと is a fundamental N4 nominalization pattern
+- Simple 2-token matcher: verb/auxiliary + こと
+- Pattern correctly excludes nouns (even サ変接続 nouns)
+- Test sentences cover different verb forms (dictionary, negative, basic)
+- Successfully implemented a core N4 grammar construction
+
+### Next Priorities
+Continue with N4 patterns (simple 1-2 structure patterns first):
+
+**Simple N4 patterns to implement next** (1-2 structures):
+1. **ございます** - polite form of ある (1 std + 1 pol)
+2. **しか～ない** - "only" (1 structure)
+3. **じゃないか** - "isn't it?" (1 structure)
+4. **お～ください** - honorific request (1 structure)
+5. **なおす** - "redo/fix" (similar to おわる/はじめる, 1 std + 1 pol)
+6. **ようだ** - "seems like/appears to be" (2-3 structures)
+
+**Recommendation**: Continue with simple auxiliary verb/particle patterns before tackling complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 919 tests passing (added 4 new tests)
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 142 - 2025-12-13
 
 ### ✅ Session Summary
