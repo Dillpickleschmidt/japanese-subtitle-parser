@@ -461,9 +461,33 @@ pub fn mazu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: まで
+// Pattern: まで (even, to the extent)
+// Structures: Noun + まで(も)
+//
+// This is the N4 "even" meaning of まで (adverbial particle).
+// Tokenizes identically to N5 まで (until/to) - only semantic difference.
+// Both N5 and N4 patterns will match the same text.
+// Application should show both grammar explanations to user.
+//
+// Tokenization: Noun + まで (助詞/副助詞)
+// Note: まで + も is matched as separate tokens, not a compound
 pub fn made() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::noun_matcher;
+
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+    ]
 }
 
 // Pattern: までに (by/until - deadline)

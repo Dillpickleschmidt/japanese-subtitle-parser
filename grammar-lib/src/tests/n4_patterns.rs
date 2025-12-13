@@ -3396,3 +3396,49 @@ mod teyokatta_tests {
         assert_pattern_range(&patterns, "てよかった", 7, 12); // てよかった
     }
 }
+
+// Pattern: まで (even, to the extent)
+// Data source: grammar_points_data.json["まで"]
+// Testing: structure.standard[0] - "Noun + まで(も)"
+//
+// This is the N4 "even" meaning of まで (adverbial particle).
+// Different from N5 "まで" (until - temporal/spatial limit).
+//
+// Meaning: "even", "to the extent", highlighting unexpectedness
+// Tokenization: Noun + まで (助詞/副助詞) [+ も (助詞/係助詞)]
+mod made_tests {
+    use super::*;
+
+    // Structure: Noun + まで
+    #[test]
+    fn made_noun_even() {
+        let sentence = "バイクまで持っているの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まで");
+        assert_pattern_range(&patterns, "まで", 0, 5); // バイクまで
+    }
+
+    // Structure: Noun + まで (emphasized extent)
+    #[test]
+    fn made_disliked_thing() {
+        let sentence = "お腹が空きすぎて、大嫌いなバナナまで食べた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まで");
+        assert_pattern_range(&patterns, "まで", 13, 18); // バナナまで
+    }
+
+    // Structure: Noun + まで + も (emphatic)
+    #[test]
+    fn made_mo_emphatic() {
+        let sentence = "私はスポーツカーまでも持っています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まで");
+        assert_pattern_range(&patterns, "まで", 2, 10); // スポーツカーまで
+    }
+}
