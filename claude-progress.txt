@@ -3,19 +3,20 @@
 ## Session 119 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (っけ)
-**Patterns completed**: 1 new N3 sentence-ending particle pattern
-**Tests added**: 5 comprehensive tests
-**Total tests**: 745 (was 740 at session start)
+**Status**: Two N3 patterns fully implemented (っけ + さ - Casual よ)
+**Patterns completed**: 2 new N3 sentence-ending particle patterns
+**Tests added**: 8 comprehensive tests (5 + 3)
+**Total tests**: 748 (was 740 at session start)
 
 ### Accomplishments
 1. ✅ Implemented っけ pattern (N3) - "recall/confirmation particle"
-2. ✅ All 5 tests passing with proper range assertions
-3. ✅ No test regressions - all 745 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented さ - Casual よ pattern (N3) - "sentence-ending particle"
+3. ✅ All 8 tests passing with proper range assertions
+4. ✅ No test regressions - all 748 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### っけ (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (lines 3491-3525)
@@ -43,7 +44,25 @@
   - 青かったっけ (chars 11-17) - い-Adjective[た] + っけ
   - だったっけ (chars 6-11, 4-9) - な-Adjective/Noun + だった + っけ
 
-### Technical Details
+#### さ - Casual よ (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 1431-1451)
+- **Tests**: 3 tests in n3_patterns.rs (mod sa_casual_yo_tests)
+- **Structures**:
+  - standard[0]: Phrase + さ
+- **Tokenization insights**:
+  - さ = 助詞/終助詞 (sentence-ending particle) with base_form="さ"
+  - Simple sentence-ending particle used for emphasis with confidence
+- **Implementation**: 2-token matcher
+  - TokenMatcher::Any: Phrase/content word before さ
+  - SaCasualYoMatcher: Matches さ as 助詞/終助詞
+- **Meaning**: Casual replacement for よ - draws attention with high confidence in what one is saying
+- **Pattern priority**: 1 (N3 particle pattern)
+- **Pattern ranges**: Include content word + さ
+  - ってさ (chars 16-19) - quotation + さ
+  - だってさ (chars 16-20) - hearsay + さ
+  - ないさ (chars 7-10) - adjective + さ
+
+### Technical Details - っけ
 - **Pattern priority**: 1 (N3 particle construction)
 - **Test coverage**: All 5 structure variants from grammar_points_data.json
   - standard[0]: Verb[た] + っけ (1 test)
@@ -55,20 +74,28 @@
 - **Key insight**: Pattern matches any content word followed by た/だ in 基本形, then っけ
 - **Grammar note**: っけ is casual register, used when asking oneself or others about forgotten information
 
+### Technical Details - さ - Casual よ
+- **Pattern priority**: 1 (N3 particle construction)
+- **Test coverage**: 1 structure variant from grammar_points_data.json
+  - standard[0]: Phrase + さ (3 tests covering different contexts)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Simple 2-token pattern - TokenMatcher::Any + sentence-ending さ particle
+- **Grammar note**: Primarily used by men, conveys "what I just said is correct" with varying tones
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 5
-- **Tests passing**: 745/745 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~116 (matcher implementation + 5 tests + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 8 (5 + 3)
+- **Tests passing**: 748/748 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~185 (2 matcher implementations + 8 tests + 2 feature_list updates)
 
 ### Key Insights
-- っけ is a sentence-ending particle specifically for recall/confirmation
-- Pattern successfully handles all conjugation types (verb, i-adj, na-adj, noun)
-- TokenMatcher::Any elegantly handles all content word types before the auxiliary
+- Both patterns are sentence-ending particles with different functions
+- っけ is for recall/confirmation, さ is for emphasis with confidence
+- TokenMatcher::Any works elegantly for both patterns to match preceding content
 - Test sentences are realistic and cover different usage contexts
-- Pattern ranges include full grammatical construction (not just っけ alone)
-- Session completed 1 pattern efficiently with comprehensive test coverage
+- Pattern ranges include full grammatical construction for proper context
+- Session completed 2 simple but important N3 particle patterns efficiently
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
@@ -83,10 +110,10 @@ Continue with N3 patterns (high-priority incomplete patterns):
 **Recommendation**: Continue with concrete N3 patterns before tackling complex multi-structure patterns.
 
 ### Environment Status
-- ✅ All 745 tests passing
+- ✅ All 748 tests passing (added 8 new tests)
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
