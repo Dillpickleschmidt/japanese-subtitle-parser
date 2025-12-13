@@ -6774,3 +6774,101 @@ mod nomani_tests {
         assert_pattern_range(&patterns, "の間に", 4, 6); // 間に
     }
 }
+
+// Pattern: とは限らない (not necessarily, not always)
+// Data source: grammar_points_data.json["とは限らない"]
+// Testing: All structure variants
+#[cfg(test)]
+mod tohakagiranai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + とは限（かぎ）らない
+    // Note: "高い" is an i-adjective, so the pattern starts from "いい"
+    #[test]
+    fn test_verb_tohakagiranai() {
+        let sentence = "高いからといって品質がいいとは限らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは限らない");
+        assert_pattern_range(&patterns, "とは限らない", 11, 19); // いいとは限らない
+    }
+
+    // Testing: standard[1] - い-Adjective + とは限（かぎ）らない
+    #[test]
+    fn test_i_adjective_tohakagiranai() {
+        let sentence = "新しいものが必ずしも良いとは限らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは限らない");
+        assert_pattern_range(&patterns, "とは限らない", 10, 18); // 良いとは限らない
+    }
+
+    // Testing: standard[2] - な-Adjective + だ + とは限（かぎ）らない
+    // Note: "信頼できる" is a verb, not a na-adjective
+    #[test]
+    fn test_na_adjective_tohakagiranai() {
+        let sentence = "有名だからと言って信頼できるとは限らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは限らない");
+        assert_pattern_range(&patterns, "とは限らない", 11, 20); // できるとは限らない
+    }
+
+    // Testing: standard[3] - Noun + だ + とは限（かぎ）らない
+    #[test]
+    fn test_noun_tohakagiranai() {
+        let sentence = "留学生だからといって英語が上手だとは限らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは限らない");
+        assert_pattern_range(&patterns, "とは限らない", 13, 22); // 上手だとは限らない
+    }
+
+    // Testing: polite[0] - Verb + とは限（かぎ）りません
+    #[test]
+    fn test_verb_tohakagiranai_polite() {
+        let sentence = "頑張ったからといって成功するとは限りません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは限らない");
+        assert_pattern_range(&patterns, "とは限らない", 10, 21); // 成功するとは限りません
+    }
+
+    // Testing: polite[1] - い-Adjective + とは限（かぎ）りません
+    #[test]
+    fn test_i_adjective_tohakagiranai_polite() {
+        let sentence = "安いからといって質が悪いとは限りません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは限らない");
+        assert_pattern_range(&patterns, "とは限らない", 10, 19); // 悪いとは限りません
+    }
+
+    // Testing: polite[2] - な-Adjective + だ + とは限（かぎ）りません
+    #[test]
+    fn test_na_adjective_tohakagiranai_polite() {
+        let sentence = "彼が親切だからといって全員に優しいとは限りません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは限らない");
+        assert_pattern_range(&patterns, "とは限らない", 14, 24); // 優しいとは限りません
+    }
+
+    // Testing: polite[3] - Noun + だ + とは限（かぎ）りません
+    #[test]
+    fn test_noun_tohakagiranai_polite() {
+        let sentence = "学生だからといって若いとは限りません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは限らない");
+        assert_pattern_range(&patterns, "とは限らない", 9, 18); // 若いとは限りません
+    }
+}

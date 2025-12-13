@@ -3068,9 +3068,72 @@ pub fn nikagiru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: とは限らない
+// Pattern: とは限らない (not necessarily, not always)
+// Structures: Verb/い-Adj/な-Adj/Noun + (だ) + とは限らない/とは限りません
 pub fn tohakagiranai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と particle (quotation)
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match は topic particle
+    #[derive(Debug)]
+    struct WaTopicMatcher;
+    impl Matcher for WaTopicMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match 限る verb
+    #[derive(Debug)]
+    struct KagiruMatcher;
+    impl Matcher for KagiruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "限る"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match ない auxiliary (casual negative)
+    #[derive(Debug)]
+    struct NaiAuxMatcher;
+    impl Matcher for NaiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match ません polite negative (ませ + ん)
+    #[derive(Debug)]
+    struct MasenMatcher;
+    impl Matcher for MasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ませ" && token.base_form == "ます")
+                || (token.surface == "ん" && token.pos.first().is_some_and(|p| p == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Verb, i-Adj, na-Adj, or Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Surface("だ"))),  // Optional だ for na-adj/noun
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(WaTopicMatcher)),
+        TokenMatcher::Custom(Arc::new(KagiruMatcher)),
+        TokenMatcher::Any,  // Match ない or ませ
+        TokenMatcher::Optional(Box::new(TokenMatcher::Any)),  // Optionally match ん for polite form
+    ]
 }
 
 // Pattern: めったに〜ない

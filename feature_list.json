@@ -5476,13 +5476,13 @@
   {
     "pattern_name": "とは限らない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "とは限（かぎ）らない is regularly used to convey the meaning of '(A) is not necessarily so', or 'there is no guarantee that (A)' [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null
