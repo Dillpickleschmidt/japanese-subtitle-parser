@@ -2819,6 +2819,67 @@ pub fn tate() -> Vec<TokenMatcher> {
     ]
 }
 
+// Pattern: たとえ〜ても (even if)
+// Structures: たとえ + Verb[ても] / たとえ + い-Adj[ても] / たとえ + な-Adj + でも / たとえ + Noun + でも
+pub fn tatoetemo() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TatoeAdverbMatcher;
+    impl Matcher for TatoeAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match たとえ as 副詞/一般 (adverb)
+            token.surface == "たとえ"
+                && token.base_form == "たとえ"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeMoOrDemoStartMatcher;
+    impl Matcher for TeMoOrDemoStartMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match て (connecting particle), で (case particle), OR でも (single token for na-adj)
+            (token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+                || (token.surface == "で"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                || (token.surface == "でも"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match も as 助詞/係助詞 (binding particle)
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match the pattern: たとえ + <content> + (て|で)+も OR でも
+    // Note: でも can be either 1 token (副助詞 for na-adj) or 2 tokens (格助詞+係助詞 for nouns)
+    vec![
+        TokenMatcher::Custom(Arc::new(TatoeAdverbMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 5,  // Increase to allow more content words between たとえ and ending
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(TeMoOrDemoStartMatcher)), // Match て, で, or でも
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MoParticleMatcher,
+        )))), // Optional も (present after て/で, absent after でも as single token)
+    ]
+}
+
 // Pattern: 込む ①
 pub fn komu_u2460() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement

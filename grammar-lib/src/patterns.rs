@@ -4028,6 +4028,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    Tatoetemo {
+        name: "たとえ〜ても",
+        matcher_fn: crate::matchers::n3::tatoetemo,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     KomuU2460 {
         name: "込む ①",
         matcher_fn: crate::matchers::n3::komu_u2460,
