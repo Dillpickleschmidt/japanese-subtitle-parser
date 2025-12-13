@@ -4184,3 +4184,58 @@ mod kaku_tests {
     //     // 各地 tokenizes as single noun (名詞/一般), not 各 + 地
     // }
 }
+
+// Pattern: 風 (style/manner)
+// Data source: grammar_points_data.json["風"]
+// Testing: structure.standard[0] - "Noun + 風（ふう）"
+//          structure.standard[1] - "Noun + 風（ふう） + （の） + Noun"
+//
+// Note: 風 always tokenizes as suffix (名詞/接尾/一般) after a noun
+// The の in structure[1] is a separate particle, not part of the 風 pattern
+mod fuu_tests {
+    use super::*;
+
+    // Structure: Noun + 風（ふう）
+    #[test]
+    fn fuu_american_style() {
+        let sentence = "アメリカ風料理が好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "風");
+        assert_pattern_range(&patterns, "風", 0, 5); // アメリカ風
+    }
+
+    // Structure: Noun + 風（ふう） (decade example)
+    #[test]
+    fn fuu_90s_style() {
+        let sentence = "９０年代風ファッションがまた流行ってきています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "風");
+        assert_pattern_range(&patterns, "風", 2, 5); // 年代風
+    }
+
+    // Structure: Noun + 風（ふう） + の + Noun
+    #[test]
+    fn fuu_with_no() {
+        let sentence = "メキシコ風の料理を食べたいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "風");
+        assert_pattern_range(&patterns, "風", 0, 5); // メキシコ風
+    }
+
+    // Structure: Noun + 風（ふう） + の + Noun
+    #[test]
+    fn fuu_hiroshima_style() {
+        let sentence = "広島風のお好み焼きが一番おいしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "風");
+        assert_pattern_range(&patterns, "風", 0, 3); // 広島風
+    }
+}

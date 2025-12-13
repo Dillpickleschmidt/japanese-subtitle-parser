@@ -4006,13 +4006,13 @@
   {
     "pattern_name": "風",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "風（ふう） is a suffix that is used in Japanese to convey the meaning of 'in the style of (A)', or 'in the fashion of (A)' [2 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

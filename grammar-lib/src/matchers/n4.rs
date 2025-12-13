@@ -2852,7 +2852,23 @@ pub fn tomieru() -> Vec<TokenMatcher> {
 
 // Pattern: 風
 pub fn kaze() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Match 風 as suffix (名詞/接尾/一般)
+    // Note: Always pronounced ふう in this usage, not かぜ
+    #[derive(Debug)]
+    struct FuuSuffixMatcher;
+    impl super::Matcher for FuuSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "風"
+                && token.base_form == "風"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(FuuSuffixMatcher)),
+    ]
 }
 
 // Pattern: がみられる
