@@ -3,19 +3,20 @@
 ## Session 116 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: One N3 pattern fully implemented (中)
-**Patterns completed**: 1 new N3 suffix pattern
-**Tests added**: 4 comprehensive tests
-**Total tests**: 721 (was 717 at session start)
+**Status**: Two N3 patterns fully implemented (中 + って)
+**Patterns completed**: 2 new N3 patterns (1 suffix + 1 particle)
+**Tests added**: 7 comprehensive tests (4 + 3)
+**Total tests**: 724 (was 717 at session start)
 
 ### Accomplishments
 1. ✅ Implemented 中 pattern (N3) - "during / in the middle of / throughout"
-2. ✅ All 4 tests passing with proper range assertions
-3. ✅ No test regressions - all 721 tests pass
-4. ✅ Updated feature_list.json
-5. ✅ Clean commit with full documentation
+2. ✅ Implemented って pattern (N3) - "casual topic marker"
+3. ✅ All 7 tests passing with proper range assertions
+4. ✅ No test regressions - all 724 tests pass
+5. ✅ Updated feature_list.json for both patterns
+6. ✅ Two clean commits with full documentation
 
-### Completed Pattern
+### Completed Patterns
 
 #### 中 (N3) ✓
 - **File**: grammar-lib/src/matchers/n3.rs (lines 3658-3694)
@@ -39,7 +40,26 @@
   - 今日じゅうに (chars 0-6) - deadline/throughout (じゅう)
   - 家じゅうに (chars 3-8) - throughout space (じゅう)
 
-### Technical Details
+#### って (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (lines 5-28)
+- **Tests**: 3 tests in n3_patterns.rs (mod tte_tests)
+- **Structures**:
+  - standard[0]: Sentence topic + って
+- **Tokenization insights**:
+  - って = 助詞/格助詞/連語 (particle/case particle/compound word)
+  - Follows nouns, pronouns, or sentence topics
+  - NOTE: This is the TOPIC MARKER usage (replacing は), not quotation marker
+- **Implementation**: 2-token matcher
+  - TokenMatcher::Any for sentence topic (usually noun)
+  - TteParticleMatcher: Matches って as 助詞/格助詞/連語
+- **Meaning**: Casual topic marker (replacing は) - marks sentence topic informally
+- **Pattern priority**: 1 (N3 particle pattern)
+- **Pattern ranges**: Include topic + って
+  - 私って (chars 0-3) - pronoun + って
+  - トマトって (chars 0-5) - noun + って
+  - 人って (chars 2-5) - noun + って (after modifier)
+
+### Technical Details - 中
 - **Pattern priority**: 1 (N3 suffix construction)
 - **Test coverage**: 1 structure variant from grammar_points_data.json
   - standard[0]: Noun + 中（ちゅう/じゅう）（に） (4 tests covering both readings)
@@ -52,19 +72,30 @@
   - ちゅう: Often with 音読み (Chinese readings) - 水中, 会議中, 試合中
   - じゅう: Often with 訓読み (Japanese readings) - 今年中, 夏休み中, 今晩中
 
+### Technical Details - って
+- **Pattern priority**: 1 (N3 particle pattern)
+- **Test coverage**: 1 structure variant from grammar_points_data.json
+  - standard[0]: Sentence topic + って (3 tests covering different contexts)
+- **Implementation approach**: Implemented pre-existing stub function (TODO → full implementation)
+- **Key insight**: って already existed in patterns.rs but matcher was unimplemented
+- **Grammar note**: って as topic marker is casual replacement for は (formal topic marker)
+- **Usage**: Primarily in spoken/casual Japanese, adds informal/friendly tone
+
 ### Session Statistics
-- **Patterns implemented**: 1 (N3)
-- **Tests written**: 4
-- **Tests passing**: 721/721 (100%)
-- **Commits**: 1 clean commit
-- **Lines added**: ~107 (matcher implementation + 4 tests + pattern declaration + feature_list update)
+- **Patterns implemented**: 2 (N3)
+- **Tests written**: 7 (4 + 3)
+- **Tests passing**: 724/724 (100%)
+- **Commits**: 2 clean commits
+- **Lines added**: ~178 (2 matcher implementations + 7 tests + 2 feature_list updates)
 
 ### Key Insights
 - 中 is a suffix pattern indicating temporal or spatial duration/process
 - Pattern successfully handles both ちゅう (kanji 中) and じゅう (hiragana) readings
 - Hiragana ちゅう alone doesn't work - must use kanji 中 for ちゅう reading
-- Test sentences are realistic and cover both temporal and spatial contexts
-- Pattern ranges include full construction (noun + suffix + optional に) for proper context
+- って pattern was already declared but unimplemented - replaced TODO with full matcher
+- って specifically matches topic marker usage (助詞/格助詞/連語), not quotation usage
+- Test sentences are realistic and cover different usage contexts
+- Pattern ranges include full constructions for proper grammatical context
 
 ### Next Priorities
 Continue with N3 patterns (high-priority incomplete patterns):
@@ -74,15 +105,15 @@ Continue with N3 patterns (high-priority incomplete patterns):
 2. 的 - "like / -ish / -ly" (2 structure variants)
 3. 同士 - "together / between" (2 structure variants)
 4. さえ - "even" (6 structure variants - more complex)
-5. って - quotation/topic marker (1 structure variant - very simple!)
+5. ことなの - "it's that" (explanatory pattern)
 
-**Recommendation**: Continue with simple single-structure patterns like なかなか～ない or って before tackling more complex patterns.
+**Recommendation**: Continue with simple single-structure patterns like なかなか～ない before tackling more complex multi-structure patterns.
 
 ### Environment Status
-- ✅ All 721 tests passing
+- ✅ All 724 tests passing (added 7 new tests)
 - ✅ No regressions
 - ✅ Clean git state
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for both patterns
 - ✅ Ready for next pattern implementation or session termination
 
 ---
