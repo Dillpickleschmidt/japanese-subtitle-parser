@@ -1,5 +1,95 @@
 # Grammar-lib Development Progress
 
+## Session 103 - 2025-12-12
+
+### ✅ Session Summary
+**Status**: One N3 pattern fully implemented (たびに)
+**Patterns completed**: 1 new N3 pattern (time expression)
+**Tests added**: 4 comprehensive tests
+**Total tests**: 651 (was 647)
+
+### Accomplishments
+1. ✅ Implemented たびに pattern (N3) - "every time / whenever"
+2. ✅ All 4 tests passing with proper range assertions
+3. ✅ No test regressions - all 651 tests pass
+4. ✅ Updated feature_list.json
+5. ✅ Clean commit with full documentation
+
+### Completed Pattern
+
+#### たびに (N3) ✓
+- **File**: grammar-lib/src/matchers/n3.rs (line 2171-2225)
+- **Tests**: 4 variants, all passing in n3_patterns.rs (mod tabini_tests)
+  - test_tabini_verb_drinking (タナカ君と飲みに行くたびに、二日酔いになる - Every time I go drinking with Tanaka, I get a hangover)
+  - test_tabini_verb_milk (牛乳を飲むたびにお腹が痛くなる - Every time I drink milk, I get a stomach ache)
+  - test_tabini_noun_holiday (私は休みのたびにハワイへ行きます - Whenever I have a holiday, I go to Hawaii)
+  - test_tabini_noun_dishes (彼は洗い物のたびに指を切る - Every time he does the dishes, he cuts his finger)
+- **Structures**:
+  - standard[0]: Verb［る］+ たびに
+  - standard[1]: Noun + の + たびに
+- **Tokenization insights**:
+  - たび = 名詞/非自立/副詞可能 (bound noun with adverbial use)
+  - に = 助詞/格助詞/一般 (case particle)
+  - Optional の = 助詞/連体化 (nominalizing particle) - appears between noun and たび
+  - Verbs in dictionary form (基本形) connect directly to たび
+- **Implementation**: 4-token matcher with optional の
+  - TabiNounMatcher: Matches たび as 名詞/非自立/副詞可能
+  - NiParticleMatcher: Matches に as 助詞/格助詞
+  - NoRentaikaMatcher (optional): Matches の as 助詞/連体化
+  - TokenMatcher::Any for content word (verb or noun)
+- **Meaning**: "every time / whenever" - emphasizes that something happens on each occurrence
+- **Pattern priority**: 3 (high-priority N3 construction)
+- **Pattern ranges**: Include content word + optional の + たび + に
+  - 行くたびに (chars 8-13) - Verb + たびに
+  - 飲むたびに (chars 3-8) - Verb + たびに
+  - 休みのたびに (chars 2-8) - Noun + の + たびに
+  - 洗い物のたびに (chars 2-9) - Noun + の + たびに
+
+### Technical Details
+- **Pattern priority**: 3 (updated from placeholder priority 1)
+- **Test coverage**: All 2 structure variants from grammar_points_data.json
+  - standard[0]: Verb［る］+ たびに (2 tests)
+  - standard[1]: Noun + の + たびに (2 tests)
+- **Implementation approach**: Test-first workflow (print_debug → analyze → implement → finalize)
+- **Key insight**: Pattern uses bound noun たび (meaning "time/occasion") with optional nominalizing particle の for nouns
+- **Pattern range**: Includes full grammatical construction (content word + optional の + たび + に)
+- **Similar patterns**: ごとに (also means "every") but たびに specifically emphasizes actions/events
+
+### Session Statistics
+- **Patterns implemented**: 1 (N3)
+- **Tests written**: 4
+- **Tests passing**: 651/651 (100%)
+- **Commits**: 1 clean commit
+- **Lines added**: ~111 (matcher implementation + 4 tests + pattern priority update + feature_list update)
+
+### Key Insights
+- たびに is a time expression pattern using the bound noun たび (度)
+- Pattern successfully handles both verb and noun forms with a single matcher using TokenMatcher::Any
+- Optional の particle cleanly handled with TokenMatcher::Optional
+- Test sentences are realistic and cover different usage contexts
+- Pattern ranges include full construction for better context
+
+### Next Priorities
+Continue with N3 patterns (high-priority incomplete patterns):
+
+**High-value N3 patterns to implement**:
+1. ため(に) - "for the purpose of / because of" (causal pattern, 2 structures)
+2. たとえ〜ても - "even if" (conditional pattern)
+3. さえ - "even" (emphasis particle, 6 structure variants - more complex)
+4. そうだ - hearsay/conjecture (multiple meanings)
+5. わけだ - "it means that / no wonder" (explanatory pattern)
+
+**Recommendation**: Continue with concrete patterns like "ため(に)" before tackling more complex multi-structure patterns.
+
+### Environment Status
+- ✅ All 651 tests passing
+- ✅ No regressions
+- ✅ Clean git state
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern implementation or session termination
+
+---
+
 ## Session 102 - 2025-12-12
 
 ### ✅ Session Summary
