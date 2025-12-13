@@ -2550,13 +2550,13 @@
   {
     "pattern_name": "だけで",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "だけで is a combination of the adverbial particle だけ , and the case marking particle で [2 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

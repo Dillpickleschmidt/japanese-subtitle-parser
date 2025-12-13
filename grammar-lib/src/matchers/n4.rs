@@ -218,9 +218,38 @@ pub fn kata() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: だけで
+// Pattern: だけで (just by/with only)
+// Structures: Verb + だけで / Noun + だけで
 pub fn dakede() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だけ particle (副助詞)
+    #[derive(Debug)]
+    struct DakeParticleMatcher;
+    impl super::Matcher for DakeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match で particle (格助詞)
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Custom(Arc::new(DakeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+    ]
 }
 
 // Pattern: だが・ですが

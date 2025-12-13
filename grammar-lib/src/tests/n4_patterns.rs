@@ -2525,3 +2525,34 @@ mod tekuru_tests {
         assert_pattern_range(&patterns, "てくる ", 4, 9); // 来てきます
     }
 }
+
+// Pattern: だけで (just by/with only)
+// Data source: grammar_points_data.json["だけで"]
+// Testing both structure variants:
+//   - standard[0]: Verb + だけで
+//   - standard[1]: Noun + だけで
+mod dakede_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + だけで
+    #[test]
+    fn verb_dakede() {
+        let sentence = "彼女と話すだけで楽しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけで");
+        assert_pattern_range(&patterns, "だけで", 3, 8); // 話すだけで
+    }
+
+    // Testing: standard[1] - Noun + だけで
+    #[test]
+    fn noun_dakede() {
+        let sentence = "これは電子レンジだけでオーブンの機能はついていない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけで");
+        assert_pattern_range(&patterns, "だけで", 5, 11); // レンジだけで
+    }
+}
