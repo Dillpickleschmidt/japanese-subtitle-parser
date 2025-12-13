@@ -7334,3 +7334,32 @@ mod toiunoha_tests {
         assert_pattern_range(&patterns, "って", 0, 3); // 夢って
     }
 }
+
+// Pattern: と並んで (alongside, comparable to)
+// Data source: grammar_points_data.json["と並んで"]
+// Testing: structure.standard[0] - "Noun + と並んで"
+#[cfg(test)]
+mod tonarande_tests {
+    use super::*;
+
+    #[test]
+    fn test_tonarande_full_form() {
+        let sentence = "このアニメはサザエさんと並んで日本中で愛されている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と並んで");
+        assert_pattern_range(&patterns, "と並んで", 6, 15); // サザエさんと並んで
+    }
+
+    // Testing: structure.standard[1] - "Noun + と並ぶほど"
+    #[test]
+    fn test_tonarande_hodo_form() {
+        let sentence = "日産はトヨタと並ぶほど車を出している";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と並んで");
+        assert_pattern_range(&patterns, "と並んで", 3, 11); // トヨタと並ぶほど
+    }
+}

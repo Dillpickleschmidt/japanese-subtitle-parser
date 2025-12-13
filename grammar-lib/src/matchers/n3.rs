@@ -3355,9 +3355,50 @@ pub fn toonajide_u30fb_tochigatte() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: と並んで
+// Pattern: と並んで (alongside, comparable to)
+// Structures: Noun + と + 並ぶ + (んで/ぶほど)
 pub fn tonarande() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // と as case marking particle
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // 並ぶ verb in any conjugation form
+    #[derive(Debug)]
+    struct NarabuMatcher;
+    impl Matcher for NarabuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "並ぶ"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // で (接続助詞) or ほど (副助詞)
+    #[derive(Debug)]
+    struct EndingMatcher;
+    impl Matcher for EndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で" && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+            || (token.surface == "ほど" && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+        TokenMatcher::Custom(Arc::new(NarabuMatcher)),
+        TokenMatcher::Custom(Arc::new(EndingMatcher)),
+    ]
 }
 
 // Pattern: に違いない
