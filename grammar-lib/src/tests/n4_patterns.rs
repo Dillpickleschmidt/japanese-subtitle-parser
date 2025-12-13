@@ -2618,3 +2618,78 @@ mod dai_tests {
         assert_pattern_range(&patterns, "～代", 0, 4); // ７０年代
     }
 }
+
+// ========== がる (to show signs of / to act like) ==========
+// Pattern: がる
+// Data source: grammar_points_data.json["がる"]
+//
+// Structures to test:
+//   - standard[0]: い-Adjective[い] + がる
+//   - standard[1]: な-Adjective + がる
+//   - polite[0]: い-Adjective[い] + がります
+//   - polite[1]: な-Adjective + がります
+//
+// Examples from data:
+//   - 強がる (act tough)
+//   - 嫌がる (show signs of disliking)
+//   - 欲しがる (show signs of wanting)
+//   - 寒がっている (seem to be cold)
+#[cfg(test)]
+mod garu_tests {
+    use super::*;
+
+    // Testing: standard[0] - い-Adjective + がる (dictionary form)
+    #[test]
+    fn i_adjective_garu_tsuyogaru() {
+        let sentence = "彼はいつも女の子の前では強がるけど実は弱いんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がる");
+        assert_pattern_range(&patterns, "がる", 12, 15); // 強がる
+    }
+
+    // Testing: Conjugated form 怖がり (連用形 of 怖がる)
+    #[test]
+    fn i_adjective_garu_kowagari() {
+        let sentence = "友達の中で彼は一番の怖がりとして知られている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がる");
+        assert_pattern_range(&patterns, "がる", 10, 13); // 怖がり
+    }
+
+    // Testing: standard[1] - な-Adjective + がる (dictionary form as compound)
+    #[test]
+    fn na_adjective_garu() {
+        let sentence = "犬が嫌がることをしてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がる");
+        assert_pattern_range(&patterns, "がる", 2, 5); // 嫌がる
+    }
+
+    // Testing: polite[0] - い-Adjective + がります (conjugated split form)
+    #[test]
+    fn i_adjective_garimasu() {
+        let sentence = "この子はいつも新しいおもちゃを欲しがります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がる");
+        assert_pattern_range(&patterns, "がる", 15, 21); // 欲しがります
+    }
+
+    // Testing: Conjugated form with て (欲しがっている)
+    #[test]
+    fn i_adjective_gatteiru() {
+        let sentence = "あの人、暑がっているね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がる");
+        assert_pattern_range(&patterns, "がる", 4, 7); // 暑がっ
+    }
+}

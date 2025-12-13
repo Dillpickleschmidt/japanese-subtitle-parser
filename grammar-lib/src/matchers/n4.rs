@@ -885,9 +885,64 @@ pub fn nara() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: がる
+// Pattern: がる (to show signs of / to act like)
+// Structures: Adjective + がる/がります
+//
+// Tokenization patterns:
+// 1. Dictionary form (compound): 強がる → 強がる (動詞, base_form=強がる) - single token
+// 2. Split conjugated form: 欲しがります → 欲し (形容詞, ガル接続) + がり (動詞/接尾) + ます
+//
+// This pattern has two separate matchers to handle both tokenization cases.
 pub fn garu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![]  // Placeholder - pattern handled by garu_compound and garu_split
+}
+
+// Match dictionary form がる verbs (single token compounds like 強がる)
+pub fn garu_compound() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct GaruVerbMatcher;
+    impl Matcher for GaruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.base_form.ends_with("がる")
+                && token.base_form != "がる"
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(GaruVerbMatcher))]
+}
+
+// Match split conjugated がる forms (Adjective + がる suffix)
+pub fn garu_split() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match adjective in ガル接続 form (stem for がる attachment)
+    #[derive(Debug)]
+    struct GaruConnectingAdjMatcher;
+    impl Matcher for GaruConnectingAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続")
+        }
+    }
+
+    // Match がる as verb suffix (動詞/接尾, base_form=がる)
+    #[derive(Debug)]
+    struct GaruSuffixMatcher;
+    impl Matcher for GaruSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.base_form == "がる"
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(GaruConnectingAdjMatcher)),
+        TokenMatcher::Custom(Arc::new(GaruSuffixMatcher)),
+    ]
 }
 
 // Pattern: がする (sensory experience)

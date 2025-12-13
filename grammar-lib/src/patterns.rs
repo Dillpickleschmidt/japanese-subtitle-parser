@@ -1442,10 +1442,18 @@ declare_patterns! {
         jlpt: "n4",
     },
 
-    Garu {
+    GaruCompound {
         name: "がる",
-        matcher_fn: crate::matchers::n4::garu,
-        priority: 1,
+        matcher_fn: crate::matchers::n4::garu_compound,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    GaruSplit {
+        name: "がる",
+        matcher_fn: crate::matchers::n4::garu_split,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n4",
     },
