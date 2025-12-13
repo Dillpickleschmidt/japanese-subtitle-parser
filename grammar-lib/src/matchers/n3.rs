@@ -27,9 +27,14 @@ pub fn tte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ばいい
+// Pattern: ばいい (it would be good if)
+// Structures: Verb［ば］+ いい
 pub fn baii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrIAdjKateiMatcher)),
+        TokenMatcher::Custom(Arc::new(BaConditionalMatcher)),
+        super::ii_form(),
+    ]
 }
 
 // たらいい・といい: Conditional + いい (it would be good if)

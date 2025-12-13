@@ -6328,3 +6328,49 @@ mod tara_ii_to_ii_tests {
         assert_pattern_range(&patterns, "たらいい・といい_たら連用", 6, 14); // られたらいいです
     }
 }
+
+// ========== ばいい (it would be good if) ==========
+// Pattern: ばいい (it would be good if)
+// Data source: grammar_points_data.json["ばいい"]
+//
+// Structure variants to test:
+//   standard[0]: Verb［ば］+ いい
+//   polite[0]: Verb［ば］+ いい + です
+
+mod baii_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb［ば］+ いい
+    #[test]
+    fn test_verb_ba_ii_standard() {
+        let sentence = "どれを食べればいいか迷ってるところ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばいい");
+        assert_pattern_range(&patterns, "ばいい", 3, 9); // 食べればいい
+    }
+
+    // Testing: structure.standard[0] - Verb［ば］+ いい (potential verb)
+    #[test]
+    fn test_verb_ba_ii_potential() {
+        let sentence = "行けばいいけど、行けるか分からない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばいい");
+        assert_pattern_range(&patterns, "ばいい", 0, 5); // 行けばいい
+    }
+
+    // Testing: polite[0] - Verb［ば］+ いい + です
+    // Note: The pattern detects Verb + ば + いい, not including です
+    #[test]
+    fn test_verb_ba_ii_suru_verb() {
+        let sentence = "勉強すればいいんじゃない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばいい");
+        assert_pattern_range(&patterns, "ばいい", 0, 7); // 勉強すればいい
+    }
+}

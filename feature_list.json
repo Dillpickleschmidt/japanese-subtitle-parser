@@ -6064,13 +6064,13 @@
   {
     "pattern_name": "ばいい",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In contrast to ばよかった , which is used for expressing regret about something that someone wishes had been done, ばいい hig... [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null
