@@ -2464,3 +2464,64 @@ mod teiku_tests {
         assert_pattern_range(&patterns, "ていく", 7, 15); // 頑張っていきます
     }
 }
+
+// ========== てくる (to come to) ==========
+// Pattern: てくる
+// Data source: grammar_points_data.json["てくる "]
+//
+// Structure to test:
+//   - standard[0]: Verb[て] + くる
+//   - polite[0]: Verb[て] + きます
+//
+// Examples from data:
+//   - 持ってくる (bring)
+//   - 買ってきた (bought and came with)
+//   - 上手くなってきた (have gotten better)
+#[cfg(test)]
+mod tekuru_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[て] + くる (bring/forget to bring)
+    #[test]
+    fn test_tekuru_bring() {
+        let sentence = "今日も宿題を持ってくるのを忘れた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくる ");
+        assert_pattern_range(&patterns, "てくる ", 6, 11); // 持ってくる
+    }
+
+    // Testing: standard[0] - Verb[て] + きた (past - bought and came)
+    #[test]
+    fn test_tekuru_bought() {
+        let sentence = "パパ、じゃが芋を買ってきたよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくる ");
+        assert_pattern_range(&patterns, "てくる ", 8, 13); // 買ってきた
+    }
+
+    // Testing: standard[0] - Verb[て] + きた (have gotten better)
+    #[test]
+    fn test_tekuru_gotten_better() {
+        let sentence = "最近、日本語が上手くなってきた感じがする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくる ");
+        assert_pattern_range(&patterns, "てくる ", 10, 15); // なってきた
+    }
+
+    // Testing: polite[0] - Verb[て] + きます
+    #[test]
+    fn test_tekuru_polite() {
+        let sentence = "明日また来てきます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくる ");
+        assert_pattern_range(&patterns, "てくる ", 4, 9); // 来てきます
+    }
+}

@@ -181,9 +181,36 @@ pub fn teiku() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: てくる 
+// Pattern: てくる (to come to)
+// Structures: Verb[て] + くる
 pub fn tekuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+        }
+    }
+
+    // Match くる as auxiliary verb
+    #[derive(Debug)]
+    struct KuruMatcher;
+    impl Matcher for KuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "くる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeDeFormMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(KuruMatcher))],
+    ])
 }
 
 // Pattern: かた
