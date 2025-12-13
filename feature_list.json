@@ -4818,13 +4818,13 @@
   {
     "pattern_name": "そうもない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そうもない is an expression used with verbs in Japanese, to indicate that some particular action is very unlikely [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null

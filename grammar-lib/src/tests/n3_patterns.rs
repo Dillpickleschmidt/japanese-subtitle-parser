@@ -5640,3 +5640,63 @@ mod deyokereba_tests {
         assert_pattern_range(&patterns, "でよければ", 0, 7); // 先生でよければ
     }
 }
+
+// Pattern: そうもない (very unlikely)
+// Data source: grammar_points_data.json["そうもない"]
+// Testing: structure.standard[0] - "Verb[stem] + そうもない"
+//          structure.polite[0] - "Verb[stem] + そうもありません"
+//
+// Structure variants:
+//   - standard[0]: Verb[stem] + そうもない
+//   - polite[0]: Verb[stem] + そうもありません
+mod soumonai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[stem] + そうもない"
+    // Example: 出来そうもない (doesn't even seem possible)
+    #[test]
+    fn test_soumonai_potential_verb() {
+        let sentence = "腕がまだ治っていないから、あと一週間ぐらい運動が出来そうもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうもない");
+        assert_pattern_range(&patterns, "そうもない", 24, 31); // 出来そうもない
+    }
+
+    // Testing: structure.standard[0] - "Verb[stem] + そうもない"
+    // Example: 行けそうもない (doesn't even appear like I can go)
+    #[test]
+    fn test_soumonai_potential_verb_ikeru() {
+        let sentence = "今日は雷が酷いから、釣りに行けそうもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうもない");
+        assert_pattern_range(&patterns, "そうもない", 13, 20); // 行けそうもない
+    }
+
+    // Testing: structure.standard[0] - "Verb[stem] + そうもない"
+    // Example: 食べられそうもない (doesn't even seem like I can eat)
+    #[test]
+    fn test_soumonai_potential_verb_taberare() {
+        let sentence = "こんな量、食べられそうもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうもない");
+        assert_pattern_range(&patterns, "そうもない", 7, 14); // られそうもない
+    }
+
+    // Testing: structure.polite[0] - "Verb[stem] + そうもありません"
+    // Example: 見られそうもありません (might not be able to watch)
+    #[test]
+    fn test_soumonai_polite_potential_verb() {
+        let sentence = "今日は１１時まで帰って来ないかもしれないから、いつも見ているテレビ番組が見られそうもありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうもない");
+        assert_pattern_range(&patterns, "そうもない", 37, 47); // られそうもありません
+    }
+}

@@ -2706,9 +2706,87 @@ pub fn iumademonai_u2461() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: そうもない
+// そうもない: very unlikely / doesn't even appear likely
+// Structures:
+//   - Verb[stem] + そう + も + ない
+//   - Verb[stem] + そう + も + ありません
 pub fn soumonai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match そう as 名詞/接尾/助動詞語幹
+    #[derive(Debug)]
+    struct SouAuxiliaryMatcher;
+    impl super::Matcher for SouAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そう"
+                && token.base_form == "そう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Match も as 助詞/係助詞
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.base_form == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ない (i-adjective form), ある, ます, or ん (for polite negative)
+    #[derive(Debug)]
+    struct NegativeOrAruMatcher;
+    impl super::Matcher for NegativeOrAruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ない as i-adjective
+            if token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+            {
+                return true;
+            }
+            // ある or あり (for polite form)
+            if (token.surface == "ある" || token.surface == "あり")
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+            {
+                return true;
+            }
+            // ます (for polite negative)
+            if token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // ん (for polite negative ending)
+            if token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(), // Verb in 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(SouAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NegativeOrAruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NegativeOrAruMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NegativeOrAruMatcher,
+        )))),
+    ]
 }
 
 // Pattern: ないことはない
