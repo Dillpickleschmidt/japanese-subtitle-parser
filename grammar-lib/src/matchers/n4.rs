@@ -2977,9 +2977,75 @@ pub fn soredemo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SoredemoMatcher))]
 }
 
-// Pattern: たらどう
+// Pattern: たらどう (why don't you / how about)
+// Structures: Verb［たら］+ どう + (だ/か/です + か)
 pub fn taradou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match たら conditional auxiliary (仮定形)
+    #[derive(Debug)]
+    struct TaraConditionalMatcher;
+    impl Matcher for TaraConditionalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match どう adverb
+    #[derive(Debug)]
+    struct DouAdverbMatcher;
+    impl Matcher for DouAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どう"
+                && token.base_form == "どう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match だ copula (optional)
+    #[derive(Debug)]
+    struct DaCopulaMatcher;
+    impl Matcher for DaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match か question particle (optional)
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.base_form == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match です polite auxiliary (optional)
+    #[derive(Debug)]
+    struct DesuMatcher;
+    impl Matcher for DesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TaraConditionalMatcher)),
+        TokenMatcher::Custom(Arc::new(DouAdverbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DesuMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KaParticleMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaCopulaMatcher)))),
+    ]
 }
 
 // Pattern: とかんがえられている

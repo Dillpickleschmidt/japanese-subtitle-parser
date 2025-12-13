@@ -4288,3 +4288,64 @@ mod bayokatta_tests {
         assert_pattern_range(&patterns, "ばよかった", 3, 14); // 勉強すればよかったです
     }
 }
+
+// ========== たらどう (why don't you / how about) ==========
+// Pattern: たらどう
+// Data source: grammar_points_data.json["たらどう"]
+//
+// Structures to test:
+//   - standard[0]: Verb［たら］+ どう + だ？
+//   - standard[1]: Verb［たら］+ どう + （か）？
+//   - polite[0]: Verb［たら］+ どう + です + か
+//
+// Examples from data:
+//   - 減らしたらどう (why don't you reduce)
+//   - 入れたらどうか (why don't you add)
+#[cfg(test)]
+mod taradou_tests {
+    use super::*;
+
+    // Structure: Verb［たら］+ どう
+    #[test]
+    fn verb_tara_dou_basic() {
+        let sentence = "食べる量を減らしたらどう？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらどう");
+        assert_pattern_range(&patterns, "たらどう", 5, 12); // 減らしたらどう
+    }
+
+    // Structure: Verb［たら］+ どう + か
+    #[test]
+    fn verb_tara_dou_ka() {
+        let sentence = "砂糖を入れたらどうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらどう");
+        assert_pattern_range(&patterns, "たらどう", 3, 10); // 入れたらどうか
+    }
+
+    // Structure: Verb［たら］+ どう + です + か (polite)
+    #[test]
+    fn verb_tara_dou_desuka() {
+        let sentence = "警察に電話してみたらどうですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらどう");
+        assert_pattern_range(&patterns, "たらどう", 7, 15); // みたらどうですか
+    }
+
+    // Structure: Verb［たら］+ どう + だ
+    #[test]
+    fn verb_tara_dou_da() {
+        let sentence = "頭を使ったらどうだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たらどう");
+        assert_pattern_range(&patterns, "たらどう", 2, 9); // 使ったらどうだ
+    }
+}
