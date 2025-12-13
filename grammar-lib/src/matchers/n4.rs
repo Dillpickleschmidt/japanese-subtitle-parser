@@ -385,8 +385,56 @@ pub fn dakede() -> Vec<TokenMatcher> {
 }
 
 // Pattern: だが・ですが
+// Pattern: だが・ですが (but, however - formal)
+// Structures: だが + Phrase, ですが + Phrase
+// Two tokenization patterns:
+//   1. Single token: だが (接続詞) - at sentence start/after punctuation
+//   2. Split tokens: だ/です (助動詞) + が (助詞/接続助詞) - mid-sentence
 pub fn daga_u30fb_desuga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だが as single conjunction token OR だ/です auxiliary
+    #[derive(Debug)]
+    struct DagaDesugaMatcher;
+    impl super::Matcher for DagaDesugaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Pattern 1: だが as single conjunction token (sentence-start)
+            if token.surface == "だが"
+                && token.base_form == "だが"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+            {
+                return true;
+            }
+
+            // Pattern 2: だ or です as auxiliary (will be followed by が)
+            if (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Match が as conjunction particle (for split form)
+    #[derive(Debug)]
+    struct GaConjunctionMatcher;
+    impl super::Matcher for GaConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // The first matcher handles both だが (conjunction) and だ/です (auxiliary)
+    // If it matches だが (conjunction), the optional が won't match (correct)
+    // If it matches だ/です (auxiliary), the optional が will match (correct)
+    vec![
+        TokenMatcher::Custom(Arc::new(DagaDesugaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaConjunctionMatcher)))),
+    ]
 }
 
 // Pattern: なくて

@@ -3855,3 +3855,53 @@ mod nado_tests {
         assert_pattern_range(&patterns, "など", 2, 5); // 靴など
     }
 }
+
+// ========== だが・ですが (but, however - formal) ==========
+// Pattern: だが・ですが
+// Data source: grammar_points_data.json["だが・ですが"]
+//
+// Structures to test:
+//   - standard[0]: だが + Phrase
+//   - polite[0]: ですが + Phrase
+//
+// Examples from data:
+//   - 彼は弁護士だが、頭が良くない (He is a lawyer, but he is not very smart)
+//   - 宝くじを１００枚買った。だが、当たらなかった (I bought 100 lottery tickets. However, I didn't win)
+//   - 美容室に行ったのですが、高かったので帰りました (I went to the hair salon, but since it was expensive, I came home)
+#[cfg(test)]
+mod daga_desuga_tests {
+    use super::*;
+
+    // Structure: だが + Phrase (standard[0])
+    #[test]
+    fn daga_mid_sentence() {
+        let sentence = "彼は弁護士だが、頭が良くない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だが・ですが");
+        assert_pattern_range(&patterns, "だが・ですが", 5, 7); // だが
+    }
+
+    // Structure: だが + Phrase (standard[0]) - sentence start
+    #[test]
+    fn daga_sentence_start() {
+        let sentence = "宝くじを１００枚買った。だが、当たらなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だが・ですが");
+        assert_pattern_range(&patterns, "だが・ですが", 12, 14); // だが
+    }
+
+    // Structure: ですが + Phrase (polite[0])
+    #[test]
+    fn desuga_polite() {
+        let sentence = "美容室に行ったのですが、高かったので帰りました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だが・ですが");
+        assert_pattern_range(&patterns, "だが・ですが", 8, 11); // ですが
+    }
+}
