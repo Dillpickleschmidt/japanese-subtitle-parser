@@ -2684,9 +2684,54 @@ pub fn kotogadekiru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: かい
+// Pattern: かい (casual question particle)
+// Structures: Word + (な) + (の) + かい
 pub fn kai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches な as 助動詞 (for noun/na-adjective)
+    #[derive(Debug)]
+    struct NaAuxiliaryMatcher;
+    impl super::Matcher for NaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matches の as 名詞/非自立/一般 (nominalizer)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl super::Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matches かい as 助詞/終助詞
+    #[derive(Debug)]
+    struct KaiParticleMatcher;
+    impl super::Matcher for KaiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かい"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NaAuxiliaryMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoNominalizerMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(KaiParticleMatcher)),
+    ]
 }
 
 // Pattern: もし

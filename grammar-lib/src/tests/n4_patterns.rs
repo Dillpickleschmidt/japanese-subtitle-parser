@@ -4474,3 +4474,72 @@ mod toki_tests {
         assert_pattern_range(&patterns, "とき", 1, 4); // のとき
     }
 }
+
+// ========== かい (question particle - casual) ==========
+// Pattern: かい
+// Data source: grammar_points_data.json["かい"]
+//
+// Structures to test:
+//   - standard[0]: Verb + （の） + かい
+//   - standard[1]: ［い］Adjective + （の） + かい
+//   - standard[2]: Noun + （なの） + かい
+//   - standard[3]: ［な］Adjective + （なの） + かい
+//
+// Notes:
+//   - の/なの are optional and can be shortened to ん/なん
+//   - Very casual, masculine, direct question particle
+//   - Often sounds accusatory, used with familiar people
+//
+// Examples from data:
+//   - 食べたいのかい？ (Do you want to eat?)
+//   - 欲しいのかい？ (Do you want it?)
+//   - 綺麗なのかい？ (Is she pretty?)
+//   - いい人なのかい？ (Is he a good person?)
+#[cfg(test)]
+mod kai_tests {
+    use super::*;
+
+    // Structure: Verb + の + かい (standard[0])
+    #[test]
+    fn verb_no_kai() {
+        let sentence = "このドーナッツを食べたいのかい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かい");
+        assert_pattern_range(&patterns, "かい", 10, 15); // たいのかい
+    }
+
+    // Structure: ［い］Adjective + の + かい (standard[1])
+    #[test]
+    fn i_adjective_no_kai() {
+        let sentence = "このおもちゃが欲しいのかい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かい");
+        assert_pattern_range(&patterns, "かい", 7, 13); // 欲しいのかい
+    }
+
+    // Structure: Noun + なの + かい (standard[2])
+    #[test]
+    fn noun_nano_kai() {
+        let sentence = "彼はいい人なのかい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かい");
+        assert_pattern_range(&patterns, "かい", 4, 9); // 人なのかい
+    }
+
+    // Structure: ［な］Adjective + なの + かい (standard[3])
+    #[test]
+    fn na_adjective_nano_kai() {
+        let sentence = "彼女は綺麗なのかい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かい");
+        assert_pattern_range(&patterns, "かい", 3, 9); // 綺麗なのかい
+    }
+}
