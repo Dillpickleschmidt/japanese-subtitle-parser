@@ -1,5 +1,5 @@
 use crate::pattern_matcher::TokenMatcher;
-use crate::matchers::Matcher;
+use crate::matchers::{Matcher, noun_matcher};
 use std::sync::Arc;
 
 // Pattern: と
@@ -1480,9 +1480,46 @@ pub fn hazuganai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: しか～ない 
+// Pattern: しか～ない (only/nothing but)
+// Structures: Noun + しか + Verb[ない]
 pub fn shika_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match しか particle
+    #[derive(Debug)]
+    struct ShikaMatcher;
+    impl Matcher for ShikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しか"
+                && token.base_form == "しか"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match negative: ない (auxiliary verb or adjective) or ん (for ません)
+    #[derive(Debug)]
+    struct NegativeAuxiliaryMatcher;
+    impl Matcher for NegativeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            ((token.surface == "ない" && token.base_form == "ない")
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞")))
+                || (token.surface == "ん" && token.base_form == "ん"
+                    && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(ShikaMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 5,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NegativeAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: だけでなく

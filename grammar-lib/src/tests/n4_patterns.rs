@@ -1560,3 +1560,64 @@ mod janaika_tests {
         assert_pattern_range(&patterns, "じゃないか", 8, 13); // ではないか
     }
 }
+
+// ========== しか～ない (only/nothing but) ==========
+// Pattern: しか～ない
+// Data source: grammar_points_data.json["しか～ない "]
+//
+// Structure to test:
+//   - standard[0]: Noun + しか + Verb［ない］
+//
+// Examples from data:
+//   - 牛丼しか置いていない (only have gyudon)
+//   - 一匹しか釣れない (only caught one fish)
+//
+// Note: This is different from "Number + しか～ない" which is a separate pattern
+#[cfg(test)]
+mod shika_nai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + しか + ていない
+    #[test]
+    fn test_shika_nai_teiru_negative() {
+        let sentence = "この店は牛丼しか置いていない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しか～ない ");
+        assert_pattern_range(&patterns, "しか～ない ", 5, 14); // 丼しか置いていない
+    }
+
+    // Testing: standard[0] - Noun + しか + negative verb
+    #[test]
+    fn test_shika_nai_simple() {
+        let sentence = "釣りに行って、一匹しか釣れないと悲しくなる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しか～ない ");
+        assert_pattern_range(&patterns, "しか～ない ", 8, 15); // 匹しか釣れない
+    }
+
+    // Testing: standard[0] - Noun + しか + ありません (polite)
+    #[test]
+    fn test_shika_arimasen_polite() {
+        let sentence = "コーヒーしかありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しか～ない ");
+        assert_pattern_range(&patterns, "しか～ない ", 0, 11); // コーヒーしかありません
+    }
+
+    // Testing: standard[0] - Noun + しか + ない (simple negative)
+    #[test]
+    fn test_shika_nai_existence() {
+        let sentence = "今はこれしかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しか～ない ");
+        assert_pattern_range(&patterns, "しか～ない ", 2, 8); // これしかない
+    }
+}
