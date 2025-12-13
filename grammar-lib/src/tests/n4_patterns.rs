@@ -3658,3 +3658,58 @@ mod goro_tests {
         assert_pattern_range(&patterns, "ごろ", 3, 5); // ころ
     }
 }
+
+// Pattern: かどうか - "whether or not"
+// Data source: grammar_points_data.json["かどうか"]
+// Testing all structure variants:
+//   - standard[0]: Verb + かどうか
+//   - standard[1]: い-Adjective + かどうか
+//   - standard[2]: な-Adjective + かどうか
+//   - standard[3]: Noun + かどうか
+mod kadouka_tests {
+    use super::*;
+
+    // Structure: Verb + か + どう + か (standard[0])
+    #[test]
+    fn kadouka_verb() {
+        let sentence = "サチコと付き合うかどうか分からない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かどうか");
+        assert_pattern_range(&patterns, "かどうか", 4, 12); // 付き合うかどうか
+    }
+
+    // Structure: い-Adjective + か + どう + か (standard[1])
+    #[test]
+    fn kadouka_i_adjective() {
+        let sentence = "この川が深いかどうか分からない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かどうか");
+        assert_pattern_range(&patterns, "かどうか", 4, 10); // 深いかどうか
+    }
+
+    // Structure: な-Adjective + か + どう + か (standard[2])
+    #[test]
+    fn kadouka_na_adjective() {
+        let sentence = "この携帯が便利かどうか分からない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かどうか");
+        assert_pattern_range(&patterns, "かどうか", 5, 11); // 便利かどうか
+    }
+
+    // Structure: Noun + か + どう + か (standard[3])
+    #[test]
+    fn kadouka_noun() {
+        let sentence = "あそこにいるのが父親かどうかわからない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かどうか");
+        assert_pattern_range(&patterns, "かどうか", 8, 14); // 父親かどうか
+    }
+}

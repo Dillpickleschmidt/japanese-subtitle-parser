@@ -2379,9 +2379,43 @@ pub fn hazuda() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: かどうか
+// Pattern: かどうか (whether or not)
+// Structures: Verb/Adjective/Noun + か + どう + か
 pub fn kadouka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match か particle (副助詞)
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token
+                    .pos
+                    .get(1)
+                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    // Match どう adverb
+    #[derive(Debug)]
+    struct DouAdverbMatcher;
+    impl Matcher for DouAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どう"
+                && token.base_form == "どう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding element (verb/adjective/noun)
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(DouAdverbMatcher)),
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+    ]
 }
 
 // Pattern: ないと
