@@ -1,7 +1,7 @@
 use crate::pattern_matcher::TokenMatcher;
 use crate::KagomeToken;
 use std::sync::Arc;
-use super::{Matcher, noun_matcher};
+use super::{Matcher, noun_matcher, concat};
 
 // ========== たい (Want to do) ==========
 
@@ -2433,9 +2433,101 @@ pub fn nonakade_uff5e_gaichiban_uff5e() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: より～のほうが
+// Pattern: より～のほうが (comparison - "more X than Y")
+// Structures: より + (optional content) + (optional の) + ほう + が
 pub fn yori_uff5e_nohouga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement - requires fixing Wildcard matcher issues (see Session 63 & 66)
+    use std::sync::Arc;
+
+    // Match より particle
+    #[derive(Debug)]
+    struct YoriParticleMatcher;
+    impl super::Matcher for YoriParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "より"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match の particle (連体化 - attributive)
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl super::Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match ほう (方) as 名詞/非自立
+    #[derive(Debug)]
+    struct HouNounMatcher;
+    impl super::Matcher for HouNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ほう" || token.surface == "方")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match が particle
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl super::Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match any token EXCEPT の or ほう (for content between より and ほう)
+    #[derive(Debug)]
+    struct AnyExceptNoOrHouMatcher;
+    impl super::Matcher for AnyExceptNoOrHouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Reject の (attributive)
+            if token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+            {
+                return false;
+            }
+            // Reject ほう (noun)
+            if (token.surface == "ほう" || token.surface == "方")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+            {
+                return false;
+            }
+            // Accept everything else
+            true
+        }
+    }
+
+    vec![
+        // より
+        TokenMatcher::Custom(Arc::new(YoriParticleMatcher)),
+        // Optional content between より and の/ほう (0-3 tokens, excluding の and ほう)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            AnyExceptNoOrHouMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            AnyExceptNoOrHouMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            AnyExceptNoOrHouMatcher,
+        )))),
+        // Optional の
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoRentaikaMatcher,
+        )))),
+        // ほう
+        TokenMatcher::Custom(Arc::new(HouNounMatcher)),
+        // が
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+    ]
 }
 
 // Pattern: なにか・なにも

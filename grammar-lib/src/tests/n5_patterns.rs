@@ -5452,3 +5452,61 @@ mod i_adjective_predicate_tests {
     }
 }
 
+// ========== より～のほうが (Comparison: A than B) ==========
+// Pattern: より～のほうが (comparison - "more X than Y")
+// Data source: grammar_points_data.json["より～のほうが"]
+//
+// Structure variants to test:
+//   standard[0]: Verb (A) + より + Verb (B) + 方（ほう） + が
+//   standard[1]: ［い］Adjective (A) + より + ［い］Adjective (B) + 方（ほう） + が
+//   standard[2]: ［な］Adjective (A) + な + より + ［な］Adjective (B) + な + 方（ほう） + が
+//   standard[3]: Noun (A) + より + Noun (B) + の + 方（ほう） + が
+
+mod yori_no_hou_ga_tests {
+    use super::*;
+
+    // Structure: Verb (A) + より + Verb (B) + 方（ほう） + が
+    #[test]
+    fn test_verb_comparison() {
+        let sentence = "都会に住むよりほうがいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "より～のほうが");
+        assert_pattern_range(&patterns, "より～のほうが", 5, 10); // よりほうが
+    }
+
+    // Structure: ［い］Adjective (A) + より + ［い］Adjective (B) + 方（ほう） + が
+    #[test]
+    fn test_i_adjective_comparison() {
+        let sentence = "怖い映画より面白い映画のほうが好き";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "より～のほうが");
+        assert_pattern_range(&patterns, "より～のほうが", 4, 15); // より面白い映画のほうが
+    }
+
+    // Structure: ［な］Adjective (A) + な + より + ［な］Adjective (B) + な + 方（ほう） + が
+    #[test]
+    fn test_na_adjective_comparison() {
+        let sentence = "静かな場所より賑やかな場所のほうがいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "より～のほうが");
+        assert_pattern_range(&patterns, "より～のほうが", 5, 17); // より賑やかな場所のほうが
+    }
+
+    // Structure: Noun (A) + より + Noun (B) + の + 方（ほう） + が
+    #[test]
+    fn test_noun_comparison() {
+        let sentence = "彼女より私のほうが背が高い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "より～のほうが");
+        assert_pattern_range(&patterns, "より～のほうが", 2, 9); // より私のほうが
+    }
+}
+
