@@ -5140,9 +5140,114 @@ pub fn u301c_youtoshinai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: もしかしたら
+// Pattern: もしかしたら (maybe/perhaps/possibly)
+// Structures: もしかしたら, もしかして, もしかすると
+//
+// Kagome tokenizes these in three different ways:
+// 1. もしかして (副詞/一般) - single adverb token
+// 2. もしか (副詞/助詞類接続) + し (動詞, する) + たら (助動詞, た)
+// 3. もしか (副詞/助詞類接続) + する (動詞) + と (助詞/接続助詞)
 pub fn moshikashitara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Matcher for もしかして as single adverb
+    #[derive(Debug)]
+    struct MoshikashiteMatcher;
+    impl Matcher for MoshikashiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もしかして"
+                && token.base_form == "もしかして"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Matcher for もしか (adverb base)
+    #[derive(Debug)]
+    struct MoshikaMatcher;
+    impl Matcher for MoshikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もしか"
+                && token.base_form == "もしか"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Matcher for し (連用形 of する)
+    #[derive(Debug)]
+    struct ShiVerbMatcher;
+    impl Matcher for ShiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Matcher for たら (conditional form of た)
+    #[derive(Debug)]
+    struct TaraAuxiliaryMatcher;
+    impl Matcher for TaraAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matcher for する (dictionary form)
+    #[derive(Debug)]
+    struct SuruVerbMatcher;
+    impl Matcher for SuruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "する"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Matcher for と (conditional particle)
+    #[derive(Debug)]
+    struct ToConditionalMatcher;
+    impl Matcher for ToConditionalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // We need a custom matcher that can handle all three forms
+    // Since we can't use alternation, we'll create a single comprehensive matcher
+    #[derive(Debug)]
+    struct MoshikashitaraComprehensiveMatcher;
+    impl Matcher for MoshikashitaraComprehensiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match もしかして (single token) OR もしか (start of multi-token forms)
+            (token.surface == "もしかして"
+                && token.base_form == "もしかして"
+                && token.pos.first().is_some_and(|pos| pos == "副詞"))
+                || (token.surface == "もしか"
+                    && token.base_form == "もしか"
+                    && token.pos.first().is_some_and(|pos| pos == "副詞"))
+        }
+    }
+
+    // We'll match the comprehensive start, then optionally match the rest
+    vec![
+        TokenMatcher::Custom(Arc::new(MoshikashitaraComprehensiveMatcher)),
+        // Optional: し or する
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            ShiVerbMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            SuruVerbMatcher,
+        )))),
+        // Optional: たら or と
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            TaraAuxiliaryMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            ToConditionalMatcher,
+        )))),
+    ]
 }
 
 // Pattern: たとえ〜ても

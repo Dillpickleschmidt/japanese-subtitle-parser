@@ -11320,3 +11320,67 @@ mod mettani_u301c_nai_tests {
         assert_pattern_range(&patterns, "めったに〜ない", 11, 17); // めったにない
     }
 }
+
+// ========== もしかしたら (maybe/perhaps/possibly) ==========
+// Pattern: もしかしたら (maybe/perhaps/possibly)
+// Data source: grammar_points_data.json["もしかしたら"]
+//
+// Structure variants to test:
+//   standard[0]: もしかしたら + Phrase + (かもしれない)
+//   standard[1]: Alternatives - もしかして、もしかすると
+
+mod moshikashitara_tests {
+    use super::*;
+
+    // Test: もしかしたら (standard form)
+    // Example: "もしかしたら、行けるかもしれない"
+    // Tokenization: もしか (副詞) + し (動詞, する) + たら (助動詞, た)
+    #[test]
+    fn test_moshikashitara_basic() {
+        let sentence = "もしかしたら、行けるかもしれない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もしかしたら");
+        assert_pattern_range(&patterns, "もしかしたら", 0, 6); // もしかしたら
+    }
+
+    // Test: もしかして (alternative form - single token)
+    // Example: "もしかして仕事があるかもしれないから、今ははっきりしたことが言えない"
+    // Tokenization: もしかして (副詞/一般) - single adverb
+    #[test]
+    fn test_moshikashite() {
+        let sentence = "もしかして仕事があるかもしれないから、今ははっきりしたことが言えない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もしかしたら");
+        assert_pattern_range(&patterns, "もしかしたら", 0, 5); // もしかして
+    }
+
+    // Test: もしかすると (alternative form)
+    // Example: "もしかすると、アンちゃんも来るかもしれないけど皆は大丈夫？"
+    // Tokenization: もしか (副詞) + する (動詞) + と (助詞/接続助詞)
+    #[test]
+    fn test_moshikasuruto() {
+        let sentence = "もしかすると、アンちゃんも来るかもしれないけど皆は大丈夫？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もしかしたら");
+        assert_pattern_range(&patterns, "もしかしたら", 0, 6); // もしかすると
+    }
+
+    // Test: もしかしたら with かもしれない
+    // Example: "もしかしたら明日も休むかもしれない"
+    // Tokenization: もしか (副詞) + し (動詞, する) + たら (助動詞, た)
+    #[test]
+    fn test_moshikashitara_with_kamoshirenai() {
+        let sentence = "もしかしたら明日も休むかもしれない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もしかしたら");
+        assert_pattern_range(&patterns, "もしかしたら", 0, 6); // もしかしたら
+    }
+}
