@@ -8339,3 +8339,67 @@ mod to_uff5e_to_u3001_dochiraga_tests {
         assert_pattern_range(&patterns, "と～と、どちらが ", 16, 20); // どちらが
     }
 }
+
+// ========== なければいけない (must do / have to) ==========
+// Pattern: なければいけない
+// Data source: grammar_points_data.json["なければいけない"]
+//
+// Structures to test:
+//   - standard[0]: Verb[ない] + なければ + いけない
+//   - standard[1]: Verb[ない] + なきゃ + いけない (casual contraction)
+//   - polite[0]: Verb[ない] + なければ + いけません
+//   - polite[1]: Verb[ない] + なきゃ + いけません
+//
+// Examples from data:
+//   - 行かなければいけない (have to go)
+//   - 止めなければいけない (have to park/stop)
+//   - 迎えに行かなきゃ (have to go pick up - omitting いけない)
+//   - 調べなきゃいけない (need to look up)
+#[cfg(test)]
+mod nakerebaikenai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb[ない] + なければ + いけない
+    #[test]
+    fn test_nakereba_ikenai_standard() {
+        let sentence = "来月に友達の結婚式に行かなければいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なければいけない");
+        assert_pattern_range(&patterns, "なければいけない", 12, 20); // なければいけない
+    }
+
+    // Testing: structure.standard[1] - Verb[ない] + なきゃ + いけない (casual)
+    #[test]
+    fn test_nakya_ikenai_casual() {
+        let sentence = "宿題で調べなきゃいけない事がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なければいけない");
+        assert_pattern_range(&patterns, "なければいけない", 5, 12); // なきゃいけない
+    }
+
+    // Testing: structure.polite[0] - Verb[ない] + なければ + いけません
+    #[test]
+    fn test_nakereba_ikemasen_polite() {
+        let sentence = "車は駐車場に止めなければいけません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なければいけない");
+        assert_pattern_range(&patterns, "なければいけない", 8, 17); // なければいけません
+    }
+
+    // Testing: structure.polite[1] - Verb[ない] + なきゃ + いけません
+    #[test]
+    fn test_nakya_ikemasen_polite() {
+        let sentence = "明日までに提出しなきゃいけません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なければいけない");
+        assert_pattern_range(&patterns, "なければいけない", 8, 16); // なきゃいけません
+    }
+}
