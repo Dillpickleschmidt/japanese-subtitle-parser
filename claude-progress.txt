@@ -1,3 +1,80 @@
+## Session 349 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (もしも～なら・もしも～でも)
+**Tests added**: 4 (all passing)
+**Total tests**: 2215 passing, 1 ignored (was 2211 passing, 1 ignored)
+
+### ✅ Pattern Completed: もしも～なら・もしも～でも (supposing that / assuming that)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted in overlay)
+
+**Pattern**: もしも is an adverb that strengthens the base meaning of もし (if/supposing). The literal meaning is "even a bit" or "even slightly". It's exclusively paired with conditional expressions (なら, ならば, ば, と, ても/でも) to express hypothetical situations. Often translated as "supposing that", "assuming that", or "if by any chance".
+
+**Structures tested**: 4 comprehensive tests covering major conditional forms
+1. もしも + Phrase + ならば: もしも時間があるならば、手伝ってください (If you have time, please help)
+2. もしも + Phrase + と: もしも仕事で怪我をすると、現場が止まるので気をつけてください (If you get hurt at work, the site will shut down)
+3. もしも + Phrase + なら: もしも明日休みなら、一緒に博物館へいかない？ (If you have tomorrow off, want to go to the museum?)
+4. もしも + Phrase + としても: もしも彼がいたとしても、今日中には終わらなかっただろう (Even if he were here, we wouldn't have finished by today)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (moshimo_uff5e_nara_u30fb_moshimo_uff5e_demo, lines 7739-7810)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (moshimo_nara_demo_tests module, lines 11391-11447)
+- Pattern: grammar-lib/src/patterns.rs (MoshimoUff5eNaraU30fbMoshimoUff5eDemo, lines 4305-4310)
+
+**Tokenization patterns**:
+```
+Three-token matcher: もしも + Wildcard{0-20} + ConditionalMarker
+
+もしも always tokenizes as:
+- もしも (副詞/助詞類接続) - single adverb token
+
+Conditional markers:
+- なら: 助動詞, base=だ, 仮定形
+- ならば: なら (助動詞) + ば (助詞/接続助詞)
+- ば: 助詞/接続助詞
+- と: 助詞/接続助詞
+- ても/でも: て/で + も (助詞/係助詞)
+```
+
+**Key implementation points**:
+1. Three-token matcher: MoshimoMatcher + Wildcard{0-20} + ConditionalMatcher
+2. MoshimoMatcher checks surface == "もしも", base_form == "もしも", POS == 副詞
+3. Wildcard allows 0-20 tokens for the hypothetical phrase between もしも and conditional
+4. ConditionalMatcher matches multiple conditional endings:
+   - なら (助動詞, base=だ, 仮定形)
+   - ば (助詞/接続助詞)
+   - と (助詞/接続助詞)
+   - も (助詞/係助詞) for ても/でも constructions
+5. Pattern matches first conditional marker found in wildcard range
+6. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: Include full construction from もしも to conditional ending
+- もしも～ならば: "もしも時間があるなら" (chars 0-10) - matches なら, not ば separately
+- もしも～と: "もしも仕事で怪我をすると" (chars 0-12)
+- もしも～なら: "もしも明日休みなら" (chars 0-9)
+- もしも～としても: "もしも彼がいたとしても" (chars 0-11)
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major conditional forms: なら, ならば, と, としても
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that もしも is just もし + the adverbial particle も. While もし means "if", adding も strengthens it to "even if" or "supposing". The pattern differs from たとえ (contrastive "even if") in that もしも focuses on hypothetical results (if A, then B), while たとえ asks about possible choices in a situation (even if A, one could do B or C).
+
+**Implementation Challenge**: The matcher needed to handle multiple conditional endings flexibly. The ConditionalMatcher checks for なら, ば, と, and も (for ても/でも), allowing the pattern to match various conditional constructions. In ならば cases, the pattern matches the first token (なら), not waiting for the ば particle.
+
+**Related patterns**:
+- もし (N4 pattern) - basic conditional "if" without the emphatic も
+- たとえ (N3 pattern) - contrastive "even if", focuses on choices not results
+
+---
+
 ## Session 348 - 2025-12-14
 
 ### ✅ Session Summary
