@@ -6862,13 +6862,13 @@
   {
     "pattern_name": "決して〜ない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "決（けっ）して by itself is the て form of the verb 決（けっ）する 'to determine' [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

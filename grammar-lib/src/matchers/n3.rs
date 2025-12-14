@@ -5094,9 +5094,40 @@ pub fn haiumademonai_u2460() -> Vec<TokenMatcher> {
     haiumademonai_u2460_split()
 }
 
-// Pattern: 決して〜ない
+// Pattern: 決して〜ない (never / under no circumstances / by no means)
+// Structures: 決して + Wildcard{0-20} + ない
 pub fn kesshite_u301c_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct KesshiteMatcher;
+    impl Matcher for KesshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "決して"
+                && token.pos.first().is_some_and(|p| p == "副詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ない"
+                && (token.pos.first().is_some_and(|p| p == "助動詞")
+                    || token.pos.first().is_some_and(|p| p == "形容詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KesshiteMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 20,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: わけにはいかない

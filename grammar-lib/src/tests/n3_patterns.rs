@@ -11138,3 +11138,66 @@ mod katoiuto_u2461_tests {
         assert_pattern_range(&patterns, "～かというと ②", 0, 12); // どこに行きたいかというと
     }
 }
+
+// Pattern: 決して〜ない (never / under no circumstances / by no means)
+// Data source: grammar_points_data.json["決して〜ない"]
+// Testing all structure variants
+#[cfg(test)]
+mod kesshite_u301c_nai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "決して + Verb[ない]"
+    #[test]
+    fn test_kesshite_verb_nai() {
+        let sentence = "この道はものすごく危ないので、決してグループから離れないでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "決して〜ない");
+        assert_pattern_range(&patterns, "決して〜ない", 15, 28); // 決してグループから離れない
+    }
+
+    // Testing: structure.standard[1] - "決して + い-Adjective[ない]"
+    #[test]
+    fn test_kesshite_i_adj_nai() {
+        let sentence = "決して痛くないとは言えないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "決して〜ない");
+        assert_pattern_range(&patterns, "決して〜ない", 0, 7); // 決して痛くない
+    }
+
+    // Testing: structure.standard[2] - "決して + な-Adjective + ではない"
+    #[test]
+    fn test_kesshite_na_adj_dewanai() {
+        let sentence = "この乗り物は決して危険ではないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "決して〜ない");
+        assert_pattern_range(&patterns, "決して〜ない", 6, 17); // 決して危険ではないです (includes です)
+    }
+
+    // Testing: structure.standard[3] - "決して + Noun + ではない"
+    #[test]
+    fn test_kesshite_noun_dewanai() {
+        let sentence = "この子は決して悪い人ではないけど、時々失礼なときがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "決して〜ない");
+        assert_pattern_range(&patterns, "決して〜ない", 4, 14); // 決して悪い人ではない
+    }
+
+    // Testing: alternative form with じゃない instead of ではない
+    #[test]
+    fn test_kesshite_janai() {
+        let sentence = "決してあなたが嫌いじゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "決して〜ない");
+        assert_pattern_range(&patterns, "決して〜ない", 0, 13); // 決してあなたが嫌いじゃない
+    }
+}
