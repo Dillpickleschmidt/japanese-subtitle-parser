@@ -6575,3 +6575,76 @@ mod demo_demo_tests {
         assert_pattern_range(&patterns, "〜でも 〜でも", 0, 11); // ケーキでもクッキーでも
     }
 }
+
+// Pattern: 〜ようと思う・〜おうと思う (intend to/thinking of doing)
+// Data source: grammar_points_data.json["〜ようと思う・〜おうと思う"]
+// Testing all structure variants from standard and polite forms
+mod you_to_omou_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[よう] + と思う"
+    #[test]
+    fn test_you_to_omou_basic_ru_verb() {
+        let sentence = "このゲームはもうあきらめようと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜ようと思う・〜おうと思う");
+        assert_pattern_range(&patterns, "〜ようと思う・〜おうと思う", 8, 17); // あきらめようと思う
+    }
+
+    // Testing: structure.standard[0] - "Verb[よう] + と思う" (う-verb)
+    #[test]
+    fn test_ou_to_omou_basic_u_verb() {
+        let sentence = "来月、バイクを買おうと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜ようと思う・〜おうと思う");
+        assert_pattern_range(&patterns, "〜ようと思う・〜おうと思う", 7, 13); // 買おうと思う
+    }
+
+    // Testing: structure.standard[1] - "Verb[よう] + と思っている"
+    #[test]
+    fn test_you_to_omotteiru_continuous() {
+        let sentence = "今晩はレストランで美味しいものを食べようと思っているけど";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜ようと思う・〜おうと思う");
+        assert_pattern_range(&patterns, "〜ようと思う・〜おうと思う", 16, 26); // 食べようと思っている
+    }
+
+    // Testing: structure.standard[1] - "Verb[よう] + と思っている" (う-verb)
+    #[test]
+    fn test_ou_to_omotteiru_continuous() {
+        let sentence = "明日から電車で通おうと思っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜ようと思う・〜おうと思う");
+        assert_pattern_range(&patterns, "〜ようと思う・〜おうと思う", 7, 16); // 通おうと思っている
+    }
+
+    // Testing: structure.polite[0] - "Verb[よう] + と思います"
+    #[test]
+    fn test_you_to_omoimasu_polite() {
+        let sentence = "もう少し頑張ろうと思います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜ようと思う・〜おうと思う");
+        assert_pattern_range(&patterns, "〜ようと思う・〜おうと思う", 4, 13); // 頑張ろうと思います
+    }
+
+    // Testing: structure.polite[1] - "Verb[よう] + と思っています"
+    #[test]
+    fn test_you_to_omotteimasu_polite_continuous() {
+        let sentence = "来年は日本へ行こうと思っています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜ようと思う・〜おうと思う");
+        assert_pattern_range(&patterns, "〜ようと思う・〜おうと思う", 6, 16); // 行こうと思っています
+    }
+}

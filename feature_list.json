@@ -1822,13 +1822,13 @@
   {
     "pattern_name": "〜ようと思う・〜おうと思う",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The combination of a verb with the auxiliary verb う , or よう , followed by the う-Verb 思（おも）う gives us the common expre... [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null

@@ -1674,9 +1674,75 @@ pub fn noyouni_u30fb_noyouna() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 〜ようと思う・〜おうと思う
+// Pattern: 〜ようと思う・〜おうと思う (intend to/thinking of doing)
+// Structures: Verb[未然ウ接続] + う + と + 思う/思っている/思います/思っています
 pub fn u301c_youtoomou_u30fb_u301c_outoomou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match quotation particle と
+    #[derive(Debug)]
+    struct QuotationToMatcher;
+    impl super::Matcher for QuotationToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.base_form == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match 思う (in any conjugation)
+    #[derive(Debug)]
+    struct OmouMatcher;
+    impl super::Matcher for OmouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "思う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match て particle (for 思っている forms)
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl super::Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match いる/います (for ている forms)
+    #[derive(Debug)]
+    struct IruMatcher;
+    impl super::Matcher for IruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ます (for polite forms)
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl super::Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    super::concat(vec![
+        verb_you(),  // Verb[未然ウ接続] + う
+        vec![TokenMatcher::Custom(Arc::new(QuotationToMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(OmouMatcher))],
+        // Optional: て + いる (for 思っている)
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeMatcher))))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(IruMatcher))))],
+        // Optional: ます (for polite forms)
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher))))],
+    ])
 }
 
 // Pattern: く・に
