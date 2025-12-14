@@ -1,3 +1,83 @@
+## Session 338 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (ふりをする)
+**Tests added**: 7 (all passing)
+**Total tests**: 2142 passing, 1 ignored (was 2135 passing, 1 ignored)
+
+### ✅ Pattern Completed: ふりをする (pretend to be/do)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (in feature_list.json), 1 (in patterns.rs - low priority, not highlighted)
+
+**Pattern**: ふりをする is used to show that someone is "pretending to be (A)", "putting on airs of (A)", or "acting as if (A)". This construction comes from the noun 振り (ふり) meaning "a shake" or "behavior pattern shown on the outside", combined with the particle を and する. It can be thought of as "to give off the impression of (A)".
+
+**Structures tested**: 7 comprehensive tests covering all variants
+1. Verb[ている] + ふりをする: 僕は子供の頃、よく寝ているふりをした (When I was a child, I would often pretend to sleep)
+2. Verb[た] + ふりをする: この蛇は人等の大きな動物が近づくと死んだふりをするらしい (This snake apparently pretends to be dead when humans approach)
+3. Verb[ない] + ふりをする: 彼女は何も知らないふりをして黙っていた (She pretended not to know anything and stayed silent)
+4. い-Adjective + ふりをする: 嬉しいふりをする (Pretend to be happy)
+5. な-Adjective + な + ふりをする: 元気なふりをしなくていいよ (You don't have to pretend to be happy)
+6. Noun + の + ふりをする: カエルのふりをして遊んでいる (Playing while pretending to be a frog)
+7. Polite form: 分かっているふりをします (Pretend to understand)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (furiwosuru, lines 6982-7014)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (furiwosuru_tests module, lines 10533-10619)
+- Pattern: grammar-lib/src/patterns.rs (Furiwosuru, lines 4249-4255)
+
+**Tokenization pattern**:
+```
+All variants follow the same structure:
+- Preceding element (verb/adjective/noun in attributive form)
+- ふり (名詞/非自立/一般) - non-independent noun
+- を (助詞/格助詞/一般) - object marker particle
+- する (動詞/自立, サ変・スル) - verb "to do" (any form)
+
+Examples:
+1. いる (動詞/非自立, 基本形) + ふり + を + した (た form)
+2. だ (助動詞, 特殊・タ, 基本形) + ふり + を + する
+3. ない (助動詞, 特殊・ナイ, 基本形) + ふり + を + して
+4. 嬉しい (形容詞/自立, 基本形) + ふり + を + する
+5. な (助動詞, base='だ', 体言接続) + ふり + を + しなく
+6. の (助詞/連体化) + ふり + を + して
+```
+
+**Key implementation points**:
+1. Simple four-token matcher: Any + ふり + を + する
+2. FuriMatcher checks surface == "ふり" and POS == 名詞/非自立
+3. WoParticleMatcher checks surface == "を" and POS == 助詞
+4. specific_verb("する") matches any conjugated form of する
+5. TokenMatcher::Any allows any preceding element (verb, adjective, noun in attributive form)
+6. Pattern works with all conjugations of する (する, した, して, します, しなく, etc.)
+7. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: Include the token before ふり + ふりをする (and any conjugation of する)
+- Verb[ている] form: "いるふりをした" (chars 11-18)
+- Verb[た] form: "だふりをするらしい" (chars 19-28) - includes らしい auxiliary
+- Verb[ない] form: "ないふりをし" (chars 7-13)
+- い-Adj form: "嬉しいふりをする" (chars 28-36)
+- な-Adj form: "なふりをしなく" (chars 11-18)
+- Noun + の form: "のふりをし" (chars 20-25)
+- Polite form: "いるふりをします" (chars 9-17)
+
+**Test Quality**:
+- All 7 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: Verb (ている/た/ない), い-Adj, な-Adj, Noun, polite forms
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The noun 振り has several meanings, but in this pattern it specifically refers to "showing a certain behavior pattern on the outside". This means ふり doesn't necessarily imply deception - it just indicates that what appears externally may differ from internal reality (either mentally or physically). The grammar data emphasizes that this is about giving off an impression, not specifically about lying or pretending in a negative sense.
+
+**Related patterns**:
+- This is a standalone construction pattern, not part of a larger family
+- Similar "pretend" expressions might use different structures in other contexts
+
+---
+
 ## Session 337 - 2025-12-14
 
 ### ✅ Session Summary
