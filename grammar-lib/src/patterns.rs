@@ -4546,7 +4546,15 @@ declare_patterns! {
     Uff5eWoUff5eNimakaseru {
         name: "～を～に任せる",
         matcher_fn: crate::matchers::n2::uff5e_wo_uff5e_nimakaseru,
-        priority: 1,
+        priority: 4,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    Uff5eWoUff5eNimakaseruReverse {
+        name: "～を～に任せる",
+        matcher_fn: crate::matchers::n2::uff5e_wo_uff5e_nimakaseru_reverse,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

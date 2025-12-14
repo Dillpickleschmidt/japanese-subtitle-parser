@@ -337,3 +337,61 @@ mod ageku_tests {
         assert_pattern_range(&patterns, "あげく", 10, 16); // 口論のあげく
     }
 }
+
+// Pattern: ～を～に任せる (entrust X to Y)
+// Data source: grammar_points_data.json["～を～に任せる"]
+// Testing: structure.standard[0] - "(Task) Nounを + (Target) Nounに + 任せる"
+// Testing: structure.standard[1] - "(Target) Nounに + (Task) Nounを + 任せる"
+//
+// Structure variants:
+//   - standard[0]: (Task) Nounを + (Target) Nounに + 任せる (task-target order)
+//   - standard[1]: (Target) Nounに + (Task) Nounを + 任せる (target-task order)
+//   - polite[0-1]: Same with 任せます
+
+mod wo_ni_makaseru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "(Task) Nounを + (Target) Nounに + 任せる"
+    #[test]
+    fn test_task_wo_target_ni() {
+        let sentence = "私は忙しいから、ペットの世話をあなたに任せてもいい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～を～に任せる");
+        assert_pattern_range(&patterns, "～を～に任せる", 14, 21); // をあなたに任せ
+    }
+
+    // Testing: structure.standard[1] - "(Target) Nounに + (Task) Nounを + 任せる"
+    #[test]
+    fn test_target_ni_task_wo() {
+        let sentence = "新人君にあの重要なプレゼンを任せたの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～を～に任せる");
+        assert_pattern_range(&patterns, "～を～に任せる", 3, 17); // にあの重要なプレゼンを任せた
+    }
+
+    // Testing: polite form - "Nounを + Nounに + 任せます"
+    #[test]
+    fn test_polite_form() {
+        let sentence = "この計画を部長に任せます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～を～に任せる");
+        assert_pattern_range(&patterns, "～を～に任せる", 4, 12); // を部長に任せます
+    }
+
+    // Testing: with fate/luck as target
+    #[test]
+    fn test_luck_target() {
+        let sentence = "合否を運に任せる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～を～に任せる");
+        assert_pattern_range(&patterns, "～を～に任せる", 2, 8); // を運に任せる
+    }
+}

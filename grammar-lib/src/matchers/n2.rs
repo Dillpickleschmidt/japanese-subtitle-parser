@@ -102,9 +102,101 @@ pub fn mononara_u2460() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ～を～に任せる
+// Pattern: ～を～に任せる (entrust X to Y)
+// Structures: Nounを + Nounに + 任せる
 pub fn uff5e_wo_uff5e_nimakaseru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を particle (object marker)
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl super::Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match に particle (target marker)
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl super::Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match 任せる verb in any conjugation
+    #[derive(Debug)]
+    struct MakaseruMatcher;
+    impl super::Matcher for MakaseruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "任せる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(WoMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 1,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(MakaseruMatcher)),
+    ]
+}
+
+// Pattern: ～を～に任せる (target-task order: に...を)
+// This handles sentences where the target comes before the task, like:
+// "新人君にあの重要なプレゼンを任せた" (entrusted presentation to newcomer)
+pub fn uff5e_wo_uff5e_nimakaseru_reverse() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Reuse matchers from the main pattern
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl super::Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl super::Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MakaseruMatcher;
+    impl super::Matcher for MakaseruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "任せる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Wildcard {
+            min: 4,
+            max: 4,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(WoMatcher)),
+        TokenMatcher::Custom(Arc::new(MakaseruMatcher)),
+    ]
 }
 
 // Pattern: 活かす
