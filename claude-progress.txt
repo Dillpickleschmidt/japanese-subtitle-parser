@@ -1,3 +1,75 @@
+## Session 291 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (まい～のように - almost every [time period])
+**Tests added**: 3 (all passing)
+**Total tests**: 1849 (was 1846)
+
+### Pattern Implemented: まい～のように (almost every [time period])
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: The expression まい～のように combines the prefix まい (毎 - every) with time expressions and のように (in the manner of) to mean "almost every [time period]" or "on a [time period] basis". This pattern emphasizes regular, frequent occurrence of something.
+
+**Structures tested**: 3 tests covering the single structure variant with different time words
+1. まい + 日 + のように: まい日のように (almost every day)
+2. まい + 週 + のように: まい週のように (almost every week)
+3. まい + 年 + のように: まい年のように (almost every year)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (mai_uff5e_noyouni function, lines 2585-2663)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (maiuff5enoyouni_tests module, lines 10753-10795)
+- Pattern: grammar-lib/src/patterns.rs (MaiUff5eNoyouni - already existed at line 1581)
+
+**Tokenization pattern**:
+```
+まい (動詞/自立, base=まう, 連用形)
++ Time Word (名詞/接尾 or 名詞/一般): 日/週/月/年 etc.
++ の (助詞/連体化)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/副詞化)
+
+Examples:
+- まい + 日 + のように
+- まい + 週 + のように
+- まい + 年 + のように
+```
+
+**Key implementation points**:
+1. MaiMatcher matches まい as 動詞/自立 (base=まう, 連用形) - Kagome tokenizes it as verb "to dance" instead of prefix "every"
+2. TimeWordMatcher accepts nouns (接尾 or 一般) for time expressions
+3. NoParticleMatcher matches の as 助詞/連体化 (nominalizer)
+4. YouMatcher matches よう as 名詞/非自立/助動詞語幹
+5. NiAdverbMatcher matches に as 助詞/副詞化 (adverbializer)
+6. Pattern range includes: まい + Time Word + のように
+7. Priority 1 means detected but not highlighted in browser extension
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover multiple time expressions (日, 週, 年)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that まい is tokenized as verb まう (to dance) instead of prefix 毎 (every)
+2. Recognizing the full pattern structure: まい + Time Word + のように
+3. Creating custom matchers for each component of the pattern
+4. Ensuring the pattern matches various time words (日, 週, 月, 年, etc.)
+5. Understanding that this pattern differs from simple のように by requiring まい prefix
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a common construction pattern for expressing frequency.
+
+**Linguistic Note**: The expression まい～のように literally means "in the manner of every [time period]". The prefix まい (毎) means "every" and is used before time expressions to create words like まい日 (every day), まい週 (every week), まい年 (every year). When combined with のように, it softens to "almost every" rather than strictly "every", making it sound less absolute and more natural in conversation. This is similar to English "like every day" vs "every single day".
+
+**Next pattern to implement**: ように～てほしい (want someone to do in order to) or れる・られる (Potential)
+
+---
+
 ## Session 290 - 2025-12-14
 
 ### ✅ Session Summary
