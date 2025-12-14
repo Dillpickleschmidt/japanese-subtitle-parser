@@ -1,10 +1,70 @@
 ## Session 315 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully completed 1 N3 pattern
-**Patterns completed**: 1 (にかけて)
-**Tests added**: 4 (all passing)
-**Total tests**: 2003 passing, 1 ignored (was 1999 passing, 1 ignored)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (にかけて, にもとづいて)
+**Tests added**: 9 (all passing)
+**Total tests**: 2008 passing, 1 ignored (was 1999 passing, 1 ignored)
+
+### ✅ Pattern Completed: にもとづいて (based on)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: にもとづいて expresses "based on (A)", highlighting a judgement or conclusion using (A) as the foundation. From に + 基づく (to originate from) + て/た. The kanji 基 (foundation) is used to highlight things that "stem" from something. The pattern can be written in hiragana (にもとづいて) or with kanji (に基づいて). Commonly used to identify things that are "produced from (A)", "created from (A)", or "invented based on (A)".
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Hiragana te-form: クライアントの指示にもとづいて、編集をしておきました (I edited based on the client's instructions)
+2. Hiragana past form: 私は実話にもとづいた映画が好きです (I like movies based on true stories)
+3. Kanji te-form: 以前成功した計画に基づいて、新しい計画を立てようと思っています (thinking of making new plan based on previous successful plan)
+4. Kanji past form: アンケートに基づいたグラフを作成してください (please make a graph based on the surveys)
+5. Created from: あの国の法律は宗教にもとづいて作られている (that country's law is founded on religion)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nimotozuite, lines 1398-1443)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nimotozuite_tests module, lines 6932-6997)
+- Pattern: grammar-lib/src/patterns.rs (Nimotozuite)
+
+**Tokenization pattern**:
+```
+Three tokens:
+- に (助詞/格助詞/一般, base='に')
+- もとづい OR 基づい (動詞/自立, base='もとづく' OR '基づく', 連用タ接続)
+- て (助詞/接続助詞) OR た (助動詞, 特殊・タ)
+
+Te-form example:
+- に (助詞) + もとづい (動詞) + て (助詞) = にもとづいて
+
+Past form example:
+- に (助詞) + もとづい (動詞) + た (助動詞) = にもとづいた
+```
+
+**Key implementation points**:
+1. NiParticleMatcher matches に as case-marking particle (助詞/格助詞)
+2. MotozukuMatcher matches BOTH もとづく and 基づく as verb base forms (動詞/自立)
+3. TeOrTaMatcher matches EITHER て (助詞/接続助詞) OR た (助動詞)
+4. Pattern handles both hiragana and kanji variants automatically
+5. Pattern range includes all 3 tokens: に + (もとづい/基づい) + (て/た)
+
+**Pattern ranges**: Include full construction from に to て/た
+- Example: "にもとづいて" (chars 9-15) - hiragana te-form
+- Example: "にもとづいた" (chars 4-10) - hiragana past form
+- Example: "に基づいて" (chars 8-13) - kanji te-form
+- Example: "に基づいた" (chars 11-16) - kanji past form
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both te-form and past form variants
+- Cover both hiragana and kanji writing systems
+- Cover different usage contexts (instructions, true stories, plans, surveys, laws)
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The verb 基づく means "to be based on" or "to originate from", and the kanji 基 literally means "foundation" or "base". When used with the conjunction particle て, it creates にもとづいて which expresses that (B) is based on the foundation of (A). When used with the past auxiliary た, it creates にもとづいた which acts as an attributive modifier, allowing "based on (A)" to directly modify a following noun (e.g., "movies based on true stories").
+
+---
 
 ### ✅ Pattern Completed: にかけて (from A to B, throughout A)
 
