@@ -1,3 +1,107 @@
+## Session 244 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (てくれない・てもらえない - won't you do for me?)
+**Tests added**: 10 (all passing)
+**Total tests**: 1613 (was 1603)
+
+### Pattern Implemented: てくれない・てもらえない (won't you do for me?)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: Negative polite request form. Uses てくれない/てもらえない (casual) or てくれません/てもらえません (polite) to make polite requests. Also handles ないで form for negative requests ("please don't...").
+
+**Structures tested**: 10 tests covering all major structure variants
+1. Verb[て] + くれない (か)?: 教えてくれない？ (won't you teach me? - casual)
+2. Verb[て] + くれない + か: 貸してくれないか？ (won't you lend - casual with か)
+3. Verb[て] + もらえない (か)?: 調べてもらえない？ (could I have you look up? - casual)
+4. Verb[て] + もらえない + か: 消してもらえないか (could I have you turn off - casual with か)
+5. Verb[ないで] + くれない: しないでくれない？ (won't you not do? - negative request casual)
+6. Verb[ないで] + もらえない: 触らないでもらえない？ (could I have you not touch? - negative request)
+7. Verb[て] + くれません (か)?: いてくれませんか？ (won't you be here? - polite)
+8. Verb[て] + もらえません (か)?: 開けてもらえませんか？ (could I have you open? - polite)
+9. Verb[ないで] + くれません (か): 怒らないでくれませんか (won't you not get angry? - negative request polite)
+10. Verb[ないで] + もらえません (か): 使わないでもらえませんか (could I have you not use? - negative request polite)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 3715-3795)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 7295-7421)
+- Pattern structure: Verb + (ない) + て/で + くれる/もらえる + ない/ません + optional(か)
+
+**Tokenization patterns discovered**:
+- Verb (連用形/連用タ接続/未然形) - verb stem before て or ない
+- て/で (助詞/接続助詞) - te-form particle
+- ない (助動詞) - negative auxiliary (in ないで construction)
+- くれる/もらえる (動詞/非自立, 未然形/連用形) - receiving verbs
+- ない (助動詞, 基本形) OR ませ (助動詞, 未然形) - negative forms
+- ん (助動詞) - polite negative contraction (optional, only with ませ)
+
+**Matcher components**:
+1. VerbFormMatcher - Matches verb in 連用形, 連用タ接続 (て-form stem), or 未然形 (ない-form stem)
+2. TeDeParticleMatcher - Matches て or で as conjunction particle
+3. NaiAuxMatcher (Optional) - Matches ない auxiliary for ないで construction
+4. KureruMoraeruMatcher - Matches くれる or もらえる verbs
+5. NaiMaseMatcher - Matches ない (casual negative) or ませ (polite negative)
+6. NMatcher (Optional) - Matches ん (polite negative contraction)
+
+**Key characteristics**:
+- Handles both て-form and ないで-form requests
+- Supports both くれない (for speaker benefit) and もらえない (potential form of もらう)
+- Works with casual (ない) and polite (ません) forms
+- Pattern range includes full construction from verb through negative form
+- Optional か particle adds extra politeness
+
+**Pattern ranges**:
+- Include full grammatical construction from verb through negative ending
+- Examples: 教えてくれない (5-12), 調べてもらえない (2-10), しないでくれない (6-14)
+- Polite forms: いてくれません (6-13), 開けてもらえません (2-11)
+
+**Difference from related patterns**:
+- てくれない/てもらえない: Negative question form = polite request
+- てくれる/てもらう: Positive form = receiving favor
+- てください: Direct polite request
+- Politeness scale: てくれ < てくれる < てもらえる < てくれない(か) < てもらえない(か)
+
+**Challenges solved**:
+1. Verb form matching: Used single matcher for 連用形, 連用タ接続, and 未然形 to handle both て and ないで forms
+2. Optional ない: Made NaiAuxMatcher optional to support both て and ないで constructions
+3. Negative forms: Created matcher to handle both ない and ませ negative forms
+4. Polite contraction: Made ん matcher optional since it only appears with ませ, not ない
+
+### Session Statistics
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1
+- **Test success rate**: 10/10 (100%)
+- **Total passing tests**: 1613
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**: Many construction patterns still need implementation
+2. **Good candidates from feature_list.json**:
+   - てすみません (sorry for doing)
+   - でございます (very polite copula)
+   - でできる・からできる (can make from)
+   - といい (it would be good if)
+   - といってもいい (you could say)
+3. **Pattern focus**: Common N4 construction patterns with practical usage
+
+### Environment Status
+- All 1613 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+- Successfully used concat() helper to compose multi-token patterns
+- Custom matchers with Matcher trait provide precise POS and surface matching
+- Pattern priority 1 is appropriate for N4 construction patterns (low priority, won't highlight in overlays)
+- Optional token matching works well for handling variant constructions (with/without ない, with/without ん)
+- Single matcher can handle multiple verb conjugation forms efficiently
+
 ## Session 243 - 2025-12-14
 
 ### ✅ Session Summary
