@@ -1,3 +1,129 @@
+## Session 205 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 3 N2 patterns
+**Patterns completed**: 3 (お～願う, がけに, ことなく)
+**Tests added**: 13 (all passing)
+**Total tests**: 1328 (was 1315)
+
+### Pattern Implemented: お～願う (humble request)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 6
+1. お + Verb[stem] + 願う (お調べ願う)
+2. お + Verb[stem] + 願います (お確かめ願います, お待ち願います)
+3. ご + Chinese-origin Noun + 願います (ご確認願います, ご協力願います)
+4. Western-origin Noun + 願います (サイン願います - no prefix)
+
+**Implementation details**:
+- Pattern: (Optional お/ご) + Verb[連用形]/Noun[サ変接続] + 願う + (Optional ます)
+- Four tokens with optional prefix and suffix
+- Custom matchers:
+  - OGoMatcher: お or ご as 接頭詞/名詞接続
+  - VerbOrNounMatcher: Verb[連用形] OR Noun[サ変接続]
+  - NegauVerbMatcher: 願う as 動詞/非自立 (after verb) or 動詞/自立 (after noun)
+  - MasuMatcher: ます as 助動詞
+- Handles all three structure types (お+verb, ご+noun, western noun) in single pattern
+- Humble speech expression, more formal than お～ください
+- Rarely used outside formal situations (business, announcements)
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 1054-1127)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 1276-1341)
+
+### Pattern Implemented: がけに (on the way, as you go)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 3
+1. 帰りがけに (on the way home)
+2. 行きがけに (on the way there)
+3. 通りがけに (passing by)
+
+**Implementation details**:
+- Pattern tokenizes as compound noun ending in がけ + に particle
+- Two tokens: XりがけXいがけ/通りがけ (名詞) + に (助詞/格助詞)
+- Custom matcher: GakeNounMatcher checks surface.ends_with("がけ") && pos == 名詞
+- Simple 2-token pattern despite appearing as "Verb stem + がけに" in grammar
+- Not commonly used in modern Japanese
+- Expresses doing (B) on the way to/from (A) or while passing by
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 1128-1167)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 648-668)
+
+### Pattern Implemented: ことなく (without doing)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 4
+1. 出すことなく (without injuring)
+2. 遅刻することなく (without being late)
+3. 捕まることなく (without being caught)
+4. 言うことなく (without telling)
+
+**Implementation details**:
+- Pattern: Verb[基本形] + こと (名詞/非自立) + なく (形容詞)
+- Three tokens with specific matchers for each:
+  - DictionaryVerbMatcher: Verb in 基本形 (dictionary form)
+  - KotoMatcher: こと as 名詞/非自立/一般
+  - NakuMatcher: なく (base form: ない) as 形容詞 in 連用テ接続
+- More formal than ないで 'without'
+- Two contrastive uses:
+  1. Preventative: (A) is negative, (B) avoids it
+  2. Unmet desire: (A) was wished for but (B) happened without it
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 1168-1218)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 1002-1045)
+
+### Workflow followed (all 3 patterns)
+1. ✅ Read grammar_points_data.json to understand structure variants
+2. ✅ Checked for existing stub functions (all found)
+3. ✅ Wrote tests with print_debug for all structure variants
+4. ✅ Analyzed tokenization output to understand token structure
+5. ✅ Implemented matchers based on actual tokenization (not assumptions)
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug and added proper assertions with correct ranges
+8. ✅ Verified all tests pass (no regressions)
+9. ✅ Updated feature_list.json for all 3 patterns
+10. ✅ Committed changes with detailed commit messages
+
+### Key Learnings
+1. **Prefix flexibility**: お～願う handles optional prefixes (お/ご) for different word origins
+2. **Compound nouns**: がけに tokenizes as single compound noun despite appearing as verb+suffix
+3. **Formal expressions**: Both お～願う and ことなく are formal/polite alternatives to common patterns
+4. **Tokenization variations**: 願う changes POS (非自立 vs 自立) depending on what precedes it
+
+### Statistics
+- **Session time**: ~2.5 hours
+- **Patterns completed this session**: 3
+- **Test success rate**: 13/13 (100%)
+- **Total passing tests**: 1328
+- **Average time per pattern**: ~50 minutes
+
+### Next Session Recommendations
+1. **Continue with N2 priority 4 patterns**: Several patterns still available
+2. **Good candidates**:
+   - か〜ないかのうちに (just as/before) - temporal pattern
+   - かと思ったら・かと思うと (just when I thought) - か + と思う pattern
+   - が気になる (be concerned about) - が + adjective pattern
+   - ことだから (because, knowing that) - こと + だから
+3. **Pattern types**: N2 has mix of formal expressions, compound patterns, and temporal constructions
+
+### Environment Status
+- ✅ All 1328 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated for all 3 patterns
+- ✅ Ready for next session
+
+---
+
 ## Session 204 - 2025-12-13
 
 ### ✅ Session Summary
