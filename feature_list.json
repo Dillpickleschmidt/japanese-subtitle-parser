@@ -3110,13 +3110,13 @@
   {
     "pattern_name": "と～と、どちらが ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "と～と、どちらが is an expression in Japanese that is made from the following parts: と - The particle (x2) in its meaning of ... [4 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

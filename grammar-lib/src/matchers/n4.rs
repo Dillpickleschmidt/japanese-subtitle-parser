@@ -5135,8 +5135,61 @@ pub fn teirutokoroda() -> Vec<TokenMatcher> {
 }
 
 // Pattern: と～と、どちらが 
+// Pattern: と～と、どちらが (which is... ?)
+// Structures: どちら/どっち + (のほう) + が
 pub fn to_uff5e_to_u3001_dochiraga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match どちら or どっち (pronoun)
+    #[derive(Debug)]
+    struct DochiraDotchiMatcher;
+    impl super::Matcher for DochiraDotchiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "どちら" || token.surface == "どっち")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "代名詞")
+        }
+    }
+
+    // Match の (particle for の in のほう)
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl super::Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match ほう (direction/side)
+    #[derive(Debug)]
+    struct HouMatcher;
+    impl super::Matcher for HouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match が (case particle)
+    #[derive(Debug)]
+    struct GaCaseParticleMatcher;
+    impl super::Matcher for GaCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DochiraDotchiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoRentaikaMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(HouMatcher)))),
+        TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher)),
+    ]
 }
 
 // Pattern: ようにする

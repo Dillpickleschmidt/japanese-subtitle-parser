@@ -8255,3 +8255,87 @@ mod naito_tests {
         assert_pattern_range(&patterns, "ないと", 8, 13); // 守らないと
     }
 }
+
+// ========== と～と、どちらが (which is... ?) ==========
+// Pattern: と～と、どちらが
+// Data source: grammar_points_data.json["と～と、どちらが "]
+//
+// Structures to test:
+//   - standard[0]: Noun (A) + と + Noun (B) + (と) + どちら/どっち + が
+//   - standard[1]: Verb + こと/の + と + Verb + こと/の + (と) + どちら + が
+//   - Variations: どちらのほう, どっち, どっちのほう
+//
+// Examples from data:
+//   - ピザとラーメンとどちらが好きですか (Between pizza and ramen, which do you prefer?)
+//   - 辛い物と甘い物とどっちが好き (Between spicy and sweet, which do you like?)
+//   - 私と彼女どっちが好き (Between me and her, who do you like?) [second と omitted]
+#[cfg(test)]
+mod to_uff5e_to_u3001_dochiraga_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun (A) + と + Noun (B) + と + どちら + が"
+    #[test]
+    fn test_to_dochiraga_two_nouns_with_second_to() {
+        let sentence = "ピザとラーメンとどちらが好きですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と～と、どちらが ");
+        assert_pattern_range(&patterns, "と～と、どちらが ", 8, 12); // どちらが
+    }
+
+    // Testing: structure.standard[0] variation - second と omitted
+    #[test]
+    fn test_to_dochiraga_two_nouns_without_second_to() {
+        let sentence = "私と彼女どっちが好き？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と～と、どちらが ");
+        assert_pattern_range(&patterns, "と～と、どちらが ", 4, 8); // どっちが
+    }
+
+    // Testing: structure.standard[0] variation - どちらのほう
+    #[test]
+    fn test_to_dochiraga_dochira_no_hou() {
+        let sentence = "ワインとビールとどちらのほうが飲みたいですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と～と、どちらが ");
+        assert_pattern_range(&patterns, "と～と、どちらが ", 8, 15); // どちらのほうが
+    }
+
+    // Testing: structure.standard[0] variation - どっちのほう
+    #[test]
+    fn test_to_dochiraga_dotchi_no_hou() {
+        let sentence = "辛い物と甘い物とどっちのほうが好き？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と～と、どちらが ");
+        assert_pattern_range(&patterns, "と～と、どちらが ", 8, 15); // どっちのほうが
+    }
+
+    // Testing: structure.standard[1] - "Verb + こと + と + Verb + こと + と + どちら + が"
+    #[test]
+    fn test_to_dochiraga_verbs_with_koto() {
+        let sentence = "漢字を書くことと漢字を読むこととどちらが得意ですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と～と、どちらが ");
+        assert_pattern_range(&patterns, "と～と、どちらが ", 16, 20); // どちらが
+    }
+
+    // Testing: structure.standard[1] variation - Verb + の
+    #[test]
+    fn test_to_dochiraga_verbs_with_no() {
+        let sentence = "遊園地に行くのと動物園に行くのとどちらがいいですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と～と、どちらが ");
+        assert_pattern_range(&patterns, "と～と、どちらが ", 16, 20); // どちらが
+    }
+}
