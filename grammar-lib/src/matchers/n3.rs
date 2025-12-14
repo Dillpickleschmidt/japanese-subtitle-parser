@@ -519,9 +519,61 @@ pub fn nakanaka_uff5e_nai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: によると・によれば
+// Pattern: によると・によれば (according to)
+// Structures: Noun + によると / Verb + ところ + によると / (1) によれば / によりますと
 pub fn niyoruto_u30fb_niyoreba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Custom matcher for に particle (case-marking)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Custom matcher for よる/より/よれ (verb forms)
+    #[derive(Debug)]
+    struct YoruVerbMatcher;
+    impl Matcher for YoruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "よる" || token.surface == "より" || token.surface == "よれ")
+                && token.base_form == "よる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    // Custom matcher for ます (polite auxiliary)
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Custom matcher for と or ば (conjunctive particles)
+    #[derive(Debug)]
+    struct ToOrBaMatcher;
+    impl Matcher for ToOrBaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "と" || token.surface == "ば")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(YoruVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+        TokenMatcher::Custom(Arc::new(ToOrBaMatcher)),
+    ]
 }
 
 // Pattern: によって・による (depending on, according to, by means of)

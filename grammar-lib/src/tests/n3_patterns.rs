@@ -8982,3 +8982,78 @@ mod niyotte_niyoru_tests {
     }
 }
 
+// ========== によると・によれば (according to) ==========
+// Pattern: によると・によれば (according to, going off of)
+// Data source: grammar_points_data.json["によると・によれば"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + によると
+//   standard[1]: Verb + ところ + によると
+//   standard[2]: (1) によれば (can replace によると)
+//
+// Additional formal variant: によりますと (newspapers/articles)
+
+mod niyoruto_niyoreba_tests {
+    use super::*;
+
+    // Test: Noun + によると (according to)
+    // Example: 天気予報によると、今夜から雪が降るらしいですよ
+    #[test]
+    fn test_noun_niyoruto() {
+        let sentence = "天気予報によると、今夜から雪が降るらしいですよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によると・によれば");
+        assert_pattern_range(&patterns, "によると・によれば", 4, 8); // によると
+    }
+
+    // Test: Verb + ところ + によると
+    // Example: 先生に聞いたところによると、来週からオンライン授業になるらしいよ
+    #[test]
+    fn test_tokoro_niyoruto() {
+        let sentence = "先生に聞いたところによると、来週からオンライン授業になるらしいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によると・によれば");
+        assert_pattern_range(&patterns, "によると・によれば", 9, 13); // によると
+    }
+
+    // Test: Noun + によれば (according to - conditional form)
+    // Example: 今朝のニュースによれば、来月末から海外旅行が出来るようになる
+    #[test]
+    fn test_noun_niyoreba() {
+        let sentence = "今朝のニュースによれば、来月末から海外旅行が出来るようになる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によると・によれば");
+        assert_pattern_range(&patterns, "によると・によれば", 7, 11); // によれば
+    }
+
+    // Test: によりますと (formal variant used in news/articles)
+    // Example: 愛知県警によりますと、犯人は四十代の男性だという事です
+    #[test]
+    fn test_niyorimasu_to() {
+        let sentence = "愛知県警によりますと、犯人は四十代の男性だという事です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によると・によれば");
+        assert_pattern_range(&patterns, "によると・によれば", 4, 10); // によりますと
+    }
+
+    // Test: Verb + ところ + によると (different verb)
+    // Example: 私が聞くところによると、部長が転職するそうだ
+    #[test]
+    fn test_tokoro_niyoruto_kikukoro() {
+        let sentence = "私が聞くところによると、部長が転職するそうだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によると・によれば");
+        assert_pattern_range(&patterns, "によると・によれば", 7, 11); // によると
+    }
+}
+
