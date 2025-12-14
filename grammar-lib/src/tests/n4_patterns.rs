@@ -10660,3 +10660,93 @@ mod rutokoroda_tests {
     }
 }
 
+// Pattern: ほかに(も)・ほか(に)は (other than, besides, anything else)
+// Data source: grammar_points_data.json["ほかに(も)・ほか(に)は"]
+// Testing: All structure variants
+//
+// Structures tested:
+//   - standard[0]: 他（ほか） + の + Noun
+//   - standard[1]: （その） + 他（ほか） + にも/に/は/には
+//   - standard[2]: Noun + の + 他（ほか） + にも/に/は/には
+//   - Negative patterns with には
+mod hokani_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "他（ほか） + の + Noun"
+    #[test]
+    fn test_hokano_noun() {
+        let sentence = "この電子レンジは壊れているのでほかの電子レンジをお使いになってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほかに(も)・ほか(に)は");
+        assert_pattern_range(&patterns, "ほかに(も)・ほか(に)は", 15, 18); // ほかの
+    }
+
+    // Testing: structure.standard[1] - "ほか + に" (basic form)
+    #[test]
+    fn test_hokani() {
+        let sentence = "ほかに、欲しいものはある？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほかに(も)・ほか(に)は");
+        assert_pattern_range(&patterns, "ほかに(も)・ほか(に)は", 0, 3); // ほかに
+    }
+
+    // Testing: structure.standard[1] - "ほか + にも"
+    #[test]
+    fn test_hokanimo() {
+        let sentence = "動物園のほかにもどこかへ行きますか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほかに(も)・ほか(に)は");
+        assert_pattern_range(&patterns, "ほかに(も)・ほか(に)は", 4, 8); // ほかにも
+    }
+
+    // Testing: structure.standard[1] - "その + ほか + にも"
+    #[test]
+    fn test_sono_hokanimo_question() {
+        let sentence = "そのほかにも何か質問がありませんか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほかに(も)・ほか(に)は");
+        assert_pattern_range(&patterns, "ほかに(も)・ほか(に)は", 2, 6); // ほかにも
+    }
+
+    // Testing: structure.standard[2] - "ほか + には" (negative)
+    #[test]
+    fn test_noun_hokaniha_negative() {
+        let sentence = "ほかにはない物が食べたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほかに(も)・ほか(に)は");
+        assert_pattern_range(&patterns, "ほかに(も)・ほか(に)は", 0, 4); // ほかには
+    }
+
+    // Testing: structure.standard[2] - "Noun + の + ほか + には" (affirmative)
+    #[test]
+    fn test_noun_hokaniha_affirmative() {
+        let sentence = "お金のほかには何が欲しいですか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほかに(も)・ほか(に)は");
+        assert_pattern_range(&patterns, "ほかに(も)・ほか(に)は", 3, 7); // ほかには
+    }
+
+    // Testing: structure.standard[2] - "Noun + の + ほか + に + は"
+    #[test]
+    fn test_noun_hokani_ha() {
+        let sentence = "彼のほかにはフランス語を話せる人はいません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほかに(も)・ほか(に)は");
+        assert_pattern_range(&patterns, "ほかに(も)・ほか(に)は", 2, 6); // ほかには
+    }
+}
+

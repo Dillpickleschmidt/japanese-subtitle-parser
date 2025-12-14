@@ -5333,9 +5333,59 @@ pub fn tara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ほかに(も)・ほか(に)は
+// Pattern: ほかに(も)・ほか(に)は (other than, besides, anything else)
+// Structures: ほか + の/に/にも/には/にも
 pub fn hokani_mo_u30fb_hoka_ni_ha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ほか as 名詞/副詞可能
+    #[derive(Debug)]
+    struct HokaMatcher;
+    impl super::Matcher for HokaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほか"
+                && token.base_form == "ほか"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Match の or に particle
+    #[derive(Debug)]
+    struct NoOrNiParticleMatcher;
+    impl super::Matcher for NoOrNiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // の (助詞/連体化) or に (助詞/格助詞)
+            if token.surface == "の" {
+                token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+            } else if token.surface == "に" {
+                token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            } else {
+                false
+            }
+        }
+    }
+
+    // Match も or は particle (optional)
+    #[derive(Debug)]
+    struct MoOrHaParticleMatcher;
+    impl super::Matcher for MoOrHaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "も" || token.surface == "は")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(HokaMatcher)),
+        TokenMatcher::Custom(Arc::new(NoOrNiParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MoOrHaParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: がひつよう (is necessary)

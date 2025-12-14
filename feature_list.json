@@ -3530,13 +3530,13 @@
   {
     "pattern_name": "ほかに(も)・ほか(に)は",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "他（ほか）に is regularly considered to be one of the more difficult structures to master in Japanese, so let's take a thor... [10 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
