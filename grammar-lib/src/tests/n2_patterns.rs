@@ -815,3 +815,44 @@ mod karamiruto_tests {
         assert_pattern_range(&patterns, "から見ると", 0, 6); // 外からみたら
     }
 }
+
+// Pattern: か何か (or something, or something like that)
+// Data source: grammar_points_data.json["か何か"]
+// Testing: structure.standard[0] - "Noun + か何（なに）か"
+//
+// Expresses uncertainty about a specific thing
+// Nuance: "(A) or whatever it is", "or something like (A)"
+// Often used when offering something or when more options are available
+mod kananika_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_kananika_question() {
+        let sentence = "すみません、お茶かなにかありませんか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か何か");
+        assert_pattern_range(&patterns, "か何か", 6, 12); // お茶かなにか
+    }
+
+    #[test]
+    fn test_noun_kananika_holding() {
+        let sentence = "あそこにナイフかなにかを持った怪しい人がいました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か何か");
+        assert_pattern_range(&patterns, "か何か", 4, 11); // ナイフかなにか
+    }
+
+    #[test]
+    fn test_noun_kananika_offer() {
+        let sentence = "紅茶かなにか飲みませんか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か何か");
+        assert_pattern_range(&patterns, "か何か", 0, 6); // 紅茶かなにか
+    }
+}

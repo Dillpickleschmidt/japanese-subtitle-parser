@@ -1639,9 +1639,53 @@ pub fn nanitoittemo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: か何か
+// Pattern: か何か (or something, or something like that)
+// Structures: Noun + か + なに + か (or かなにか as single adverb)
 pub fn kananika() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match か as particle
+    #[derive(Debug)]
+    struct KaMatcher;
+    impl super::Matcher for KaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token
+                    .pos
+                    .get(1)
+                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    // Match なに (pronoun) OR なにか (adverb)
+    #[derive(Debug)]
+    struct NaniOrNanikaMatcher;
+    impl super::Matcher for NaniOrNanikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // なに as pronoun
+            if token.surface == "なに"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "代名詞")
+            {
+                return true;
+            }
+            // かなにか as single adverb token
+            if token.surface == "なにか"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(KaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaniOrNanikaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KaMatcher)))),
+    ]
 }
 
 // Pattern: てならない
