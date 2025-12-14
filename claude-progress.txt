@@ -1,10 +1,10 @@
 ## Session 297 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N4 pattern
-**Patterns completed**: 1 (命令形 - imperative form)
-**Tests added**: 9 (all passing)
-**Total tests**: 1895 (was 1886)
+**Status**: COMPLETE - Successfully implemented 2 N4 patterns
+**Patterns completed**: 2 (命令形 - imperative form, 真(っ) - ma-prefix)
+**Tests added**: 16 (all passing)
+**Total tests**: 1902 (was 1886)
 
 ### Pattern Implemented: 命令形 (imperative form)
 
@@ -81,7 +81,85 @@ surface='食べろ' base='食べる' pos=動詞/自立/*/* [features: 動詞, �
 
 Women tend to use the more polite て-form instead of imperative. The よ particle can soften the imperative slightly, making it more like friendly advice than a harsh command.
 
-**Next pattern to implement**: 真(っ) (ma- prefix for "completely") or ～のだろうか (wondering/questioning)
+---
+
+### Pattern 2 Implemented: 真(っ) (ma-prefix for "completely")
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1 (detected but not highlighted)
+
+**Pattern**: The prefix 真 (ま) comes from the kanji 真（ま） meaning "true" and is attached to words to express that something is "completely", "exactly", or "genuinely" (A). Depending on which kana column the following word starts with, the prefix conjugates as 真ん (before ま/な column) or 真っ (before か/さ/しゃ/は columns).
+
+**Key conjugation patterns tested**: 7 tests covering different column combinations
+1. 真ん + ま-column: 真ん中 (dead center/middle)
+2. 真ん + な-column: 真ん丸 (perfectly round)
+3. 真っ + さ-column: 真っ白 (pure white)
+4. 真っ + か-column: 真っ黄色 (bright yellow) - prefix pattern
+5. Exception: 真っ赤 (completely red - 赤い→か)
+6. Exception: 真っ青 (completely blue - 青い→さお)
+7. 真っ + は-column with H→P: 真っ裸 (completely naked - はだか→ぱだか)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (ma function, lines 3571-3596)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (ma_prefix_tests module, lines 11441-11529)
+- Pattern: grammar-lib/src/patterns.rs (Ma - already existed)
+
+**Tokenization patterns**:
+```
+Two distinct tokenization patterns:
+
+Pattern 1: Compound words (SINGLE token):
+surface='真ん中' base='真ん中' pos=名詞/一般
+surface='真ん丸' base='真ん丸' pos=名詞/形容動詞語幹
+surface='真っ赤' base='真っ赤' pos=名詞/形容動詞語幹
+surface='真っ青' base='真っ青' pos=名詞/形容動詞語幹
+surface='真っ裸' base='真っ裸' pos=名詞/一般
+
+Pattern 2: Prefix + Noun (TWO tokens):
+surface='真っ' base='真っ' pos=接頭詞/名詞接続
++ surface='黄色' base='黄色' pos=名詞/一般
+```
+
+**Key implementation points**:
+1. MaPatternMatcher checks for BOTH patterns in one matcher
+2. Pattern 1 (compounds): Checks if surface/base_form start with 真ん or 真っ AND pos==名詞 AND length > 2 chars
+3. Pattern 2 (prefix): Checks if surface=="真っ" AND base_form=="真っ" AND pos==接頭詞/名詞接続
+4. Single-token matcher works for both cases (compounds match themselves, prefix matches only the prefix)
+5. Priority 1 means detected but not highlighted
+
+**Pattern ranges**:
+- Compound words: Full compound (e.g., 真ん中 = chars 0-3)
+- Prefix pattern: Just the prefix (e.g., 真っ = chars 4-6, not including following noun)
+- 形容動詞語幹 compounds: Includes following で particle due to na-adjective pattern overlap (e.g., 真ん丸で = chars 4-8)
+
+**Test Quality**:
+- Cover both 真ん and 真っ conjugations
+- Test different kana column combinations (ま, な, さ, か, は)
+- Test exception cases (真っ赤, 真っ青)
+- Test H→P sound change (真っ裸 - はだか→ぱだか)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified (noting overlaps with na-adjective patterns)
+
+**Challenges Solved**:
+1. Understanding two distinct tokenization patterns (compounds vs prefix)
+2. Creating a single matcher that handles both single-token and two-token cases
+3. Recognizing that compound words are tokenized differently than prefix + noun combinations
+4. Understanding that 形容動詞語幹 (na-adjective stems) extend ranges to include で
+5. Accepting that prefix pattern only highlights the prefix, not the full phrase
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a common construction pattern that adds emphasis but doesn't represent a complex grammatical structure learners need to focus on.
+
+**Linguistic Note**: The 真(ま) prefix intensifies the meaning of words to express "completely" or "totally". The conjugation rules follow phonetic patterns:
+- **真ん**: Before ま-column (真ん中 mannaka) and な-column (真ん丸 manmaru)
+- **真っ**: Before か/さ/しゃ columns (真っ赤 makka, 真っ白 masshiro, 真っ正直 masshoujiki)
+- **真っ (with H→P)**: Before は-column where H becomes P (真っ裸 mappada ka, 真っ昼間 mapiruma)
+
+Special exceptions exist for color adjectives: 青い becomes 真っ青 (massao, not makao), and 赤い becomes 真っ赤 (makka, not maaka).
+
+**Next pattern to implement**: ～のだろうか (wondering/questioning) or ～は～の一つだ (is one of)
 
 ---
 
