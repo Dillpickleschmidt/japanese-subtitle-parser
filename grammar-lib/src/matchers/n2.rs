@@ -502,9 +502,40 @@ pub fn shitagatte() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: あげく
+// Pattern: あげく (in the end, after all)
+// Structures: Verb[た] + あげく / Noun + の + あげく
 pub fn ageku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // あげく is always a noun (can function as adverb)
+    #[derive(Debug)]
+    struct AgekuMatcher;
+    impl super::Matcher for AgekuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あげく"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // の particle matcher for noun + の + あげく pattern
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match: (Noun/Verb) + (optional の) + あげく
+    // The optional の handles both verb+あげく and noun+の+あげく patterns
+    vec![
+        TokenMatcher::Any, // Verb or Noun before あげく
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(AgekuMatcher)),
+    ]
 }
 
 // Pattern: きっかけ

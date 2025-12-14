@@ -297,3 +297,43 @@ mod itsunomanika_tests {
         assert_pattern_range(&patterns, "いつの間にか", 6, 12); // いつのまにか
     }
 }
+
+// あげく (in the end, after all)
+// Data source: grammar_points_data.json["あげく"]
+// Testing multiple structure variants
+mod ageku_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb［た］+ あげく + (に)"
+    #[test]
+    fn test_ageku_verb_past() {
+        let sentence = "私は夫と話し合いをしたあげく、離婚することに決めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あげく");
+        assert_pattern_range(&patterns, "あげく", 10, 14); // たあげく
+    }
+
+    // Testing: structure.standard[1] - "Verb［た］+ あげく + の + Noun"
+    #[test]
+    fn test_ageku_no_noun() {
+        let sentence = "長時間の議論のあげくの結論がこれですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あげく");
+        assert_pattern_range(&patterns, "あげく", 4, 10); // 議論のあげく
+    }
+
+    // Testing: structure.standard[2] - "Noun + の + あげく + (に)"
+    #[test]
+    fn test_ageku_noun_no() {
+        let sentence = "田中さんと中田さんは口論のあげく、喧嘩になってしまった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あげく");
+        assert_pattern_range(&patterns, "あげく", 10, 16); // 口論のあげく
+    }
+}
