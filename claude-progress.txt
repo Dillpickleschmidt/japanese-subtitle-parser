@@ -1,3 +1,92 @@
+## Session 272 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ばあいは - in the event of/in the case of)
+**Tests added**: 4 (all passing)
+**Total tests**: 1750 (was 1746)
+
+### Pattern Implemented: ばあいは (in the event of, in the case of)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Expression meaning "in the event of (A)" or "in the case of (A)". Uses the noun 場合（ばあい）meaning "case" or "situation" to highlight a hypothetical situation or viewpoint. Has a nuance of randomness/uncertainty, so it's not used for regularly occurring events or controllable situations.
+
+**Structures tested**: 4 tests covering all structure variants
+1. Verb + 場合(は): オートバイに乗る場合はヘルメットをかぶってください (In the event that you ride a motorbike, wear a helmet)
+2. い-Adjective + 場合(は): 咳がひどい場合はマスクをしてください (In the case that you have a bad cough, wear a mask)
+3. な-Adjective + な + 場合(は): 仕事が大変な場合は私に電話をしてください (In the case that work is difficult, call me)
+4. Noun + の + 場合(は): 私の場合は冬が好きです (In my case, I like winter)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (baaiha, lines 3231-3306)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (baaiha_tests, lines 9278-9340)
+- Pattern: grammar-lib/src/patterns.rs (Baaiha, line 1829)
+
+**Tokenization pattern**:
+```
+Verb/い-Adj (preceding element)
++ 場合 (名詞/副詞可能)
++ は (助詞/係助詞) - optional
+
+な-Adj (名詞/形容動詞語幹)
++ な (助動詞, base="だ", 体言接続)
++ 場合 (名詞/副詞可能)
++ は (助詞/係助詞) - optional
+
+Noun
++ の (助詞/連体化)
++ 場合 (名詞/副詞可能)
++ は (助詞/係助詞) - optional
+```
+
+**Key implementation points**:
+1. Single pattern handles all variants (verb/i-adj/na-adj/noun) with optional particles
+2. Custom PreBaaiMatcher accepts verbs, i-adjectives, na-adjectives, and nouns
+3. Optional NaOrNoParticleMatcher handles な (for na-adj) and の (for nouns)
+4. Optional WaParticleMatcher handles the は particle
+5. Pattern range includes full construction: word + (optional particle) + 場合 + (optional は)
+6. 場合 is always tokenized as 名詞/副詞可能
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all structure variants: Verb, i-Adj, na-Adj + な, Noun + の
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+
+**Challenges Solved**:
+1. Handling multiple preceding element types in a single pattern
+2. Including optional particles (な/の) that only appear with certain element types
+3. Making は optional (pattern can be just 場合 without は)
+4. Ensuring pattern range includes the full grammatical construction
+
+**Linguistic Note**: The expression ばあいは uses 場合 (case/situation) to mark hypothetical or viewpoint-specific situations. It has a nuance of randomness/uncertainty, so it's inappropriate for regularly occurring events (use とき instead) or controllable situations. When used for viewpoints (私の場合は), it creates a contrastive nuance through the は particle.
+
+### Session Statistics
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1 (ばあいは)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1750 (up from 1746)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - ば (conditional) - fundamental conditional form (22 variants - complex)
+   - ひつようがある (need to) - necessity expression
+   - みたい (seems like) - similar to ようだ
+   - べき (should/ought to) - moral obligation expression
+2. **Pattern focus**: ひつようがある would be a good next choice (simpler than ば)
+
+### Environment Status
+- All 1750 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 271 - 2025-12-14
 
 ### ✅ Session Summary
