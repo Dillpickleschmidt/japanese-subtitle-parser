@@ -1535,3 +1535,65 @@ mod kotodakara_tests {
         assert_pattern_range(&patterns, "ことだから", 14, 19); // ことだから
     }
 }
+
+// Pattern: ことになっている (it is expected / scheduled to)
+// Data source: grammar_points_data.json["ことになっている"]
+// Testing all structure variants
+//
+// Structure variants:
+//   - standard[0]: Verb[る] + ことになっている
+//   - standard[1]: Verb[ない] + ことになっている
+//   - polite[0]: Verb[る] + ことになっています
+//   - polite[1]: Verb[ない] + ことになっています
+
+mod kotoninatteiru_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_ru_kotoninatteiru() {
+        // Example: 授業は12時から始まることになっています
+        // (The class is scheduled to start at 12)
+        let sentence = "授業は12時から始まることになっています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになっている");
+        assert_pattern_range(&patterns, "ことになっている", 11, 20); // ことになっています
+    }
+
+    #[test]
+    fn test_verb_nai_kotoninatteiru() {
+        // Example: 社長は来週の飲み会に参加しないことになっています
+        // (The president is scheduled to not come to the party next week)
+        let sentence = "社長は来週の飲み会に参加しないことになっています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになっている");
+        assert_pattern_range(&patterns, "ことになっている", 15, 24); // ことになっています
+    }
+
+    #[test]
+    fn test_expected_habit_ru() {
+        // Example: タクシーは左から乗ることになっている
+        // (It is expected for customers to get into the cab from the left side)
+        let sentence = "タクシーは左から乗ることになっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになっている");
+        assert_pattern_range(&patterns, "ことになっている", 10, 18); // ことになっている
+    }
+
+    #[test]
+    fn test_expected_habit_nai() {
+        // Example: 生徒たちは授業中に教室を出れないことになっている
+        // (Students are expected to not leave the classroom during class)
+        let sentence = "生徒たちは授業中に教室を出れないことになっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことになっている");
+        assert_pattern_range(&patterns, "ことになっている", 16, 24); // ことになっている
+    }
+}
