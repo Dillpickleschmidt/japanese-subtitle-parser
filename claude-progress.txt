@@ -1,3 +1,87 @@
+## Session 207 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N5 pattern
+**Patterns completed**: 1 (Verbs (Non-past))
+**Tests added**: 3 (all passing)
+**Total tests**: 1335 (was 1332)
+
+### Pattern Implemented: Verbs (Non-past) (non-past tense verbs)
+
+**JLPT Level**: N5
+**Category**: Construction
+**Priority**: 1
+
+**Structures tested**: 3
+1. Dictionary form る-verb: 見る (watch/see)
+2. Dictionary form う-verb: 遊ぶ (play)
+3. Future context: 寝る (will sleep)
+
+**Implementation details**:
+- Pattern: Verb[基本形] (dictionary form)
+- Detects casual non-past verbs in dictionary form
+- Polite forms (ます) handled by separate "ます" pattern
+- Custom matcher checks:
+  1. POS tag: 動詞/自立
+  2. Conjugation: 基本形 (dictionary form)
+- Non-past verbs express: present habitual, future, or general facts
+- Priority 1: educational pattern, not highlighted in overlays
+
+**Design decision**:
+- This pattern specifically detects casual dictionary form verbs
+- Polite non-past (Verb + ます) already handled by existing "ます" pattern
+- Both patterns coexist as they represent different concepts:
+  - "Verbs (Non-past)": casual form concept
+  - "ます": polite auxiliary concept
+
+**Test file**: grammar-lib/src/tests/n5_patterns.rs (lines 5680-5726)
+**Matcher file**: grammar-lib/src/matchers/n5.rs (lines 1789-1808)
+**Pattern declaration**: grammar-lib/src/patterns.rs (lines 587-593)
+
+### Workflow followed
+1. ✅ Read grammar_points_data.json to understand structure variants
+2. ✅ Checked for existing stub function (found at line 1790)
+3. ✅ Wrote 3 tests with print_debug for different verb types
+4. ✅ Analyzed tokenization output (基本形 = dictionary form)
+5. ✅ Implemented custom matcher checking 動詞/自立 + 基本形
+6. ✅ Verified tests detect patterns correctly
+7. ✅ Removed print_debug and added proper assertions
+8. ✅ Verified all 1335 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes with detailed commit message
+
+### Key Learnings
+1. **Basic patterns**: N5 patterns are fundamental and overlap with other patterns by design
+2. **Priority system**: Priority 1 patterns are educational, not highlighted in browser overlays
+3. **Pattern separation**: "Verbs (Non-past)" (casual) vs "ます" (polite) both exist as separate concepts
+4. **Dictionary form detection**: Simple POS + conjugation check for 基本形
+5. **Test selection**: Tests focus on dictionary form only, polite forms already covered
+
+### Statistics
+- **Session time**: ~30 minutes
+- **Patterns completed this session**: 1
+- **Test success rate**: 3/3 (100%)
+- **Total passing tests**: 1335
+- **Files modified**: 3 (matchers/n5.rs, tests/n5_patterns.rs, feature_list.json)
+- **Remaining N5 patterns**: 12 (was 13)
+
+### Next Session Recommendations
+1. **Continue with N5 patterns**: Finish basic level first
+2. **Good candidates**:
+   - い-Adjectives - basic adjective detection
+   - う-Verb (Dictionary) - う-ending verb detection
+   - う-Verb (Negative) - ない form detection
+3. **Pattern complexity**: N5 patterns are simpler, good warm-up work
+
+### Environment Status
+- ✅ All 1335 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
+
 ## Session 206 - 2025-12-13
 
 ### ✅ Session Summary
