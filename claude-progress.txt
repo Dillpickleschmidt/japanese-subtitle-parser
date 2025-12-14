@@ -3584,3 +3584,74 @@ Continue with N3 patterns (in order of priority):
 4. に対して - "toward, in contrast to" (Noun + に対して)
 5. に関する・に関して - "concerning, regarding" (Noun + に関する/に関して)
 
+## Session 316 - 2025-12-14
+
+### Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (によって・による)
+**Tests added**: 5 (all passing)
+**Total tests**: 2013 (was 2008)
+
+### Pattern Implemented: によって・による (depending on, according to, by means of)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: によって, による, and により are all different versions of the same expression, that can basically be translated as "according to (A)" or "depending on (A)". They express that something varies based on or is determined by a particular factor.
+
+**Structures tested**: 5 comprehensive tests
+1. Noun + によって: 地域によって (depending on the region)
+2. Noun + により: 強盗により (by a robber - formal)
+3. Noun + による (adnominal): 地震による津波 (tsunami caused by earthquake)
+4. Noun + による (sentence-ending): 状況による (depends on the situation)
+5. Noun + によって (passive): エラーによって起きた (occurred due to error)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (niyotte_u30fb_niyoru, lines 527-548)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (niyotte_niyoru_tests module, lines 8915-8983)
+- Pattern: grammar-lib/src/patterns.rs (NiyotteU30fbNiyoru, already existed)
+
+**Tokenization pattern**:
+All three forms tokenize as single tokens:
+- surface='によって' base='によって' pos=助詞/格助詞/連語
+- surface='により' base='により' pos=助詞/格助詞/連語
+- surface='による' base='による' pos=助詞/格助詞/連語
+
+Pattern matches: Noun + (によって | により | による)
+
+**Key Implementation Details**:
+- Custom matcher NiYotteMatcher checks for all three surface forms
+- All forms have identical POS structure: 助詞/格助詞/連語
+- Pattern requires preceding noun (using noun_matcher())
+- Matches both mid-sentence and sentence-ending usage
+- Covers によって (general), により (formal), and による (adnominal/predicative)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences (not textbook examples)
+- Cover all major structural variants from grammar_points_data.json
+- Correct character ranges verified for all variants
+
+### Session Statistics
+- **Session time**: ~50 minutes
+- **Patterns completed**: 1 (によって・による)
+- **Tests success rate**: 5/5 (100%)
+- **Total passing tests**: 2013 (was 2008, +5)
+- **Files modified**: 3 (matchers/n3.rs, tests/n3_patterns.rs, feature_list.json)
+- **Commits**: 1 (complete pattern implementation)
+
+### Environment Status
+- All 2013 tests passing
+- No regressions
+- Codebase clean
+- Ready for next pattern
+
+### Next Priorities
+Continue with N3 patterns (in order of priority):
+1. によると・によれば - "according to" (Noun + によると/によれば)
+2. に違いない - "must be, no doubt" (Verb/Adj/Noun + に違いない)
+3. わけがない - "there's no way that" (plain form + わけがない)
+4. わけではない - "it doesn't mean that" (plain form + わけではない)
+5. に対して - "toward, in contrast to" (Noun + に対して)
