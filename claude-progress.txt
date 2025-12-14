@@ -1,3 +1,88 @@
+## Session 232 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (〜ようと思う・〜おうと思う - intend to/thinking of doing)
+**Tests added**: 6 (all passing)
+**Total tests**: 1540 (was 1534)
+
+### Pattern Implemented: 〜ようと思う・〜おうと思う (intend to/thinking of doing)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Expresses the speaker's intention to do something. The volitional form (よう/おう) combined with と思う means "I think I will (do)" or "I intend to (do)". Often used with 思っている to emphasize ongoing contemplation.
+
+**Structures tested**: 6 tests covering all major conjugation forms
+1. Verb[よう] + と思う (basic, る-verb): あきらめようと思う (I think I'll give up)
+2. Verb[おう] + と思う (basic, う-verb): 買おうと思う (I think I'll buy)
+3. Verb[よう] + と思っている (continuous, る-verb): 食べようと思っている (I'm thinking of eating)
+4. Verb[おう] + と思っている (continuous, う-verb): 通おうと思っている (I'm thinking of commuting)
+5. Verb[よう] + と思います (polite): 頑張ろうと思います (I think I will try hard)
+6. Verb[よう] + と思っています (polite continuous): 行こうと思っています (I'm thinking of going)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 1677-1746)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 6579-6650)
+- Pattern structure: Verb[未然ウ接続] + う + と + 思う (+ optional て+いる or ます)
+
+**Tokenization pattern**:
+- Verb (未然ウ接続, e.g., 食べよ/買お/行こ) + う (助動詞, 基本形) + と (助詞/格助詞/引用) + 思う (動詞)
+- Optional て (助詞/接続助詞) + いる (動詞) for continuous aspect (思っている)
+- Optional ます (助動詞) for polite forms (思います)
+
+**Matcher components**:
+1. verb_you() - Reuses existing matcher for Verb[未然ウ接続] + う (volitional form)
+2. QuotationToMatcher - Matches と quotation particle (助詞/格助詞/引用)
+3. OmouMatcher - Matches 思う verb in any conjugation form
+4. TeMatcher (Optional) - Matches て particle for continuous aspect
+5. IruMatcher (Optional) - Matches いる for continuous aspect (ている forms)
+6. MasuMatcher (Optional) - Matches ます for polite forms
+
+**Key characteristics**:
+- Reuses verb_you() to leverage existing volitional form detection logic
+- Optional matchers handle different conjugations: plain, continuous (ている), and polite (ます)
+- Properly captures full grammatical construction including conjugation extensions
+- Pattern range includes the complete construction: verb + よう/おう + と + 思う + (ている/います)
+- Priority 2 (important N4 construction pattern for expressing intentions)
+
+**Workflow followed**:
+1. ✅ Found existing stub function at line 1678
+2. ✅ Read grammar_points_data.json for structure variants (2 standard, 2 polite)
+3. ✅ Wrote 6 tests with print_debug() covering diverse conjugation forms
+4. ✅ Analyzed tokenization - identified volitional form + と + 思う pattern
+5. ✅ Implemented matcher reusing verb_you() with optional conjugation extensions
+6. ✅ Verified all tests detect patterns correctly with proper ranges
+7. ✅ Removed print_debug() and added proper assertions with correct character ranges
+8. ✅ Verified all 1540 tests pass (6 new tests, no regressions)
+9. ✅ Updated feature_list.json (category: "complete", passes: true)
+10. ✅ Committed changes with detailed commit message
+
+### Session Statistics
+- **Session time**: ~1.5 hours
+- **Patterns completed this session**: 1
+- **Test success rate**: 6/6 (100%)
+- **Total passing tests**: 1540
+- **Files modified**: 4 (matchers/n4.rs, tests/n4_patterns.rs, patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**: Many construction patterns still need implementation
+2. **Good candidates from feature_list.json**:
+   - お〜する (humble speech form)
+   - お～になる (honorific speech form)
+   - そう (hearsay/appearance)
+   - ていただけませんか (polite request)
+   - ているあいだに (while doing)
+   - てくれてありがとう (thank you for doing)
+3. **Pattern focus**: Common N4 grammar constructions with practical usage in polite speech
+
+### Environment Status
+- ✅ All 1540 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern
 ## Session 231 - 2025-12-14
 
 ### ✅ Session Summary
