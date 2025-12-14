@@ -2494,13 +2494,13 @@
   {
     "pattern_name": "たら",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The conjunction particle たら is used as a kind of 'halfway point' between 'if' and 'when' in Japanese [4 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

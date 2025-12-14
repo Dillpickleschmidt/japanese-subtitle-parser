@@ -6381,3 +6381,63 @@ mod irassharu_tests {
         assert_pattern_range(&patterns, "いらっしゃる", 5, 12); // いらっしゃった
     }
 }
+
+// ========== たら (conditional "if/when") ==========
+// Pattern: たら
+// Data source: grammar_points_data.json["たら"]
+//
+// Structures to test:
+//   - standard[0]: Verb［た］+ ら
+//   - standard[1]: ［い］Adjective［た］+ ら
+//   - standard[2]: ［な］Adjective + だった + ら
+//   - standard[3]: Noun + だった + ら
+//
+// Examples from data:
+//   - 遅れたら (if/when late)
+//   - 寒かったら (if/when cold)
+//   - 好きだったら (if/when liked)
+//   - 明日だったら (if/when tomorrow)
+#[cfg(test)]
+mod tara_tests {
+    use super::*;
+
+    #[test]
+    fn test_tara_verb_conditional() {
+        let sentence = "今度遅れたら、許さないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら");
+        assert_pattern_range(&patterns, "たら", 2, 6); // 遅れたら
+    }
+
+    #[test]
+    fn test_tara_i_adjective() {
+        let sentence = "寒かったら、エアコンつけてね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら");
+        assert_pattern_range(&patterns, "たら", 0, 5); // 寒かったら
+    }
+
+    #[test]
+    fn test_tara_na_adjective() {
+        let sentence = "彼のことが好きだったら、彼に言った方がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら");
+        assert_pattern_range(&patterns, "たら", 5, 11); // 好きだったら
+    }
+
+    #[test]
+    fn test_tara_noun() {
+        let sentence = "明日だったら、遊べるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら");
+        assert_pattern_range(&patterns, "たら", 0, 6); // 明日だったら
+    }
+}

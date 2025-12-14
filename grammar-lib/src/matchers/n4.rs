@@ -3397,9 +3397,74 @@ pub fn teitadakemasenka() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たら
+// Pattern: たら (conditional "if/when")
+// Structures: Verb[た] + ら / い-Adj[た] + ら / な-Adj/Noun + だった + ら
 pub fn tara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match たら (仮定形 of た auxiliary)
+    #[derive(Debug)]
+    struct TaraAuxiliaryMatcher;
+    impl Matcher for TaraAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match だっ (連用タ接続 of だ auxiliary) - for な-Adj and Nouns
+    #[derive(Debug)]
+    struct DattaMatcher;
+    impl Matcher for DattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だっ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match verbs in 連用形 or 連用タ接続 (for verb + たら)
+    #[derive(Debug)]
+    struct VerbRenyouFormMatcher;
+    impl Matcher for VerbRenyouFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形" || f == "連用タ接続")
+        }
+    }
+
+    // Match い-adjectives in 連用タ接続 (for い-adj + たら)
+    #[derive(Debug)]
+    struct IAdjRenyouTaMatcher;
+    impl Matcher for IAdjRenyouTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match な-adjectives (名詞/形容動詞語幹) or nouns (for だったら pattern)
+    #[derive(Debug)]
+    struct NaAdjOrNounMatcher;
+    impl Matcher for NaAdjOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // たら can follow:
+    // 1. Verb (連用形/連用タ接続) + たら
+    // 2. い-Adj (連用タ接続) + たら
+    // 3. な-Adj/Noun + だっ + たら
+    vec![
+        TokenMatcher::Any, // Verb, い-Adj, or な-Adj/Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DattaMatcher)))), // Optional だっ for pattern 3
+        TokenMatcher::Custom(Arc::new(TaraAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: ほかに(も)・ほか(に)は
