@@ -4172,6 +4172,98 @@ mod tsuideni_tests {
     }
 }
 
+// ========== ものだ (should / naturally is / common sense) ==========
+// Pattern: ものだ (should / naturally is)
+// Data source: grammar_points_data.json["ものだ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + もの + だ
+//   standard[1]: い-Adjective + もの + だ
+//   standard[2]: な-Adjective + な + もの + だ
+//   Abbreviation: もん instead of もの
+//   Negative: もの + ではない / じゃない
+
+mod monoda_tests {
+    use super::*;
+
+    // Test: Verb + もの + だ (standard affirmative - work ethic)
+    #[test]
+    fn test_monoda_verb_affirmative() {
+        let sentence = "仕事は一生懸命するものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものだ");
+        assert_pattern_range(&patterns, "ものだ", 7, 12); // するものだ
+    }
+
+    // Test: い-Adjective + もの + だ (unusual for someone to plan)
+    #[test]
+    fn test_monoda_i_adjective() {
+        let sentence = "ユウキが自分からプランを立てるのは珍しいものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものだ");
+        assert_pattern_range(&patterns, "ものだ", 17, 23); // 珍しいものだ
+    }
+
+    // Test: な-Adjective + な + もの + だ (kids should be energetic)
+    #[test]
+    fn test_monoda_na_adjective() {
+        let sentence = "こどもは元気なものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものだ");
+        assert_pattern_range(&patterns, "ものだ", 6, 10); // なものだ
+    }
+
+    // Test: Verb + もの + ではない (negative - life isn't easy)
+    #[test]
+    fn test_monoda_negative_dewanai() {
+        let sentence = "人生はそんなに簡単なものではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものではない");
+        assert_pattern_range(&patterns, "ものではない", 9, 16); // なものではない
+    }
+
+    // Test: Verb + もの + じゃない (casual negative - shouldn't abandon family)
+    #[test]
+    fn test_monoda_negative_janai() {
+        let sentence = "家族は捨てるものじゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものじゃない");
+        assert_pattern_range(&patterns, "ものじゃない", 3, 12); // 捨てるものじゃない
+    }
+
+    // Test: Verb + もん + だ (abbreviated casual - impressive)
+    #[test]
+    fn test_monoda_abbreviated_mon() {
+        let sentence = "東大に入れたのか？大したもんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものだ");
+        assert_pattern_range(&patterns, "ものだ", 9, 15); // 大したもんだ
+    }
+
+    // Test: Verb + もん + じゃない (abbreviated casual negative - littering)
+    #[test]
+    fn test_monoda_abbreviated_mon_negative() {
+        let sentence = "ゴミを道に捨てるもんじゃない！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものじゃない");
+        assert_pattern_range(&patterns, "ものじゃない", 5, 14); // 捨てるもんじゃない
+    }
+}
+
 // ========== たものだ (used to / would often - past habit) ==========
 // Pattern: たものだ (used to / would often)
 // Data source: grammar_points_data.json["たものだ"]

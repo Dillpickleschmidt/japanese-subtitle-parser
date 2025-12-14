@@ -2885,6 +2885,22 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    MonodaDewanai {
+        name: "ものではない",
+        matcher_fn: crate::matchers::n3::monoda_dewanai,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    MonodaJanai {
+        name: "ものじゃない",
+        matcher_fn: crate::matchers::n3::monoda_janai,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Saichuuni {
         name: "最中に",
         matcher_fn: crate::matchers::n3::saichuuni,

@@ -1653,9 +1653,127 @@ pub fn mono_u30fb_mon() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ものだ
+// Pattern: ものだ (should / naturally is / common sense)
+// Structures: Any + もの/もん + だ/ではない/じゃない
 pub fn monoda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match もの or もん (dependent noun)
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl super::Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "もの" || token.surface == "もん")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ (助動詞, 基本形)
+    #[derive(Debug)]
+    struct DaMatcher;
+    impl super::Matcher for DaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(DaMatcher)),
+    ]
+}
+
+// Pattern: ものではない (negative form)
+pub fn monoda_dewanai() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match もの or もん (dependent noun)
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl super::Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "もの" || token.surface == "もん")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match で (助動詞, base='だ')
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl super::Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    // Match ない (形容詞)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(DeMatcher)),
+        TokenMatcher::Surface("は"),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
+}
+
+// Pattern: ものじゃない (casual negative)
+pub fn monoda_janai() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match もの or もん (dependent noun)
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl super::Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "もの" || token.surface == "もん")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match じゃ (助詞/副助詞)
+    #[derive(Debug)]
+    struct JaMatcher;
+    impl super::Matcher for JaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "じゃ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match ない (助動詞)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(JaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: 最中に
