@@ -1,3 +1,101 @@
+## Session 287 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (よていだ - plan to)
+**Tests added**: 4 (all passing)
+**Total tests**: 1830 (was 1826)
+
+### Pattern Implemented: よていだ (plan to)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: The expression 予定だ (よていだ) means "plan to" or "scheduled to" and functions similarly to つもりだ (intend to), but emphasizes formal plans rather than intentions. It attaches to the dictionary form of verbs or to nouns (with の particle).
+
+**Structures tested**: 4 tests covering all structure variants
+1. Verb[る] + 予定 + だ: 行く予定だ (plan to go)
+2. Noun + の + 予定 + だ: からの予定だ (planned to start from)
+3. Verb[る] + 予定 + です: 食べる予定です (plan to eat - polite)
+4. Noun + の + 予定 + です: からの予定です (planned to - polite)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (yoteida function, lines 6369-6421)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (yoteida_tests module, lines 10421-10471)
+- Pattern: grammar-lib/src/patterns.rs (Yoteida - already existed at line 2317)
+
+**Tokenization pattern**:
+```
+Pattern 1 - Verb + 予定 + だ/です:
+Verb (動詞/自立, 基本形 like 行く/食べる)
++ 予定 (名詞/サ変接続)
++ だ (助動詞, base=だ, 特殊・ダ) OR です (助動詞, base=です, 特殊・デス)
+
+Pattern 2 - Noun + の + 予定 + だ/です:
+[Noun + Particle (like から)]
++ の (助詞/連体化)
++ 予定 (名詞/サ変接続)
++ だ OR です
+
+Examples:
+- 行く (Verb 基本形) + 予定 + だ
+- 食べる (Verb 基本形) + 予定 + です
+- の (助詞/連体化) + 予定 + だ
+- の (助詞/連体化) + 予定 + です
+```
+
+**Key implementation points**:
+1. VerbOrNoMatcher accepts EITHER a verb in 基本形 OR の particle (連体化)
+2. This dual matching handles both verb and noun forms elegantly in one pattern
+3. YoteiMatcher ensures 予定 is 名詞/サ変接続
+4. DaDesuMatcher accepts both だ and です copulas
+5. Pattern range includes: Verb/の + 予定 + だ/です
+6. Priority 1 means detected but not highlighted (common construction)
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all 4 structure variants (2 standard + 2 polite)
+- Test both verb-based (行く予定だ) and noun-based (の予定だ) forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified
+
+**Challenges Solved**:
+1. Understanding that the pattern accepts EITHER a verb OR の particle before 予定
+2. Creating a dual-purpose matcher (VerbOrNoMatcher) instead of two separate patterns
+3. Recognizing that の is tokenized as 助詞/連体化 (nominalizer particle)
+4. Ensuring the pattern works with both だ and です endings
+5. Understanding that 予定 is a サ変接続 noun (can attach to する to form a verb)
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a common construction pattern used frequently in daily conversation.
+
+**Linguistic Note**: The word 予定 (よてい) means "plan" or "schedule". Unlike つもりだ which emphasizes personal intention, 予定だ emphasizes that something is formally planned or scheduled. It's commonly used for concrete plans like meetings, trips, or scheduled events. The expression literally means "it is a plan (that X will happen)". When using verbs, the dictionary form attaches directly to 予定, while nouns require the nominalizer particle の to connect them to 予定.
+
+### Session Statistics
+- **Session time**: Approximately 40 minutes
+- **Patterns completed this session**: 1 (よていだ)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1830 (up from 1826)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - らしい ① (seems like/apparently) - hearsay/conjecture pattern
+   - らしい ② (typical of) - characteristic expression
+   - るところだ (in the process of) - progressive action
+   - れる・られる (Potential) - potential form
+   - ほかに(も)・ほか(に)は (other than, besides)
+2. **Pattern focus**: らしい patterns would be interesting as they show ambiguity between two meanings
+
+### Environment Status
+- All 1830 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 286 - 2025-12-14
 
 ### ✅ Session Summary
