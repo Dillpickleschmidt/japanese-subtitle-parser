@@ -1,3 +1,84 @@
+## Session 292 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ように～てほしい - want someone to do in order to)
+**Tests added**: 4 (all passing)
+**Total tests**: 1853 (was 1849)
+
+### Pattern Implemented: ように～てほしい (want someone to do in order to)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: The expression ように～てほしい combines the auxiliary verb ようだ (in its adverbial form ように) with the てほしい structure to express "want someone to do something in order to achieve X" or "want someone to do something like X". This pattern is used when the speaker wants someone to perform an action either to enable a particular result (with verb+ように) or in a particular manner (with noun+のように).
+
+**Structures tested**: 4 tests covering both structure variants
+1. Verb + ように + Verb[て] + ほしい: なれるように頑張ってほしい (want you to work hard so you can become [a lawyer])
+2. Verb + ように + Verb[て] + ほしい (with なる): 勝てるようになってほしい (want [this team] to be able to win)
+3. Noun + のように + Verb[て] + ほしい: 選手のように走ってほしい (want you to run like an athlete)
+4. Noun + のように + Verb[て] + ほしい: アナウンサーのように話してほしい (want you to talk like an announcer)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (youni_uff5e_tehoshii function, lines 4335-4403)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (youni_tehoshii_tests module, lines 10797-10860)
+- Pattern: grammar-lib/src/patterns.rs (YouniUff5eTehoshii - already existed at line 1917)
+
+**Tokenization pattern**:
+```
+Pattern structure:
+よう (名詞/非自立/助動詞語幹)
++ に (助詞/格助詞 or 副詞化)
++ [0-10 tokens wildcard]
++ Verb (連用形 or 連用タ接続)
++ て/で (助詞/接続助詞)
++ ほしい (形容詞/非自立)
+
+Examples:
+- なれるように頑張ってほしい: よう + に + 頑張っ + て + ほしい
+- 勝てるようになってほしい: よう + に + なっ + て + ほしい
+- 選手のように走ってほしい: よう + に + 走っ + て + ほしい
+- アナウンサーのように話してほしい: よう + に + 話し + て + ほしい
+```
+
+**Key implementation points**:
+1. YouMatcher matches よう as 名詞/非自立/助動詞語幹 (auxiliary verb stem)
+2. NiParticleMatcher accepts both 格助詞 (case particle) and 副詞化 (adverbializer)
+3. Wildcard allows 0-10 tokens between ように and the verb+て form
+4. TeDeFormMatcher matches て or で as 接続助詞 (conjunctive particle)
+5. HoshiiMatcher matches ほしい as 形容詞/非自立 (dependent adjective)
+6. Pattern range starts from よう (not from the preceding verb/noun) to highlight the combination of ように with てほしい
+7. Priority 1 means detected but not highlighted in browser extension
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover both Verb+ように and Noun+のように variants
+- Test ようになる construction (common usage pattern)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that this is a composite pattern combining ように with てほしい
+2. Deciding on appropriate pattern range (starting from よう to emphasize the combination)
+3. Handling the wildcard between ように and Verb[て] to allow various constructions
+4. Simplifying the matcher from an overly complex initial design to a clean よう-based pattern
+5. Recognizing that に can be either 格助詞 or 副詞化 depending on context
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a composite construction that combines two existing patterns (ように and てほしい) and the component patterns are already highlighted separately.
+
+**Linguistic Note**: The expression ように～てほしい combines two grammatical structures:
+- **ように** (in such a way that, like) - expresses manner or purpose
+- **てほしい** (want someone to do) - expresses desire for someone else's action
+
+When combined, it creates a nuanced expression meaning "I want [someone] to do [action2] in such a way that/in order to [action1/become like noun]". The pattern emphasizes both the desired action (てほしい) and the manner/purpose (ように), making it more specific than using either pattern alone.
+
+**Next pattern to implement**: れる・られる (Potential) or んだけど・んですが (explanatory pattern)
+
+---
+
 ## Session 291 - 2025-12-14
 
 ### ✅ Session Summary
