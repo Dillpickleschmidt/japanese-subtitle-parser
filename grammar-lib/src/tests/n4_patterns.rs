@@ -4892,3 +4892,56 @@ mod nakutemoii_tests {
         assert_pattern_range(&patterns, "なくてもいい", 3, 10); // しなくてもいい
     }
 }
+
+// ========== そんなに (that much/so much) ==========
+// Pattern: そんなに (demonstrative adverb - "to that extent")
+// Data source: grammar_points_data.json["そんなに"]
+//
+// Structures to test:
+//   - standard[0]: そんなに + Verb
+//   - standard[1]: そんなに + い-Adjective
+//   - standard[2]: そんなに + な-Adjective
+//
+// Notes:
+//   - Part of こそあど言葉 family (こんなに, そんなに, あんなに, どんなに)
+//   - Used adverbially before verbs and adjectives
+//   - Means "so much", "that much", "to that extent"
+mod sonnani_tests {
+    use super::*;
+
+    // Testing: standard[0] - そんなに + Verb
+    // Example: "そんなに食べたら" - eat that much
+    #[test]
+    fn test_sonnani_verb() {
+        let sentence = "そんなに食べたらお腹を壊すよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そんなに");
+        assert_pattern_range(&patterns, "そんなに", 0, 4); // そんなに
+    }
+
+    // Testing: standard[1] - そんなに + い-Adjective
+    // Example: "そんなに暑い" - that hot
+    #[test]
+    fn test_sonnani_i_adjective() {
+        let sentence = "そんなに暑いと思うならエアコンをつければいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そんなに");
+        assert_pattern_range(&patterns, "そんなに", 0, 4); // そんなに
+    }
+
+    // Testing: standard[2] - そんなに + な-Adjective
+    // Example: "そんなに嫌い" - dislike that much
+    #[test]
+    fn test_sonnani_na_adjective() {
+        let sentence = "そんなに嫌いなら、無理して食べなくてもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そんなに");
+        assert_pattern_range(&patterns, "そんなに", 0, 4); // そんなに
+    }
+}

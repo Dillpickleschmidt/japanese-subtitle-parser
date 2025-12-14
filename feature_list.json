@@ -2410,13 +2410,13 @@
   {
     "pattern_name": "そんなに",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そんなに , like そんな , is one of the most common ways to express that one thing is 'like' something else in casual convers... [3 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

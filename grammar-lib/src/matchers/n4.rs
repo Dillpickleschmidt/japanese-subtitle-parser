@@ -2659,8 +2659,20 @@ pub fn gahitsuyou() -> Vec<TokenMatcher> {
 }
 
 // Pattern: そんなに
+// Pattern: そんなに (that much/so much - demonstrative adverb)
+// Structures: そんなに + Verb/Adjective
 pub fn sonnani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SonnaniMatcher;
+    impl super::Matcher for SonnaniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そんなに"
+                && token.base_form == "そんなに"
+                && token.pos.first().is_some_and(|p| p == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SonnaniMatcher))]
 }
 
 // Pattern: ひつようがある
