@@ -1016,9 +1016,52 @@ pub fn tokorowomiruto() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: からすると・からすれば
+// Pattern: からすると・からすれば (judging from, considering)
+// Structures: Noun + から + する + と/ば
 pub fn karasuruto_u30fb_karasureba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match から as case particle
+    #[derive(Debug)]
+    struct KaraMatcher;
+    impl super::Matcher for KaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match する verb in either base form (基本形) or hypothetical form (仮定形)
+    #[derive(Debug)]
+    struct SuruVerbMatcher;
+    impl super::Matcher for SuruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && (token.features.get(5).is_some_and(|f| f == "基本形")
+                    || token.features.get(5).is_some_and(|f| f == "仮定形"))
+        }
+    }
+
+    // Match と or ば as connective particle
+    #[derive(Debug)]
+    struct ToOrBaMatcher;
+    impl super::Matcher for ToOrBaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "と" || token.surface == "ば")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(KaraMatcher)),
+        TokenMatcher::Custom(Arc::new(SuruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ToOrBaMatcher)),
+    ]
 }
 
 // Pattern: からして (based on, judging from)

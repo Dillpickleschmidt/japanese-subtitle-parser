@@ -709,3 +709,55 @@ mod karatoitte_tests {
         assert_pattern_range(&patterns, "からといって", 3, 10); // だからといって
     }
 }
+
+// Pattern: からすると・からすれば (judging from, considering)
+// Data source: grammar_points_data.json["からすると・からすれば"]
+// Testing: structure.standard[0] - "Noun + からすると"
+//          structure.standard[1] - "Noun + からすれば"
+//
+// Expresses speaker's judgment/assessment based on (A)
+// Nuance: "going off (A)" or "considering (A)" as basis for judgment
+// Literal: から (from) + する (to do) + と/ば (hypothetical)
+mod karasuruto_karasureba_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_karasuruto() {
+        let sentence = "この成績からすると、あなたは全然勉強をしていないでしょう？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からすると・からすれば");
+        assert_pattern_range(&patterns, "からすると・からすれば", 2, 9); // 成績からすると
+    }
+
+    #[test]
+    fn test_noun_karasureba() {
+        let sentence = "日本育ちの私からすれば、これは寿司ではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からすると・からすれば");
+        assert_pattern_range(&patterns, "からすると・からすれば", 5, 11); // 私からすれば
+    }
+
+    #[test]
+    fn test_reaction_karasuruto() {
+        let sentence = "彼女の反応からすると、本当に驚いているようだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からすると・からすれば");
+        assert_pattern_range(&patterns, "からすると・からすれば", 3, 10); // 反応からすると
+    }
+
+    #[test]
+    fn test_sweetness_karasuruto() {
+        let sentence = "この甘さからすると、塩と間違えて砂糖を入れてしまったに違いない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からすると・からすれば");
+        assert_pattern_range(&patterns, "からすると・からすれば", 3, 9); // さからすると
+    }
+}
