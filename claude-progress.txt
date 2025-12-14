@@ -1,3 +1,120 @@
+## Session 341 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (ほど, ほど～ない)
+**Tests added**: 5 (all passing - ほど tests already existed)
+**Total tests**: 2171 passing, 1 ignored (was 2166 passing, 1 ignored)
+
+### ✅ Pattern Completed: ほど (to the extent that / so much that / about)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: ほど, coming from the kanji 程（ほど） 'an extent', is used for describing rough estimates about the 'amount' of something. Unlike expressions such as くらい (which focuses more on the speaker's uncertainty about the exact number), ほど puts emphasis on the upper (or lower) limit of something as having been 'reached'. It is usually translated as 'so much that (A)', or 'to the extent that (A)'.
+
+**Note**: This pattern was already implemented and tested. Updated feature_list.json to mark as complete.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Verb + ほど: 死ぬほど練習したけれど、試合に出られなかった (I practiced myself to death, but I was not able to participate in the match)
+2. い-Adjective + ほど: その気持ちは痛いほど分かるけど (I understand how you feel to the point that it hurts)
+3. な-Adjective + な + ほど: それは嫌なほど聞かされたから (I have been told that so much that I don't want to hear it anymore)
+4. Noun + ほど: あと１０分ほどで着きます (I will be there in about 10 minutes)
+5. Complex example: 今日はもう二度と走りたくないと思うほど走った (Today, I ran so much that I feel like I never want to run again)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (hodo, lines 1158-1178)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (lines 10714-10769)
+- Pattern: grammar-lib/src/patterns.rs (Hodo, lines 2784-2790)
+
+**Tokenization pattern**:
+```
+Simple two-token matcher: Any + ほど
+- Any (preceding word in attributive form - verb, adjective, or noun)
+- ほど (助詞/副助詞) - adverbial particle
+```
+
+**Key implementation points**:
+1. Simple two-token matcher: Any + ほど (助詞/副助詞)
+2. HodoParticleMatcher checks surface == "ほど" and POS == 助詞/副助詞
+3. TokenMatcher::Any allows any preceding element
+4. Works with all word types (verbs, adjectives, nouns)
+5. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: Include the token before ほど + ほど
+- Verb form: "死ぬほど" (chars 0-4)
+- い-Adj form: "痛いほど" (chars 6-10)
+- な-Adj form: "なほど" (chars 4-7, includes な connector)
+- Noun form: "分ほど" (chars 4-7)
+- Complex: "思うほど" (chars 15-19)
+
+---
+
+### ✅ Pattern Completed: ほど～ない (not as...as / not to the extent of)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: ほど～ない combines the noun ほど 'an extent' with ない to negate that extent, saying that it has not been reached. This phrase can be translated as 'it isn't like (A)', 'it's not to the point of (A)'. Literally it means 'if (A) is the extent, then (B) is not true'. It's frequently used for making comparisons between two things, similar to '(B) is not as ~ as (A)' in English.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Verb + ほど + い-Adjective[ない]: 今日は思ったほど暑くなかった (Today wasn't as hot as I expected)
+2. Verb + ほど + の + Verb[ない]: 悩むほどの事じゃない (It is nothing to worry about so much)
+3. Noun + ほど + い-Adjective[ない]: 自転車は車ほど速くないけど (Bicycles aren't as fast as cars)
+4. Noun + ほど + い-Adjective + Noun + は + ない: この世にこのカレーほど辛い食べ物はない (There is no food as spicy as this curry in the world)
+5. Noun + ほど + な-Adjective + Noun + は + ない: お母さんほどケーキ作りが上手な人はどこにもいない (There is no one as good as my mom at baking cakes)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (hodo_uff5e_nai, lines 1224-1263)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (hodo_uff5e_nai_tests module, lines 10780-10847)
+- Pattern: grammar-lib/src/patterns.rs (HodoUff5eNai, lines 2800-2806)
+
+**Tokenization pattern**:
+```
+Four-token matcher with wildcard: Any + ほど + Wildcard{1-15} + ない
+- Any (preceding element - verb, noun, adjective)
+- ほど (助詞/副助詞) - adverbial particle
+- Wildcard {min: 1, max: 15} - allows 1-15 tokens between ほど and ない
+- ない (助動詞 or 形容詞, base='ない') - negative marker
+
+Examples of tokens between ほど and ない:
+- 1 token: 速く (adjective)
+- 2 tokens: 暑く + なかっ (adjective + negative past)
+- 4 tokens: の + 事 + じゃ (の particle + noun + じゃ)
+- 12+ tokens: 辛い + 食べ物 + は (adjective + noun + は particle + more)
+```
+
+**Key implementation points**:
+1. Four-token matcher: Any + ほど + Wildcard{1-15} + ない
+2. HodoParticleMatcher checks surface == "ほど" and POS == 助詞/副助詞
+3. NaiMatcher checks base_form == "ない" and POS is either 助動詞 or 形容詞
+4. Wildcard allows up to 15 tokens to accommodate complex comparisons
+5. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: Include full construction from word before ほど to ない
+- Verb + adjective: "たほど暑くなかった" (chars 5-14)
+- Verb + の + noun: "悩むほどの事じゃない" (chars 0-10)
+- Noun + adjective: "車ほど速くない" (chars 4-11)
+- Complex existential: "カレーほど辛い食べ物はない" (chars 6-19)
+- Very complex: "お母さんほどケーキ作りが上手な人はどこにもいない" (chars 0-24, full sentence)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants from grammar data
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: While this grammar point may be used for expressing that an extent has not been reached, it is most frequently used for making comparisons between two things. In these cases, it states that 'the example/limit of (A) is something that cannot be reached/repeated by (B)'. The wildcard matcher allows for various intervening elements between ほど and ない, making it flexible enough to match both simple comparisons and complex sentence structures.
+
+**Related patterns**:
+- "ほど" (base pattern) - matches Any + ほど (just completed)
+- This pattern extends ほど by requiring a negation (ない) somewhere after it
+
+---
+
 ## Session 340 - 2025-12-14
 
 ### ✅ Session Summary
