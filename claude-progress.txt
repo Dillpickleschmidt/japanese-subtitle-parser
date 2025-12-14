@@ -1,3 +1,78 @@
+## Session 351 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (ような気がする)
+**Tests added**: 5 (all passing)
+**Total tests**: 2234 passing, 1 ignored (was 2229 passing, 1 ignored - net +5 tests)
+
+### ✅ Pattern Completed: ような気がする (have a feeling that / kinda feel like)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted in overlay)
+
+**Pattern**: ような気がする adds uncertainty to 気がする through the auxiliary verb よう. It expresses "to have a funny feeling that (A)" or "to kinda have a feeling that (A)". The pattern specifically requires ような to be present - plain 気がする without ような is handled by the separate "がする" pattern.
+
+**Structures tested**: 5 comprehensive tests covering major variants
+1. Verb + ような + 気がする: 出来るような気がする (3-13)
+2. い-Adj + ような + 気がする: 危ないような気がする (7-17)
+3. な-Adj + な + ような + 気がする: 元気なような気がする (11-21)
+4. Noun + の + ような + 気がする: 警察のような気がする (6-16)
+5. Polite form - Verb + ような + 気がします: できるような気がします (7-18)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (younakigasuru, lines 4689-4758)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (youna_ki_ga_suru_tests module, lines 11646-11731)
+- Pattern: grammar-lib/src/patterns.rs (Younakigasuru)
+
+**Tokenization patterns**:
+```
+ような:
+- よう (名詞/非自立/助動詞語幹)
+- な (助動詞, base=だ, 体言接続)
+
+気:
+- 気 (名詞/非自立/一般) - dependent noun (in context)
+- 気 (名詞/一般) - regular noun (when alone)
+
+が + する:
+- が (助詞/格助詞/一般)
+- する (動詞, base=する, 基本形) - plain form
+- し + ます (動詞, 連用形 + 助動詞) - polite form
+```
+
+**Key implementation points**:
+1. Pattern requires ような to be present (not optional) - 気がする alone is a separate pattern
+2. Wildcard stops before よう or 気 (dependent noun) to prevent overconsumption
+3. Six-token matcher: Wildcard + よう + な + 気 + が + する
+4. Matches both plain (する) and polite (します) forms
+5. Pattern priority: 1 (detected but not highlighted in overlay)
+6. Custom matchers for よう, な, 気, and が ensure correct tokenization
+
+**Pattern ranges**: Include content word + ような + 気がする
+- Verb: 出来る + ような気がする
+- い-Adj: 危ない + ような気がする
+- な-Adj: 元気 + な + ような気がする (includes the な before ような)
+- Noun: 警察 + の + ような気がする (includes の)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and custom range verification
+- No print_debug in committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major structural variants: verb, i-adj, na-adj, noun, polite
+- Custom range checking using .any() to handle multiple wildcard matches
+
+**Implementation challenge solved**:
+Initially tried Optional matchers for ような, but discovered that match_remaining_pattern_with_pos doesn't handle Optional correctly after Wildcard. Solved by making ような required, which is linguistically appropriate since 気がする alone is a different pattern with different nuance.
+
+**Related patterns**:
+- がする (N3) - handles 気がする without ような
+- ように・ような (N4) - the auxiliary verb ような itself
+- ようだ (N4) - another use of よう
+
+---
+
 ## Session 350 - 2025-12-14
 
 ### ✅ Session Summary
