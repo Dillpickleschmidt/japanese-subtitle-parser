@@ -1,3 +1,77 @@
+## Session 322 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (に比べて)
+**Tests added**: 5 (all passing)
+**Total tests**: 2061 passing, 1 ignored (was 2056 passing, 1 ignored)
+
+### ✅ Pattern Completed: に比べて (compared to / in comparison to)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: に比べて is a set expression used when comparing one thing to another. It combines the case-marking particle に with the verb 比べる (to compare) in various conjugated forms. The pattern translates as "(A) compared to (B)" or "when comparing (A) to (B)". All four conditional/connective forms are handled by a single unified matcher.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Noun + に比べて (standard て-form): 東京の冬は北海道の冬にくらべて全然寒くない (Tokyo's winter is not cold at all compared to Hokkaido)
+2. Noun + にくらべて (sentence initial): 去年にくらべて今年の冬は暖かい (Compared to last year, this year's winter is warm)
+3. Noun + に比べたら (conditional たら form): 他の地域に比べたら、この地域は住みやすい (Compared to other areas, this area is very easy to live in)
+4. Noun + に比べれば (conditional ば form): 去年に比べれば今年は寒いけど、昨日に比べたら今日は暖かい (If compared to last year, it is colder this year)
+5. Noun + に比べると (conditional と form): 新型のパソコンに比べるとこのパソコンは遅く感じるけど (If we compare this computer to a new model, it feels slow)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nikurabete, lines 2252-2308)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nikurabete_tests module, lines 9445-9503)
+- Pattern: grammar-lib/src/patterns.rs (Nikurabete, line 3136)
+
+**Tokenization patterns**:
+```
+All four forms follow the same basic structure:
+- Noun (名詞) - any noun
+- に (助詞/格助詞/一般) - case-marking particle
+- 比べる/くらべる (動詞/自立) - verb in various forms
+- て/ば/と/たら - conjunctive/conditional particle
+
+Specific forms:
+1. に比べて: に + 比べ (連用形) + て (助詞/接続助詞)
+2. に比べたら: に + 比べ (連用形) + たら (助動詞, 仮定形, base='た')
+3. に比べれば: に + 比べれ (仮定形) + ば (助詞/接続助詞)
+4. に比べると: に + 比べる (基本形) + と (助詞/接続助詞)
+
+Pattern matches all variants with a single matcher using OR logic.
+```
+
+**Key implementation points**:
+1. Single unified matcher handles all four conditional/connective forms
+2. NiParticleMatcher checks に as 助詞/格助詞
+3. KuraberuVerbMatcher accepts both 比べる (kanji) and くらべる (hiragana)
+4. ConditionalParticleMatcher uses OR logic to match て/ば/と/たら
+5. Supports all conjugation forms of 比べる: 連用形, 仮定形, 基本形
+6. Pattern structure: Noun + に + 比べる/くらべる + conditional particle
+
+**Pattern ranges**: Include full construction (Noun + に + 比べ[variant])
+- Example: "冬にくらべて" (chars 9-15) - with て-form
+- Example: "去年にくらべて" (chars 0-7) - sentence initial
+- Example: "地域に比べたら" (chars 2-9) - with たら-form
+- Example: "去年に比べれば" (chars 0-7) - with ば-form
+- Example: "パソコンに比べると" (chars 3-12) - with と-form
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all four conjugation variants: て, たら, ば, と
+- Test both kanji (比べ) and hiragana (くらべ) forms
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The way that 比べる is conjugated is not overly important to the sentence meaning, so long as it conveys the sense of "if" or "when" in the comparison. This is why に比べて (connective て-form), に比べたら (conditional たら), に比べれば (conditional ば), and に比べると (conditional と) are all acceptable and commonly used interchangeably. The core meaning of comparison remains the same across all forms.
+
+**Alternative forms**: The grammar data notes that と can be used instead of に (e.g., と比べて), with に focusing slightly more on changes/differences between similar features, while と often mutually contrasts individual/unique characteristics. However, the current implementation focuses on the に variant as it is the standard form taught at N3 level.
+
+---
+
 ## Session 321 - 2025-12-14
 
 ### ✅ Session Summary
