@@ -1724,13 +1724,13 @@
   {
     "pattern_name": "Verb[て] + B",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the common functions that the conjunction particle て has, is that it can contrast things that share some sort ... [1 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

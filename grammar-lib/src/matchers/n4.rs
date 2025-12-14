@@ -2615,8 +2615,69 @@ pub fn teshimau_u30fb_chau() -> Vec<TokenMatcher> {
 }
 
 // Pattern: Verb[て] + B
+// Pattern: Verb[て] + B (Contrastive conjunction)
+// Expresses contrast using て-form with equal weight for both clauses
+// Structures: Verb[連用形/連用タ接続] + て + (optional comma) + (noun) + は
+// Examples:
+//   - 姉ちゃんは勉強をして弟はゲームをしている (Sister studies, AND brother plays games)
+//   - 妻は買い物に行って、私はごみを捨てに行った (Wife went shopping WHILE I threw trash)
+//
+// Note: Comma (、) is often used before the contrasting clause but is optional.
+// This pattern handles both cases.
 pub fn verb_te_b_2() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match て or で as conjunction particle
+    #[derive(Debug)]
+    struct TeConjunctionMatcher;
+    impl Matcher for TeConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match は particle (topic/contrast marker)
+    #[derive(Debug)]
+    struct HaContrastMatcher;
+    impl Matcher for HaContrastMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match comma (、) punctuation
+    #[derive(Debug)]
+    struct CommaMatcher;
+    impl Matcher for CommaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "、"
+                && token.pos.first().is_some_and(|p| p == "記号")
+                && token.pos.get(1).is_some_and(|p| p == "読点")
+        }
+    }
+
+    // Pattern: Verb[連用形/連用タ接続] + て/で + (optional comma) + (0-3 tokens) + は
+    // Note: Using two separate approaches to handle with/without comma
+    // The wildcard stops at punctuation, so we need to explicitly include comma as optional
+    super::concat(vec![
+        vec![
+            super::flexible_verb_form(),
+            TokenMatcher::Custom(Arc::new(TeConjunctionMatcher)),
+            TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(CommaMatcher)))),
+        ],
+        vec![TokenMatcher::Wildcard {
+            min: 0,
+            max: 3,
+            stop_conditions: vec![],
+        }],
+        vec![TokenMatcher::Custom(Arc::new(HaContrastMatcher))],
+    ])
 }
 
 // Pattern: Causative-Passive (to be made to do)

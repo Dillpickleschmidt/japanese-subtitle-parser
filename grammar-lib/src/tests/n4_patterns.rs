@@ -5834,3 +5834,81 @@ mod question_phrase_ka_tests {
         assert_pattern_range(&patterns, "Question-phrase + か", 9, 12); // か教え
     }
 }
+
+// ========== Verb[て] + B (Contrastive conjunction) ==========
+// Pattern: Verb[て] + B
+// Data source: grammar_points_data.json["Verb[て] + B"]
+//
+// Structure to test:
+//   - standard[0]: Verb［て］+ Phrase
+//
+// This pattern expresses CONTRAST (not sequence) using て-form.
+// Key characteristics:
+//   - Connects two contrasting but related events/states with equal weight
+//   - Both clauses usually have different subjects (marked with は)
+//   - NOT sequential actions (that's a different use of て)
+//   - Similar to "while (A), (B)" or "(A) and (B)" with contrastive nuance
+//
+// Examples from data:
+//   - 姉ちゃんは毎晩勉強をして弟は毎晩ゲームをしている (Sister studies, AND brother plays games)
+//   - 妻は買い物に行って、私はごみを捨てに行った (Wife went shopping WHILE I threw trash)
+//   - タケルはご飯を食べてナオミはパンを食べる (Takeru eats rice AND Naomi eats bread)
+#[cfg(test)]
+mod verb_te_b_tests {
+    use super::*;
+
+    // Test 1: Two contrasting actions with は (sister vs brother)
+    #[test]
+    fn test_verb_te_b_contrasting_subjects() {
+        let sentence = "姉ちゃんは毎晩勉強をして弟は毎晩ゲームをしている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て] + B");
+        assert_pattern_range(&patterns, "Verb[て] + B", 10, 14); // して弟は
+    }
+
+    // Test 2: Two contrasting destinations (wife vs I) - with comma
+    #[test]
+    fn test_verb_te_b_contrasting_destinations() {
+        let sentence = "妻は買い物に行って、私はごみを捨てに行った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て] + B");
+        assert_pattern_range(&patterns, "Verb[て] + B", 6, 12); // 行って、私は
+    }
+
+    // Test 2b: Without comma to verify pattern works both ways
+    #[test]
+    fn test_verb_te_b_without_comma() {
+        let sentence = "妻は買い物に行って私はごみを捨てに行った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て] + B");
+        assert_pattern_range(&patterns, "Verb[て] + B", 6, 11); // 行って私は
+    }
+
+    // Test 3: Two contrasting foods (Takeru vs Naomi)
+    #[test]
+    fn test_verb_te_b_contrasting_preferences() {
+        let sentence = "タケルはご飯を食べてナオミはパンを食べる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て] + B");
+        assert_pattern_range(&patterns, "Verb[て] + B", 7, 14); // 食べてナオミは
+    }
+
+    // Test 4: Weather contrast (morning vs afternoon)
+    #[test]
+    fn test_verb_te_b_weather_contrast() {
+        let sentence = "朝は雨が降って夕方は晴れた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て] + B");
+        assert_pattern_range(&patterns, "Verb[て] + B", 4, 10); // 降って夕方は
+    }
+}
