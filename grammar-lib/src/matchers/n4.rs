@@ -1611,9 +1611,47 @@ pub fn ba() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: なら
+// Pattern: なら (conditional "if")
+// Structures: Verb/い-Adj/な-Adj/Noun + (の) + なら(ば)
+//
+// Tokenization:
+// なら (助動詞, 特殊・ダ, 仮定形, base="だ")
+// + ば (助詞/接続助詞) - optional
+//
+// Pattern range: なら or ならば (not including preceding word)
 pub fn nara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match なら (conditional form of だ auxiliary verb)
+    #[derive(Debug)]
+    struct NaraMatcher;
+    impl Matcher for NaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ダ")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match ば (conditional particle)
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaraMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            BaParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: がる (to show signs of / to act like)

@@ -8627,3 +8627,101 @@ mod nasaru_tests {
         assert_pattern_range(&patterns, "なさる", 11, 20); // なさいませんでした
     }
 }
+
+// ========== なら (conditional "if") ==========
+// Pattern: なら
+// Data source: grammar_points_data.json["なら"]
+//
+// Structures to test:
+//   - standard[0]: Verb + (の) + なら(ば)
+//   - standard[1]: い-Adjective + (の) + なら(ば)
+//   - standard[2]: な-Adjective + なら(ば)
+//   - standard[3]: Noun + なら(ば)
+//
+// Key points:
+//   - なら is an abbreviation of ならば (hypothetical form of classical auxiliary verb なり)
+//   - Can be used with or without の for nominalization
+//   - Used for hypothetical/conditional situations ("if")
+//   - Not used for results produced through effort/training
+//
+// Examples from data:
+//   - 住むのならば、車を買ったほうがいい (If you are going to live, better buy a car)
+//   - 寒いのならば、ジャケットを着るといいだろう (If it is cold, you should wear a jacket)
+//   - 無理なら、いいよ (If it's not possible, it's okay)
+//   - デザートなら、何でも食べられます (If it is a dessert, I can eat anything)
+
+mod nara_tests {
+    use super::*;
+
+    // Testing: structure.standard[3] - "Noun + なら(ば)"
+    // Noun + なら (without の)
+    #[test]
+    fn test_nara_noun_without_no() {
+        let sentence = "デザートなら何でも食べられます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら");
+        assert_pattern_range(&patterns, "なら", 4, 6); // なら
+    }
+
+    // Testing: structure.standard[0] - "Verb + (の) + なら(ば)"
+    // Verb + の + ならば (full form with nominalization)
+    #[test]
+    fn test_nara_verb_no_naraba() {
+        let sentence = "田舎に住むのならば、車を買ったほうがいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら");
+        assert_pattern_range(&patterns, "なら", 6, 9); // ならば
+    }
+
+    // Testing: structure.standard[0] - "Verb + なら"
+    // Verb + なら (without の or ば)
+    #[test]
+    fn test_nara_verb_without_no() {
+        let sentence = "私の車を使うなら、いつ使うか教えてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら");
+        assert_pattern_range(&patterns, "なら", 6, 8); // なら
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + (の) + なら(ば)"
+    // い-Adjective + の + ならば
+    #[test]
+    fn test_nara_i_adj_no_naraba() {
+        let sentence = "寒いのならば、ジャケットを着るといいだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら");
+        assert_pattern_range(&patterns, "なら", 3, 6); // ならば
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + なら"
+    // い-Adjective + なら (without の or ば)
+    #[test]
+    fn test_nara_i_adj_without_no() {
+        let sentence = "暑いなら、その上着を脱いでください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら");
+        assert_pattern_range(&patterns, "なら", 2, 4); // なら
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + なら(ば)"
+    // な-Adjective + なら
+    #[test]
+    fn test_nara_na_adj() {
+        let sentence = "無理ならいいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら");
+        assert_pattern_range(&patterns, "なら", 2, 4); // なら
+    }
+}

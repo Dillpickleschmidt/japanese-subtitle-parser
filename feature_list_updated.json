@@ -3250,13 +3250,13 @@
   {
     "pattern_name": "なさい",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "なさい is the imperative form of なさる, an honorific language verb which specifically highlights and respects the actions ... [1 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3264,13 +3264,13 @@
   {
     "pattern_name": "なさる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "なさる is an honorific language verb which acknowledges and respects the actions of another (never the speaker) [8 std, 10 pol]",
     "priority": 2,
     "skip_reason": null
