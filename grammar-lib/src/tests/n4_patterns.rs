@@ -6498,3 +6498,80 @@ mod teshimau_tests {
         assert_pattern_range(&patterns, "てしまう・ちゃう", 2, 10); // 食べてしまいます
     }
 }
+
+// Pattern: 〜でも 〜でも (whether...or, even if...or)
+// Data source: grammar_points_data.json["〜でも 〜でも"]
+// Testing all structure variants:
+//   - standard[0]: ［い］Adjective［て］ + も + ［い］Adjective［て］ + も
+//   - standard[1]: ［な］Adjective + でも + ［な］Adjective + でも
+//   - standard[2]: Noun (A) + でも + Noun (B) + でも
+//   - standard[3]: ［い］Adjective［て］ + も + ［い］Adjective［て］ + も + Phrase［ない］
+//   - standard[4]: ［な］Adjective + でも + ［な］Adjective + でも + Phrase［ない］
+//   - standard[5]: Noun (A) + でも + Noun (B) + でも + Phrase［ない］
+//
+// Note: Expresses "whether it is (A) or (B)" in positive sentences,
+// or "neither (A) nor (B)" in negative sentences.
+#[cfg(test)]
+mod demo_demo_tests {
+    use super::*;
+
+    #[test]
+    fn test_i_adj_demo_demo_positive() {
+        let sentence = "暑くても寒くても運動を続けるつもりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜でも 〜でも");
+        assert_pattern_range(&patterns, "〜でも 〜でも", 0, 8); // 暑くても寒くても
+    }
+
+    #[test]
+    fn test_na_adj_demo_demo_positive() {
+        let sentence = "簡単でも複雑でも挑戦してみたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜でも 〜でも");
+        assert_pattern_range(&patterns, "〜でも 〜でも", 0, 8); // 簡単でも複雑でも
+    }
+
+    #[test]
+    fn test_noun_demo_demo_positive() {
+        let sentence = "サッカーでもバスケットボールでもいいからスポーツをやりたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜でも 〜でも");
+        assert_pattern_range(&patterns, "〜でも 〜でも", 0, 16); // サッカーでもバスケットボールでも
+    }
+
+    #[test]
+    fn test_i_adj_demo_demo_negative() {
+        let sentence = "暑くても寒くても関係ない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜でも 〜でも");
+        assert_pattern_range(&patterns, "〜でも 〜でも", 0, 8); // 暑くても寒くても
+    }
+
+    #[test]
+    fn test_na_adj_demo_demo_negative() {
+        let sentence = "静かでも賑やかでも気にしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜でも 〜でも");
+        assert_pattern_range(&patterns, "〜でも 〜でも", 0, 9); // 静かでも賑やかでも
+    }
+
+    #[test]
+    fn test_noun_demo_demo_negative() {
+        let sentence = "ケーキでもクッキーでも苺が入っていたら食べない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜でも 〜でも");
+        assert_pattern_range(&patterns, "〜でも 〜でも", 0, 11); // ケーキでもクッキーでも
+    }
+}
