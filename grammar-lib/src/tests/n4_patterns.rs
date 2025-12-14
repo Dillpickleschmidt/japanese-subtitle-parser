@@ -10282,3 +10282,71 @@ mod mitaini_mitaina_tests {
     }
 }
 
+// Pattern: ようにいう (to tell/ask someone to do)
+// Data source: grammar_points_data.json["ようにいう"]
+// Testing structure variants:
+//   - standard[0]: Verb + ように + 言う (to tell)
+//   - standard[1]: Verb + ように + 頼む (to request)
+//   - standard[1]: Verb + ように + 命じる (to order)
+//   - polite[0]: Verb + ように + 言います
+//   - polite[1]: Verb + ように + 頼みます
+//   - polite[1]: Verb + ように + 命じます
+mod youniiu_tests {
+    use super::*;
+
+    #[test]
+    fn test_youniiu_iu_negative() {
+        // Testing: Verb[ない] + ように + 言う
+        let sentence = "子供に水をこぼさないようにいう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいう");
+        assert_pattern_range(&patterns, "ようにいう", 5, 15); // こぼさないようにいう
+    }
+
+    #[test]
+    fn test_youniiu_iu_negative_2() {
+        // Testing: Verb[ない] + ように + 言う
+        let sentence = "弁護士が犯人に警察に話さないようにいう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいう");
+        assert_pattern_range(&patterns, "ようにいう", 10, 19); // 話さないようにいう
+    }
+
+    #[test]
+    fn test_youniiu_tanomu_negative() {
+        // Testing: Verb[ない] + ように + 頼む
+        let sentence = "俺の漫画を借りてもいいけど、破らないようにたのむよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいう");
+        assert_pattern_range(&patterns, "ようにいう", 14, 24); // 破らないようにたのむ
+    }
+
+    #[test]
+    fn test_youniiu_meijiru_negative() {
+        // Testing: Verb[ない] + ように + 命じる
+        let sentence = "総理は国民に海外旅行に行かないようにめいじる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいう");
+        assert_pattern_range(&patterns, "ようにいう", 11, 22); // 行かないようにめいじる
+    }
+
+    #[test]
+    fn test_youniiu_iu_polite() {
+        // Testing: Verb + ように + 言います (polite)
+        let sentence = "先生が生徒に宿題を忘れないようにいいます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいう");
+        assert_pattern_range(&patterns, "ようにいう", 9, 20); // 忘れないようにいいます
+    }
+}
+

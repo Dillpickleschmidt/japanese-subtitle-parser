@@ -6294,9 +6294,76 @@ pub fn tsuzukeru() -> Vec<TokenMatcher> {
     vec![super::flexible_verb_form(), TokenMatcher::Custom(Arc::new(TsuzukeruMatcher))]
 }
 
-// Pattern: ようにいう
+// Pattern: ようにいう (to tell/ask someone to do)
+// Structures: Verb[未然形] + ない + ように + 言う/頼む/命じる
 pub fn youniiu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match any verb (will be in 未然形 before ない)
+    #[derive(Debug)]
+    struct VerbMatcher;
+    impl super::Matcher for VerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ない auxiliary
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match よう as dependent noun with auxiliary verb stem
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl super::Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.base_form == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Match に as adverbial particle (副詞化)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+        }
+    }
+
+    // Match いう/言う, たのむ/頼む, or めいじる/命じる
+    #[derive(Debug)]
+    struct IuTanomuMeijiruMatcher;
+    impl super::Matcher for IuTanomuMeijiruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && (token.base_form == "いう"
+                    || token.base_form == "たのむ"
+                    || token.base_form == "めいじる")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IuTanomuMeijiruMatcher)),
+    ]
 }
 
 // Pattern: よていだ
