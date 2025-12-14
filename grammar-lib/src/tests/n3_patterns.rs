@@ -10200,3 +10200,57 @@ mod bakari_tests {
     }
 }
 
+// Pattern: ばかりだ (keeps on / only ~ is occurring)
+// Data source: grammar_points_data.json["ばかりだ"]
+mod bakarida_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[る] + ばかりだ"
+    // Example: ガソリンの値段は上がっていくばかりだ (The price of gas keeps rising)
+    #[test]
+    fn test_bakarida_standard() {
+        let sentence = "ガソリンの値段は上がっていくばかりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりだ");
+        assert_pattern_range(&patterns, "ばかりだ", 12, 18); // いくばかりだ
+    }
+
+    // Testing: structure.standard[1] - "Verb[る] + ばかりで + Phrase"
+    // Example: 治安が悪くなるばかりで、しばらく良くなりそうもない
+    #[test]
+    fn test_bakarida_de_form() {
+        let sentence = "この町の治安が悪くなるばかりで、しばらく良くなりそうもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりだ");
+        assert_pattern_range(&patterns, "ばかりだ", 9, 15); // なるばかりで
+    }
+
+    // Testing: structure.polite[0] - "Verb[る] + ばかりです"
+    // Example: 日本の人口は減るばかりです (Japan's population continues to drop)
+    #[test]
+    fn test_bakarida_polite() {
+        let sentence = "日本の人口は減るばかりです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりだ");
+        assert_pattern_range(&patterns, "ばかりだ", 6, 13); // 減るばかりです
+    }
+
+    // Testing: negative trend variant
+    // Example: 最近は全然体を鍛えていないから、筋肉がなくなっていくばかりだ
+    #[test]
+    fn test_bakarida_negative_trend() {
+        let sentence = "最近は全然体を鍛えていないから、筋肉がなくなっていくばかりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりだ");
+        assert_pattern_range(&patterns, "ばかりだ", 24, 30); // いくばかりだ
+    }
+}
+
