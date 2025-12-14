@@ -4332,9 +4332,74 @@ pub fn tearu() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: ように～てほしい
+// Pattern: ように～てほしい (want someone to do in order to)
+// Structures:
+//   - Verb/Adj/Noun + (の) + ように + ... + Verb[て] + ほしい
+//
+// Note: This pattern combines ように with てほしい to express "want someone to do
+// something in order to achieve X" or "want someone to do something like X".
 pub fn youni_uff5e_tehoshii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match よう as dependent noun with auxiliary verb stem
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.base_form == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Match に particle (格助詞 or 副詞化)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "副詞化"))
+        }
+    }
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match ほしい adjective
+    #[derive(Debug)]
+    struct HoshiiMatcher;
+    impl Matcher for HoshiiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ほしい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10,
+            stop_conditions: vec![],
+        }, // Allow up to 10 tokens between ように and Verb[て]
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeFormMatcher)),
+        TokenMatcher::Custom(Arc::new(HoshiiMatcher)),
+    ]
 }
 
 // Pattern: ているあいだに (while/during)

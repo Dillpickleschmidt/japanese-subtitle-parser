@@ -10794,3 +10794,68 @@ mod maiuff5enoyouni_tests {
     }
 }
 
+// ========== ように～てほしい (want someone to do in order to) ==========
+// Pattern: ように～てほしい
+// Data source: grammar_points_data.json["ように～てほしい"]
+//
+// Structures to test:
+//   - standard[0]: Verb + ように + Verb[て] + ほしい
+//   - standard[1]: Noun + のように + Verb[て] + ほしい
+//   - polite[0]: Verb + ように + Verb[て] + ほしい + です
+//   - polite[1]: Noun + のように + Verb[て] + ほしい + です
+//
+// Examples from data:
+//   - 弁護士になれるように頑張ってほしい (want you to work hard so you can become a lawyer)
+//   - この チームが大会で勝てるようになってほしい (want this team to be able to win)
+//   - スポーツ選手のように走ってほしい (want you to run like an athlete)
+//   - アナウンサーのように話してほしい (want you to talk like an announcer)
+#[cfg(test)]
+mod youni_tehoshii_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + ように + Verb[て] + ほしい"
+    #[test]
+    fn test_verb_youni_tehoshii() {
+        let sentence = "弁護士になれるように頑張ってほしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように～てほしい");
+        assert_pattern_range(&patterns, "ように～てほしい", 7, 17); // ように頑張ってほしい
+    }
+
+    // Testing: structure.standard[0] - "Verb + ように + Verb[て] + ほしい"
+    // with ようになる construction
+    #[test]
+    fn test_verb_youni_natte_tehoshii() {
+        let sentence = "このチームが大会で勝てるようになってほしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように～てほしい");
+        assert_pattern_range(&patterns, "ように～てほしい", 12, 21); // ようになってほしい
+    }
+
+    // Testing: structure.standard[1] - "Noun + のように + Verb[て] + ほしい"
+    #[test]
+    fn test_noun_noyouni_tehoshii_athlete() {
+        let sentence = "お前にはスポーツ選手のように走ってほしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように～てほしい");
+        assert_pattern_range(&patterns, "ように～てほしい", 11, 20); // ように走ってほしい
+    }
+
+    // Testing: structure.standard[1] - "Noun + のように + Verb[て] + ほしい"
+    #[test]
+    fn test_noun_noyouni_tehoshii_announcer() {
+        let sentence = "もっとアナウンサーのように話してほしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように～てほしい");
+        assert_pattern_range(&patterns, "ように～てほしい", 10, 19); // ように話してほしい
+    }
+}
+
