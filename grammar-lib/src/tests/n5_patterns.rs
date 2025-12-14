@@ -6314,3 +6314,111 @@ mod u_verb_negative_past_tests {
     }
 }
 
+// る-Verb (Negative) pattern tests
+// Data source: grammar_points_data.json["る-Verb (Negative)"]
+// Pattern: る-Verb (ichidan verb) negative forms
+// Structures: Verb[一段] + ない (casual), Verb[一段] + ません (polite), Verb[一段] + ないです (semi-polite)
+mod ru_verb_negative_tests {
+    use super::*;
+
+    // Testing: standard[1] - 食べる + ない
+    #[test]
+    fn test_ru_verb_negative_taberu() {
+        let sentence = "私は肉を食べないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 4, 8); // 食べない
+    }
+
+    // Testing: standard[2] - 見る + ない
+    #[test]
+    fn test_ru_verb_negative_miru() {
+        let sentence = "テレビは見ないことにしている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 4, 7); // 見ない
+    }
+
+    // Testing: standard[3] - 寝る + ない
+    #[test]
+    fn test_ru_verb_negative_neru() {
+        let sentence = "夜は寝ないで勉強している";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 2, 5); // 寝ない
+    }
+
+    // Testing: polite[1] - 食べる + ません
+    #[test]
+    fn test_ru_verb_negative_polite_taberu() {
+        let sentence = "肉は食べません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 2, 7); // 食べません
+    }
+
+    // Testing: polite[3] - 見る + ません
+    #[test]
+    fn test_ru_verb_negative_polite_miru() {
+        let sentence = "黒板が見えません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 3, 8); // 見えません
+    }
+
+    // Testing: polite[5] - 寝る + ませんでした
+    // NOTE: ませんでした is detected as 寝ません + でした, which is semantically correct
+    #[test]
+    fn test_ru_verb_negative_polite_neru() {
+        let sentence = "今日は寝ませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 3, 10); // 寝ませんでした
+    }
+
+    // Testing: polite[2] - 食べる + ないです
+    #[test]
+    fn test_ru_verb_negative_semi_polite_taberu() {
+        let sentence = "野菜は食べないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 3, 9); // 食べないです
+    }
+
+    // Testing: polite[4] - 見る + ないです
+    #[test]
+    fn test_ru_verb_negative_semi_polite_miru() {
+        let sentence = "映画は見ないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 3, 8); // 見ないです
+    }
+
+    // Testing: polite[6] - 寝る + ないです
+    #[test]
+    fn test_ru_verb_negative_semi_polite_neru() {
+        let sentence = "今夜は寝ないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 3, 8); // 寝ないです
+    }
+}
+
