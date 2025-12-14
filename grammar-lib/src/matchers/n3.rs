@@ -1395,9 +1395,51 @@ pub fn okagede() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にもとづいて
+// Pattern: にもとづいて (based on)
+// Structures: Noun + に基づいて / Noun + に基づいた + Noun
 pub fn nimotozuite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MotozukuMatcher;
+    impl Matcher for MotozukuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && (token.base_form == "もとづく" || token.base_form == "基づく")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeOrTaMatcher;
+    impl Matcher for TeOrTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // て particle (conjunction)
+            (token.surface == "て"
+                && token.base_form == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+                // OR た auxiliary (past tense)
+                || (token.surface == "た"
+                    && token.base_form == "た"
+                    && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MotozukuMatcher)),
+        TokenMatcher::Custom(Arc::new(TeOrTaMatcher)),
+    ]
 }
 
 // Pattern: 点

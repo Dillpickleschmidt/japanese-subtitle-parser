@@ -6929,6 +6929,73 @@ mod nikakete_tests {
     }
 }
 
+// Pattern: にもとづいて (based on)
+// Data source: grammar_points_data.json["にもとづいて"]
+// Testing: structure.standard[0] - "Noun + に基づいて"
+//          structure.standard[1] - "Noun + に基づいた + Noun"
+//
+// Pattern meaning: "based on (A)", highlighting judgement/conclusion using (A) as basis
+// From に + 基づく (to originate from) + て
+// 基 (foundation) - things that "stem" from something
+//
+// Structures to test:
+//   - standard[0]: Noun + にもとづいて (te-form - conclusion follows)
+//   - standard[1]: Noun + にもとづいた + Noun (past form modifying noun)
+//   - Alternative writing: に基づいて (with kanji)
+mod nimotozuite_tests {
+    use super::*;
+
+    #[test]
+    fn test_nimotozuite_hiragana_te_form() {
+        let sentence = "クライアントの指示にもとづいて、編集をしておきました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもとづいて");
+        assert_pattern_range(&patterns, "にもとづいて", 9, 15); // にもとづいて
+    }
+
+    #[test]
+    fn test_nimotozuite_past_form_noun() {
+        let sentence = "私は実話にもとづいた映画が好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもとづいて");
+        assert_pattern_range(&patterns, "にもとづいて", 4, 10); // にもとづいた
+    }
+
+    #[test]
+    fn test_nimotozuite_kanji_te_form() {
+        let sentence = "以前成功した計画に基づいて、新しい計画を立てようと思っています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもとづいて");
+        assert_pattern_range(&patterns, "にもとづいて", 8, 13); // に基づいて
+    }
+
+    #[test]
+    fn test_nimotozuite_kanji_past_form() {
+        let sentence = "来週までに、アンケートに基づいたグラフを作成してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもとづいて");
+        assert_pattern_range(&patterns, "にもとづいて", 11, 16); // に基づいた
+    }
+
+    #[test]
+    fn test_nimotozuite_created_from() {
+        let sentence = "あの国の法律は宗教にもとづいて作られている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもとづいて");
+        assert_pattern_range(&patterns, "にもとづいて", 9, 15); // にもとづいて
+    }
+}
+
 
 // ========== どころか (far from, let alone) ==========
 // Pattern: どころか (far from, let alone, anything but)

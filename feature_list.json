@@ -5798,13 +5798,13 @@
   {
     "pattern_name": "にもとづいて",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to say that one thing is 'based on' another in Japanese, the expression に基（もと）づいて will be used [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
