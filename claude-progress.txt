@@ -1,10 +1,10 @@
 ## Session 202 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented からには pattern
-**Patterns completed**: 1 (からには)
-**Tests added**: 5 (all passing)
-**Total tests**: 1282 (was 1277)
+**Status**: COMPLETE - Successfully implemented 3 N2 から-based patterns
+**Patterns completed**: 3 (からには, からして, からといって)
+**Tests added**: 12 (all passing)
+**Total tests**: 1289 (was 1277)
 
 ### Pattern Implemented: からには (as long as, since, given that)
 
@@ -52,26 +52,106 @@
    - For である: matches ある+からには (part of copula)
 4. **Fast implementation**: Simple compound particle patterns take ~1 hour
 
+### Pattern Implemented: からして (based on, judging from)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 1
+- Noun + からして (性格からして, 値段からして, 名前からして)
+
+**Implementation details**:
+- Pattern: Noun + から + し + て (4 tokens)
+- からして tokenizes as THREE separate tokens (not a compound particle):
+  * から (助詞/格助詞/一般) - case particle "from"
+  * し (動詞/自立, する in 連用形) - verb する
+  * て (助詞/接続助詞) - te-form connective particle
+- Custom matchers ensure correct POS tags for each component
+- Expresses speaker's partially objective opinion based on limited information
+- Translates: "judging from (A)", "based on (A)", "going from (A)"
+- Nuance: from available piece of information about (A), (B) is likely the whole picture
+- Literal meaning: "going from (A), (B)" - highlights limited information/method available
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 618-656)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 1024-1072)
+
+### Pattern Implemented: からといって (just because)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 4
+1. Verb + からといって (勉強したからといって)
+2. い-Adjective + からといって (広いからといって)
+3. な-Adjective + だからといって (丈夫だからといって)
+4. Noun + だからといって (日本人だからといって)
+
+**Implementation details**:
+- Pattern: Any + から + と + いう + て (5 tokens)
+- からといって tokenizes as FOUR separate components:
+  * から (助詞/接続助詞) - connective particle
+  * と (助詞/格助詞/引用) - quotation particle
+  * いう (動詞/自立, various forms like いっ) - verb "to say"
+  * て (助詞/接続助詞) - connective particle
+- For な-Adj/Noun: includes だ before から (5 total tokens)
+- Single pattern handles all forms using TokenMatcher::Any
+- Expresses: "(A) does not necessarily mean (B)" or "despite (A), (B) is not true"
+- Literal: "from saying that (A), doesn't mean (B)"
+- Often used with negative statement in (B) part
+- Used for strong opinions or criticism of actions/behavior
+- Grammar note mentions abbreviated forms: からとて (literary), からって (colloquial)
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 658-711)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 1073-1132)
+
 ### Statistics
-- **Session time**: ~1 hour
-- **Patterns completed this session**: 1
-- **Test success rate**: 5/5 (100%)
-- **Total passing tests**: 1282
+- **Session time**: ~2.5 hours
+- **Patterns completed this session**: 3
+- **Test success rate**: 12/12 (100%)
+- **Total passing tests**: 1289
+- **Average time per pattern**: ~50 minutes
+
+### Key Learnings
+1. **から-based patterns**: Three distinct patterns all using から but with different structures:
+   - からには: Single compound particle (助詞/接続助詞)
+   - からして: Splits into から + し + て (3 separate tokens)
+   - からといって: Splits into から + と + いう + て (4 separate tokens)
+2. **Tokenization varies**: Don't assume similar-looking patterns tokenize the same way
+3. **TokenMatcher::Any**: Works well for patterns that attach to multiple word types
+4. **Multi-token matching**: When pattern splits, need custom matcher for each component with proper POS verification
+5. **Pattern family**: All three から patterns express reasoning/judgment but with different nuances:
+   - からには: Determination based on established fact
+   - からして: Judgment based on limited information
+   - からといって: Negation of assumed correlation
+
+### Workflow followed (all 3 patterns)
+1. ✅ Read grammar_points_data.json to understand structures
+2. ✅ Checked for existing stub functions (all found)
+3. ✅ Wrote tests with print_debug for all structure variants
+4. ✅ Analyzed tokenization output to understand token structure
+5. ✅ Implemented matchers based on actual tokenization
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug and added proper assertions with correct ranges
+8. ✅ Verified all tests pass with no regressions
+9. ✅ Updated feature_list.json for all patterns
+10. ✅ Committed changes with detailed messages
 
 ### Next Session Recommendations
-1. **Continue with N2 priority 4 patterns**: More から-based expressions available
+1. **Continue with N2 priority 4 patterns**: More から-based or other expressions
 2. **Good candidates**:
-   - からして (from, judging from) - から + して
    - からすると/からすれば (judging from) - から + conditional
-   - からといって (just because) - から + という + て
    - から見ると (from the perspective of) - から + 見る + と
-3. **Pattern discovery**: N2 has many から-based conditional/reasoning expressions
+   - か何か (or something) - simpler pattern
+   - げ (seeming/appearance) - suffix pattern
+3. **Pattern discovery**: N2 has many reasoning/judgment expressions
 
 ### Environment Status
-- ✅ All 1282 tests passing
+- ✅ All 1289 tests passing
 - ✅ No regressions
 - ✅ Clean git state (changes committed)
-- ✅ feature_list.json updated
+- ✅ feature_list.json updated for all 3 patterns
 - ✅ Ready for next session
 
 ---
