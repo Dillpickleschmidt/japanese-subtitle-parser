@@ -654,3 +654,58 @@ mod karashite_tests {
         assert_pattern_range(&patterns, "からして", 0, 6); // 名前からして
     }
 }
+
+// Pattern: からといって (just because)
+// Data source: grammar_points_data.json["からといって"]
+// Testing: structure.standard[0] - "Verb + からといって"
+//
+// Other structures tested:
+//   - standard[1]: い-Adjective + からといって
+//   - standard[2]: な-Adjective + だからといって
+//   - standard[3]: Noun + だからといって
+//
+// からといって tokenizes as: から + と + いう + て (4 tokens)
+// For な-Adj/Noun: だ + から + と + いう + て (5 tokens, starts with だ)
+mod karatoitte_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_karatoitte() {
+        let sentence = "たくさん勉強したからといって、合格するとは限らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からといって");
+        assert_pattern_range(&patterns, "からといって", 7, 14); // たからといって
+    }
+
+    #[test]
+    fn test_i_adjective_karatoitte() {
+        let sentence = "公園が広いからといって、犬を放し飼いにしていいわけではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からといって");
+        assert_pattern_range(&patterns, "からといって", 3, 11); // 広いからといって
+    }
+
+    #[test]
+    fn test_na_adjective_dakaratoitte() {
+        let sentence = "丈夫だからといって、雑に扱えば壊れる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からといって");
+        assert_pattern_range(&patterns, "からといって", 2, 9); // だからといって
+    }
+
+    #[test]
+    fn test_noun_dakaratoitte() {
+        let sentence = "日本人だからといって、漢字が書けるとは限らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からといって");
+        assert_pattern_range(&patterns, "からといって", 3, 10); // だからといって
+    }
+}

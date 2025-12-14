@@ -1070,9 +1070,65 @@ pub fn karashite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: からといって
+// Pattern: からといって (just because)
+// Structures: Verb/い-Adj + から + と + いって, な-Adj/Noun + だ + から + と + いって
 pub fn karatoitte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match から as connective particle
+    #[derive(Debug)]
+    struct KaraConnectiveMatcher;
+    impl Matcher for KaraConnectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.base_form == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match と as quotation particle
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.base_form == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match いう verb (various forms: いっ, いわ, etc.)
+    #[derive(Debug)]
+    struct IuVerbMatcher;
+    impl Matcher for IuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match て as connective particle
+    #[derive(Debug)]
+    struct TeConnectiveMatcher;
+    impl Matcher for TeConnectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.base_form == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, い-Adj, or だ (for な-Adj/Noun)
+        TokenMatcher::Custom(Arc::new(KaraConnectiveMatcher)),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(IuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeConnectiveMatcher)),
+    ]
 }
 
 // Pattern: そういえば
