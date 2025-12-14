@@ -4112,9 +4112,21 @@ pub fn o_uff5e_ninaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なさる
+// Pattern: なさる (honorific verb - respects actions of others)
+// Structures: する → なさる, Noun + する → Noun + なさる
+// Conjugates like 五段・ラ行特殊: なさる/なさらない/なさった/なさいます
 pub fn nasaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NasaruMatcher;
+    impl super::Matcher for NasaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "なさる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(4).is_some_and(|f| f == "五段・ラ行特殊")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(NasaruMatcher))]
 }
 
 // Pattern: お～ください (honorific request)

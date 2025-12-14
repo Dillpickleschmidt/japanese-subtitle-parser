@@ -8524,3 +8524,106 @@ mod nasai_tests {
         assert_pattern_range(&patterns, "なさい", 7, 12); // 食べなさい
     }
 }
+
+// Pattern: なさる (honorific verb - respects actions of others)
+// Data source: grammar_points_data.json["なさる"]
+// Testing all structure variants from grammar data
+mod nasaru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "する ￫ なさる"
+    // する is replaced by なさる to show respect for another's actions
+    #[test]
+    fn test_nasaru_basic_standard() {
+        let sentence = "週末も仕事をなさるのですか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさる");
+        assert_pattern_range(&patterns, "なさる", 6, 9); // なさる
+    }
+
+    // Testing: structure.standard[2] - "料理（りょうり）する ￫ 料理（りょうり）なさる"
+    // Noun + する → Noun + なさる pattern
+    #[test]
+    fn test_nasaru_noun_compound_standard() {
+        let sentence = "先生は何を勉強なさるのですか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさる");
+        assert_pattern_range(&patterns, "なさる", 7, 10); // なさる (after 勉強)
+    }
+
+    // Testing: structure.standard[6] - "Verb［た］ ￫ なさった"
+    // Past tense: なさる → なさった
+    #[test]
+    fn test_nasaru_past_standard() {
+        let sentence = "社長はどこでゴルフをなさったのですか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさる");
+        assert_pattern_range(&patterns, "なさる", 10, 14); // なさった
+    }
+
+    // Testing: structure.standard[5] - "Verb［ない］ ￫ なさらない"
+    // Negative: なさる → なさらない
+    #[test]
+    fn test_nasaru_negative_standard() {
+        let sentence = "納得なさらないなら私に言ってください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさる");
+        assert_pattern_range(&patterns, "なさる", 2, 9); // なさらないなら (includes full negative form)
+    }
+
+    // Testing: structure.polite[4] - "Verb［る］ ￫ なさいます"
+    // Polite form: なさる → なさいます (special conjugation)
+    #[test]
+    fn test_nasaru_polite() {
+        let sentence = "お飲み物はどうなさいますか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさる");
+        assert_pattern_range(&patterns, "なさる", 7, 12); // なさいます
+    }
+
+    // Testing: structure.polite[6] - "Verb［た］ ￫ なさいました"
+    // Polite past: なさる → なさいました
+    #[test]
+    fn test_nasaru_polite_past() {
+        let sentence = "お客様、どうなさいましたか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさる");
+        assert_pattern_range(&patterns, "なさる", 6, 12); // なさいました
+    }
+
+    // Testing: structure.polite[5] - "Verb［ない］ ￫ なさいません"
+    // Polite negative: なさる → なさいません
+    #[test]
+    fn test_nasaru_polite_negative() {
+        let sentence = "忘れ物はなさいませんか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさる");
+        assert_pattern_range(&patterns, "なさる", 4, 10); // なさいません
+    }
+
+    // Testing: structure.polite[7] - "Verb［なかった］ ￫ なさいませんでした"
+    // Polite negative past: なさる → なさいませんでした
+    #[test]
+    fn test_nasaru_polite_negative_past() {
+        let sentence = "彼は計画を変えることはなさいませんでした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさる");
+        assert_pattern_range(&patterns, "なさる", 11, 20); // なさいませんでした
+    }
+}
