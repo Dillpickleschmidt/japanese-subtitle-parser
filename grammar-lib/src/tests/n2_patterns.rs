@@ -1164,3 +1164,54 @@ mod gakeni_tests {
         assert_pattern_range(&patterns, "がけに", 5, 10); // 通りがけに
     }
 }
+
+// Pattern: ことなく (without doing)
+// Data source: grammar_points_data.json["ことなく"]
+// Testing: structure.standard[0] - "Verb + ことなく"
+//
+// Note: Only 1 structure variant (standard only, no polite form)
+// More formal than ないで
+
+mod kotonaku_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_kotonaku_preventative() {
+        let sentence = "怪我人を出すことなく、人質を全員救出する事ができた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなく");
+        assert_pattern_range(&patterns, "ことなく", 4, 10); // 出すことなく
+    }
+
+    #[test]
+    fn test_verb_kotonaku_arrival() {
+        let sentence = "遅刻することなく、職場に着いた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなく");
+        assert_pattern_range(&patterns, "ことなく", 0, 8); // 遅刻することなく
+    }
+
+    #[test]
+    fn test_verb_kotonaku_unmet_desire() {
+        let sentence = "犯人が捕まることなく１０年が経つ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなく");
+        assert_pattern_range(&patterns, "ことなく", 3, 10); // 捕まることなく
+    }
+
+    #[test]
+    fn test_verb_kotonaku_quit() {
+        let sentence = "彼は社長に何も言うことなく会社を辞めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなく");
+        assert_pattern_range(&patterns, "ことなく", 7, 13); // 言うことなく
+    }
+}

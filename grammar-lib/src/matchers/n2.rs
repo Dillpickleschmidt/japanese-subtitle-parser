@@ -999,9 +999,49 @@ pub fn nu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ことなく
+// Pattern: ことなく (without doing)
+// Structure: Verb[基本形] + こと + なく
+// More formal than ないで
 pub fn kotonaku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for verb in dictionary form (基本形)
+    #[derive(Debug)]
+    struct DictionaryVerbMatcher;
+    impl Matcher for DictionaryVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Matcher for こと as 名詞/非自立
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for なく (ない in 連用テ接続 form)
+    #[derive(Debug)]
+    struct NakuMatcher;
+    impl Matcher for NakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+    ]
 }
 
 // Pattern: にて
