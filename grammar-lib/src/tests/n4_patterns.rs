@@ -6441,3 +6441,60 @@ mod tara_tests {
         assert_pattern_range(&patterns, "たら", 0, 6); // 明日だったら
     }
 }
+
+// ========== てしまう・ちゃう (completion/regret) ==========
+// Pattern: てしまう・ちゃう
+// Data source: grammar_points_data.json["てしまう・ちゃう"]
+//
+// Structures to test:
+//   - standard[0]: Verb［て］+ しまう
+//   - standard[1]: Verb［て］+ ちゃう (casual contraction)
+//   - standard[2]: Verb［で］+ じゃう (casual with で)
+//   - polite[0]: Verb［て］+ しまいます
+//
+// Note: ちゃう = contraction of てしまう, じゃう = contraction of でしまう
+// Expresses: completion, regret, or something done accidentally
+#[cfg(test)]
+mod teshimau_tests {
+    use super::*;
+
+    #[test]
+    fn test_teshimau_standard() {
+        let sentence = "私はすぐに道に迷ってしまう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てしまう・ちゃう");
+        assert_pattern_range(&patterns, "てしまう・ちゃう", 7, 13); // 迷ってしまう
+    }
+
+    #[test]
+    fn test_chau_contraction() {
+        let sentence = "最近運動をしてないから太っちゃう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てしまう・ちゃう");
+        assert_pattern_range(&patterns, "てしまう・ちゃう", 11, 16); // 太っちゃう
+    }
+
+    #[test]
+    fn test_jau_contraction_de() {
+        let sentence = "花が死んじゃうから、花を踏むな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てしまう・ちゃう");
+        assert_pattern_range(&patterns, "てしまう・ちゃう", 2, 7); // 死んじゃう
+    }
+
+    #[test]
+    fn test_teshimau_polite() {
+        let sentence = "全部食べてしまいますので気をつけています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てしまう・ちゃう");
+        assert_pattern_range(&patterns, "てしまう・ちゃう", 2, 10); // 食べてしまいます
+    }
+}

@@ -2703,9 +2703,96 @@ pub fn temo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: てしまう・ちゃう
+// Pattern: てしまう・ちゃう (completion/regret)
+// Structures: Verb[て] + しまう / Verb + ちゃう / Verb + じゃう (+ ます optional)
 pub fn teshimau_u30fb_chau() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match verb in 連用形 or 連用タ接続 (needed before て/ちゃう/じゃう)
+    #[derive(Debug)]
+    struct VerbRenyouFormMatcher;
+    impl Matcher for VerbRenyouFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形" || f == "連用タ接続")
+        }
+    }
+
+    // Match て particle (for てしまう pattern)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match しまう verb (動詞/非自立)
+    #[derive(Debug)]
+    struct ShimauVerbMatcher;
+    impl Matcher for ShimauVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "しまう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ちゃう verb (contraction of てしまう)
+    #[derive(Debug)]
+    struct ChauVerbMatcher;
+    impl Matcher for ChauVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ちゃう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match じゃう verb (contraction of でしまう)
+    #[derive(Debug)]
+    struct JauVerbMatcher;
+    impl Matcher for JauVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "じゃう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ます polite auxiliary
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match しまう, ちゃう, or じゃう
+    #[derive(Debug)]
+    struct ShimauOrContractionMatcher;
+    impl Matcher for ShimauOrContractionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form == "しまう"
+                    || token.base_form == "ちゃう"
+                    || token.base_form == "じゃう")
+        }
+    }
+
+    // てしまう pattern: Verb(連用タ接続) + て + しまう (+ Optional ます)
+    // OR
+    // ちゃう/じゃう pattern: Verb(連用タ接続) + ちゃう/じゃう (+ Optional ます)
+    //
+    // We need to match both patterns, so we use Optional for て and check for all three verb forms
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbRenyouFormMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeParticleMatcher)))), // て is optional (for ちゃう/じゃう)
+        TokenMatcher::Custom(Arc::new(ShimauOrContractionMatcher)), // Match しまう, ちゃう, or じゃう
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: Verb[て] + B
