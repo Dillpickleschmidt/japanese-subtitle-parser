@@ -1,3 +1,82 @@
+## Session 348 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (めったに〜ない)
+**Tests added**: 4 (all passing)
+**Total tests**: 2207 passing, 1 ignored (was 2203 passing, 1 ignored)
+
+### ✅ Pattern Completed: めったに〜ない (rarely/seldom/hardly)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted in feature_list.json but priority 3 according to grammar data)
+
+**Pattern**: めったに〜ない is an expression meaning "rarely", "seldom", or "hardly". Originally, 滅多（めった） is a な-adjective meaning "thoughtless" or "reckless". As an adverb, 滅多（めった）に literally means "thoughtlessly" or "recklessly". When paired with the negative form ない, the nuance becomes "to not (A) thoughtlessly" - expressing that something doesn't happen without special reason.
+
+**Structures tested**: 4 comprehensive tests covering both tokenization variants
+1. めった + に + Verb[ない] (long form): 大人になってから駄菓子屋にはめったに行かない (Ever since I became an adult, I hardly go to candy stores)
+2. めったに + Verb[ない] (short form): 親とは正月以外にはめったに会わない (Other than New Years, I hardly see my parents)
+3. Noun + は + めったにない: こんなチャンスはめったにないぞ！ (A chance like this is very rare)
+4. Noun phrase + は + めったにない: パーティーに行くことはめったにない (I rarely go to parties)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (mettani_u301c_nai, lines 5934-6021)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (mettani_u301c_nai_tests module, lines 11268-11322)
+- Pattern: grammar-lib/src/patterns.rs (MettaniU301cNai, lines 3849-3854)
+
+**Tokenization patterns**:
+```
+TWO FORMS (both handled by the matcher):
+
+1. Short form (adverb):
+   - めったに (副詞/一般) + wildcard{0-20} + ない
+   - Examples: "めったにない", "めったに会わない"
+
+2. Long form (na-adjective stem + particle):
+   - めった (名詞/形容動詞語幹) + に (助詞/副詞化) + wildcard{0-20} + ない
+   - Example: "めったに行かない" (tokenized as めった + に + 行か + ない)
+
+ない tokenization:
+- 助動詞 (auxiliary verb) after verb stems
+- 形容詞 (adjective) in noun predicate contexts
+```
+
+**Key implementation points**:
+1. Four-token matcher: MettaniOrMettaNiMatcher + Optional(に) + Wildcard{0-20} + NaiMatcher
+2. MettaniOrMettaNiMatcher matches EITHER:
+   - めったに (副詞/一般) - single adverb token, OR
+   - めった (名詞/形容動詞語幹) - na-adjective stem
+3. Optional に particle (助詞/副詞化) handles the long form tokenization
+4. Wildcard allows 0-20 tokens between めったに/めった and ない
+5. NaiMatcher checks base_form == "ない" and POS is either 助動詞 or 形容詞
+6. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+7. Works with all contexts: verb negatives and noun predicates
+
+**Pattern ranges**: Include full construction from めったに/めった to ない
+- Long form with verb: "めったに行かない" (chars 14-22)
+- Short form with verb: "めったに会わない" (chars 9-17)
+- Noun predicate (short): "めったにない" (chars 8-14)
+- Noun phrase predicate: "めったにない" (chars 11-17)
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both tokenization variants (めったに adverb vs めった + に)
+- Cover both verb negatives and noun predicates
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that めったに originally means "thoughtlessly" or "recklessly" from 滅多（めった）. When appearing in a negative statement, the nuance becomes "to not (A) thoughtlessly" - meaning the speaker will not do (A) unintentionally, or (A) will not happen unless there is some special reason for it. It's more common to see めったに written in hiragana than with kanji.
+
+**Implementation Challenge**: The challenge was handling TWO different tokenization patterns produced by Kagome. The matcher uses a custom matcher (MettaniOrMettaNiMatcher) that accepts either めったに as a single adverb OR めった as a na-adjective stem, followed by an optional に particle. This allows the pattern to match both forms seamlessly.
+
+**Related patterns**:
+- This is a standalone adverbial expression pattern requiring negative form
+- Similar to other negative emphasis adverbs like 決して (never)
+
+---
+
 ## Session 347 - 2025-12-14
 
 ### ✅ Session Summary
