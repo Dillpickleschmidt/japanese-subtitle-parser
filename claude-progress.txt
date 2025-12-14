@@ -1,3 +1,115 @@
+## Session 252 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (とされている - it is considered that)
+**Tests added**: 4 (all passing)
+**Total tests**: 1649 (was 1645)
+
+### Pattern Implemented: とされている (it is considered that)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Expresses that something is considered, regarded, or viewed as (A) by people in general. Similar to といわれている but uses する (to do/make) instead of 言う (to say). The quotative particle と marks the preceding phrase, followed by the passive form of する (される) + ている. Translates as "it is considered that..." or "it is regarded as...".
+
+**Structures tested**: 4 tests covering all structure variants
+1. Noun + だ + とされている: 必要だとされている (is considered necessary)
+2. Noun + だ + とされている (different context): ものだとされている (is considered to be something)
+3. い-Adj + とされている: 良いとされている (is considered good)
+4. Noun + だ + とされています (polite): 世界遺産だとされています (is considered a world heritage site)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (to_sareteiru, lines 5706-5759)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (to_sareteiru_tests, lines 7861-7918)
+- Pattern: grammar-lib/src/patterns.rs (ToSareteiru)
+
+**Tokenization pattern**:
+```
+と (助詞/格助詞/引用) - quotation particle
++ さ (する in 未然レル接続) - verb "to do" in mizen form (さ)
++ れる (動詞/接尾, 連用形) - passive auxiliary
++ て (助詞/接続助詞) - connecting particle
++ いる (動詞/非自立, 基本形) - auxiliary verb
+```
+
+**Key implementation points**:
+1. Five custom matchers with specific POS checks:
+   - ToQuotationMatcher: と as 助詞/格助詞/引用
+   - SuruVerbMizenMatcher: する in 未然レル接続 (さ)
+   - PassiveReruMatcher: れる as 動詞/接尾
+   - TeParticleMatcher: て as 助詞/接続助詞
+   - Uses specific_verb("いる") for auxiliary verb
+2. Pattern range: とされている (full construction, extends to ます for polite)
+3. Priority 2 (higher than general passive patterns)
+4. Works with any preceding content (verbs, adjectives, nouns with/without だ)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover い-adjectives and nouns with だ
+- Test both standard (ている) and polite (ています) forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Understanding the passive construction of する: する → さ (未然レル接続) + れる (passive)
+2. Distinguishing this specific pattern from generic passive patterns
+3. Handling both standard and polite forms with automatic extension
+4. Proper tokenization: 5 separate tokens that form one grammatical unit
+
+**Tokenization Discovery**:
+The passive form of する is constructed as:
+- する (未然レル接続) = さ (surface)
+- れる (passive suffix) = れ (surface in 連用形)
+- Combined with て + いる to express ongoing state of passive
+- Pattern automatically extends to include ます in polite form
+
+**Pattern Relationship with Other Patterns**:
+- Very similar structure to といわれている (it is said that)
+- Part of quotative と family with passive construction
+- Related patterns:
+  - といわれている (it is said that) - uses 言う verb
+  - とかんがえられている (it is thought that) - uses 考える verb
+- Differs from active quotative constructions (という)
+
+### Session Statistics
+- **Session time**: Approximately 30 minutes
+- **Patterns completed this session**: 1 (とされている)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1649 (up from 1645)
+- **Files modified**: 4 (matchers/n4.rs, patterns.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 quotative と patterns**:
+   - とかんがえられている (it is thought that) - formal passive with 考える
+   - とみえる (it appears that)
+   - とか～とか (things like... and...)
+   - ときいた (I heard that) - past tense hearsay
+2. **Pattern focus**: More passive quotative constructions with different verbs
+
+### Environment Status
+- All 1649 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+
+**Passive Quotative Construction Pattern**:
+This pattern follows the passive quotative structure:
+- Content + と (quotation) + Verb[passive] + ている
+- The と marks what precedes it as quoted or considered content
+- Passive form indicates the content is something "considered by people in general"
+- される (passive of する) emphasizes formal/objective consideration
+- ている expresses ongoing state (it's commonly/currently considered)
+
+**Comparison with といわれている**:
+- といわれている: "it is said" (emphasizes verbal/hearsay aspect)
+- とされている: "it is considered/regarded as" (emphasizes formal judgment/classification)
+- Both use same grammatical structure: と + Verb[passive] + ている
+
 ## Session 251 - 2025-12-14
 
 ### ✅ Session Summary
