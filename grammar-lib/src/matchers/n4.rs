@@ -4772,9 +4772,36 @@ pub fn shi_uff5e_shi() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: でできる・からできる
+// Pattern: でできる・からできる (made from/out of)
+// Structures: Noun + で/から + できる/できている/できます
 pub fn dedekiru_u30fb_karadekiru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for で or から as case particle
+    #[derive(Debug)]
+    struct DeKaraParticleMatcher;
+    impl Matcher for DeKaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で" || token.surface == "から")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for できる verb (any conjugation)
+    #[derive(Debug)]
+    struct DekiruVerbMatcher;
+    impl Matcher for DekiruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "できる" && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(DeKaraParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(DekiruVerbMatcher)),
+    ]
 }
 
 // Pattern: ながら (while doing)

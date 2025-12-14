@@ -7532,3 +7532,79 @@ mod degozaimasu_tests {
         assert_pattern_range(&patterns, "でございます", 7, 11); // でござる
     }
 }
+
+// ========== でできる・からできる (made from/out of) ==========
+// Pattern: でできる・からできる
+// Data source: grammar_points_data.json["でできる・からできる"]
+//
+// Structures to test:
+//   - standard[0]: Noun + で + できる (material obvious)
+//   - standard[1]: Noun + から + できる (material not obvious)
+//   - polite[0]: Noun + で + できます
+//   - polite[1]: Noun + から + できます
+//
+// Note: できている (specific items) vs できる (general) both valid
+//
+// Examples from data:
+//   - 卵と鶏肉でできる料理 (food made from eggs and chicken)
+//   - 大豆からできる (made from soybeans)
+//   - 竹でできている (made from bamboo - specific item)
+#[cfg(test)]
+mod dedekiru_karadekiru_tests {
+    use super::*;
+
+    // Test: Noun + で + できる (standard, general - material obvious)
+    #[test]
+    fn test_de_dekiru_standard() {
+        let sentence = "今日は卵と鶏肉でできる料理を紹介します";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でできる・からできる");
+        assert_pattern_range(&patterns, "でできる・からできる", 5, 11); // 鶏肉でできる
+    }
+
+    // Test: Noun + から + できる (standard - material not obvious)
+    #[test]
+    fn test_kara_dekiru_standard() {
+        let sentence = "味噌は大豆からできると職人さんが教えてくれた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でできる・からできる");
+        assert_pattern_range(&patterns, "でできる・からできる", 3, 10); // 大豆からできる
+    }
+
+    // Test: Noun + で + できている (specific item)
+    #[test]
+    fn test_de_dekiteiru_specific() {
+        let sentence = "この箸は竹でできている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でできる・からできる");
+        assert_pattern_range(&patterns, "でできる・からできる", 4, 8); // 竹ででき
+    }
+
+    // Test: Noun + で + できます (polite)
+    #[test]
+    fn test_de_dekiru_polite() {
+        let sentence = "紙は木の繊維でできます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でできる・からできる");
+        assert_pattern_range(&patterns, "でできる・からできる", 4, 11); // 繊維でできます
+    }
+
+    // Test: Noun + から + できます (polite)
+    #[test]
+    fn test_kara_dekiru_polite() {
+        let sentence = "日本酒は米からできます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でできる・からできる");
+        assert_pattern_range(&patterns, "でできる・からできる", 4, 11); // 米からできます
+    }
+}
