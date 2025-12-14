@@ -1,3 +1,69 @@
+## Session 310 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (と同じで・と違って)
+**Tests added**: 4 (all passing)
+**Total tests**: 1976 (was 1972)
+
+### Pattern Implemented: と同じで・と違って (same as / different from)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: と同じで・と違って expresses similarity (と同じで "same as") and dissimilarity (と違って "different from"). The pattern uses the case-marking particle と to mark the comparison target, followed by either 同じで (same) or 違って (different). While both use と, they have different grammatical structures:
+- と同じで: と + 同じ (rentaishi) + で (auxiliary verb だ in conjunctive form)
+- と違って: と + 違っ (verb stem from 違う) + て (conjunctive particle)
+
+**Structures tested**: 4 comprehensive tests covering both variants
+1. Noun + と + 同じで: 彼は僕と同じで、猫アレルギーです (like me, he is allergic to cats)
+2. Noun + と + 同じで: 母も私と同じで、アウトドアが好きです (like me, my mother likes outdoors)
+3. Noun + と + 違って: 私は弟と違って、本を読むのが大好きです (unlike my brother, I love reading)
+4. Noun + と + 違って: 彼女は私と違って、遊園地が苦手です (unlike me, she doesn't like amusement parks)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (toonajide_u30fb_tochigatte, lines 3821-3878)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (toonajide_tochigatte_tests module, lines 8383-8433)
+- Pattern: grammar-lib/src/patterns.rs (ToonajideU30fbTochigatte, already existed)
+
+**Tokenization patterns**:
+```
+Pattern 1: と同じで
+- と (助詞/格助詞/一般) - case-marking particle
+- 同じ (連体詞) - rentaishi (adnominal)
+- で (助動詞) - base='だ', 特殊・ダ, 連用形 (conjunctive form)
+
+Pattern 2: と違って
+- と (助詞/格助詞/一般) - case-marking particle
+- 違っ (動詞/自立) - base='違う', 五段・ワ行促音便, 連用タ接続 (verb stem)
+- て (助詞/接続助詞) - conjunctive particle
+```
+
+**Key implementation points**:
+1. Single matcher handles both variants using OR logic in custom matchers
+2. Three custom matchers: ToParticleMatcher, OnajideOrChigatteMatcher, DeOrTeMatcher
+3. OnajideOrChigatteMatcher accepts EITHER 同じ (連体詞) OR 違っ (動詞)
+4. DeOrTeMatcher accepts EITHER で (助動詞) OR て (助詞/接続助詞)
+5. Pattern range includes only と + (同じ/違っ) + (で/て) = 3 tokens
+6. Despite different structures, both patterns express comparison (similar vs different)
+
+**Pattern ranges**: Include と + (同じで/違って) only (3 tokens)
+- Example: "と同じで" (chars 3-7) in "僕と同じで"
+- Example: "と違って" (chars 3-7) in "弟と違って"
+- Example: "と違って" (chars 4-8) in "私と違って"
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both structure variants: と同じで and と違って
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar explanation notes that と同じで uses the conjunctive form で (from auxiliary verb だ) to connect clauses, while と違って uses the て form of the verb 違う. Both expressions mark the comparison target with と and then state that (B) exists in a state of "having sameness" or "having difference" with (A). The two patterns are contrasting expressions commonly used together in explanations to emphasize similarities and differences.
+
+---
+
 ## Session 309 - 2025-12-14
 
 ### ✅ Session Summary
