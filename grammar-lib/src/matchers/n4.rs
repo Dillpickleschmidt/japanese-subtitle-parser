@@ -3055,9 +3055,37 @@ pub fn dedekiru_u30fb_karadekiru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ながら
+// Pattern: ながら (while doing)
+// Structures: Verb[stem] + ながら
 pub fn nagara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for verb in 連用形 (stem form)
+    #[derive(Debug)]
+    struct VerbStemMatcher;
+    impl Matcher for VerbStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| form == "連用形")
+        }
+    }
+
+    // Matcher for ながら as 助詞/接続助詞
+    #[derive(Debug)]
+    struct NagaraMatcher;
+    impl Matcher for NagaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ながら"
+                && token.base_form == "ながら"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbStemMatcher)),
+        TokenMatcher::Custom(Arc::new(NagaraMatcher)),
+    ]
 }
 
 // Pattern: たところだ (just did)

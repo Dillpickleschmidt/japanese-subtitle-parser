@@ -5183,3 +5183,53 @@ mod verb_you_tests {
         assert_pattern_range(&patterns, "Verb[よう]", 0, 7); // 頑張りましょう
     }
 }
+
+// ========== ながら (while doing) ==========
+// Pattern: ながら
+// Data source: grammar_points_data.json["ながら"]
+//
+// Structure to test:
+//   - standard[0]: Verb[stem] + ながら
+//
+// Examples from data:
+//   - 聴きながら走ります (run while listening)
+//   - 運転しながら携帯を使っていたら (while driving, using phone)
+//
+// Note: The two actions must share the same subject
+#[cfg(test)]
+mod nagara_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb[stem] + ながら (ichidan verb)
+    #[test]
+    fn test_nagara_ichidan_verb() {
+        let sentence = "毎日、音楽を聴きながら走ります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながら");
+        assert_pattern_range(&patterns, "ながら", 6, 11); // 聴きながら
+    }
+
+    // Testing: structure.standard[0] - Verb[stem] + ながら (godan verb - する)
+    #[test]
+    fn test_nagara_godan_verb() {
+        let sentence = "運転しながら携帯を使ってはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながら");
+        assert_pattern_range(&patterns, "ながら", 0, 6); // 運転しながら
+    }
+
+    // Testing: structure.standard[0] - Verb[stem] + ながら (godan verb - く)
+    #[test]
+    fn test_nagara_godan_ru_verb() {
+        let sentence = "歩きながら考えるのが好きだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながら");
+        assert_pattern_range(&patterns, "ながら", 0, 5); // 歩きながら
+    }
+}
