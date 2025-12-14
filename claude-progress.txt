@@ -1,10 +1,10 @@
 ## Session 314 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully completed なぜなら〜から pattern (N3)
-**Patterns completed**: 1 (なぜなら〜から)
-**Tests added**: 4 (all passing)
-**Total tests**: 1994 passing, 1 ignored (was 1990 passing, 1 ignored)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (なぜなら〜から, なんか・なんて)
+**Tests added**: 9 (all passing)
+**Total tests**: 1999 passing, 1 ignored (was 1990 passing, 1 ignored)
 
 ### ✅ Pattern Completed: なぜなら〜から (because / the reason is)
 
@@ -61,6 +61,57 @@ Three-token variant:
 - Correct character ranges verified: includes full pattern from なぜなら to です
 
 **Solution to previous session's issue**: The problem was that the wildcard needed an explicit minimum of 1 (not 0) and the optional comma needed to be explicitly handled before the wildcard. The pattern now correctly matches the full construction.
+
+---
+
+### ✅ Pattern Completed: なんか・なんて (such as, things like)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: なんか and なんて are adverbial particles expressing "such as" or "things like", often showing a low evaluation or dismissive tone toward what they follow. They're considered overlapping with など. なんて is an abbreviation of などという ("to say something like").
+
+**Usage distinction**:
+- なんて: more common after 用言 (conjugatable words) - verbs, い-Adjectives, な-Adjectives
+- なんか: more common after 体言 (unconjugatable words) - nouns
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Verb + なんて: 走るなんて (do something like run)
+2. い-Adjective + なんて: 寒いなんて (this cold or anything)
+3. な-Adjective + なんて: 心配なんて (things such as worrying)
+4. Noun + なんて: お前なんて (someone like you)
+5. Noun + なんか: テレビなんか (things like TVs)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nanka_u30fb_nante, lines 4665-4685)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nanka_nante_tests module, lines 8714-8790)
+- Pattern: grammar-lib/src/patterns.rs (NankaU30fbNante)
+
+**Tokenization pattern**:
+```
+Any word + なんて/なんか (助詞/副助詞)
+
+Example tokens:
+- 走る (動詞/自立, base='走る')
+- なんて (助詞/副助詞, base='なんて')
+```
+
+**Key implementation points**:
+1. Simple pattern: TokenMatcher::Any + NanteNankaMatcher
+2. NanteNankaMatcher checks for both なんて and なんか
+3. Validates POS tags: 助詞/副助詞 (adverbial particle)
+4. Pattern range: includes preceding word + particle (2 tokens)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from actual examples
+- Cover all word types (verbs, i-adj, na-adj, nouns)
+- Cover both なんて and なんか variants
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: While native speakers traditionally use なんて after conjugatable words and なんか after nouns, most won't consider it incorrect to use either with any type of word. Both often show humility when used in relation to oneself (私なんか) or insult when used in relation to others (お前なんて).
 
 ---
 
