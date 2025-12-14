@@ -1774,9 +1774,119 @@ pub fn mitaini_u30fb_mitaina() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: そうに・そうな 
+// Pattern: そうに・そうな (seems like/looks like - adverbial and attributive forms)
+// Structures: Verb/Adj[stem] + そう + に/な
 pub fn souni_u30fb_souna() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb/adjective stem OR な in negative forms (reused from そう pattern)
+    #[derive(Debug)]
+    struct StemOrNaiMatcher;
+    impl super::Matcher for StemOrNaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb stem (連用形)
+            (token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形"))
+            ||
+            // い-Adjective stem (ガル接続)
+            (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続"))
+            ||
+            // な-Adjective (形容動詞語幹)
+            (token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+            ||
+            // ない auxiliary in ガル接続 (for negative forms)
+            (token.surface == "な"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続"))
+            ||
+            // ない adjective in ガル接続 (for negative forms: 大事じゃな)
+            (token.surface == "な"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続"))
+        }
+    }
+
+    // Match さ suffix (for negative forms: なさそう)
+    #[derive(Debug)]
+    struct SaSuffixMatcher;
+    impl super::Matcher for SaSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match そう auxiliary (名詞/接尾/助動詞語幹 OR 副詞/助詞類接続 for negative forms)
+    #[derive(Debug)]
+    struct SouAuxiliaryMatcher;
+    impl super::Matcher for SouAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そう"
+                && token.base_form == "そう"
+                && ((token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                    && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹"))
+                || (token.pos.first().is_some_and(|pos| pos == "副詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続")))
+        }
+    }
+
+    // Match に particle (adverbial form: そうに)
+    // Can be 助詞/格助詞/一般 OR 助詞/副詞化
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "格助詞" || pos == "副詞化"))
+        }
+    }
+
+    // Match な auxiliary (attributive form: そうな)
+    // 助動詞, 体言接続, base=だ
+    #[derive(Debug)]
+    struct NaAuxiliaryMatcher;
+    impl super::Matcher for NaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match either に (adverbial) or な (attributive)
+    #[derive(Debug)]
+    struct NiOrNaMatcher;
+    impl super::Matcher for NiOrNaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // に particle (adverbial)
+            (token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "格助詞" || pos == "副詞化")))
+            ||
+            // な auxiliary (attributive)
+            (token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(StemOrNaiMatcher)), // Verb/Adj stem OR な (negative)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(SaSuffixMatcher)))), // Optional さ (for なさそう)
+        TokenMatcher::Custom(Arc::new(SouAuxiliaryMatcher)), // そう
+        TokenMatcher::Custom(Arc::new(NiOrNaMatcher)), // に (adverbial) or な (attributive)
+    ]
 }
 
 // Pattern: のように・のような 

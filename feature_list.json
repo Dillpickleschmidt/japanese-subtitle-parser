@@ -2354,13 +2354,13 @@
   {
     "pattern_name": "そうに・そうな ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そうだ is one of the 18 auxiliary verbs in Japanese, and can be used in the same way as な-Adjectives (may be followed by... [6 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

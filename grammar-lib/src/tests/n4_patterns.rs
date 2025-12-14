@@ -6987,3 +6987,105 @@ mod sou_tests {
         assert_pattern_range(&patterns, "そう ", 5, 11); // 面白そうです
     }
 }
+
+// Pattern: そうに・そうな (seeming like/looking like - adverbial and attributive forms)
+// Data source: grammar_points_data.json["そうに・そうな "]
+// Structures:
+//   - Verb[stem] + そうに + Verb/Adj
+//   - い-Adj[stem] + そうに + Verb/Adj
+//   - な-Adj + そうに + Verb/Adj
+//   - Verb[stem] + そうな + Noun
+//   - い-Adj[stem] + そうな + Noun
+//   - な-Adj + そうな + Noun
+//   - Special: negative forms with なさそう (adjective) vs なそう (verb)
+mod souni_souna_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_stem_souni_verb() {
+        // structure.standard[0]: Verb[stem] + そうに + Verb
+        let sentence = "さっき、先輩が怒りそうになってた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうに・そうな ");
+        assert_pattern_range(&patterns, "そうに・そうな ", 7, 12); // 怒りそうに
+    }
+
+    #[test]
+    fn test_i_adj_stem_souni_verb() {
+        // structure.standard[1]: い-Adj[い] + そうに + Verb
+        let sentence = "彼は忙しそうに仕事をしている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうに・そうな ");
+        assert_pattern_range(&patterns, "そうに・そうな ", 2, 7); // 忙しそうに
+    }
+
+    #[test]
+    fn test_na_adj_souni_verb() {
+        // structure.standard[2]: な-Adj + そうに + Verb
+        let sentence = "彼女はどんな仕事でも簡単そうにやるからうらやましい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうに・そうな ");
+        assert_pattern_range(&patterns, "そうに・そうな ", 10, 15); // 簡単そうに
+    }
+
+    #[test]
+    fn test_verb_stem_souna_noun() {
+        // structure.standard[3]: Verb[stem](2) + そうな + Noun
+        let sentence = "あの人は怒らなそうな顔をしている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうに・そうな ");
+        assert_pattern_range(&patterns, "そうに・そうな ", 6, 10); // なそうな
+    }
+
+    #[test]
+    fn test_i_adj_stem_souna_noun() {
+        // structure.standard[3]: い-Adj[い] + そうな + Noun
+        let sentence = "つまらなそうなパーティーには行きません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうに・そうな ");
+        assert_pattern_range(&patterns, "そうに・そうな ", 0, 7); // つまらなそうな
+    }
+
+    #[test]
+    fn test_na_adj_souna_noun() {
+        // structure.standard[3]: な-Adj + そうな + Noun
+        let sentence = "大事じゃなさそうな物は捨ててもいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうに・そうな ");
+        assert_pattern_range(&patterns, "そうに・そうな ", 4, 9); // なさそうな
+    }
+
+    #[test]
+    fn test_i_adj_negative_nasasou() {
+        // Caution: い-Adj negative with さ insertion: なさそう
+        let sentence = "すごい！辛くなさそうに食べるね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうに・そうな ");
+        assert_pattern_range(&patterns, "そうに・そうな ", 6, 11); // なさそうに
+    }
+
+    #[test]
+    fn test_na_adj_negative_nasasou() {
+        // Caution: な-Adj negative with さ insertion: なさそう
+        let sentence = "彼は美味しくなさそうにご飯を食べている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうに・そうな ");
+        assert_pattern_range(&patterns, "そうに・そうな ", 6, 11); // なさそうに
+    }
+}
