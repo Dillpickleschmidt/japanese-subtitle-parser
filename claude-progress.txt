@@ -1,3 +1,101 @@
+## Session 303 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (としたら・とすれば・とすると)
+**Tests added**: 8 (all passing)
+**Total tests**: 1943 (was 1935)
+
+### Pattern Implemented: としたら・とすれば・とすると (assuming that / if it were the case that)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: Hypothetical/conditional expression meaning "assuming that", "if it were the case that", or "if we suppose that". Uses the particle と with する in various forms plus conditional endings. All three variants (としたら, とすれば, とすると) express similar hypothetical meanings with slightly different nuances but are implemented as a single pattern.
+
+**Structures tested**: 8 comprehensive tests
+1. Verb + としたら: 出かけるとしたら (if we were to go out)
+2. Verb + とすれば: 痛いとすれば (if it hurts)
+3. Verb + とすると: 真っ直ぐだとすると (assuming it's straight)
+4. い-Adjective + としたら: 高いとしたら (if it's expensive)
+5. な-Adjective + だ + としたら: 簡単だとしたら (if it's simple)
+6. Noun + だ + としたら: 車だとしたら (if it's a car)
+7. Noun + だ + とすれば: 犯人だとすれば (if he's the culprit)
+8. Noun + だ + とすると: 過労だとすると (assuming it's overwork)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (toshitara_u30fb_tosureba_u30fb_tosuruto, lines 2534-2599)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (toshitara_tosureba_tosuruto_tests module, lines 7859-7956)
+- Pattern: grammar-lib/src/patterns.rs (ToshitaraU30fbTosurebaU30fbTosuruto, already existed as stub)
+
+**Tokenization pattern**:
+```
+Three variants with same core structure: と + する(form) + conditional_ending
+
+1. としたら:
+   - と (助詞/格助詞/引用)
+   - し (する, 動詞, 連用形)
+   - たら (た, 助動詞, 仮定形)
+
+2. とすれば:
+   - と (助詞/格助詞/引用)
+   - すれ (する, 動詞, 仮定形)
+   - ば (助詞/接続助詞)
+
+3. とすると:
+   - と (助詞/格助詞/引用)
+   - する (する, 動詞, 基本形)
+   - と (助詞/接続助詞)
+
+Example (としたら):
+- surface='と' base='と' pos=助詞/格助詞/引用
+- surface='し' base='する' pos=動詞/自立 [連用形]
+- surface='たら' base='た' pos=助動詞 [仮定形]
+
+Example (とすれば):
+- surface='と' base='と' pos=助詞/格助詞/引用
+- surface='すれ' base='する' pos=動詞/自立 [仮定形]
+- surface='ば' base='ば' pos=助詞/接続助詞
+
+Example (とすると):
+- surface='と' base='と' pos=助詞/格助詞/引用
+- surface='する' base='する' pos=動詞/自立 [基本形]
+- surface='と' base='と' pos=助詞/接続助詞
+```
+
+**Key implementation points**:
+1. Single unified matcher for all three variants (としたら, とすれば, とすると)
+2. Three custom matchers:
+   - ToParticleMatcher: matches と as 助詞/格助詞/引用
+   - SuruMatcher: matches する in any conjugation form
+   - ConditionalEndingMatcher: matches たら OR ば OR と(接続助詞)
+3. ConditionalEndingMatcher uses OR logic to accept all three conditional endings
+4. Pattern works with verbs, adjectives, and nouns (with optional だ before と)
+5. Pattern range includes only the と + する + ending (3 tokens)
+
+**Pattern ranges**: Include と + する(form) + conditional_ending only (3 tokens)
+- Example: "としたら" (chars 6-10) in "出かけるとしたら"
+- Example: "とすれば" (chars 4-8) in "痛いとすれば"
+- Example: "とすると" (chars 9-13) in "だとすると"
+
+**Test Quality**:
+- All 8 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences covering all structure variants
+- Tests verify all three conditional forms: としたら, とすれば, とすると
+- Tests cover verbs, い-adjectives, な-adjectives, and nouns
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The three variants have subtle differences in nuance:
+- としたら: "if we assume/suppose" (most common, focuses on the hypothetical condition)
+- とすれば: "if it is the case that" (more formal, focuses on logical consequence)
+- とすると: "assuming that" (emphasizes the reasoning/conclusion following from the assumption)
+
+However, in practical usage they are largely interchangeable, which is why they're implemented as a single pattern.
+
+---
+
 ## Session 302 - 2025-12-14
 
 ### ✅ Session Summary
