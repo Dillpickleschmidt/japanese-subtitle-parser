@@ -4068,9 +4068,54 @@ pub fn njanai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: わけがない
+// Pattern: わけがない (there's no way that / it's impossible that)
+// Structures: わけ + が + ない/ありません
 pub fn wakeganai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match わけ (dependent noun)
+    #[derive(Debug)]
+    struct WakeMatcher;
+    impl Matcher for WakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わけ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match が particle
+    #[derive(Debug)]
+    struct GaMatcher;
+    impl Matcher for GaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ない or あり (start of negative)
+    #[derive(Debug)]
+    struct NaiAriMatcher;
+    impl Matcher for NaiAriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ない (adjective) - plain negative "わけがない"
+            (token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞"))
+            // あり (start of ありません) - polite negative "わけがありません"
+            || (token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(WakeMatcher)),
+        TokenMatcher::Custom(Arc::new(GaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAriMatcher)),
+    ]
 }
 
 // Pattern: としたら・とすれば・とすると (assuming that / if it were the case that)

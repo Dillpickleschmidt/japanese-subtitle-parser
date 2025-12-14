@@ -6358,13 +6358,13 @@
   {
     "pattern_name": "ような気がする",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ような気（き）がする is a phrase that takes the base meaning of 気（き）がする 'to have a feeling that (A)', or 'to give off a vibe th... [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6372,13 +6372,13 @@
   {
     "pattern_name": "わけがない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the strongest ways to use the noun わけ in Japanese, is in the expression わけがない [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6386,13 +6386,13 @@
   {
     "pattern_name": "わけだ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the most misunderstood words in Japanese is 訳（わけ） [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6400,13 +6400,13 @@
   {
     "pattern_name": "わけではない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned in the 訳（わけ）だ grammar point, わけ is a noun that is used for strong determination/conclusion in Japanese, ... [6 std, 6 pol]",
     "priority": 3,
     "skip_reason": null

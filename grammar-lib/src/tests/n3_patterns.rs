@@ -11894,3 +11894,99 @@ mod wakedehanai_tests {
         assert_pattern_range(&patterns, "わけではない", 5, 14); // わけではありません
     }
 }
+
+// ============================================================================
+// わけがない Tests
+// ============================================================================
+// Pattern: わけがない (there's no way that / it's impossible that / SO not)
+// Data source: grammar_points_data.json["わけがない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[る] + わけがない (also Verb[た])
+//   standard[1]: な-Adjective + な + わけがない
+//   standard[2]: い-Adjective + わけがない
+//   polite[0]: Verb[る] + わけがありません (also Verb[た])
+//   polite[1]: な-Adjective + な + わけがありません
+//   polite[2]: い-Adjective + わけがありません
+//
+// Note: わけがない is stronger than わけではない, emphasizing impossibility
+// "it is SO not (A)" vs "it's not that (A)"
+mod wakeganai_tests {
+    use super::*;
+
+    // Test: Verb[る] + わけがない
+    // Structure: standard[0] - "Verb[る] + わけがない"
+    // Example from grammar data: "食べれるわけがない" (there's no way I can eat)
+    #[test]
+    fn test_verb_ru_wakeganai() {
+        let sentence = "このステーキ２キロもあるの？！こんなの一人で食べれるわけがない！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけがない");
+        assert_pattern_range(&patterns, "わけがない", 26, 31); // わけがない
+    }
+
+    // Test: Verb[た] + わけがない
+    // Structure: standard[0] note (1) - "Verb[た] + わけがない"
+    // Testing past tense verb form
+    #[test]
+    fn test_verb_ta_wakeganai() {
+        let sentence = "彼はまだ学生だよ、そんなお金を持ってたわけがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけがない");
+        assert_pattern_range(&patterns, "わけがない", 19, 24); // わけがない
+    }
+
+    // Test: い-Adjective + わけがない
+    // Structure: standard[2] - "い-Adjective + わけがない"
+    // Example from grammar data: "不味いわけがない" (there's no way it's bad)
+    #[test]
+    fn test_i_adjective_wakeganai() {
+        let sentence = "キムラシェフが作ったパスタだよ、不味いわけがないじゃん！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけがない");
+        assert_pattern_range(&patterns, "わけがない", 19, 27); // わけがないじゃん (auto-extended to include auxiliary)
+    }
+
+    // Test: な-Adjective + な + わけがない
+    // Structure: standard[1] - "な-Adjective + な + わけがない"
+    // Example from grammar data: "静かなわけがない" (there's no way it's quiet)
+    #[test]
+    fn test_na_adjective_wakeganai() {
+        let sentence = "このアパートは線路の隣にあるから静かなわけがない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけがない");
+        assert_pattern_range(&patterns, "わけがない", 19, 24); // わけがない
+    }
+
+    // Test: Verb[る] + わけがありません (polite)
+    // Structure: polite[0] - "Verb[る] + わけがありません"
+    #[test]
+    fn test_verb_wakeganai_polite() {
+        let sentence = "あの人は毎日仕事をしているから、暇なわけがありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけがない");
+        assert_pattern_range(&patterns, "わけがない", 18, 26); // わけがありません
+    }
+
+    // Test: い-Adjective + わけがありません (polite)
+    // Structure: polite[2] - "い-Adjective + わけがありません"
+    #[test]
+    fn test_i_adjective_wakeganai_polite() {
+        let sentence = "彼はとても優しいから、意地悪なわけがありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけがない");
+        assert_pattern_range(&patterns, "わけがない", 15, 23); // わけがありません
+    }
+}
