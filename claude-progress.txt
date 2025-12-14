@@ -1,10 +1,10 @@
 ## Session 225 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N4 pattern
-**Patterns completed**: 1 (Number/Amount + は)
-**Tests added**: 4 (all passing)
-**Total tests**: 1472 (was 1468)
+**Status**: COMPLETE - Successfully implemented 2 N4 patterns
+**Patterns completed**: 2 (Number/Amount + は, Question-phrase + か)
+**Tests added**: 9 total (4 for Number/Amount + 5 for Question-phrase, all passing)
+**Total tests**: 1477 (was 1468)
 
 ### Pattern Implemented: Number/Amount + は (at least, or so)
 
@@ -53,20 +53,68 @@
 9. ✅ Updated feature_list.json
 10. ✅ Committed changes
 
+### Pattern Implemented #2: Question-phrase + か (embedded question)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Adverbial か particle marking embedded questions, followed by information-seeking verbs
+
+**Structures tested**: 5 tests
+1. Verb + か + わかる polite: 忘年会に社長が来るか分かりますか (Do you know if the CEO is coming?)
+2. Verb + か + わかる casual: これで足りるか分かる？ (Do you know if this is enough?)
+3. Question word + verb + か + 知る polite: 何でこのビルを壊すか知っていますか (Do you know why they're destroying this building?)
+4. Question word + verb + か + 知る casual: お祭りは何時に終わるか知ってる？ (Do you know what time the festival ends?)
+5. Question word + か + 教える: 彼がどこに住んでるか教えてくれる？ (Can you tell me where he lives?)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 3819-3865)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 5763-5836)
+- Pattern detects: か (助詞/副助詞) + information-seeking verb
+
+**Tokenization patterns**:
+- か: 助詞/副助詞／並立助詞／終助詞 (adverbial particle か)
+- Information-seeking verbs: 分かる, 知る, 決める, 覚える, 教える, 確かめる, 調べる, 聞く, 考える, 見る
+
+**Matcher components**:
+1. KaParticleMatcher - Matches か as 助詞 (particle)
+2. InfoVerbMatcher - Matches specific verbs that seek or handle information (10 common verbs)
+
+**Key characteristics**:
+- Adverbial か (副助詞), NOT sentence-ending question marker (終助詞)
+- Marks embedded/indirect questions - uncertain things being inquired about
+- Always followed by verbs that seek, determine, or convey information
+- Pattern range: か + first token of information-seeking verb
+- Creates "if/whether/what/when/where/why/how" embedded questions
+- Different from sentence-final か which directly asks questions
+
+**Workflow followed**:
+1. ✅ Checked for existing stub function (found at line 3820)
+2. ✅ Read grammar_points_data.json for structure variants (2 standard)
+3. ✅ Wrote 5 tests with print_debug() covering various question types
+4. ✅ Analyzed tokenization - confirmed か as 副助詞 pattern
+5. ✅ Implemented matcher with two custom matchers
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug() and added proper assertions
+8. ✅ Verified all 1477 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes
+
 ### Session Statistics
-- **Session time**: ~45 minutes
-- **Patterns completed this session**: 1
-- **Test success rate**: 4/4 (100%)
-- **Total passing tests**: 1472
+- **Session time**: ~2 hours
+- **Patterns completed this session**: 2
+- **Test success rate**: 9/9 (100%)
+- **Total passing tests**: 1477
 - **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
 
 ### Next Session Recommendations
 1. **Continue with N4 patterns**: Many basic patterns still need implementation
-2. **Good candidates**: Question-phrase + か, Verb[て] + B, causative/passive forms
+2. **Good candidates**: Verb[て] + B, causative/passive forms, more particles
 3. **Pattern focus**: Fundamental N4 grammar constructions
 
 ### Environment Status
-- ✅ All 1472 tests passing
+- ✅ All 1477 tests passing
 - ✅ No regressions
 - ✅ Clean git state (all changes committed)
 - ✅ feature_list.json updated
