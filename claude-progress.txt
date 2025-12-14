@@ -1,3 +1,85 @@
+## Session 270 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (はずがない - hardly possible/improbable)
+**Tests added**: 5 (all passing)
+**Total tests**: 1739 (was 1734)
+
+### Pattern Implemented: はずがない (hardly possible, improbable, unlikely)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Expression meaning "hardly possible", "improbable", or "unlikely". Literally translates as "(A) is not bound to be true". Suggests that something being almost 100% true is not the case. Weaker than ないはずだ (bound not to be).
+
+**Structures tested**: 5 tests covering all structure variants
+1. Verb + はずがない: 遅れるはずがない (It's improbable that I'll be late)
+2. い-Adjective + はずがない: 重いはずがない (It's hardly possible that this is heavy)
+3. な-Adjective + な + はずがない: 立派なはずがない (It's unlikely that it's splendid)
+4. Noun + の + はずがない: トムのはずがない (It's unlikely that it's Tom)
+5. Verb + はずがありません (polite): 言うはずがありません (He shouldn't say such a thing)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (hazuganai, lines 5050-5132)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (hazuganai_tests, lines 9132-9192)
+- Pattern: grammar-lib/src/patterns.rs (Hazuganai, line 2181)
+
+**Tokenization pattern**:
+```
+Verb/i-Adj/Na-Adj/Noun (preceding element)
++ (optional) な (助動詞, base="だ") OR の (助詞/連体化)
++ はず (名詞/非自立/一般)
++ が (助詞/格助詞/一般)
++ ない (形容詞/自立) OR ある (動詞, for polite ありません)
+```
+
+**Key implementation points**:
+1. Single pattern handles all variants (verb/adj/noun) with optional particles
+2. Custom PreHazuMatcher accepts verbs, adjectives (both i- and na-), and nouns
+3. Optional NaOrNoParticleMatcher handles な (for na-adj) and の (for nouns)
+4. NaiOrAruMatcher handles both plain ない and polite ありません
+5. Pattern range includes full construction: word + (optional particle) + はずがない/ありません
+6. Pattern matcher automatically extends through conjugations (ありません = ある + ません + ん)
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all structure variants: Verb, i-Adj, na-Adj + な, Noun + の, polite form
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+
+**Challenges Solved**:
+1. Handling multiple preceding element types (verb/i-adj/na-adj/noun) in single pattern
+2. Including optional particles (な/の) that only appear with certain element types
+3. Matching both plain ない (adjective) and polite ありません (verb + auxiliary)
+4. Ensuring pattern range includes the full grammatical construction, not just particles
+
+**Linguistic Note**: The expression はずがない comes from 筈 (はず) meaning "expectation/norm". It negates the expectation that something is bound to be true, making it softer than directly stating something is false. Different from ないはずだ which strongly negates the statement.
+
+### Session Statistics
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1 (はずがない)
+- **Test success rate**: 5/5 (100%)
+- **Total passing tests**: 1739 (up from 1734)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - はずだ (should be/ought to be) - related pattern to はずがない
+   - ば (conditional)
+   - ばあいは (in case of)
+   - ひつようがある (need to)
+2. **Pattern focus**: はずだ would be a natural next choice as it shares similar structure
+
+### Environment Status
+- All 1739 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 269 - 2025-12-14
 
 ### ✅ Session Summary
