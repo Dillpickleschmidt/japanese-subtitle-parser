@@ -1,3 +1,79 @@
+## Session 225 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (Number/Amount + は)
+**Tests added**: 4 (all passing)
+**Total tests**: 1472 (was 1468)
+
+### Pattern Implemented: Number/Amount + は (at least, or so)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Contrastive は after numeric counters meaning "at least" or "or so"
+
+**Structures tested**: 4 tests
+1. Counter + は (without くらい): ５回は行っている (at least 5 times)
+2. Counter + は (time duration): ５時間は見ている (watch for 5 hours or so)
+3. Counter + くらい + は: ２キロくらいはある (at least 2 kilograms)
+4. Counter + ぐらい + は: １回ぐらいは行った方がいい (should go at least once)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 2132-2180)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 5697-5761)
+- Pattern detects: Counter (助数詞) + optional くらい/ぐらい + は (係助詞)
+
+**Tokenization patterns**:
+- Counter: 名詞/接尾/助数詞 (like 回, キロ, 時間)
+- くらい/ぐらい: 助詞/副助詞 (optional)
+- は: 助詞/係助詞 (contrastive particle)
+
+**Matcher components**:
+1. CounterMatcher - Matches 名詞/接尾/助数詞
+2. KuraiMatcher (optional) - Matches くらい/ぐらい as 助詞/副助詞
+3. HaMatcher - Matches は as 助詞/係助詞
+
+**Key characteristics**:
+- Focuses on contrastive は after counters (not general topic は)
+- Creates nuance of "at least" or "or so" through comparison implication
+- Pattern range: Counter + (optional くらい/ぐらい) + は
+- Does not include the number itself (starts from counter)
+
+**Workflow followed**:
+1. ✅ Checked for existing stub function (found at line 2133)
+2. ✅ Read grammar_points_data.json for structure variants (3 standard)
+3. ✅ Wrote 4 tests with print_debug() covering all structure types
+4. ✅ Analyzed tokenization - confirmed Counter + くらい + は pattern
+5. ✅ Implemented matcher with three custom matchers
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug() and added proper assertions
+8. ✅ Verified all 1472 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes
+
+### Session Statistics
+- **Session time**: ~45 minutes
+- **Patterns completed this session**: 1
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1472
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**: Many basic patterns still need implementation
+2. **Good candidates**: Question-phrase + か, Verb[て] + B, causative/passive forms
+3. **Pattern focus**: Fundamental N4 grammar constructions
+
+### Environment Status
+- ✅ All 1472 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern
+
+---
+
 ## Session 220 - 2025-12-13
 
 ### ✅ Session Summary
