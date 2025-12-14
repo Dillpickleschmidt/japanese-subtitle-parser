@@ -9065,3 +9065,66 @@ mod nonakade_tests {
         assert_pattern_range(&patterns, "のなかで", 0, 5); // 車のなかで
     }
 }
+
+// ========== のように・のような (like/as) ==========
+// Pattern: のように・のような
+// Data source: grammar_points_data.json["のように・のような "]
+//
+// Structures to test:
+//   - standard[0]: Noun + のように + Verb
+//   - standard[1]: Noun + のような + Noun
+//   - standard[2]: (Adverb、い-Adj、な-Adj can also be followed by のように)
+//
+// Examples from data:
+//   - ナオミはプロの歌手のように歌う (Naomi sings like a professional singer)
+//   - この先生は鬼のように怖い (This teacher is as scary as a demon)
+//   - 私は鳥のように自由だ (I am free as a bird)
+//   - 最近はタブレットのようなスマホが売られています (Recently, tablet-like smartphones are being sold)
+#[cfg(test)]
+mod noyouni_noyouna_tests {
+    use super::*;
+
+    // Testing: Noun + のように + Verb
+    #[test]
+    fn test_noun_noyouni_verb() {
+        let sentence = "ナオミはプロの歌手のように歌う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のように・のような ");
+        assert_pattern_range(&patterns, "のように・のような ", 7, 13); // 歌手のように
+    }
+
+    // Testing: Noun + のように + い-Adjective
+    #[test]
+    fn test_noun_noyouni_i_adj() {
+        let sentence = "この先生は鬼のように怖い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のように・のような ");
+        assert_pattern_range(&patterns, "のように・のような ", 5, 10); // 鬼のように
+    }
+
+    // Testing: Noun + のように + な-Adjective
+    #[test]
+    fn test_noun_noyouni_na_adj() {
+        let sentence = "私は鳥のように自由だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のように・のような ");
+        assert_pattern_range(&patterns, "のように・のような ", 2, 7); // 鳥のように
+    }
+
+    // Testing: Noun + のような + Noun
+    #[test]
+    fn test_noun_noyouna_noun() {
+        let sentence = "最近はタブレットのようなスマホが売られています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のように・のような ");
+        assert_pattern_range(&patterns, "のように・のような ", 3, 12); // タブレットのような
+    }
+}

@@ -2017,9 +2017,69 @@ pub fn souni_u30fb_souna() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: のように・のような 
+// Pattern: のように・のような (like/as - with noun)
+// Structures: Noun + のように + Verb/Adj, Noun + のような + Noun
 pub fn noyouni_u30fb_noyouna() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match any noun
+    #[derive(Debug)]
+    struct NounMatcher;
+    impl super::Matcher for NounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match の (連体化 particle)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.base_form == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match よう (名詞/非自立/助動詞語幹)
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl super::Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.base_form == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match に (副詞化) or な (助動詞/体言接続)
+    #[derive(Debug)]
+    struct NiOrNaMatcher;
+    impl super::Matcher for NiOrNaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // に particle (adverbial)
+            (token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化"))
+            ||
+            // な auxiliary (attributive)
+            (token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NounMatcher)),
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrNaMatcher)),
+    ]
 }
 
 // Pattern: 〜ようと思う・〜おうと思う (intend to/thinking of doing)
