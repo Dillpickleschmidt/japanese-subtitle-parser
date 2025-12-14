@@ -1,3 +1,64 @@
+## Session 231 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (〜でも 〜でも - whether...or)
+**Tests added**: 6 (all passing)
+**Total tests**: 1534 (was 1528)
+
+### Pattern Implemented: 〜でも 〜でも (whether...or, even if...or)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: When the adverbial particle でも is used more than once in a sequence, it expresses analogical reasoning with multiple analogies. Translates as "whether it is (A), or (B)" in positive sentences, or "neither (A) nor (B)" in negative sentences.
+
+**Structures tested**: 6 tests covering all structure variants
+1. い-Adjective［て］+ も + い-Adjective［て］+ も: 暑くても寒くても (whether hot or cold)
+2. な-Adjective + でも + な-Adjective + でも: 簡単でも複雑でも (whether simple or complex)
+3. Noun (A) + でも + Noun (B) + でも: サッカーでもバスケットボールでも (whether soccer or basketball)
+4. い-Adjective［て］+ も + い-Adjective［て］+ も + Phrase［ない］: 暑くても寒くても関係ない (neither hot nor cold matters)
+5. な-Adjective + でも + な-Adjective + でも + Phrase［ない］: 静かでも賑やかでも気にしない (neither quiet nor lively matters)
+6. Noun (A) + でも + Noun (B) + でも + Phrase［ない］: ケーキでもクッキーでも食べない (will eat neither cake nor cookies)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 4220-4298)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 6502-6577)
+- Pattern structure: Word + (て/で/でも) + [も] + Word + (て/で/でも) + [も]
+
+**Tokenization patterns**:
+- い-Adj: Adj(連用テ接続) + て(接続助詞) + も(係助詞)
+- な-Adj: な-Adj(形容動詞語幹) + でも(副助詞) - single token
+- Noun: Noun + で(格助詞) + も(係助詞) OR Noun + でも(副助詞) - two tokenization variants
+
+**Matcher components**:
+1. FirstWordMatcher - Matches い-adjective in 連用テ接続 form, な-adjective (形容動詞語幹), or regular noun
+2. TeDeOrDemoMatcher - Matches て (接続助詞), で (格助詞), or でも (副助詞)
+3. MoParticleMatcher (Optional) - Matches も (係助詞), optional for でも single-token case
+
+**Key characteristics**:
+- Detects TWO instances of "(word) + でも/ても" in sequence
+- Handles multiple tokenization variants (single token でも vs で + も)
+- Expresses "whether (A) or (B)" in positive contexts
+- Expresses "neither (A) nor (B)" in negative contexts
+- Priority 1 (construction pattern)
+- Works with い-adjectives, な-adjectives, and nouns
+
+**Workflow followed**:
+1. ✅ Found existing stub function at line 4221
+2. ✅ Read grammar_points_data.json for structure variants (6 standard, 0 polite)
+3. ✅ Wrote 6 tests with print_debug() covering all structure forms
+4. ✅ Analyzed tokenization patterns - discovered multiple tokenization variants
+5. ✅ Implemented matcher with Optional も to handle both single-token でも and two-token で+も patterns
+6. ✅ Verified all tests detect patterns correctly with proper ranges
+7. ✅ Removed print_debug() and added proper assertions
+8. ✅ Verified all 1534 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes
+
+---
+
 ## Session 230 - 2025-12-14
 
 ### ✅ Session Summary
