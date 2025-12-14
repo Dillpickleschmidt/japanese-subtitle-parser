@@ -5725,3 +5725,47 @@ mod verbs_non_past_tests {
     // This pattern specifically detects casual dictionary form verbs in non-past tense
 }
 
+// ========== い-Adjectives ==========
+// Pattern: い-Adjectives
+// Data source: grammar_points_data.json["い-Adjectives"]
+//
+// Structure variants to test:
+//   standard[0]: Base form examples (おおきい, おいしい, はやい)
+
+mod i_adjectives_tests {
+    use super::*;
+
+    // Testing: structure.standard - Basic い-adjective (大きい)
+    #[test]
+    fn test_i_adjective_ookii() {
+        let sentence = "大きい犬が好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjectives");
+        assert_pattern_range(&patterns, "い-Adjectives", 0, 3); // 大きい
+    }
+
+    // Testing: structure.standard - い-adjective modifying noun (狭い道)
+    #[test]
+    fn test_i_adjective_semai() {
+        let sentence = "狭い道を歩いている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjectives");
+        assert_pattern_range(&patterns, "い-Adjectives", 0, 2); // 狭い
+    }
+
+    // Testing: structure.standard - い-adjective as predicate (温い)
+    #[test]
+    fn test_i_adjective_nurui() {
+        let sentence = "この水は温い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adjectives");
+        assert_pattern_range(&patterns, "い-Adjectives", 4, 6); // 温い
+    }
+}
+

@@ -268,13 +268,13 @@
   {
     "pattern_name": "い-Adjectives",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In Japanese, い-Adjectives are known as 'form containing words', and are used to describe nouns [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null

@@ -174,8 +174,24 @@ pub fn ii() -> Vec<TokenMatcher> {
 }
 
 // Pattern: い-Adjectives
+// Structures: い-adjectives in base form (大きい, 美しい, etc.)
+// Matches い-adjectives (形容詞) - adjectives ending in い
 pub fn i_adjectives() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    #[derive(Debug)]
+    struct IAdjMatcher;
+    impl Matcher for IAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match い-adjectives: 形容詞/自立 in base form
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(IAdjMatcher))]
 }
 
 // Pattern: な-Adjectives
