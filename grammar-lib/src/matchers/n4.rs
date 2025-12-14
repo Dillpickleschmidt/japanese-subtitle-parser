@@ -5537,9 +5537,62 @@ pub fn taradou() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とかんがえられている
+// Pattern: とかんがえられている / とおもわれている (it is thought/considered that)
+// Structures: Phrase + と考えられている/と思われている/と考えられています/と思われています
 pub fn tokangaerareteiru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl super::Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match かんがえる or おもう in 未然形
+    #[derive(Debug)]
+    struct ThinkVerbMizenMatcher;
+    impl super::Matcher for ThinkVerbMizenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "かんがえる" || token.base_form == "考える"
+                || token.base_form == "おもう" || token.base_form == "思う")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| form == "未然形")
+        }
+    }
+
+    // Match passive れる or られる
+    #[derive(Debug)]
+    struct PassiveReruRareruMatcher;
+    impl super::Matcher for PassiveReruRareruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "れる" || token.base_form == "られる")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(ThinkVerbMizenMatcher)),
+        TokenMatcher::Custom(Arc::new(PassiveReruRareruMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::specific_verb("いる"),
+    ]
 }
 
 // Pattern: とされている

@@ -7916,3 +7916,57 @@ mod to_sareteiru_tests {
         assert_pattern_range(&patterns, "とされている", 8, 15); // とされています
     }
 }
+
+// Pattern: とかんがえられている (it is thought/considered that)
+// Data source: grammar_points_data.json["とかんがえられている"]
+// Testing: structure.standard[0] - Phrase + と考えられている
+//          structure.standard[1] - Phrase + と思われている
+//          structure.polite[0] - Phrase + と考えられています
+//          structure.polite[1] - Phrase + と思われています
+mod tokangaerareteiru_tests {
+    use super::*;
+
+    #[test]
+    fn test_kangae_standard_form() {
+        // Standard form with 考えられている
+        let sentence = "「最初はグー」と最初に言ったのは、志村けんだとかんがえられている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とかんがえられている");
+        assert_pattern_range(&patterns, "とかんがえられている", 22, 32); // とかんがえられている
+    }
+
+    #[test]
+    fn test_omowa_standard_form() {
+        // Standard form with 思われている
+        let sentence = "このトンネルは日本で一番呪われているトンネルだとおもわれている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とかんがえられている");
+        assert_pattern_range(&patterns, "とかんがえられている", 23, 31); // とおもわれている
+    }
+
+    #[test]
+    fn test_kangae_polite_form() {
+        // Polite form with 考えられています
+        let sentence = "カバは世界で最も危ない動物だとかんがえられています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とかんがえられている");
+        assert_pattern_range(&patterns, "とかんがえられている", 14, 25); // とかんがえられています
+    }
+
+    #[test]
+    fn test_omowa_polite_form() {
+        // Polite form with 思われています
+        let sentence = "これは最古の遺跡だとおもわれています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とかんがえられている");
+        assert_pattern_range(&patterns, "とかんがえられている", 9, 18); // とおもわれています
+    }
+}
