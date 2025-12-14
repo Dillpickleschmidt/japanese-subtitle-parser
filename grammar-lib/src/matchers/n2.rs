@@ -1273,9 +1273,71 @@ pub fn souieba() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: お～願う
+// Pattern: お～願う (humble request: please do)
+// Structures:
+//   - お + Verb[stem] + 願う/願います
+//   - ご + Chinese-origin Noun + 願う/願います
+//   - Western-origin Noun + 願う/願います (no prefix)
 pub fn o_uff5e_negau() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for お or ご prefix (optional for Western nouns)
+    #[derive(Debug)]
+    struct OGoMatcher;
+    impl Matcher for OGoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "お" || token.surface == "ご")
+                && token.pos.first().is_some_and(|pos| pos == "接頭詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "名詞接続")
+        }
+    }
+
+    // Matcher for verb stem or sahen noun before 願う
+    // This should match: Verb[連用形] OR Noun[サ変接続]
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb in conjunctive form (連用形)
+            let is_verb_stem = token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形");
+
+            // Sahen-setsuzoku noun (can become verb with する)
+            let is_sahen_noun = token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続");
+
+            is_verb_stem || is_sahen_noun
+        }
+    }
+
+    // Matcher for 願う verb (either 非自立 after verb, or 自立 after noun)
+    #[derive(Debug)]
+    struct NegauVerbMatcher;
+    impl Matcher for NegauVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "願う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                    || token.pos.get(1).is_some_and(|pos| pos == "自立"))
+        }
+    }
+
+    // Matcher for ます auxiliary (optional)
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(OGoMatcher)))),
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NegauVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: ～て頂戴

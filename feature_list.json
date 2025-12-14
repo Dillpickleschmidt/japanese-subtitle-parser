@@ -7296,13 +7296,13 @@
   {
     "pattern_name": "お～願う",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "お～願（ねが）う is a humble speech expression in Japanese used for making requests in the same way as お～ください 'please do (A)' [3 std, 3 pol]",
     "priority": 4,
     "skip_reason": null

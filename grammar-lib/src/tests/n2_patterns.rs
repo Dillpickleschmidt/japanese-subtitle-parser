@@ -1050,3 +1050,77 @@ mod kikkake_tests {
         assert_pattern_range(&patterns, "きっかけ", 5, 11); // がきっかけで
     }
 }
+
+// Pattern: お～願う (humble request)
+// Data source: grammar_points_data.json["お～願う"]
+// Testing all structure variants:
+//   - standard[0]: お + Verb[stem] + 願う
+//   - standard[1]: ご + Chinese-origin Noun + 願う
+//   - standard[2]: Western-origin Noun + 願う (no prefix)
+//   - polite[0]: お + Verb[stem] + 願います
+//   - polite[1]: ご + Chinese-origin Noun + 願います
+//   - polite[2]: Western-origin Noun + 願います (no prefix)
+
+mod o_uff5e_negau_tests {
+    use super::*;
+
+    #[test]
+    fn test_o_verb_negau_standard() {
+        let sentence = "この件についてもう一度お調べ願う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～願う");
+        assert_pattern_range(&patterns, "お～願う", 11, 16); // お調べ願う
+    }
+
+    #[test]
+    fn test_o_verb_negaimasu_polite() {
+        let sentence = "こちらからのメールが届いているか、お確かめ願います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～願う");
+        assert_pattern_range(&patterns, "お～願う", 17, 25); // お確かめ願います
+    }
+
+    #[test]
+    fn test_go_noun_negaimasu_chinese() {
+        let sentence = "この契約書にご記入された情報に間違いがないか、ご確認願います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～願う");
+        assert_pattern_range(&patterns, "お～願う", 23, 30); // ご確認願います
+    }
+
+    #[test]
+    fn test_go_noun_negaimasu_cooperation() {
+        let sentence = "歩道での禁煙にご協力願います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～願う");
+        assert_pattern_range(&patterns, "お～願う", 7, 14); // ご協力願います
+    }
+
+    #[test]
+    fn test_western_noun_negaimasu() {
+        let sentence = "この契約書の下の方にサイン願います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～願う");
+        assert_pattern_range(&patterns, "お～願う", 10, 17); // サイン願います
+    }
+
+    #[test]
+    fn test_o_verb_negaimasu_wait() {
+        let sentence = "社長はもうすぐ到着するので、もう少々お待ち願います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～願う");
+        assert_pattern_range(&patterns, "お～願う", 18, 25); // お待ち願います
+    }
+}
