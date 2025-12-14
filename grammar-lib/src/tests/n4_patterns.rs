@@ -10859,3 +10859,81 @@ mod youni_tehoshii_tests {
     }
 }
 
+// Pattern: ～にする・～くする (to make/do something)
+// Data source: grammar_points_data.json["～にする・～くする"]
+//
+// Testing all structure variants:
+//   - standard[0]: な-Adj + に + する
+//   - standard[1]: い-Adj[く] + する
+//   - standard[2]: Noun + に + する
+//   - polite[0-2]: Same forms with します
+mod nisuru_u30fb_kusuru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "な-Adj + に + する"
+    #[test]
+    fn test_na_adj_ni_suru() {
+        let sentence = "汚い部屋を綺麗にするのは大変だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～にする・～くする");
+        assert_pattern_range(&patterns, "～にする・～くする", 5, 10); // 綺麗にする
+    }
+
+    // Testing: structure.standard[1] - "い-Adj[く] + する"
+    #[test]
+    fn test_i_adj_ku_suru() {
+        let sentence = "風呂を熱くするよ。いい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～にする・～くする");
+        assert_pattern_range(&patterns, "～にする・～くする", 3, 7); // 熱くする
+    }
+
+    // Testing: structure.standard[1] - "い-Adj[く] + する" (sweet)
+    #[test]
+    fn test_i_adj_ku_suru_sweet() {
+        let sentence = "このコーヒーを甘くするために、砂糖をください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～にする・～くする");
+        assert_pattern_range(&patterns, "～にする・～くする", 7, 11); // 甘くする
+    }
+
+    // Testing: structure.standard[2] - "Noun + に + する"
+    #[test]
+    fn test_noun_ni_suru() {
+        let sentence = "これは私のお気に入りの曲にするつもりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～にする・～くする");
+        assert_pattern_range(&patterns, "～にする・～くする", 11, 15); // 曲にする
+    }
+
+    // Testing: structure.polite[0] - "な-Adj + に + します"
+    #[test]
+    fn test_na_adj_ni_shimasu() {
+        let sentence = "この建物をもっと丈夫にします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～にする・～くする");
+        assert_pattern_range(&patterns, "～にする・～くする", 8, 14); // 丈夫にします
+    }
+
+    // Testing: structure.polite[1] - "い-Adj[く] + します"
+    #[test]
+    fn test_i_adj_ku_shimasu() {
+        let sentence = "音を小さくします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～にする・～くする");
+        assert_pattern_range(&patterns, "～にする・～くする", 2, 8); // 小さくします
+    }
+}
+

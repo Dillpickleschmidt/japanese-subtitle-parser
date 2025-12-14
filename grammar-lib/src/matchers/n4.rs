@@ -2412,8 +2412,61 @@ pub fn ku_u30fb_ni() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ～にする・～くする
+// Pattern: ～にする・～くする (to make/do something)
+// Structures: な-Adj + に + する, い-Adj[く] + する, Noun + に + する
 pub fn uff5e_nisuru_u30fb_uff5e_kusuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match EITHER:
+    // - い-adjective in 連用テ接続 form (く form)
+    // - な-adjective (形容動詞語幹)
+    // - regular noun
+    #[derive(Debug)]
+    struct AdjOrNounMatcher;
+    impl super::Matcher for AdjOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // い-adjective in 連用テ接続 form (く form)
+            let is_i_adj_ku = token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続");
+
+            // な-adjective (形容動詞語幹) or noun
+            let is_na_adj_or_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+
+            is_i_adj_ku || is_na_adj_or_noun
+        }
+    }
+
+    // Match に particle (格助詞) - OPTIONAL for い-Adj case
+    #[derive(Debug)]
+    struct NiCaseParticleMatcher;
+    impl super::Matcher for NiCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match する or します verb
+    #[derive(Debug)]
+    struct SuruMatcher;
+    impl super::Matcher for SuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Pattern: (い-Adj[く] OR な-Adj OR Noun) + (optional に) + する
+    // The に is optional because い-Adj goes directly to する without に
+    vec![
+        TokenMatcher::Custom(Arc::new(AdjOrNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiCaseParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(SuruMatcher)),
+    ]
 }
 
 // Pattern: といい (it would be good if)
