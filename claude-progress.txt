@@ -1,3 +1,62 @@
+## Session 315 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (にかけて)
+**Tests added**: 4 (all passing)
+**Total tests**: 2003 passing, 1 ignored (was 1999 passing, 1 ignored)
+
+### ✅ Pattern Completed: にかけて (from A to B, throughout A)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: にかけて expresses "over a period of time", "from (A) until (B)", or "all through (A)". Coming from the verb 掛ける (to suspend), it indicates something ongoing or suspended over a period. The pattern combines the case-marking particle に with 掛ける in te-form, creating a compound particle. Primarily used in written language and news, especially for weather patterns.
+
+**Structures tested**: 4 comprehensive tests covering all variants
+1. Time range: 今夜から朝にかけて大雨が降るでしょう (it will rain from tonight through til the morning)
+2. Seasonal range: 三月末から五月の頭にかけて多くの人が引っ越しをします (many people move from end of March through beginning of May)
+3. With は particle: 朝にかけては晴れるでしょう (it will clear up during the morning - "limited to")
+4. Contrasting with は: 今月から来月にかけては忙しい時期になる (limited from this month through next month, it will be busy)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nikakete, lines 5478-5509)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nikakete_tests module, lines 6876-6930)
+- Pattern: grammar-lib/src/patterns.rs (Nikakete)
+
+**Tokenization pattern**:
+```
+Single compound particle:
+- にかけて (助詞/格助詞/連語, base='にかけて')
+- は (助詞/係助詞) - optional
+
+The particle にかけて tokenizes as a single compound token.
+When followed by は, it creates にかけては meaning "limited to (A)" with contrasting nuance.
+```
+
+**Key implementation points**:
+1. NikaketeMatcher checks surface/base_form == "にかけて" and POS == 助詞/格助詞
+2. Optional WaParticleMatcher for は (助詞/係助詞)
+3. Pattern range includes にかけて + optional は (1-2 tokens)
+4. Simple implementation - single compound particle + optional は
+
+**Pattern ranges**: Include にかけて + optional は
+- Example: "にかけて" (chars 5-9) - basic form
+- Example: "にかけては" (chars 13-18) - with は particle
+- Example: "にかけては" (chars 6-11) - with は particle
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover time ranges, seasonal ranges, and both basic and は variants
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern にかけて comes from 掛ける "to suspend/hang", creating the meaning of something being "suspended" or ongoing over a time period. When は is added (にかけては), it adds the meaning of "limited to within (A)", where the following clause contrasts with or limits the scope to that specific time period. This is an extension of は's standard function of marking a "set state" that defines its topic.
+
+---
+
 ## Session 314 - 2025-12-14
 
 ### ✅ Session Summary
