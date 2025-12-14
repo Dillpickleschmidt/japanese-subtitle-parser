@@ -1,3 +1,81 @@
+## Session 321 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (に当たる)
+**Tests added**: 6 (all passing)
+**Total tests**: 2056 passing, 1 ignored (was 2050 passing, 1 ignored)
+
+### ✅ Pattern Completed: に当たる (corresponds to / amounts to / is in regard to)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: に当たる is a construction that combines the case-marking particle に with the verb 当たる (to hit/match). It conveys that something "corresponds to", "amounts to", or "is in regard to" something else. The pattern expresses equivalence or matching between two things.
+
+**Structures tested**: 6 comprehensive tests covering all tokenization variants
+1. Noun + にあたる (expression): 英語の「what's up」は日本語の「元気」にあたる表現だ (What's up in English corresponds to the expression genki in Japanese)
+2. Noun + にあたる + Noun (relative): その人は私の親戚にあたる人です (That person is my relative)
+3. Noun + に + あたる (split form): 先生はタナカ君のいとこにあたる (The teacher is Tanaka-kun's cousin)
+4. Noun + にあたる (time period): 今年は仕事を始めてから５年目にあたる (This year amounts to the 5th year since I started working)
+5. Noun + にあたる + Noun (language): 「Hello」は日本で「こんにちは」にあたる言葉です (Hello corresponds to the Japanese word konnichiwa)
+6. Noun + に + あたり + ます (polite): この言葉は英語の「thank you」にあたります (This word corresponds to the English "thank you")
+
+**Implementation details**:
+- Matchers: grammar-lib/src/matchers/n3.rs (niataru, niataru_particle, lines 4401-4471)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (niataru_tests module, lines 9361-9433)
+- Patterns: grammar-lib/src/patterns.rs (Niataru, NiataruParticle, lines 3768-3782)
+
+**Tokenization patterns**:
+```
+Kagome tokenizes this in TWO ways:
+
+1. Compound particle form (にあたる as single token):
+   - にあたる (助詞/格助詞/連語) - multi-word particle
+   - Used when followed by a noun or at end of sentence
+
+2. Split form (に + あたる as separate tokens):
+   - に (助詞/格助詞/一般) - case-marking particle
+   - あたる/あたり (動詞/自立, base='あたる') - verb
+   - ます (助動詞) - optional polite auxiliary
+
+Pattern matches:
+- Variant 1: Any token + にあたる (particle)
+- Variant 2: Any token + に + あたる + optional ます
+```
+
+**Key implementation points**:
+1. Created TWO pattern definitions to handle different tokenizations:
+   - "に当たる" - for split form (に + あたる verb)
+   - "に当たる_particle" - for compound form (にあたる particle)
+2. Uses TokenMatcher::Any to allow various preceding tokens (nouns, の, punctuation)
+3. Split form matcher checks: に particle + あたる verb + optional ます auxiliary
+4. Compound form matcher checks: single にあたる token with POS 助詞/格助詞/連語
+5. Both patterns handle all three main meanings:
+   - Corresponds to (equivalence between languages/concepts)
+   - Amounts to (temporal/quantitative equivalence)
+   - Is in regard to (relationship equivalence)
+
+**Pattern ranges**: Include preceding token + に当たる construction
+- Compound form examples: "親戚にあたる" (6-12), "目にあたる" (13-18), "」にあたる" (22-27)
+- Split form examples: "いとこにあたる" (8-15), "」にあたります" (18-25)
+
+**Test Quality**:
+- All 6 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both tokenization patterns: compound (4 tests) and split (2 tests)
+- Test multiple contexts: language equivalence, relationships, time periods
+- Cover both plain and polite forms
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern comes from 当たる "to hit/match", so に当たる literally means "to hit upon" or "to match to". The に particle marks the target of comparison. This pattern is often used when explaining equivalences between languages or describing relationships between people, where one thing "corresponds to" or "amounts to" another.
+
+**Technical Challenge**: This pattern required handling two different tokenization strategies from Kagome. When "にあたる" appears before a following noun or at the end of a sentence, Kagome tokenizes it as a single compound particle (連語). However, when used with the polite form "ます" or in certain other contexts, it tokenizes as separate tokens (に + あたる). Creating two separate pattern definitions with unique names ensures both forms are detected correctly.
+
+---
+
 ## Session 320 - 2025-12-14
 
 ### ✅ Session Summary
