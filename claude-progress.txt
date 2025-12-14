@@ -1,3 +1,96 @@
+## Session 282 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ように - so that, in order to)
+**Tests added**: 6 (all passing)
+**Total tests**: 1810 (was 1804)
+
+### Pattern Implemented: ように (so that, in order to)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: The expression ように combines the auxiliary verb ようだ with the particle に to express purpose or intention with an element of uncertainty. It means "so that" or "in order to" when used with verbs in potential form, negative form, or できる. The pattern emphasizes that the speaker lacks direct control over the outcome and is trying to create conditions that will enable the desired result.
+
+**Structures tested**: 6 tests covering all structure variants
+1. Verb[ない] + ように: 離れないように (so that [I] won't get separated)
+2. Verb[できる] + ように: 話せるように (so that [I] can speak)
+3. Verb[できる][ない] + ように: 入れないように (so that [burglars] can't enter)
+4. できる + ように: できるように (so that [I] can do)
+5. 出来る + ように: 出来るように (kanji variant - so that [I] can do)
+6. Verb[できる] + ように: 踊れるように (so that [I] can dance)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (youni function, lines 6231-6281)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (youni_tests module, lines 10109-10190)
+- Pattern: grammar-lib/src/patterns.rs (Youni - already existed)
+
+**Tokenization pattern**:
+```
+Affirmative form (potential verb):
+Verb (動詞/自立, 基本形, potential form like 話せる/踊れる/できる)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/副詞化)
+
+Negative form:
+Verb (動詞/自立, 未然形)
++ ない (助動詞, base=ない)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/副詞化)
+```
+
+**Key implementation points**:
+1. VerbMatcher accepts any verb (potential, dictionary, or 未然形)
+2. Optional NaiMatcher handles the ない auxiliary for negative forms
+3. YouMatcher ensures よう is a dependent noun (非自立) with auxiliary verb stem (助動詞語幹)
+4. NiParticleMatcher checks に is 助詞/副詞化 (not 格助詞 like other に patterns)
+5. Pattern range includes full construction: Verb(+ない) + よう + に
+6. Pattern has priority 2, higher than ようだ (priority 1), so it takes precedence
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all structure variants: potential verbs (話せる, 踊れる), できる/出来る, and negative forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Distinguishing ように from ようだ by checking the に particle POS (副詞化 vs other types)
+2. Understanding that potential verbs (話せる, 踊れる) appear as 基本形 in tokenization
+3. Handling both できる (hiragana) and 出来る (kanji) variants
+4. Making ない optional to handle both affirmative and negative forms in one matcher
+5. Ensuring pattern range includes the complete grammatical construction
+
+**Pattern Priority**: Priority 2 means this pattern is detected and highlighted in the browser extension. This is appropriate as it's an important grammar point for expressing purpose with uncertainty, distinct from ようだ (seems like).
+
+**Linguistic Note**: The expression ように literally means "in the manner/way of [verb]". When used with potential verbs or negative forms, it emphasizes that the speaker is trying to create conditions but cannot guarantee the result. This contrasts with ために (in order to), which expresses more direct causation. The よう comes from 様 (yō) meaning "manner" or "way", and the に particle marks the adverbial form, creating the meaning "in such a way that [something becomes possible]".
+
+### Session Statistics
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1 (ように)
+- **Test success rate**: 6/6 (100%)
+- **Total passing tests**: 1810 (up from 1804)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - ように・ような (like/as) - adverbial/attributive forms of ようだ
+   - みたいに・みたいな (like/as) - casual equivalent of ように・ような
+   - ようにいう (to tell/ask someone to do) - instruction expression
+   - ほかに(も)・ほか(に)は (other than, besides) - more complex pattern
+   - まい～のように (like mai~) - formal comparison pattern
+2. **Pattern focus**: ように・ような would be a natural next choice as it uses similar components (よう + に/な)
+
+### Environment Status
+- All 1810 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 281 - 2025-12-14
 
 ### ✅ Session Summary
