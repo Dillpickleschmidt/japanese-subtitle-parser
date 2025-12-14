@@ -548,3 +548,69 @@ mod kanenai_tests {
         assert_pattern_range(&patterns, "かねない", 12, 17); // 出かねない
     }
 }
+
+// Pattern: からには (as long as, since, given that)
+// Data source: grammar_points_data.json["からには"]
+// Testing: structure.standard[0] - "Verb[る] + からには"
+//
+// Other structures tested:
+//   - standard[1]: Verb[た] + からには
+//   - standard[2]: い-Adjective + からには
+//   - standard[3]: な-Adjective + である + からには
+//   - standard[4]: Noun + である + からには
+//
+// Note: Pattern matches the immediately preceding token + からには
+// For verb+た forms, the pattern matches た+からには (not full verb phrase)
+mod karaniha_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_ta_form() {
+        let sentence = "ここまで来たからには、最後まで頑張りたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からには");
+        assert_pattern_range(&patterns, "からには", 5, 10); // たからには
+    }
+
+    #[test]
+    fn test_verb_ta_form_2() {
+        let sentence = "約束したからには、必ず守らなければならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からには");
+        assert_pattern_range(&patterns, "からには", 3, 8); // たからには
+    }
+
+    #[test]
+    fn test_i_adjective() {
+        let sentence = "高いからには、それなりの品質を期待している";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からには");
+        assert_pattern_range(&patterns, "からには", 0, 6); // 高いからには
+    }
+
+    #[test]
+    fn test_na_adjective_dearu() {
+        let sentence = "親として有名であるからには、責任がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からには");
+        assert_pattern_range(&patterns, "からには", 7, 13); // あるからには
+    }
+
+    #[test]
+    fn test_noun_dearu() {
+        let sentence = "教師であるからには、生徒の手本となるべきだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からには");
+        assert_pattern_range(&patterns, "からには", 3, 9); // あるからには
+    }
+}

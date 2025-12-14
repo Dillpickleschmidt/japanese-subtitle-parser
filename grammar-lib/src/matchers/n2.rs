@@ -781,9 +781,34 @@ pub fn womotoni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: からには
+// Pattern: からには (as long as, since, given that)
+// Structures: Verb[る/た] + からには, Adjective + からには, Noun/な-Adj + である + からには
 pub fn karaniha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // からには is always tokenized as a single conjunctive particle
+    #[derive(Debug)]
+    struct KaranihaMatcher;
+    impl Matcher for KaranihaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "からには"
+                && token.base_form == "からには"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Use TokenMatcher::Any for simplicity - からには can attach to various forms
+    // Note: This will match just the immediately preceding token, which may be:
+    // - A verb (dictionary form or stem)
+    // - An adjective
+    // - An auxiliary (た in verb phrases, ある in である)
+    // The full grammatical construction may span multiple tokens, but this
+    // is the minimal meaningful unit for pattern detection.
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(KaranihaMatcher)),
+    ]
 }
 
 // Pattern: いつの間にか (before one knows it, suddenly)
