@@ -9128,3 +9128,65 @@ mod noyouni_noyouna_tests {
         assert_pattern_range(&patterns, "のように・のような ", 3, 12); // タブレットのような
     }
 }
+
+// Pattern: はずがない (hardly possible, improbable, unlikely)
+// Data source: grammar_points_data.json["はずがない"]
+// Testing all structure variants
+mod hazuganai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + はず + が + ない"
+    #[test]
+    fn test_verb_hazuganai() {
+        let sentence = "一時間も早く家を出たから遅れるはずがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずがない");
+        assert_pattern_range(&patterns, "はずがない", 12, 20); // 遅れるはずがない
+    }
+
+    // Testing: structure.standard[1] - "［い］Adjective + はず + が + ない"
+    #[test]
+    fn test_i_adj_hazuganai() {
+        let sentence = "この箱は重いはずがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずがない");
+        assert_pattern_range(&patterns, "はずがない", 4, 11); // 重いはずがない
+    }
+
+    // Testing: structure.standard[2] - "［な］Adjective + な + はず + が + ない"
+    #[test]
+    fn test_na_adj_hazuganai() {
+        let sentence = "サリーの家は立派なはずがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずがない");
+        assert_pattern_range(&patterns, "はずがない", 6, 14); // 立派なはずがない
+    }
+
+    // Testing: structure.standard[3] - "Noun + の + はず + が + ない"
+    #[test]
+    fn test_noun_hazuganai() {
+        let sentence = "あそこにいる人はトムのはずがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずがない");
+        assert_pattern_range(&patterns, "はずがない", 8, 16); // トムのはずがない
+    }
+
+    // Testing: structure.polite[0] - "Verb + はず + が + ありません"
+    #[test]
+    fn test_verb_hazugaarimasen() {
+        let sentence = "彼はそんなことを言うはずがありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずがない");
+        assert_pattern_range(&patterns, "はずがない", 8, 18); // 言うはずがありません
+    }
+}

@@ -5047,9 +5047,88 @@ pub fn naito() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: はずがない
+// Pattern: はずがない (hardly possible, improbable, unlikely)
+// Structures: Verb/i-Adj + はずがない, Na-Adj + な + はずがない, Noun + の + はずがない
 pub fn hazuganai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb, i-adjective, or na-adjective/noun stem
+    #[derive(Debug)]
+    struct PreHazuMatcher;
+    impl Matcher for PreHazuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+            // OR i-adjective
+            || token.pos.first().is_some_and(|pos| pos == "形容詞")
+            // OR na-adjective stem (形容動詞語幹)
+            || token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+            // OR noun
+            || token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match optional な (for na-adjectives) or の (for nouns)
+    #[derive(Debug)]
+    struct NaOrNoParticleMatcher;
+    impl Matcher for NaOrNoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match な (auxiliary verb, copula)
+            (token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // OR match の (possessive/modifier particle)
+            || (token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化"))
+        }
+    }
+
+    // Match はず (dependent noun)
+    #[derive(Debug)]
+    struct HazuMatcher;
+    impl Matcher for HazuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "はず"
+                && token.base_form == "はず"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match が particle (case particle)
+    #[derive(Debug)]
+    struct GaCaseParticleMatcher;
+    impl Matcher for GaCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ない (i-adjective) or ある (for polite ありません)
+    #[derive(Debug)]
+    struct NaiOrAruMatcher;
+    impl Matcher for NaiOrAruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (adjective)
+            (token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞"))
+            // OR Match ある (verb, for ありません)
+            || (token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(PreHazuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaOrNoParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(HazuMatcher)),
+        TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiOrAruMatcher)),
+    ]
 }
 
 // Pattern: しか～ない (only/nothing but)

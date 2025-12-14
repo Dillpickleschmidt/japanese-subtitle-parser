@@ -3446,13 +3446,13 @@
   {
     "pattern_name": "はずがない",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like はず , coming from the kanji 筈（はず） , which suggests that something is 'bound' to be true, はずがない suggests that some... [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null
