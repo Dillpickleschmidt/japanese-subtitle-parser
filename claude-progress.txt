@@ -1,3 +1,69 @@
+## Session 333 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (ばかり)
+**Tests added**: 5 (all passing)
+**Total tests**: 2111 passing, 1 ignored (was 2106 passing, 1 ignored)
+
+### ✅ Pattern Completed: ばかり (nothing but / only)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: ばかり is an adverbial particle used after verbs (in て-form) or nouns to highlight that 'nothing but (A) is being done' or 'only (A) exists'. When following verbs, it's often combined with いる (as てばかりいる), though いる can be omitted. The pattern can be followed by で (conjunctive form of だ) or いて when connecting to a second clause.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Verb[て] + ばかり + いる: 先生はいつも怒ってばかりいる (Our teacher does nothing but get angry)
+2. Noun + ばかり: 最近はお菓子ばかり食べている (Recently, I've been eating nothing but sweets)
+3. Verb[て] + ばかり + いて: 先月生まれた息子がずっと泣いてばかりいて、全然寝れない (My son does nothing but cry, so I can't sleep)
+4. Verb[て] + ばかり + で: 彼は毎日残業してばかりで、全然家の事を手伝ってくれない (All he does is work overtime everyday)
+5. Noun + ばかり + で: 彼は口を開けると文句ばかりで、一緒にいるだけで疲れる (All he can do is complain)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (bakari, lines 1784-1804)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (bakari_tests module, lines 10136-10201)
+- Pattern: grammar-lib/src/patterns.rs (Bakari, lines 2960-2966)
+
+**Tokenization pattern**:
+```
+Standard structure (all variants):
+- Any preceding token (verb in て-form, or noun)
+- ばかり (助詞/副助詞) - adverbial particle
+
+Examples:
+1. て (助詞/接続助詞) + ばかり (助詞/副助詞)
+2. Noun (名詞) + ばかり (助詞/副助詞)
+
+The ばかり particle always tokenizes as 助詞/副助詞.
+```
+
+**Key implementation points**:
+1. Simple matcher with two token matchers: Any + ばかり
+2. BakariParticleMatcher checks surface == "ばかり" and POS == 助詞/副助詞
+3. TokenMatcher::Any allows any preceding token (て particle after verb, or noun)
+4. Pattern matches the core "ばかり" construction, regardless of what follows (いる, いて, で, etc.)
+5. Single unified matcher handles both verb and noun variants
+
+**Pattern ranges**: Include preceding token + ばかり
+- Verb examples: "てばかり" (chars 8-12), "てばかり" (chars 14-18), "てばかり" (chars 7-11)
+- Noun examples: "お菓子ばかり" (chars 3-9), "文句ばかり" (chars 8-13)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both structure variants: Verb[て] + ばかり and Noun + ばかり
+- Test different contexts: てばかりいる, てばかりいて, てばかりで, Noun + ばかり
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern comes from ばかり (sometimes written 許り or 計り) which means "to let off" or "to let through", implying that (A) is the only thing being "permitted" in a specific situation. When used with verbs followed by て, it creates てばかり meaning "does nothing but". When following で (the conjunctive form of だ, not the particle で), it connects to a second clause showing the consequence of doing nothing but (A).
+
+**Usage Context**: The pattern emphasizes repetition or exclusivity. With verbs, it highlights that an action is being done excessively or to the exclusion of other actions. With nouns, it emphasizes that only that thing exists or occurs. The で that follows ばかり is the conjunctive form of the auxiliary verb だ, not the case-marking particle で.
+
+---
+
 ## Session 332 - 2025-12-14
 
 ### ✅ Session Summary
