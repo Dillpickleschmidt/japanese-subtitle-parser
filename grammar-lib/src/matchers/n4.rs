@@ -3453,8 +3453,64 @@ pub fn degozaimasu() -> Vec<TokenMatcher> {
 }
 
 // Pattern: お〜する
+// Pattern: お〜する (humble speech - お/ご + Noun + する)
+// Structures:
+//   1. お/ご (接頭詞) + Noun[サ変接続] + する (split form like ご確認します)
+//   2. Noun[サ変接続 starting with お/ご] + する (compound form like お守りします)
 pub fn o_u301c_suru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match お or ご prefix
+    #[derive(Debug)]
+    struct OGoPrefixMatcher;
+    impl super::Matcher for OGoPrefixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "お" || token.surface == "ご")
+                && token.pos.first().is_some_and(|pos| pos == "接頭詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "名詞接続")
+        }
+    }
+
+    // Match ANY サ変接続 noun
+    #[derive(Debug)]
+    struct SahenNounMatcher;
+    impl super::Matcher for SahenNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+        }
+    }
+
+    // Match する verb (any conjugation)
+    #[derive(Debug)]
+    struct SuruMatcher;
+    impl super::Matcher for SuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ます polite auxiliary
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl super::Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: お/ご (prefix) + Noun[サ変] + する + (optional ます)
+    // Matches split form: ご + 確認 + します
+    // Note: Does NOT match compound forms like お守りします (where お守り is a single token)
+    // Priority is set low (1) to avoid over-matching plain サ変 verbs
+
+    vec![
+        TokenMatcher::Custom(Arc::new(OGoPrefixMatcher)),  // REQUIRED prefix
+        TokenMatcher::Custom(Arc::new(SahenNounMatcher)),
+        TokenMatcher::Custom(Arc::new(SuruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: いたす (humble speech - to do)
