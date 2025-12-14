@@ -1,3 +1,117 @@
+## Session 264 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (なん + counter + か - uncertain number)
+**Tests added**: 6 (all passing)
+**Total tests**: 1711 (was 1705)
+
+### Pattern Implemented: なん + counter + か (uncertain number)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: Expression highlighting an uncertain number of something, similar to "some", "several", or "a few" in English. Literally means "what + counter + I wonder?", showing the speaker's uncertainty about the number. Has three main forms: なん + Counter + か (most common for counting specific things), いく + Counter + か (common in set expressions), and いくつか (fixed expression meaning "some/several").
+
+**Structures tested**: 6 tests covering all 3 structure variants
+1. なん + 回 + か: なん回か行ったことがある (I've been there several times)
+2. なん + 枚 + か: なん枚かちょうだい (May I have some sheets?)
+3. なん + 冊 + か: なん冊か妹にあげた (I gave several books to my sister)
+4. いく + 人 + か: いく人か来ると思います (I think several people will come)
+5. いく + 日 + か: いく日か経ってから (After several days passed)
+6. いくつか: いくつかの問題がある (There are some problems)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (nan_counter_ka, lines 2789-2849)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (nan_counter_ka_tests, lines 8729-8817)
+- Pattern: grammar-lib/src/patterns.rs (NanCounterKa)
+
+**Tokenization patterns**:
+
+なん + Counter + か:
+```
+なん (名詞/代名詞/一般, base="なん")
++ Counter (名詞/接尾/助数詞) - optional for いくつか
++ か (助詞/副助詞／並立助詞／終助詞)
+```
+
+いく + Counter + か:
+```
+いく (名詞/数, base="いく")
++ Counter (名詞/接尾/助数詞) - optional for いくつか
++ か (助詞/副助詞／並立助詞／終助詞)
+```
+
+いくつか:
+```
+いくつ (名詞/代名詞/一般, base="いくつ")
++ か (助詞/副助詞／並立助詞／終助詞)
+```
+
+**Key implementation points**:
+1. NanOrIkuMatcher handles three cases:
+   - なん (名詞/代名詞/一般)
+   - いく (名詞/数)
+   - いくつ (名詞/代名詞/一般)
+2. CounterMatcher is optional to allow いくつか without a counter
+3. CounterMatcher checks for 名詞/接尾/助数詞 (counter suffix)
+4. KaParticleMatcher verifies か is a particle
+5. Pattern range: entire construction (なん/いく/いくつ + counter + か)
+6. Priority 1 (construction pattern)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover all 3 structure variants: なん + Counter, いく + Counter, いくつか
+- Test various counters: 回 (times), 枚 (sheets), 冊 (books), 人 (people), 日 (days)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Understanding that なん and いく are both nouns but different subcategories
+2. Making counter optional to handle both なん回か and いくつか
+3. Recognizing いくつ as a complete expression (doesn't need a counter)
+4. Understanding that か is classified as 助詞/副助詞／並立助詞／終助詞
+
+**Tokenization Discovery**:
+- なん is 名詞/代名詞/一般 (pronoun) for question word "what"
+- いく is 名詞/数 (number noun) from kanji 幾 meaning "how many/much"
+- いくつ is also 名詞/代名詞/一般 (pronoun) meaning "how many"
+- Counters are consistently 名詞/接尾/助数詞 (noun suffix / counter)
+- か particle shows the speaker's uncertainty about the number
+
+**Pattern Usage Distinction**:
+- **なん + Counter + か**: Most common for counting specific things (people, times, items)
+- **いく + Counter + か**: More common in set expressions like いくら (how much), いくつ (how many/old)
+- **いくつか**: Fixed expression that doesn't require a specific counter, means "some/several"
+
+**Linguistic Note**: Despite having the same kanji as 何（なに）, なん is almost always used to count things (with counters), while なに is used to identify things (what kind/type). Example: なん冊か (several books - counting) vs 何者だ (what kind of person - identifying).
+
+### Session Statistics
+- **Session time**: Approximately 50 minutes
+- **Patterns completed this session**: 1 (なん + counter + か)
+- **Test success rate**: 6/6 (100%)
+- **Total passing tests**: 1711 (up from 1705)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - に (Frequency) - frequency marking particle
+   - にきがつく (to notice/realize)
+   - にみえる (to appear/look like)
+   - のなかで (among/in)
+   - のように・のような (like/as)
+2. **Pattern focus**: More N4 constructions with particles and verb expressions
+
+### Environment Status
+- All 1711 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+---
+
 ## Session 263 - 2025-12-14
 
 ### ✅ Session Summary
