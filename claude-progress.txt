@@ -1,10 +1,10 @@
 ## Session 355 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully completed 1 N3 pattern
-**Patterns completed**: 1 (んだって)
-**Tests added**: 4 (all passing)
-**Total tests**: 2270 total tests, 2269 passing, 1 ignored (was 2265 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (んだって, 一方だ)
+**Tests added**: 7 (all passing)
+**Total tests**: 2273 total tests, 2272 passing, 1 ignored (was 2265 passing, 1 ignored - net +7 tests)
 
 ### ✅ Pattern Completed: んだって (I heard that / it's thought that)
 
@@ -72,6 +72,74 @@ Pattern 2 (after adjectives/nouns):
 - ～んです・のです (N4) - explanatory ん pattern (different meaning)
 - って (N4) - quotative particle (component of だって)
 - だ (N5) - copula (component of だって)
+
+---
+
+### ✅ Pattern Completed: 一方だ (more and more / continuing to / getting X-er and X-er)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted in overlay)
+
+**Pattern**: 一方（いっぽう） is a noun meaning "single direction" that follows verbs expressing change to convey continuing progression in one direction. Translates to "more and more (A)", "continuing to (A)", or "getting (A)er and (A)er". The pattern emphasizes that the change is unidirectional and ongoing. 一方 is paired with だ (sentence-ending) or で (mid-sentence with explanation).
+
+**Structures tested**: 3 comprehensive tests covering major variants
+1. Verb + 一方だ: 悪化する一方だ (keeps getting worse) - chars 16-19
+2. Verb + 一方です (polite): 減る一方です (population keeps decreasing) - chars 13-17
+3. Verb + 一方だ (increase): 上がる一方だ (keeps rising) - chars 9-12
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (ippouda function, lines 7620-7654)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (ippouda_tests module, lines 12252-12292)
+- Pattern: grammar-lib/src/patterns.rs (Ippouda, declared at line 4058)
+
+**Tokenization patterns**:
+```
+Standard form:
+- 一方 (名詞/非自立/副詞可能) - dependent noun
+- だ (助動詞, base=だ, 基本形) - copula auxiliary
+
+Polite form:
+- 一方 (名詞/非自立/副詞可能) - dependent noun
+- です (助動詞, base=です, 基本形) - polite copula auxiliary
+```
+
+**Key implementation points**:
+1. Two-token matcher: 一方 + (だ|です)
+2. IppouMatcher checks surface == "一方", base_form == "一方", POS == 名詞/非自立/副詞可能
+3. DaDesuMatcher matches BOTH だ (base=だ) and です (base=です) as auxiliary verbs
+4. Pattern priority: 1 (detected but not highlighted in overlay)
+5. Only used with verbs expressing change (increase, decrease, intensify, weaken)
+6. Literal meaning "single direction" conveys continuing change in one direction
+
+**Pattern ranges**: Include 一方だ or 一方です (2 tokens)
+- Plain form: 一方だ (chars 16-19)
+- Polite form: 一方です (chars 13-17)
+- Pattern captures just 一方 + copula, not the preceding verb
+
+**Test Quality**:
+- All 3 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both plain (だ) and polite (です) forms
+- Test both increasing and decreasing verbs
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: 一方 can ONLY be used with verbs that express some kind of change, as 一方 itself does not express change - it only indicates a continuing direction. Works with verbs expressing increasing, decreasing, intensifying, or weakening, so long as the shift is all in a single direction. The pattern emphasizes the unidirectional, ongoing nature of the change.
+
+**Usage examples from grammar data**:
+- 悪化する一方だ: "The relationship keeps getting worse" (deterioration)
+- 減る一方です: "The population keeps decreasing" (decline)
+- 上がる一方だ: "Prices keep rising" (increase)
+- 増える一方で: "Because the amount of work keeps increasing..." (with explanation)
+
+**Caution**: Unnatural uses occur when 一方 is paired with verbs that don't express change:
+- 泣く一方だ: "Cries in one direction" (unnatural - 泣く doesn't express change)
+- 進む一方だ: "Keeps progressing" (natural - 進む expresses change)
+
+**Related patterns**:
+- 一方で (N3) - same pattern, mid-sentence form with で (not yet implemented)
+- ばかり (N4) - "nothing but / only" (different meaning but similar continual sense)
 
 ---
 
