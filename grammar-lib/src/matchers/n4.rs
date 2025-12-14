@@ -2462,9 +2462,106 @@ pub fn toittemoii() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ても
+// Pattern: ても (even if/even though)
+// Structures:
+//   - Verb[て] + も / Verb[なくて] + も
+//   - い-Adjective[て] + も / い-Adj[なくて] + も
+//   - な-Adjective + でも (single token) / な-Adj + じゃなくて + も
+//   - Noun + で + も (two tokens) / Noun + じゃなくて + も
 pub fn temo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for verbs/adjectives in te-form before ても
+    // Includes: Verb[連用タ接続], い-Adj[連用テ接続], and Verb/Adj + なく
+    #[derive(Debug)]
+    struct TemoStemMatcher;
+    impl Matcher for TemoStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb in 連用タ接続 or 連用テ接続 (for て-form)
+            if token.pos.first().is_some_and(|p| p == "動詞") {
+                token.features.get(5).is_some_and(|f| f == "連用タ接続" || f == "連用テ接続" || f == "未然形")
+            }
+            // い-adjective in 連用テ接続
+            else if token.pos.first().is_some_and(|p| p == "形容詞") {
+                token.features.get(5).is_some_and(|f| f == "連用テ接続")
+            }
+            // なく (negative auxiliary in 連用テ接続)
+            else if token.surface == "なく" && token.base_form == "ない" {
+                token.pos.first().is_some_and(|p| p == "助動詞")
+                    && token.features.get(5).is_some_and(|f| f == "連用テ接続")
+            }
+            // な-adjective or noun (before でも or じゃ)
+            else if token.pos.first().is_some_and(|p| p == "名詞") {
+                true
+            }
+            else {
+                false
+            }
+        }
+    }
+
+    // Matcher for て particle (conjunction) OR で particle (case marking) OR じゃ particle
+    #[derive(Debug)]
+    struct TeDeJaMatcher;
+    impl Matcher for TeDeJaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // て (conjunction particle)
+            if token.surface == "て" {
+                token.pos.first().is_some_and(|p| p == "助詞")
+                    && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+            }
+            // で (case marking particle)
+            else if token.surface == "で" {
+                token.pos.first().is_some_and(|p| p == "助詞")
+                    && token.pos.get(1).is_some_and(|p| p == "格助詞")
+            }
+            // じゃ (副助詞)
+            else if token.surface == "じゃ" {
+                token.pos.first().is_some_and(|p| p == "助詞")
+                    && token.pos.get(1).is_some_and(|p| p == "副助詞")
+            }
+            // でも (single token - 副助詞)
+            else if token.surface == "でも" && token.base_form == "でも" {
+                token.pos.first().is_some_and(|p| p == "助詞")
+                    && token.pos.get(1).is_some_and(|p| p == "副助詞")
+            }
+            else {
+                false
+            }
+        }
+    }
+
+    // Matcher for も particle (binding particle) - marks the end of ても
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // This pattern is complex with many variations. The core suffix is:
+    // - て + も (2 tokens)
+    // - でも (1 token - single particle)
+    // - で + も (2 tokens)
+    //
+    // The prefix can be 1-2 tokens (verb stem, adj, なく, じゃ+なく, etc.)
+    // Rather than trying to match all prefixes, we'll match the suffix and let
+    // the pattern matcher include appropriate preceding tokens via prioritization.
+    //
+    // Strategy: Match just the core suffix (て+も / で+も / でも)
+    // This will be combined with the Wildcard to capture preceding context
+    vec![
+        // Match one preceding token (verb stem, adj stem, noun, or なく)
+        TokenMatcher::Custom(Arc::new(TemoStemMatcher)),
+        // Match て/で/じゃ/でも particle
+        TokenMatcher::Custom(Arc::new(TeDeJaMatcher)),
+        // Optionally match も (not needed when でも is single token)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+    ]
 }
 
 // Pattern: てしまう・ちゃう

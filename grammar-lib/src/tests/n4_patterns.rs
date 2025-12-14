@@ -5476,3 +5476,116 @@ mod sukunakunai_tests {
         assert_pattern_range(&patterns, "すくなくない_polite", 18, 26); // 少なくありません
     }
 }
+
+// ========== ても (even if/even though) ==========
+// Pattern: ても
+// Data source: grammar_points_data.json["ても"]
+//
+// Structures to test:
+//   - standard[0]: Verb[て] + も
+//   - standard[1]: い-Adjective[て] + も
+//   - standard[2]: な-Adjective + で + も
+//   - standard[3]: Noun + で + も
+//   - standard[4]: Verb[なくて] + も
+//   - standard[5]: い-Adjective[なくて] + も
+//   - standard[6]: な-Adjective + でなくて + も
+//   - standard[7]: Noun + でなくて + も
+//
+// Examples from data:
+//   - 言っても何も変わりません (even if you say it, nothing will change)
+//   - 冷たくても美味しい (even if it's cold, it's delicious)
+//   - 大変でも諦めません (even if it's difficult, won't give up)
+//   - 安い電子レンジでも (even with a cheap microwave)
+//   - 終わらなくてもいい (even if you don't finish, it's okay)
+#[cfg(test)]
+mod temo_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[て] + も
+    #[test]
+    fn test_temo_verb_affirmative() {
+        let sentence = "あの人に言っても何も変わりません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても");
+        assert_pattern_range(&patterns, "ても", 4, 8); // 言っても
+    }
+
+    // Testing: standard[1] - い-Adjective[て] + も
+    #[test]
+    fn test_temo_i_adjective() {
+        let sentence = "お茶は冷たくても美味しいから好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても");
+        assert_pattern_range(&patterns, "ても", 3, 8); // 冷たくても
+    }
+
+    // Testing: standard[2] - な-Adjective + で + も
+    #[test]
+    fn test_temo_na_adjective() {
+        let sentence = "彼女は仕事が大変でも諦めません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても");
+        assert_pattern_range(&patterns, "ても", 6, 10); // 大変でも
+    }
+
+    // Testing: standard[3] - Noun + で + も
+    #[test]
+    fn test_temo_noun() {
+        let sentence = "安い電子レンジでも弁当は温められます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても");
+        assert_pattern_range(&patterns, "ても", 4, 9); // レンジでも
+    }
+
+    // Testing: standard[4] - Verb[なくて] + も
+    #[test]
+    fn test_temo_verb_negative() {
+        let sentence = "これは明日までに終わらなくてもいいから";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても");
+        assert_pattern_range(&patterns, "ても", 11, 15); // なくても
+    }
+
+    // Testing: standard[5] - い-Adjective[なくて] + も
+    #[test]
+    fn test_temo_i_adjective_negative() {
+        let sentence = "頭が痛くなくてもこの薬を飲んでください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても");
+        assert_pattern_range(&patterns, "ても", 4, 8); // なくても
+    }
+
+    // Testing: standard[6] - な-Adjective + でなくて + も
+    #[test]
+    fn test_temo_na_adjective_negative() {
+        let sentence = "野菜は好きじゃなくても食べた方がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても");
+        assert_pattern_range(&patterns, "ても", 7, 11); // なくても
+    }
+
+    // Testing: standard[7] - Noun + でなくて + も
+    #[test]
+    fn test_temo_noun_negative() {
+        let sentence = "運転手じゃなくてもシートベルトをしなくてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても");
+        assert_pattern_range(&patterns, "ても", 5, 9); // なくても
+    }
+}
