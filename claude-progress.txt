@@ -1,3 +1,72 @@
+## Session 319 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (に代わって)
+**Tests added**: 5 (all passing)
+**Total tests**: 2033 passing, 1 ignored (was 2028 passing, 1 ignored)
+
+### ✅ Pattern Completed: に代わって (in place of / on behalf of)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: に代わって is an expression that combines the case-marking particle に, the verb 代わる (to substitute/replace), and the conjunctive particle て (or formal conjunctive form). It conveys that (B) is doing something "in place of (A)" or "on behalf of (A)". The pattern can also mean "to replace" or "to succeed" when indicating permanent substitution.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Noun + に代わって (in place of): 妹に代わって、私が買い物に行くことに決まった (It has been decided that I am going to go shopping in place of my sister)
+2. Noun + に代わって (on behalf of): 私が彼女に代わって会議に出ます (I will be attending the meeting in place of her)
+3. Noun + に代わり (formal conjunctive): タナカさんに代わり、今日は私があなたたちの担当をします (In place of Tanaka-san, today, I am going to be in charge of you guys)
+4. Noun + に代わって (replacing/succeeding): 父親に代わって、息子が王になった (Replacing his father, the son became king)
+5. Noun + に代わり (being replaced by): 世界中ではファックスに代わりメールが主流になった (All around the world, fax has been replaced by email as the main form of communication)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nikawatte, lines 6292-6335)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nikawatte_tests module, lines 9060-9130)
+- Pattern: grammar-lib/src/patterns.rs (Nikawatte, line 4384)
+
+**Tokenization patterns**:
+```
+て-form (に代わって):
+- Noun (名詞) - any noun including suffixes like さん
+- に (助詞/格助詞/一般) - case-marking particle
+- 代わっ (動詞/自立, base='代わる', 五段・ラ行, 連用タ接続) - verb in て-form conjunctive
+- て (助詞/接続助詞) - conjunctive particle
+
+Formal conjunctive (に代わり):
+- Noun (名詞) - any noun including suffixes like さん
+- に (助詞/格助詞/一般) - case-marking particle
+- 代わり (動詞/自立, base='代わる', 五段・ラ行, 連用形) - verb in formal conjunctive form
+```
+
+**Key implementation points**:
+1. NiParticleMatcher checks に as 助詞/格助詞
+2. KawaruVerbMatcher checks base_form == "代わる" as 動詞
+3. TeParticleMatcher checks て as 助詞/接続助詞 (optional)
+4. Pattern matches both て-form (代わって) and formal conjunctive (代わり)
+5. Uses noun_matcher() which matches any 名詞 including suffixes
+6. Optional て particle allows both variants with a single matcher
+
+**Pattern ranges**: Include full construction (Noun + に + 代わって/代わり)
+- Example: "妹に代わって" (chars 0-6) - て-form
+- Example: "彼女に代わって" (chars 2-9) - て-form
+- Example: "さんに代わり" (chars 3-9) - formal conjunctive
+- Example: "父親に代わって" (chars 0-7) - て-form
+- Example: "ファックスに代わり" (chars 5-14) - formal conjunctive
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both て-form and formal conjunctive variants
+- Cover multiple contexts (in place of, on behalf of, replacing, being replaced)
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The particle に in this construction acts as a location marker, indicating that something is being removed from its place and exchanged for something else. This is why に代わって can mean both temporary substitution ("on behalf of") and permanent replacement ("to succeed/replace"). The speaker uses this pattern to indicate that the substitution was decided externally, not by themselves.
+
+---
+
 ## Session 318 - 2025-12-14
 
 ### ✅ Session Summary
