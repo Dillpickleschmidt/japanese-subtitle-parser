@@ -1124,3 +1124,43 @@ mod o_uff5e_negau_tests {
         assert_pattern_range(&patterns, "お～願う", 18, 25); // お待ち願います
     }
 }
+
+// Pattern: がけに (on the way, as you go)
+// Data source: grammar_points_data.json["がけに"]
+// Testing: structure.standard[0] - "Verb[stem] + がけに"
+//
+// Note: Only 1 structure variant (standard only, no polite form)
+
+mod gakeni_tests {
+    use super::*;
+
+    #[test]
+    fn test_kaeri_gakeni() {
+        let sentence = "帰りがけに駅前のたこ焼き屋でたこ焼きを買った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がけに");
+        assert_pattern_range(&patterns, "がけに", 0, 5); // 帰りがけに
+    }
+
+    #[test]
+    fn test_iki_gakeni() {
+        let sentence = "今日は学校への行きがけにコンビニで弁当を買う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がけに");
+        assert_pattern_range(&patterns, "がけに", 7, 12); // 行きがけに
+    }
+
+    #[test]
+    fn test_toori_gakeni() {
+        let sentence = "お父さん、通りがけにサービスエリアにでも寄って行こ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がけに");
+        assert_pattern_range(&patterns, "がけに", 5, 10); // 通りがけに
+    }
+}

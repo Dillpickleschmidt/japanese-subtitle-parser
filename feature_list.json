@@ -7464,13 +7464,13 @@
   {
     "pattern_name": "がけに",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although not used much in modern Japanese, the suffix 掛（が）け 'support', or 'hanger' followed by に may occasionally app... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

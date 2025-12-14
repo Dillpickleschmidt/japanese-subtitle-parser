@@ -645,9 +645,26 @@ pub fn ka_u301c_naikanouchini() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: がけに
+// Pattern: がけに (on the way, as you go)
+// Structure: Verb[stem] + がけ + に
+// Note: Tokenizes as compound noun (帰りがけ/行きがけ/通りがけ) + に
 pub fn gakeni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for compound noun ending in がけ
+    #[derive(Debug)]
+    struct GakeNounMatcher;
+    impl Matcher for GakeNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface.ends_with("がけ")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(GakeNounMatcher)),
+        TokenMatcher::Surface("に"),
+    ]
 }
 
 // Pattern: ていては
