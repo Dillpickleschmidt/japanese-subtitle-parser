@@ -10750,3 +10750,47 @@ mod hokani_tests {
     }
 }
 
+// Pattern: まい～のように (almost every [time period])
+// Data source: grammar_points_data.json["まい～のように"]
+// Testing: structure.standard[0] - "毎（まい） + Time Expression + のように"
+//
+// Structure: まい + Time Word (日/週/月/年 etc.) + のように
+// Meaning: "almost every (time period)", "on a (time period) basis"
+// Note: まい (毎) means "every" and is a prefix before time expressions
+mod maiuff5enoyouni_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "まい + 日 + のように"
+    #[test]
+    fn test_maiday_noyouni() {
+        let sentence = "まい日のようにポテトチップス食べてるから太ってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まい～のように");
+        assert_pattern_range(&patterns, "まい～のように", 0, 7); // まい日のように
+    }
+
+    // Testing: structure.standard[0] - "まい + 週 + のように"
+    #[test]
+    fn test_maiweek_noyouni() {
+        let sentence = "渋谷にはまい週のように行っているよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まい～のように");
+        assert_pattern_range(&patterns, "まい～のように", 4, 11); // まい週のように
+    }
+
+    // Testing: structure.standard[0] - "まい + 年 + のように"
+    #[test]
+    fn test_maiyear_noyouni() {
+        let sentence = "彼は８月になるとまい年のように平和記念資料館へ行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まい～のように");
+        assert_pattern_range(&patterns, "まい～のように", 8, 15); // まい年のように
+    }
+}
+

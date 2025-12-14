@@ -2582,9 +2582,84 @@ pub fn youninaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: まい～のように
+// Pattern: まい～のように (almost every [time period])
+// Structures: まい + Time Word (日/週/月/年 etc.) + のように
 pub fn mai_uff5e_noyouni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match まい (tokenized as verb まう in 連用形)
+    // Note: まい should be the prefix 毎 (every), but Kagome tokenizes it as the verb まう (to dance)
+    #[derive(Debug)]
+    struct MaiMatcher;
+    impl Matcher for MaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まい"
+                && token.base_form == "まう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "連用形")
+        }
+    }
+
+    // Match time expression nouns (日, 週, 月, 年, etc.)
+    // These are typically 名詞/接尾 or 名詞/一般
+    #[derive(Debug)]
+    struct TimeWordMatcher;
+    impl Matcher for TimeWordMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                    || token.pos.get(1).is_some_and(|pos| pos == "一般"))
+        }
+    }
+
+    // Match の particle (連体化)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match よう (名詞/非自立/助動詞語幹)
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token
+                    .pos
+                    .get(2)
+                    .is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Match に particle (副詞化)
+    #[derive(Debug)]
+    struct NiAdverbMatcher;
+    impl Matcher for NiAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MaiMatcher)),
+        TokenMatcher::Custom(Arc::new(TimeWordMatcher)),
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Custom(Arc::new(NiAdverbMatcher)),
+    ]
 }
 
 // Pattern: じゃないか (isn't it?)
