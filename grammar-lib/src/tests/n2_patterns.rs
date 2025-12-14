@@ -212,3 +212,34 @@ mod ooyoso_tests {
         assert_pattern_range(&patterns, "おおよそ", 17, 20); // およそ
     }
 }
+
+// Pattern: おまけに (besides, in addition, to make matters worse)
+// Data source: grammar_points_data.json["おまけに"]
+// Testing: structure.standard[0] - "おまけに + Phrase"
+//
+// Structure variants:
+//   - standard[0]: おまけに + Phrase
+
+mod omakeni_tests {
+    use super::*;
+
+    #[test]
+    fn test_omakeni_negative_addition() {
+        let sentence = "今日は仕事に遅刻して部長に怒られたし、おまけに取引先の人も怒らせちゃった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おまけに");
+        assert_pattern_range(&patterns, "おまけに", 19, 23); // おまけに
+    }
+
+    #[test]
+    fn test_omakeni_positive_addition() {
+        let sentence = "昨日は彼氏に美味しいご飯をご馳走してもらって、おまけにプレゼントまでもらった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おまけに");
+        assert_pattern_range(&patterns, "おまけに", 23, 27); // おまけに
+    }
+}

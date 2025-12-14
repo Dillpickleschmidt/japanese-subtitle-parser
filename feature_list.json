@@ -7268,13 +7268,13 @@
   {
     "pattern_name": "おまけに",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "お負（ま）けに is a phrase which often functions as a conjunction between the (A) and (B) parts of a sentence in order to sh... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
