@@ -1,3 +1,17 @@
+## Session 257 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ないと - must/have to)
+**Tests added**: 5 (all passing)
+**Total tests**: 1673 (was 1668)
+
+**Key Learning**: Pattern requires Verb in 未然形 (mizen/irrealis form) before ない, NOT 連用形. This was critical - initially used flexible_verb_form() which matches 連用形, causing the pattern to fail. Created custom VerbMizenMatcher to match 未然形 correctly.
+
+**Pattern Details**: Conditional obligation expressing "must/have to". Verb[未然形] + ない + と creates double-negative meaning "if not do, then not good" → "must do". Often abbreviated to just ないと with consequence (いけない/だめ) implied.
+
+**Next priorities**: Continue with N4 obligation patterns (なければいけない, なければならない, なくてはいけない) or command patterns (なさい, なさる).
+
 ## Session 256 - 2025-12-14
 
 ### ✅ Session Summary
