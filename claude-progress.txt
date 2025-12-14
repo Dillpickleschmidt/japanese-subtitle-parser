@@ -1,10 +1,10 @@
 ## Session 353 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully completed 1 N3 pattern
-**Patterns completed**: 1 (わけがない)
-**Tests added**: 6 (all passing)
-**Total tests**: 2251 passing, 1 ignored (was 2245 passing, 1 ignored - net +6 tests)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (わけがない, わけにはいかない)
+**Tests added**: 11 (all passing)
+**Total tests**: 2256 passing, 1 ignored (was 2245 passing, 1 ignored - net +11 tests)
 
 ### ✅ Pattern Completed: わけがない (there's no way that / it's impossible that / SO not)
 
@@ -71,7 +71,92 @@ Three-token matcher: わけ + が + ない/あり
 **Related patterns**:
 - わけだ (N3) - "so / no wonder / that's why" (affirmative logical conclusion)
 - わけではない (N3) - "it's not that" (softer negation)
-- わけにはいかない (N3) - "cannot" (obligation/impossibility - not yet implemented)
+- わけにはいかない (N3) - "cannot" (obligation/impossibility)
+
+---
+
+### ✅ Pattern Completed: わけにはいかない (cannot afford to / impossible to / it cannot be so that)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: わけにはいかない combines わけ (reason/conclusion) with に (case particle), は (topic/contrast particle), and いかない (negative form of いく "to go"). It expresses that something is highly undesirable or highly unattainable. The literal meaning is "it cannot be so that (A)" or "it cannot go in the direction of (A)". It conveys a stronger sense of impossibility or inappropriateness compared to simple できない.
+
+**Structures tested**: 5 comprehensive tests covering different usage contexts
+1. Verb + わけにはいかない (undesirable action): 残すわけにはいかない (there's no way I can leave it) - chars 30-38
+2. Verb + わけにはいかない (cannot afford to): 休むわけにはいかない (cannot afford to take a day off) - chars 15-23
+3. Verb + わけにはいかない (desirable but impossible): 買うわけにはいかない (it cannot be so that I buy it) - chars 29-37
+4. Verb + わけにはいかない (social obligation): 断るわけにはいかない (there's no way I can decline) - chars 12-20
+5. Verb + わけにはいきません (polite): 帰るわけにはいきません (there's no way I can go home) - chars 18-27
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (wakenihaikanai function, lines 5571-5643)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (wakenihaikanai_tests module, lines 11994-12072)
+- Pattern: grammar-lib/src/patterns.rs (Wakenihaikanai)
+
+**Tokenization patterns**:
+```
+Five-token matcher: わけ + に + は + いか/いき + ない/ませ
+
+わけ (required):
+- わけ (名詞/非自立/一般) - dependent noun
+
+に (required):
+- に (助詞/格助詞/一般) - case particle
+
+は (required):
+- は (助詞/係助詞) - topic/contrast particle
+
+いか or いき (required):
+- いか (動詞/自立, base=いく, 未然形) - negative stem for plain form
+- いき (動詞/自立, base=いく, 連用形) - connective stem for polite form
+
+ない or ませ (required):
+- ない (助動詞, base=ない, 基本形) - plain negative
+- ませ (助動詞, base=ます, 未然形) - start of polite negative (ません)
+```
+
+**Key implementation points**:
+1. Five-token matcher: わけ + に + は + いか/いき + ない/ませ
+2. WakeMatcher checks surface == "わけ", POS == 名詞/非自立
+3. NiMatcher checks surface == "に", POS == 助詞/格助詞
+4. WaMatcher checks surface == "は", POS == 助詞/係助詞
+5. IkaMatcher matches EITHER いか (未然形) OR いき (連用形) from いく verb
+6. NaiMaseMatcher matches EITHER ない (auxiliary) OR ませ (start of ません)
+7. Pattern matcher automatically extends ませ to include the full ません
+8. The pattern matches just わけにはいかない or わけにはいきません
+9. Pattern priority: 3 (moderate - detected and highlighted in overlay)
+
+**Pattern ranges**: Include full わけにはいかない or わけにはいきません
+- Plain form: わけにはいかない (5 tokens: わけ + に + は + いか + ない)
+- Polite form: わけにはいきません (わけ + に + は + いき + ませ, then auto-extended to ません + ん)
+- Pattern extension handles both plain and polite negative endings
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover different usage contexts: undesirable action, cannot afford, impossible, social obligation, polite form
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: わけにはいかない expresses that something is highly inappropriate, undesirable, or impossible due to circumstances, social obligations, or moral reasons. It's stronger than simple できない (cannot) and carries connotations of "must not" or "should not". The pattern can express:
+1. Undesirable actions that one feels compelled to avoid
+2. Things one cannot afford to do given the circumstances
+3. Desirable things that are impossible due to external constraints
+4. Social/moral obligations that prevent certain actions
+
+**Usage contexts**:
+- Undesirable: Actions one morally/socially should not do
+- Cannot afford: Actions impossible due to circumstances
+- Impossible: Desired actions blocked by constraints
+- Obligation: Social expectations preventing refusal
+
+**Related patterns**:
+- わけだ (N3) - "so / no wonder / that's why" (logical conclusion)
+- わけではない (N3) - "it's not that" (softer negation)
+- わけがない (N3) - "there's no way that" (impossibility/strong negation)
+- できない (N5) - "cannot" (simple inability)
 
 ---
 
