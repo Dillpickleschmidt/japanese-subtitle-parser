@@ -1,3 +1,81 @@
+## Session 344 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (まるで…ようだ)
+**Tests added**: 7 (all passing)
+**Total tests**: 2189 passing, 1 ignored (was 2182 passing, 1 ignored)
+
+### ✅ Pattern Completed: まるで…ようだ (it is as if / it is as though / it seems entirely like)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (in feature_list.json), 1 (in patterns.rs - low priority, not highlighted)
+
+**Pattern**: まるで～ようだ is an expression in Japanese that combines the adverb まるで (sometimes written as 丸（まる）で - meaning "entirely" or "completely"), and combines it with a description of (A) followed by the auxiliary verb よう or みたい (with or without either だ or です after it). The whole expression may be understood as "it seems entirely as though (A)" or "it is as if (A)".
+
+**Structures tested**: 7 comprehensive tests covering all variants
+1. まるで + Verb + ようだ: このゲームはものすごくリアルだ。まるで映画を見ているようだ。 (This game is very realistic. It is as if I am watching a movie)
+2. まるで + い-Adjective + みたいだ: あの人の仕事の仕方はまるで楽みたいだ。 (How that person works looks as if it is super easy)
+3. まるで + な-Adjective + なようだ: 彼の説明はまるで簡単なようだけど、実際は難しい。 (His explanation seems entirely simple, but it's actually difficult)
+4. まるで + Noun + のようだ: まるで２０代のようだ。 (It is as though [she's] in her twenties)
+5. まるで + Noun + みたいだ: まるで兄弟みたいだ。 (It is as if they are siblings)
+6. まるで + Noun + のようです (polite): この景色はまるで絵画のようです。 (This scenery is as if it were a painting)
+7. Complex example: 彼女の歌声はまるで天使が歌っているようだ。 (Her singing voice is as if angels are singing)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (marude_u2026_youda, lines 4409-4458)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (marude_youda_tests module, lines 10966-10049)
+- Pattern: grammar-lib/src/patterns.rs (MarudeU2026Youda, lines 3553-3559)
+
+**Tokenization pattern**:
+```
+Four-token matcher with wildcard: まるで + Wildcard{1-20} + よう/みたい + だ/です
+- まるで (副詞/一般) - adverb meaning "entirely/completely"
+- Wildcard {min: 1, max: 20} - description (verb/adjective/noun phrases)
+- よう (名詞/非自立/助動詞語幹) or みたい (名詞/非自立/形容動詞語幹)
+- だ or です (助動詞) - copula
+
+Examples:
+- Short: まるで + 楽 + みたい + だ (4 tokens between まるで and だ)
+- Long: まるで + 天使 + が + 歌っ + て + いる + よう + だ (7 tokens between まるで and だ)
+```
+
+**Key implementation points**:
+1. Four-token matcher: まるで + Wildcard{1-20} + よう/みたい + だ/です
+2. MarudeMatcher checks surface == "まるで" and POS == 副詞 (adverb)
+3. YouMitaiMatcher handles both よう (名詞/非自立/助動詞語幹) and みたい (名詞/非自立/形容動詞語幹)
+4. DaDesuMatcher handles both だ and です (助動詞) copula forms
+5. Wildcard allows 1-20 tokens for the description between まるで and ようだ/みたいだ
+6. Works with all preceding elements: verbs, い-adjectives, な-adjectives, nouns
+7. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: Include full construction from まるで to だ/です
+- Short form: "まるで楽みたいだ" (chars 10-18)
+- With verb: "まるで映画を見ているようだ" (chars 16-29)
+- With な-adjective: "まるで簡単なようだ" (chars 5-14)
+- With noun + の: "まるで２０代のようだ" (chars 23-33)
+- Polite form: "まるで絵画のようです" (chars 5-15)
+- Complex: "まるで天使が歌っているようだ" (chars 6-20)
+
+**Test Quality**:
+- All 7 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: verb, い-adjective, な-adjective, noun
+- Cover both ようだ and みたいだ forms
+- Cover both だ and です (polite) endings
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that まるで comes from 丸（まる）meaning "round" or "entire", giving it the sense of "completely" or "entirely". The 'as if' or 'as though' nuance comes primarily from either ようだ or みたいだ, with まるで simply meaning "entirely" or "completely" in almost all situations. The pattern emphasizes the completeness of the resemblance or appearance.
+
+**Related patterns**:
+- "ようだ" (base pattern) - conjecture/similarity without まるで emphasis
+- "みたい" (base pattern) - casual conjecture/similarity
+- まるで can appear alone in different contexts with different meanings
+
+---
+
 ## Session 343 - 2025-12-14
 
 ### ✅ Session Summary
