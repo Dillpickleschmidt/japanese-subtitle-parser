@@ -2151,9 +2151,59 @@ pub fn sasuga() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ことは〜が
+// Pattern: ことは〜が - "(A) is true, but (B)" / "although (A), (B)"
+// Structures: Word + ことは + Word(*) + が/けど/けれど/けども
+// (*) The same word is repeated before and after ことは
+// Note: This matcher cannot validate that the words are the same (would require state tracking)
+//       but it matches the structural pattern
 pub fn kotoha_u301c_ga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match こと (non-independent noun)
+    #[derive(Debug)]
+    struct KotoNounMatcher;
+    impl Matcher for KotoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match は (topic particle)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match が/けど/けれど/けども (conjunctive particles)
+    #[derive(Debug)]
+    struct GaKedoMatcher;
+    impl Matcher for GaKedoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "が" || token.surface == "けど"
+                || token.surface == "けれど" || token.surface == "けれども")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding word (verb, adjective, or noun)
+        TokenMatcher::Custom(Arc::new(KotoNounMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 3,
+            stop_conditions: vec![],
+        },  // Repeated word - 1 token for verbs/い-adj, 2-3 tokens for な-adj/noun (である, だ, etc.)
+        TokenMatcher::Custom(Arc::new(GaKedoMatcher)),
+    ]
 }
 
 // Pattern: 更に

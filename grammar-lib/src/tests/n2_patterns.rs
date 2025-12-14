@@ -1673,3 +1673,80 @@ mod kotonihanaranai_tests {
         assert_pattern_range(&patterns, "ことにはならない", 10, 21); // たいことにはなりません
     }
 }
+
+// ことは〜が - "(A) is true, but (B)" / "although (A), (B)"
+// Data source: grammar_points_data.json["ことは〜が"]
+mod kotoha_ga_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_repetition_ga() {
+        // Example: 漢字は読めることは読めるが、簡単な漢字しか読めないです
+        // Structure.standard[0]: "Verb + ことは + Verb(*) + が"
+        let sentence = "漢字は読めることは読めるが、簡単な漢字しか読めないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことは〜が");
+        assert_pattern_range(&patterns, "ことは〜が", 3, 13); // 読めることは読めるが
+    }
+
+    #[test]
+    fn test_verb_repetition_kedo() {
+        // Example with けど variant
+        // Structure.standard[0] with けど: "Verb + ことは + Verb(*) + けど"
+        let sentence = "食べることは食べるけど、あまり好きじゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことは〜が");
+        assert_pattern_range(&patterns, "ことは〜が", 0, 11); // 食べることは食べるけど
+    }
+
+    #[test]
+    fn test_i_adjective_repetition() {
+        // Example: 新しい家は広いことは広いけど、家具が多いから狭く見える
+        // Structure.standard[1]: "［い］Adjective + ことは + ［い］Adjective(*) + が"
+        let sentence = "新しい家は広いことは広いけど、家具が多いから狭く見える";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことは〜が");
+        assert_pattern_range(&patterns, "ことは〜が", 5, 14); // 広いことは広いけど
+    }
+
+    #[test]
+    fn test_na_adjective_repetition() {
+        // Example: このスマホは便利であることは便利であるけど、本体がデカすぎて片手では操作できない
+        // Structure.standard[2]: "［な］Adjective + であることは + ［な］Adjective(*) + である + けど"
+        let sentence = "このスマホは便利であることは便利であるけど、本体がデカすぎて片手では操作できない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことは〜が");
+        assert_pattern_range(&patterns, "ことは〜が", 9, 21); // あることは便利であるけど
+    }
+
+    #[test]
+    fn test_noun_repetition() {
+        // Example: ここは道路なことは道路だけど、狭すぎて車が通れない
+        // Structure.standard[3]: "Noun + なことは + Noun(*) + だ + けど"
+        let sentence = "ここは道路なことは道路だけど、狭すぎて車が通れない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことは〜が");
+        assert_pattern_range(&patterns, "ことは〜が", 5, 14); // なことは道路だけど
+    }
+
+    #[test]
+    fn test_verb_keredo() {
+        // Example with けれど variant
+        let sentence = "行くことは行くけれど、あまり気が進まない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことは〜が");
+        assert_pattern_range(&patterns, "ことは〜が", 0, 10); // 行くことは行くけれど
+    }
+}

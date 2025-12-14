@@ -7576,13 +7576,13 @@
   {
     "pattern_name": "ことは〜が",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことは～が is a set expression which indicates that 'while something is (A), also (B)' [6 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
