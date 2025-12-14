@@ -2492,3 +2492,78 @@ Noun + だけ(助詞/副助詞) + で/じゃ + [は optional] + なく(助動詞
 - Codebase clean
 - WIP tests for next pattern added but not yet implemented
 
+
+---
+
+## Session 304 - と同じくらい Pattern Implementation (N3)
+
+**Date:** 2025-12-14
+**Pattern:** と同じくらい (about the same as)
+**JLPT Level:** N3
+**Status:** ✅ Complete
+
+### Implementation Summary
+
+**Pattern Structure:**
+- Noun + と (格助詞) + 同じ (連体詞) + くらい/ぐらい (副助詞)
+- Meaning: "about the same as [Noun]", "approximately the same as"
+- Can be followed by の + Noun or に for adverbial usage
+
+**Matcher Implementation:**
+```rust
+// Custom matchers for:
+// 1. OnajiMatcher - matches 同じ (連体詞/adnominal)
+// 2. KuraiGuraiMatcher - matches くらい or ぐらい (助詞/副助詞)
+// Pattern: noun_matcher() + と + 同じ + くらい/ぐらい
+```
+
+**Key Implementation Details:**
+- Handles both くらい and ぐらい variants
+- Checks POS tags to ensure 同じ is 連体詞 (not other uses)
+- Checks that くらい/ぐらい is 助詞/副助詞 (adverbial particle)
+- Priority 1 (same as generic くらい ②, but gets higher confidence due to specificity)
+
+### Tests Added (5 total)
+
+All tests in `mod toonajikurai_tests`:
+
+1. **test_basic_toonajikurai** - Noun + と同じぐらい
+   - Sentence: "彼のパソコンはプリンターと同じぐらい大きい"
+   - Range: [7, 18] = "プリンターと同じぐらい"
+
+2. **test_toonajikurai_kuraivariant** - くらい variant
+   - Sentence: "先生、昨日と同じくらい痛いです"
+   - Range: [3, 11] = "昨日と同じくらい"
+
+3. **test_toonajikurai_no_noun** - With の + Noun modifier
+   - Sentence: "あの人は車と同じぐらいのスピードで走れる"
+   - Range: [4, 11] = "車と同じぐらい"
+
+4. **test_toonajikurai_complex** - Complex clause example
+   - Sentence: "今飼っている犬と同じぐらいのサイズのワンチャンが欲しいです"
+   - Range: [6, 13] = "犬と同じぐらい"
+
+5. **test_toonajikurai_ni** - With に (adverbial usage)
+   - Sentence: "あの女の人はお母さんと同じぐらいに見えた"
+   - Range: [6, 16] = "お母さんと同じぐらい"
+
+**Test Quality:**
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences (not textbook examples)
+- Cover all major structural variants from grammar_points_data.json
+- Correct character ranges verified for all variants
+
+### Session Statistics
+- **Session time:** ~40 minutes
+- **Patterns completed:** 1 (と同じくらい)
+- **Tests success rate:** 5/5 (100%)
+- **Total passing tests:** 1948 (was 1943, +5)
+- **Files modified:** 3 (matchers/n3.rs, tests/n3_patterns.rs, feature_list.json)
+- **Commits:** 1 (complete pattern implementation)
+
+### Environment Status
+- All 1948 tests passing
+- No regressions
+- Codebase clean
+- Ready for next pattern
