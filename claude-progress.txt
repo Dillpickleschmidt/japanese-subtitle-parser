@@ -1,12 +1,12 @@
 ## Session 217 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N4 pattern
-**Patterns completed**: 1 (そういう)
-**Tests added**: 4 (all passing)
-**Total tests**: 1413 (was 1409)
+**Status**: COMPLETE - Successfully implemented 2 N4 patterns
+**Patterns completed**: 2 (そういう, そんな・こんな・あんな・どんな)
+**Tests added**: 8 total (4 for そういう + 4 for そんな family, all passing)
+**Total tests**: 1417 (was 1409)
 
-### Pattern Implemented: そういう (like that, that kind of)
+### Pattern 1: そういう (like that, that kind of)
 
 **JLPT Level**: N4
 **Category**: Construction
@@ -55,20 +55,67 @@
 9. ✅ Updated feature_list.json
 10. ✅ Committed changes with detailed commit message
 
-### Statistics
-- **Session time**: ~45 minutes
-- **Patterns completed this session**: 1
-- **Test success rate**: 4/4 (100%)
-- **Total passing tests**: 1413
+### Pattern 2: そんな・こんな・あんな・どんな (like that/this, what kind of)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: そんな/こんな/あんな/どんな demonstratives (pre-noun adjectivals)
+
+**Structures tested**: 4 tests
+1. そんな言い方してはいけません → そんな (0-3)
+2. こんな高いものはもらえないよ → こんな (0-3)
+3. あんな大人にはなりたくない → あんな (0-3)
+4. どんな靴が欲しい？ → どんな (0-3)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 1944-1964)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 4998-5046)
+- Pattern detects: こそあど demonstratives + な pattern
+
+**Tokenization behavior**:
+- All 4 forms tokenize as single tokens (連体詞)
+- Simpler than そういう (no two-token variants like ああいう)
+
+**Matcher components**:
+- SonnaMatcher - Single custom matcher checking:
+  - pos[0] == "連体詞"
+  - base_form in ["そんな", "こんな", "あんな", "どんな"]
+
+**Key characteristics**:
+- Part of こそあど言葉 demonstrative family
+- Abbreviations from そのような, このような, あのような, どのような
+- Means "like that/this, that/this kind of, what kind of"
+- Modifies following noun (pre-noun adjectival)
+- Casual conversational forms
+
+**Workflow followed**:
+1. ✅ Checked for existing stub function (found at line 1944)
+2. ✅ Read grammar_points_data.json for structure variants (4 standard forms)
+3. ✅ Wrote 4 tests with print_debug() for all variants
+4. ✅ Analyzed tokenization - confirmed all are single tokens
+5. ✅ Implemented simple custom matcher
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug() and added proper assertions
+8. ✅ Verified all 1417 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes with detailed commit message
+
+### Session Statistics
+- **Session time**: ~1.5 hours
+- **Patterns completed this session**: 2
+- **Test success rate**: 8/8 (100%)
+- **Total passing tests**: 1417
 - **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
 
 ### Next Session Recommendations
-1. **Continue with N4 demonstrative patterns**: こんな/そんな/あんな/どんな (similar pattern)
-2. **Alternative N4 patterns**: そう (hearsay), そうに・そうな, etc.
-3. **Pattern complexity**: Keep working on priority 2 N4 patterns
+1. **Continue with N4 patterns**: Many demonstratives and simple patterns remain
+2. **Good candidates**: そう (hearsay), そうに・そうな, etc.
+3. **Pattern complexity**: Continue with priority 2 N4 patterns
 
 ### Environment Status
-- ✅ All 1413 tests passing
+- ✅ All 1417 tests passing
 - ✅ No regressions
 - ✅ Clean git state (all changes committed)
 - ✅ feature_list.json updated
