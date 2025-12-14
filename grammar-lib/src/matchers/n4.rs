@@ -1315,9 +1315,27 @@ pub fn sa() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とか～とか
+// Pattern: とか～とか (things like... and...)
+// Structures: Verb/Adj/Noun + とか (+ Verb/Adj/Noun + とか)*
+// Listing particle for non-exhaustive examples
 pub fn toka_uff5e_toka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for とか as 助詞/並立助詞 (coordinating particle)
+    #[derive(Debug)]
+    struct TokaParticleMatcher;
+    impl Matcher for TokaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "とか"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "並立助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Any word (verb, noun, adjective)
+        TokenMatcher::Custom(Arc::new(TokaParticleMatcher)),
+    ]
 }
 
 // Pattern: そういう

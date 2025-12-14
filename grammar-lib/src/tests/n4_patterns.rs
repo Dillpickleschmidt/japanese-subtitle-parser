@@ -7970,3 +7970,63 @@ mod tokangaerareteiru_tests {
         assert_pattern_range(&patterns, "とかんがえられている", 9, 18); // とおもわれています
     }
 }
+
+// Pattern: とか～とか (things like... and...)
+// Data source: grammar_points_data.json["とか～とか"]
+// Testing: Listing particle for non-exhaustive examples
+//
+// Structures:
+//   - standard[0]: Verb (A) + とか + Verb (B) + （とか）
+//   - standard[1]: Adjective (A) + (だ) + とか + Adjective (B) + (だ) + （とか）
+//   - standard[2]: Noun (A) + とか + Noun (B) + （とか）
+mod toka_uff5e_toka_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb (A) + とか + Verb (B) + （とか）"
+    #[test]
+    fn test_verb_listing() {
+        let sentence = "健康のために野菜を食べるとか水を飲むとかをしています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とか～とか");
+        // Multiple instances detected: 食べるとか and 飲むとか
+        assert_pattern_range(&patterns, "とか～とか", 9, 14); // 食べるとか
+    }
+
+    // Testing: structure.standard[2] - "Noun (A) + とか + Noun (B) + （とか）"
+    #[test]
+    fn test_noun_listing_two_items() {
+        let sentence = "亀とかすっぽんとかは美味しいんですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とか～とか");
+        // Multiple instances detected: すっぽんとか (first in list) and 亀とか
+        assert_pattern_range(&patterns, "とか～とか", 3, 9); // すっぽんとか (first match)
+    }
+
+    // Testing: structure.standard[2] - "Noun (A) + とか + Noun (B) + とか + Noun (C) + とか"
+    #[test]
+    fn test_noun_listing_multiple_items() {
+        let sentence = "かぼちゃとかサツマイモとか白菜とかシイタケが入っている鍋が好き";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とか～とか");
+        // Multiple instances detected, checking first one found
+        assert_pattern_range(&patterns, "とか～とか", 6, 13); // サツマイモとか (first match)
+    }
+
+    // Testing: structure.standard[2] - "Noun (A) + とか"
+    // Last item can omit とか - single とか usage
+    #[test]
+    fn test_noun_single_toka() {
+        let sentence = "たとえば、ドイツとかは？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とか～とか");
+        assert_pattern_range(&patterns, "とか～とか", 5, 10); // ドイツとか
+    }
+}
