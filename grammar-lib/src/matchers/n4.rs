@@ -6653,9 +6653,38 @@ pub fn kashira() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(KashiraMatcher))]
 }
 
-// Pattern: らしい ②
+// Pattern: らしい ② (typical of, characteristic)
+// Structures: Noun + らしい, Noun + らしく + Phrase, Noun + らしい + Noun
+//
+// This pattern matches the い-adjective usage of らしい meaning "typical of" or "befitting".
+// Unlike らしい ① (auxiliary verb for hearsay), this specifically matches:
+// 1. Compound adjectives tokenized as single い-Adjective: 男らしい, 女らしい, 春らしい
+// 2. The auxiliary verb form when used to express characteristic (same tokenization as らしい ①)
+//
+// Key distinction:
+// - らしい ① (助動詞): Hearsay/conjecture - "apparently", "seems like" (based on evidence)
+// - らしい ② (形容詞 or 助動詞): Characteristic - "typical of", "befitting", "like"
+//
+// Note: When らしい appears as 助動詞 after a noun, it's structurally identical to らしい ①.
+// Only the semantic meaning differs. This pattern focuses on capturing the compound adjective
+// forms (形容詞/自立) which are unambiguously らしい ②.
 pub fn rashii_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for い-Adjective compounds ending in らしい (e.g., 男らしい, 女らしい, 春らしい)
+    #[derive(Debug)]
+    struct RashiiAdjMatcher;
+    impl Matcher for RashiiAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match い-Adjectives where base_form ends with らしい
+            // This catches compound adjectives like 男らしい (manly), 女らしい (ladylike)
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.base_form.ends_with("らしい")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(RashiiAdjMatcher))]
 }
 
 // Pattern: にみえる (appears/looks like)

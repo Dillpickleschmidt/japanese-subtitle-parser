@@ -10539,3 +10539,95 @@ mod rashii_u2460_tests {
     }
 }
 
+// Pattern: らしい ② (typical of, characteristic)
+// Data source: grammar_points_data.json["らしい ②"]
+// This is the い-adjective usage meaning "typical of" or "befitting"
+//
+// IMPORTANT DISTINCTION:
+// らしい ① (助動詞): Hearsay/conjecture - "apparently", "seems like"
+// らしい ② (形容詞): Characteristic - "typical of", "befitting", "like"
+//
+// TOKENIZATION PATTERNS:
+// 1. Compound adjectives (UNAMBIGUOUS らしい ②):
+//    - 男らしい → Single token 形容詞/自立, base=男らしい
+//    - 女らしい → Single token 形容詞/自立, base=女らしい
+//    - 子供らしい → Single token 形容詞/自立, base=子供らしい
+//
+// 2. Auxiliary verb form (AMBIGUOUS - could be ① OR ②):
+//    - お兄ちゃんらしく → Noun + 助動詞(base=らしい)
+//    - １０月らしい → Noun + 助動詞(base=らしい)
+//    - These are structurally identical to らしい ① (hearsay)
+//    - Only semantic context distinguishes them
+//
+// This pattern ONLY matches compound adjectives (形容詞/自立 ending in らしい).
+// For auxiliary verb forms, see らしい ① pattern.
+mod rashii_u2461_tests {
+    use super::*;
+
+    // Testing: Compound adjective form - "男らしい"
+    // This is UNAMBIGUOUSLY らしい ② (characteristic)
+    // Tokenized as single 形容詞/自立 token
+    #[test]
+    fn test_rashii_u2461_compound_adj_predicate() {
+        let sentence = "トムは本当に男らしいね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "らしい ②");
+        assert_pattern_range(&patterns, "らしい ②", 6, 10); // 男らしい
+    }
+
+    // Testing: Compound adjective form - "女らしい" (negative)
+    // Example from grammar_points_data.json showing negative form
+    #[test]
+    fn test_rashii_u2461_compound_adj_negative() {
+        let sentence = "彼女は女らしくない人だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "らしい ②");
+        assert_pattern_range(&patterns, "らしい ②", 3, 9); // 女らしくない
+    }
+
+    // TODO: UNDETECTABLE - Auxiliary verb forms are ambiguous
+    //
+    // The following structures use らしい as 助動詞 (auxiliary verb), which is
+    // structurally IDENTICAL to らしい ① (hearsay/conjecture). Only semantic
+    // context can distinguish whether it means "apparently" or "typical of".
+    //
+    // Examples:
+    // - "お兄ちゃんらしくしなさい" → Noun + らしく(助動詞)
+    //   Could mean: "act like an older brother" (characteristic) ← らしい ②
+    //   Or: "apparently act like an older brother" (hearsay) ← らしい ①
+    //
+    // - "１０月らしい天気" → Noun + らしい(助動詞)
+    //   Could mean: "October-like weather" (characteristic) ← らしい ②
+    //   Or: "apparently October weather" (hearsay) ← らしい ①
+    //
+    // - "８月らしくないです" → Noun + らしく(助動詞) + ない + です
+    //   Could mean: "not typical of August" (characteristic) ← らしい ②
+    //   Or: "apparently not August" (hearsay) ← らしい ①
+    //
+    // When detecting Noun + らしい(助動詞), the system should show BOTH
+    // grammar point explanations (らしい ① and らしい ②) and let users
+    // determine the meaning from context.
+    //
+    // #[test]
+    // fn test_rashii_u2461_auxiliary_adverbial() {
+    //     let sentence = "タケル君はもうお兄ちゃんなので、お兄ちゃんらしくしなさい！";
+    //     // お兄ちゃん (Noun) + らしく (助動詞, base=らしい)
+    // }
+    //
+    // #[test]
+    // fn test_rashii_u2461_auxiliary_attributive() {
+    //     let sentence = "やっと１０月らしい天気になったね";
+    //     // １０月 (Noun) + らしい (助動詞, base=らしい)
+    // }
+    //
+    // #[test]
+    // fn test_rashii_u2461_auxiliary_negative() {
+    //     let sentence = "今日は８月らしくないです。涼しいです。";
+    //     // ８月 (Noun) + らしく (助動詞) + ない + です
+    // }
+}
+
