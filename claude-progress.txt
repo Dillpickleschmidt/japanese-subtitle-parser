@@ -1,10 +1,77 @@
 ## Session 318 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully completed 1 N2 pattern
-**Patterns completed**: 1 (ことだから)
-**Tests added**: 6 (all passing)
-**Total tests**: 2024 passing, 1 ignored (was 2018 passing, 1 ignored)
+**Status**: COMPLETE - Successfully completed 2 N2 patterns
+**Patterns completed**: 2 (ことだから, ことになっている)
+**Tests added**: 10 (all passing)
+**Total tests**: 2028 passing, 1 ignored (was 2018 passing, 1 ignored)
+
+### ✅ Pattern Completed: ことになっている (it is expected / scheduled to)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: ことになっている is an alternation of ことになる (something has been decided by someone other than the speaker). It combines the nominalizing use of こと, the particle に, and the ている-form of the verb なる (to become). The primary difference from ことになる is that ことになっている focuses more on something being 'expected to (A)' or 'scheduled to (A)' - it is 'becoming that (A)' but has not actually happened yet.
+
+**Structures tested**: 4 comprehensive tests covering all variants
+1. Verb[る] + ことになっています (scheduled): 授業は12時から始まることになっています (The class is scheduled to start at 12)
+2. Verb[ない] + ことになっています (scheduled not to): 社長は来週の飲み会に参加しないことになっています (The president is scheduled to not come to the party next week)
+3. Verb[る] + ことになっている (expected habit): タクシーは左から乗ることになっている (It is expected for customers to get into the cab from the left side)
+4. Verb[ない] + ことになっている (expected not to): 生徒たちは授業中に教室を出れないことになっている (Students are expected to not leave the classroom during class)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n2.rs (kotoninatteiru, lines 1928-1998)
+- Tests: grammar-lib/src/tests/n2_patterns.rs (kotoninatteiru_tests module, lines 1539-1599)
+- Pattern: grammar-lib/src/patterns.rs (Kotoninatteiru, line 5698)
+
+**Tokenization pattern**:
+```
+Standard form (ことになっている):
+- こと (名詞/非自立/一般) - noun
+- に (助詞/格助詞/一般) - case-marking particle
+- なっ (動詞/自立, base='なる', 連用タ接続) - verb in conjunctive form
+- て (助詞/接続助詞) - conjunctive particle
+- い (動詞/非自立, base='いる', 連用形) - auxiliary verb
+
+Polite form (ことになっています):
+- こと + に + なっ + て + い (same as above)
+- ます (助動詞, 特殊・マス, 基本形) - polite auxiliary
+  (Note: ます is matched by the ている pattern, not by this pattern)
+```
+
+**Key implementation points**:
+1. KotoMatcher checks こと as 名詞/非自立
+2. NiMatcher checks に as 助詞/格助詞
+3. NaruMatcher checks なる (any conjugation) as 動詞
+4. TeMatcher checks て as 助詞/接続助詞
+5. IruMatcher checks いる as 動詞/非自立
+6. Pattern matches exactly 5 tokens: こと + に + なっ + て + い
+7. The ます suffix is matched by overlapping ている pattern (not this pattern)
+8. Works with both る-form and ない-form verbs
+
+**Pattern ranges**: Include full construction (こと + に + なっている/います)
+- Example: "ことになっています" (chars 11-20) - polite, after る-verb
+- Example: "ことになっています" (chars 15-24) - polite, after ない-verb
+- Example: "ことになっている" (chars 10-18) - standard, after る-verb
+- Example: "ことになっている" (chars 16-24) - standard, after ない-verb
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both scheduled and expected meanings
+- Cover both る-form and ない-form verbs
+- Cover both standard and polite forms
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern has two main uses:
+1. **Scheduled to (A)**: Indicates something is planned or arranged to happen (or not happen) in the future. The decision was made externally, not by the speaker.
+2. **Expected to (A)**: Indicates habitual or ongoing expectations that reoccur under specific conditions. This use expresses rules, customs, or norms.
+
+The ている form emphasizes that the state of "becoming (A)" is ongoing - the schedule or expectation is currently in effect, though the actual event may be in the future or recurring. This distinguishes it from ことになる which simply states "it has been decided that (A)".
+
+---
 
 ### ✅ Pattern Completed: ことだから (it is exactly because / precisely because)
 
