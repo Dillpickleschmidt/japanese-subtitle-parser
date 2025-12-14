@@ -1,3 +1,83 @@
+## Session 326 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (～は～で有名)
+**Tests added**: 6 (all passing)
+**Total tests**: 2081 passing, 1 ignored (was 2075 passing, 1 ignored)
+
+### ✅ Pattern Completed: ～は～で有名 (famous for / renowned for)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (in feature_list.json), 1 (in patterns.rs - low priority, not highlighted)
+
+**Pattern**: ～は～で有名 is a common expression used to describe what certain things or places are famous for. It translates as "(A) is famous for (B)" and is constructed from the adverbial particle は, the case-marking particle で (meaning "with" or "by means of"), and 有名 (famous/renowned), which can be used as a noun or な-adjective.
+
+**Structures tested**: 6 comprehensive tests covering all structure variants
+1. Verb + こと + で + 有名: ウサイン・ボルトは速く走れることでゆうめいです (Usain Bolt is famous for being able to run fast)
+2. い-Adjective + こと + で + 有名: この学校は野球が強いことでゆうめいです (This school is famous for having a strong baseball team)
+3. な-Adjective + な + こと + で + 有名: 日本は安全なことでゆうめいです (Japan is famous for being safe)
+4. Noun + で + 有名: 岡山は備前焼でゆうめいです (Okayama is famous for Bizen-yaki)
+5. Verb + の + で + 有名: あの選手は速く走れるのでゆうめいだ (That athlete is famous for being able to run fast)
+6. い-Adjective + の + で + 有名: この町は景色が美しいので有名です (This town is famous for its beautiful scenery)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (uff5e_ha_uff5e_deyuumei, lines 1849-1910)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (deyuumei_tests module, lines 9692-9772)
+- Pattern: grammar-lib/src/patterns.rs (Uff5eHaUff5eDeyuumei, lines 3016-3022)
+
+**Tokenization patterns**:
+```
+Two main tokenization forms:
+
+1. Hiragana form (ゆうめい):
+   - で/ので (particle)
+   - ゆう (動詞/自立, base='ゆう', 五段・ワ行促音便) - verb
+   - めい (名詞/一般) - noun
+   - です/だ (助動詞) - copula
+
+2. Kanji form (有名):
+   - で/ので (particle)
+   - 有名 (名詞/形容動詞語幹) - na-adjective stem
+   - です/だ (助動詞) - copula
+
+Key particle forms:
+- で (助詞/格助詞/一般) - case-marking particle "with/by means of"
+- ので (助詞/接続助詞) - merged form of の + で (nominalizer + particle)
+```
+
+**Key implementation points**:
+1. DeOrNodeMatcher handles both で (格助詞) and ので (接続助詞)
+2. YuuOrYuumeiMatcher handles both ゆう (verb, hiragana) and 有名 (na-adjective stem, kanji)
+3. MeiNounMatcher is optional (only needed for hiragana ゆうめい split into ゆう+めい)
+4. Pattern structure: Any + で/ので + ゆう/有名 + optional めい
+5. TokenMatcher::Any allows any preceding token (こと, の, or a noun)
+
+**Pattern ranges**: Include full construction (preceding element + で/ので + 有名)
+- こと variants: "ことでゆうめいです" (14-23), "ことでゆうめいです" (10-19), "ことでゆうめいです" (6-15)
+- Noun variant: "備前焼でゆうめいです" (3-13)
+- の variants: "走れるのでゆうめいだ" (7-17), "美しいので有名です" (7-16)
+
+**Test Quality**:
+- All 6 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: Verb+こと, い-Adj+こと, な-Adj+こと, Noun, Verb+の, い-Adj+の
+- Test both hiragana (ゆうめい) and kanji (有名) forms
+- Test both で and ので particle forms
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern literally means "with (B), (A) is famous/renowned". The で particle marks the means or reason for the fame. When こと or の precedes で, it nominalizes the entire phrase (verb/adjective clause) to describe what the subject is famous for.
+
+**Technical Note**: The interesting tokenization challenge is that ので can be either:
+1. The merged particle の + で (nominalizer + case-marker)
+2. Two separate tokens in some contexts
+
+Our matcher handles both by checking for ので as a single 接続助詞 token. When Kagome splits it as の + で, the の is not included in the pattern match - we only match starting from で.
+
+---
+
 ## Session 325 - 2025-12-14
 
 ### ✅ Session Summary
