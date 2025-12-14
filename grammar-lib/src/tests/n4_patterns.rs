@@ -11249,3 +11249,57 @@ mod ijou_1_tests {
     }
 }
 
+// Pattern: ～ない～はない (double negative - there isn't an X that doesn't Y)
+// Data source: grammar_points_data.json["～ない～はない"]
+// Testing structures:
+//   - standard[0]: Verb[ない] + Noun + は + ない
+//   - standard[1]: い-Adjective[ない] + Noun + は + Verb[ない]
+//   - standard[2]: な-Adjective + じゃない/ではない + Noun + は + Verb[ない]
+mod nai_wa_nai_tests {
+    use super::*;
+
+    // Test: structure.standard[0] - Verb[ない] + Noun + は + ない (potential verb)
+    #[test]
+    fn test_verb_negative_noun_wa_nai() {
+        let sentence = "彼には弾けない曲はない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ない～はない");
+        assert_pattern_range(&patterns, "～ない～はない", 5, 11); // ない曲はない
+    }
+
+    // Test: structure.standard[1] - い-Adjective[ない] + Noun + は + Verb[ない]
+    #[test]
+    fn test_i_adj_negative_noun_wa_nai() {
+        let sentence = "私は美味しくない食べ物は食べない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ない～はない");
+        assert_pattern_range(&patterns, "～ない～はない", 6, 16); // ない食べ物は食べない
+    }
+
+    // Test: structure.standard[1] - い-Adjective[ない] + Noun + は + Verb[ない]
+    #[test]
+    fn test_i_adj_negative_noun_wa_nai_2() {
+        let sentence = "彼は安くない靴は買わない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ない～はない");
+        assert_pattern_range(&patterns, "～ない～はない", 4, 12); // ない靴は買わない
+    }
+
+    // Test: structure.standard[0] - Verb[ない] + Noun + は + ない (potential verb)
+    #[test]
+    fn test_potential_negative() {
+        let sentence = "私には書けない漢字はない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ない～はない");
+        assert_pattern_range(&patterns, "～ない～はない", 5, 12); // ない漢字はない
+    }
+}
+

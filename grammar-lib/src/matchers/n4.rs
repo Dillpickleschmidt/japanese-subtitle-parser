@@ -3644,9 +3644,44 @@ pub fn uff5e_ha_uff5e_nohitotsuda() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ～ない～はない
+// Pattern: ～ない～はない (double negative - there isn't X that doesn't Y)
+// Structures: [Verb/Adj + ない] + Noun + は + [Verb/Adj + ない]
 pub fn uff5e_nai_uff5e_hanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ない (either as auxiliary or adjective)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Match は particle (係助詞)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl super::Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),        // First ない
+        super::noun_matcher(),                             // Noun
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)), // は
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 2,
+            stop_conditions: vec![],
+        }, // Optional verb/adjective stem (0-2 tokens)
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),        // Second ない
+    ]
 }
 
 // Pattern: すこしも～ない (not even a little)
