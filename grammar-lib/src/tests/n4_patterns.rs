@@ -10106,3 +10106,86 @@ mod hotondo_tests {
     }
 }
 
+// Pattern: ように (so that, in order to)
+// Data source: grammar_points_data.json["ように"]
+// Testing structures:
+//   - standard[0]: Verb[る] + ように + Phrase
+//   - standard[1]: Verb[できる] + ように + Phrase
+//   - standard[2]: Verb[ない] + ように + Phrase
+//   - standard[3]: Verb[できる][ない] + ように + Phrase
+mod youni_tests {
+    use super::*;
+
+    #[test]
+    fn test_youni_affirmative_verb() {
+        // Testing: Verb[ない] + ように + Phrase
+        // Using example from grammar_points_data.json
+        let sentence = "お母さんから離れないように手をつなぐ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように");
+        assert_pattern_range(&patterns, "ように", 6, 13); // 離れないように
+    }
+
+    #[test]
+    fn test_youni_potential_verb() {
+        // Testing: Verb[できる] + ように + Phrase
+        // Using example from grammar_points_data.json
+        let sentence = "日本語をペラペラに話せるように毎日近所の人と日本語で話しをしている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように");
+        assert_pattern_range(&patterns, "ように", 9, 15); // 話せるように
+    }
+
+    #[test]
+    fn test_youni_negative_verb() {
+        // Testing: Verb[ない] + ように + Phrase (with potential form)
+        // Using example from grammar_points_data.json
+        let sentence = "泥棒が入れないように家のカギを閉める。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように");
+        assert_pattern_range(&patterns, "ように", 3, 10); // 入れないように
+    }
+
+    #[test]
+    fn test_youni_dekiru_affirmative() {
+        // Testing: できる + ように + Phrase
+        // Using example from grammar_points_data.json
+        let sentence = "勉強ができるように机の上を掃除した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように");
+        assert_pattern_range(&patterns, "ように", 3, 9); // できるように
+    }
+
+    #[test]
+    fn test_youni_dekiru_potential() {
+        // Testing: できる + ように + Phrase (kanji variant)
+        // Using example from grammar_points_data.json
+        let sentence = "平日にスキーが出来るように仕事を休んだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように");
+        assert_pattern_range(&patterns, "ように", 7, 13); // 出来るように
+    }
+
+    #[test]
+    fn test_youni_potential_dance() {
+        // Testing: Verb[できる] + ように + Phrase
+        // Using example from grammar_points_data.json
+        let sentence = "マイケルジャクソンみたいに踊れるように毎日ダンスの練習をする。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように");
+        assert_pattern_range(&patterns, "ように", 13, 19); // 踊れるように
+    }
+}
+

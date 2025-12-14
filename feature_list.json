@@ -3698,13 +3698,13 @@
   {
     "pattern_name": "ように",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When partnered with verbs in the potential form, or in the negative form, the auxiliary verb ようだ (in its adverbial fo... [4 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
