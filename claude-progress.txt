@@ -1,3 +1,114 @@
+## Session 250 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (とおもう - I think that)
+**Tests added**: 7 (all passing)
+**Total tests**: 1641 (was 1634)
+
+### Pattern Implemented: とおもう (I think that)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: Expresses the speaker's opinion or thought about something. The quotative particle と marks the preceding clause as the content of the thought, followed by おもう/思う (to think). This is one of the most fundamental quotative patterns in Japanese.
+
+**Structures tested**: 7 tests covering all main structure variants
+1. Verb + とおもう: 遅れるとおもう (I think I'll be late)
+2. い-Adjective + とおもう: 酷いとおもう (I think it's harsh)
+3. な-Adjective + だ + とおもう: 綺麗だとおもう (I think she's pretty)
+4. Noun + だ + とおもう: フランス語だとおもう (I think it's French)
+5. Verb + とおもいます (polite): 降るとおもいます (I think it will rain)
+6. Verb + と思っている (progressive): 賢いと思っている (he thinks he's smart)
+7. な-Adjective + とおもう (casual, no だ): 安全とおもう (I think it's safe)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (toomou, lines 1088-1117)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (toomou_tests, lines 7715-7803)
+- Pattern: grammar-lib/src/patterns.rs (Toomou)
+
+**Tokenization pattern**:
+```
+と (助詞/格助詞/引用) - quotation particle
++ おもう/思う (動詞, any conjugation) - verb "to think"
+```
+
+**Key implementation points**:
+1. Two custom matchers with specific POS checks:
+   - ToQuotationMatcher: と as 助詞/格助詞/引用
+   - OmouVerbMatcher: base_form is "おもう" OR "思う" (handles both hiragana and kanji)
+2. Matches all conjugations automatically (おもう, おもいます, 思っ, etc.)
+3. Pattern range: とおもう (core pattern)
+   - Automatically extends to include ます (polite): とおもいます
+   - For progressive form (と思っている), detects core と思っ
+4. Works with any preceding content (verbs, adjectives, nouns with/without だ)
+
+**Test Quality**:
+- All sentences are realistic, natural Japanese from grammar_points_data.json
+- Cover both standard and polite forms
+- Test both hiragana (おもう) and kanji (思う) variants
+- Include progressive form (expressing ongoing/habitual thought or someone else's thought)
+- Include casual na-adjective form without だ (common in spoken Japanese)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Handling both hiragana (おもう) and kanji (思う) base forms
+2. Understanding that the pattern detects the core と + verb, with automatic extension for auxiliaries
+3. Recognizing that the progressive form (と思っている) is detected at the core level (と思っ)
+4. Supporting casual speech variant where だ is omitted after な-adjectives
+
+**Tokenization Discovery**:
+The verb おもう can appear in various conjugations:
+- Base form: おもう (動詞/基本形)
+- Polite: おもい (動詞/連用形) + ます (助動詞)
+- Progressive: 思っ (動詞/連用タ接続) + て + いる
+- The base_form can be either "おもう" (hiragana) or "思う" (kanji)
+
+**Pattern Relationship with Other Patterns**:
+- Core quotative と pattern - foundation for many N4 constructions
+- Related patterns to implement next:
+  - といわれている (it is said that)
+  - ときいた (I heard that)
+  - とされている (it is considered that)
+
+### Session Statistics
+- **Session time**: Approximately 40 minutes
+- **Patterns completed this session**: 1 (とおもう)
+- **Test success rate**: 7/7 (100%)
+- **Total passing tests**: 1641 (up from 1634)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 quotative と patterns**:
+   - といわれている (it is said that) - passive construction
+   - ときいた (I heard that) - hearsay
+   - とされている (it is considered that) - formal passive
+   - とかんがえられている (it is thought that) - formal consideration
+2. **Pattern focus**: More quotative constructions with passive and formal verbs
+
+### Environment Status
+- All 1641 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+
+**Quotative Particle と**:
+This session continued the quotative と pattern series. The と particle marks the preceding clause as quoted content - in this case, the content of thought. This is distinguished from other uses of と:
+- Quotative (とおもう): marks thought content
+- Conditional (と): if/when (different pattern)
+- "With" particle (と): accompaniment (different pattern)
+
+**Base Form Variations**:
+Japanese verbs can have different base_form representations:
+- Hiragana: おもう (common in casual/modern text)
+- Kanji: 思う (common in formal/literary text)
+Both must be handled in matchers to ensure complete coverage.
+
 ## Session 249 - 2025-12-14
 
 ### ✅ Session Summary
