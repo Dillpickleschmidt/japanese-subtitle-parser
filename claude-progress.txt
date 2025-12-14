@@ -1767,3 +1767,106 @@ This pattern follows the passive quotative structure:
 - といわれている: "it is said" (emphasizes verbal/hearsay aspect)
 - とされている: "it is considered/regarded as" (emphasizes formal judgment/classification)
 - Both use same grammatical structure: と + Verb[passive] + ている
+
+---
+
+## Session 267: にみえる Pattern Implementation (N4)
+
+**Date**: 2025-12-14
+**Pattern**: にみえる (appears/looks like)
+**JLPT Level**: N4
+**Status**: ✅ Complete
+
+### Implementation Summary
+
+Successfully implemented the にみえる pattern, which expresses how something appears or looks.
+
+**Pattern Structure**:
+- Verb + ように + みえる (looks like it's [verbing])
+- い-Adjective + そうに + みえる (looks [adjective])
+- な-Adjective + そうに + みえる (looks [adjective])
+- Noun + に + みえる (looks like [noun])
+- Noun + のように + みえる (looks like [noun])
+
+**Key Implementation Details**:
+
+1. **Matcher Design** (`matchers/n4.rs`):
+   - `NounOrYouSouMatcher`: Matches よう/そう (auxiliary verb stems) OR regular nouns
+   - `NiParticleMatcher`: Matches に particle (either 副詞化 or 格助詞)
+   - `MieruVerbMatcher`: Matches みえる/見える verb (to appear/be visible)
+
+2. **Tokenization Patterns**:
+   - よう: 名詞/非自立/助動詞語幹
+   - そう: 名詞/接尾/助動詞語幹
+   - に (after よう/そう): 助詞/副詞化
+   - に (after noun): 助詞/格助詞
+   - みえる: 動詞/自立
+
+3. **Pattern Flexibility**:
+   - Handles both auxiliary verb stems (よう/そう) and direct noun patterns
+   - Supports all conjugations of みえる (みえる, みえます, みえた, etc.)
+
+### Test Coverage
+
+Implemented 6 comprehensive tests covering all structure variants:
+
+1. **test_verb_you_ni_mieru**: "サムの泳ぎ方は溺れているようにみえる"
+   - Range: [12-18] = 'ようにみえる'
+   
+2. **test_i_adj_sou_ni_mieru**: "寒そうにみえるけど、大丈夫？"
+   - Range: [1-7] = 'そうにみえる'
+   
+3. **test_na_adj_sou_ni_mieru**: "あの仕事は大変そうにみえる"
+   - Range: [7-13] = 'そうにみえる'
+   
+4. **test_noun_ni_mieru_direct**: "あの雲はアイスクリームにみえる"
+   - Range: [4-15] = 'アイスクリームにみえる'
+   
+5. **test_noun_you_ni_mieru**: "一人で暗い所にいるとなんでも顔のようにみえる"
+   - Range: [16-22] = 'ようにみえる'
+   
+6. **test_you_ni_miemasu_polite**: "溺れているようにみえますが、大丈夫ですか？"
+   - Range: [5-12] = 'ようにみえます'
+
+### Session Statistics
+
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1 (にみえる)
+- **Test success rate**: 6/6 (100%)
+- **Total passing tests**: 1727 (up from 1721)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Technical Notes
+
+**Pattern Ranges**:
+The pattern captures different ranges depending on context:
+- よう/そう patterns: Include the auxiliary verb stem + に + みえる
+- Direct noun patterns: Include the noun + に + みえる
+- This ensures the full grammatical construction is captured
+
+**Distinction from Basic 見える**:
+The pattern specifically targets the grammatical construction "に + みえる" meaning "appears/looks like", distinct from basic visual perception uses of 見える (to be visible).
+
+**Related Patterns**:
+- そうに・そうな (already implemented) - appearance/likelihood
+- ように・ような (needs implementation) - similarity/manner
+- とみえる (already implemented) - inference/deduction
+
+### Next Session Recommendations
+
+Continue with remaining N4 patterns in priority order:
+
+1. **のなかで** - among/within
+2. **のように・のような** - like/similar to
+3. **はずがない** - cannot be/there's no way
+4. **はずだ** - should be/must be
+5. **ば** - conditional if
+
+### Environment Status
+
+- All 1727 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
