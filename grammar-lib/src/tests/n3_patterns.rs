@@ -6873,6 +6873,62 @@ mod tohakagiranai_tests {
     }
 }
 
+// Pattern: にかけて (from A to B, throughout A)
+// Data source: grammar_points_data.json["にかけて"]
+// Testing: structure.standard[0] - "Noun + にかけて(は)"
+//
+// Pattern meaning: "over a period of time", "from (A) until (B)", "all through (A)"
+// Coming from 掛ける (to suspend), indicates something ongoing over a period
+// Primarily used in written language and news (weather patterns)
+//
+// Structures to test:
+//   - standard[0]: Noun + から + Noun + にかけて (time range)
+//   - standard[0]: Noun + にかけて (single point extending)
+//   - standard[0]: Noun + にかけては (with は particle - "limited to")
+mod nikakete_tests {
+    use super::*;
+
+    #[test]
+    fn test_nikakete_time_range() {
+        let sentence = "今夜から朝にかけて大雨が降るでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかけて");
+        assert_pattern_range(&patterns, "にかけて", 5, 9); // にかけて
+    }
+
+    #[test]
+    fn test_nikakete_seasonal_range() {
+        let sentence = "毎年、三月末から五月の頭にかけて多くの人が引っ越しをします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかけて");
+        assert_pattern_range(&patterns, "にかけて", 12, 16); // にかけて
+    }
+
+    #[test]
+    fn test_nikakete_with_wa() {
+        let sentence = "今は雨が降っていますが、朝にかけては晴れるでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかけて");
+        assert_pattern_range(&patterns, "にかけて", 13, 18); // にかけては
+    }
+
+    #[test]
+    fn test_nikakete_contrasting_with_wa() {
+        let sentence = "今月から来月にかけては忙しい時期になるので、無理せずに頑張ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかけて");
+        assert_pattern_range(&patterns, "にかけて", 6, 11); // にかけては
+    }
+}
+
 
 // ========== どころか (far from, let alone) ==========
 // Pattern: どころか (far from, let alone, anything but)

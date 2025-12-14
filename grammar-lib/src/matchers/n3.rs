@@ -5475,9 +5475,37 @@ pub fn kake_compound() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(KakeCompoundMatcher))]
 }
 
-// Pattern: にかけて
+// Pattern: にかけて (from A to B, throughout A)
+// Structures: Noun + にかけて / Noun + にかけては
 pub fn nikakete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NikaketeMatcher;
+    impl Matcher for NikaketeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "にかけて"
+                && token.base_form == "にかけて"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NikaketeMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            WaParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: たて (freshly/just finished)
