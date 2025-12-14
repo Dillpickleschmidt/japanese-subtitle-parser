@@ -1216,8 +1216,53 @@ pub fn souiu() -> Vec<TokenMatcher> {
 }
 
 // Pattern: Verb[よう]
+// Pattern: Verb[よう] (volitional form - let's, shall)
+// Structures: Verb[未然ウ接続] + う OR Verb[連用形] + ましょ + う
 pub fn verb_you() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in 未然ウ接続 (for standard form) or 連用形 (for polite form)
+    #[derive(Debug)]
+    struct VolitionalVerbMatcher;
+    impl super::Matcher for VolitionalVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "未然ウ接続" || form == "連用形")
+        }
+    }
+
+    // Match ましょ (auxiliary verb for polite volitional)
+    #[derive(Debug)]
+    struct MashouMatcher;
+    impl super::Matcher for MashouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ましょ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match う (auxiliary verb for volitional)
+    #[derive(Debug)]
+    struct UMatcher;
+    impl super::Matcher for UMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|t| t == "不変化型")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VolitionalVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MashouMatcher)))),
+        TokenMatcher::Custom(Arc::new(UMatcher)),
+    ]
 }
 
 // Pattern: ようだ

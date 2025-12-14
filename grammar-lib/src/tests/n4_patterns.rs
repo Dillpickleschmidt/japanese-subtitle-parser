@@ -5044,3 +5044,142 @@ mod sonna_tests {
         assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3); // どんな
     }
 }
+
+// Pattern: Verb[よう] (volitional form - let's, shall)
+// Data source: grammar_points_data.json["Verb[よう]"]
+// Testing all structure variants from standard and polite forms
+mod verb_you_tests {
+    use super::*;
+
+    // Testing: structure.standard - Ichidan verb (る1) + よう
+    #[test]
+    fn test_verb_you_ichidan() {
+        let sentence = "今夜は映画を見ようと思っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 6, 9); // 見よう
+    }
+
+    // Testing: structure.standard - Godan る5 verb + ろう
+    #[test]
+    fn test_verb_you_godan_ru() {
+        let sentence = "そろそろ座ろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 4, 7); // 座ろう
+    }
+
+    // Testing: structure.standard - Godan う verb + おう
+    #[test]
+    fn test_verb_you_godan_u() {
+        let sentence = "みんなで歌おうよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 4, 7); // 歌おう
+    }
+
+    // Testing: structure.standard - Godan く verb + こう
+    #[test]
+    fn test_verb_you_godan_ku() {
+        let sentence = "公園まで歩こうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 4, 7); // 歩こう
+    }
+
+    // Testing: structure.standard - Godan す verb + そう
+    #[test]
+    fn test_verb_you_godan_su() {
+        let sentence = "もう一度話そう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 4, 7); // 話そう
+    }
+
+    // Testing: structure.standard - Godan ぐ verb + ごう
+    #[test]
+    fn test_verb_you_godan_gu() {
+        let sentence = "プールで泳ごうよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 4, 7); // 泳ごう
+    }
+
+    // Testing: structure.standard - Godan む verb + もう
+    #[test]
+    fn test_verb_you_godan_mu() {
+        let sentence = "明日は休もう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 3, 6); // 休もう
+    }
+
+    // Testing: structure.standard - Exception する → しよう
+    #[test]
+    fn test_verb_you_suru() {
+        let sentence = "私が運転しようか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 2, 7); // 運転しよう
+    }
+
+    // Testing: structure.standard - Exception くる → こよう
+    #[test]
+    fn test_verb_you_kuru() {
+        let sentence = "明日また来ようね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 4, 7); // 来よう
+    }
+
+    // Testing: structure.polite - Ichidan verb + ましょう
+    #[test]
+    fn test_verb_you_polite_ichidan() {
+        let sentence = "一緒に見ましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 3, 8); // 見ましょう
+    }
+
+    // Testing: structure.polite - Godan verb + ましょう
+    #[test]
+    fn test_verb_you_polite_godan() {
+        let sentence = "ここで休みましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 3, 9); // 休みましょう
+    }
+
+    // Testing: structure.polite - Exception する → しましょう
+    #[test]
+    fn test_verb_you_polite_suru() {
+        let sentence = "頑張りましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[よう]");
+        assert_pattern_range(&patterns, "Verb[よう]", 0, 7); // 頑張りましょう
+    }
+}

@@ -1766,13 +1766,13 @@
   {
     "pattern_name": "Verb[よう]",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "よう (and う ) are grammar constructions that function in a similar way to ましょう , or to be more precise, ましょう is the pol... [14 std, 14 pol]",
     "priority": 2,
     "skip_reason": null
