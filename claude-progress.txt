@@ -1,3 +1,79 @@
+## Session 288 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (らしい ① - seems like/apparently, hearsay/conjecture)
+**Tests added**: 5 (all passing)
+**Total tests**: 1835 (was 1830)
+
+### Pattern Implemented: らしい ① (seems like/apparently - hearsay/conjecture)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: The auxiliary verb らしい expresses hearsay or conjecture, similar to そうだ and ようだ, but indicates the speaker has some evidence (heard, saw, read) to believe something is true, while still not being 100% certain. It translates as "it seems like", "apparently", or "I heard that".
+
+**Structures tested**: 5 tests covering all structure variants
+1. Verb + らしい: するらしい (seems like [he] will propose - compound verb プロポーズする)
+2. い-Adjective + らしい: いいらしい (apparently is handsome)
+3. な-Adjective/Noun + らしい: 本当らしい (apparently is true)
+4. Noun + らしい: 人らしい (seems like [that person] is French - フランス人)
+5. Polite form: 降るらしい (apparently will snow)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (rashii_u2460 function, lines 2631-2663)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (rashii_u2460_tests module, lines 10473-10540)
+- Pattern: grammar-lib/src/patterns.rs (RashiiU2460 - already existed at line 1597)
+
+**Tokenization pattern**:
+```
+Verb + らしい:
+Verb (動詞/自立, 基本形 like する/降る)
++ らしい (助動詞, base=らしい)
+
+Adjective + らしい:
+Adjective (形容詞/自立, 基本形 like いい)
++ らしい (助動詞)
+
+Noun + らしい:
+Noun (名詞 like 本当/人)
++ らしい (助動詞)
+
+Key: らしい is ALWAYS 助動詞 (auxiliary verb), NOT 形容詞 (adjective)
+```
+
+**Key implementation points**:
+1. VerbAdjOrNounMatcher accepts verbs, adjectives, OR nouns before らしい
+2. RashiiAuxMatcher ensures らしい is 助動詞 (auxiliary verb), NOT い-adjective
+3. This distinguishes らしい ① (hearsay) from らしい ② (characteristic, which is い-adjective)
+4. Pattern range includes full grammatical construction: Word + らしい
+5. For compound verbs (Noun + する), range includes the full compound (プロポーズするらしい)
+6. Priority 1 means detected but not highlighted (common auxiliary pattern)
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover verbs (including compound verbs), い-adjectives, な-adjectives, and nouns
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that らしい can follow verbs, adjectives, OR nouns
+2. Distinguishing らしい ① (auxiliary verb for hearsay) from らしい ② (adjective for characteristic)
+3. Handling compound verbs (プロポーズする) where the pattern range includes the full compound
+4. Ensuring the matcher checks POS tag (助動詞) to avoid matching い-adjective usage
+5. Understanding the pattern matcher behavior: consecutive tokens match, giving ranges that include intermediate tokens when part of a compound
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a common auxiliary verb used frequently in daily conversation for expressing hearsay or conjecture.
+
+**Linguistic Note**: The auxiliary verb らしい (助動詞) expresses presumption or hearsay based on evidence. Unlike そうだ (hearsay/appearance) and ようだ (seems like), らしい sounds relatively confident because the speaker has some concrete reason to believe their statement (e.g., heard, read, saw something). This is different from らしい ② (形容詞), which means "typical of" or "befitting" (e.g., 男らしい = manly).
+
+**Next pattern to implement**: らしい ② (typical of/characteristic) - the い-adjective form
+
+---
+
 ## Session 287 - 2025-12-14
 
 ### ✅ Session Summary
