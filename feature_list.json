@@ -5672,13 +5672,13 @@
   {
     "pattern_name": "なし",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although it is used almost exclusively as a suffix , なし is actually a noun that means ないこと 'thing without' [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null

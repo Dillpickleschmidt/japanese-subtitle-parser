@@ -8577,3 +8577,75 @@ mod donnani_temo_tests {
         assert_pattern_range(&patterns, "どんなに〜ても", 0, 10); // どんなにお金持ちでも
     }
 }
+
+// Pattern: なし (without)
+// Data source: grammar_points_data.json["なし"]
+// Testing all structure variants from grammar data
+mod nashi_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + なしで（は）"
+    // Example: 許可なしで (without permission)
+    // Tokenization: 許可なし (compound形容詞) + で (助動詞)
+    #[test]
+    fn test_nashi_de() {
+        let sentence = "許可なしで公園に店を出さないでください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なし");
+        assert_pattern_range(&patterns, "なし", 0, 5); // 許可なしで
+    }
+
+    // Testing: structure.standard[1] - "Phrase + なしだ"
+    // Example: 間違いなしだ (without error / flawless)
+    // Tokenization: 間違い (名詞) + なし (助動詞) + だ (助動詞)
+    #[test]
+    fn test_nashi_da() {
+        let sentence = "その考えは間違いなしだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なし");
+        assert_pattern_range(&patterns, "なし", 8, 11); // なしだ
+    }
+
+    // Testing: structure.standard[2] - "Noun + なし + の + Noun"
+    // Example: 肉なしの料理 (dish without meat)
+    // Tokenization: 肉 (名詞) + なし (形容詞) + の (助詞/連体化)
+    #[test]
+    fn test_nashi_no_noun() {
+        let sentence = "肉なしの人気料理はなんですか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なし");
+        assert_pattern_range(&patterns, "なし", 1, 4); // なしの
+    }
+
+    // Testing: structure.polite[1] - "Phrase + なしです"
+    // Example: 問題なしです (there is no problem)
+    // Tokenization: 問題 (名詞) + なし (助動詞) + です (助動詞)
+    #[test]
+    fn test_nashi_desu() {
+        let sentence = "その説明は問題なしです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なし");
+        assert_pattern_range(&patterns, "なし", 7, 11); // なしです
+    }
+
+    // Testing: なしにする pattern (avoiding/skipping something)
+    // Example: 昼飯なしにする (going to skip lunch)
+    // Tokenization: 昼飯 (名詞) + なし (形容詞) + に (助詞/格助詞)
+    #[test]
+    fn test_nashi_ni_suru() {
+        let sentence = "昨日は沢山食べたから、今日は昼飯なしにする。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なし");
+        assert_pattern_range(&patterns, "なし", 16, 19); // なしに
+    }
+}

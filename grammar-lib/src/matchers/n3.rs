@@ -5146,9 +5146,57 @@ pub fn zunihairarenai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なし
+// Pattern: なし (without)
+// Structures: Noun + なし + (で/だ/です/の/に)
+// Note: Can appear as compound (許可なし as one token) or separate (肉 + なし)
 pub fn nashi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches なし as 助動詞 or 形容詞 with base_form=ない (standalone)
+    // OR compound forms ending in なし (e.g., 許可なし)
+    #[derive(Debug)]
+    struct NashiOrCompoundMatcher;
+    impl Matcher for NashiOrCompoundMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Standalone なし
+            (token.surface == "なし"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞")))
+            // Compound ending in なし (e.g., 許可なし)
+            || (token.surface.ends_with("なし")
+                && token.base_form.ends_with("ない")
+                && token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Matches で (from だ), だ, です, の, or に particles
+    #[derive(Debug)]
+    struct NashiFollowingMatcher;
+    impl Matcher for NashiFollowingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // で from だ (auxiliary verb)
+            (token.surface == "で" && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // だ (auxiliary verb)
+            || (token.surface == "だ" && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // です (auxiliary verb)
+            || (token.surface == "です" && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // の (rentaika particle)
+            || (token.surface == "の" && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化"))
+            // に (case particle)
+            || (token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NashiOrCompoundMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NashiFollowingMatcher)))),
+    ]
 }
 
 // Pattern: あり
