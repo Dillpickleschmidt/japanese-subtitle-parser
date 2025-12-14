@@ -5938,13 +5938,13 @@
   {
     "pattern_name": "に関する・に関して",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に関（かん）する and に関（かん）して are two grammar patterns in Japanese that are regularly used to show when (B) is 'about' or 're... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

@@ -2780,8 +2780,163 @@ pub fn kankeigaaru() -> Vec<TokenMatcher> {
 }
 
 // Pattern: に関する・に関して
+// Pattern: に関する・に関して (about / related to / regarding)
+// Structures: Noun + に関（かん）して / Noun + に関（かん）する + Noun
+//
+// Tokenization patterns observed:
+// 1. Kanji form に関する: single particle (助詞/格助詞/連語)
+// 2. Hiragana にかんする: に (助詞) + かんする (動詞, base='かんする')
+// 3. Hiragana にかんして: に (助詞) + かんし (名詞/サ変接続) + て (助詞/格助詞/連語)
+// 4. Hiragana にかんして: に (助詞) + かん (名詞) + し (動詞 base='する') + て (助詞/接続助詞)
+//
+// Due to multiple tokenization patterns, we'll create separate matchers for each
 pub fn nikansuru_u30fb_nikanshite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![]  // Placeholder - actual matching done by specific variants below
+}
+
+// Variant 1: Single particle form (に関する / にかんする as one token)
+pub fn nikansuru_particle() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NikansuruParticleMatcher;
+    impl Matcher for NikansuruParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に関する" || token.surface == "にかんする")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Noun or other token before pattern
+        TokenMatcher::Custom(Arc::new(NikansuruParticleMatcher)),
+    ]
+}
+
+// Variant 2: Split form with verb (に + かんする)
+pub fn nikansuru_verb() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KansuruVerbMatcher;
+    impl Matcher for KansuruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "かんする"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Noun before に
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KansuruVerbMatcher)),
+    ]
+}
+
+// Variant 3: Split form with noun+て (に + かんし + て)
+pub fn nikanshite_noun() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KanshiNounMatcher;
+    impl Matcher for KanshiNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かんし"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Noun before に
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KanshiNounMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
+}
+
+// Variant 4: Split form with noun+verb+て (に + かん + し + て)
+pub fn nikanshite_noun_verb() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KanNounMatcher;
+    impl Matcher for KanNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct SuruVerbMatcher;
+    impl Matcher for SuruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Noun before に
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KanNounMatcher)),
+        TokenMatcher::Custom(Arc::new(SuruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: に対して (toward / in regard to / in contrast to)

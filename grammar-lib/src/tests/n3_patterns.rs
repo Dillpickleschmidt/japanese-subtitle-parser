@@ -9572,3 +9572,58 @@ mod nichigainai_tests {
     }
 }
 
+// Pattern: に関する・に関して (about / related to / regarding)
+// Data source: grammar_points_data.json["に関する・に関して"]
+// Testing all structure variants
+//
+// Structures to test:
+//   - standard[0]: Noun + に関（かん）して
+//   - standard[1]: Noun + に関（かん）する + Noun
+mod nikansuru_tests {
+    use super::*;
+
+    // Structure: standard[1] - Noun + に関（かん）する + Noun (hiragana, verb form)
+    #[test]
+    fn test_nikansuru_modifier_app() {
+        let sentence = "このアプリの使い方にかんする質問はありますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に関する・に関して_verb");
+        assert_pattern_range(&patterns, "に関する・に関して_verb", 6, 14); // 使い方にかんする
+    }
+
+    // Structure: standard[1] - Noun + に関（かん）する + Noun (kanji, particle form)
+    #[test]
+    fn test_nikansuru_modifier_research() {
+        let sentence = "彼は今地盤汚染に関する研究をしています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に関する・に関して_particle");
+        assert_pattern_range(&patterns, "に関する・に関して_particle", 5, 11); // 汚染に関する
+    }
+
+    // Structure: standard[0] - Noun + に関（かん）して (noun+て form)
+    #[test]
+    fn test_nikansuru_nikanshite_kindergarten() {
+        let sentence = "幼稚園にかんしては、全然詳しくないので僕に聞かれても困ります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に関する・に関して_noun");
+        assert_pattern_range(&patterns, "に関する・に関して_noun", 0, 8); // 幼稚園にかんして
+    }
+
+    // Structure: standard[0] - Noun + に関（かん）して (noun+verb+て form)
+    #[test]
+    fn test_nikansuru_nikanshite_pause() {
+        let sentence = "この農薬にかんして、知っておくべきことはありますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に関する・に関して_noun_verb");
+        assert_pattern_range(&patterns, "に関する・に関して_noun_verb", 2, 9); // 農薬にかんして
+    }
+}
+

@@ -3261,10 +3261,35 @@ declare_patterns! {
         jlpt: "n3",
     },
 
-    NikansuruU30fbNikanshite {
-        name: "に関する・に関して",
-        matcher_fn: crate::matchers::n3::nikansuru_u30fb_nikanshite,
-        priority: 1,
+    // に関する・に関して pattern has multiple tokenization variants
+    NikansuruParticle {
+        name: "に関する・に関して_particle",
+        matcher_fn: crate::matchers::n3::nikansuru_particle,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NikansuruVerb {
+        name: "に関する・に関して_verb",
+        matcher_fn: crate::matchers::n3::nikansuru_verb,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NikanshiteNoun {
+        name: "に関する・に関して_noun",
+        matcher_fn: crate::matchers::n3::nikanshite_noun,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    NikanshiteNounVerb {
+        name: "に関する・に関して_noun_verb",
+        matcher_fn: crate::matchers::n3::nikanshite_noun_verb,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },
