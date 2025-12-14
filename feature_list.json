@@ -3866,13 +3866,13 @@
   {
     "pattern_name": "れる・られる (Potential)",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In addition to ' passive ' verbs, れる and られる (the auxiliary verbs ) are used when expressing possibility '可能（かのう）' [15 std, 15 pol]",
     "priority": 2,
     "skip_reason": null

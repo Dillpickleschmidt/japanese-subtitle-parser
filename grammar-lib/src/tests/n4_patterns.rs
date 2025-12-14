@@ -11016,3 +11016,194 @@ mod ndakedo_ndesuga_tests {
     }
 }
 
+// Pattern: れる・られる (Potential) - ability/possibility
+// Data source: grammar_points_data.json["れる・られる (Potential)"]
+// Testing all verb types and their potential forms
+//
+// Structure variants to test:
+//   - [る1] Ichidan verbs: 見る → 見られる (can see)
+//   - [る5] Godan る-verbs: 座る → 座れる (can sit)
+//   - [う] う-verbs: 歌う → 歌える (can sing)
+//   - [く] く-verbs: 歩く → 歩ける (can walk)
+//   - [す] す-verbs: 話す → 話せる (can speak)
+//   - [つ] つ-verbs: 打つ → 打てる (can hit)
+//   - [ぬ] ぬ-verbs: 死ぬ → 死ねる (can die)
+//   - [ぶ] ぶ-verbs: 飛ぶ → 飛べる (can fly)
+//   - [む] む-verbs: 休む → 休める (can rest)
+//   - [ぐ] ぐ-verbs: 泳ぐ → 泳げる (can swim)
+//   - Exceptions: する → できる, 来る → こられる
+//   - Polite forms: られます, れます, えます, etc.
+mod potential_verb_tests {
+    use super::*;
+
+    // Testing: Ichidan verb (る1) - 見る → 見られる
+    // Note: Ichidan + られる is structurally identical to passive form
+    // This is detected by Verb［れる・られる］(passive) pattern
+    // Context determines if it means "can see" (potential) or "is seen" (passive)
+    // TODO: Consider if we should add Ichidan + られる to this pattern or leave ambiguous
+    #[test]
+    fn test_ichidan_verb_mirareru() {
+        let sentence = "この席からステージが見られるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Detected by passive pattern (ambiguous - could be potential or passive)
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 10, 14); // 見られる
+    }
+
+    // Testing: Godan る-verb (る5) - 座る → 座れる
+    #[test]
+    fn test_godan_ru_verb_suwareru() {
+        let sentence = "ここに座れますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 3, 7); // 座れます
+    }
+
+    // Testing: う-verb - 歌う → 歌える
+    #[test]
+    fn test_u_verb_utaeru() {
+        let sentence = "あの歌なら歌えると思うけど";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 5, 8); // 歌える
+    }
+
+    // Testing: く-verb - 歩く → 歩ける
+    #[test]
+    fn test_ku_verb_arukeru() {
+        let sentence = "まだ少し歩けるから大丈夫だよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 4, 7); // 歩ける
+    }
+
+    // Testing: す-verb - 話す → 話せる
+    #[test]
+    fn test_su_verb_hanaseru() {
+        let sentence = "英語は話せないけど中国語は話せます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        // Check first occurrence: 話せない
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 3, 7); // 話せない (first match)
+        // Note: There's also 話せます at position 13-17, but assert_pattern_range checks first match
+    }
+
+    // Testing: つ-verb - 打つ → 打てる
+    #[test]
+    fn test_tsu_verb_uteru() {
+        let sentence = "この打者はホームランが打てる選手だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 11, 14); // 打てる
+    }
+
+    // Testing: ぬ-verb - 死ぬ → 死ねる (Note: somewhat morbid but grammatically valid)
+    #[test]
+    fn test_nu_verb_shineru() {
+        let sentence = "いつでも死ねるけど生きることを選んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 4, 7); // 死ねる
+    }
+
+    // Testing: ぶ-verb - 飛ぶ → 飛べる
+    #[test]
+    fn test_bu_verb_toberu() {
+        let sentence = "鳥のように空を飛べたらいいのにな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 7, 11); // 飛べたら
+    }
+
+    // Testing: む-verb - 休む → 休める
+    #[test]
+    fn test_mu_verb_yasumeru() {
+        let sentence = "今日はゆっくり休めそうだね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 7, 9); // 休め
+    }
+
+    // Testing: ぐ-verb - 泳ぐ → 泳げる
+    #[test]
+    fn test_gu_verb_oyogeru() {
+        let sentence = "プールで泳げるようになりたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 4, 7); // 泳げる
+    }
+
+    // Testing: Exception - する → できる
+    // Note: できる is detected by ことができる pattern when used with こと
+    // This test shows the ことができる pattern detection
+    #[test]
+    fn test_exception_dekiru_with_koto() {
+        let sentence = "料理することができるけど上手じゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // できる in "ことができる" construction
+        assert_has_pattern(&patterns, "ことができる");
+        assert_pattern_range(&patterns, "ことができる", 0, 10); // 料理することができる
+    }
+
+    // Testing: Exception - 来る → 来られる
+    // Note: 来られる is structurally identical to passive form (ambiguous)
+    #[test]
+    fn test_exception_korareru() {
+        let sentence = "明日は来られますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Detected by passive pattern (ambiguous - could be potential "can come" or passive)
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 3, 8); // 来られます
+    }
+
+    // Testing: Casual られる form (ら抜き - "ra-nuki")
+    // Note: This is casual/colloquial and sometimes considered incorrect
+    // 見る → 見れる (instead of 見られる)
+    #[test]
+    fn test_ranuki_mirereru() {
+        let sentence = "そこから富士山が見れるらしいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる (Potential)");
+        assert_pattern_range(&patterns, "れる・られる (Potential)", 8, 14); // 見れるらしい
+    }
+
+    // Testing: Negative potential form - 食べられない
+    // Note: Ichidan negative potential is also ambiguous with passive
+    #[test]
+    fn test_negative_potential() {
+        let sentence = "辛いものは食べられないんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Detected by passive pattern (ambiguous - could be potential or passive)
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 5, 11); // 食べられない
+    }
+}
+

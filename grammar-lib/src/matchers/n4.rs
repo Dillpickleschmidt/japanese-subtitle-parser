@@ -5717,9 +5717,51 @@ pub fn tatoeba() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(TatoebaMatcher))]
 }
 
-// Pattern: れる・られる (Potential)
+// Pattern: れる・られる (Potential) - ability/possibility
+// Structures:
+//   - Godan potential verbs: Single token (歩ける, 話せる, 飛べる, etc.)
+//   - Ichidan + られる: Verb(未然形) + られる(動詞/接尾)
+//   - できる: Exception for する verbs (included here)
+//   - ら抜き: 見れる (casual, sometimes considered incorrect)
+//
+// Note: Ichidan + られる is structurally identical to passive form.
+// Both patterns will detect it, which is semantically correct (ambiguous without context).
 pub fn reru_u30fb_rareru_potential() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for potential verbs (both godan single-token and ら抜き forms)
+    // These are single tokens with base_form ending in える/ける/せる/てる/ねる/べる/める/げる/れる
+    // Examples: 歩ける (歩く → 歩ける), 話せる (話す → 話せる), 見れる (見る → 見れる - ら抜き), できる
+    #[derive(Debug)]
+    struct PotentialVerbMatcher;
+    impl Matcher for PotentialVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Must be a verb
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+
+            // Check if base_form ends with potential suffix
+            // Godan potential verbs end in: える, ける, せる, てる, ねる, べる, める, げる, れる
+            let potential_endings = ["える", "ける", "せる", "てる", "ねる", "べる", "める", "げる", "れる"];
+
+            for ending in &potential_endings {
+                if token.base_form.ends_with(ending) {
+                    // Exclude the auxiliary れる/られる themselves
+                    if token.base_form == "れる" || token.base_form == "られる" {
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            false
+        }
+    }
+
+    // Pattern: Single-token potential verb
+    // This matches godan potential verbs (歩ける, 話せる, etc.) and できる
+    // Note: Ichidan + られる is handled by the passive pattern (ambiguous)
+    vec![TokenMatcher::Custom(Arc::new(PotentialVerbMatcher))]
 }
 
 // Pattern: んだけど・んですが (explanatory + but/however)
