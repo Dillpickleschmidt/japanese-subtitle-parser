@@ -4063,9 +4063,68 @@ pub fn uff5e_temo_uff5e_nakutemo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: んじゃない
+// Pattern: んじゃない (prohibition - don't do)
+// Structures: Verb + ん + じゃない/ありません/なかった
+//             Verb + て + ん + じゃない (てん contraction)
 pub fn njanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb (dictionary form or て-form)
+    #[derive(Debug)]
+    struct VerbOrTeMatcher;
+    impl Matcher for VerbOrTeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in dictionary form (基本形) or て particle
+            (token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形"))
+                || (token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+        }
+    }
+
+    // Match ん (explanatory particle)
+    #[derive(Debug)]
+    struct NParticleMatcher;
+    impl Matcher for NParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match じゃ (particle)
+    #[derive(Debug)]
+    struct JyaMatcher;
+    impl Matcher for JyaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "じゃ" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match ない/あり/なかっ (negative forms)
+    #[derive(Debug)]
+    struct NegativeFormMatcher;
+    impl Matcher for NegativeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ない (助動詞) - basic negative
+            (token.surface == "ない" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+                // あり (助動詞, from ありません)
+                || (token.surface == "あり"
+                    && token.base_form == "ある"
+                    && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+                // なかっ (助動詞, from なかった)
+                || (token.surface == "なかっ"
+                    && token.base_form == "ない"
+                    && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrTeMatcher)),
+        TokenMatcher::Custom(Arc::new(NParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(JyaMatcher)),
+        TokenMatcher::Custom(Arc::new(NegativeFormMatcher)),
+    ]
 }
 
 // Pattern: わけがない (there's no way that / it's impossible that)

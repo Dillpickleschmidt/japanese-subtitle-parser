@@ -12125,3 +12125,71 @@ mod wohajime_tests {
         assert_pattern_range(&patterns, "をはじめ", 7, 13); // 公園をはじめ
     }
 }
+
+#[cfg(test)]
+mod njanai_tests {
+    use super::*;
+
+    // Pattern: んじゃない (don't do / prohibition)
+    // Data source: grammar_points_data.json["んじゃない"]
+    // Testing structures:
+    //   - standard[0]: Verb + んじゃない (prohibition)
+    //   - polite: Verb + んじゃありません
+    //   - abbreviated: Verb + てん + じゃない (てる → てん)
+    //   - past: Verb + んじゃなかった (regret)
+
+    #[test]
+    fn test_njanai_basic_prohibition() {
+        // Testing: Verb + んじゃない (basic prohibition)
+        let sentence = "親に向かってそんなこと言うんじゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んじゃない");
+        assert_pattern_range(&patterns, "んじゃない", 11, 18); // 言うんじゃない
+    }
+
+    #[test]
+    fn test_njanai_prohibition() {
+        // Testing: Verb + んじゃない (prohibition with exclamation)
+        let sentence = "そこら辺のキノコを食べるんじゃない！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んじゃない");
+        assert_pattern_range(&patterns, "んじゃない", 9, 17); // 食べるんじゃない
+    }
+
+    #[test]
+    fn test_njanai_polite() {
+        // Testing: Verb + んじゃありません (polite prohibition)
+        let sentence = "勝手にお友達のものを取るんじゃありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んじゃない");
+        assert_pattern_range(&patterns, "んじゃない", 10, 20); // 取るんじゃありません
+    }
+
+    #[test]
+    fn test_njanai_ten_abbreviation() {
+        // Testing: Verb + てん + じゃない (abbreviated ている)
+        let sentence = "いつまでもケラケラしながら話してんじゃない！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んじゃない");
+        assert_pattern_range(&patterns, "んじゃない", 15, 21); // てんじゃない
+    }
+
+    #[test]
+    fn test_njanai_past_regret() {
+        // Testing: Verb + んじゃなかった (past - regret)
+        let sentence = "こんな安い車を買うんじゃなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んじゃない");
+        assert_pattern_range(&patterns, "んじゃない", 7, 16); // 買うんじゃなかった
+    }
+}
