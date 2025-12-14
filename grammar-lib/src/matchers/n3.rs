@@ -2360,9 +2360,37 @@ pub fn ha_uff5e_kuraidesu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: さ - Interjection
+// Pattern: さ - Interjection (drawing attention, inviting action)
+// Structures: さあ (as 感動詞 interjection)
+//
+// Note: This pattern and "さ - Filler" both match さあ as 感動詞.
+// The distinction is semantic/contextual rather than structural:
+// - Interjection: Typically at sentence start, drawing attention ("ok then", "well")
+// - Filler: Typically mid-sentence, expressing hesitation ("um", "uh")
+//
+// Since they're structurally identical and "often used interchangeably"
+// (per grammar data), both patterns will match. Users can determine
+// meaning from context.
+//
+// UNDETECTABLE: さー (with prolonged sound mark) tokenizes as two separate tokens
+// (さ + ー), making it impossible to detect as a single interjection pattern.
 pub fn sa_interjection() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for さあ as interjection (drawing attention)
+    #[derive(Debug)]
+    struct SaInterjectionMatcher;
+    impl Matcher for SaInterjectionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match さあ as 感動詞 (interjection)
+            // Note: さー is undetectable (tokenizes as さ + ー)
+            token.surface == "さあ"
+                && token.base_form == "さあ"
+                && token.pos.first().is_some_and(|pos| pos == "感動詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SaInterjectionMatcher))]
 }
 
 // Pattern: さ - Filler (hesitation/thinking filler word)
