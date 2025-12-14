@@ -2129,9 +2129,54 @@ pub fn youni_u30fb_youna() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Number/Amount + は
+// Pattern: Number/Amount + は (at least, or so)
+// Structures: Counter + (くらい/ぐらい) + は  (e.g., 回は, キロくらいは)
+// Examples: ５回は (at least 5 times), ２キロくらいは (at least 2 kg)
+//
+// Note: This pattern detects the contrastive use of は after counters to mean "at least" or "or so".
+// The pattern starts from the counter (not the number), as the counter + は is the key construction.
 pub fn number_amount_ha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match counter (助数詞) like 回, キロ, 時間, etc.
+    #[derive(Debug)]
+    struct CounterMatcher;
+    impl Matcher for CounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助数詞")
+        }
+    }
+
+    // Match くらい or ぐらい (副助詞)
+    #[derive(Debug)]
+    struct KuraiMatcher;
+    impl Matcher for KuraiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "くらい" || token.surface == "ぐらい")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match は (係助詞)
+    #[derive(Debug)]
+    struct HaMatcher;
+    impl Matcher for HaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(CounterMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KuraiMatcher)))),
+        TokenMatcher::Custom(Arc::new(HaMatcher)),
+    ]
 }
 
 // Pattern: なん + counter + か

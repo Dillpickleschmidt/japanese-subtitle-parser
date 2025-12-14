@@ -5693,3 +5693,69 @@ mod causative_passive_tests {
         assert_pattern_range(&patterns, "Causative-Passive", 10, 14); // させられ
     }
 }
+
+// ========== Number/Amount + は (at least, or so) ==========
+// Pattern: Number/Amount + は
+// Data source: grammar_points_data.json["Number/Amount + は"]
+//
+// Structures to test:
+//   - standard[0]: Number/Amount + Counter + (くらい) + は
+//   - standard[1]: Noun + くらい + は
+//
+// Examples from data:
+//   - 年に５回は行っている (at least 5 times a year)
+//   - 毎日、テレビを５時間は見ている (watch TV for 5 hours or so every day)
+//   - ２キロくらいはあると思う (I think it's at least 2 kilograms)
+//   - １回ぐらいは行った方がいい (should go at least once)
+#[cfg(test)]
+mod number_amount_ha_tests {
+    use super::*;
+
+    // Test 1: Number + Counter + は (without くらい)
+    #[test]
+    fn test_number_counter_ha_basic() {
+        let sentence = "ディズニーランドには年に５回は行っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Number/Amount + は");
+        assert_pattern_range(&patterns, "Number/Amount + は", 13, 15); // 回は
+    }
+
+    // Test 2: Number + Counter + は (time duration)
+    #[test]
+    fn test_number_counter_ha_duration() {
+        let sentence = "毎日、テレビを５時間は見ている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Number/Amount + は");
+        assert_pattern_range(&patterns, "Number/Amount + は", 8, 11); // 時間は
+    }
+
+    // Test 3: Number + Counter + くらい + は
+    #[test]
+    fn test_number_counter_kurai_ha() {
+        let sentence = "２キロくらいはあると思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Number/Amount + は");
+        assert_pattern_range(&patterns, "Number/Amount + は", 1, 7); // キロくらいは
+    }
+
+    // Test 4: Number + Counter + ぐらい + は (ぐらい variant)
+    #[test]
+    fn test_number_counter_gurai_ha() {
+        let sentence = "倉敷には１回ぐらいは行った方がいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Number/Amount + は");
+        assert_pattern_range(&patterns, "Number/Amount + は", 5, 10); // 回ぐらいは
+    }
+
+    // Note: The structure variant "Noun + くらい + は" (without counter) is primarily
+    // handled by the くらい pattern itself. This pattern focuses on the contrastive は
+    // after numeric counters (助数詞) to mean "at least" or "or so".
+}
