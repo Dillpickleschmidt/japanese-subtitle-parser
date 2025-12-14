@@ -9627,3 +9627,65 @@ mod nikansuru_tests {
     }
 }
 
+// Pattern: に限る (nothing better than / limited to)
+// Data source: grammar_points_data.json["に限る"]
+// Testing all structure variants
+mod nikagiru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[る] + に限る"
+    #[test]
+    fn test_nikagiru_verb_affirmative() {
+        let sentence = "暑い日は冷たいシャワーを浴びるにかぎる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限る");
+        assert_pattern_range(&patterns, "に限る", 12, 19); // 浴びるにかぎる
+    }
+
+    // Testing: structure.standard[1] - "Noun + に限る"
+    #[test]
+    fn test_nikagiru_noun() {
+        let sentence = "回転寿司はくら寿司にかぎる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限る");
+        assert_pattern_range(&patterns, "に限る", 7, 13); // 寿司にかぎる
+    }
+
+    // Testing: structure.standard[2] - "Verb[ない] + に限る"
+    #[test]
+    fn test_nikagiru_verb_negative() {
+        let sentence = "寒い日には温かい部屋を出ないにかぎる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限る");
+        assert_pattern_range(&patterns, "に限る", 12, 18); // ないにかぎる
+    }
+
+    // Testing: structure.polite[0] - "Verb[る] + に限ります"
+    #[test]
+    fn test_nikagiru_verb_polite() {
+        let sentence = "暑い日は冷たいビールを飲むにかぎります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限る");
+        assert_pattern_range(&patterns, "に限る", 11, 19); // 飲むにかぎります
+    }
+
+    // Testing: structure.polite[1] - "Noun + に限ります"
+    #[test]
+    fn test_nikagiru_noun_polite() {
+        let sentence = "この施設を利用できるのはこのアパートの住民にかぎります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限る");
+        assert_pattern_range(&patterns, "に限る", 19, 27); // 住民にかぎります
+    }
+}
+

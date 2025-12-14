@@ -5910,13 +5910,13 @@
   {
     "pattern_name": "に比べて",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に比（くら）べて is a set expression in Japanese, used when comparing one thing to another [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5924,13 +5924,13 @@
   {
     "pattern_name": "に違いない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the case marking particle に is combined with the noun 違（ちが）い 'difference', and the い-Adjective ない, an expression... [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5938,13 +5938,13 @@
   {
     "pattern_name": "に関する・に関して",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に関（かん）する and に関（かん）して are two grammar patterns in Japanese that are regularly used to show when (B) is 'about' or 're... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5952,13 +5952,13 @@
   {
     "pattern_name": "に限る",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に限（かぎ）る is a combination of the case marking particle に (marking a location), and the う - Verb 限（かぎ）る 'to limit' [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null

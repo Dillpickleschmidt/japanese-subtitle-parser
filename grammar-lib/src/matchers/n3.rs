@@ -4718,9 +4718,45 @@ pub fn niataru_particle() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に限る
+// Pattern: に限る (nothing better than / limited to)
+// Structures: Verb/Noun + に + 限る/限ります
 pub fn nikagiru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KagiruVerbMatcher;
+    impl Matcher for KagiruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "かぎる" || token.surface == "かぎり" || token.surface == "限る" || token.surface == "限り")
+                && token.base_form == "かぎる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MasuAuxiliaryMatcher;
+    impl Matcher for MasuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KagiruVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuAuxiliaryMatcher)))),
+    ]
 }
 
 // Pattern: とは限らない (not necessarily, not always)

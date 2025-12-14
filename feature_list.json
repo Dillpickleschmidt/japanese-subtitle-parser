@@ -5952,13 +5952,13 @@
   {
     "pattern_name": "に限る",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に限（かぎ）る is a combination of the case marking particle に (marking a location), and the う - Verb 限（かぎ）る 'to limit' [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null
