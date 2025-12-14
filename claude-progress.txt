@@ -1,3 +1,80 @@
+## Session 355 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (んだって)
+**Tests added**: 4 (all passing)
+**Total tests**: 2270 total tests, 2269 passing, 1 ignored (was 2265 passing, 1 ignored - net +4 tests)
+
+### ✅ Pattern Completed: んだって (I heard that / it's thought that)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted in overlay)
+
+**Pattern**: んだって is a casual sentence-ending particle that expresses something heard by the speaker. It combines ん (explanatory particle) with だって (a contraction of だ + って). The pattern translates to "I heard that (A)" or "it's thought that (A)". だって is a grouping of the auxiliary verb だ and the adverbial particle って (abbreviation of と言って 'is said' or と思って 'is thought').
+
+**Structures tested**: 4 comprehensive tests covering all major variants
+1. Verb + んだって: するんだって (I heard she's getting married) - chars 12-16
+2. い-Adjective + んだって: 欲しいんだって (I heard he wants it) - chars 16-20
+3. な-Adjective + な + んだって: 適当なんだって (I heard it's all nonsense) - chars 37-41
+4. Noun + な + んだって: フィギュアスケートなんだって (I heard his favorite sport is figure skating) - chars 40-44
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (ndatte function, lines 3465-3541)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (ndatte_tests module, lines 12197-12250)
+- Pattern: grammar-lib/src/patterns.rs (Ndatte, declared at line 3264)
+
+**Tokenization patterns**:
+```
+Two different tokenization patterns depending on preceding word:
+
+Pattern 1 (after verbs):
+- ん (助動詞, 不変化型) - explanatory auxiliary
+- だって (助詞/終助詞) - sentence-ending particle (single token)
+
+Pattern 2 (after adjectives/nouns):
+- ん (名詞/非自立/一般) - explanatory dependent noun
+- だ (助動詞, base=だ) - copula auxiliary
+- って (助詞/格助詞/連語) - quotative particle
+```
+
+**Key implementation points**:
+1. Three-token matcher: ん + Optional(だ) + (だって|って)
+2. NParticleMatcher matches ん as BOTH 助動詞 (after verbs) AND 名詞/非自立 (after adj/nouns)
+3. DaAuxMatcher matches だ as auxiliary verb (助動詞, base=だ)
+4. DatteOrTteMatcher matches EITHER:
+   - だって (助詞/終助詞) - after verbs
+   - って (助詞/格助詞/連語) - after adjectives/nouns
+5. Optional(だ) handles both tokenization patterns in a single matcher
+6. Pattern priority: 1 (detected but not highlighted in overlay)
+
+**Pattern ranges**: Include only んだって (or ん + だ + って)
+- After verbs: んだって (2 tokens: ん + だって)
+- After adjectives/nouns: んだって (3 tokens: ん + だ + って)
+- The pattern is a sentence-ending particle, so it doesn't include the preceding content word
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structural variants: verb, i-adjective, na-adjective, noun
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: なんだって is quite casual and should be avoided in formal situations. It's commonly used in conversations with friends to relay information heard from others. The pattern expresses hearsay or secondhand information, similar to "I heard that..." in English.
+
+**Usage contexts**:
+- Casual conversation: Relaying information heard from others
+- Informal situations: Friends, family, casual social contexts
+- Expresses hearsay: Information not directly witnessed by the speaker
+
+**Related patterns**:
+- ～んです・のです (N4) - explanatory ん pattern (different meaning)
+- って (N4) - quotative particle (component of だって)
+- だ (N5) - copula (component of だって)
+
+---
+
 ## Session 354 - 2025-12-14
 
 ### ✅ Session Summary
