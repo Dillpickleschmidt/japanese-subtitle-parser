@@ -7128,13 +7128,13 @@
   {
     "pattern_name": "～は～となっている",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "(A) は (B) となっている is a common expression used to show that '(A) is becoming (B)', or (more commonly) '(A) has become (B)' [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null

@@ -8181,3 +8181,74 @@ mod nagaramo_tests {
         assert_pattern_range(&patterns, "ながらも", 0, 7); // 緊張しながらも
     }
 }
+
+// ========== ～は～となっている (A is B / has become B) ==========
+// Pattern: ～は～となっている (A is B / has become B / it has been established that A is B)
+// Data source: grammar_points_data.json["～は～となっている"]
+//
+// Structure variants to test:
+//   standard[0]: ［な］Adjective + となっている
+//   standard[1]: Noun + となっている
+//   polite[0]: ［な］Adjective + となっています
+//   polite[1]: Noun + となっています
+//
+// Note: The pattern detects only "となっている/となっています", NOT the は
+
+mod tonatteiru_tests {
+    use super::*;
+
+    // Testing: standard[0] - な-Adjective + となっている
+    #[test]
+    fn test_tonatteiru_na_adjective() {
+        let sentence = "鬼滅の刃は非常に人気となっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～となっている");
+        assert_pattern_range(&patterns, "～は～となっている", 10, 16); // となっている
+    }
+
+    // Testing: standard[1] - Noun + となっている
+    #[test]
+    fn test_tonatteiru_noun() {
+        let sentence = "日本では、ドラッグは法律上、違法となっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～となっている");
+        assert_pattern_range(&patterns, "～は～となっている", 16, 22); // となっている
+    }
+
+    // Testing: standard[1] - Noun + となっている (different example)
+    #[test]
+    fn test_tonatteiru_noun_prohibited() {
+        let sentence = "このプールでは、飛び込みが禁止となっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～となっている");
+        assert_pattern_range(&patterns, "～は～となっている", 15, 21); // となっている
+    }
+
+    // Testing: polite[0] - な-Adjective + となっています
+    #[test]
+    fn test_tonatteiru_na_adjective_polite() {
+        let sentence = "今の時代にはインターネットは必要となっています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～となっている");
+        assert_pattern_range(&patterns, "～は～となっている", 16, 23); // となっています
+    }
+
+    // Testing: polite[1] - Noun + となっています
+    #[test]
+    fn test_tonatteiru_noun_polite() {
+        let sentence = "この高校ではアルバイトが禁止となっています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～となっている");
+        assert_pattern_range(&patterns, "～は～となっている", 14, 21); // となっています
+    }
+}
