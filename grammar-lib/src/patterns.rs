@@ -1338,6 +1338,14 @@ declare_patterns! {
         jlpt: "n4",
     },
 
+    ToIwareteiru {
+        name: "といわれている",
+        matcher_fn: crate::matchers::n4::to_iwareteiru,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
     Nado {
         name: "など",
         matcher_fn: crate::matchers::n4::nado,

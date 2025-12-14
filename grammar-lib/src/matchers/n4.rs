@@ -5647,3 +5647,58 @@ pub fn shi_u301c_shi() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(ShiParticleMatcher)), // し (接続助詞)
     ]
 }
+
+// Pattern: といわれている (it is said that)
+// Structures: Phrase + と + いわれている/いわれています
+pub fn to_iwareteiru() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl super::Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    #[derive(Debug)]
+    struct IuVerbMizenMatcher;
+    impl super::Matcher for IuVerbMizenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "いう" || token.base_form == "言う")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| form == "未然形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct PassiveReruMatcher;
+    impl super::Matcher for PassiveReruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "れる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(IuVerbMizenMatcher)),
+        TokenMatcher::Custom(Arc::new(PassiveReruMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::specific_verb("いる"),
+    ]
+}

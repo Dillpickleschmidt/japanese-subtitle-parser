@@ -7801,3 +7801,59 @@ mod toomou_tests {
         assert_pattern_range(&patterns, "とおもう", 7, 11); // とおもう
     }
 }
+
+// Pattern: といわれている (it is said that)
+// Data source: grammar_points_data.json["といわれている"]
+// Testing: structure.standard[0] - "Phrase + といわれている"
+//
+// Structure variants to test:
+//   - standard[0]: Phrase + といわれている
+//   - polite[0]: Phrase + といわれています
+#[cfg(test)]
+mod to_iwareteiru_tests {
+    use super::*;
+
+    // Testing: standard[0] - Phrase + といわれている (い-Adj phrase)
+    #[test]
+    fn test_standard_i_adj() {
+        let sentence = "大阪のタコ焼きは日本一美味しいといわれている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といわれている");
+        assert_pattern_range(&patterns, "といわれている", 15, 22); // といわれている
+    }
+
+    // Testing: standard[0] - Phrase + といわれている (な-Adj phrase)
+    #[test]
+    fn test_standard_na_adj() {
+        let sentence = "ティフアナは世界一危険な町といわれている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といわれている");
+        assert_pattern_range(&patterns, "といわれている", 13, 20); // といわれている
+    }
+
+    // Testing: polite[0] - Phrase + といわれています
+    #[test]
+    fn test_polite_form() {
+        let sentence = "あのレストランは有名だといわれています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といわれている");
+        assert_pattern_range(&patterns, "といわれている", 11, 19); // といわれています
+    }
+
+    // Testing: standard[0] - Phrase + といわれている (Verb phrase)
+    #[test]
+    fn test_verb_phrase() {
+        let sentence = "明日は雨が降るといわれている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といわれている");
+        assert_pattern_range(&patterns, "といわれている", 7, 14); // といわれている
+    }
+}
