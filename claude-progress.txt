@@ -1,3 +1,78 @@
+## Session 346 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (決して〜ない)
+**Tests added**: 5 (all passing)
+**Total tests**: 2201 passing, 1 ignored (was 2196 passing, 1 ignored)
+
+### ✅ Pattern Completed: 決して〜ない (never / under no circumstances / by no means)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: 決して is an adverb meaning "never", "under no circumstances", or "by no means". It comes from 決する (to determine) in て-form, but is now treated as a standalone adverb. It emphasizes that something is "decidedly not" or "assuredly not" the case. The pattern always appears with ない somewhere in the sentence to express strong negation.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. 決して + Verb[ない]: この道はものすごく危ないので、決してグループから離れないでください (This road is very dangerous, so please under no circumstances leave the group)
+2. 決して + い-Adjective[ない]: 決して痛くないとは言えないです (By no means can I say that it does not hurt)
+3. 決して + な-Adjective + ではない: この乗り物は決して危険ではないです (This ride is by no means dangerous)
+4. 決して + Noun + ではない: この子は決して悪い人ではないけど、時々失礼なときがある (By no means do I think that this person is bad, but they are rude at times)
+5. 決して + じゃない (casual): 決してあなたが嫌いじゃない (I by no means dislike you)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (kesshite_u301c_nai, lines 5097-5131)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (kesshite_u301c_nai_tests module, lines 11142-11203)
+- Pattern: grammar-lib/src/patterns.rs (KesshiteU301cNai, declared)
+
+**Tokenization pattern**:
+```
+Three-token matcher: 決して + Wildcard{0-20} + ない
+- 決して (副詞/一般) - adverb meaning "decidedly/assuredly"
+- Wildcard {min: 0, max: 20} - intervening phrase (0-20 tokens)
+- ない (助動詞 or 形容詞, base_form='ない') - negative marker
+
+Examples of wildcard content:
+- 0 tokens: 決して痛くない (adjective directly followed by ない)
+- 3 tokens: 決して危険ではない (な-adj + で + は + ない)
+- 10+ tokens: 決してグループから離れない (longer verb phrase with particles)
+```
+
+**Key implementation points**:
+1. Three-token matcher: KesshiteMatcher + Wildcard{0-20} + NaiMatcher
+2. KesshiteMatcher checks surface == "決して" and POS == 副詞
+3. NaiMatcher checks base_form == "ない" and POS is either 助動詞 or 形容詞
+4. Wildcard allows 0-20 tokens between 決して and ない for various constructions
+5. Works with all preceding elements: verbs, い-adjectives, な-adjectives, nouns
+6. Handles both ではない and じゃない (casual) forms
+7. Priority set to 3 (moderate - construction pattern)
+
+**Pattern ranges**: Include full construction from 決して to ない
+- Verb form: "決してグループから離れない" (chars 15-28)
+- い-Adj form: "決して痛くない" (chars 0-7)
+- な-Adj + です: "決して危険ではないです" (chars 6-17, includes です)
+- Noun form: "決して悪い人ではない" (chars 4-14)
+- じゃない form: "決してあなたが嫌いじゃない" (chars 0-13)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: verb, い-adjective, な-adjective, noun
+- Cover both ではない and じゃない forms
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that 決して comes from 正（まさ）meaning "precise" or "actual", with か creating a question nuance. The literal meaning is closer to "is it true?" or "is it actually?" While translated as "never", the actual meaning emphasizes the decisiveness of the negation: "decidedly not (A)" or "assuredly not (A)".
+
+**Note on Pattern Matching**: In polite form with です, the pattern range extends through です (e.g., ではないです matches to the end of です, not just ない). This is because the pattern matcher includes trailing polite markers as part of the matched construction.
+
+**Related patterns**:
+- This is a standalone adverb pattern that must appear with negation
+- Related to other emphatic negative adverbs
+
+---
+
 ## Session 345 - 2025-12-14
 
 ### ✅ Session Summary
