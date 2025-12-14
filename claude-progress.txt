@@ -2917,3 +2917,90 @@ Current session
 - ✅ feature_list.json updated
 - ✅ Ready for next pattern
 
+
+## Session 215 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N5 pattern
+**Patterns completed**: 1 (の - pronoun replacement)
+**Tests added**: 4 (all passing)
+**Total tests**: 1400 (was 1396)
+
+### Pattern Implemented: の (Pronoun Replacement)
+
+**JLPT Level**: N5
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: の used as pronoun to replace previously mentioned nouns
+
+**Structures tested**: 4 tests covering all variants
+1. たけしさんの - Possessive replacement (following noun, 名詞/非自立)
+2. 誰の/あなたの - Pronoun replacement (following pronoun, 助詞/連体化)
+3. 乗っているの - Verb nominalization (following verb, 名詞/非自立)
+4. 俺の - Casual speech (following pronoun, 助詞/連体化)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n5.rs (lines 146-195)
+- Tests: grammar-lib/src/tests/n5_patterns.rs (lines 6515-6584)
+- Pattern detects: Noun/Verb + の (pronoun replacement)
+- Handles two tokenization forms:
+  1. 助詞/連体化 (particle, nominalizer) - e.g., 俺の、誰の
+  2. 名詞/非自立/一般 (dependent noun) - e.g., たけしさんの、乗っているの
+
+**Custom matchers created**:
+- NounOrVerbMatcher: Matches preceding noun or verb
+- NoPronounMatcher: Matches の in either particle or dependent noun form
+
+**Key Learnings**:
+1. **Two tokenization forms**: の can be tokenized as either 助詞/連体化 or 名詞/非自立 depending on context
+2. **Preceding word**: Can follow both nouns (possessive) and verbs (nominalizer)
+3. **Automatic range extension**: Pattern ranges automatically extend to include following auxiliaries (e.g., のです)
+4. **Multiple matches**: When sentence has multiple instances, pattern matcher may return any one match
+5. **Low priority pattern**: Priority 1 (Construction) means matched but not highlighted in browser extension
+
+**Grammar explanation**:
+- Replaces previously mentioned nouns to avoid repetition (重ね言葉 - redundant words)
+- After nouns: possessive meaning (e.g., たけしさんの = Takeshi-san's [book])
+- After verbs: nominalizer meaning (e.g., 乗っているの = the one [you] drive)
+- Same の as possessive の, but following noun is omitted
+
+**Test coverage**:
+✅ Possessive replacement after proper noun (たけしさんの)
+✅ Pronoun replacement after question word (誰の) and pronoun (あなたの)
+✅ Nominalizer after verb clause (乗っているの)
+✅ Casual speech (俺の)
+
+### Workflow followed
+1. ✅ Read grammar_points_data.json for の pattern
+2. ✅ Checked for existing stub function (found at line 147)
+3. ✅ Wrote 4 tests with print_debug for all structure variants
+4. ✅ Analyzed tokenization output to identify two forms of の
+5. ✅ Implemented matcher based on actual tokenization
+6. ✅ Verified tests detect patterns correctly
+7. ✅ Removed print_debug and added proper assertions
+8. ✅ Verified all tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes with detailed commit message
+
+### Statistics
+- **Patterns completed this session**: 1
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1400
+- **Files modified**: 3 (matchers/n5.rs, tests/n5_patterns.rs, feature_list.json)
+- **Remaining N5 patterns**: 1 (は)
+
+### Next Session Recommendations
+1. **Complete final N5 pattern**: は (topic particle)
+   - More complex than の as it's a fundamental topic marker
+   - May need to distinguish from contrastive は
+   - Priority 1, Construction category
+2. **Move to N4 patterns**: Once N5 is complete
+3. **Pattern complexity**: は is fundamental but may have edge cases
+
+### Environment Status
+- ✅ All 1400 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern
