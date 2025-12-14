@@ -7954,3 +7954,70 @@ mod toshitara_tosureba_tosuruto_tests {
         assert_pattern_range(&patterns, "としたら・とすれば・とすると", 6, 10); // とすると
     }
 }
+
+// ========== と同じくらい (about the same as) ==========
+// Pattern: と同じくらい (about the same as)
+// Data source: grammar_points_data.json["と同じくらい"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + と同じ + くらい (or ぐらい)
+//   standard[1]: Noun + と同じ + くらい + の + Noun
+
+mod toonajikurai_tests {
+    use super::*;
+
+    // Testing: Noun + と同じぐらい (basic form)
+    #[test]
+    fn test_basic_toonajikurai() {
+        let sentence = "彼のパソコンはプリンターと同じぐらい大きい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同じくらい");
+        assert_pattern_range(&patterns, "と同じくらい", 7, 18); // プリンターと同じぐらい
+    }
+
+    // Testing: Noun + と同じくらい (with くらい variant)
+    #[test]
+    fn test_toonajikurai_kuraivariant() {
+        let sentence = "先生、昨日と同じくらい痛いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同じくらい");
+        assert_pattern_range(&patterns, "と同じくらい", 3, 11); // 昨日と同じくらい
+    }
+
+    // Testing: Noun + と同じぐらい + の + Noun
+    #[test]
+    fn test_toonajikurai_no_noun() {
+        let sentence = "あの人は車と同じぐらいのスピードで走れる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同じくらい");
+        assert_pattern_range(&patterns, "と同じくらい", 4, 11); // 車と同じぐらい
+    }
+
+    // Testing: More complex example with clause
+    #[test]
+    fn test_toonajikurai_complex() {
+        let sentence = "今飼っている犬と同じぐらいのサイズのワンチャンが欲しいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同じくらい");
+        assert_pattern_range(&patterns, "と同じくらい", 6, 13); // 犬と同じぐらい
+    }
+
+    // Testing: と同じくらい + に variation
+    #[test]
+    fn test_toonajikurai_ni() {
+        let sentence = "あの女の人はお母さんと同じぐらいに見えた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同じくらい");
+        assert_pattern_range(&patterns, "と同じくらい", 6, 16); // お母さんと同じぐらい
+    }
+}

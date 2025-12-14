@@ -3698,9 +3698,38 @@ pub fn mi() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: と同じくらい
+// Pattern: と同じくらい (about the same as)
+// Structures: Noun + と + 同じ + くらい/ぐらい
 pub fn toonajikurai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match くらい or ぐらい (助詞/副助詞)
+    #[derive(Debug)]
+    struct KuraiGuraiMatcher;
+    impl super::Matcher for KuraiGuraiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "くらい" || token.surface == "ぐらい")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match 同じ (連体詞)
+    #[derive(Debug)]
+    struct OnajiMatcher;
+    impl super::Matcher for OnajiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "同じ"
+                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("と"),
+        TokenMatcher::Custom(Arc::new(OnajiMatcher)),
+        TokenMatcher::Custom(Arc::new(KuraiGuraiMatcher)),
+    ]
 }
 
 // Pattern: と同じで・と違って
