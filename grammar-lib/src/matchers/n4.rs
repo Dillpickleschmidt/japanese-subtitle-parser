@@ -2028,9 +2028,53 @@ pub fn uff5e_nisuru_u30fb_uff5e_kusuru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: といい
+// Pattern: といい (it would be good if)
+// Structures: Noun/な-Adj + だ + と + いい(verb)
+// Note: When だと precedes いい, Kagome tokenizes いい as いう(verb/連用形) not いい(adjective)
+// This pattern catches that specific case, while the N3 pattern たらいい・といい_と handles
+// Verb/い-Adj + と + いい(adjective)
 pub fn toii() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だ copula (助動詞)
+    #[derive(Debug)]
+    struct DaCopulaMatcher;
+    impl super::Matcher for DaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match と as quotation particle (格助詞/引用)
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl super::Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match いい when tokenized as いう verb in 連用形
+    #[derive(Debug)]
+    struct IiVerbMatcher;
+    impl super::Matcher for IiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いい"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DaCopulaMatcher)),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(IiVerbMatcher)),
+    ]
 }
 
 // Pattern: ようになる

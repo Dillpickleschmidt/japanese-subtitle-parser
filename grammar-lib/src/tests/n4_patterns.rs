@@ -7608,3 +7608,55 @@ mod dedekiru_karadekiru_tests {
         assert_pattern_range(&patterns, "でできる・からできる", 4, 11); // 米からできます
     }
 }
+
+// Pattern: といい (I hope / it would be good if)
+// Data source: grammar_points_data.json["といい"]
+// Note: This N4 pattern detects Noun/な-Adj + だといい where いい is tokenized as いう(verb).
+// The N3 pattern たらいい・といい_と handles Verb/い-Adj + といい where いい is tokenized as いい(adjective).
+mod toii_tests {
+    use super::*;
+
+    // Test: Noun + だ + と + いい (casual)
+    // Structure: Noun + だ + と + いい
+    #[test]
+    fn test_toii_noun_casual() {
+        let sentence = "今夜の夕食は魚だといいな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といい");
+        assert_pattern_range(&patterns, "といい", 7, 11); // だといい
+    }
+
+    // Test: な-Adjective + だ + と + いい + です (polite)
+    // Structure: な-Adj + だ + と + いい + です
+    #[test]
+    fn test_toii_na_adjective_polite() {
+        let sentence = "試験が簡単だといいですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といい");
+        assert_pattern_range(&patterns, "といい", 5, 11); // だといいです (extends to include です)
+    }
+
+    // Test: Noun + だ + と + いい + です (polite with complex sentence)
+    // Structure: Noun + だ + と + いい + です
+    #[test]
+    fn test_toii_noun_polite() {
+        let sentence = "先輩が言っていることが本当だといいですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といい");
+        assert_pattern_range(&patterns, "といい", 13, 19); // だといいです (extends to include です)
+    }
+
+    // Note: Verb + と + いい and い-Adj + と + いい are handled by the N3 pattern たらいい・といい_と
+    // because in those cases, いい is tokenized as いい(adjective), not いう(verb).
+    // Examples:
+    // - 明日は雪が降るといいな → N3 pattern (降るといい)
+    // - 今夜のパーティーは楽しいといいね → N3 pattern (楽しいといい)
+    // - 来週は彼氏が来るといいね → N3 pattern (来るといい)
+    // - 明日の試合で勝つといいんだけど → N3 pattern (勝つといい)
+}

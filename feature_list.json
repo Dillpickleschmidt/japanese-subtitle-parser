@@ -2942,13 +2942,13 @@
   {
     "pattern_name": "といい",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the regular uses of the と particle is to express 'if' [11 std, 11 pol]",
     "priority": 2,
     "skip_reason": null
