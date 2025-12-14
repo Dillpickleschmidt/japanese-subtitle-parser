@@ -1,3 +1,84 @@
+## Session 269 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (のように・のような - like/as)
+**Tests added**: 4 (all passing)
+**Total tests**: 1734 (was 1730)
+
+### Pattern Implemented: のように・のような (like/as - with noun)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: The auxiliary verb ようだ used for making observations and comparisons. States that something is "in the manner/way of (A)". The の particle is required before よう when describing a noun. Can be used in adverbial form (のように) or attributive form (のような).
+
+**Structures tested**: 4 tests covering all structure variants
+1. Noun + のように + Verb: ナオミはプロの歌手のように歌う (Naomi sings like a professional singer)
+2. Noun + のように + い-Adjective: この先生は鬼のように怖い (This teacher is as scary as a demon)
+3. Noun + のように + な-Adjective: 私は鳥のように自由だ (I am free as a bird)
+4. Noun + のような + Noun: 最近はタブレットのようなスマホが売られています (Recently, tablet-like smartphones are being sold)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (noyouni_u30fb_noyouna, lines 2020-2083)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (noyouni_noyouna_tests, lines 9069-9130)
+- Pattern: grammar-lib/src/patterns.rs (NoyouniU30fbNoyouna, line 1525)
+
+**Tokenization pattern**:
+```
+Noun (名詞)
++ の (助詞/連体化)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/副詞化) OR な (助動詞/体言接続, base="だ")
+```
+
+**Key implementation points**:
+1. Single pattern handles both のように (adverbial) and のような (attributive) forms
+2. Custom matchers ensure correct part-of-speech for each token
+3. よう is a dependent noun (非自立) requiring modification by の
+4. に makes it adverbial (modifies verbs/adjectives), な makes it attributive (modifies nouns)
+5. Pattern range includes full construction: Noun + の + よう + に/な
+6. Reuses NiOrNaMatcher pattern to match either ending
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all structure variants: のように with Verb/i-Adj/na-Adj, のような with Noun
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+
+**Challenges Solved**:
+1. Distinguishing this pattern from plain ように・ような (without の)
+2. Correctly matching よう as a dependent noun (非自立)
+3. Handling both に (副詞化) and な (体言接続) endings in one pattern
+4. Ensuring the preceding の is the possessive/modifier type (連体化)
+
+**Linguistic Note**: The expression のように/のような literally means "in the manner/appearance of (noun)". The の particle makes the noun modify よう (manner/appearance), creating a comparison. This is more confident and based on direct observation than みたい or そう, as よう comes from 様 (appearance/manner).
+
+### Session Statistics
+- **Session time**: Approximately 30 minutes
+- **Patterns completed this session**: 1 (のように・のような)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1734 (up from 1730)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - はずがない (cannot be/should not be)
+   - はずだ (should be/ought to be)
+   - ば (conditional)
+   - ばあいは (in case of)
+   - ひつようがある (need to)
+2. **Pattern focus**: More N4 constructions with auxiliary verbs and expressions
+
+### Environment Status
+- All 1734 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 268 - 2025-12-14
 
 ### ✅ Session Summary
