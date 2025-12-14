@@ -3928,9 +3928,119 @@ impl Matcher for VerbStemOrSahenNounMatcher {
     }
 }
 
-// Pattern: ていただけませんか
+// Pattern: ていただけませんか (could you please - humble polite request)
+// Structures: Verb[て] + いただけませんか / Verb[て] + もらえませんか
+//
+// Note: Kagome tokenizes いただけませんか incorrectly as:
+//   い(いる) + た + だけ + ませんか
+// Instead of the correct:
+//   いただけ(potential of いただく) + ませんか
+//
+// We match both the incorrect tokenization and the correct もらえませんか form
 pub fn teitadakemasenka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match either い (from いただけませんか) or もらえ (from もらえませんか)
+    #[derive(Debug)]
+    struct ItadakeMoraeMatcher;
+    impl Matcher for ItadakeMoraeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match い (tokenized as いる verb)
+            if token.surface == "い"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.base_form == "いる"
+            {
+                return true;
+            }
+            // Match もらえる
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.base_form == "もらえる"
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match た from いただけませんか (optional for もらえませんか)
+    #[derive(Debug)]
+    struct TaAuxiliaryMatcher;
+    impl Matcher for TaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+        }
+    }
+
+    // Match だけ particle (optional for もらえませんか)
+    #[derive(Debug)]
+    struct DakeParticleMatcher;
+    impl Matcher for DakeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match ませ (未然形 of ます)
+    #[derive(Debug)]
+    struct MaseAuxiliaryMatcher;
+    impl Matcher for MaseAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ます"
+        }
+    }
+
+    // Match ん (negative auxiliary)
+    #[derive(Debug)]
+    struct NNegativeMatcher;
+    impl Matcher for NNegativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match か (question particle)
+    #[derive(Debug)]
+    struct KaQuestionMatcher;
+    impl Matcher for KaQuestionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Pattern: Verb[連用形/連用タ接続] + て/で + (い|もらえ) + [た] + [だけ] + ませ + ん + か
+    // The た and だけ are only present in いただけませんか (mis-tokenized)
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ItadakeMoraeMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TaAuxiliaryMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DakeParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(MaseAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(NNegativeMatcher)),
+        TokenMatcher::Custom(Arc::new(KaQuestionMatcher)),
+    ]
 }
 
 // Pattern: たら (conditional "if/when")

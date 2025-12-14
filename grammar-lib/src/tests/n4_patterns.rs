@@ -7089,3 +7089,56 @@ mod souni_souna_tests {
         assert_pattern_range(&patterns, "そうに・そうな ", 6, 11); // なさそうに
     }
 }
+
+// ========================================
+// ていただけませんか Tests
+// ========================================
+mod teitadakemasenka_tests {
+    use super::*;
+
+    // Pattern: ていただけませんか (could you please - humble polite request)
+    // Data source: grammar_points_data.json["ていただけませんか"]
+    // Testing: structure.standard[0] - "Verb[て] + いただけませんか"
+    #[test]
+    fn test_te_itadakemasen_ka_basic() {
+        let sentence = "お名前を教えていただけませんか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていただけませんか");
+        assert_pattern_range(&patterns, "ていただけませんか", 4, 15); // 教えていただけませんか
+    }
+
+    // Testing: structure.standard[1] - "Verb[て] + もらえませんか"
+    #[test]
+    fn test_te_moraemasen_ka_basic() {
+        let sentence = "危ないので少しだけ下がってもらえませんか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていただけませんか");
+        assert_pattern_range(&patterns, "ていただけませんか", 9, 20); // 下がってもらえませんか
+    }
+
+    // Testing: Different verb types with いただけませんか
+    #[test]
+    fn test_te_itadakemasen_ka_different_verbs() {
+        let sentence = "もう一度説明していただけませんか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていただけませんか");
+        assert_pattern_range(&patterns, "ていただけませんか", 4, 16); // 説明していただけませんか
+    }
+
+    // Testing: Different verb with もらえませんか
+    #[test]
+    fn test_te_moraemasen_ka_different_verbs() {
+        let sentence = "ちょっと待ってもらえませんか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていただけませんか");
+        assert_pattern_range(&patterns, "ていただけませんか", 4, 14); // 待ってもらえませんか
+    }
+}
