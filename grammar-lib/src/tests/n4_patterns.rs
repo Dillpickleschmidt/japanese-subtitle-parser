@@ -7857,3 +7857,62 @@ mod to_iwareteiru_tests {
         assert_pattern_range(&patterns, "といわれている", 7, 14); // といわれている
     }
 }
+
+// Pattern: とされている (it is considered that)
+// Data source: grammar_points_data.json["とされている"]
+// Testing: structure.standard[0-3] - "X + とされている"
+//
+// Structure variants to test:
+//   - standard[0]: Verb + とされている
+//   - standard[1]: い-Adj + とされている
+//   - standard[2]: な-Adj + (だ) + とされている
+//   - standard[3]: Noun + (だ) + とされている
+//   - polite[0-3]: Same forms + ています
+#[cfg(test)]
+mod to_sareteiru_tests {
+    use super::*;
+
+    // Testing: standard[3] - Noun + だ + とされている
+    #[test]
+    fn test_noun_standard() {
+        let sentence = "今の時代にはインターネットが必要だとされている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とされている");
+        assert_pattern_range(&patterns, "とされている", 17, 23); // とされている
+    }
+
+    // Testing: standard[3] - Noun + だ + とされている (different context)
+    #[test]
+    fn test_noun_invention() {
+        let sentence = "これはニコラテスラが発明したものだとされている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とされている");
+        assert_pattern_range(&patterns, "とされている", 17, 23); // とされている
+    }
+
+    // Testing: standard[1] - い-Adj + とされている
+    #[test]
+    fn test_i_adjective() {
+        let sentence = "睡眠は健康に良いとされている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とされている");
+        assert_pattern_range(&patterns, "とされている", 8, 14); // とされている
+    }
+
+    // Testing: polite[3] - Noun + だ + とされています
+    #[test]
+    fn test_polite_form() {
+        let sentence = "これは世界遺産だとされています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とされている");
+        assert_pattern_range(&patterns, "とされている", 8, 15); // とされています
+    }
+}
