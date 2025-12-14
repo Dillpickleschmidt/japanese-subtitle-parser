@@ -9388,3 +9388,34 @@ mod hitsuyougaaru_tests {
         assert_pattern_range(&patterns, "ひつようがある", 14, 24); // 行く必要がありません
     }
 }
+
+// Pattern: 見える (to be visible, can be seen)
+// Data source: grammar_points_data.json["見える"]
+// Testing: structure.standard[0] - "Noun + が + 見（み）える"
+//          structure.polite[0] - "Noun + が + 見（み）えます"
+mod mieru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + が + 見（み）える"
+    #[test]
+    fn test_mieru_standard() {
+        let sentence = "遠くに建物が見えるけどあれは何？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "見える");
+        assert_pattern_range(&patterns, "見える", 3, 9); // 建物が見える
+    }
+
+    // Testing: structure.polite[0] - "Noun + が + 見（み）えます"
+    #[test]
+    fn test_mieru_polite() {
+        let sentence = "この部屋からは富士山が見えます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "見える");
+        assert_pattern_range(&patterns, "見える", 7, 15); // 富士山が見えます
+    }
+}
+

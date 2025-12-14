@@ -3992,13 +3992,13 @@
   {
     "pattern_name": "見える",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In the same way that 聞（き）こえる is used to describe things that are 'audible', 見（み）える can be used to describe things tha... [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null
