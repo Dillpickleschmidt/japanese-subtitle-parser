@@ -2407,3 +2407,104 @@ Current session
 - ✅ Ready for next session
 
 ---
+
+---
+
+## Session 209 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: IN PROGRESS - Successfully implemented 2 N5 patterns
+**Patterns completed**: 2 (る-Verb (Dictionary), う-Verb (Dictionary))
+**Tests added**: 6 (all passing)
+**Total tests**: 1348 (was 1342)
+
+### Pattern Implemented: る-Verb (Dictionary) (Ichidan verbs in dictionary form)
+
+**JLPT Level**: N5
+**Category**: Construction
+**Priority**: 1
+
+**Structures tested**: 3
+1. 食べる (taberu - to eat) - classic ru-verb
+2. 見る (miru - to see/watch) - monosyllabic ru-verb with auxiliary
+3. 寝る (neru - to sleep) - common ru-verb
+
+**Implementation details**:
+- Pattern: Verb with 一段 (ichidan) conjugation type in 基本形
+- Custom matcher checks:
+  1. POS tag: 動詞/自立
+  2. Conjugation type: 一段 (ichidan)
+  3. Conjugation form: 基本形 (dictionary form)
+- Ranges automatically extend to include auxiliaries (like Verbs (Non-past))
+- Educational pattern (priority 1) - not highlighted in browser overlays
+
+**Test file**: grammar-lib/src/tests/n5_patterns.rs (lines 5825-5868)
+**Matcher file**: grammar-lib/src/matchers/n5.rs (lines 322-340)
+
+### Pattern Implemented: う-Verb (Dictionary) (Godan verbs in dictionary form)
+
+**JLPT Level**: N5
+**Category**: Construction
+**Priority**: 1
+
+**Structures tested**: 3
+1. 歩く (aruku - to walk) - く-ending u-verb
+2. 話す (hanasu - to speak) - す-ending u-verb
+3. 座る (suwaru - to sit) - る-ending u-verb (NOT a ru-verb!)
+
+**Implementation details**:
+- Pattern: Verb with 五段 (godan) conjugation type in 基本形
+- Custom matcher checks:
+  1. POS tag: 動詞/自立
+  2. Conjugation type: starts_with("五段") - covers all godan sub-types
+  3. Conjugation form: 基本形 (dictionary form)
+- Ranges automatically extend to include auxiliaries
+- Demonstrates distinction from ru-verbs: 座る is godan despite ending in る
+
+**Test file**: grammar-lib/src/tests/n5_patterns.rs (lines 5870-5913)
+**Matcher file**: grammar-lib/src/matchers/n5.rs (lines 342-360)
+
+### Workflow followed
+1. ✅ Read grammar_points_data.json for both patterns
+2. ✅ Checked for existing stub functions (both found)
+3. ✅ Wrote tests with print_debug for dictionary form examples
+4. ✅ Analyzed tokenization output to identify key features
+5. ✅ Implemented matchers based on actual tokenization
+6. ✅ Verified tests detect patterns correctly
+7. ✅ Removed print_debug and added proper assertions
+8. ✅ Verified all tests pass (no regressions)
+9. ✅ Updated feature_list.json for both patterns
+10. ✅ Committed changes with detailed commit messages
+
+### Key Learnings
+1. **Verb classification**: Japanese verbs fall into two main classes:
+   - 一段 (ichidan/ru-verbs): conjugate by removing る
+   - 五段 (godan/u-verbs): conjugate using all 5 vowel sounds
+2. **Conjugation detection**: features[4] contains conjugation type (一段 or 五段・*)
+3. **五段 subtypes**: Godan has many subtypes (五段・カ行, 五段・サ行, etc.) - use starts_with("五段")
+4. **る-ending u-verbs**: Not all verbs ending in る are ru-verbs (e.g., 座る is godan)
+5. **Range extension**: Basic verb/adjective patterns automatically extend ranges to include auxiliaries
+
+### Statistics
+- **Patterns completed this session**: 2
+- **Test success rate**: 6/6 (100%)
+- **Total passing tests**: 1348
+- **Files modified**: 4 (matchers/n5.rs, tests/n5_patterns.rs, feature_list.json x2)
+- **Remaining N5 patterns**: 9 (was 11)
+
+### Next Session Recommendations
+1. **Continue with N5 verb conjugation patterns**:
+   - る-Verb (Negative) - ない form
+   - う-Verb (Negative) - ない form
+   - る-Verb (Past) - た form
+   - う-Verb (Past) - た form
+2. **Pattern complexity**: These conjugation patterns may have many variants
+3. **Alternative**: Skip to simpler particle patterns if verb conjugations are too complex
+
+### Environment Status
+- ✅ All 1348 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern
+
