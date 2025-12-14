@@ -397,13 +397,97 @@ pub fn mokamawazu() -> Vec<TokenMatcher> {
 }
 
 // Pattern: かねる
+// Pattern: かねる (cannot, difficult to do)
+// Structures: Verb[stem] + かねる / かねます
 pub fn kaneru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct VerbStemMatcher;
+    impl Matcher for VerbStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KaneruVerbMatcher;
+    impl Matcher for KaneruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "かね" || token.surface == "兼ね")
+                && token.base_form == "かねる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MasuOrRuMatcher;
+    impl Matcher for MasuOrRuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ます (助動詞)
+            (token.surface == "ます"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // OR match る (基本形 of かねる)
+            || (token.surface == "る"
+                && token.base_form == "かねる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbStemMatcher)),
+        TokenMatcher::Custom(Arc::new(KaneruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(MasuOrRuMatcher)),
+    ]
 }
 
-// Pattern: かねない
+// Pattern: かねない (might, capable of)
+// Structures: Verb[stem] + かねない / かねません
 pub fn kanenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct VerbStemMatcher;
+    impl Matcher for VerbStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KaneruVerbMatcher;
+    impl Matcher for KaneruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "かね" || token.surface == "兼ね")
+                && token.base_form == "かねる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiOrMasenMatcher;
+    impl Matcher for NaiOrMasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (助動詞)
+            (token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // OR match ませ (助動詞, ます base form)
+            || (token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbStemMatcher)),
+        TokenMatcher::Custom(Arc::new(KaneruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiOrMasenMatcher)),
+        // Optional ん for ません form
+        TokenMatcher::Optional(Box::new(TokenMatcher::Surface("ん"))),
+    ]
 }
 
 // Pattern: を除いて

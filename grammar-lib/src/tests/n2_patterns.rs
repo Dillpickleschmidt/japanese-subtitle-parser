@@ -449,3 +449,102 @@ mod enai_tests {
         assert_pattern_range(&patterns, "〜得ない", 9, 15); // 起こりえない
     }
 }
+
+// Pattern: かねる (cannot, difficult to do)
+// Data source: grammar_points_data.json["かねる"]
+// Testing structure variants:
+//   - standard[0]: Verb[stem] + かねる
+//   - polite[0]: Verb[stem] + かねます
+#[cfg(test)]
+mod kaneru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb[stem] + かねる
+    #[test]
+    fn test_verb_stem_kaneru() {
+        let sentence = "こういう場合でも返金はできかねます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かねる");
+        assert_pattern_range(&patterns, "かねる", 11, 17); // できかねます
+    }
+
+    // Testing: structure.polite[0] - Verb[stem] + かねます
+    #[test]
+    fn test_verb_stem_kanemasu() {
+        let sentence = "それはお答えしかねます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かねる");
+        assert_pattern_range(&patterns, "かねる", 3, 11); // お答えしかねます
+    }
+
+    // Testing: another realistic example
+    #[test]
+    fn test_uketsuke_kanemasu() {
+        let sentence = "お電話での予約受付は受けかねます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かねる");
+        assert_pattern_range(&patterns, "かねる", 10, 16); // 受けかねます
+    }
+}
+
+// Pattern: かねない (might, capable of)
+// Data source: grammar_points_data.json["かねない"]
+// Testing structure variants:
+//   - standard[0]: Verb[stem] + かねない
+//   - standard[1]: Noun + に + かねない
+//   - polite[0]: Verb[stem] + かねません
+//   - polite[1]: Noun + に + かねません
+#[cfg(test)]
+mod kanenai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb[stem] + かねない
+    #[test]
+    fn test_verb_stem_kanenai() {
+        let sentence = "それは命を落としかねない感染症らしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かねない");
+        assert_pattern_range(&patterns, "かねない", 5, 12); // 落としかねない
+    }
+
+    // Testing: structure.standard[1] - Noun + に + かねない (via になる verb)
+    #[test]
+    fn test_noun_ni_kanenai() {
+        let sentence = "仕事のやりすぎは鬱の原因になりかねない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かねない");
+        assert_pattern_range(&patterns, "かねない", 13, 19); // なりかねない
+    }
+
+    // Testing: structure.polite[0] - Verb[stem] + かねません
+    #[test]
+    fn test_verb_stem_kanemasen() {
+        let sentence = "地震の後には津波が起こりかねません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かねない");
+        assert_pattern_range(&patterns, "かねない", 9, 17); // 起こりかねません
+    }
+
+    // Testing: with conditional phrase
+    #[test]
+    fn test_conditional_kanenai() {
+        let sentence = "操作を間違えれば怪我人が出かねない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かねない");
+        assert_pattern_range(&patterns, "かねない", 12, 17); // 出かねない
+    }
+}

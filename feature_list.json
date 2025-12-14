@@ -7338,13 +7338,13 @@
   {
     "pattern_name": "かねない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The negative form of the る-Verb 兼（か）ねる 'to spread across' (usually 2 different activities or thought processes) is a ... [2 std, 2 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7352,13 +7352,13 @@
   {
     "pattern_name": "かねる",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "兼（か）ねる , a る-Verb meaning 'to spread across' (usually 2 different activities or thought processes), often follows the... [1 std, 1 pol]",
     "priority": 4,
     "skip_reason": null
