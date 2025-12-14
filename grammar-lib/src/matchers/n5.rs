@@ -143,9 +143,55 @@ pub fn are() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(AreMatcher))]
 }
 
-// Pattern: の
+// Pattern: の (pronoun replacement)
+// Structures: Noun + の OR Verb + の
+// の can be tokenized as either:
+// - 助詞/連体化 (particle, nominalizer) - e.g., 俺の、誰の
+// - 名詞/非自立/一般 (dependent noun) - e.g., たけしさんの、乗っているの
+// Can follow nouns (possessive) or verb clauses (nominalizer replacing previously mentioned noun)
 pub fn no() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match preceding word (noun or verb)
+    #[derive(Debug)]
+    struct NounOrVerbMatcher;
+    impl Matcher for NounOrVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞" || pos == "動詞")
+        }
+    }
+
+    // Match の as pronoun replacement (either particle or dependent noun form)
+    #[derive(Debug)]
+    struct NoPronounMatcher;
+    impl Matcher for NoPronounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface != "の" {
+                return false;
+            }
+
+            // Case 1: 助詞/連体化 (particle, nominalizer) - e.g., 俺の、誰の
+            if token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+            {
+                return true;
+            }
+
+            // Case 2: 名詞/非自立/一般 (dependent noun) - e.g., たけしさんの、乗っているの
+            if token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NounOrVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NoPronounMatcher)),
+    ]
 }
 
 // Pattern: いい

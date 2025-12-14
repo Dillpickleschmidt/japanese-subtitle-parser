@@ -6512,3 +6512,74 @@ mod ru_verb_negative_past_tests {
     }
 }
 
+// ========== の (Pronoun replacement) ==========
+// Pattern: の (pronoun replacement - replaces previously mentioned noun)
+// Data source: grammar_points_data.json["の"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + の + (previously mentioned noun)
+//   Note: The previously mentioned noun is dropped.
+//
+// Examples from grammar data:
+//   - この本はたけしさんのです (This book is Takeshi-san's)
+//   - そのペンは誰の？あなたの？ (That pen, whose is it? Is it yours?)
+//   - あの車、あなたが乗っているのですか (That car, is it the one you drive?)
+
+mod no_pronoun_replacement_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + の (possessive replacement)
+    // Example: "さんの" where the following noun (本) is dropped
+    #[test]
+    fn test_no_possessive_replacement() {
+        let sentence = "この本はたけしさんのです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の");
+        assert_pattern_range(&patterns, "の", 7, 10); // さんの
+    }
+
+    // Testing: standard[0] - Noun + の (pronoun replacement - multiple instances)
+    // Example: "誰の" and "あなたの" where the following noun (ペン) is dropped
+    #[test]
+    fn test_no_yours_pronoun() {
+        let sentence = "そのペンは誰の？あなたの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の");
+        // Pattern should match both instances
+        // First: 誰の (chars 5-7)
+        // Second: あなたの (chars 8-12)
+        // Checking for the second instance (pattern matcher may return any match)
+        assert_pattern_range(&patterns, "の", 8, 12); // あなたの
+    }
+
+    // Testing: standard[0] - Verb + の (replacing non-specific things, "one")
+    // Example: "いるの" where の replaces 車
+    #[test]
+    fn test_no_replacement_one() {
+        let sentence = "あの車、あなたが乗っているのですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の");
+        // Note: Range extends to include auxiliary です (automatic range extension)
+        // Core pattern: いる (11-13) + の (13-14) → Extended: いるのです (11-16)
+        assert_pattern_range(&patterns, "の", 11, 16); // いるのです
+    }
+
+    // Testing: standard[0] - Noun + の (casual conversation)
+    // Example: "俺の" in casual speech
+    #[test]
+    fn test_no_casual_mine() {
+        let sentence = "それ、俺のだから返してくれ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の");
+        assert_pattern_range(&patterns, "の", 3, 5); // 俺の
+    }
+}
+
