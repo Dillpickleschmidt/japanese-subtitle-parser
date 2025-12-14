@@ -1,10 +1,10 @@
 ## Session 274 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N4 pattern
-**Patterns completed**: 1 (見える - to be visible/can be seen)
-**Tests added**: 2 (all passing)
-**Total tests**: 1756 (was 1754)
+**Status**: COMPLETE - Successfully implemented 2 N4 patterns
+**Patterns completed**: 2 (見える - to be visible/can be seen, 聞こえる - to be audible/can be heard)
+**Tests added**: 4 (all passing)
+**Total tests**: 1758 (was 1754)
 
 ### Pattern Implemented: 見える (to be visible, can be seen)
 
@@ -52,24 +52,79 @@ Noun (名詞 - any subtype)
 
 **Linguistic Note**: The verb 見える is intransitive, so the object that is "visible" is marked with が (not を). This is different from the transitive verb 見る (to see/look at) which takes を. The expression emphasizes that something can be perceived visually without effort - it's a natural state of visibility rather than an active attempt to see something.
 
+### Pattern Implemented: 聞こえる (to be audible, can be heard)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2 (Priority 1 in pattern declaration - low priority for highlighting)
+
+**Pattern**: Intransitive verb meaning "to be audible" or "can be heard". Used to describe things that can be heard without requiring active concentration - ambient noise that's unavoidable if in range. Different from 聞ける (potential form of 聞く) which implies trying to concentrate on a specific sound.
+
+**Structures tested**: 2 tests covering the core pattern
+1. Noun + が + 聞こえる (standard): 車の音が聞こえる (I can hear the sound of a car)
+2. Noun + が + 聞こえます (polite): 隣の部屋から話し声が聞こえます (I can hear voices from the next room)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (kikoeru, lines 2566-2587)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (kikoeru_tests, lines 9422-9455)
+- Pattern: grammar-lib/src/patterns.rs (Kikoeru, line 1637 - already existed)
+
+**Tokenization pattern**:
+```
+Noun (名詞 - any subtype)
++ が (助詞/格助詞/一般)
++ 聞こえる (動詞/自立, base="聞こえる")
+```
+
+**Key implementation points**:
+1. Simple pattern matching Noun + が + 聞こえる (parallel to 見える pattern)
+2. Custom GaParticleMatcher matches が as a case particle (格助詞)
+3. Uses TokenMatcher::specific_verb("聞こえる") to match the verb
+4. Pattern matcher automatically extends through conjugations (聞こえ+ます, 聞こえ+ない, 聞こえ+た, etc.)
+5. Pattern range includes full construction: Noun + が + 聞こえる/聞こえます
+6. Priority 1 in patterns.rs means it's detected but not highlighted in browser extension overlays
+
+**Grammar points data note**:
+The grammar_points_data.json lists 4 structure variants:
+- [0] Noun + が + 聞こえる (implemented - core pattern)
+- [1] い-Adj[く] + 聞こえる (not implemented - normal adverbial usage)
+- [2] な-Adj + に + 聞こえる (not implemented - normal adverbial usage)
+- [3] Noun + に + 聞こえる (not implemented - normal adverbial usage)
+
+Variants [1-3] are just standard Japanese adverbs modifying the verb, not special grammar patterns requiring detection. Only the core pattern with が (marking the sound source) is implemented.
+
+**Test Quality**:
+- Test sentences are realistic, subtitle-quality Japanese
+- Cover both structure variants: standard and polite
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Deciding which structures from grammar_points_data.json actually need detection
+2. Recognizing that adverbial forms are normal verb usage, not special patterns
+3. Correctly matching が as case particle (格助詞) not other particle types
+4. Ensuring pattern range includes the full Noun + が + 聞こえる construction
+
+**Linguistic Note**: The verb 聞こえる is intransitive, so the source of sound is marked with が (not を). This is different from the transitive verb 聞く (to hear/listen to) which takes を. The expression emphasizes that something can be perceived aurally without effort - it's ambient sound that reaches the listener naturally rather than an active attempt to listen to something.
+
 ### Session Statistics
-- **Session time**: Approximately 20 minutes
-- **Patterns completed this session**: 1 (見える)
-- **Test success rate**: 2/2 (100%)
-- **Total passing tests**: 1756 (up from 1754)
+- **Session time**: Approximately 40 minutes
+- **Patterns completed this session**: 2 (見える, 聞こえる)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1758 (up from 1754)
 - **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
 
 ### Next Session Recommendations
 1. **Continue with N4 patterns needing implementation**:
-   - 聞こえる (to be audible) - very similar to 見える (same pattern structure)
-   - ～は～の一つだ (is one of ~)
-   - ～のだろうか (I wonder if ~)
-   - ～にする・～くする (to make/to do)
-   - 化する (to become/to turn into)
-2. **Pattern focus**: 聞こえる would be an excellent next choice as it's identical structure to 見える
+   - ～は～の一つだ (is one of ~) - simple pattern with 1-2 structures
+   - ～のだろうか (I wonder if ~) - question form with だろう
+   - ～にする・～くする (to make/to do) - causative/transformation
+   - 化する (to become/to turn into) - suffix pattern
+   - ～ない～はない (double negative pattern)
+2. **Pattern focus**: ～は～の一つだ would be a good next choice (simpler structure)
 
 ### Environment Status
-- All 1756 tests passing
+- All 1758 tests passing
 - No regressions
 - Codebase clean and ready for next session
 
