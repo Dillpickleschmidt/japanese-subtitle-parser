@@ -1,10 +1,10 @@
 ## Session 201 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: IN PROGRESS - Successfully implemented 〜得ない pattern
-**Patterns completed**: 1 (〜得ない)
-**Tests added**: 4 (all passing)
-**Total tests**: 1270 (was 1266)
+**Status**: COMPLETE - Successfully implemented 3 N2 patterns
+**Patterns completed**: 3 (〜得ない, かねる, かねない)
+**Tests added**: 11 (all passing)
+**Total tests**: 1277 (was 1266)
 
 ### Pattern Implemented: 〜得ない (cannot, impossible)
 
@@ -51,26 +51,78 @@
 3. **Common phrase**: ありえない is extremely common in daily speech
 4. **Simple implementation**: 4-token pattern (3 required + 1 optional ん)
 
+### Pattern Implemented: かねる (cannot, difficult to do)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 3
+1. Verb[stem] + かねる (standard negative capability)
+2. Verb[stem] + かねます (polite form)
+3. Various verbs: できかねます, お答えしかねます, 受けかねます
+
+**Implementation details**:
+- Pattern: Verb[連用形] + かね(かねる/非自立) + ます/る
+- Custom matchers:
+  - VerbStemMatcher: Verb in 連用形 (conjunctive form)
+  - KaneruVerbMatcher: かね/兼ね (surface) with かねる (base_form) as 動詞/非自立
+  - MasuOrRuMatcher: ます (助動詞) OR る (basic form of かねる)
+- Handles both hiragana (かね) and kanji (兼ね) forms
+- Formal/polite expression for "cannot do" or "difficult to do"
+- Softer than できない, implies external circumstances prevent action
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 453-494)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 400-444)
+
+### Pattern Implemented: かねない (might, capable of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 4
+1. Verb[stem] + かねない (standard form - negative possibility)
+2. Noun + に + かねない (via になる verb)
+3. Verb[stem] + かねません (polite form)
+4. With conditional phrase (〜ば...かねない)
+
+**Implementation details**:
+- Pattern: Verb[連用形] + かね(かねる/非自立) + ない/ませ(ん)
+- Custom matchers:
+  - VerbStemMatcher: Verb in 連用形 (conjunctive form)
+  - KaneruVerbMatcher: かね/兼ね (surface) with かねる (base_form) as 動詞/非自立
+  - NaiOrMasenMatcher: ない (助動詞) OR ませ (助動詞, ます base form)
+  - Optional ん for ません form
+- Expresses possibility of undesirable outcome
+- Often used with conditional phrases (と, ば, たら, でも)
+- Examples: 命を落としかねない, 火災になりかねない
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 493-550)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 446-491)
+
 ### Statistics
-- **Session time**: ~40 minutes so far
-- **Patterns completed this session**: 1
-- **Test success rate**: 4/4 (100%)
-- **Total passing tests**: 1270
+- **Session time**: ~2 hours
+- **Patterns completed this session**: 3
+- **Test success rate**: 11/11 (100%)
+- **Total passing tests**: 1277
+- **Average time per pattern**: ~40 minutes
 
 ### Next Session Recommendations
 1. **Continue with N2 priority 4 patterns**: More patterns at same priority level
 2. **Good candidates**:
-   - かねる/かねない (cannot possibly) - similar える pattern
    - かのようだ (as if, seems like) - か + の + ようだ
    - からして (from, judging from) - から + して
-3. **Avoid**: Complex patterns requiring variable wildcards
+   - からすると/からすれば (judging from) - から + conditional
+   - からといって (just because) - から + という + て
+3. **Pattern discovery**: N2 priority 4 has many から-based expressions
 
 ### Environment Status
-- ✅ All 1270 tests passing
+- ✅ All 1277 tests passing
 - ✅ No regressions
 - ✅ Clean git state (changes committed)
-- ✅ feature_list.json updated
-- ✅ Ready for next pattern
+- ✅ feature_list.json updated for all 3 patterns
+- ✅ Ready for next session
 
 ---
 
