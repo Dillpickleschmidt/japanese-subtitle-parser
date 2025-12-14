@@ -9129,3 +9129,62 @@ mod nikawatte_tests {
     }
 }
 
+// ========== に取って (for / to / concerning) ==========
+// Pattern: に取って (for / to / concerning)
+// Data source: grammar_points_data.json["に取って"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + に取って (expresses viewpoint/perspective)
+
+mod nitotte_tests {
+    use super::*;
+
+    // Test: Noun (pronoun) + に取って (to me)
+    // Example: 彼は私に取って親みたいな存在です
+    #[test]
+    fn test_nitotte_pronoun() {
+        let sentence = "彼は私に取って親みたいな存在です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に取って");
+        assert_pattern_range(&patterns, "に取って", 2, 7); // 私に取って
+    }
+
+    // Test: Noun (name) + に取って (to Takemi)
+    // Example: タケミに取って一番大切な人は誰ですか
+    #[test]
+    fn test_nitotte_name() {
+        let sentence = "タケミに取って一番大切な人は誰ですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に取って");
+        assert_pattern_range(&patterns, "に取って", 2, 7); // ミに取って
+    }
+
+    // Test: Noun + に取って (from that company's perspective)
+    // Example: 私に取ってあの会社は人を働かせすぎだと思います
+    #[test]
+    fn test_nitotte_company() {
+        let sentence = "私に取ってあの会社は人を働かせすぎだと思います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に取って");
+        assert_pattern_range(&patterns, "に取って", 0, 5); // 私に取って
+    }
+
+    // Test: Noun + に取って (important friend to me)
+    // Example: 私に取って一番大事な友達はあなたです
+    #[test]
+    fn test_nitotte_friend() {
+        let sentence = "私に取って一番大事な友達はあなたです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に取って");
+        assert_pattern_range(&patterns, "に取って", 0, 5); // 私に取って
+    }
+}
+

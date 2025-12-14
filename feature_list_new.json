@@ -5854,13 +5854,13 @@
   {
     "pattern_name": "に取って",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にとって (or に取（と）って when appearing as kanji) is a structure in Japanese that is used to convey opinions, or just general... [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
