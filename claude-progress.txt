@@ -1,12 +1,12 @@
 ## Session 228 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N4 pattern
-**Patterns completed**: 1 (Verb［せる・させる］- causative form)
-**Tests added**: 10 (all passing)
-**Total tests**: 1498 (was 1488)
+**Status**: COMPLETE - Successfully implemented 2 N4 patterns
+**Patterns completed**: 2 (Verb［せる・させる］causative + Verb［れる・られる］passive)
+**Tests added**: 21 total (10 causative + 11 passive, all passing)
+**Total tests**: 1509 (was 1488)
 
-### Pattern Implemented: Verb［せる・させる］(Causative form - make/let someone do)
+### Pattern Implemented #1: Verb［せる・させる］(Causative form - make/let someone do)
 
 **JLPT Level**: N4
 **Category**: Construction
@@ -65,24 +65,89 @@
 9. ✅ Updated feature_list.json
 10. ✅ Committed changes
 
+### Pattern Implemented #2: Verb［れる・られる］(Passive form - something happens to the subject)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Passive auxiliary verbs れる/られる expressing that something happens to the subject
+
+**Structures tested**: 11 tests covering all verb types
+1. Ichidan verb: 比べられる (be compared)
+2. Godan る5 verb: 座られた (was sat upon)
+3. Godan う verb: 歌われて (was sung)
+4. Godan く verb: 歩かれる (be walked on)
+5. Godan す verb: 話され (be talked about)
+6. Godan む verb: 噛まれる (be bitten)
+7. Godan ぶ verb: 飛ばれている (is being flown)
+8. Godan ぐ verb: 泳がれる (be swum in)
+9. Exception する: される (be done/pranked)
+10. Exception くる: 来られる (be visited)
+11. Polite form: 叱られます (will be scolded)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 520-570)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 6117-6245)
+- Pattern detects: Verb[未然形/未然レル接続] + れる/られる (動詞/接尾) + optional ます
+
+**Tokenization patterns**:
+- Verb stem: 未然形 (negative/passive stem) or 未然レル接続 (for する verbs)
+- Passive auxiliary: れる/られる as 動詞/接尾 (suffix verb)
+- Polite marker: ます (optional)
+
+**Matcher components**:
+1. PassiveStemMatcher - Matches verbs in 未然形 or 未然レル接続
+2. PassiveAuxiliaryMatcher - Matches れる/られる as 動詞/接尾
+3. MasuMatcher (optional) - Matches polite ます
+
+**Key characteristics**:
+- Expresses passive voice: something happens to the subject
+- Subject is affected by an external action (often negative nuance)
+- Covers all verb types: ichidan, godan (all endings), する, くる
+- Pattern includes verb stem + passive auxiliary + optional polite form
+- 11/11 tests detect pattern (100% success rate)
+- The "doer" of the action is marked with に or から particles
+
+**Note on multiple meanings**:
+The auxiliary られる/れる has 4 meanings in Japanese:
+1. **Passive (受け身)**: Something happens to the subject - THIS PATTERN
+2. Possible (可能): Ability or possibility to do something
+3. Spontaneous (自発): Something happens spontaneously
+4. Respectful (尊敬): Honorific form
+
+Our pattern detects the morphological form (verb stem + auxiliary) which can express any of these meanings depending on context.
+
+**Workflow followed**:
+1. ✅ Checked for existing stub function (found at line 521: verb_uff3b_reru_u30fb_rareru_uff3d)
+2. ✅ Read grammar_points_data.json for structure variants (14 standard, 14 polite)
+3. ✅ Wrote 11 tests with print_debug() covering all verb types
+4. ✅ Analyzed tokenization - understood 未然形 + れる/られる pattern (identical to causative)
+5. ✅ Implemented matcher using PassiveStemMatcher + PassiveAuxiliaryMatcher + optional MasuMatcher
+6. ✅ Verified all 11/11 tests detect patterns correctly with proper ranges
+7. ✅ Removed print_debug() and added proper assertions
+8. ✅ Verified all 1509 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes
+
 ### Session Statistics
-- **Session time**: ~1.5 hours
-- **Patterns completed this session**: 1
-- **Test success rate**: 10/10 (100% - 9 detect, 1 documented lexical exception)
-- **Total passing tests**: 1498
+- **Session time**: ~2.5 hours
+- **Patterns completed this session**: 2 (causative + passive)
+- **Test success rate**: 21/21 (100%)
+- **Total passing tests**: 1509
 - **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
 
 ### Next Session Recommendations
 1. **Continue with N4 patterns**: Many fundamental patterns still need implementation
 2. **Good candidates**:
-   - Verb［れる・られる］(passive form) - natural next step after causative
    - たら (conditional)
    - そう (hearsay/appearance)
    - ～ようと思う (intention)
-3. **Pattern focus**: Fundamental N4 verb conjugations and constructions
+   - てしまう・ちゃう (completion/regret)
+3. **Pattern focus**: Fundamental N4 grammar constructions
 
 ### Environment Status
-- ✅ All 1498 tests passing
+- ✅ All 1509 tests passing
 - ✅ No regressions
 - ✅ Clean git state (all changes committed)
 - ✅ feature_list.json updated
