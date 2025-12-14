@@ -10227,3 +10227,58 @@ mod youni_youna_tests {
     }
 }
 
+// Pattern: みたいに・みたいな (like/as - casual form)
+// Data source: grammar_points_data.json["みたいに・みたいな"]
+// Structure variants:
+//   - standard[0]: Verb + みたいに + Verb
+//   - standard[1]: Noun + みたいに + Verb
+//   - standard[2]: Noun + みたいな + Noun
+//   - Note: Verb can also precede みたいな (structure[4])
+mod mitaini_mitaina_tests {
+    use super::*;
+
+    #[test]
+    fn noun_mitaini_verb() {
+        // Example: プロみたいに泳ぎたい (I want to swim like a professional)
+        let sentence = "プロみたいに泳ぎたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたいに・みたいな");
+        assert_pattern_range(&patterns, "みたいに・みたいな", 0, 6); // プロみたいに
+    }
+
+    #[test]
+    fn noun_mitaina_noun() {
+        // Example: 先生みたいな人になりたい (I want to become someone like my teacher)
+        let sentence = "先生みたいな人になりたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたいに・みたいな");
+        assert_pattern_range(&patterns, "みたいに・みたいな", 0, 6); // 先生みたいな
+    }
+
+    #[test]
+    fn verb_mitaini_verb() {
+        // Example: イルカみたいに泳ぎたいと言っている (He is saying he wants to swim like a dolphin)
+        let sentence = "彼はイルカみたいに泳ぎたいと言っている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたいに・みたいな");
+        assert_pattern_range(&patterns, "みたいに・みたいな", 2, 9); // イルカみたいに
+    }
+
+    #[test]
+    fn verb_mitaina_noun() {
+        // Example: 関西みたいな所に住みたい (I want to live in a place like the Kansai region)
+        let sentence = "関西みたいな所に住みたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたいに・みたいな");
+        assert_pattern_range(&patterns, "みたいに・みたいな", 0, 6); // 関西みたいな
+    }
+}
+

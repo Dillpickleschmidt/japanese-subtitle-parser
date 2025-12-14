@@ -1997,9 +1997,75 @@ pub fn kamoshirenai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: みたいに・みたいな
+// Pattern: みたいに・みたいな (like, as - casual form)
+// Structures: Noun/Verb/Adj + みたい + に, Noun/Verb/Adj + みたい + な
+// Note: Casual equivalent of ように・ような
 pub fn mitaini_u30fb_mitaina() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match みたい as dependent noun with 形容動詞語幹 (na-adjective stem)
+    #[derive(Debug)]
+    struct MitaiMatcher;
+    impl Matcher for MitaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "みたい"
+                && token.base_form == "みたい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Match に particle (格助詞/一般 for adverbial form)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match な auxiliary (体言接続 form of だ)
+    #[derive(Debug)]
+    struct NaAuxiliaryMatcher;
+    impl Matcher for NaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match either に or な after みたい
+    #[derive(Debug)]
+    struct NiOrNaMatcher;
+    impl Matcher for NiOrNaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            NiParticleMatcher.matches(token) || NaAuxiliaryMatcher.matches(token)
+        }
+    }
+
+    // Match noun, verb, or adjective
+    #[derive(Debug)]
+    struct NounVerbOrAdjMatcher;
+    impl Matcher for NounVerbOrAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞");
+            let is_adj = token.pos.first().is_some_and(|pos| pos == "形容詞");
+
+            is_noun || is_verb || is_adj
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NounVerbOrAdjMatcher)),
+        TokenMatcher::Custom(Arc::new(MitaiMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrNaMatcher)),
+    ]
 }
 
 // Pattern: そうに・そうな (seems like/looks like - adverbial and attributive forms)
