@@ -1,3 +1,143 @@
+## Session 259 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (なければいけない - must do / have to)
+**Tests added**: 4 (all passing)
+**Total tests**: 1683 (was 1679)
+
+### Pattern Implemented: なければいけない (must do / have to)
+
+**JLPT Level**: N4
+**Category**: Conjugation
+**Priority**: 1
+
+**Pattern**: Obligation construction expressing "must do" or "have to". This is a double-negative conditional structure that literally means "if (A) is not done, it cannot go" → "must do (A)". Uses the conditional form なければ (if not) or the contracted casual form なきゃ, followed by いけない (cannot go) or its polite form いけません.
+
+**Structures tested**: 4 tests covering all structure variants
+1. Verb[ない] + なければ + いけない (standard): 行かなければいけない (have to go)
+2. Verb[ない] + なきゃ + いけない (casual contraction): 調べなきゃいけない (need to look up)
+3. Verb[ない] + なければ + いけません (polite): 止めなければいけません (have to park/stop)
+4. Verb[ない] + なきゃ + いけません (casual + polite): 提出しなきゃいけません (need to submit)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (nakerebaikenai, lines 5200-5268)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (nakerebaikenai_tests, lines 8343-8405)
+- Pattern: grammar-lib/src/patterns.rs (Nakerebaikenai)
+
+**Tokenization patterns**:
+
+Standard form (なければいけない):
+```
+なけれ (助動詞, 特殊・ナイ, 仮定形, base="ない") - conditional form of ない
++ ば (助詞/接続助詞) - conditional particle
++ いけ (動詞/非自立, 未然形 OR 連用形, base="いける") - verb "to be able to go"
++ ない (助動詞, 特殊・ナイ, 基本形) - negative auxiliary
+```
+
+Casual contracted form (なきゃいけない):
+```
+なきゃ (助動詞, 特殊・ナイ, 仮定縮約２, base="ない") - contracted conditional
++ いけ (動詞/非自立, 未然形 OR 連用形, base="いける")
++ ない (助動詞, 特殊・ナイ, 基本形)
+```
+
+Polite form (なければいけません):
+```
+なけれ + ば + いけ (連用形)
++ ませ (助動詞, 特殊・マス, 未然形) - polite auxiliary
++ ん (助動詞, 不変化型, 基本形) - negative contraction
+```
+
+**Key implementation points**:
+1. NakerebaOrNakyaMatcher handles both なけれ (仮定形) and なきゃ (仮定縮約２)
+2. BaParticleMatcher is optional (only needed for なければ, not なきゃ)
+3. IkeMatcher accepts both 未然形 and 連用形 (for standard vs polite)
+4. NaiAuxiliaryMatcher is optional to allow automatic extension for polite forms
+5. Pattern automatically extends to include ます+ん for polite negative
+6. Priority 1 (obligation construction)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover both standard (なければ) and casual contracted (なきゃ) forms
+- Test both plain (いけない) and polite (いけません) endings
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Handling two different conditional forms: なければ (full) vs なきゃ (contracted)
+2. Making ば optional to allow matching both variants with one pattern
+3. Making ない optional to allow automatic extension for polite forms (いけません)
+4. Understanding that いけ changes conjugation form: 未然形 (standard) vs 連用形 (polite)
+
+**Tokenization Discovery**:
+- なければ tokenizes as なけれ (仮定形) + ば (接続助詞)
+- なきゃ is a single token (仮定縮約２) - contracted form
+- いけない uses いけ in 未然形 when followed by ない
+- いけません uses いけ in 連用形 when followed by ます
+- The pattern matcher automatically extends patterns to include ます auxiliary
+
+**Pattern Relationship with Other Patterns**:
+- Related to なければならない (similar structure, different verb)
+- Related to なくてはいけない (te-form variant)
+- Related to なくちゃ・なきゃ (casual obligation, can omit いけない)
+- All express obligation/necessity in different registers
+
+**Usage distinction**:
+- なければいけない: Standard obligation ("must do")
+- なきゃいけない: Casual contracted form
+- なければならない: More formal/literary (uses ならない instead of いけない)
+- なくてはいけない: Te-form variant (structurally different but same meaning)
+
+### Session Statistics
+- **Session time**: Approximately 60 minutes
+- **Patterns completed this session**: 1 (なければいけない)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1683 (up from 1679)
+- **Files modified**: 4 (matchers/n4.rs, tests/n4_patterns.rs, patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 obligation patterns**:
+   - なければならない (must do) - similar structure, uses ならない
+   - なくてはいけない (must do) - te-form variant
+   - なくてはならない (must do) - te-form + ならない
+2. **Or continue with N4 command patterns**:
+   - なさい (imperative command form)
+   - なさる (honorific form of する)
+3. **Pattern focus**: More obligation and command constructions
+
+### Environment Status
+- All 1683 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+
+**Conditional Forms in Japanese**:
+The pattern uses the conditional (仮定形) of the negative auxiliary ない:
+- Full form: ない → なければ (if not)
+- Contracted: ない → なきゃ (casual "if not")
+- Both mean the same but differ in formality
+
+**Double Negative Logic**:
+The construction is a double negative that creates obligation:
+- Literal: "If not do, cannot go" = "must do"
+- 行かなければいけない = "If (I) don't go, it won't do" = "I must go"
+
+**いけない vs ならない**:
+Both mean "won't do/won't work" but differ in usage:
+- いけない: More common in speech, casual/neutral
+- ならない: More formal, literary, or written contexts
+- Both create the same grammatical function (obligation)
+
+**Pattern Extension for Polite Forms**:
+The pattern matcher automatically extends patterns when it detects polite auxiliaries:
+- Base pattern: なければ + いけ + ない
+- Extended: なければ + いけ + ます → なければいけません
+- This is why making ない optional was crucial for detection
+
 ## Session 258 - 2025-12-14
 
 ### ✅ Session Summary
