@@ -5759,3 +5759,78 @@ mod number_amount_ha_tests {
     // handled by the くらい pattern itself. This pattern focuses on the contrastive は
     // after numeric counters (助数詞) to mean "at least" or "or so".
 }
+
+// ========== Question-phrase + か (embedded question) ==========
+// Pattern: Question-phrase + か
+// Data source: grammar_points_data.json["Question-phrase + か"]
+//
+// Structure to test:
+//   - standard[0]: Question Word + か + わかる/知る/覚える/決める etc.
+//
+// Examples from data:
+//   - 社長が来るか分かりますか (Do you know if the CEO is coming?)
+//   - これで足りるか分かる？ (Do you know if this is enough?)
+//   - 何でこのビルを壊すか知っていますか (Do you know why they are destroying this building?)
+//   - お祭りは何時に終わるか知ってる？ (Do you know what time the festival ends?)
+//
+// Note: This is the adverbial particle か (副助詞), not the sentence-ending question marker.
+// It highlights uncertain things and is followed by verbs seeking information.
+#[cfg(test)]
+mod question_phrase_ka_tests {
+    use super::*;
+
+    // Test 1: Verb + か + わかる (if/whether)
+    #[test]
+    fn test_verb_ka_wakaru() {
+        let sentence = "忘年会に社長が来るか分かりますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Question-phrase + か");
+        assert_pattern_range(&patterns, "Question-phrase + か", 9, 15); // か分かります
+    }
+
+    // Test 2: Verb + か + わかる casual (if this is enough)
+    #[test]
+    fn test_verb_ka_wakaru_casual() {
+        let sentence = "これで足りるか分かる？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Question-phrase + か");
+        assert_pattern_range(&patterns, "Question-phrase + か", 6, 10); // か分かる
+    }
+
+    // Test 3: Question word (何で) + verb + か + 知る (why)
+    #[test]
+    fn test_question_word_verb_ka_shiru() {
+        let sentence = "何でこのビルを壊すか知っていますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Question-phrase + か");
+        assert_pattern_range(&patterns, "Question-phrase + か", 9, 12); // か知っ
+    }
+
+    // Test 4: Question word (何時) + verb + か + 知る (what time)
+    #[test]
+    fn test_question_word_verb_ka_shiru_casual() {
+        let sentence = "お祭りは何時に終わるか知ってる？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Question-phrase + か");
+        assert_pattern_range(&patterns, "Question-phrase + か", 10, 13); // か知っ
+    }
+
+    // Test 5: Question word (どこ) + か + verb (where)
+    #[test]
+    fn test_question_word_ka_verb() {
+        let sentence = "彼がどこに住んでるか教えてくれる？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Question-phrase + か");
+        assert_pattern_range(&patterns, "Question-phrase + か", 9, 12); // か教え
+    }
+}

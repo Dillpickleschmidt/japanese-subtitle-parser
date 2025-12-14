@@ -3816,9 +3816,52 @@ pub fn sorede() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SoredeMatcher))]
 }
 
-// Pattern: Question-phrase + か
+// Pattern: Question-phrase + か (embedded question)
+// Structures: Verb/Phrase + か + わかる/知る/決める/覚える etc.
+// Examples: 来るか分かる (know if coming), 何で壊すか知る (know why destroying)
+//
+// Note: This か is the adverbial particle (副助詞), not the sentence-ending question marker.
+// It marks embedded questions - uncertain things that are being inquired about.
 pub fn question_phrase_ka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match か as adverbial particle
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.base_form == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match information-seeking verbs (わかる, 知る, 決める, 覚える, etc.)
+    #[derive(Debug)]
+    struct InfoVerbMatcher;
+    impl Matcher for InfoVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && [
+                    "分かる", "わかる", "判る", "解る", // understand, know
+                    "知る",                           // know
+                    "決める",                         // decide
+                    "覚える",                         // remember, learn
+                    "教える",                         // teach, tell
+                    "確かめる",                       // confirm, verify
+                    "調べる",                         // investigate, check
+                    "聞く",                           // ask, hear
+                    "考える",                         // think, consider
+                    "見る",                           // see, look
+                ]
+                .contains(&token.base_form.as_str())
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(InfoVerbMatcher)),
+    ]
 }
 
 // Pattern: それでも (even so/nevertheless)
