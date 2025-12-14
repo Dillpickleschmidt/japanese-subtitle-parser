@@ -1,3 +1,73 @@
+## Session 329 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (のはXの方だ)
+**Tests added**: 3 (all passing)
+**Total tests**: 2091 passing, 1 ignored (was 2088 passing, 1 ignored)
+
+### ✅ Pattern Completed: のはXの方だ (the one that A is B / it's B that A)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - common construction pattern)
+
+**Pattern**: のはXの方だ is an expression used to show that (A) (usually despite expectations) is (B). It can be translated as "the one that (A), is (B)" or "it's (B) that (A)". The phrase is composed of のは (nominalizer + topic particle), a noun, and の方だ/です ("on the side of" + copula).
+
+**Structures tested**: 3 comprehensive tests covering standard and polite forms
+1. Verb phrase + のは + Noun + の方だ (apologetic): 言い出したのは俺の方だから、俺がなんとかしておくよ (I am the one that said it, so I will do something about it)
+2. Verb phrase + のは + Noun + の方だ (blaming): そのコップを壊したのはタケルの方だ！ (The one that broke the cup is Takeru!)
+3. Verb phrase + のは + Noun + の方です (polite apologetic): 謝らなければいけないのは私の方ですよ (The one that needs to apologize is me)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nohaxnohouda, lines 769-836)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nohaxnohouda_tests module, lines 9880-9927)
+- Pattern: grammar-lib/src/patterns.rs (Nohaxnohouda, lines 2720-2726)
+
+**Tokenization pattern**:
+```
+All forms follow the same structure:
+- の (名詞/非自立/一般) - nominalizing particle
+- は (助詞/係助詞) - topic particle
+- Noun (名詞) - any noun (俺, タケル, 私, etc.)
+- の (助詞/連体化) - possessive/connective particle
+- 方 (名詞/非自立/一般) - noun meaning "side/direction"
+- だ/です (助動詞) - copula
+
+Pattern structure: の + は + Noun + の + 方 + だ/です
+```
+
+**Key implementation points**:
+1. NoNominalizerMatcher checks の as 名詞/非自立/一般 (nominalizer)
+2. HaParticleMatcher checks は as 助詞/係助詞 (topic particle)
+3. Uses noun_matcher() for any noun (pronouns, names, common nouns)
+4. NoPossessiveMatcher checks の as 助詞/連体化 (possessive particle)
+5. HouNounMatcher checks 方 as 名詞/非自立 (noun)
+6. DaDesuCopulaMatcher handles both だ and です as 助動詞
+7. Pattern range includes full construction: の + は + Noun + の + 方 + だ/です
+
+**Pattern ranges**: Include full construction (のは + Noun + の方だ/です)
+- Example: "のは俺の方だ" (chars 5-11)
+- Example: "のはタケルの方だ" (chars 9-17)
+- Example: "のは私の方です" (chars 10-17)
+
+**Test Quality**:
+- All 3 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both standard (の方だ) and polite (の方です) forms
+- Test different contexts: apologetic responsibility, blaming, polite apologetic
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The literal meaning is "that which is (A), is on the side of (B)". By saying something is on the "side" of (B), it comes across more gently than expressly stating it "is (B)". This phrase is often used apologetically to express that someone feels they are the individual who is (more) responsible for causing a certain outcome. The の nominalizes the preceding clause, は highlights the contrast, and の方 softens the assertion.
+
+**Usage Context**: The pattern structure requires:
+- のは attaches to the end of a phrase (becomes なのは if the final word is a noun)
+- Followed by a noun representing the person/thing being identified
+- の方だ/です completes the construction
+
+---
+
 ## Session 328 - 2025-12-14
 
 ### ✅ Session Summary
