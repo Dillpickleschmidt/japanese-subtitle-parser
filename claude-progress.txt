@@ -1,3 +1,73 @@
+## Session 332 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (は～くらいです)
+**Tests added**: 5 (all passing)
+**Total tests**: 2106 passing, 1 ignored (was 2101 passing, 1 ignored)
+
+### ✅ Pattern Completed: は～くらいです (about the extent of / the only)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - common construction pattern)
+
+**Pattern**: は～くらいです is an expression used to convey that '(B) is all that exists within (A)'. As with other grammar points that use くらい, this nuance is shown in the form of an 'extent'. Both は and くらい are used as adverbial particles. The pattern translates as "(B) is about the extent of (A)" or "(B) is the only thing within (A)".
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. は + Verb + くらいです: 休日の日に家を出るのは、買い物に行くときくらいです (Going out to go shopping is about the only thing I do when I have a day off)
+2. は + Noun + ぐらいです: 食べ物で嫌いなのは茹で玉子ぐらいです (Boiled eggs are about the only thing I dislike in regards of food)
+3. は + Noun + ぐらいだ (casual): 悪いことをするのは、ほんの一瞬ぐらいだ (Doing bad things is only about a moment)
+4. は + Noun + くらいのものです (emphatic): 距離は５キロくらいのものです (The distance is only about 5km)
+5. は + Verb + くらいなものです (emphatic): 電車は仕事に行くときに使っているくらいなものです (Commuting to work is about the only time I use the train)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (ha_uff5e_kuraidesu, lines 3145-3236)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (hakuraidew_tests module, lines 10077-10134)
+- Pattern: grammar-lib/src/patterns.rs (HaUff5eKuraidesu, lines 3313-3319)
+
+**Tokenization patterns**:
+```
+Core structure:
+1. Any preceding token (verb, noun, adjective, etc.)
+2. くらい/ぐらい (助詞/副助詞) - extent particle
+3. Optional emphasis:
+   a. の (助詞/連体化) + もの (名詞/非自立/一般) - のもの variant
+   b. な (助動詞, base='だ', 体言接続) + もの - なもの variant
+4. です/だ (助動詞) - copula
+
+Pattern accepts both くらい and ぐらい interchangeably.
+Pattern detects the extent expression, while は earlier in the sentence marks the topic.
+```
+
+**Key implementation points**:
+1. KuraiParticleMatcher checks くらい/ぐらい as 助詞/副助詞
+2. NoOrNaMatcher handles optional の (連体化) or な (助動詞, base='だ')
+3. MonoNounMatcher handles optional もの (名詞/非自立)
+4. DesuDaCopulaMatcher accepts both です and だ as 助動詞
+5. TokenMatcher::Any allows any preceding element
+6. Pattern structure: Any + くらい/ぐらい + (の/な)? + もの? + です/だ
+7. Both optional matchers allow for plain form or emphatic のもの/なもの variants
+
+**Pattern ranges**: Include preceding element + くらい/ぐらい + optional emphatic + copula
+- Simple form: "ときくらいです" (18-25), "玉子ぐらいです" (29-36), "一瞬ぐらいだ" (13-19)
+- Emphatic form: "キロくらいのものです" (4-14), "いるくらいなものです" (14-24)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both くらい and ぐらい variants
+- Test both です and だ copula forms
+- Test both plain and emphatic (のもの/なもの) variants
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The は particle marks the topic (what we're limiting), appearing earlier in the sentence. The くらい shows the extent or limit. Together with です/だ, the pattern expresses "(B) is about the extent of (A)" - indicating that B is roughly all that exists within the scope of A. The のもの and なもの variants add extra emphasis to this limitation.
+
+**Usage Context**: (A) comes before は, highlighting the situation/place/thing/person within which a limit exists. The (B) part describes what that limit is, followed by くらいです/だ. This translates as "about the only" or "about the extent of" in natural English.
+
+---
+
 ## Session 331 - 2025-12-14
 
 ### ✅ Session Summary
