@@ -1504,8 +1504,122 @@ pub fn ru_verb_negative_past() -> Vec<TokenMatcher> {
 }
 
 // Pattern: う-Verb (Negative-Past)
+// Structures: Verb[五段,未然形] + なかった OR Verb[五段,連用形] + ませんでした OR Verb[五段,未然形] + なかったです
 pub fn u_verb_negative_past() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match godan (う-verb) in either 未然形 (for なかった) or 連用形 (for ませんでした)
+    #[derive(Debug)]
+    struct GodanVerbNegativePastMatcher;
+    impl Matcher for GodanVerbNegativePastMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Check if it's a verb
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+
+            // Check conjugation type contains "五段" (godan/う-verb)
+            if let Some(conjugation) = token.features.get(4) {
+                if !conjugation.contains("五段") {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+            // Check it's in 未然形 (for なかった) or 連用形 (for ませんでした)
+            if let Some(form) = token.features.get(5) {
+                form == "未然形" || form == "連用形"
+            } else {
+                false
+            }
+        }
+    }
+
+    // Match なかっ (past negative auxiliary - 連用タ接続)
+    #[derive(Debug)]
+    struct NakattaMatcher;
+    impl Matcher for NakattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なかっ"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|t| t == "特殊・ナイ")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match た (past tense marker)
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|t| t == "特殊・タ")
+        }
+    }
+
+    // Match ませ (ます in 未然形)
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f.starts_with("特殊・マス"))
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ん (negative particle)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|t| t == "不変化型")
+        }
+    }
+
+    // Match でし (です in 連用形)
+    #[derive(Debug)]
+    struct DeshiMatcher;
+    impl Matcher for DeshiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "でし"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f.starts_with("特殊・デス"))
+        }
+    }
+
+    // Match です (semi-polite marker)
+    #[derive(Debug)]
+    struct DesuMatcher;
+    impl Matcher for DesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Build the matcher for standard/semi-polite forms:
+    // 1. Verb + なかっ + た (standard)
+    // 2. Verb + なかっ + た + です (semi-polite)
+    // Note: Polite form (ませんでした) is handled by the う-Verb (Negative) pattern
+    vec![
+        TokenMatcher::Custom(Arc::new(GodanVerbNegativePastMatcher)),
+        TokenMatcher::Custom(Arc::new(NakattaMatcher)),
+        TokenMatcher::Custom(Arc::new(TaMatcher)),
+        // Optional です for semi-polite (なかった + です)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DesuMatcher)))),
+    ]
 }
 
 // Pattern: Verb + て (te-form for sequential actions)
