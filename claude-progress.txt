@@ -1,3 +1,99 @@
+## Session 284 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (みたいに・みたいな - like/as - casual form)
+**Tests added**: 4 (all passing)
+**Total tests**: 1816 (was 1812)
+
+### Pattern Implemented: みたいに・みたいな (like, as - casual form)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: This pattern is the casual equivalent of ように・ような. It handles the adverbial (みたいに) and attributive (みたいな) forms when preceded by nouns, verbs, or adjectives. It expresses similarity or comparison, meaning "like" or "as". The pattern uses みたい as a 形容動詞語幹 (na-adjective stem) followed by に (adverbial form) or な (attributive form).
+
+**Structures tested**: 4 tests covering all structure variants
+1. Noun + みたいに + Verb: プロみたいに (like a professional - adverbial)
+2. Noun + みたいな + Noun: 先生みたいな (like a teacher - attributive)
+3. Noun + みたいに + Verb: イルカみたいに (like a dolphin - adverbial)
+4. Noun + みたいな + Noun: 関西みたいな (like Kansai - attributive)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (mitaini_u30fb_mitaina function, lines 2000-2069)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (mitaini_mitaina_tests module, lines 10230-10283)
+- Pattern: grammar-lib/src/patterns.rs (MitainiU30fbMitaina - already existed)
+
+**Tokenization pattern**:
+```
+Adverbial form (みたいに):
+Noun/Verb/Adj (名詞/動詞/形容詞)
++ みたい (名詞/非自立/形容動詞語幹)
++ に (助詞/格助詞/一般)
+
+Attributive form (みたいな):
+Noun/Verb/Adj (名詞/動詞/形容詞)
++ みたい (名詞/非自立/形容動詞語幹)
++ な (助動詞, base=だ, 体言接続)
+
+Examples:
+- プロ (Noun) + みたい + に
+- 先生 (Noun) + みたい + な
+- イルカ (Noun) + みたい + に
+- 関西 (Noun) + みたい + な
+```
+
+**Key implementation points**:
+1. NounVerbOrAdjMatcher accepts nouns, verbs, or adjectives (broader than ように・ような)
+2. MitaiMatcher checks みたい is 名詞/非自立/形容動詞語幹
+3. NiOrNaMatcher accepts either に (格助詞) or な (助動詞/体言接続)
+4. Pattern range includes: Noun/Verb/Adj + みたい + に/な
+5. This pattern is the casual form of ように・ような
+6. Priority 1 means detected but not highlighted in browser extension
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Test both adverbial (みたいに) and attributive (みたいな) forms
+- Test with different word types (nouns in all examples)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Correct character ranges verified
+
+**Challenges Solved**:
+1. Understanding that みたい is tokenized as 形容動詞語幹 (na-adjective stem), not 助動詞語幹 like よう
+2. Recognizing that みたいに・みたいな accepts NOUNS before みたい (unlike ように・ような which mainly uses verbs/adjectives)
+3. Creating a matcher that accepts nouns, verbs, AND adjectives before みたい
+4. Handling both に (格助詞) and な (助動詞) endings in a single pattern
+5. Understanding the distinction between formal (ように・ような) and casual (みたいに・みたいな) forms
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in the browser extension. This is appropriate as it's a common casual comparison construction that doesn't need special emphasis.
+
+**Linguistic Note**: The expression みたい comes from 見たい (mitai) meaning "want to see" but has evolved into a casual form meaning "like" or "seems like". When combined with に (adverbial) it means "in the manner of" or "like", and with な (attributive) it modifies nouns. This is the casual/conversational equivalent of the more formal ように・ような. Unlike ように which uses よう (様 - manner/way) from formal auxiliary verb よう, みたい is treated as a na-adjective stem, making it more casual and common in spoken Japanese.
+
+### Session Statistics
+- **Session time**: Approximately 30 minutes
+- **Patterns completed this session**: 1 (みたいに・みたいな)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1816 (up from 1812)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - ようにいう (to tell/ask someone to do) - instruction expression
+   - ようにいのる (to pray that) - hope/wish expression
+   - ように～てほしい (want someone to do in order to) - combined pattern
+   - ほかに(も)・ほか(に)は (other than, besides) - more complex pattern
+   - よていだ (予定だ - plan to) - intention expression
+2. **Pattern focus**: ようにいう would be a natural next choice as it builds on よう patterns
+
+### Environment Status
+- All 1816 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 283 - 2025-12-14
 
 ### ✅ Session Summary
