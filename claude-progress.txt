@@ -1,3 +1,105 @@
+## Session 265 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (に (Frequency) - per/every)
+**Tests added**: 4 (all passing)
+**Total tests**: 1715 (was 1711)
+
+### Pattern Implemented: に (Frequency) - per/every
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: The case marking particle に used to express frequency. Describes how often something happens or is done. The construction follows the pattern: Timeframe + に + Number of Times. The に particle maintains its regular nuance of being a 'goal' or 'destination', within which something else takes place. This is distinct from で which expresses the amount of time required to complete something, rather than frequency.
+
+**Structures tested**: 4 tests covering the single structure variant with different counters
+1. 一ヶ月に一回: 一ヶ月に一回友達と遊園地に行く (I go to the amusement park with friends once per month)
+2. 一週間に２回: 一週間に２回しか歯を磨かない (He only brushes his teeth twice per week)
+3. 一日に３回: 一日に３回薬を飲んでください (Please take medicine three times per day)
+4. 一年に一度: 一年に一度、家族で旅行に行きます (We go on a family trip once per year)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (ni_frequency, lines 962-1010)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (ni_frequency_tests, lines 8819-8872)
+- Pattern: grammar-lib/src/patterns.rs (NiFrequency)
+
+**Tokenization pattern**:
+```
+Number (名詞/数)
++ Counter (名詞/接尾/助数詞)
++ に (助詞/格助詞/一般)
++ Number (名詞/数)
++ Counter (名詞/接尾/助数詞)
+```
+
+**Key implementation points**:
+1. NumberMatcher checks for 名詞/数 (number noun)
+2. CounterSuffixMatcher checks for 名詞/接尾/助数詞 (counter suffix)
+3. NiParticleMatcher checks for に as 助詞/格助詞/一般
+4. Pattern matches full sequence: Timeframe + に + Frequency
+5. Pattern range: entire construction (e.g., 一ヶ月に一回, 一週間に２回)
+6. Priority 2 (frequency construction)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover different timeframes: 月 (month), 週間 (week), 日 (day), 年 (year)
+- Cover different counters: 回 (times), 度 (times/degrees)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Understanding the structure: Number + Counter + に + Number + Counter
+2. Distinguishing frequency に from other uses of に (location, direction, etc.)
+3. Recognizing that counters are consistently 名詞/接尾/助数詞
+4. Supporting different counter types (回, 度, etc.)
+
+**Tokenization Discovery**:
+- Numbers are tokenized as 名詞/数 (can be kanji or arabic numerals: 一, ２, 3)
+- Counters are tokenized as 名詞/接尾/助数詞:
+  - ヶ月 (months), 週間 (weeks), 日 (days), 年 (years)
+  - 回 (times), 度 (times/degrees)
+- に particle is 助詞/格助詞/一般 in this frequency context
+- The pattern is highly consistent across different timeframes and counters
+
+**Pattern Usage Distinction**:
+- **に (Frequency)**: Expresses how often within a timeframe (一週間に２回)
+- **で (Duration)**: Expresses time required to complete something (２年間で５０万円貯めた)
+- Key difference: に marks portions of time within a larger space, で marks a whole space of time
+
+**Examples of Usage**:
+- 一ヶ月に一回 = once per month (literally: in one month, one time)
+- 一週間に２回 = twice per week
+- 一日に３回 = three times per day
+- 一年に一度 = once per year
+
+**Linguistic Note**: The に particle in this pattern keeps its core meaning as a goal/destination marker. The timeframe (一ヶ月, 一週間, etc.) represents the "destination" or "scope" within which the frequency occurs. This differs from で which marks a bounded time period for completion.
+
+### Session Statistics
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1 (に (Frequency))
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1715 (up from 1711)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - にきがつく (to notice/realize)
+   - にみえる (to appear/look like)
+   - のなかで (among/in)
+   - のように・のような (like/as)
+2. **Pattern focus**: More N4 constructions with particles and verb expressions
+
+### Environment Status
+- All 1715 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+---
+
 ## Session 264 - 2025-12-14
 
 ### ✅ Session Summary
