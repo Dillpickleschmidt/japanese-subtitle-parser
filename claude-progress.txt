@@ -1,3 +1,132 @@
+## Session 261 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (なさい - imperative command)
+**Tests added**: 4 (all passing)
+**Total tests**: 1691 (was 1687)
+
+### Pattern Implemented: なさい (imperative command)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2 (changed to 1 in patterns.rs for proper priority)
+
+**Pattern**: Imperative command form used to give polite commands. なさい is the imperative form of なさる, an honorific verb that respects the actions of others. Despite being respectful, as a command it's never used toward superiors. Most commonly used toward children, students, or peers. Attaches to the ます stem (連用形) of verbs.
+
+**Structures tested**: 4 tests covering the single structure variant
+1. Verb[stem] + なさい (basic command): 寝なさい (Go to sleep!)
+2. Verb[stem] + なさい (study command): 勉強しなさい (Study!)
+3. Verb[stem] + なさい (apologize): 謝りなさい (Apologize!)
+4. Verb[stem] + なさい (eat command): 食べなさい (Eat!)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (nasai, lines 3856-3877)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (nasai_tests, lines 8469-8526)
+- Pattern: grammar-lib/src/patterns.rs (Nasai)
+
+**Tokenization pattern**:
+```
+Verb[連用形] (stem form)
++ なさい (動詞/非自立, 五段・ラ行特殊, 命令ｉ, base="なさる")
+```
+
+**Key implementation points**:
+1. Custom NasaiMatcher with specific checks:
+   - surface == "なさい"
+   - base_form == "なさる"
+   - pos == 動詞/非自立
+   - features[5] (conjugation form) == "命令ｉ" (imperative i-form)
+2. Precedes with verb in 連用形 (stem/masu-form)
+3. Pattern range: verb stem + なさい (e.g., 寝なさい, 食べなさい)
+4. Priority set to 1 in patterns.rs (imperative construction)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover different verb types: 一段 (寝る, 食べる), 五段 (謝る), サ変 (勉強する)
+- Test various command contexts: sleep, study, apologize, eat
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Understanding that なさい is tokenized as a verb (動詞/非自立), not an auxiliary
+2. Recognizing the special conjugation type: 五段・ラ行特殊 (special godan ra-row verb)
+3. Identifying the imperative form: 命令ｉ (distinct from regular 命令形)
+4. Pattern matches verb stem (連用形), not dictionary form
+
+**Tokenization Discovery**:
+- なさい is the imperative form of the honorific verb なさる
+- Classified as 動詞/非自立 (auxiliary verb) despite being a verb form
+- Uses special conjugation type 五段・ラ行特殊
+- Conjugation form is 命令ｉ (imperative i-form), unique to なさる
+- Always follows the 連用形 (masu-stem) of the main verb
+
+**Pattern Relationship with Other Patterns**:
+- なさい is the imperative form of なさる (honorific verb)
+- Related command forms:
+  - 命令形 (dictionary stem + e-sound): 食べろ, 行け (plain imperative)
+  - てください: politer request form
+  - てくれ: casual request to peers
+  - な (shortened なさい): 食べな (very casual command)
+- なさい sits between polite requests (ください) and plain commands (命令形)
+
+**Usage distinction**:
+- なさい: Polite command to children/students/peers (respectful but authoritative)
+- 命令形: Plain command (blunt, masculine, aggressive)
+- てください: Polite request (respectful, not commanding)
+- な (short form): Very casual command to close friends/children
+
+**Note on shortened form**:
+The grammar data mentions な as a shortened form of なさい, but this is difficult to distinguish from the negative imperative particle な (don't). We focused on the full form なさい for clarity:
+- 食べな (shortened なさい): "You should eat" - verb stem + な
+- 食べるな (negative imperative): "Don't eat" - dictionary form + な
+
+### Session Statistics
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1 (なさい)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1691 (up from 1687)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 command/honorific patterns**:
+   - なさる (honorific form of する - "to do")
+   - Related to なさい but used as a verb rather than command
+2. **Or continue with N4 obligation patterns**:
+   - なくてはいけない (must do) - te-form variant
+   - なくてはならない (must do) - te-form + ならない
+3. **Pattern focus**: More command forms or obligation constructions
+
+### Environment Status
+- All 1691 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+
+**Imperative Forms in Japanese**:
+Japanese has multiple imperative/command forms with different levels of politeness:
+1. **命令形 (plain imperative)**: 食べろ, 行け - very blunt, masculine
+2. **なさい (polite command)**: 食べなさい - polite but still commanding
+3. **てください (polite request)**: 食べてください - respectful request
+4. **な (shortened なさい)**: 食べな - casual to friends/children
+
+**なさる as Honorific Verb**:
+- なさる is the honorific equivalent of する (to do)
+- Used to show respect for others' actions: 何をなさいますか (What will you do?)
+- なさい is its imperative form, creating a "respectful command"
+- This seeming paradox (respectful + commanding) limits usage to authority figures addressing subordinates
+
+**Verb Stem (連用形) Usage**:
+The 連用形 (masu-stem) is versatile and combines with many constructions:
+- ます: 食べます (polite non-past)
+- たい: 食べたい (want to eat)
+- なさい: 食べなさい (polite command)
+- すぎる: 食べすぎる (eat too much)
+- やすい: 食べやすい (easy to eat)
+
 ## Session 260 - 2025-12-14
 
 ### ✅ Session Summary
