@@ -1,3 +1,95 @@
+## Session 294 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (んだけど・んですが - explanatory + but/however)
+**Tests added**: 6 (all passing)
+**Total tests**: 1865 (was 1859)
+
+### Pattern Implemented: んだけど・んですが (explanatory + but/however)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: The expression んだけど・んですが combines んだ/のだ (explanatory/giving cause) with けど/が (but/however). It translates as "but..." where the nuance is "but with (A) as the reason... (B)". The (B) part is sometimes left unsaid, implying that the speaker is looking for a reply or doesn't want to state the conclusion out of politeness/awkwardness.
+
+**Structures tested**: 6 tests covering all major structure variants
+1. Verb + んだけど: 助かるんだけど (it would be helpful, but...)
+2. Verb + のですが (polite): 行くのですが (I'm going, but...)
+3. い-Adj + のだけど: 買いたいのだけど (I want to buy [it], but...)
+4. な-Adj + のだけど: いいのだけど (it's good, but...)
+5. Noun + なんですが (polite): 学生なんですが (I'm a student, but...)
+6. んだけれど variant: あるんだけれど (I have [time], but...)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (ndakedo_u30fb_ndesuga function, lines 5725-5784)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (ndakedo_ndesuga_tests module, lines 10940-11017)
+- Pattern: grammar-lib/src/patterns.rs (NdakedoU30fbNdesuga - already existed at line 2149)
+
+**Tokenization pattern**:
+```
+Standard forms (んだけど/のだけど):
+ん/の (名詞/非自立/一般)
++ だ (助動詞)
++ けど/けれど/けれども/けども (助詞/接続助詞)
+
+Polite forms (んですが/のですが):
+ん/の (名詞/非自立/一般)
++ です (助動詞)
++ が/けど/けれど/けれども/けども (助詞/接続助詞)
+
+Noun forms (なんですが/なのですが):
+[Optional] な (助動詞, base=だ, 体言接続)
++ ん/の (名詞/非自立/一般)
++ です (助動詞)
++ が (助詞/接続助詞)
+
+Examples:
+- んだけど: ん + だ + けど
+- のですが: の + です + が
+- なんですが: な + ん + です + が
+- んだけれど: ん + だ + けれど
+```
+
+**Key implementation points**:
+1. NaAuxMatcher (optional) handles な for Noun + なんですが pattern
+2. NOrNoMatcher accepts both ん and の as 名詞/非自立 (explanatory nominalizer)
+3. DaDesuMatcher accepts both だ and です (copula)
+4. KeDoGaMatcher accepts けど/けれど/けれども/けども/が as 助詞/接続助詞
+5. Pattern range includes: (optional な) + ん/の + だ/です + けど/が variants
+6. Priority 2 means detected and may be highlighted in browser extension
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all major variants: んだけど, のですが, のだけど, なんですが, んだけれど
+- Test verb, adjective, and noun forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding the three-token structure: ん/の + だ/です + けど/が
+2. Handling optional な prefix for Noun + なんですが pattern
+3. Supporting multiple variants of けど (けれど, けれども, けども)
+4. Distinguishing んだけど (casual) from のですが (polite)
+5. Ensuring pattern works with both standard and polite forms
+
+**Pattern Priority**: Priority 2 means this pattern is detected and may be highlighted in browser extension overlays. This is appropriate as it's a common conversational pattern that shows indirect/polite communication style.
+
+**Linguistic Note**: The expression んだけど (casual) / んですが (polite) is a very common Japanese communication pattern. The ん/の creates an explanatory tone (giving background/reason), while けど/が adds "but" to soften the statement or invite a response. It's frequently used to:
+1. Make requests more polite (助かるんだけど = "It would help, but..." → indirect request)
+2. Express hesitation or uncertainty (分からないんだけど = "I don't know, but..." → leaving room for help)
+3. Provide background before stating a conclusion (学生なんですが = "I'm a student, so..." → leading to a request)
+4. Sound less direct or confrontational in conversation
+
+The が variant (んですが/のですが) is more formal/polite than けど variants.
+
+**Next pattern to implement**: れる・られる (Potential) - potential verb form pattern, or 他動詞・自動詞 (transitive/intransitive verbs)
+
+---
+
 ## Session 293 - 2025-12-14
 
 ### ✅ Session Summary
