@@ -1006,9 +1006,62 @@ pub fn toiumonoda() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: から見ると
+// Pattern: から見ると (from the perspective of, judging from)
+// Structures: Noun + から + 見る + と/ば/て/たら
 pub fn karamiruto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match から as case particle
+    #[derive(Debug)]
+    struct KaraMatcher;
+    impl super::Matcher for KaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match みる verb in any conjugation form (基本形, 仮定形, 連用形)
+    #[derive(Debug)]
+    struct MiruVerbMatcher;
+    impl super::Matcher for MiruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "みる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    // Match と, ば, て, or たら as ending
+    #[derive(Debug)]
+    struct EndingMatcher;
+    impl super::Matcher for EndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // と or ば or て (all connective particles)
+            if (token.surface == "と" || token.surface == "ば" || token.surface == "て")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            // たら (auxiliary verb in hypothetical form)
+            if token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(KaraMatcher)),
+        TokenMatcher::Custom(Arc::new(MiruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(EndingMatcher)),
+    ]
 }
 
 // Pattern: ところを見ると

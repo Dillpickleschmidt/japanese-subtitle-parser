@@ -761,3 +761,57 @@ mod karasuruto_karasureba_tests {
         assert_pattern_range(&patterns, "からすると・からすれば", 3, 9); // さからすると
     }
 }
+
+// Pattern: から見ると (from the perspective of, judging from)
+// Data source: grammar_points_data.json["から見ると"]
+// Testing: structure.standard[0] - "Noun + から見（み）ると"
+//          structure.standard[1] - "Noun + から見（み）れば"
+//          structure.standard[2] - "Noun + から見（み）て"
+//          structure.standard[3] - "Noun + から見（み）たら"
+//
+// Expresses viewing from perspective of (A) or judgment based on looking at (A)
+// Nuance: "from the point of view of (A)" or "from looking at (A)"
+// Literal: から (from) + 見る (to look) + と/ば/て/たら (hypothetical/connective)
+mod karamiruto_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_karamiruto() {
+        let sentence = "アニメに興味がない人からみると、どのアニメも同じに見える";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から見ると");
+        assert_pattern_range(&patterns, "から見ると", 9, 15); // 人からみると
+    }
+
+    #[test]
+    fn test_noun_karamireba() {
+        let sentence = "私からみれば、彼女はあまり美人じゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から見ると");
+        assert_pattern_range(&patterns, "から見ると", 0, 6); // 私からみれば
+    }
+
+    #[test]
+    fn test_noun_karamite() {
+        let sentence = "このタイヤ跡の大きさからみて、犯人はトラックを使ったに違いない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から見ると");
+        assert_pattern_range(&patterns, "から見ると", 9, 14); // さからみて
+    }
+
+    #[test]
+    fn test_noun_karamitara() {
+        let sentence = "外からみたら、私のコレクションはゴミに見えるでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から見ると");
+        assert_pattern_range(&patterns, "から見ると", 0, 6); // 外からみたら
+    }
+}
