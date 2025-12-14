@@ -5822,3 +5822,48 @@ mod na_adjectives_tests {
     }
 }
 
+// Pattern: る-Verb (Dictionary) - Ichidan verbs in dictionary form
+// Data source: grammar_points_data.json["る-Verb (Dictionary)"]
+// Testing: structure.standard - examples of る-verbs in dictionary form
+//
+// る-verbs (一段動詞/ichidan): verbs that conjugate by removing る
+// Examples from data: 食べる, 見る, 寝る
+// Contrast with う-verbs where る changes to other sounds
+// Note: Pattern ranges extend to include following auxiliaries (similar to Verbs (Non-past))
+mod ru_verb_dictionary_tests {
+    use super::*;
+
+    // Testing: 食べる (to eat) - classic る-verb
+    #[test]
+    fn test_ru_verb_taberu() {
+        let sentence = "毎日野菜を食べるようにしている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Dictionary)");
+        assert_pattern_range(&patterns, "る-Verb (Dictionary)", 5, 8); // 食べる
+    }
+
+    // Testing: 見る (to see/watch) - monosyllabic る-verb with auxiliary
+    #[test]
+    fn test_ru_verb_miru() {
+        let sentence = "その映画は絶対に見るべきだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Dictionary)");
+        assert_pattern_range(&patterns, "る-Verb (Dictionary)", 8, 13); // 見るべきだ (extended with auxiliaries)
+    }
+
+    // Testing: 寝る (to sleep) - another common る-verb
+    #[test]
+    fn test_ru_verb_neru() {
+        let sentence = "今夜は早く寝るつもりです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Dictionary)");
+        assert_pattern_range(&patterns, "る-Verb (Dictionary)", 5, 7); // 寝る
+    }
+}
+

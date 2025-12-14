@@ -319,9 +319,24 @@ pub fn ne() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(NeParticleMatcher))]
 }
 
-// Pattern: る-Verb (Dictionary)
+// Pattern: る-Verb (Dictionary) - Ichidan verbs in dictionary form
+// Structures: Ichidan verb (一段) in 基本形
 pub fn ru_verb_dictionary() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct RuVerbDictionaryMatcher;
+    impl Matcher for RuVerbDictionaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verbs that are:
+            // 1. 動詞/自立 (independent verb)
+            // 2. 一段 conjugation type (ichidan/ru-verb)
+            // 3. 基本形 (dictionary form)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(4).is_some_and(|f| f == "一段")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(RuVerbDictionaryMatcher))]
 }
 
 // Pattern: う-Verb (Dictionary)
