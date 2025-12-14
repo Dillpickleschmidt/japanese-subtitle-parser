@@ -1,3 +1,141 @@
+## Session 203 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 3 N2 patterns
+**Patterns completed**: 3 (からすると・からすれば, から見ると, か何か)
+**Tests added**: 11 (all passing)
+**Total tests**: 1300 (was 1289)
+
+### Pattern Implemented: からすると・からすれば (judging from, considering)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 4
+1. Noun + からすると - "judging from (A), (B)"
+2. Noun + からすれば - "considering (A), (B)"
+3. Various nouns: 成績, 反応, 甘さ, 私
+
+**Implementation details**:
+- Pattern: Noun + から(格助詞) + する(基本形/仮定形) + と/ば(接続助詞)
+- Four tokens: Noun + から + する/すれ + と/ば
+- Custom matchers:
+  - KaraMatcher: から as case particle (助詞/格助詞/一般)
+  - SuruVerbMatcher: する verb in either 基本形 (する+と) or 仮定形 (すれ+ば)
+  - ToOrBaMatcher: と or ば as connective particle (助詞/接続助詞)
+- Single pattern handles both structure variants using OR logic in matchers
+- Expresses speaker's judgment/assessment based on (A)
+- Nuance: "going off (A)" or "considering (A)" as basis for judgment
+- Literal: から (from) + する (to do) + と/ば (hypothetical)
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 713-763)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 1019-1065)
+
+### Pattern Implemented: から見ると (from the perspective of, judging from)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 4
+1. Noun + からみると - "judging from (A), (B)"
+2. Noun + からみれば - "from the point of view of (A), (B)"
+3. Noun + からみて - "by the looks of (A), (B)"
+4. Noun + からみたら - "from looking at (A), (B)"
+
+**Implementation details**:
+- Pattern: Noun + から(格助詞) + みる(verb) + と/ば/て/たら
+- Four tokens with flexible ending
+- Custom matchers:
+  - KaraMatcher: から as case particle (助詞/格助詞/一般)
+  - MiruVerbMatcher: みる verb in any conjugation (基本形/仮定形/連用形)
+  - EndingMatcher: と/ば/て (connective particles) OR たら (auxiliary verb)
+- Single pattern handles all 4 structure variants using OR logic in EndingMatcher
+- Expresses viewing from perspective of (A) or judgment based on looking at (A)
+
+**Tokenization patterns**:
+- からみると: から + みる(基本形) + と(接続助詞)
+- からみれば: から + みれ(仮定形) + ば(接続助詞)
+- からみて: から + み(連用形) + て(接続助詞)
+- からみたら: から + み(連用形) + たら(助動詞)
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 765-817)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 1009-1065)
+
+### Pattern Implemented: か何か (or something, or something like that)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Structures tested**: 3
+1. Noun + かなにか (request form: お茶かなにか)
+2. Noun + かなにか (in relative clause: ナイフかなにか)
+3. Noun + かなにか (offering form: 紅茶かなにか)
+
+**Implementation details**:
+- Pattern: Noun + か + なに/なにか + (optional か)
+- Handles two tokenization patterns:
+  * Split form: Noun + か(副助詞) + なに(名詞/代名詞) + か(副助詞)
+  * Single adverb form: Noun + か(副助詞) + なにか(副詞)
+- Custom matchers:
+  - KaMatcher: か as particle (助詞/副助詞／並立助詞／終助詞)
+  - NaniOrNanikaMatcher: なに (pronoun) OR なにか (adverb) using OR logic
+  - Optional final か for split tokenization form
+- Expresses uncertainty about a specific thing
+- Often used when offering something or when more options are available
+
+**Tokenization patterns**:
+- Split: Noun + か + なに + か (4 tokens)
+- Single adverb: Noun + か + なにか (3 tokens)
+
+**Test file**: grammar-lib/src/tests/n2_patterns.rs (lines 819-858)
+**Matcher file**: grammar-lib/src/matchers/n2.rs (lines 1642-1689)
+
+### Workflow followed (all 3 patterns)
+1. ✅ Read grammar_points_data.json to understand structure variants
+2. ✅ Checked for existing stub functions (all found)
+3. ✅ Wrote tests with print_debug for all structure variants
+4. ✅ Analyzed tokenization output to understand token structure
+5. ✅ Implemented matchers based on actual tokenization (not assumptions)
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug and added proper assertions with correct ranges
+8. ✅ Verified all tests pass (no regressions)
+9. ✅ Updated feature_list.json for all 3 patterns
+10. ✅ Committed changes with detailed commit messages
+
+### Key Learnings
+1. **から-based patterns**: Second session with から patterns - からすると and から見ると both follow similar structure (から + verb + conditional/connective)
+2. **Flexible endings**: Both patterns handle multiple endings (と/ば/て/たら) using OR logic in custom matchers
+3. **Tokenization variations**: か何か shows two distinct tokenization patterns depending on context (split vs single adverb)
+4. **Optional matchers**: Using TokenMatcher::Optional effectively handles tokenization variants
+5. **Pattern family**: Three から patterns (からには, からして, からといって from Session 202, plus からすると and から見ると from this session) show how から combines with different verbs/particles to create nuanced expressions
+
+### Statistics
+- **Session time**: ~2 hours
+- **Patterns completed this session**: 3
+- **Test success rate**: 11/11 (100%)
+- **Total passing tests**: 1300
+- **Average time per pattern**: ~40 minutes
+
+### Next Session Recommendations
+1. **Continue with N2 priority 4 patterns**: More patterns at same priority level
+2. **Good candidates**:
+   - かのようだ (as if, seems like) - か + の + ようだ
+   - がけに (on account of, because) - が + けに
+   - かと思ったら・かと思うと (just when I thought) - か + と思う + たら/と
+3. **Pattern discovery**: N2 has many conditional/judgment expressions using から, と, ば
+
+### Environment Status
+- ✅ All 1300 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated for all 3 patterns
+- ✅ Ready for next session
+
+---
+
 ## Session 202 - 2025-12-13
 
 ### ✅ Session Summary
