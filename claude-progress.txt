@@ -1,3 +1,72 @@
+## Session 327 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (はもちろん)
+**Tests added**: 4 (all passing)
+**Total tests**: 2085 passing, 1 ignored (was 2081 passing, 1 ignored)
+
+### ✅ Pattern Completed: はもちろん (not only...but also / not to mention)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - common construction pattern)
+
+**Pattern**: はもちろん is a phrase that presents (A) as being something obvious, while (B) should still be considered/mentioned. It combines the topic particle は with the adverb もちろん (naturally/of course). The pattern translates as "not only (A), but (B)" or "not to mention (A), (B)" in English.
+
+**Structures tested**: 4 comprehensive tests covering the standard structure
+1. Noun + はもちろん (computers): パソコンのことはもちろん、電化製品の事ならなんでも聞いてください (Please ask me anything, not only about computers but also other electronics)
+2. Noun + はもちろん (subjects): 数学はもちろん、学校の科目を全て一人で教えることができる人を探している (We are looking for someone not only who can teach math, but every subject)
+3. Noun + はもちろん (languages): 彼女は日本語はもちろん、韓国語も話すことができます (Not only can she speak Japanese, but she can also speak Korean)
+4. Noun + はもちろん (talents): この作家の本はもちろん、歌もうまいから人気がある (This author is popular, not only because of his book, but also because he is a good singer)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (hamochiron, lines 3738-3767)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (hamochiron_tests module, lines 9782-9828)
+- Pattern: grammar-lib/src/patterns.rs (Hamochiron, lines 3465-3471)
+
+**Tokenization pattern**:
+```
+Standard structure (all variants):
+- Preceding noun - Any token
+- は (助詞/係助詞) - topic particle
+- もちろん (副詞/一般) - adverb "of course/naturally"
+
+The pattern tokenizes as two separate tokens:
+1. は as topic particle (助詞/係助詞)
+2. もちろん as adverb (副詞/一般)
+```
+
+**Key implementation points**:
+1. Simple matcher with three token matchers: Any + は + もちろん
+2. HaParticleMatcher checks は as 助詞/係助詞
+3. MochironAdverbMatcher checks もちろん as 副詞/一般
+4. TokenMatcher::Any allows any preceding noun or noun phrase
+5. Pattern range includes the full construction: Noun + は + もちろん
+
+**Pattern ranges**: Include full construction (Noun + はもちろん)
+- Example: "ことはもちろん" (chars 5-12) - includes the noun before は
+- Example: "数学はもちろん" (chars 0-7)
+- Example: "日本語はもちろん" (chars 3-11)
+- Example: "本はもちろん" (chars 5-11)
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover the standard structure: Noun (A) + はもちろん
+- Following clause typically uses も or さえ to mark Noun (B), but that's not part of this pattern
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: はもちろん is more formal than だけでなく (another pattern meaning "not only...but also"). Due to its formality, it may sound stiff in friendly conversation unless particularly emphasizing something. Despite (A) being the obvious factor, (B) is being highlighted as sharing similar qualities to (A).
+
+**Usage Context**: The pattern structure is "Noun (A) + はもちろん + Noun (B) + も", where:
+- (A) is presented as obvious/well-known
+- (B) is an additional factor worth mentioning
+- も (or さえ) typically follows Noun (B) to show it also has the same quality
+
+---
+
 ## Session 326 - 2025-12-14
 
 ### ✅ Session Summary
