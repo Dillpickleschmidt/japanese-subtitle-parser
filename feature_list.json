@@ -4160,13 +4160,13 @@
   {
     "pattern_name": "Verb[volitional] + としたが",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned in our ようとする lesson, when combined with the auxiliary verb う (or よう), とする carries the meaning of 'to try... [3 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

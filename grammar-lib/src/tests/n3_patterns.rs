@@ -7520,3 +7520,84 @@ mod doushitemo_tests {
         assert_pattern_range(&patterns, "どうしても", 0, 5); // どうしても
     }
 }
+
+// Pattern: Verb[volitional] + としたが
+// Data source: grammar_points_data.json["Verb[volitional] + としたが"]
+//
+// Structure variants to test:
+//   - standard[0]: Verb[おう] + としたが + Result
+//   - standard[1]: Verb[おう] + としたら + Result
+//   - standard[2]: けれども、けれど、けど variants
+//
+// Meaning: "was about to do X, but Y" / "tried to do X, but Y"
+// The volitional form + とする expresses intent, and が/たら/けど shows interruption
+#[cfg(test)]
+mod verb_volitional_toshitaga_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb[volitional] + としたが
+    #[test]
+    fn test_volitional_toshitaga() {
+        let sentence = "クライアントに電話を掛けようとしたが、夜遅かったので朝まで待つことにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional] + としたが");
+        assert_pattern_range(&patterns, "Verb[volitional] + としたが", 10, 18); // 掛けようとしたが
+    }
+
+    // Testing: structure.standard[1] - Verb[volitional] + としたら
+    #[test]
+    fn test_volitional_toshitara() {
+        let sentence = "池で泳ごうとしたら、警察に止められた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional] + としたが");
+        assert_pattern_range(&patterns, "Verb[volitional] + としたが", 2, 9); // 泳ごうとしたら
+    }
+
+    // Testing: structure.standard[2] - Verb[volitional] + としたけど
+    #[test]
+    fn test_volitional_toshitakedo() {
+        let sentence = "逃げようとしたけど、捕まったら大変なことになるから逃げなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional] + としたが");
+        assert_pattern_range(&patterns, "Verb[volitional] + としたが", 0, 9); // 逃げようとしたけど
+    }
+
+    // Testing: Different volitional form (五段 verb)
+    #[test]
+    fn test_volitional_godan_toshitaga() {
+        let sentence = "昨日買おうとしたが、店が閉まっていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional] + としたが");
+        assert_pattern_range(&patterns, "Verb[volitional] + としたが", 2, 9); // 買おうとしたが
+    }
+
+    // Testing: Different volitional form (一段 verb)
+    #[test]
+    fn test_volitional_ichidan_toshitara() {
+        let sentence = "諦めようとしたら、友達が励ましてくれた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional] + としたが");
+        assert_pattern_range(&patterns, "Verb[volitional] + としたが", 0, 8); // 諦めようとしたら
+    }
+
+    // Testing: としたけれど variant
+    #[test]
+    fn test_volitional_toshitakeredo() {
+        let sentence = "説明しようとしたけれど、誰も聞いてくれなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[volitional] + としたが");
+        assert_pattern_range(&patterns, "Verb[volitional] + としたが", 0, 11); // 説明しようとしたけれど
+    }
+}

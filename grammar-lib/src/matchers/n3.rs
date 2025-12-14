@@ -3725,9 +3725,91 @@ pub fn toittemo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: Verb[volitional] + としたが
+// Pattern: Verb[volitional] + としたが (was about to do X, but Y)
+// Structures:
+//   - Verb[おう] + としたが
+//   - Verb[おう] + としたら
+//   - Verb[おう] + としたけど/けれど/けれども
 pub fn verb_volitional_toshitaga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in volitional form (未然ウ接続)
+    #[derive(Debug)]
+    struct VolitionalVerbMatcher;
+    impl Matcher for VolitionalVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然ウ接続")
+        }
+    }
+
+    // Match う as auxiliary verb (助動詞/不変化型/基本形)
+    #[derive(Debug)]
+    struct VolitionalAuxiliaryMatcher;
+    impl Matcher for VolitionalAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match と as quotation particle
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match し from する in 連用形
+    #[derive(Debug)]
+    struct ShiVerbMatcher;
+    impl Matcher for ShiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match た or たら (past or conditional form)
+    // - た: surface='た' base='た' pos=助動詞 features[5]=基本形
+    // - たら: surface='たら' base='た' pos=助動詞 features[5]=仮定形
+    #[derive(Debug)]
+    struct TaTaraMatcher;
+    impl Matcher for TaTaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "た" || token.surface == "たら")
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match が/けど/けれど/けれども as conjunction particle
+    #[derive(Debug)]
+    struct GaKedoMatcher;
+    impl Matcher for GaKedoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "が" || token.surface == "けど" ||
+             token.surface == "けれど" || token.surface == "けれども")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VolitionalVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(VolitionalAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TaTaraMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaKedoMatcher)))),
+    ]
 }
 
 // Pattern: 言うまでもない ②
