@@ -9827,3 +9827,53 @@ mod hamochiron_tests {
     }
 }
 
+// ========== のに (in order to / for) ==========
+// Pattern: のに (in order to / for - purpose/goal)
+// Data source: grammar_points_data.json["のに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + のに
+//
+// NOTE: This is semantically ambiguous with N4 "のに " (despite).
+// Both use "Verb + のに" structure. The difference is:
+// - N4 "のに ": "despite" (illogical result)
+// - N3 "のに": "in order to" (logical result/purpose)
+// When detected, both patterns should be shown to user.
+
+mod noni_tests {
+    use super::*;
+
+    // Testing: Verb + のに (purpose/goal - "to stop")
+    #[test]
+    fn test_noni_purpose_stop() {
+        let sentence = "トラックは車と違って、ブレーキをかけてから止まるのに時間がかかる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のに");
+        assert_pattern_range(&patterns, "のに", 21, 26); // 止まるのに
+    }
+
+    // Testing: Verb + のに (struggle to do - "to spread out")
+    #[test]
+    fn test_noni_purpose_spread() {
+        let sentence = "風が強すぎて、ピクニックシートを広げるのに苦労した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のに");
+        assert_pattern_range(&patterns, "のに", 16, 21); // 広げるのに
+    }
+
+    // Testing: Verb + のに (take time to eat)
+    #[test]
+    fn test_noni_purpose_eat() {
+        let sentence = "食べるのに時間をかけすぎて寝る時間が遅くなった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のに");
+        assert_pattern_range(&patterns, "のに", 0, 5); // 食べるのに
+    }
+}
+

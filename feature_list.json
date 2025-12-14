@@ -5966,13 +5966,13 @@
   {
     "pattern_name": "のに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Regarded as a conjunction particle by itself, のに is simply a fusion of the case marking particles の and に [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

@@ -1040,9 +1040,46 @@ pub fn deha_u30fb_soredeha_u30fb_jaa() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(DehaJaaMatcher))]
 }
 
-// Pattern: のに
+// Pattern: のに (in order to / for - purpose/goal)
+// Structures: Verb[る] + の + に
+//
+// NOTE: This is distinct from N4 "のに " (despite).
+// N3: Verb + の (nominalizer) + に (goal marker) - two tokens
+// N4: Any + のに (conjunction particle) - single token
+// The tokenization difference allows us to distinguish them.
 pub fn noni_2() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の as 名詞/非自立 (nominalizer)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match に as 助詞/格助詞 (case-marking particle)
+    #[derive(Debug)]
+    struct NiCaseParticleMatcher;
+    impl Matcher for NiCaseParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Verb {
+            conjugation_form: None,  // Dictionary form (基本形)
+            base_form: None,
+        },
+        TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
+        TokenMatcher::Custom(Arc::new(NiCaseParticleMatcher)),
+    ]
 }
 
 // Pattern: ため(に) (for the sake of / in order to - purpose)
