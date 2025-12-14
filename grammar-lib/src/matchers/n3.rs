@@ -2365,9 +2365,24 @@ pub fn sa_interjection() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: さ - Filler
+// Pattern: さ - Filler (hesitation/thinking filler word)
+// Structures: さあ/さー (as 感動詞 interjection)
 pub fn sa_filler() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for さあ/さー as interjection (filler word)
+    #[derive(Debug)]
+    struct SaFillerMatcher;
+    impl Matcher for SaFillerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match さあ or さー as 感動詞 (interjection)
+            (token.surface == "さあ" || token.surface == "さー")
+                && token.base_form == "さあ"
+                && token.pos.first().is_some_and(|pos| pos == "感動詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SaFillerMatcher))]
 }
 
 // さ - Casual よ: Sentence-ending particle (drawing attention with confidence)

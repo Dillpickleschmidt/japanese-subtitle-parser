@@ -8252,3 +8252,63 @@ mod tonatteiru_tests {
         assert_pattern_range(&patterns, "～は～となっている", 14, 21); // となっています
     }
 }
+
+// ========== さ - Filler ==========
+// Pattern: さ - Filler (hesitation/thinking filler)
+// Data source: grammar_points_data.json["さ - Filler"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase (A) + さぁ(1) + Phrase (B)
+//   standard[1]: (1) さあ、さー、さ
+//
+// This pattern detects the use of さ/さあ/さー as a filler word (like "um", "uh", "you know" in English)
+// used mid-sentence to express hesitation or thinking time.
+
+mod sa_filler_tests {
+    use super::*;
+
+    // Test: Multiple さあ as filler words
+    #[test]
+    fn test_saa_filler_multiple() {
+        let sentence = "あのさ、私さあ、この前さあ、お金貸したじゃん";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さ - Filler");
+        // First さあ occurrence
+        assert_pattern_range(&patterns, "さ - Filler", 5, 7); // さあ (after 私)
+    }
+
+    // Test: さあ in middle of sentence after verb
+    #[test]
+    fn test_saa_filler_after_verb() {
+        let sentence = "夜中に急に娘から電話が来てさあ、本当にビックリしたよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さ - Filler");
+        assert_pattern_range(&patterns, "さ - Filler", 13, 15); // さあ
+    }
+
+    // Test: さあ as filler before explaining
+    #[test]
+    fn test_saa_filler_before_explanation() {
+        let sentence = "それでさあ、どうしようかと思ってたんだけど";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さ - Filler");
+        assert_pattern_range(&patterns, "さ - Filler", 3, 5); // さあ
+    }
+
+    // Test: さあ expressing hesitation before a response
+    #[test]
+    fn test_saa_hesitation_response() {
+        let sentence = "質問されてさあ、答えが分からなくて困った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さ - Filler");
+        assert_pattern_range(&patterns, "さ - Filler", 5, 7); // さあ
+    }
+}
