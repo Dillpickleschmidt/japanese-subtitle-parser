@@ -2786,9 +2786,66 @@ pub fn number_amount_ha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なん + counter + か
+// Pattern: なん + counter + か (uncertain number)
+// Structures: なん + Counter + か, いく + Counter + か, いくつか
 pub fn nan_counter_ka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for なん (代名詞) or いく (名詞/数) or いくつ (代名詞)
+    #[derive(Debug)]
+    struct NanOrIkuMatcher;
+    impl Matcher for NanOrIkuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match なん (代名詞/一般)
+            if token.base_form == "なん"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+            {
+                return true;
+            }
+            // Match いく (名詞/数)
+            if token.base_form == "いく"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "数")
+            {
+                return true;
+            }
+            // Match いくつ (代名詞/一般)
+            if token.base_form == "いくつ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "代名詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Matcher for counter (助数詞) - optional for いくつか
+    #[derive(Debug)]
+    struct CounterMatcher;
+    impl Matcher for CounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "接尾")
+                && token.pos.get(2).is_some_and(|p| p == "助数詞")
+        }
+    }
+
+    // Matcher for か particle
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か" && token.pos.first().is_some_and(|p| p == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NanOrIkuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(CounterMatcher)))),
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+    ]
 }
 
 // Pattern: 真(っ)

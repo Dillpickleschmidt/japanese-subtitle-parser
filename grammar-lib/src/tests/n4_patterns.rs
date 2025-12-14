@@ -8725,3 +8725,93 @@ mod nara_tests {
         assert_pattern_range(&patterns, "なら", 2, 4); // なら
     }
 }
+
+// ========== なん + counter + か (uncertain number) ==========
+// Pattern: なん + counter + か
+// Data source: grammar_points_data.json["なん + counter + か"]
+//
+// Structures to test:
+//   - standard[0]: 何（なん） + Counter + か
+//   - standard[1]: いく + Counter + か
+//   - standard[2]: いくつか
+//
+// Examples from data:
+//   - なん回か行ったことがあると思う (I think I've been there several times)
+//   - 紙をなん枚かちょうだい (May I have some paper?)
+//   - いくつかの問題がある (There are some problems)
+#[cfg(test)]
+mod nan_counter_ka_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "何（なん） + Counter + か"
+    // Counter: 回 (times)
+    #[test]
+    fn test_nan_counter_ka_times() {
+        let sentence = "そこにはなん回か行ったことがあると思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なん + counter + か");
+        assert_pattern_range(&patterns, "なん + counter + か", 4, 8); // なん回か
+    }
+
+    // Testing: structure.standard[0] - "何（なん） + Counter + か"
+    // Counter: 枚 (sheets/flat objects)
+    #[test]
+    fn test_nan_counter_ka_sheets() {
+        let sentence = "ごめん、紙をなん枚かちょうだい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なん + counter + か");
+        assert_pattern_range(&patterns, "なん + counter + か", 6, 10); // なん枚か
+    }
+
+    // Testing: structure.standard[0] - "何（なん） + Counter + か"
+    // Counter: 冊 (books/bound objects)
+    #[test]
+    fn test_nan_counter_ka_books() {
+        let sentence = "いらない本をなん冊か妹にあげた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なん + counter + か");
+        assert_pattern_range(&patterns, "なん + counter + か", 6, 10); // なん冊か
+    }
+
+    // Testing: structure.standard[1] - "いく + Counter + か"
+    // Counter: 人 (people)
+    #[test]
+    fn test_iku_counter_ka_people() {
+        let sentence = "パーティーにはいく人か来ると思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なん + counter + か");
+        assert_pattern_range(&patterns, "なん + counter + か", 7, 11); // いく人か
+    }
+
+    // Testing: structure.standard[1] - "いく + Counter + か"
+    // Counter: 日 (days)
+    #[test]
+    fn test_iku_counter_ka_days() {
+        let sentence = "いく日か経ってから連絡があった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なん + counter + か");
+        assert_pattern_range(&patterns, "なん + counter + か", 0, 4); // いく日か
+    }
+
+    // Testing: structure.standard[2] - "いくつか"
+    // Fixed expression meaning "some" or "several"
+    #[test]
+    fn test_ikutsuka_fixed() {
+        let sentence = "いくつかの問題があるので、もう少し時間がかかります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なん + counter + か");
+        assert_pattern_range(&patterns, "なん + counter + か", 0, 4); // いくつか
+    }
+}
