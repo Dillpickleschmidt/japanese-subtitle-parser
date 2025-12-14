@@ -1,3 +1,113 @@
+## Session 251 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (といわれている - it is said that)
+**Tests added**: 4 (all passing)
+**Total tests**: 1645 (was 1641)
+
+### Pattern Implemented: といわれている (it is said that)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Expresses public opinion, common knowledge, or hearsay. The quotative particle と marks the preceding phrase as quoted content, followed by the passive form of 言う (to say) + ている (ongoing state). Translates as "it is said that..." or "it is known that...".
+
+**Structures tested**: 4 tests covering all structure variants
+1. Phrase + といわれている (standard, い-Adj phrase): 美味しいといわれている
+2. Phrase + といわれている (standard, な-Adj phrase): 危険な町といわれている
+3. Phrase + といわれています (polite form): 有名だといわれています
+4. Phrase + といわれている (standard, Verb phrase): 降るといわれている
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (to_iwareteiru, lines 5651-5704)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (to_iwareteiru_tests, lines 7805-7859)
+- Pattern: grammar-lib/src/patterns.rs (ToIwareteiru)
+
+**Tokenization pattern**:
+```
+と (助詞/格助詞/引用) - quotation particle
++ いう (動詞/自立, 未然形) → いわ - verb "to say" in 未然形
++ れる (動詞/接尾, 連用形) - passive auxiliary
++ て (助詞/接続助詞) - connecting particle
++ いる (動詞/非自立, 基本形) - auxiliary verb
+```
+
+**Key implementation points**:
+1. Five custom matchers with specific POS checks:
+   - ToQuotationMatcher: と as 助詞/格助詞/引用
+   - IuVerbMizenMatcher: いう/言う in 未然形 (いわ)
+   - PassiveReruMatcher: れる as 動詞/接尾
+   - TeParticleMatcher: て as 助詞/接続助詞
+   - Uses specific_verb("いる") for auxiliary verb
+2. Pattern range: といわれている (full construction, extends to ます for polite)
+3. Priority 2 (higher than general passive patterns)
+4. Works with any preceding content (verbs, adjectives, nouns)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover verb phrases, い-adjectives, な-adjectives, and nouns
+- Test both standard (ている) and polite (ています) forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Understanding the passive construction of 言う: いう → いわ (未然形) + れる (passive)
+2. Distinguishing this specific pattern from generic passive れる patterns
+3. Handling both hiragana (いう) and kanji (言う) base forms
+4. Proper tokenization: 5 separate tokens that form one grammatical unit
+
+**Tokenization Discovery**:
+The passive form of 言う is constructed as:
+- いう (未然形) = いわ (surface)
+- れる (passive suffix) = れ (surface in 連用形)
+- Combined with て + いる to express ongoing state of passive
+- Pattern automatically extends to include ます in polite form
+
+**Pattern Relationship with Other Patterns**:
+- Part of quotative と family (とおもう, といってもいい, etc.)
+- Similar structure to other passive quotative patterns:
+  - とされている (it is considered that)
+  - とかんがえられている (it is thought that)
+- Differs from active quotative constructions (という)
+
+### Session Statistics
+- **Session time**: Approximately 35 minutes
+- **Patterns completed this session**: 1 (といわれている)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1645 (up from 1641)
+- **Files modified**: 4 (matchers/n4.rs, patterns.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 quotative と patterns**:
+   - とされている (it is considered that) - formal passive
+   - とかんがえられている (it is thought that) - formal consideration
+   - ときいた (I heard that) - past tense hearsay
+   - とみえる (it appears that)
+2. **Pattern focus**: More passive quotative constructions with different verbs
+
+### Environment Status
+- All 1645 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+
+**Passive Quotative Construction Pattern**:
+This pattern follows the passive quotative structure:
+- Content + と (quotation) + Verb[passive] + ている
+- The と marks what precedes it as quoted or reported content
+- Passive form indicates the content is something "said by people in general"
+- ている expresses ongoing state (it's commonly/currently said)
+
+**Difference from Active Quotation**:
+- Active: という (someone says/called)
+- Passive: といわれている (it is said/known)
+- Passive form emphasizes public opinion rather than specific speaker
+
 ## Session 250 - 2025-12-14
 
 ### ✅ Session Summary
