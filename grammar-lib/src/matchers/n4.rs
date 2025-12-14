@@ -3492,9 +3492,62 @@ pub fn temiru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: てすみません
+// Pattern: てすみません (sorry for doing)
+// Structures: Verb[て] + すみません
 pub fn tesumimasen() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches て or で as conjunction particle
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Matches すみません as interjection
+    #[derive(Debug)]
+    struct SumimasenMatcher;
+    impl Matcher for SumimasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "すみません"
+                && token.base_form == "すみません"
+                && token.pos.first().is_some_and(|p| p == "感動詞")
+        }
+    }
+
+    // Matches です auxiliary (for でした)
+    #[derive(Debug)]
+    struct DesuAuxMatcher;
+    impl Matcher for DesuAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "です" && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Matches た auxiliary (for past tense)
+    #[derive(Debug)]
+    struct TaAuxMatcher;
+    impl Matcher for TaAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "た" && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    super::concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeDeParticleMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(SumimasenMatcher))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(
+            Arc::new(DesuAuxMatcher),
+        )))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(
+            Arc::new(TaAuxMatcher),
+        )))],
+    ])
 }
 
 // Pattern: てあげる (to do for someone)

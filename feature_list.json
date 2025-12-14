@@ -2802,13 +2802,13 @@
   {
     "pattern_name": "てすみません",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "てすみません is a grammar construction that expresses the speaker's regret about (A) [1 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

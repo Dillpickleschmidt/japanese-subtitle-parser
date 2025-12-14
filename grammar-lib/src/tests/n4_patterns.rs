@@ -7419,3 +7419,64 @@ mod tekurenai_temoraenai_tests {
         assert_pattern_range(&patterns, "てくれない・てもらえない", 3, 14); // 使わないでもらえません
     }
 }
+
+// Pattern: てすみません (sorry for doing)
+// Data source: grammar_points_data.json["てすみません"]
+// Testing: structure.standard[0] - "Verb[て] + すみません"
+//
+// This pattern expresses regret about doing something. From 済む (to finish),
+// すみません (negated form) means "to be unfinished". てすみません literally means
+// "unfinished due to (doing A)" = feeling regret about one's action.
+mod tesumimasen_tests {
+    use super::*;
+
+    #[test]
+    fn test_te_sumimasen_arriving_late() {
+        let sentence = "待ち合わせの時間に遅れてすみません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てすみません");
+        assert_pattern_range(&patterns, "てすみません", 9, 17); // 遅れてすみません
+    }
+
+    #[test]
+    fn test_te_sumimasen_dyeing_hair() {
+        let sentence = "息子さんの髪をピンクに染めてすみません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てすみません");
+        assert_pattern_range(&patterns, "てすみません", 11, 19); // 染めてすみません
+    }
+
+    #[test]
+    fn test_te_sumimasen_leaving_food() {
+        let sentence = "ご飯を残してすみません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てすみません");
+        assert_pattern_range(&patterns, "てすみません", 3, 11); // 残してすみません
+    }
+
+    #[test]
+    fn test_te_sumimasen_making_wait() {
+        let sentence = "こんなに待たせてすみませんでした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てすみません");
+        assert_pattern_range(&patterns, "てすみません", 6, 16); // せてすみませんでした
+    }
+
+    #[test]
+    fn test_te_sumimasen_forgetting() {
+        let sentence = "大事な約束を忘れてすみません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てすみません");
+        assert_pattern_range(&patterns, "てすみません", 6, 14); // 忘れてすみません
+    }
+}
