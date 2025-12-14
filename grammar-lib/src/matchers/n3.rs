@@ -1073,9 +1073,48 @@ pub fn hodo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ば〜ほど
+// Pattern: ば〜ほど (the more...the more)
+// Structures: Verb[ば] + Verb[る] + ほど, い-Adj[ば] + い-Adj + ほど, Noun + なら(ば) + Noun + ほど, etc.
 pub fn ba_u301c_hodo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match ば as connective particle
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match ほど as particle
+    #[derive(Debug)]
+    struct HodoParticleMatcher;
+    impl Matcher for HodoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほど"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match: [word/aux] + ば + [1-10 tokens] + ほど
+    // Note: We match one token before ば. For noun variants like プロならばプロほど,
+    // this will match なら+ば, not capturing the noun before. This is a limitation
+    // but acceptable for pattern detection purposes.
+    vec![
+        TokenMatcher::Any, // Match the token immediately before ば (verb, adj, or auxiliary)
+        TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 10, // 1-10 tokens between ば and ほど
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(HodoParticleMatcher)),
+    ]
 }
 
 // Pattern: ほど～ない

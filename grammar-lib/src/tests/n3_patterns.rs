@@ -10254,3 +10254,105 @@ mod bakarida_tests {
     }
 }
 
+// ========== ば〜ほど (the more...the more) ==========
+// Pattern: ば〜ほど (the more...the more)
+// Data source: grammar_points_data.json["ば〜ほど"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ば] + Verb[る] + ほど (same verb repeated)
+//   standard[1]: い-Adj[ば] + い-Adj + ほど (same adjective repeated)
+//   standard[2]: な-Adj + ならば + な-Adj + な + ほど
+//   standard[3]: な-Adj + であれば + な-Adj + である + ほど
+//   standard[4]: Noun + ならば + Noun + ほど
+//   standard[5]: Noun + であれば + Noun + である + ほど
+//
+// Note: The same verb/adjective/noun must be repeated in both parts
+
+mod ba_hodo_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[ば] + Verb[る] + ほど"
+    // Example from grammar_points_data.json: いい肉は噛めば噛むほど味が出る
+    #[test]
+    fn test_ba_hodo_verb() {
+        let sentence = "いい肉は噛めば噛むほど味が出る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば〜ほど");
+        assert_pattern_range(&patterns, "ば〜ほど", 4, 11); // 噛めば噛むほど
+    }
+
+    // Testing: structure.standard[0] - Verb variant with する
+    // Example from grammar_points_data.json: 漢字の勉強をすればするほど色んな本が読めるようになる
+    #[test]
+    fn test_ba_hodo_verb_suru() {
+        let sentence = "漢字の勉強をすればするほど色んな本が読めるようになる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば〜ほど");
+        assert_pattern_range(&patterns, "ば〜ほど", 6, 13); // すればするほど
+    }
+
+    // Testing: structure.standard[1] - "い-Adj[ば] + い-Adj + ほど"
+    // Example from grammar_points_data.json: 公園は広ければ広いほどいい
+    #[test]
+    fn test_ba_hodo_i_adjective() {
+        let sentence = "公園は広ければ広いほどいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば〜ほど");
+        assert_pattern_range(&patterns, "ば〜ほど", 3, 11); // 広ければ広いほど
+    }
+
+    // Testing: structure.standard[2] - "な-Adj + ならば + な-Adj + な + ほど"
+    // Example from grammar_points_data.json: ビルは丈夫ならば丈夫なほど安心できる
+    #[test]
+    fn test_ba_hodo_na_adjective_naraba() {
+        let sentence = "ビルは丈夫ならば丈夫なほど安心できる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば〜ほど");
+        assert_pattern_range(&patterns, "ば〜ほど", 5, 13); // ならば丈夫なほど
+    }
+
+    // Testing: structure.standard[3] - "な-Adj + であれば + な-Adj + である + ほど"
+    // Example from grammar_points_data.json: アプリが便利であれば便利であるほどユーザーが増える
+    #[test]
+    fn test_ba_hodo_na_adjective_deareba() {
+        let sentence = "アプリが便利であれば便利であるほどユーザーが増える";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば〜ほど");
+        assert_pattern_range(&patterns, "ば〜ほど", 7, 17); // あれば便利であるほど
+    }
+
+    // Testing: structure.standard[4] - "Noun + ならば + Noun + ほど"
+    // Example from grammar_points_data.json: プロならばプロほど速く泳げる
+    #[test]
+    fn test_ba_hodo_noun_naraba() {
+        let sentence = "プロならばプロほど速く泳げる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば〜ほど");
+        assert_pattern_range(&patterns, "ば〜ほど", 2, 9); // ならばプロほど
+    }
+
+    // Testing: structure.standard[5] - "Noun + であれば + Noun + である + ほど"
+    // Example from grammar_points_data.json: 職人であれば職人であるほど凄いものが作れる
+    #[test]
+    fn test_ba_hodo_noun_deareba() {
+        let sentence = "職人であれば職人であるほど凄いものが作れる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば〜ほど");
+        assert_pattern_range(&patterns, "ば〜ほど", 3, 13); // あれば職人であるほど
+    }
+}
+
