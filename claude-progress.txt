@@ -1,3 +1,81 @@
+## Session 318 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N2 pattern
+**Patterns completed**: 1 (ことだから)
+**Tests added**: 6 (all passing)
+**Total tests**: 2024 passing, 1 ignored (was 2018 passing, 1 ignored)
+
+### ✅ Pattern Completed: ことだから (it is exactly because / precisely because)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: ことだから is a set expression indicating that the speaker is fairly certain about (B), based specifically on their experience with (A). The pattern combines the noun こと (thing), the auxiliary だ/です, and the conjunctive particle から. The literal meaning is "from that it's (A), also (B)", implying that due to (A) being a predetermined fact, (B) too can be assumed to be true.
+
+**Structures tested**: 6 comprehensive tests covering all variants
+1. Verb + ことだから: あの人がすることだから、どうせ人を騙して儲けているに違いない (Precisely because it is something that person does, there is no doubt that he is making money scamming people)
+2. Noun + の + ことだから: いつも遅れてくる田中くんのことだから、今日も遅れてくるだろう (It is exactly because Tanaka-kun always arrives late, that he will probably arrive late today)
+3. Noun + の + ことだから (boss): 部長のことだから、またミスをしたらクビにさせられると思う (It is exactly because it is my boss, he will probably fire me if I mess up again)
+4. Verb + ことですから (polite): 撮影が無事終わったことですから、打ち上げでもしましょう (Considering that we have finished filming, it is a good opportunity for us to have a party)
+5. Verb + ことだから (opportunity meaning): お父さんとお母さんが珍しくうちに来ていることだから、久しぶりにみんなで映画でも見よう (Dad, mom, considering that you guys are here, which is a rare occasion, why don't we watch a movie together)
+6. Verb + ことだから (strong reason): お客様のプライバシーに関わることだから、これ以上詳しいことは言えません (Because this is something that has to do with the privacy of our customer, we can't give you further details)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n2.rs (kotodakara, lines 1990-2035)
+- Tests: grammar-lib/src/tests/n2_patterns.rs (kotodakara_tests module, lines 1450-1537)
+- Pattern: grammar-lib/src/patterns.rs (Kotodakara, line 5722)
+
+**Tokenization patterns**:
+```
+Standard form (ことだから):
+- こと (名詞/非自立/一般) - noun
+- だ (助動詞, 特殊・ダ, 基本形) - auxiliary verb
+- から (助詞/接続助詞) - conjunctive particle
+
+Polite form (ことですから):
+- こと (名詞/非自立/一般) - noun
+- です (助動詞, 特殊・デス, 基本形) - polite auxiliary
+- から (助詞/接続助詞) - conjunctive particle
+
+When preceded by nouns, の connects the noun to こと:
+- Noun + の (助詞/連体化) + こと + だ/です + から
+```
+
+**Key implementation points**:
+1. KotoMatcher checks こと as 名詞/非自立
+2. DaDesuMatcher accepts BOTH だ and です (助動詞)
+3. KaraMatcher checks から as 助詞/接続助詞
+4. Pattern matches exactly 3 tokens: こと + (だ/です) + から
+5. Pattern works with verbs (any conjugation), nouns + の, and な-adjectives + な
+
+**Pattern ranges**: Include only the core expression (こと + だ/です + から)
+- Example: "ことだから" (chars 6-11) - after verb
+- Example: "ことだから" (chars 13-18) - after noun + の
+- Example: "ことですから" (chars 9-15) - polite form
+- Example: "ことだから" (chars 3-8) - after noun + の (short)
+- Example: "ことだから" (chars 20-25) - after long verb phrase
+- Example: "ことだから" (chars 14-19) - after verb
+
+**Test Quality**:
+- All 6 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all three usage nuances: certainty based on experience, good opportunity, strong reason
+- Cover both standard and polite forms
+- Cover verb, noun + の, and various contexts
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern has three slightly different nuances:
+1. **Certainty based on experience**: When following verbs in dictionary form or nouns (especially names), it expresses that the speaker is fairly certain about (B) based on their knowledge of (A). Often used with people's names.
+2. **Good opportunity**: When following verbs in any conjugation, it can express that (A) is a good opportunity to do (B).
+3. **Strong reason**: Simply implies (strongly) that (A) is the reason for (B), used with verbs, nouns + の, or な-adjectives + な.
+
+Despite these nuances, ことだから always means "by the logic of (A), definitely (B)". The speaker's intended meaning is clear from the (B) part of the sentence.
+
+---
+
 ## Session 317 - 2025-12-14
 
 ### ✅ Session Summary
