@@ -5867,3 +5867,48 @@ mod ru_verb_dictionary_tests {
     }
 }
 
+// Pattern: う-Verb (Dictionary) - Godan verbs in dictionary form
+// Data source: grammar_points_data.json["う-Verb (Dictionary)"]
+// Testing: structure.standard - examples of う-verbs in dictionary form
+//
+// う-verbs (五段動詞/godan): verbs that conjugate using all 5 vowel sounds in their column
+// Examples from data: 座る, 歌う, 歩く, 話す, 打つ, 死ぬ, 飛ぶ, 休む, 泳ぐ
+// Note: Some う-verbs end in る but are NOT る-verbs (they conjugate differently)
+// Pattern ranges extend to include following auxiliaries (similar to Verbs (Non-past))
+mod u_verb_dictionary_tests {
+    use super::*;
+
+    // Testing: 歩く (to walk) - く-ending う-verb
+    #[test]
+    fn test_u_verb_aruku() {
+        let sentence = "毎朝公園を歩くのが日課です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Dictionary)");
+        assert_pattern_range(&patterns, "う-Verb (Dictionary)", 5, 7); // 歩く
+    }
+
+    // Testing: 話す (to speak) - す-ending う-verb
+    #[test]
+    fn test_u_verb_hanasu() {
+        let sentence = "彼とは英語で話すことが多い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Dictionary)");
+        assert_pattern_range(&patterns, "う-Verb (Dictionary)", 6, 8); // 話す
+    }
+
+    // Testing: 座る (to sit) - る-ending う-verb (NOT a る-verb!)
+    #[test]
+    fn test_u_verb_suwaru() {
+        let sentence = "ここに座る人はいないのか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Dictionary)");
+        assert_pattern_range(&patterns, "う-Verb (Dictionary)", 3, 5); // 座る
+    }
+}
+

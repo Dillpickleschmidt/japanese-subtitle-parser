@@ -339,9 +339,24 @@ pub fn ru_verb_dictionary() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(RuVerbDictionaryMatcher))]
 }
 
-// Pattern: う-Verb (Dictionary)
+// Pattern: う-Verb (Dictionary) - Godan verbs in dictionary form
+// Structures: Godan verb (五段) in 基本形
 pub fn u_verb_dictionary() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct UVerbDictionaryMatcher;
+    impl Matcher for UVerbDictionaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verbs that are:
+            // 1. 動詞/自立 (independent verb)
+            // 2. 五段 conjugation type (godan/u-verb)
+            // 3. 基本形 (dictionary form)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(4).is_some_and(|f| f.starts_with("五段"))
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(UVerbDictionaryMatcher))]
 }
 
 // Pattern: を (object marker particle)

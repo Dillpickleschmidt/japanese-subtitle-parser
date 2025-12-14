@@ -310,13 +310,13 @@
   {
     "pattern_name": "う-Verb (Dictionary)",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "う-Verbs include all of the verbs in Japanese that end in う sounds (including some of the verbs that end in る) [10 std, 10 pol]",
     "priority": 1,
     "skip_reason": null
