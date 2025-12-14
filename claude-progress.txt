@@ -1,3 +1,92 @@
+## Session 258 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (と～と、どちらが - which is... ?)
+**Tests added**: 6 (all passing)
+**Total tests**: 1679 (was 1673)
+
+### Pattern Implemented: と～と、どちらが (which is... ?)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Comparison question construction used to ask someone to choose between two options. Uses the polite question word どちら (or casual どっち) meaning "which". The particle と connects the two options being compared. The second と is often omitted. The construction can include のほう (direction/side) for emphasis. Only used when there are exactly two choices.
+
+**Structures tested**: 6 tests covering all structure variants
+1. Noun + と + Noun + と + どちら + が: ピザとラーメンとどちらが好きですか (Between pizza and ramen, which do you prefer?)
+2. Noun + と + Noun + どっち + が (second と omitted): 私と彼女どっちが好き (Between me and her, who do you like?)
+3. Noun + と + Noun + と + どちらのほう + が: ワインとビールとどちらのほうが飲みたいですか (Between wine and beer, which would you want to drink?)
+4. Adjective + Noun + と + Adjective + Noun + と + どっちのほう + が: 辛い物と甘い物とどっちのほうが好き (Between spicy and sweet, which do you like?)
+5. Verb + こと + と + Verb + こと + と + どちら + が: 漢字を書くことと漢字を読むこととどちらが得意ですか (Between writing and reading kanji, which are you better at?)
+6. Verb + の + と + Verb + の + と + どちら + が: 遊園地に行くのと動物園に行くのとどちらがいいですか (Between going to the amusement park and going to the zoo, which is better?)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (to_uff5e_to_u3001_dochiraga, lines 5138-5193)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (to_uff5e_to_u3001_dochiraga_tests, lines 8259-8341)
+- Pattern: grammar-lib/src/patterns.rs (ToUff5eToU3001Dochiraga)
+
+**Tokenization patterns**:
+
+Standard form (どちら/どっち + が):
+```
+どちら/どっち (名詞/代名詞/一般) - pronoun "which"
++ が (助詞/格助詞/一般) - case marking particle
+```
+
+With のほう (どちら/どっち + のほう + が):
+```
+どちら/どっち (名詞/代名詞/一般) - pronoun "which"
++ の (助詞/連体化) - possessive/modifying particle
++ ほう (名詞/非自立/一般) - "direction/side"
++ が (助詞/格助詞/一般) - case marking particle
+```
+
+**Key implementation points**:
+1. DochiraDotchiMatcher matches both どちら and どっち as 名詞/代名詞
+2. NoRentaikaMatcher and HouMatcher are optional for のほう construction
+3. GaCaseParticleMatcher matches が as 助詞/格助詞
+4. Pattern range: どちら/どっち (+ のほう if present) + が
+5. The と particles before are NOT included in the pattern range
+6. Priority 2 (comparison question construction)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover all major structure variants: nouns, verbs with の, verbs with こと
+- Test both どちら (polite) and どっち (casual)
+- Test both with and without second と
+- Test both with and without のほう
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Understanding that the pattern starts at どちら/どっち, not at the first と
+2. Handling optional の + ほう sequence correctly
+3. Character range calculation for multi-token pattern with optional elements
+4. Supporting both polite (どちら) and casual (どっち) variants
+
+**Tokenization Discovery**:
+- The と particle tokenizes differently based on context:
+  - After nouns (when second と present): 助詞/並立助詞 (coordinating particle)
+  - After nouns (when second と omitted): 助詞/格助詞/一般 (case particle)
+- どちら and どっち are both 名詞/代名詞/一般
+- のほう adds emphasis on "direction" of choice (similar to "which one are you leaning towards?")
+- The construction works with any content that can be nominalized (verbs need の or こと)
+
+**Pattern Relationship with Other Patterns**:
+- Related to other comparison/choice patterns
+- Uses the question word どちら (polite form of 誰)
+- The と particle here means "and" (connecting choices), not quotation
+- Similar structure to "AとBとどちらがいいですか" patterns
+
+**Usage distinction**:
+- と～と、どちらが: Formal comparison question (exactly 2 choices)
+- どちらのほう: Emphasizes "direction" of preference
+- どっち: Casual alternative to どちら
+
+**Next priorities**: Continue with N4 obligation patterns (なければいけない, なければならない) or command patterns (なさい, なさる).
+
 ## Session 257 - 2025-12-14
 
 ### ✅ Session Summary
