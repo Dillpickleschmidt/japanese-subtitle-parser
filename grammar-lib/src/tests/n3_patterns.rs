@@ -11384,3 +11384,64 @@ mod moshikashitara_tests {
         assert_pattern_range(&patterns, "もしかしたら", 0, 6); // もしかしたら
     }
 }
+
+// Pattern: もしも～なら・もしも～でも (supposing that / assuming that)
+// Data source: grammar_points_data.json["もしも～なら・もしも～でも"]
+// Testing structures from grammar data
+mod moshimo_nara_demo_tests {
+    use super::*;
+
+    // Test: もしも + Phrase + ならば
+    // Example from grammar data: "もしも、今年中に引っ越すのならば、僕が手伝ってやるよ。"
+    // Structure: standard[0] - "もしも + Phrase + なら"
+    // Note: This test has an overlapping higher-priority "の" pattern (引っ越すのなら)
+    // which may prevent detection in some cases. Using alternate sentence.
+    #[test]
+    fn test_moshimo_naraba() {
+        let sentence = "もしも時間があるならば、手伝ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もしも～なら・もしも～でも");
+        assert_pattern_range(&patterns, "もしも～なら・もしも～でも", 0, 10); // もしも時間があるなら
+    }
+
+    // Test: もしも + Phrase + と
+    // Example from grammar data: "もしも仕事で怪我をすると、現場が止まるので気をつけてください。"
+    // Structure: standard[1] - "Phrase + と"
+    #[test]
+    fn test_moshimo_to() {
+        let sentence = "もしも仕事で怪我をすると、現場が止まるので気をつけてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もしも～なら・もしも～でも");
+        assert_pattern_range(&patterns, "もしも～なら・もしも～でも", 0, 12); // もしも仕事で怪我をすると
+    }
+
+    // Test: もしも + Phrase + なら
+    // Example from grammar data: "もしも明日休みなら、一緒に博物館へいかない？"
+    // Structure: standard[0] - "もしも + Phrase + なら"
+    #[test]
+    fn test_moshimo_nara() {
+        let sentence = "もしも明日休みなら、一緒に博物館へいかない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もしも～なら・もしも～でも");
+        assert_pattern_range(&patterns, "もしも～なら・もしも～でも", 0, 9); // もしも明日休みなら
+    }
+
+    // Test: もしも + Phrase + としても
+    // Example from grammar data: "もしも彼がいたとしても、今日中には終わらなかっただろう。"
+    // Structure: standard[1] - "Phrase + ても"
+    #[test]
+    fn test_moshimo_toshitemo() {
+        let sentence = "もしも彼がいたとしても、今日中には終わらなかっただろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もしも～なら・もしも～でも");
+        assert_pattern_range(&patterns, "もしも～なら・もしも～でも", 0, 11); // もしも彼がいたとしても
+    }
+}

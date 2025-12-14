@@ -7736,9 +7736,77 @@ pub fn doushitemo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(DoushitemoMatcher))]
 }
 
-// Pattern: もしも～なら・もしも～でも
+// Pattern: もしも～なら・もしも～でも (supposing that / assuming that)
+// Structures: もしも + Phrase + (なら/ならば/ば/と/ても/でも)
 pub fn moshimo_uff5e_nara_u30fb_moshimo_uff5e_demo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match もしも adverb
+    #[derive(Debug)]
+    struct MoshimoMatcher;
+    impl Matcher for MoshimoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もしも"
+                && token.base_form == "もしも"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match conditional endings: なら, ば, と, ても, でも
+    // This includes:
+    // - なら (助動詞, base=だ, 仮定形)
+    // - ば (助詞/接続助詞)
+    // - と (助詞/接続助詞)
+    // - ても/でも require て/で + も which are handled by existing patterns
+    #[derive(Debug)]
+    struct ConditionalMatcher;
+    impl Matcher for ConditionalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match なら (助動詞, base=だ, 仮定形)
+            if token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+
+            // Match ば (助詞/接続助詞)
+            if token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+
+            // Match と (助詞/接続助詞)
+            if token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+
+            // Match も (助詞/係助詞) for ても/でも constructions
+            if token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MoshimoMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 20,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(ConditionalMatcher)),
+    ]
 }
 
 // Pattern: 同士
