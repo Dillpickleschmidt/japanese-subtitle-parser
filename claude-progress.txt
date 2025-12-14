@@ -1,3 +1,73 @@
+## Session 334 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (ばかりだ)
+**Tests added**: 4 (all passing)
+**Total tests**: 2115 passing, 1 ignored (was 2111 passing, 1 ignored)
+
+### ✅ Pattern Completed: ばかりだ (keeps on / only ~ is occurring)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (in feature_list.json), 1 (in patterns.rs - low priority, not highlighted)
+
+**Pattern**: ばかりだ is used to show that (A) is the only thing that is occurring, or that something "keeps on" doing (A). The pattern combines the adverbial particle ばかり with the auxiliary verbs だ, です, or で (the conjunctive form of だ). It emphasizes that the action or state continues in a single direction, often with negative trends.
+
+**Structures tested**: 4 comprehensive tests covering all variants
+1. Verb[る] + ばかりだ (standard): ガソリンの値段は上がっていくばかりだ (The price of gas keeps rising)
+2. Verb[る] + ばかりで (conjunctive): この町の治安が悪くなるばかりで、しばらく良くなりそうもない (The public order of this town keeps on getting worse)
+3. Verb[る] + ばかりです (polite): 日本の人口は減るばかりです (Japan's population continues to drop)
+4. Negative trend variant: 最近は全然体を鍛えていないから、筋肉がなくなっていくばかりだ (I keep on getting less muscle)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (bakarida, lines 1806-1837)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (bakarida_tests module, lines 10203-10255)
+- Pattern: grammar-lib/src/patterns.rs (Bakarida, lines 2968-2974)
+
+**Tokenization pattern**:
+```
+All variants follow the same structure:
+- Preceding element (verb in various forms)
+- ばかり (助詞/副助詞) - adverbial particle
+- だ/です/で (助動詞) - auxiliary verb
+
+Examples:
+1. いく (動詞, 基本形) + ばかり (助詞/副助詞) + だ (助動詞, base='だ', 基本形)
+2. なる (動詞, 基本形) + ばかり (助詞/副助詞) + で (助動詞, base='だ', 連用形)
+3. 減る (動詞, 基本形) + ばかり (助詞/副助詞) + です (助動詞, 基本形)
+```
+
+**Key implementation points**:
+1. Simple three-token matcher: Any + ばかり + だ/です/で
+2. BakariParticleMatcher checks surface == "ばかり" and POS == 助詞/副助詞
+3. DaDesuDeMatcher accepts だ, です, or で as 助動詞
+4. TokenMatcher::Any allows any preceding verb (in dictionary form, or part of ていく, etc.)
+5. Pattern is distinct from basic "ばかり" pattern by requiring the copula ending
+6. Priority set to 1 to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: Include full construction (Verb + ばかり + copula)
+- Standard: "いくばかりだ" (chars 12-18)
+- Conjunctive: "なるばかりで" (chars 9-15)
+- Polite: "減るばかりです" (chars 6-13)
+- Negative trend: "いくばかりだ" (chars 24-30)
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: だ, です, で
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: This pattern emphasizes continuous change in one direction. The grammar data notes it is "paired almost exclusively with verbs that describe some form of change (higher/lower, stronger/weaker, better/worse, faster/slower, etc)." While primarily used with negative trends, it can also express positive trends. The pattern uses the auxiliary verb だ/です, with で being the conjunctive form when connecting to a second clause.
+
+**Relationship to other patterns**: This pattern is distinct from:
+- "ばかり" (basic pattern) - which matches Any + ばかり without requiring a copula
+- "ばかりに" (to be implemented) - which uses the case-marking particle に
+- "ばかりでなく" (to be implemented) - which means "not only...but also"
+
+---
+
 ## Session 333 - 2025-12-14
 
 ### ✅ Session Summary
