@@ -3590,6 +3590,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    Bakarika {
+        name: "ばかりか",
+        matcher_fn: crate::matchers::n3::bakarika,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     DehanakuteU30fbJanakute {
         name: "ではなくて・じゃなくて",
         matcher_fn: crate::matchers::n3::dehanakute_u30fb_janakute,

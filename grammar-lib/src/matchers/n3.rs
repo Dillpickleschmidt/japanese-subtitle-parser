@@ -4289,9 +4289,128 @@ pub fn betsuni_u301c_nai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ばかりでなく
+// Pattern: ばかりでなく (not only...but also)
+// Structures: Any + ばかり + (で/じゃ + は? + なく + て? | か)
 pub fn bakaridenaku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ばかり (助詞/副助詞)
+    #[derive(Debug)]
+    struct BakariParticleMatcher;
+    impl super::Matcher for BakariParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ばかり"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match で (助動詞, base: だ) or じゃ (助詞/副助詞)
+    #[derive(Debug)]
+    struct DeJaMatcher;
+    impl super::Matcher for DeJaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface == "で" {
+                // で as 助動詞 (base: だ)
+                token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    && token.base_form == "だ"
+            } else if token.surface == "じゃ" {
+                // じゃ as 助詞/副助詞
+                token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+            } else {
+                false
+            }
+        }
+    }
+
+    // Match は as 助詞/係助詞 (optional)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl super::Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match なく (助動詞, base: ない)
+    #[derive(Debug)]
+    struct NakuMatcher;
+    impl super::Matcher for NakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match て as 助詞/接続助詞 (optional)
+    #[derive(Debug)]
+    struct TeConjunctionMatcher;
+    impl super::Matcher for TeConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match か as 助詞/副助詞／並立助詞／終助詞 (for ばかりか form)
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl super::Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match the full form: Any + ばかり + で/じゃ + は? + なく + て?
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(BakariParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(DeJaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            WaParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            TeConjunctionMatcher,
+        )))),
+    ]
+}
+
+// Pattern: ばかりか (alternative concise form of ばかりでなく)
+// Structure: Any + ばかり + か
+pub fn bakarika() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match ばかり (助詞/副助詞)
+    #[derive(Debug)]
+    struct BakariParticleMatcher;
+    impl super::Matcher for BakariParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ばかり"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match か as 助詞
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl super::Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(BakariParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+    ]
 }
 
 // Pattern: ではなくて・じゃなくて

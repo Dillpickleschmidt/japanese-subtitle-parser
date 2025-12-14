@@ -6106,13 +6106,13 @@
   {
     "pattern_name": "ばかりでなく",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ばかりでなく is a combination of the adverbial particle ばかり, with the conjugated (and negated) form of the auxiliary verb だ [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

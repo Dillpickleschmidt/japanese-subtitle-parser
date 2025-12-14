@@ -10356,3 +10356,104 @@ mod ba_hodo_tests {
     }
 }
 
+// Pattern: ばかりでなく (not only...but also)
+// Data source: grammar_points_data.json["ばかりでなく"]
+// Testing all structure variants from structure.standard[]
+// This is a more formal version of だけでなく
+mod bakaridenaku_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + ばかりではなく"
+    // Example from grammar_points_data.json: 彼は仕事ばかりではなく、家事もちゃんとやっています
+    #[test]
+    fn test_bakaridenaku_verb() {
+        let sentence = "彼は仕事ばかりではなく、家事もちゃんとやっています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりでなく");
+        assert_pattern_range(&patterns, "ばかりでなく", 2, 11); // 仕事ばかりではなく
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + ばかりではなく"
+    // Example from grammar_points_data.json: 安いアパートは古いばかりではなく、だいたい小さくて汚い
+    #[test]
+    fn test_bakaridenaku_i_adjective() {
+        let sentence = "都内にある安いアパートは古いばかりではなく、だいたい小さくて汚い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりでなく");
+        assert_pattern_range(&patterns, "ばかりでなく", 12, 21); // 古いばかりではなく
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + な + ばかりではなく"
+    // Example from grammar_points_data.json: この池は綺麗なばかりではなく、ワニが沢山いるので危ないです
+    #[test]
+    fn test_bakaridenaku_na_adjective() {
+        let sentence = "この池は綺麗なばかりではなく、ワニが沢山いるので危ないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりでなく");
+        assert_pattern_range(&patterns, "ばかりでなく", 6, 14); // なばかりではなく
+    }
+
+    // Testing: structure.standard[3] - "Noun + ばかりではなく"
+    // Example from grammar_points_data.json: 宝くじに当たって、車ばかりではなく、ボートとバイクも買った
+    #[test]
+    fn test_bakaridenaku_noun() {
+        let sentence = "彼は宝くじに当たって、車ばかりではなく、ボートとバイクも買った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりでなく");
+        assert_pattern_range(&patterns, "ばかりでなく", 11, 19); // 車ばかりではなく
+    }
+
+    // Testing: structure.standard[4] - Alternative form "ばかりか"
+    // This is an alternative, more concise form
+    #[test]
+    fn test_bakaridenaku_bakarika() {
+        let sentence = "彼女は英語ばかりか、中国語も話せる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりか");
+        assert_pattern_range(&patterns, "ばかりか", 3, 9); // 英語ばかりか
+    }
+
+    // Testing: Variation with でなく (without は)
+    #[test]
+    fn test_bakaridenaku_denaku() {
+        let sentence = "この問題は難しいばかりでなく、時間もかかる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりでなく");
+        assert_pattern_range(&patterns, "ばかりでなく", 5, 14); // 難しいばかりでなく
+    }
+
+    // Testing: Variation with じゃなく (casual)
+    #[test]
+    fn test_bakaridenaku_janaku() {
+        let sentence = "あいつは頭がいいばかりじゃなく、運動もできる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりでなく");
+        assert_pattern_range(&patterns, "ばかりでなく", 6, 15); // いいばかりじゃなく
+    }
+
+    // Testing: Variation with でなくて (with て)
+    #[test]
+    fn test_bakaridenaku_denakute() {
+        let sentence = "彼は仕事ばかりでなくて、趣味も充実している";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりでなく");
+        assert_pattern_range(&patterns, "ばかりでなく", 2, 11); // 仕事ばかりでなくて
+    }
+}
+
