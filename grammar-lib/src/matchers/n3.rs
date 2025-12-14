@@ -3066,8 +3066,103 @@ pub fn dehanakute_u30fb_janakute() -> Vec<TokenMatcher> {
 }
 
 // Pattern: だけでなく(て)～も
+// Pattern: だけでなく(て)～も (not only... but also with も emphasis)
+// Structures: Noun + だけでなく(て) + ... + Noun + も
 pub fn dakedenaku_te_uff5e_mo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Reuse N4 だけでなく matcher components
+    #[derive(Debug)]
+    struct DakeMatcher;
+    impl super::Matcher for DakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DeJaMatcher;
+    impl super::Matcher for DeJaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            || (token.surface == "じゃ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl super::Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NakuMatcher;
+    impl super::Matcher for NakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl super::Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for も particle (係助詞)
+    #[derive(Debug)]
+    struct MoMatcher;
+    impl super::Matcher for MoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        // Noun (subject A)
+        super::noun_matcher(),
+        // だけ
+        TokenMatcher::Custom(Arc::new(DakeMatcher)),
+        // で or じゃ
+        TokenMatcher::Custom(Arc::new(DeJaMatcher)),
+        // は (optional)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaMatcher)))),
+        // なく
+        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        // て (optional)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeMatcher)))),
+        // Wildcard for intermediate content (0-10 tokens)
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10,
+            stop_conditions: vec![],
+        },
+        // Noun (subject B)
+        super::noun_matcher(),
+        // Optional case particle (に/と/etc)
+        TokenMatcher::Optional(Box::new(super::particle_matcher())),
+        // も
+        TokenMatcher::Custom(Arc::new(MoMatcher)),
+    ]
 }
 
 // Pattern: だけしか (only/nothing but)

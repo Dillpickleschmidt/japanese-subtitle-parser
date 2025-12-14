@@ -7601,3 +7601,73 @@ mod verb_volitional_toshitaga_tests {
         assert_pattern_range(&patterns, "Verb[volitional] + としたが", 0, 11); // 説明しようとしたけれど
     }
 }
+
+// ========== だけでなく(て)～も (not only... but also with も emphasis) ==========
+// Pattern: だけでなく(て)～も
+// Data source: grammar_points_data.json["だけでなく(て)～も"]
+//
+// Structures to test:
+//   - standard[0]: Noun + だけ + でなく(て) + Noun + も
+//   - With じゃなく(て) variant
+//   - With/without て
+//
+// Examples from data:
+//   - アメリカだけではなく、韓国とチリにも行った
+//   - 日本は地震だけでなく、台風も多い
+//   - 漫画は子供だけではなくて、大人にも人気がある
+//   - お年玉は子供だけじゃなく、大人ももらえたら
+//   - 遊園地だけじゃなくて動物園にも連れて行ってほしい
+#[cfg(test)]
+mod dakedenaku_te_mo_tests {
+    use super::*;
+
+    // Test: だけではなく (without て)
+    #[test]
+    fn test_dake_dewanaku_mo() {
+        let sentence = "アメリカだけではなく、韓国とチリにも行った事がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: だけでなく (without て, casual)
+    #[test]
+    fn test_dake_denaku_mo() {
+        let sentence = "日本は地震だけでなく、台風も多いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: だけではなくて (with て)
+    #[test]
+    fn test_dake_dewanakute_mo() {
+        let sentence = "漫画は子供だけではなくて、大人にも人気がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: だけじゃなく (casual without て)
+    #[test]
+    fn test_dake_janaku_mo() {
+        let sentence = "お年玉は子供だけじゃなく、大人ももらえたらいいのにね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: だけじゃなくて (casual with て)
+    #[test]
+    fn test_dake_janakute_mo() {
+        let sentence = "遊園地だけじゃなくて動物園にも連れて行ってほしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+}
