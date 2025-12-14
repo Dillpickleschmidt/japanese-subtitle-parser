@@ -8379,3 +8379,55 @@ mod sa_interjection_tests {
         assert_pattern_range(&patterns, "さ - Interjection", 0, 2); // さあ
     }
 }
+
+// Pattern: と同じで・と違って (same as / different from)
+// Data source: grammar_points_data.json["と同じで・と違って"]
+// Testing: structure.standard[0] - "Noun + と + 同じで"
+//          structure.standard[1] - "Noun + と + 違って"
+mod toonajide_tochigatte_tests {
+    use super::*;
+
+    // Test: Noun + と + 同じで (same as)
+    #[test]
+    fn test_to_onajide_same_as() {
+        let sentence = "彼は僕と同じで、猫アレルギーです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同じで・と違って");
+        assert_pattern_range(&patterns, "と同じで・と違って", 3, 7); // と同じで
+    }
+
+    // Test: Noun + と + 同じで (with が好き)
+    #[test]
+    fn test_to_onajide_likes() {
+        let sentence = "母も私と同じで、アウトドアが好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同じで・と違って");
+        assert_pattern_range(&patterns, "と同じで・と違って", 3, 7); // と同じで
+    }
+
+    // Test: Noun + と + 違って (different from)
+    #[test]
+    fn test_to_chigatte_unlike() {
+        let sentence = "私は弟と違って、本を読むのが大好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同じで・と違って");
+        assert_pattern_range(&patterns, "と同じで・と違って", 3, 7); // と違って
+    }
+
+    // Test: Noun + と + 違って (with が苦手)
+    #[test]
+    fn test_to_chigatte_dislike() {
+        let sentence = "彼女は私と違って、遊園地が苦手です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と同じで・と違って");
+        assert_pattern_range(&patterns, "と同じで・と違って", 4, 8); // と違って
+    }
+}

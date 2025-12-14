@@ -3818,9 +3818,63 @@ pub fn toonajikurai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: と同じで・と違って
+// Pattern: と同じで・と違って (same as / different from)
+// Structures: Noun + と + 同じで OR Noun + と + 違って
 pub fn toonajide_u30fb_tochigatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for と particle (case-marking particle)
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.base_form == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for 同じ followed by で OR 違っ followed by て
+    // This matches the second token (同じ or 違っ)
+    #[derive(Debug)]
+    struct OnajideOrChigatteMatcher;
+    impl Matcher for OnajideOrChigatteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match 同じ (rentaishi)
+            (token.surface == "同じ"
+                && token.base_form == "同じ"
+                && token.pos.first().is_some_and(|pos| pos == "連体詞"))
+            ||
+            // Match 違っ (verb stem from 違う)
+            (token.base_form == "違う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    // Matcher for で (auxiliary) OR て (particle)
+    // This matches the third token (で or て)
+    #[derive(Debug)]
+    struct DeOrTeMatcher;
+    impl Matcher for DeOrTeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match で (auxiliary verb, conjunctive form of だ)
+            (token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            ||
+            // Match て (particle)
+            (token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(OnajideOrChigatteMatcher)),
+        TokenMatcher::Custom(Arc::new(DeOrTeMatcher)),
+    ]
 }
 
 // Pattern: と並んで (alongside, comparable to)
