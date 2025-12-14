@@ -1,3 +1,67 @@
+## Session 343 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N2 pattern
+**Patterns completed**: 1 (さすが)
+**Tests added**: 4 (all passing)
+**Total tests**: 2182 passing, 1 ignored (was 2178 passing, 1 ignored)
+
+### ✅ Pattern Completed: さすが (as expected of / that is just like)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (in feature_list.json), 1 (in patterns.rs - low priority, not highlighted)
+
+**Pattern**: さすが, also often appearing in the kanji form 流石（さすが）, is an adverb that indicates the speaker's feeling of being impressed that something has lived up to its reputation, or what was expected of it. In English, this comes across as "as expected of (A)", or "that is just like (A)". As an adverb, it may appear at the beginning of phrases (either with or without に), or directly precede a noun when の is used.
+
+**Structures tested**: 4 comprehensive tests covering all variants
+1. さすが + Phrase (basic): すごい！さすが先輩！ (Wow! That's what I would expect from you senpai!)
+2. さすが + に + Phrase: さすがに今日は雨が降りすぎだろ (As one would expect, it is raining way too much today)
+3. さすが + の + Noun: さすがの君でもこの問題は難しいだろう (Even for someone like you, this problem is difficult)
+4. Negative/sarcastic usage: さすが田中くん！発注ミスの天才だね！ (As expected, Tanaka-kun! You are a genius at making order errors!)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n2.rs (sasuga, lines 2149-2176)
+- Tests: grammar-lib/src/tests/n2_patterns.rs (sasuga_tests module, lines 1754-1812)
+- Pattern: grammar-lib/src/patterns.rs (Sasuga, lines 5859-5865)
+
+**Tokenization pattern**:
+```
+Simple two-token matcher: さすが + Optional(に/の)
+- さすが (副詞/一般) - adverb
+- Optional に (助詞/副詞化) or の (助詞/連体化)
+```
+
+**Key implementation points**:
+1. Two-token matcher: さすが + Optional(に/の particle)
+2. SasugaMatcher checks surface == "さすが" and POS == 副詞 (adverb)
+3. NiNoParticleMatcher handles both に (助詞/副詞化) and の (助詞/連体化) particles
+4. TokenMatcher::Optional makes the particle optional for basic usage
+5. Works in all contexts: standalone, with に emphasis, before nouns with の
+6. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: さすが + optional particle
+- Basic usage: "さすが" (chars 4-7)
+- With に: "さすがに" (chars 0-4)
+- With の: "さすがの" (chars 0-4)
+- Before noun: "さすが" (chars 0-3)
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants from the grammar data
+- Correct character ranges verified for all variants
+- Includes both positive and negative/sarcastic usage contexts
+
+**Linguistic Note**: The grammar data notes that the kanji structure of 流石（さすが） is a type of kanji use known as 借字（しゃくじ）in Japanese, meaning "borrowed symbol". This indicates that the meaning of the kanji is not related to the meaning of the word at all. Although uncommon, さすが may occasionally have a negative connotation, where it is similar to "even" in English, implying "as one had thought, even (A) couldn't (B)".
+
+**Related patterns**:
+- This is a standalone adverb pattern, not part of a larger construction family
+- Distinct from まさか (N3 pattern meaning "no way") despite both being adverbs of speaker attitude
+
+---
+
 ## Session 342 - 2025-12-14
 
 ### ✅ Session Summary
