@@ -9771,3 +9771,59 @@ mod deyuumei_tests {
     }
 }
 
+// ========== はもちろん (not only...but also / not to mention) ==========
+// Pattern: はもちろん (not only...but also)
+// Data source: grammar_points_data.json["はもちろん"]
+//
+// Structure variants to test:
+//   standard[0]: Noun (A) + はもちろん + Noun (B) + も
+//   standard[1]: Noun (A) + はもちろん + Noun (B) + さえ
+
+mod hamochiron_tests {
+    use super::*;
+
+    // Testing: Noun + はもちろん + Noun + も (standard form)
+    #[test]
+    fn test_hamochiron_basic_mo() {
+        let sentence = "パソコンのことはもちろん、電化製品の事ならなんでも聞いてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はもちろん");
+        assert_pattern_range(&patterns, "はもちろん", 5, 12); // ことはもちろん
+    }
+
+    // Testing: Noun + はもちろん + Noun + も (another example)
+    #[test]
+    fn test_hamochiron_subjects() {
+        let sentence = "数学はもちろん、学校の科目を全て一人で教えることができる人を探している";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はもちろん");
+        assert_pattern_range(&patterns, "はもちろん", 0, 7); // 数学はもちろん
+    }
+
+    // Testing: Noun + はもちろん + Noun + も (language example)
+    #[test]
+    fn test_hamochiron_languages() {
+        let sentence = "彼女は日本語はもちろん、韓国語も話すことができます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はもちろん");
+        assert_pattern_range(&patterns, "はもちろん", 3, 11); // 日本語はもちろん
+    }
+
+    // Testing: Noun + はもちろん + Noun + も (book/song example)
+    #[test]
+    fn test_hamochiron_talents() {
+        let sentence = "この作家の本はもちろん、歌もうまいから人気がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はもちろん");
+        assert_pattern_range(&patterns, "はもちろん", 5, 11); // 本はもちろん
+    }
+}
+

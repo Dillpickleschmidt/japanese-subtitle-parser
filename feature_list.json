@@ -6008,13 +6008,13 @@
   {
     "pattern_name": "はもちろん",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "はもちろん , or occasionally は勿論（もちろん）, is a phrase in Japanese that presents (A) as being something obvious, while (B) sh... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

@@ -3735,9 +3735,35 @@ pub fn toiuyori() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: はもちろん
+// Pattern: はもちろん (not only...but also)
+// Structures: Noun (A) + はもちろん + Noun (B) + も/さえ
 pub fn hamochiron() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MochironAdverbMatcher;
+    impl Matcher for MochironAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もちろん"
+                && token.base_form == "もちろん"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(HaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MochironAdverbMatcher)),
+    ]
 }
 
 // Pattern: をはじめ
