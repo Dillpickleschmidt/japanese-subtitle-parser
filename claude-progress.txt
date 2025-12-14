@@ -1,3 +1,88 @@
+## Session 317 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (によると・によれば)
+**Tests added**: 5 (all passing)
+**Total tests**: 2018 passing, 1 ignored (was 2013 passing, 1 ignored)
+
+### ✅ Pattern Completed: によると・によれば (according to)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: によると・によれば expresses "according to (A)" or "going off (A)", where (A) is the source of information being conveyed. The pattern combines the case-marking particle に, the verb よる (to be based on), and either the conjunction particle と or the conditional auxiliary ば. The formal variant によりますと uses the polite auxiliary ます.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Noun + によると: 天気予報によると、今夜から雪が降るらしいですよ (According to the weather forecast, it will apparently snow from tonight)
+2. Verb + ところ + によると: 先生に聞いたところによると、来週からオンライン授業になるらしいよ (Going off what I heard from the teacher, we're taking online classes from next week)
+3. Noun + によれば: 今朝のニュースによれば、来月末から海外旅行が出来るようになる (According to this morning's news, we'll be able to travel abroad from the end of next month)
+4. によりますと (formal): 愛知県警によりますと、犯人は四十代の男性だという事です (According to the Aichi Prefectural Police, the criminal is a male in his 40s)
+5. Verb + ところ + によると (different verb): 私が聞くところによると、部長が転職するそうだ (Going off what I heard, the manager is going to switch jobs)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (niyoruto_u30fb_niyoreba, lines 522-577)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (niyoruto_niyoreba_tests module, lines 8996-9058)
+- Pattern: grammar-lib/src/patterns.rs (NiyorutoU30fbNiyoreba, line 2664)
+
+**Tokenization patterns**:
+```
+Basic によると:
+- に (助詞/格助詞/一般) - case-marking particle
+- よる (動詞/自立, base='よる', 基本形) - verb in dictionary form
+- と (助詞/接続助詞) - conjunctive particle
+
+Conditional によれば:
+- に (助詞/格助詞/一般)
+- よれ (動詞/自立, base='よる', 仮定形) - verb in conditional form
+- ば (助詞/接続助詞) - conditional particle
+
+Formal によりますと:
+- に (助詞/格助詞/一般)
+- より (動詞/自立, base='よる', 連用形) - verb in conjunctive form
+- ます (助動詞, 特殊・マス) - polite auxiliary
+- と (助詞/接続助詞) - conjunctive particle
+
+The pattern can be optionally preceded by ところ + に when following a verb phrase.
+```
+
+**Key implementation points**:
+1. NiParticleMatcher matches に as case-marking particle (助詞/格助詞)
+2. YoruVerbMatcher accepts よる/より/よれ with base_form='よる' (動詞/自立)
+3. Optional MasuMatcher for the formal variant (助動詞)
+4. ToOrBaMatcher accepts either と or ば as conjunctive particles (助詞/接続助詞)
+5. Pattern handles all three forms (によると, によれば, によりますと) with a single matcher
+6. Pattern range includes に + verb form + optional ます + final particle
+
+**Pattern ranges**: Include full construction from に to final particle
+- Example: "によると" (chars 4-8) - basic form
+- Example: "によると" (chars 9-13) - after ところ
+- Example: "によれば" (chars 7-11) - conditional form
+- Example: "によりますと" (chars 4-10) - formal variant
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: によると, ところによると, によれば, によりますと
+- Correct character ranges verified for all variants
+- Tests use authentic examples from news, forecasts, and conversational contexts
+
+**Linguistic Note**: The pattern によると uses the verb よる (to be based on) to express that information is "based on" or "originates from" the source marked by に. によると is considered more certain and reliable (commonly used with official sources like police, news), while によれば is slightly less certain. The formal variant によりますと is primarily used in news broadcasts and written articles. The grammar explanation notes that よる can be written with different kanji: 依る (depends on), 拠る (extends from), 因る (results from), or 由る (is due to), though it's usually written in hiragana.
+
+---
+
+## Session 316 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (によって・による)
+**Tests added**: 5 (all passing)
+**Total tests**: 2013 passing, 1 ignored (was 2008 passing, 1 ignored)
+
+---
+
 ## Session 315 - 2025-12-14
 
 ### ✅ Session Summary
