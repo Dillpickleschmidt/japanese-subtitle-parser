@@ -3012,13 +3012,13 @@
   {
     "pattern_name": "とおもう",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "To express that you 'think' something in Japanese, the common expression と思（おも）う is regularly used [5 std, 5 pol]",
     "priority": 2,
     "skip_reason": null

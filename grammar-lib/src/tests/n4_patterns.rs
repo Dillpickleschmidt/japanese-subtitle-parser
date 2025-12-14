@@ -7711,3 +7711,93 @@ mod to_itte_mo_ii_tests {
         assert_pattern_range(&patterns, "といってもいい", 11, 22); // といってもいいでしょう (includes auxiliary)
     }
 }
+
+// Pattern: とおもう (I think that)
+// Data source: grammar_points_data.json["とおもう"]
+// Structures:
+//   - standard[0]: Verb + とおもう
+//   - standard[1]: い-Adj + とおもう
+//   - standard[2]: な-Adj + だ + とおもう
+//   - standard[3]: Noun + だ + とおもう
+//   - standard[4]: (any) + と思っている (progressive/other person's thoughts)
+//   - polite[0-4]: Same with ます/います
+mod toomou_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + とおもう"
+    #[test]
+    fn test_verb_to_omou() {
+        let sentence = "ごめん、ちょっと遅れるとおもう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおもう");
+        assert_pattern_range(&patterns, "とおもう", 11, 15); // とおもう
+    }
+
+    // Testing: structure.standard[1] - "い-Adj + とおもう"
+    #[test]
+    fn test_i_adj_to_omou() {
+        let sentence = "その言い方は酷いとおもうよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおもう");
+        assert_pattern_range(&patterns, "とおもう", 8, 12); // とおもう
+    }
+
+    // Testing: structure.standard[2] - "な-Adj + だ + とおもう"
+    #[test]
+    fn test_na_adj_da_to_omou() {
+        let sentence = "あの人が綺麗だとおもう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおもう");
+        assert_pattern_range(&patterns, "とおもう", 7, 11); // とおもう
+    }
+
+    // Testing: structure.standard[3] - "Noun + だ + とおもう"
+    #[test]
+    fn test_noun_da_to_omou() {
+        let sentence = "これはフランス語だとおもう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおもう");
+        assert_pattern_range(&patterns, "とおもう", 9, 13); // とおもう
+    }
+
+    // Testing: structure.polite[0] - "Verb + とおもいます"
+    #[test]
+    fn test_verb_to_omoimasu() {
+        let sentence = "明日は雨が降るとおもいます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおもう");
+        assert_pattern_range(&patterns, "とおもう", 7, 13); // とおもいます (includes ます)
+    }
+
+    // Testing: structure.standard[4] - "Verb + と思っている" (progressive/other's thoughts)
+    #[test]
+    fn test_to_omotte_iru_other_person() {
+        let sentence = "ジェームスは自分が賢いと思っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおもう");
+        assert_pattern_range(&patterns, "とおもう", 11, 14); // と思っ (core pattern)
+    }
+
+    // Testing: casual speech variant - な-Adj without だ (common but ungrammatical)
+    #[test]
+    fn test_na_adj_casual_no_da() {
+        let sentence = "私は日本が安全とおもう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とおもう");
+        assert_pattern_range(&patterns, "とおもう", 7, 11); // とおもう
+    }
+}

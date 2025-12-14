@@ -1085,9 +1085,35 @@ pub fn noni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とおもう
+// Pattern: とおもう (I think that)
+// Structures: Verb/Adj + とおもう, Noun/な-Adj + だ + とおもう
 pub fn toomou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl super::Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    #[derive(Debug)]
+    struct OmouVerbMatcher;
+    impl super::Matcher for OmouVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "おもう" || token.base_form == "思う")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(OmouVerbMatcher)),
+    ]
 }
 
 // Pattern: など (such as, and so on)
