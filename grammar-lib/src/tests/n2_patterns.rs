@@ -270,3 +270,30 @@ mod oyobi_tests {
         assert_pattern_range(&patterns, "および", 12, 17); // 方、および
     }
 }
+
+// いつの間にか (before one knows it, suddenly)
+// Data source: grammar_points_data.json["いつの間にか"]
+// Testing: structure.standard[0] - "いつのまにか + Phrase"
+mod itsunomanika_tests {
+    use super::*;
+
+    #[test]
+    fn test_itsunomanika_gradual_change() {
+        let sentence = "３年間日本人の友達と毎日日本語で話していたら、いつのまにか日本語が上手になっていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いつの間にか");
+        assert_pattern_range(&patterns, "いつの間にか", 23, 29); // いつのまにか
+    }
+
+    #[test]
+    fn test_itsunomanika_sudden_realization() {
+        let sentence = "気づいたら、いつのまにか冬になっていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いつの間にか");
+        assert_pattern_range(&patterns, "いつの間にか", 6, 12); // いつのまにか
+    }
+}

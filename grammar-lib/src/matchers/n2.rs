@@ -537,9 +537,23 @@ pub fn karaniha() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: いつの間にか
+// Pattern: いつの間にか (before one knows it, suddenly)
+// Structures: いつのまにか + Phrase
 pub fn itsunomanika() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // いつのまにか is always tokenized as a single adverb token
+    #[derive(Debug)]
+    struct ItsunomaniकaMatcher;
+    impl super::Matcher for ItsunomaniकaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いつのまにか"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(ItsunomaniकaMatcher))]
 }
 
 // Pattern: 一旦

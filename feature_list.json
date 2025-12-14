@@ -7198,13 +7198,13 @@
   {
     "pattern_name": "いつの間にか",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although a combination of いつ 'when', の, 間（ま） 'interval', に, and か; いつの間（ま）にか is a set expression that is used as a st... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
