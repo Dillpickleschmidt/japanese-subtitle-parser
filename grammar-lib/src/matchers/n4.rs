@@ -2772,9 +2772,61 @@ pub fn daitai() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(DaitaiMatcher))]
 }
 
-// Pattern: のなかで
+// Pattern: Among/in/within (Noun/この/その + の + なか + で)
+// Structures: Noun + の + 中（なか）で, その + 中（なか）で, この + 中（なか）で
 pub fn nonakade() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NounOrDemonstrativeMatcher;
+    impl super::Matcher for NounOrDemonstrativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match nouns (名詞)
+            if token.pos.first().is_some_and(|pos| pos == "名詞") {
+                return true;
+            }
+            // Match demonstratives (この, その, あの - 連体詞)
+            if token.pos.first().is_some_and(|pos| pos == "連体詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NakaMatcher;
+    impl super::Matcher for NakaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なか"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NounOrDemonstrativeMatcher)),
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NakaMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+    ]
 }
 
 // Pattern: ように・ような

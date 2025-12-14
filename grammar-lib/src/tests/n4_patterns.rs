@@ -9025,3 +9025,43 @@ mod nimieru_tests {
         assert_pattern_range(&patterns, "にみえる", 5, 12); // ようにみえます
     }
 }
+
+// のなかで - among/in/within
+// Data source: grammar_points_data.json["のなかで"]
+#[cfg(test)]
+mod nonakade_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + の + 中（なか）で"
+    #[test]
+    fn test_noun_no_nakade() {
+        let sentence = "ラーメンのなかでは味噌ラーメンが好き";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなかで");
+        assert_pattern_range(&patterns, "のなかで", 0, 8); // ラーメンのなかで
+    }
+
+    // Testing: structure.standard[1] - "この + 中（なか）で"
+    #[test]
+    fn test_kono_nakade() {
+        let sentence = "このバンドのなかでは誰が好き？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなかで");
+        assert_pattern_range(&patterns, "のなかで", 2, 9); // バンドのなかで
+    }
+
+    // Testing: Physical location context - "in (A)"
+    #[test]
+    fn test_physical_location() {
+        let sentence = "車のなかで夕食を食べました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなかで");
+        assert_pattern_range(&patterns, "のなかで", 0, 5); // 車のなかで
+    }
+}
