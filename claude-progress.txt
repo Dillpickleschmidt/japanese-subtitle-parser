@@ -1,3 +1,157 @@
+## Session 260 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (なければならない - must do / have to)
+**Tests added**: 4 (all passing)
+**Total tests**: 1687 (was 1683)
+
+### Pattern Implemented: なければならない (must do / have to)
+
+**JLPT Level**: N4
+**Category**: Conjugation
+**Priority**: 1
+
+**Pattern**: Obligation construction expressing "must do" or "have to". Similar to なければいけない but uses ならない (to not become) instead of いけない (to not be able to go). This is a double-negative conditional structure that literally means "if (A) is not done, it cannot become" → "must do (A)". Uses the conditional form なければ (if not) or the contracted casual form なきゃ, followed by ならない or its polite form なりません. More formal/literary than なければいけない.
+
+**Structures tested**: 4 tests covering all structure variants
+1. Verb[ない] + なければ + ならない (standard): しなければならない (must do)
+2. Verb[ない] + なきゃ + ならない (casual contraction): やらなきゃならない (have to do)
+3. Verb[ない] + なければ + なりません (polite): しなければなりません (must do - polite)
+4. Verb[ない] + なきゃ + なりません (casual + polite): 帰らなきゃなりません (have to return - casual + polite)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (nakerebanaranai, lines 5270-5341)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (nakerebanaranai_tests, lines 8407-8467)
+- Pattern: grammar-lib/src/patterns.rs (Nakerebanaranai)
+
+**Tokenization patterns**:
+
+Standard form (なければならない):
+```
+なけれ (助動詞, 特殊・ナイ, 仮定形, base="ない") - conditional form of ない
++ ば (助詞/接続助詞) - conditional particle
++ なら (動詞/非自立 OR 動詞/自立, 未然形, base="なる") - verb "to become" in mizen form
++ ない (助動詞, 特殊・ナイ, 基本形) - negative auxiliary
+```
+
+Casual contracted form (なきゃならない):
+```
+なきゃ (助動詞, 特殊・ナイ, 仮定縮約２, base="ない") - contracted conditional
++ なら (動詞/自立, 未然形, base="なる")
++ ない (助動詞, 特殊・ナイ, 基本形)
+```
+
+Polite form (なければなりません / なきゃなりません):
+```
+なけれ/なきゃ (same as above)
++ (ば if なければ)
++ なり (動詞/非自立 OR 動詞/自立, 連用形, base="なる") - verb in renyou form for polite
++ ませ (助動詞, 特殊・マス, 未然形) - polite auxiliary
++ ん (助動詞, 不変化型, 基本形) - negative contraction
+```
+
+**Key implementation points**:
+1. NakerebaOrNakyaMatcher handles both なけれ (仮定形) and なきゃ (仮定縮約２)
+2. BaParticleMatcher is optional (only needed for なければ, not なきゃ)
+3. NaraMatcher accepts both なら (未然形) and なり (連用形) to handle standard and polite forms
+4. NaraMatcher also accepts both 非自立 and 自立 for verb classification flexibility
+5. NaiAuxiliaryMatcher is optional to allow automatic extension for polite forms
+6. Pattern automatically extends to include ます+ん for polite negative
+7. Priority 1 (obligation construction)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover both standard (なければ) and casual contracted (なきゃ) forms
+- Test both plain (ならない) and polite (なりません) endings
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Handling two different conditional forms: なければ (full) vs なきゃ (contracted)
+2. Making ば optional to allow matching both variants with one pattern
+3. Making ない optional to allow automatic extension for polite forms (なりません)
+4. Understanding that なる changes conjugation form: 未然形 (standard + ない) vs 連用形 (polite + ます)
+5. Handling both 非自立 and 自立 classifications for なる verb
+
+**Tokenization Discovery**:
+- なければ tokenizes as なけれ (仮定形) + ば (接続助詞)
+- なきゃ is a single token (仮定縮約２) - contracted form
+- ならない uses なら in 未然形 when followed by ない
+- なりません uses なり in 連用形 when followed by ます
+- なる can be classified as 動詞/非自立 or 動詞/自立 depending on context
+- The pattern matcher automatically extends patterns to include ます auxiliary
+
+**Pattern Relationship with Other Patterns**:
+- Very similar to なければいけない (same structure, different verb)
+- Related to なくてはならない (te-form variant)
+- Related to なくてはいけない (te-form + いけない)
+- Related to なくちゃ・なきゃ (casual obligation, can omit ならない/いけない)
+- All express obligation/necessity in different registers
+
+**Usage distinction**:
+- なければならない: More formal/literary obligation ("must do")
+- なければいけない: Common in speech, casual/neutral ("must do")
+- なきゃならない: Casual contracted form
+- ならない emphasizes "it won't become/work" (formal tone)
+- いけない emphasizes "it won't go/work" (casual tone)
+
+### Session Statistics
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1 (なければならない)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1687 (up from 1683)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 obligation patterns**:
+   - なくてはいけない (must do) - te-form variant
+   - なくてはならない (must do) - te-form + ならない
+   - These use て-form + は instead of conditional form
+2. **Or continue with N4 command patterns**:
+   - なさい (imperative command form)
+   - なさる (honorific form of する)
+3. **Pattern focus**: More obligation constructions or command/imperative forms
+
+### Environment Status
+- All 1687 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+
+**Conditional Forms in Japanese**:
+The pattern uses the conditional (仮定形) of the negative auxiliary ない:
+- Full form: ない → なければ (if not)
+- Contracted: ない → なきゃ (casual "if not")
+- Both mean the same but differ in formality
+
+**Double Negative Logic**:
+The construction is a double negative that creates obligation:
+- Literal: "If not do, cannot become" = "must do"
+- しなければならない = "If (I) don't do, it won't become/work" = "I must do"
+
+**いけない vs ならない**:
+Both mean "won't do/won't work" but differ in usage:
+- いけない: More common in speech, casual/neutral ("won't go")
+- ならない: More formal, literary, or written contexts ("won't become")
+- Both create the same grammatical function (obligation)
+
+**Verb Conjugation Differences**:
+- いける (一段 verb): いけ can be 未然形 or 連用形
+- なる (五段 verb): なら (未然形) vs なり (連用形)
+- The conjugation form changes based on what follows:
+  - 未然形 + ない (negative auxiliary)
+  - 連用形 + ます (polite auxiliary)
+
+**Pattern Extension for Polite Forms**:
+The pattern matcher automatically extends patterns when it detects polite auxiliaries:
+- Base pattern: なければ + なら + ない
+- Extended: なければ + なり + ます → なければなりません
+- This is why making ない optional was crucial for detection
+
 ## Session 259 - 2025-12-14
 
 ### ✅ Session Summary
