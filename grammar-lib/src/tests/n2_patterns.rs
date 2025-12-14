@@ -1597,3 +1597,79 @@ mod kotoninatteiru_tests {
         assert_pattern_range(&patterns, "ことになっている", 16, 24); // ことになっている
     }
 }
+
+// ことにはならない - "Just because (A), it doesn't mean that (B)" / "It doesn't mean that"
+// Data source: grammar_points_data.json["ことにはならない"]
+mod kotonihanaranai_tests {
+    use super::*;
+
+    #[test]
+    fn test_karatoitte_structure() {
+        // Example: みんなが簡単にできたからと言って、君にも簡単にできるということにはならない
+        // Structure.standard[0]: "Phrase + からといって + Phrase + ことにはならない"
+        let sentence = "みんなが簡単にできたからと言って、君にも簡単にできるということにはならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにはならない");
+        assert_pattern_range(&patterns, "ことにはならない", 23, 37); // できるということにはならない
+    }
+
+    #[test]
+    fn test_temo_structure() {
+        // Example: いくら上司でも、仕事を全部部下たちに押し付けてもいいことにはならない
+        // Structure.standard[1]: "Phrase［ても］ + ことにはならない"
+        let sentence = "いくら上司でも、仕事を全部部下たちに押し付けてもいいことにはならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにはならない");
+        assert_pattern_range(&patterns, "ことにはならない", 24, 34); // いいことにはならない
+    }
+
+    #[test]
+    fn test_simple_structure() {
+        // Example: ５分ノートを見直しただけでは、勉強したことにはならない
+        // Simple form without からといって or ても
+        let sentence = "５分ノートを見直しただけでは、勉強したことにはならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにはならない");
+        assert_pattern_range(&patterns, "ことにはならない", 18, 27); // たことにはならない
+    }
+
+    #[test]
+    fn test_toiu_emphasis() {
+        // Example: 殴られたからと言って、殴り返してもいいということにはならない
+        // With という before ことにはならない for emphasis
+        let sentence = "殴られたからと言って、殴り返してもいいということにはならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにはならない");
+        assert_pattern_range(&patterns, "ことにはならない", 17, 30); // いいということにはならない
+    }
+
+    #[test]
+    fn test_polite_form() {
+        // Structure.polite[0]: "Phrase + からといって + Phrase + ことにはなりません"
+        let sentence = "簡単だからといって、誰にでもできることにはなりません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにはならない");
+        assert_pattern_range(&patterns, "ことにはならない", 14, 26); // できることにはなりません
+    }
+
+    #[test]
+    fn test_polite_temo() {
+        // Structure.polite[1]: "Phrase［ても］ + ことにはなりません"
+        let sentence = "時間があっても、やりたいことにはなりません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことにはならない");
+        assert_pattern_range(&patterns, "ことにはならない", 10, 21); // たいことにはなりません
+    }
+}

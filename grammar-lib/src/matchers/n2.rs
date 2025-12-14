@@ -2423,9 +2423,65 @@ pub fn shikashinagara() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ことにはならない
+// Pattern: ことにはならない - "just because (A), it doesn't mean that (B)"
+// Structures: Phrase + ことにはならない/ことにはなりません
+// Optional という before ことにはならない for emphasis
 pub fn kotonihanaranai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match こと (non-independent noun)
+    #[derive(Debug)]
+    struct KotoNounMatcher;
+    impl Matcher for KotoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match に (case particle)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match は (topic particle)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match という (optional, for emphasis)
+    #[derive(Debug)]
+    struct ToiuParticleMatcher;
+    impl Matcher for ToiuParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "という"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding phrase (can be anything)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ToiuParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(KotoNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+        TokenMatcher::specific_verb("なる"),  // Matches both なら (未然形) and なり (連用形)
+        TokenMatcher::Any,  // Matches ない (negative) OR ませ (polite continuation)
+    ]
 }
 
 // Pattern: だけのことはある

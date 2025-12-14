@@ -7562,13 +7562,13 @@
   {
     "pattern_name": "ことにはならない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことにはならない is an expression which is often seen at the end of sentences when the speaker wants to emphasize that someth... [2 std, 2 pol]",
     "priority": 4,
     "skip_reason": null
