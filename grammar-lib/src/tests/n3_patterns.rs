@@ -8431,3 +8431,72 @@ mod toonajide_tochigatte_tests {
         assert_pattern_range(&patterns, "と同じで・と違って", 4, 8); // と違って
     }
 }
+
+// ========== と言える (can say that / it is fair to say) ==========
+// Pattern: と言える
+// Data source: grammar_points_data.json["と言える"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase + と + （も） + 言（い）える + だろう
+//   standard[1]: Phrase + と + （も） + いえよう
+//   polite[0]: Phrase + と + （も） + 言（い）える + でしょう
+//   polite[1]: Phrase + と + （も） + いえましょう
+
+mod toieru_tests {
+    use super::*;
+
+    // Test: Phrase + と言える (basic)
+    #[test]
+    fn test_toieru_basic() {
+        let sentence = "この儀式は日本の文化の一つといえる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と言える");
+        assert_pattern_range(&patterns, "と言える", 13, 17); // といえる
+    }
+
+    // Test: Phrase + と言えるだろう
+    #[test]
+    fn test_toieru_darou() {
+        let sentence = "このプランは成功したといえるだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と言える");
+        assert_pattern_range(&patterns, "と言える", 10, 17); // といえるだろう
+    }
+
+    // Test: Phrase + と言えるでしょう (polite)
+    #[test]
+    fn test_toieru_deshou() {
+        let sentence = "タナカ選手は国民的アスリートだといえるでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と言える");
+        assert_pattern_range(&patterns, "と言える", 15, 23); // といえるでしょう
+    }
+
+    // Test: Phrase + といえよう (stronger form)
+    #[test]
+    fn test_toieru_you() {
+        let sentence = "人が話しているときに、携帯を見るのは失礼だといえよう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と言える");
+        assert_pattern_range(&patterns, "と言える", 21, 26); // といえよう
+    }
+
+    // Test: Phrase + と + も + 言える (with も)
+    #[test]
+    fn test_toieru_with_mo() {
+        let sentence = "あのビルは日本一高いビルだともいえる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と言える");
+        assert_pattern_range(&patterns, "と言える", 13, 18); // ともいえる
+    }
+}

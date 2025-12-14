@@ -1825,9 +1825,51 @@ pub fn uff5e_no_sugata() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: と言える
+// Pattern: と言える (can say that / it is fair to say)
+// Structures: Phrase + と + (も) + いえる/いえよう
 pub fn toieru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for と particle (quotation/citation)
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Matcher for optional も particle
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for いえる verb (potential form of 言う)
+    // Accepts: いえる (基本形), いえよ (未然ウ接続), いえ (連用形)
+    #[derive(Debug)]
+    struct IeruMatcher;
+    impl Matcher for IeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いえる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(IeruMatcher)),
+    ]
 }
 
 // ちゃんと・きちんと: Properly/neatly (adverbs)
