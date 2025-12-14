@@ -9338,3 +9338,53 @@ mod baaiha_tests {
         assert_pattern_range(&patterns, "ばあいは", 0, 5); // 私の場合は
     }
 }
+
+// Pattern: ひつようがある (need to, necessary to)
+// Data source: grammar_points_data.json["ひつようがある"]
+mod hitsuyougaaru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb + 必要（ひつよう）+ が + ある
+    #[test]
+    fn test_hitsuyougaaru_affirmative() {
+        let sentence = "明日はテストがあるから、勉強をする必要がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ひつようがある");
+        assert_pattern_range(&patterns, "ひつようがある", 15, 22); // する必要がある
+    }
+
+    // Testing: structure.polite[0] - Verb + 必要（ひつよう）+ が + あります
+    #[test]
+    fn test_hitsuyougaaru_polite() {
+        let sentence = "毎日運動をする必要があります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ひつようがある");
+        assert_pattern_range(&patterns, "ひつようがある", 5, 14); // する必要があります
+    }
+
+    // Testing: negative form - Verb + 必要（ひつよう）+ が + ない
+    #[test]
+    fn test_hitsuyougaaru_negative() {
+        let sentence = "カイルは日本語が分かるので、書類を英語に訳す必要がない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ひつようがある");
+        assert_pattern_range(&patterns, "ひつようがある", 20, 27); // 訳す必要がない
+    }
+
+    // Testing: polite negative - Verb + 必要（ひつよう）+ が + ありません
+    #[test]
+    fn test_hitsuyougaaru_polite_negative() {
+        let sentence = "娘は元気になったので、病院に行く必要がありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ひつようがある");
+        assert_pattern_range(&patterns, "ひつようがある", 14, 24); // 行く必要がありません
+    }
+}

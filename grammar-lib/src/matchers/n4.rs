@@ -5000,9 +5000,65 @@ pub fn sonnani() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SonnaniMatcher))]
 }
 
-// Pattern: ひつようがある
+// Pattern: ひつようがある (need to, necessary to)
+// Structures: Verb + 必要 + が + ある/ない/あります/ありません
 pub fn hitsuyougaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in dictionary form (基本形)
+    #[derive(Debug)]
+    struct DictionaryFormVerbMatcher;
+    impl super::Matcher for DictionaryFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match 必要 (need/necessity)
+    #[derive(Debug)]
+    struct HitsuyouMatcher;
+    impl super::Matcher for HitsuyouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "必要"
+                && token.base_form == "必要"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Match が particle
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl super::Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.base_form == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ある (verb) or ない (adjective for negative)
+    #[derive(Debug)]
+    struct AruOrNaiMatcher;
+    impl super::Matcher for AruOrNaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ある verb and its conjugations (ある, あり, ありません, etc.)
+            (token.base_form == "ある" && token.pos.first().is_some_and(|pos| pos == "動詞"))
+                // OR match ない adjective for negative
+                || (token.surface == "ない"
+                    && token.base_form == "ない"
+                    && token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryFormVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(HitsuyouMatcher)),
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AruOrNaiMatcher)),
+    ]
 }
 
 // Pattern: たとえば (for example)

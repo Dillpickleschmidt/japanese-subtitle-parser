@@ -3516,13 +3516,13 @@
   {
     "pattern_name": "ひつようがある",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like が必要（ひつよう） , 必要（ひつよう）がある is an expression which is used to highlight the 'need' or 'necessity' of something [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null
