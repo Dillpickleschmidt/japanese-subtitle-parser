@@ -10951,3 +10951,99 @@ mod masumasu_tests {
         assert_pattern_range(&patterns, "ますます", 10, 14); // ますます
     }
 }
+
+// Pattern: まるで…ようだ (it is as if / it is as though / it seems entirely like)
+// Data source: grammar_points_data.json["まるで…ようだ"]
+// まるで (entirely/completely) + description + ようだ/みたいだ (seems like)
+//
+// Structures to test:
+//   - standard[0]: まるで + Verb + ようだ
+//   - standard[1]: まるで + い-Adjective + ようだ
+//   - standard[2]: まるで + な-Adjective + なようだ
+//   - standard[3]: まるで + Noun + のようだ
+//   - Using みたいだ instead of ようだ
+//   - polite: + です after だ
+mod marude_youda_tests {
+    use super::*;
+
+    #[test]
+    fn test_marude_verb_youda() {
+        // まるで + Verb + ようだ
+        // Example from grammar_points_data.json
+        let sentence = "このゲームはものすごくリアルだ。まるで映画を見ているようだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まるで…ようだ");
+        assert_pattern_range(&patterns, "まるで…ようだ", 16, 29); // まるで映画を見ているようだ
+    }
+
+    #[test]
+    fn test_marude_i_adjective_youda() {
+        // まるで + い-Adjective + みたいだ
+        // Example from grammar_points_data.json (uses みたい instead of よう)
+        let sentence = "あの人の仕事の仕方はまるで楽みたいだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まるで…ようだ");
+        assert_pattern_range(&patterns, "まるで…ようだ", 10, 18); // まるで楽みたいだ
+    }
+
+    #[test]
+    fn test_marude_na_adjective_youda() {
+        // まるで + な-Adjective + なようだ
+        let sentence = "彼の説明はまるで簡単なようだけど、実際は難しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まるで…ようだ");
+        assert_pattern_range(&patterns, "まるで…ようだ", 5, 14); // まるで簡単なようだ
+    }
+
+    #[test]
+    fn test_marude_noun_no_youda() {
+        // まるで + Noun + のようだ
+        // Example from grammar_points_data.json
+        let sentence = "あの人は私の母親と同じ年だけど運動神経がいい。まるで２０代のようだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まるで…ようだ");
+        assert_pattern_range(&patterns, "まるで…ようだ", 23, 33); // まるで２０代のようだ
+    }
+
+    #[test]
+    fn test_marude_verb_mitai() {
+        // まるで + Noun + みたいだ (using みたい instead of よう)
+        // Example from grammar_points_data.json
+        let sentence = "彼は弟にそっくりだ。まるで兄弟みたいだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まるで…ようだ");
+        assert_pattern_range(&patterns, "まるで…ようだ", 10, 19); // まるで兄弟みたいだ
+    }
+
+    #[test]
+    fn test_marude_noun_youda_polite() {
+        // まるで + Noun + のようです (polite form)
+        let sentence = "この景色はまるで絵画のようです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まるで…ようだ");
+        assert_pattern_range(&patterns, "まるで…ようだ", 5, 15); // まるで絵画のようです
+    }
+
+    #[test]
+    fn test_marude_verb_youda_complex() {
+        // Complex example with more context
+        let sentence = "彼女の歌声はまるで天使が歌っているようだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まるで…ようだ");
+        assert_pattern_range(&patterns, "まるで…ようだ", 6, 20); // まるで天使が歌っているようだ
+    }
+}

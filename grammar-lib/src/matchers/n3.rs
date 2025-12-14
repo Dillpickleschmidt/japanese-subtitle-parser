@@ -4406,9 +4406,55 @@ pub fn kaette() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: まるで…ようだ
+// Pattern: まるで…ようだ (it is as if / it is as though)
+// Structures: まるで + description + ようだ/みたいだ
 pub fn marude_u2026_youda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match まるで (adverb)
+    #[derive(Debug)]
+    struct MarudeMatcher;
+    impl Matcher for MarudeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まるで"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match よう or みたい (conjecture/similarity markers)
+    #[derive(Debug)]
+    struct YouMitaiMatcher;
+    impl Matcher for YouMitaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+            || (token.surface == "みたい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+        }
+    }
+
+    // Match だ or です (copula)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MarudeMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 20,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(YouMitaiMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: ような気がする
