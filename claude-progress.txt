@@ -1,3 +1,83 @@
+## Session 324 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (に関する・に関して)
+**Tests added**: 4 (all passing)
+**Total tests**: 2070 passing, 1 ignored (was 2066 passing, 1 ignored)
+
+### ✅ Pattern Completed: に関する・に関して (about / related to / regarding)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: に関する and に関して are two grammar patterns regularly used to show when (B) is 'about' or 'related to' (A). 関する itself is a verb meaning 'to relate'. に関する is followed directly by a second noun (modifier form), while に関して creates a pause in the sentence before (B) is explained (pause form). This pattern is more formal than について and is rarely used in casual conversation.
+
+**Structures tested**: 4 comprehensive tests covering all tokenization variants
+1. Noun + にかんする + Noun (hiragana, split as に+かんする verb): このアプリの使い方にかんする質問はありますか？ (Do you have any questions concerning how to use this app?)
+2. Noun + に関する + Noun (kanji, single particle token): 彼は今地盤汚染に関する研究をしています (He does research related to pollution in the Earth's crust)
+3. Noun + にかんして (hiragana, split as に+かんし noun+て): 幼稚園にかんしては、全然詳しくないので僕に聞かれても困ります (I am not knowledgeable in regards to kindergartens)
+4. Noun + にかんして (hiragana, split as に+かん noun+し verb+て): この農薬にかんして、知っておくべきことはありますか？ (Is there anything I should know relating to this pesticide?)
+
+**Implementation details**:
+- Matchers: grammar-lib/src/matchers/n3.rs (4 variants: nikansuru_particle, nikansuru_verb, nikanshite_noun, nikanshite_noun_verb, lines 2783-2940)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nikansuru_tests module, lines 9575-9628)
+- Patterns: grammar-lib/src/patterns.rs (4 pattern definitions: NikansuruParticle, NikansuruVerb, NikanshiteNoun, NikanshiteNounVerb, lines 3264-3295)
+
+**Tokenization patterns**:
+```
+Kagome tokenizes this pattern in FOUR different ways:
+
+1. Kanji に関する (single particle):
+   - に関する (助詞/格助詞/連語) - multi-word particle
+
+2. Hiragana にかんする (split, verb form):
+   - に (助詞/格助詞/一般)
+   - かんする (動詞/自立, base='かんする', サ変・－スル)
+
+3. Hiragana にかんして (split, noun+て form):
+   - に (助詞/格助詞/一般)
+   - かんし (名詞/サ変接続)
+   - て (助詞/格助詞/連語)
+
+4. Hiragana にかんして (split, noun+verb+て form):
+   - に (助詞/格助詞/一般)
+   - かん (名詞/一般)
+   - し (動詞/自立, base='する', サ変・スル)
+   - て (助詞/接続助詞)
+```
+
+**Key implementation points**:
+1. Created FOUR separate pattern definitions to handle different tokenizations
+2. Each pattern variant has a unique name suffix: _particle, _verb, _noun, _noun_verb
+3. All variants use TokenMatcher::Any to accept any noun before に
+4. NikansuruParticleMatcher: checks for に関する/にかんする as single particle (助詞/格助詞/連語)
+5. NikansuruVerb: matches に + かんする verb
+6. NikanshiteNoun: matches に + かんし noun + て particle (連語)
+7. NikanshiteNounVerb: matches に + かん noun + し verb (する) + て particle (接続助詞)
+8. All four patterns have priority 3 to ensure proper detection
+
+**Pattern ranges**: Include full construction (Noun + に関する/にかんする/にかんして)
+- Example: "使い方にかんする" (chars 6-14) - verb form
+- Example: "汚染に関する" (chars 5-11) - particle form
+- Example: "幼稚園にかんして" (chars 0-8) - noun+て form
+- Example: "農薬にかんして" (chars 2-9) - noun+verb+て form
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both structure variants: に関して (pause) and に関する (modifier)
+- Test all four tokenization patterns: kanji particle, hiragana verb, hiragana noun+て, hiragana noun+verb+て
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: Compared to について (another structure showing relation), に関して is more formal and rarely used in casual conversation. に関する directly modifies a following noun, while に関して creates a pause before explaining the related information in the second clause.
+
+**Technical Challenge**: This pattern required handling four different tokenization strategies from Kagome. When using kanji (に関する), it tokenizes as a single compound particle. When using hiragana, Kagome can split it multiple ways depending on context: as a verb (かんする), as a noun+particle (かんし+て), or as noun+verb+particle (かん+し+て). Creating four separate pattern definitions with unique names ensures all forms are detected correctly.
+
+---
+
 ## Session 323 - 2025-12-14
 
 ### ✅ Session Summary
