@@ -10418,3 +10418,55 @@ mod youniinoru_tests {
     }
 }
 
+// Pattern: よていだ (plan to)
+// Data source: grammar_points_data.json["よていだ"]
+// Testing all structure variants
+#[cfg(test)]
+mod yoteida_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_yoteida_standard() {
+        // Testing: structure.standard[0] - "Verb + 予定 + だ"
+        let sentence = "今夜は先輩たちと飲みに行く予定だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よていだ");
+        assert_pattern_range(&patterns, "よていだ", 11, 16); // 行く予定だ
+    }
+
+    #[test]
+    fn test_noun_no_yoteida_standard() {
+        // Testing: structure.standard[1] - "Noun + の + 予定 + だ"
+        let sentence = "休みは来週からの予定だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よていだ");
+        assert_pattern_range(&patterns, "よていだ", 7, 11); // の予定だ
+    }
+
+    #[test]
+    fn test_verb_yoteida_polite() {
+        // Testing: structure.polite[0] - "Verb + 予定 + です"
+        let sentence = "明日は友達とステーキを食べる予定です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よていだ");
+        assert_pattern_range(&patterns, "よていだ", 11, 18); // 食べる予定です
+    }
+
+    #[test]
+    fn test_noun_no_yoteida_polite() {
+        // Testing: structure.polite[1] - "Noun + の + 予定 + です"
+        let sentence = "出発は午後三時からの予定です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よていだ");
+        assert_pattern_range(&patterns, "よていだ", 9, 14); // の予定です
+    }
+}
+

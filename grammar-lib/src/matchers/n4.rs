@@ -6366,9 +6366,57 @@ pub fn youniiu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: よていだ
+// Pattern: よていだ (plan to)
+// Structures: Verb[る] + 予定 + だ/です, Noun + の + 予定 + だ/です
 pub fn yoteida() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match Verb in 基本形 OR の particle (連体化)
+    // This handles both "Verb + 予定" and "Noun + の + 予定"
+    #[derive(Debug)]
+    struct VerbOrNoMatcher;
+    impl super::Matcher for VerbOrNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in dictionary form
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+
+            // Match の particle (連体化)
+            let is_no = token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化");
+
+            is_verb || is_no
+        }
+    }
+
+    // Match 予定 noun
+    #[derive(Debug)]
+    struct YoteiMatcher;
+    impl super::Matcher for YoteiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "予定"
+                && token.base_form == "予定"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+        }
+    }
+
+    // Match だ or です copula
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl super::Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" && token.base_form == "だ")
+                || (token.surface == "です" && token.base_form == "です")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNoMatcher)),
+        TokenMatcher::Custom(Arc::new(YoteiMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: ようにいのる (to pray that, to hope)
