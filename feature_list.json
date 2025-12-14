@@ -3740,13 +3740,13 @@
   {
     "pattern_name": "ようにする",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "(A) ようにする is an expression in Japanese which combines the auxiliary verb ようだ , with する (indicating that you will 'try... [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null

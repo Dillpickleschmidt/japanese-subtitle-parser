@@ -9726,3 +9726,53 @@ mod youda_tests {
     }
 }
 
+// Pattern: ようにする (try to / make sure to)
+// Data source: grammar_points_data.json["ようにする"]
+mod younisuru_tests {
+    use super::*;
+
+    #[test]
+    fn test_younisuru_affirmative_standard() {
+        // Testing: structure.standard[0] - Verb[る] + ように + する
+        let sentence = "最近太ってきたので、毎日走るようにしています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにする");
+        assert_pattern_range(&patterns, "ようにする", 12, 18); // 走るようにし
+    }
+
+    #[test]
+    fn test_younisuru_negative_standard() {
+        // Testing: structure.standard[1] - Verb[ない] + ように + する
+        let sentence = "成績が悪いから学校を休まないようにする。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにする");
+        assert_pattern_range(&patterns, "ようにする", 10, 19); // 休まないようにする
+    }
+
+    #[test]
+    fn test_younisuru_affirmative_polite() {
+        // Testing: structure.polite[0] - Verb[る] + ように + します
+        let sentence = "次の試合で勝てるようにします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにする");
+        assert_pattern_range(&patterns, "ようにする", 5, 14); // 勝てるようにします
+    }
+
+    #[test]
+    fn test_younisuru_negative_polite() {
+        // Testing: structure.polite[1] - Verb[ない] + ように + します
+        let sentence = "乗り物に乗らないようにすると弟が言いました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにする");
+        assert_pattern_range(&patterns, "ようにする", 4, 13); // 乗らないようにする
+    }
+}
+
