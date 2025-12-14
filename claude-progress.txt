@@ -1,12 +1,12 @@
 ## Session 220 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N4 pattern
-**Patterns completed**: 1 (だいたい)
-**Tests added**: 4 (all passing)
-**Total tests**: 1436 (was 1432)
+**Status**: COMPLETE - Successfully implemented 2 patterns (1 N4 + 1 N3)
+**Patterns completed**: 2 (だいたい, どうしても)
+**Tests added**: 7 total (4 for だいたい + 3 for どうしても, all passing)
+**Total tests**: 1439 (was 1432)
 
-### Pattern Implemented: だいたい (generally, mostly, approximately)
+### Pattern Implemented #1: だいたい (generally, mostly, approximately)
 
 **JLPT Level**: N4
 **Category**: Construction
@@ -53,20 +53,66 @@
 9. ✅ Updated feature_list.json
 10. ✅ Committed changes
 
+### Pattern Implemented #2: どうしても (no matter what, by all means)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: Adverb meaning "no matter what", "by all means", "in any case"
+
+**Structures tested**: 3 tests
+1. Verb + と + どうしても (unavoidable result): 牛乳飲むとどうしてもお腹が痛くなるんです
+2. どうしても + Phrase (desire): どうしても欲しいのなら、自分で買いなさい
+3. どうしても + Phrase (negative): どうしてもヘリコプターには乗りたくない
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (lines 4860-4873)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (lines 7480-7522)
+- Pattern detects: どうしても as 副詞 (adverb)
+
+**Tokenization pattern**:
+- どうしても (副詞/一般) - single token adverb
+
+**Matcher components**:
+- Single custom matcher (DoushitemoMatcher) checking:
+  - surface == "どうしても"
+  - base_form == "どうしても"
+  - pos[0] == "副詞"
+
+**Key characteristics**:
+- Originally from どう (how) + して (doing) + も (even)
+- Means "no matter what", "by all means", "in any case"
+- Expresses something absolutely true or unavoidable
+- Can be used at beginning of sentence or after Verb + と
+- Very simple single-token pattern, similar to だいたい
+
+**Workflow followed**:
+1. ✅ Checked for existing stub function (found at line 4860)
+2. ✅ Read grammar_points_data.json for structure variants (2 standard)
+3. ✅ Wrote 3 tests with print_debug() covering both structure types
+4. ✅ Analyzed tokenization - confirmed どうしても as adverb
+5. ✅ Implemented simple single-token matcher
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug() and added proper assertions
+8. ✅ Verified all 1439 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes
+
 ### Session Statistics
-- **Session time**: ~30 minutes
-- **Patterns completed this session**: 1
-- **Test success rate**: 4/4 (100%)
-- **Total passing tests**: 1436
-- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+- **Session time**: ~1 hour
+- **Patterns completed this session**: 2 (1 N4 + 1 N3)
+- **Test success rate**: 7/7 (100%)
+- **Total passing tests**: 1439
+- **Files modified**: 5 (matchers/n4.rs, tests/n4_patterns.rs, matchers/n3.rs, tests/n3_patterns.rs, feature_list.json)
 
 ### Next Session Recommendations
-1. **Continue with N4 patterns**: Many simple adverbs and construction patterns remain
-2. **Good candidates**: Simple single-token patterns (adverbs, particles)
-3. **Pattern focus**: Build momentum with simpler patterns before tackling complex ones
+1. **Continue with simple adverb patterns**: Build momentum with single-token patterns
+2. **Good candidates**: More simple adverbs across N3/N4 levels
+3. **Pattern focus**: Quick wins with simple patterns before tackling complex multi-token constructions
 
 ### Environment Status
-- ✅ All 1436 tests passing
+- ✅ All 1439 tests passing
 - ✅ No regressions
 - ✅ Clean git state (all changes committed)
 - ✅ feature_list.json updated
