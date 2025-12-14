@@ -1,3 +1,75 @@
+## Session 331 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (～かというと ①)
+**Tests added**: 4 (all passing)
+**Total tests**: 2101 passing, 1 ignored (was 2097 passing, 1 ignored)
+
+### ✅ Pattern Completed: ～かというと ① (the reason why / if asked why)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: ～かというと ① is a phrase used in conjunction with "why" and "how" question words like どうして or なぜ. It combines the question particle か, the quotation particle と, the verb 言う (to say), and a conditional particle (と, ば, or たら). The literal meaning is "if (A) were to be asked", before the speaker highlights their reasoning in (B).
+
+**Structures tested**: 4 comprehensive tests covering all variants
+1. どうして + Phrase + かというと (standard form): どうして明日のパーティーに行きたくないかというと (Why I don't want to go to the party is because...)
+2. なぜ + Phrase + かというと (alternative question word): なぜこの計画で進めようと思ったかというと (The reason why we decided to continue with this plan is...)
+3. かと言えば (variant with ば): どうして冬でも冷房をかけているかと言えば (If you ask me why we keep the AC on in winter...)
+4. かといったら (variant with たら): なぜ安い方を選んだかといったら (If you ask me why I picked the cheaper one...)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (uff5e_katoiuto_u2460, lines 4678-4749)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (katoiuto_u2460_tests module, lines 10007-10064)
+- Pattern: grammar-lib/src/patterns.rs (Uff5eKatoiutoU2460, lines 3697-3703)
+
+**Tokenization patterns**:
+```
+All variants follow the same core structure:
+1. か (助詞/副助詞／並立助詞／終助詞) - question particle
+2. と (助詞/格助詞/引用) - quotation particle
+3. いう/言う (動詞/自立) - verb "to say" in various forms:
+   - 基本形 (いう) for かというと
+   - 仮定形 (言え) for かといえば
+   - 連用タ接続 (いっ) for かといったら
+4. Ending particle:
+   - と (助詞/接続助詞) - connective for かというと
+   - ば (助詞/接続助詞) - conditional for かといえば
+   - たら (助動詞, base='た', 仮定形) - conditional for かといったら
+```
+
+**Key implementation points**:
+1. Single unified matcher handles all three variants (と, ば, たら)
+2. KaParticleMatcher checks か as 助詞/副助詞／並立助詞／終助詞
+3. ToQuoteMatcher checks と as 助詞/格助詞/引用
+4. IuVerbMatcher accepts both いう and 言う in any conjugation form
+5. ConditionalEndMatcher uses OR logic to match と, ば, or たら
+6. Pattern structure: Any + か + と + いう/言う + (と/ば/たら)
+7. TokenMatcher::Any allows any preceding phrase
+
+**Pattern ranges**: Include full construction (preceding word + かというと/かといえば/かといったら)
+- Example: "ないかというと" (chars 17-24) - たくない + かというと
+- Example: "たかというと" (chars 14-20) - 思った + かというと
+- Example: "いるかと言えば" (chars 13-20) - いる + かと言えば
+- Example: "だかといったら" (chars 8-15) - 選んだ + かといったら
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all three ending variants: と, ば, たら
+- Test both question words: どうして and なぜ
+- Test both hiragana (いう) and kanji (言う) forms
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern literally means "if (A) were to be asked" where か marks the question, と quotes what is being asked, 言う means "to say", and the final particle (と/ば/たら) creates the "if" conditional. This is distinct from ～かというと ② which uses other question words (何, 誰, どこ, etc.). Pattern ① specifically requires "why/how" question words like どうして or なぜ.
+
+**Technical Note**: The matcher accepts all three conditional endings (と, ば, たら) as they are interchangeable in this pattern. たら appears less frequently than と or ば but is grammatically valid. The verb 言う can appear in different conjugation forms (基本形, 仮定形, 連用タ接続) depending on which ending particle is used.
+
+---
+
 ## Session 330 - 2025-12-14
 
 ### ✅ Session Summary
