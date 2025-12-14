@@ -1269,3 +1269,98 @@ mod ka_naika_nouchini_tests {
         assert_pattern_range(&patterns, "か〜ないかのうちに", 9, 21); // 経つか経たないかのうちに
     }
 }
+
+// Pattern: かと思ったら・かと思うと (just when I thought)
+// Data source: grammar_points_data.json["かと思ったら・かと思うと"]
+// Testing structures: Verb[た/る] + かと思ったら/かと思うと/かと思えば
+mod katoomottara_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_past_omottara() {
+        // Example: 泣き止んだかと思ったら (just when I thought [baby] had stopped crying)
+        let sentence = "赤ちゃんが泣き止んだかと思ったら、また大声で泣き始めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かと思ったら・かと思うと");
+        assert_pattern_range(&patterns, "かと思ったら・かと思うと", 7, 16); // 止んだかと思ったら
+    }
+
+    #[test]
+    fn test_verb_dict_omouto() {
+        // Example: 始めるのかと思うと (just when I thought [she] would start)
+        let sentence = "娘が宿題を始めるのかと思うと、パソコンを開いてユーチューブを見始めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かと思ったら・かと思うと");
+        assert_pattern_range(&patterns, "かと思ったら・かと思うと", 5, 14); // 始めるのかと思うと
+    }
+
+    #[test]
+    fn test_verb_past_omouto() {
+        // Example: 転んだかと思うと (no sooner than [she] fell)
+        let sentence = "子供が転んだかと思うと、立ち上がって走り出した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かと思ったら・かと思うと");
+        assert_pattern_range(&patterns, "かと思ったら・かと思うと", 3, 11); // 転んだかと思うと
+    }
+
+    #[test]
+    fn test_verb_dict_omoeba() {
+        // Example: 遅れるかと思えば (just when I thought [he] would be late)
+        let sentence = "彼は遅れるかと思えば、意外と早く到着した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かと思ったら・かと思うと");
+        assert_pattern_range(&patterns, "かと思ったら・かと思うと", 2, 10); // 遅れるかと思えば
+    }
+
+    #[test]
+    fn test_noun_omottara() {
+        // Example: 冷たい人かと思ったら (just when I thought [he] was cold)
+        let sentence = "田中さんは冷たい人かと思ったら、ただ人見知りなだけだった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かと思ったら・かと思うと");
+        assert_pattern_range(&patterns, "かと思ったら・かと思うと", 8, 15); // 人かと思ったら
+    }
+
+    #[test]
+    fn test_noun_omouto() {
+        // Example: 最後かと思うと (just when I remembered [this] is the last one)
+        let sentence = "今日の試合が最後かと思うと、悲しくなる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かと思ったら・かと思うと");
+        assert_pattern_range(&patterns, "かと思ったら・かと思うと", 6, 13); // 最後かと思うと
+    }
+
+    #[test]
+    fn test_i_adjective() {
+        // Example: 暑いかと思ったら (just when I thought it was hot)
+        let sentence = "外は暑いかと思ったら、意外と涼しかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かと思ったら・かと思うと");
+        assert_pattern_range(&patterns, "かと思ったら・かと思うと", 2, 10); // 暑いかと思ったら
+    }
+
+    #[test]
+    fn test_na_adjective() {
+        // Example: 静かかと思ったら (just when I thought it was quiet)
+        let sentence = "ここは静かかと思ったら、夜になると賑やかになる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かと思ったら・かと思うと");
+        assert_pattern_range(&patterns, "かと思ったら・かと思うと", 3, 11); // 静かかと思ったら
+    }
+}

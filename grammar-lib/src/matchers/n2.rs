@@ -1155,9 +1155,104 @@ pub fn omouyouni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: かと思ったら・かと思うと
+// Pattern: かと思ったら・かと思うと (just when I thought, no sooner than)
+// Structures: Verb[た/る] + (の) + かと思ったら/かと思うと/かと思えば
+//            Noun/Adjective + かと思ったら/かと思うと/かと思えば
 pub fn katoomottara_u30fb_katoomouto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::{flexible_verb_form, past_auxiliary, concat};
+
+    // Match か particle (副助詞)
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match と particle (格助詞/引用)
+    #[derive(Debug)]
+    struct ToQuotativeMatcher;
+    impl Matcher for ToQuotativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 思う verb (connected to た or in base form)
+    #[derive(Debug)]
+    struct OmouVerbMatcher;
+    impl Matcher for OmouVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "思う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match たら/と/ば endings
+    #[derive(Debug)]
+    struct ConditionalEndingMatcher;
+    impl Matcher for ConditionalEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // たら (助動詞 仮定形)
+            if token.surface == "たら" && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") {
+                return true;
+            }
+            // と (接続助詞)
+            if token.surface == "と" && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") {
+                return true;
+            }
+            // ば (接続助詞) - comes after 思え (verb in 仮定形)
+            if token.surface == "ば" && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Optional の (nominalizer)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match verb/noun/adjective or verb+た combination before か
+    #[derive(Debug)]
+    struct PredicateMatcher;
+    impl Matcher for PredicateMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verbs in base form, nouns, or adjectives
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞");
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+            let is_adj = token.pos.first().is_some_and(|pos| pos == "形容詞");
+
+            is_verb || is_noun || is_adj
+        }
+    }
+
+    // For Verb[た] + かと思ったら: Verb + た/だ + か...
+    // For Verb[る] + (の) + かと思うと: Verb + (の) + か...
+    // For Noun/Adj + かと思ったら: Noun/Adj + か...
+    concat(vec![
+        vec![TokenMatcher::Custom(Arc::new(PredicateMatcher))],
+        vec![TokenMatcher::Optional(Box::new(past_auxiliary()))],  // Optional た/だ for past verb
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoNominalizerMatcher))))],  // Optional の
+        vec![TokenMatcher::Custom(Arc::new(KaParticleMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(ToQuotativeMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(OmouVerbMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(ConditionalEndingMatcher))],
+    ])
 }
 
 // Pattern: というものでもない
