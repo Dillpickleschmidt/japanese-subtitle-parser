@@ -5980,13 +5980,13 @@
   {
     "pattern_name": "のはXの方だ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "のは～の方（ほう）だ is an expression used to show that (A) (usually despite expectations) is (B) [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null

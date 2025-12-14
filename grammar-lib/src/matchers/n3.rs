@@ -766,9 +766,74 @@ pub fn sousuruto() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: のはXの方だ
+// Pattern: のはXの方だ (the one that A is B)
+// Structures: Phrase + のは + Noun + の方だ/です
 pub fn nohaxnohouda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::noun_matcher;
+
+    // Match の as nominalizer (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match は as topic particle (助詞/係助詞)
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match の as possessive/connective particle (助詞/連体化)
+    #[derive(Debug)]
+    struct NoPossessiveMatcher;
+    impl Matcher for NoPossessiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match 方 as noun (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct HouNounMatcher;
+    impl Matcher for HouNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "方"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ or です as copula (助動詞)
+    #[derive(Debug)]
+    struct DaDesuCopulaMatcher;
+    impl Matcher for DaDesuCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
+        TokenMatcher::Custom(Arc::new(HaParticleMatcher)),
+        noun_matcher(), // Any noun (俺, タケル, 私, etc.)
+        TokenMatcher::Custom(Arc::new(NoPossessiveMatcher)),
+        TokenMatcher::Custom(Arc::new(HouNounMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuCopulaMatcher)),
+    ]
 }
 
 // Pattern: Noun＋型 (split form: Noun/Adjective + がた/かた)

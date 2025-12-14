@@ -9877,3 +9877,52 @@ mod noni_tests {
     }
 }
 
+// ========== のはXの方だ (the one that A is B) ==========
+// Pattern: のはXの方だ (the one that A is B / it's B that A)
+// Data source: grammar_points_data.json["のはXの方だ"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase + のは + Noun + の方だ
+//   standard[1]: な-Adjective + な + のは + Noun + の方だ
+//   standard[2]: Noun + な + のは + Noun + の方だ
+//   polite[0]: Phrase + のは + Noun + の方です
+//   polite[1]: な-Adjective + な + のは + Noun + の方です
+//   polite[2]: Noun + な + のは + Noun + の方です
+
+mod nohaxnohouda_tests {
+    use super::*;
+
+    // Testing: Verb phrase + のは + Noun + の方だ (standard, apologetic)
+    #[test]
+    fn test_nohaxnohouda_verb_phrase() {
+        let sentence = "言い出したのは俺の方だから、俺がなんとかしておくよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のはXの方だ");
+        assert_pattern_range(&patterns, "のはXの方だ", 5, 11); // のは俺の方だ
+    }
+
+    // Testing: Verb phrase + のは + Noun + の方だ (standard, blaming)
+    #[test]
+    fn test_nohaxnohouda_verb_phrase_blame() {
+        let sentence = "そのコップを壊したのはタケルの方だ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のはXの方だ");
+        assert_pattern_range(&patterns, "のはXの方だ", 9, 17); // のはタケルの方だ
+    }
+
+    // Testing: Verb phrase + のは + Noun + の方です (polite, apologetic)
+    #[test]
+    fn test_nohaxnohouda_verb_phrase_polite() {
+        let sentence = "謝らなければいけないのは私の方ですよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のはXの方だ");
+        assert_pattern_range(&patterns, "のはXの方だ", 10, 17); // のは私の方です
+    }
+}
+
