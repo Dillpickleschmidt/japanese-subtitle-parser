@@ -1713,9 +1713,48 @@ pub fn amari_uff5e_nai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ば
+// Pattern: ば (conditional "if")
+// Structures: Verb/Adj/Noun + conditional form + ば
+//
+// Tokenization patterns:
+// 1. Verb in 仮定形 + ば (e.g., 見れば, 座れば, 歌えば)
+// 2. い-Adjective in 仮定形 + ば (e.g., 痛ければ)
+// 3. な-Adj/Noun + なら + ば (e.g., 嫌いならば, バイクならば)
+// 4. Negative forms: なければ, でなければ
+//
+// Key tokenization:
+// - 仮定形 (hypothetical form) is the conjugation form
+// - ば is 助詞/接続助詞
+//
+// Pattern range: includes the word in 仮定形 + ば
 pub fn ba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match any token in 仮定形 (hypothetical/conditional form)
+    #[derive(Debug)]
+    struct KateiFormMatcher;
+    impl super::Matcher for KateiFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Check if token is in 仮定形 (hypothetical form)
+            token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match ば particle
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl super::Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KateiFormMatcher)),
+        TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
+    ]
 }
 
 // Pattern: なら (conditional "if")

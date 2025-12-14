@@ -3474,13 +3474,13 @@
   {
     "pattern_name": "ば",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "There are several different ways to express 'if' in Japanese [22 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3628,13 +3628,13 @@
   {
     "pattern_name": "みたい",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In Japanese, there are many ways to express that something happens in a way that is 'like' something else, or 'resemb... [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3684,13 +3684,13 @@
   {
     "pattern_name": "ようだ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In a similar way to みたい , ようだ is used when making observations about something in Japanese [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3740,13 +3740,13 @@
   {
     "pattern_name": "ようにする",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "(A) ようにする is an expression in Japanese which combines the auxiliary verb ようだ , with する (indicating that you will 'try... [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3754,13 +3754,13 @@
   {
     "pattern_name": "ようになる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When combined with the particle に , and the う-Verb なる, よう expresses that a particular action has reached the point of... [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3922,13 +3922,13 @@
   {
     "pattern_name": "化する",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "化（か） by itself is a suffix in Japanese which means 'to change', or 'to transform' [3 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3978,13 +3978,13 @@
   {
     "pattern_name": "聞こえる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "聞（き）こえる is a verb that is often used to describe things that can be heard, or the way in which something is heard [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3992,13 +3992,13 @@
   {
     "pattern_name": "見える",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In the same way that 聞（き）こえる is used to describe things that are 'audible', 見（み）える can be used to describe things tha... [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null

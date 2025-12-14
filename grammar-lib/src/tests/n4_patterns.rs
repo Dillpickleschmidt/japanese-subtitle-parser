@@ -9854,3 +9854,188 @@ mod youninaru_tests {
     }
 }
 
+// ========== ば (conditional "if") ==========
+// Pattern: ば
+// Data source: grammar_points_data.json["ば"]
+//
+// Structures to test:
+//   Verbs (conjugate to え-sound + ば):
+//   - standard[4]: る1-Verb → 見る + れば
+//   - standard[5]: る5-Verb → 座る + れば
+//   - standard[6]: う-Verb → 歌う + えば
+//   - standard[7]: く-Verb → 歩く + けば
+//   - standard[8]: す-Verb → 話す + せば
+//   - standard[9]: つ-Verb → 打つ + てば
+//   - standard[10]: ぬ-Verb → 死ぬ + ねば
+//   - standard[11]: ぶ-Verb → 飛ぶ + べば
+//   - standard[12]: む-Verb → 休む + めば
+//   - standard[13]: ぐ-Verb → 泳ぐ + げば
+//   Exceptions:
+//   - standard[15]: する → すれば
+//   - standard[16]: くる → くれば
+//   Adjectives:
+//   - standard[0]: い-Adj + ければ
+//   - standard[1]: な-Adj + ならば
+//   Nouns:
+//   - standard[2]: Noun + ならば
+//   Negative forms:
+//   - standard[18]: Verb[ない] + なければ
+//   - standard[19]: い-Adj[ない] + なければ
+//   - standard[20]: な-Adj + でなければ
+//   - standard[21]: Noun + でなければ
+#[cfg(test)]
+mod ba_tests {
+    use super::*;
+
+    // ========== Verb conditionals ==========
+
+    #[test]
+    fn test_ba_ru1_verb() {
+        // Testing: る1-Verb (ichidan) → 見る → 見れば
+        let sentence = "この映画を見れば理解できると思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 5, 8); // 見れば
+    }
+
+    #[test]
+    fn test_ba_ru5_verb() {
+        // Testing: る5-Verb (godan) → 座る → 座れば
+        let sentence = "あそこに座れば富士山が見えますよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 4, 7); // 座れば
+    }
+
+    #[test]
+    fn test_ba_u_verb() {
+        // Testing: う-Verb → 歌う → 歌えば
+        let sentence = "毎日歌えば上手くなるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 2, 5); // 歌えば
+    }
+
+    #[test]
+    fn test_ba_ku_verb() {
+        // Testing: く-Verb → 歩く → 歩けば
+        let sentence = "この道を歩けば駅に着きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 4, 7); // 歩けば
+    }
+
+    #[test]
+    fn test_ba_su_verb() {
+        // Testing: す-Verb → 話す → 話せば
+        let sentence = "本当のことを話せば許してもらえるかも";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 6, 9); // 話せば
+    }
+
+    #[test]
+    fn test_ba_suru_exception() {
+        // Testing: する → すれば
+        let sentence = "店に電話をすればすぐに予約ができるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 5, 8); // すれば
+    }
+
+    #[test]
+    fn test_ba_kuru_exception() {
+        // Testing: くる → くれば
+        let sentence = "あいつがくればパーティーが楽しくなると思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 4, 7); // くれば
+    }
+
+    // ========== Adjective conditionals ==========
+
+    #[test]
+    fn test_ba_i_adjective() {
+        // Testing: い-Adj → い → ければ (痛い → 痛ければ)
+        let sentence = "頭が痛ければ薬を飲んで寝た方がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 2, 6); // 痛ければ
+    }
+
+    #[test]
+    fn test_ba_na_adjective() {
+        // Testing: な-Adj + ならば
+        let sentence = "刺身が嫌いならば寿司も嫌いでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 5, 8); // ならば
+    }
+
+    // ========== Noun conditional ==========
+
+    #[test]
+    fn test_ba_noun() {
+        // Testing: Noun + ならば
+        let sentence = "バイクならばバイク専用の駐輪場に止めてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 3, 6); // ならば
+    }
+
+    // ========== Negative forms ==========
+
+    #[test]
+    fn test_ba_verb_negative() {
+        // Testing: Verb[ない] + なければ (食べたくない → 食べたくなければ)
+        let sentence = "私が作ったクッキーを食べたくなければ捨ててもいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 14, 18); // なければ
+    }
+
+    #[test]
+    fn test_ba_i_adj_negative() {
+        // Testing: い-Adj[ない] + なければ (辛くない → 辛くなければ)
+        let sentence = "カレーが辛くなければいっぱい食べれる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 6, 10); // なければ
+    }
+
+    #[test]
+    fn test_ba_noun_negative() {
+        // Testing: Noun + でなければ
+        let sentence = "トラックの運転手でなければこの仕事の辛さが分からない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ば");
+        assert_pattern_range(&patterns, "ば", 9, 13); // なければ
+    }
+}
+
