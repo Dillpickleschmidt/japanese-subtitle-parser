@@ -1,3 +1,69 @@
+## Session 347 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (み)
+**Tests added**: 2 (all passing)
+**Total tests**: 2203 passing, 1 ignored (was 2201 passing, 1 ignored)
+
+### ✅ Pattern Completed: み (adjective stem + み → noun suffix for "-ness")
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted)
+
+**Pattern**: み is a common suffix in Japanese that transforms adjectives into nouns, similar to "-ness" in English. It comes from attaching み to the stem form of adjectives (い removed for い-adjectives, な removed for な-adjectives). The pattern highlights the 'condition' or 'place' in which something exists in a constant state, describing innate qualities rather than varying degrees.
+
+**Structures tested**: 2 comprehensive tests (only な-adjective cases are detectable)
+1. な-Adjective stem + み (新鮮み - freshness): この色からこのフルーツの新鮮みがかんじられる (From the color of this fruit, you can see its freshness)
+2. な-Adjective stem + み (大切み - importance): 友達の大切みがわかった (Now, I understand the importance of friends)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (mi, lines 5524-5562)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (mi_tests module, lines 11205-11256)
+- Pattern: grammar-lib/src/patterns.rs (Mi, lines 3769-3775)
+
+**Tokenization patterns**:
+```
+DETECTABLE: な-Adjective + み (two tokens)
+- な-Adjective stem (名詞/形容動詞語幹) - e.g., 新鮮, 大切
+- み (動詞/自立, base='みる', 連用形) - misclassified as verb "to see"
+
+UNDETECTABLE: い-Adjective + み (single token)
+- Single noun (名詞/一般) ending in み - e.g., 楽しみ, 甘み, 赤み, 温かみ
+- Indistinguishable from regular nouns without a comprehensive dictionary
+```
+
+**Key implementation points**:
+1. Two-token matcher: な-Adjective stem + み suffix
+2. NaAdjectiveStemMatcher checks POS == 名詞/形容動詞語幹
+3. MiSuffixMatcher checks surface == "み", base_form == "みる", POS == 動詞
+4. Only matches the detectable two-token pattern (な-adjective + み)
+5. Single-token nouns ending in み (い-adjective + み) are not matched
+6. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: Include full construction (adjective stem + み)
+- 新鮮み (freshness): "新鮮み" (chars 12-15)
+- 大切み (importance): "大切み" (chars 3-6)
+
+**Test Quality**:
+- Both tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Focus on detectable variants (な-adjective + み)
+- Correct character ranges verified for all variants
+- Undetectable variants (い-adjective + み) documented with TODO comments
+
+**Linguistic Note**: The grammar data explains that み differs from English "-ness" in that it highlights the 'condition' or 'place' where something exists in a constant state, not varying degrees. It's sometimes used directly as a substitute for 味（み）(taste), describing qualities that can be sensed like taste or color (e.g., 旨み - umami/savory quality, 赤み - redness).
+
+**Implementation Challenge**: い-Adjective + み combinations are tokenized as single nouns (楽しみ, 甘み, 赤み, 温かみ) by Kagome, making them indistinguishable from regular nouns like 弓 (bow), 闇 (darkness), or 民 (people). Without maintaining a comprehensive dictionary of all い-adjective + み combinations, we cannot reliably detect these cases. The implementation focuses on the detectable pattern: な-adjective stem + み (two tokens).
+
+**Related patterns**:
+- This is a noun-forming suffix pattern, not part of a larger construction family
+- Related conceptually to other nominalization patterns
+
+---
+
 ## Session 346 - 2025-12-14
 
 ### ✅ Session Summary
