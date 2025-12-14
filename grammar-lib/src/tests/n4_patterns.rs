@@ -10470,3 +10470,72 @@ mod yoteida_tests {
     }
 }
 
+// Pattern: らしい ① (seems like/apparently - hearsay/conjecture)
+// Data source: grammar_points_data.json["らしい ①"]
+// Testing all structure variants
+//
+// Structures to test:
+//   - standard[0]: Verb + らしい
+//   - standard[1]: い-Adjective + らしい
+//   - standard[2]: な-Adjective + らしい
+//   - standard[3]: Noun + らしい
+//   - polite[0-3]: Same forms + です
+mod rashii_u2460_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + らしい"
+    #[test]
+    fn verb_rashii() {
+        let sentence = "ねえ、聞いた？タケシ君がキヨミちゃんにプロポーズするらしいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "らしい ①");
+        assert_pattern_range(&patterns, "らしい ①", 19, 29); // プロポーズするらしい (compound verb)
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + らしい"
+    #[test]
+    fn i_adjective_rashii() {
+        let sentence = "カシキさんの彼氏はカッコいいらしいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "らしい ①");
+        assert_pattern_range(&patterns, "らしい ①", 12, 17); // いいらしい
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + らしい"
+    #[test]
+    fn na_adjective_rashii() {
+        let sentence = "タカギ先輩がさっき言っていた事は本当らしいですよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "らしい ①");
+        assert_pattern_range(&patterns, "らしい ①", 16, 21); // 本当らしい
+    }
+
+    // Testing: structure.standard[3] - "Noun + らしい"
+    #[test]
+    fn noun_rashii() {
+        let sentence = "あの人はフランス人らしいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "らしい ①");
+        assert_pattern_range(&patterns, "らしい ①", 8, 12); // 人らしい
+    }
+
+    // Testing: polite form - "Verb + らしい + です"
+    #[test]
+    fn verb_rashii_polite() {
+        let sentence = "今朝、新聞で読んだんだけど、明日から雪が降るらしいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "らしい ①");
+        assert_pattern_range(&patterns, "らしい ①", 20, 25); // 降るらしい
+    }
+}
+

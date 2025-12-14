@@ -2628,9 +2628,38 @@ pub fn janaika() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: らしい ①
+// Pattern: らしい ① (seems like/apparently - hearsay/conjecture)
+// Structures: Verb/Adj/Noun + らしい (助動詞)
 pub fn rashii_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match verb, adjective, or noun before らしい
+    #[derive(Debug)]
+    struct VerbAdjOrNounMatcher;
+    impl Matcher for VerbAdjOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| {
+                pos == "動詞" || pos == "形容詞" || pos == "名詞"
+            })
+        }
+    }
+
+    // Match らしい as auxiliary verb (not い-adjective)
+    #[derive(Debug)]
+    struct RashiiAuxMatcher;
+    impl Matcher for RashiiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "らしい"
+                && token.base_form == "らしい"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbAdjOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(RashiiAuxMatcher)),
+    ]
 }
 
 // Pattern: ておく (do in advance, leave as is)

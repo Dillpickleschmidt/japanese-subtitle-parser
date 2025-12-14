@@ -3824,13 +3824,13 @@
   {
     "pattern_name": "らしい ①",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The auxiliary verb らしい is very similar to the auxiliary verbs そうだ and ようだ , in that it expresses something that the s... [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null
