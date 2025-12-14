@@ -7855,3 +7855,102 @@ mod kotonano_tests {
         assert_pattern_range(&patterns, "ことなの", 6, 10); // ことなの
     }
 }
+
+// Pattern: としたら・とすれば・とすると (assuming that / if it were the case that)
+// Data source: grammar_points_data.json["としたら・とすれば・とすると"]
+// Testing structures:
+//   - standard[0]: Verb + としたら (also とすれば, とすると)
+//   - standard[1]: い-Adj + としたら
+//   - standard[2]: な-Adj + (だ) + としたら
+//   - standard[3]: Noun + (だ) + としたら
+mod toshitara_tosureba_tosuruto_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb + としたら
+    #[test]
+    fn test_verb_toshitara() {
+        let sentence = "来週出かけるとしたらどこに行きたい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としたら・とすれば・とすると");
+        assert_pattern_range(&patterns, "としたら・とすれば・とすると", 6, 10); // としたら
+    }
+
+    // Testing: structure.standard[0] - Verb + とすれば
+    #[test]
+    fn test_verb_tosureba() {
+        let sentence = "歯が痛いとすれば、虫歯かもしれません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としたら・とすれば・とすると");
+        assert_pattern_range(&patterns, "としたら・とすれば・とすると", 4, 8); // とすれば
+    }
+
+    // Testing: structure.standard[0] - Verb + とすると
+    #[test]
+    fn test_verb_tosuruto() {
+        let sentence = "この壁が真っ直ぐだとすると、こっちの壁は斜めということ？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としたら・とすれば・とすると");
+        assert_pattern_range(&patterns, "としたら・とすれば・とすると", 9, 13); // とすると
+    }
+
+    // Testing: structure.standard[1] - い-Adjective + としたら
+    #[test]
+    fn test_i_adjective_toshitara() {
+        let sentence = "この値段が高いとしたら、別の店で買おう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としたら・とすれば・とすると");
+        assert_pattern_range(&patterns, "としたら・とすれば・とすると", 7, 11); // としたら
+    }
+
+    // Testing: structure.standard[2] - な-Adjective + だ + としたら
+    #[test]
+    fn test_na_adjective_toshitara() {
+        let sentence = "この問題が簡単だとしたら、誰でも解けるはずだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としたら・とすれば・とすると");
+        assert_pattern_range(&patterns, "としたら・とすれば・とすると", 8, 12); // としたら
+    }
+
+    // Testing: structure.standard[3] - Noun + だ + としたら
+    #[test]
+    fn test_noun_toshitara() {
+        let sentence = "通勤手段が車だとしたら、交通費は出ません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としたら・とすれば・とすると");
+        assert_pattern_range(&patterns, "としたら・とすれば・とすると", 7, 11); // としたら
+    }
+
+    // Testing: とすれば variant with noun
+    #[test]
+    fn test_noun_tosureba() {
+        let sentence = "彼が犯人だとすれば、この証拠も説明できる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としたら・とすれば・とすると");
+        assert_pattern_range(&patterns, "としたら・とすれば・とすると", 5, 9); // とすれば
+    }
+
+    // Testing: とすると variant with noun
+    #[test]
+    fn test_noun_tosuruto() {
+        let sentence = "原因が過労だとすると、休養が必要ですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としたら・とすれば・とすると");
+        assert_pattern_range(&patterns, "としたら・とすれば・とすると", 6, 10); // とすると
+    }
+}

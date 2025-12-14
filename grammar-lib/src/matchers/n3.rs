@@ -2531,9 +2531,71 @@ pub fn wakeganai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: としたら・とすれば・とすると
+// Pattern: としたら・とすれば・とすると (assuming that / if it were the case that)
+// Structures: と + する(various forms) + conditional ending
+// Matches all three variants: としたら, とすれば, とすると
 pub fn toshitara_u30fb_tosureba_u30fb_tosuruto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と particle (quotation/citation)
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match する in any form (連用形 for し, 仮定形 for すれ, 基本形 for する)
+    #[derive(Debug)]
+    struct SuruMatcher;
+    impl Matcher for SuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match conditional ending: たら OR ば OR と(接続助詞)
+    #[derive(Debug)]
+    struct ConditionalEndingMatcher;
+    impl Matcher for ConditionalEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // たら (for としたら)
+            if token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+
+            // ば (for とすれば)
+            if token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+
+            // と as 接続助詞 (for とすると)
+            if token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(SuruMatcher)),
+        TokenMatcher::Custom(Arc::new(ConditionalEndingMatcher)),
+    ]
 }
 
 // Pattern: として (as / in the capacity of)

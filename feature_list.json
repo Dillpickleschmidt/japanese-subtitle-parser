@@ -5434,13 +5434,13 @@
   {
     "pattern_name": "としたら・とすれば・とすると",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When partnered with several of the assumption based expressions that are used in Japanese, the case marking particle ... [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
