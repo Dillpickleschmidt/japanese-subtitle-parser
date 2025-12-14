@@ -324,13 +324,13 @@
   {
     "pattern_name": "う-Verb (Negative)",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The negative form of う-Verbs are conjugated based on the same set of rules used for other forms of う-Verb conjugation... [12 std, 22 pol]",
     "priority": 1,
     "skip_reason": null

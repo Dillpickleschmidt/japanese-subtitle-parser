@@ -6059,3 +6059,132 @@ mod ru_verb_past_tests {
     }
 }
 
+// Pattern: う-Verb (Negative) - Negative form of う-verbs (godan verbs)
+// Data source: grammar_points_data.json["う-Verb (Negative)"]
+// Testing all structure variants with different verb endings
+#[cfg(test)]
+mod u_verb_negative_tests {
+    use super::*;
+
+    // Testing: standard[1] - 座（すわ）る + らない
+    #[test]
+    fn test_u_verb_negative_ra() {
+        let sentence = "あいつは絶対にここには座らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 11, 15); // 座らない
+    }
+
+    // Testing: standard[2] - 歌（うた）う + わない (special case)
+    #[test]
+    fn test_u_verb_negative_wa() {
+        let sentence = "カラオケでは歌わないようにしてる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 6, 10); // 歌わない
+    }
+
+    // Testing: standard[3] - 歩（ある）く + かない
+    #[test]
+    fn test_u_verb_negative_ka() {
+        let sentence = "もう歩かないって決めたんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 2, 6); // 歩かない
+    }
+
+    // Testing: standard[4] - 話（はな）す + さない
+    #[test]
+    fn test_u_verb_negative_sa() {
+        let sentence = "誰にも話さないって約束して";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 3, 7); // 話さない
+    }
+
+    // Testing: standard[5] - 打（う）つ + たない
+    #[test]
+    fn test_u_verb_negative_ta() {
+        let sentence = "そんな危険なことはしないし打たない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 13, 17); // 打たない
+    }
+
+    // Testing: standard[6] - 死（し）ぬ + なない
+    #[test]
+    fn test_u_verb_negative_na() {
+        let sentence = "簡単には死なないから安心して";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 4, 8); // 死なない
+    }
+
+    // Testing: standard[7] - 飛（と）ぶ + ばない
+    #[test]
+    fn test_u_verb_negative_ba() {
+        let sentence = "ダチョウは飛ばないって知ってた？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 5, 9); // 飛ばない
+    }
+
+    // Testing: standard[8] - 休（やす）む + まない
+    #[test]
+    fn test_u_verb_negative_ma() {
+        let sentence = "こんな日でも休まないつもり？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 6, 10); // 休まない
+    }
+
+    // Testing: standard[9] - 泳（およ）ぐ + がない
+    #[test]
+    fn test_u_verb_negative_ga() {
+        let sentence = "川では泳がないほうがいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 3, 7); // 泳がない
+    }
+
+    // Testing: polite[1] - 座（すわ）る + りません
+    #[test]
+    fn test_u_verb_negative_polite() {
+        let sentence = "すみません、ここには座りません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 10, 15); // 座りません
+    }
+
+    // Testing: polite[2] - 座（すわ）る + らないです
+    #[test]
+    fn test_u_verb_negative_semi_polite() {
+        let sentence = "あそこには座らないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 5, 11); // 座らないです
+    }
+}
+
