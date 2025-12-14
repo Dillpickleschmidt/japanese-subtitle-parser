@@ -1,10 +1,10 @@
 ## Session 352 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: IN PROGRESS
-**Patterns completed**: 1 (わけだ)
-**Tests added**: 5 (all passing)
-**Total tests**: 2239 passing, 1 ignored (was 2234 passing, 1 ignored - net +5 tests)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (わけだ, わけではない)
+**Tests added**: 11 (all passing)
+**Total tests**: 2245 passing, 1 ignored (was 2234 passing, 1 ignored - net +11 tests)
 
 ### ✅ Pattern Completed: わけだ (so/no wonder/that's why - logical conclusion)
 
@@ -73,6 +73,81 @@ Three-token matcher: Optional(という) + わけ + だ/です
 - わけではない (N3) - "it's not that" (negative form)
 - わけがない (N3) - "there's no way that" (impossibility)
 - わけにはいかない (N3) - "cannot" (obligation/impossibility)
+
+---
+
+### ✅ Pattern Completed: わけではない (it's not the case that / doesn't mean that)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: わけではない is the negative form of わけだ. It combines わけ (noun) with ではない (the conjugated form of the auxiliary verb だ + adverbial particle は + い-adjective ない). The pattern means "it doesn't mean that (A)", "it's not the case that (A)", or more literally "it is not necessarily so that it's (A)" / "so it's not (A)". わけ can be followed by the word before わけ in attributive form.
+
+**Structures tested**: 6 comprehensive tests covering all major variants
+1. Verb + わけではない: 日本語を話せるわけではないです (It's not the case that I can speak Japanese) - chars 7-13
+2. い-Adjective + わけではない: 私の家は広いわけではない (It's not necessarily that my house is big) - chars 6-12
+3. な-Adjective + な + わけではない: 仕事が大変なわけではない (It's not that my job is difficult) - chars 6-12
+4. Noun + の + わけではない: 熱のわけではない (It's not necessarily that I have a fever) - chars 2-8
+5. わけじゃない (casual): 映画を監督して有名になったわけじゃない (Didn't become famous because he directed) - chars 24-30
+6. わけではありません (polite): 嫌いというわけではありません (It's not that I dislike you) - chars 5-14
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (wakedehanai, lines 3301-3364)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (wakedehanai_tests module, lines 11810-11896)
+- Pattern: grammar-lib/src/patterns.rs (Wakedehanai, declared at line 3232)
+
+**Tokenization patterns**:
+```
+Four-token matcher: わけ + (で|じゃ) + は? + (ない|あり)
+
+わけ (required):
+- わけ (名詞/非自立/一般) - dependent noun
+
+で or じゃ (required):
+- で (助動詞, base=だ, 連用形) - auxiliary verb connective form
+- じゃ (助詞) - particle (casual form)
+
+は (optional):
+- は (助詞/係助詞) - topic/contrast particle
+- Note: じゃ already contains じゃ = で + は, so は is optional after じゃ
+
+ない or あり (required):
+- ない (助動詞 or 形容詞) - negative auxiliary or adjective
+- あり (動詞, base=ある) - start of ありません (polite negative)
+```
+
+**Key implementation points**:
+1. Four-token matcher with optional は: わけ + (で|じゃ) + Optional(は) + (ない|あり)
+2. WakeMatcher checks surface == "わけ", POS == 名詞/非自立
+3. DeJyaMatcher matches EITHER で (auxiliary) OR じゃ (particle)
+4. WaMatcher (optional) matches は as topic particle
+5. NaiAriMatcher matches EITHER ない (plain negative) OR あり (start of ありません)
+6. The pattern matcher automatically extends あり to include the full ありません
+7. Handles both ではない and じゃない forms
+8. Priority set to 3 (moderate) as per patterns.rs
+
+**Pattern ranges**: Include full negative construction
+- Verb: "わけではない" (chars 7-13)
+- い-Adj: "わけではない" (chars 6-12)
+- な-Adj: "わけではない" (chars 6-12)
+- Noun: "わけではない" (chars 2-8)
+- Casual: "わけじゃない" (chars 24-30)
+- Polite: "わけではありません" (chars 5-14) - auto-extends to full ありません
+
+**Test Quality**:
+- All 6 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major structural variants: verb, i-adj, na-adj, noun, casual (じゃ), polite (ありません)
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that わけではない matches the explanatory meaning of "so" in English that often replaces "because" and "since". However, わけ also matches the emphatic nuance of "so", as in "it's SO not (A)". The nuance "it is not necessarily so that it's (A)" is closer to the actual meaning than simple "it's not that (A)".
+
+**Related patterns**:
+- わけだ (N3) - "so / no wonder / that's why" (affirmative form)
+- わけがない (N3) - "there's no way that" (impossibility - stronger negation)
+- じゃない (N5) - generic negative construction
 
 ---
 
