@@ -1,3 +1,80 @@
+## Session 353 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (わけがない)
+**Tests added**: 6 (all passing)
+**Total tests**: 2251 passing, 1 ignored (was 2245 passing, 1 ignored - net +6 tests)
+
+### ✅ Pattern Completed: わけがない (there's no way that / it's impossible that / SO not)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted in overlay)
+
+**Pattern**: わけがない is one of the strongest ways to use the noun わけ in Japanese. It combines わけ (reason/conclusion) with が (case particle) and ない (negative adjective) to express impossibility or strong negation. It is regularly translated as "there is no way that (A)", or "it is impossible that (A)". The pattern emphasizes the non-existence of something and is much stronger than わけではない. Can be thought of as "it is SO not (A)" (for わけがない) vs "it's not that (A)" (for わけではない).
+
+**Structures tested**: 6 comprehensive tests covering all major variants
+1. Verb[る] + わけがない: 食べれるわけがない (there's no way I can eat) - chars 26-31
+2. Verb[た] + わけがない: 持ってたわけがない (there's no way he had) - chars 19-24
+3. い-Adjective + わけがない: 不味いわけがない (there's no way it's bad) - chars 19-27 (extended to include じゃん)
+4. な-Adjective + な + わけがない: 静かなわけがない (there's no way it's quiet) - chars 19-24
+5. Verb + わけがありません (polite): 暇なわけがありません (there's no way he has free time) - chars 18-26
+6. い-Adjective + わけがありません (polite): 意地悪なわけがありません (there's no way it's mean) - chars 15-23
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (wakeganai function, lines 4071-4119)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (wakeganai_tests module, lines 11898-11992)
+- Pattern: grammar-lib/src/patterns.rs (Wakeganai, declared at line 3401)
+
+**Tokenization patterns**:
+```
+Three-token matcher: わけ + が + ない/あり
+
+わけ (required):
+- わけ (名詞/非自立/一般) - dependent noun
+
+が (required):
+- が (助詞/格助詞/一般) - case particle
+
+ない or あり (required):
+- ない (形容詞/自立, base=ない, 基本形) - plain negative
+- あり (動詞/自立, base=ある, 連用形) - start of polite negative (ありません)
+```
+
+**Key implementation points**:
+1. Three-token matcher: わけ + が + ない/あり
+2. WakeMatcher checks surface == "わけ", POS == 名詞/非自立
+3. GaMatcher checks surface == "が", POS == 助詞/格助詞
+4. NaiAriMatcher matches EITHER ない (adjective) OR あり (verb, start of ありません)
+5. Pattern matcher automatically extends あり to include the full ありません
+6. The pattern matches just わけがない or わけがありません
+7. Pattern priority: 1 (detected but not highlighted in overlay)
+8. Auto-extension: Since ない is an adjective, the pattern gets extended to include following auxiliary verbs (e.g., じゃん)
+
+**Pattern ranges**: Include わけがない or わけがありません
+- Plain form: わけがない (3 tokens)
+- Polite form: わけがありません (わけ + が + あり, then auto-extended to ありません)
+- Note: Patterns containing adjectives are auto-extended to include auxiliary verbs
+
+**Test Quality**:
+- All 6 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major structural variants: verb (る/た), i-adj, na-adj, polite forms
+- Correct character ranges verified for all variants (including auto-extension)
+
+**Linguistic Note**: わけがない is much stronger than わけではない. It emphasizes the complete impossibility or non-existence of something, similar to "it is SO not (A)" in English. The difference can be understood as:
+- わけではない: "it is so that it isn't (A)" - highlights that (A) exists but not in the way stated
+- わけがない: "it is SO not (A)" - highlights that no part of (A) can be considered correct/accurate
+
+**Related patterns**:
+- わけだ (N3) - "so / no wonder / that's why" (affirmative logical conclusion)
+- わけではない (N3) - "it's not that" (softer negation)
+- わけにはいかない (N3) - "cannot" (obligation/impossibility - not yet implemented)
+
+---
+
 ## Session 352 - 2025-12-14
 
 ### ✅ Session Summary
