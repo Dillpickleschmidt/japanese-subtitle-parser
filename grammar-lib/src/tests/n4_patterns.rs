@@ -11303,3 +11303,138 @@ mod nai_wa_nai_tests {
     }
 }
 
+// Pattern: 命令形 (imperative form)
+// Data source: grammar_points_data.json["命令形"]
+// Testing imperative verb conjugations
+//
+// Structures to test:
+//   - Godan verbs: 止まる → 止まれ, 歩く → 歩け, 話す → 話せ, etc.
+//   - Ichidan verbs: 見る → 見ろ/見よ, 食べる → 食べろ
+//   - Exceptions: する → しろ/せよ, 来る → こい, くれる → くれ
+mod imperative_form_tests {
+    use crate::tests::{assert_has_pattern, assert_pattern_range, detect_patterns, tokenize_sentence};
+
+    // Test: Godan る-verb imperative (止まる → 止まれ)
+    #[test]
+    fn test_godan_ru_imperative() {
+        let sentence = "そこで止まれ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "命令形");
+        assert_pattern_range(&patterns, "命令形", 3, 6); // 止まれ
+    }
+
+    // Test: Godan う-verb imperative (歌う → 歌え)
+    #[test]
+    fn test_godan_u_imperative() {
+        let sentence = "もっと大きな声で歌え";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "命令形");
+        assert_pattern_range(&patterns, "命令形", 8, 10); // 歌え
+    }
+
+    // TODO: UNDETECTABLE - Godan く-verb imperative (歩く → 歩け)
+    // Kagome tokenizes 歩け as potential verb 歩ける (can walk) in 連用形
+    // instead of imperative form of 歩く. This is ambiguous without context.
+    // The imperative 歩け and potential stem 歩ける (連用形) are identical.
+    //
+    // #[test]
+    // fn test_godan_ku_imperative() {
+    //     let sentence = "自分の足で歩け";
+    //     // 歩け is tokenized as base=歩ける, 一段, 連用形
+    //     // Expected: base=歩く, 五段・カ行, 命令ｅ
+    // }
+
+    // TODO: UNDETECTABLE - Godan す-verb imperative (話す → 話せ)
+    // Kagome tokenizes 話せ as potential verb 話せる (can speak) in 連用形
+    // instead of imperative form of 話す. This is ambiguous without context.
+    // The imperative 話せ and potential stem 話せる (連用形) are identical.
+    //
+    // #[test]
+    // fn test_godan_su_imperative() {
+    //     let sentence = "本当のことを話せ";
+    //     // 話せ is tokenized as base=話せる, 一段, 連用形
+    //     // Expected: base=話す, 五段・サ行, 命令ｅ
+    // }
+
+    // Test: Godan ぶ-verb imperative with よ (飛ぶ → 飛べよ)
+    #[test]
+    fn test_godan_bu_imperative_with_yo() {
+        let sentence = "もっと高く飛べよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "命令形");
+        assert_pattern_range(&patterns, "命令形", 5, 7); // 飛べ
+    }
+
+    // Test: Godan む-verb imperative (休む → 休め)
+    #[test]
+    fn test_godan_mu_imperative() {
+        let sentence = "今日はゆっくり休め";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "命令形");
+        assert_pattern_range(&patterns, "命令形", 7, 9); // 休め
+    }
+
+    // Test: Godan ぐ-verb imperative (泳ぐ → 泳げ)
+    #[test]
+    fn test_godan_gu_imperative() {
+        let sentence = "もっと速く泳げ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "命令形");
+        assert_pattern_range(&patterns, "命令形", 5, 7); // 泳げ
+    }
+
+    // Test: Ichidan verb imperative (見る → 見ろ)
+    #[test]
+    fn test_ichidan_imperative_ro() {
+        let sentence = "手をあげろ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "命令形");
+        assert_pattern_range(&patterns, "命令形", 2, 5); // あげろ
+    }
+
+    // Test: Ichidan verb imperative (食べる → 食べろ)
+    #[test]
+    fn test_ichidan_imperative_tabero() {
+        let sentence = "早く食べろ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "命令形");
+        assert_pattern_range(&patterns, "命令形", 2, 5); // 食べろ
+    }
+
+    // Test: Exception verb する → しろ
+    #[test]
+    fn test_exception_suru_shiro() {
+        let sentence = "黙ってしろ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "命令形");
+        assert_pattern_range(&patterns, "命令形", 3, 5); // しろ
+    }
+
+    // Test: Common imperative がんばれ (頑張る → 頑張れ)
+    #[test]
+    fn test_common_ganbare() {
+        let sentence = "がんばれよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "命令形");
+        assert_pattern_range(&patterns, "命令形", 0, 5); // がんばれよ
+    }
+}
+

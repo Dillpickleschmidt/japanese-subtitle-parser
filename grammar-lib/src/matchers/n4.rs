@@ -7025,9 +7025,27 @@ pub fn kasuru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 命令形
+// Pattern: 命令形 (imperative form)
+// Structures: Verb in imperative conjugation (命令ｅ, 命令ｒｏ, 命令ｙｏ)
 pub fn meireigata() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ImperativeMatcher;
+    impl super::Matcher for ImperativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Check if it's a verb
+            if !token.pos.first().is_some_and(|p| p == "動詞") {
+                return false;
+            }
+
+            // Check if conjugation form is imperative (命令ｅ, 命令ｒｏ, or 命令ｙｏ)
+            // The conjugation form is at features index 5
+            token.features.get(5).is_some_and(|form| {
+                form.starts_with("命令")
+            })
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(ImperativeMatcher))]
 }
 
 // Pattern: ように (so that, in order to)
