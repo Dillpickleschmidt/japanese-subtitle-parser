@@ -1,3 +1,91 @@
+## Session 290 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ほかに(も)・ほか(に)は - other than, besides, anything else)
+**Tests added**: 7 (all passing)
+**Total tests**: 1846 (was 1839)
+
+### Pattern Implemented: ほかに(も)・ほか(に)は (other than, besides, anything else)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: The expression ほかに(も)・ほか(に)は is used to express "other than", "besides", or "anything else". The word ほか means "another" or "other", and when combined with particles like に, にも, には, or の, it creates various nuanced meanings depending on context.
+
+**Key meanings by particle combination**:
+- **ほかに**: Another thing (basic form)
+- **ほかにも**: Even another thing (sounds less certain, additive)
+- **ほかには**: Was there another thing (focuses on something pre-existing, often in negative contexts)
+- **ほかの**: Another specific thing (modifies a following noun)
+
+**Structures tested**: 7 tests covering all major structure variants
+1. ほか + の + Noun: ほかの電子レンジ (a different microwave)
+2. ほか + に: ほかに (anything else - basic form)
+3. ほか + にも: ほかにも (anywhere else, besides - affirmative additive)
+4. その + ほか + にも: そのほかにも (besides that, in addition to that)
+5. ほか + には: ほかには (anything else - with は focus particle)
+6. Noun + の + ほか + には: お金のほかには (other than money)
+7. Noun + の + ほか + には: 彼のほかには (other than him)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (hokani_mo_u30fb_hoka_ni_ha function, lines 5336-5389)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (hokani_tests module, lines 10663-10751)
+- Pattern: grammar-lib/src/patterns.rs (HokaniMoU30fbHokaNiHa - already existed at line 2101)
+
+**Tokenization pattern**:
+```
+ほか (名詞/副詞可能, base=ほか)
++ の (助詞/連体化) OR に (助詞/格助詞/一般)
++ [Optional] も (助詞/係助詞) OR は (助詞/係助詞)
+
+Examples:
+- ほかの: ほか + の
+- ほかに: ほか + に
+- ほかにも: ほか + に + も
+- ほかには: ほか + に + は
+```
+
+**Key implementation points**:
+1. HokaMatcher matches ほか as 名詞/副詞可能 (noun that can act as adverb)
+2. NoOrNiParticleMatcher accepts either の (連体化) or に (格助詞)
+3. MoOrHaParticleMatcher (optional) accepts も or は as 係助詞 (binding particle)
+4. Pattern range includes: ほか + particle (+ optional も/は)
+5. Works with all combinations: の, に, にも, には
+6. Priority 1 means detected but not highlighted in browser extension
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all major structure variants (ほかの, ほかに, ほかにも, ほかには)
+- Test both standalone usage and usage after nouns (Noun + の + ほか)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that ほか is tokenized as 名詞/副詞可能 (can function as both noun and adverb)
+2. Handling multiple particle combinations (の, に, にも, には) in a single pattern
+3. Making the final も/は particle optional to match all variants
+4. Recognizing that の uses 助詞/連体化 while に uses 助詞/格助詞/一般
+5. Ensuring pattern works in both affirmative and negative contexts
+6. Understanding the nuanced differences between ほかに, ほかにも, and ほかには
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a common construction pattern for expressing "other than" or "besides".
+
+**Linguistic Note**: The word ほか (他) literally means "other" or "another". When combined with different particles, it creates various nuanced meanings:
+- **ほかの** modifies nouns directly (attributive form)
+- **ほかに** is adverbial form meaning "besides" or "in addition"
+- **ほかにも** adds emphasis on the "addition" aspect with も
+- **ほかには** with は creates a focus/contrast, often used in negative sentences
+
+The pattern is particularly common in questions asking about alternatives or additional options, and in statements expressing exclusivity (e.g., "other than X, there is nothing else").
+
+**Next pattern to implement**: まい～のように (like mai~) or 他動詞・自動詞 (transitive/intransitive verbs)
+
+---
+
 ## Session 289 - 2025-12-14
 
 ### ✅ Session Summary
