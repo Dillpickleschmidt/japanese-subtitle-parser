@@ -10189,3 +10189,41 @@ mod youni_tests {
     }
 }
 
+// Pattern: ように・ような (like, as - adverbial/attributive forms)
+// Data source: grammar_points_data.json["ように・ような"]
+// Testing structure variants:
+//   - standard[0]: Verb + よう + に + Verb(1) - adverbial form
+//   - standard[1]: Verb + よう + な + Noun - attributive form
+//   - standard[2]: Note about modifiers (Adverb, い-Adj, な-Adj) can precede よう
+//
+// Note: Cases with の (Noun + の + ように/ような) are handled by のように・のような pattern
+// This pattern handles Verb/Adj/Auxiliary + よう + に/な
+mod youni_youna_tests {
+    use super::*;
+
+    #[test]
+    fn test_youni_verb_adverbial() {
+        // Testing: Verb + よう + に + Verb (no の)
+        // Example: バケツをひっくり返したように雨が降っている
+        // Pattern includes た (auxiliary) + よう + に
+        let sentence = "バケツをひっくり返したように雨が降っている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように・ような");
+        assert_pattern_range(&patterns, "ように・ような", 10, 14); // たように
+    }
+
+    #[test]
+    fn test_youna_verb_attributive() {
+        // Testing: Verb + よう + な + Noun (no の)
+        // Example: 人を殺すような目をしている (eyes as if about to kill)
+        let sentence = "彼は今、人を殺すような目をしている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ように・ような");
+        assert_pattern_range(&patterns, "ように・ような", 6, 11); // 殺すような
+    }
+}
+

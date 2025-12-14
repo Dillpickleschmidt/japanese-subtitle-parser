@@ -3089,9 +3089,77 @@ pub fn nonakade() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ように・ような
+// Pattern: ように・ような (like, as - adverbial/attributive forms)
+// Structures: Verb/Adj + よう + に, Verb/Adj + よう + な
+// Note: This pattern matches ように/ような when NOT preceded by の (that's handled by のように・のような)
 pub fn youni_u30fb_youna() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match よう as dependent noun with auxiliary verb stem
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.base_form == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Match に particle (格助詞/一般 for adverbial, or 副詞化 for purpose)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "副詞化"))
+        }
+    }
+
+    // Match な auxiliary (体言接続 form of だ)
+    #[derive(Debug)]
+    struct NaAuxiliaryMatcher;
+    impl Matcher for NaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match either に or な after よう
+    #[derive(Debug)]
+    struct NiOrNaMatcher;
+    impl Matcher for NiOrNaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            NiParticleMatcher.matches(token) || NaAuxiliaryMatcher.matches(token)
+        }
+    }
+
+    // Match verb or adjective (but NOT の particle, which is handled by のように・のような)
+    #[derive(Debug)]
+    struct VerbOrAdjMatcher;
+    impl Matcher for VerbOrAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞");
+            let is_adj = token.pos.first().is_some_and(|pos| pos == "形容詞");
+            let is_auxiliary = token.pos.first().is_some_and(|pos| pos == "助動詞");
+
+            // Accept verbs, adjectives, or auxiliaries (like た in ひっくり返したよう)
+            is_verb || is_adj || is_auxiliary
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrAdjMatcher)),
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrNaMatcher)),
+    ]
 }
 
 // Pattern: Number/Amount + は (at least, or so)
