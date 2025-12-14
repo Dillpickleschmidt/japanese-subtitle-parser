@@ -10518,3 +10518,96 @@ mod bakarini_tests {
     }
 }
 
+// ========== ふりをする (pretend to be/do) ==========
+// Pattern: ふりをする (pretend to be/do)
+// Data source: grammar_points_data.json["ふりをする"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[ている] + ふりをする
+//   standard[0] note (1): Verb[ない]、Verb[た] also allowed
+//   standard[1]: い-Adjective + ふりをする
+//   standard[2]: な-Adjective + な + ふりをする
+//   standard[3]: Noun + の + ふりをする
+//   polite[0-3]: Same forms + ふりをします
+
+mod furiwosuru_tests {
+    use super::*;
+
+    // Test: Verb[ている] + ふりをする
+    #[test]
+    fn test_furiwosuru_verb_teiru() {
+        let sentence = "僕は子供の頃、よく寝ているふりをした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ふりをする");
+        assert_pattern_range(&patterns, "ふりをする", 11, 18); // いるふりをした
+    }
+
+    // Test: Verb[た] + ふりをする
+    #[test]
+    fn test_furiwosuru_verb_past() {
+        let sentence = "この蛇は人等の大きな動物が近づくと死んだふりをするらしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ふりをする");
+        assert_pattern_range(&patterns, "ふりをする", 19, 28); // だふりをするらしい
+    }
+
+    // Test: Verb[ない] + ふりをする
+    #[test]
+    fn test_furiwosuru_verb_negative() {
+        let sentence = "彼女は何も知らないふりをして黙っていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ふりをする");
+        assert_pattern_range(&patterns, "ふりをする", 7, 13); // ないふりをし
+    }
+
+    // Test: い-Adjective + ふりをする
+    #[test]
+    fn test_furiwosuru_i_adjective() {
+        let sentence = "欲しいのはこれではなかったけど、せっかく買ってくれたから嬉しいふりをする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ふりをする");
+        assert_pattern_range(&patterns, "ふりをする", 28, 36); // 嬉しいふりをする
+    }
+
+    // Test: な-Adjective + な + ふりをする
+    #[test]
+    fn test_furiwosuru_na_adjective() {
+        let sentence = "俺の前ではそんな、元気なふりをしなくていいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ふりをする");
+        assert_pattern_range(&patterns, "ふりをする", 11, 18); // なふりをしなく
+    }
+
+    // Test: Noun + の + ふりをする
+    #[test]
+    fn test_furiwosuru_noun() {
+        let sentence = "カケル君はカエルが好きだからいつもカエルのふりをして遊んでいる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ふりをする");
+        assert_pattern_range(&patterns, "ふりをする", 20, 25); // のふりをし
+    }
+
+    // Test: Polite form (ふりをします)
+    #[test]
+    fn test_furiwosuru_polite() {
+        let sentence = "彼は会議で分かっているふりをしますが、実は何も理解していません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ふりをする");
+        assert_pattern_range(&patterns, "ふりをする", 9, 17); // いるふりをします
+    }
+}
+

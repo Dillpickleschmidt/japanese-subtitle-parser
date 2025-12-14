@@ -6979,9 +6979,38 @@ pub fn komu_u2461() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ふりをする
+// Pattern: ふりをする (pretend to be/do)
+// Structures: Verb/Adjective/Noun + ふり + を + する
 pub fn furiwosuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ふり as 名詞/非自立/一般
+    #[derive(Debug)]
+    struct FuriMatcher;
+    impl Matcher for FuriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ふり"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match を particle
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,                           // Preceding word (verb/adj/noun)
+        TokenMatcher::Custom(Arc::new(FuriMatcher)), // ふり
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)), // を
+        TokenMatcher::specific_verb("する"),          // する (any form)
+    ]
 }
 
 // Pattern: できれば・できたら
