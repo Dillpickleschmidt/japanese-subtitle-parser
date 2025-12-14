@@ -4614,9 +4614,58 @@ pub fn aruiha() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ながらも
+// Pattern: ながらも (although, even while)
+// Structures: Verb[stem] + ながら(も) / な-Adj + ながら(も) / Noun + ながら(も)
 pub fn nagaramo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ながら as 助詞/接続助詞
+    #[derive(Debug)]
+    struct NagaraMatcher;
+    impl Matcher for NagaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ながら"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match も as 助詞/係助詞
+    #[derive(Debug)]
+    struct MoMatcher;
+    impl Matcher for MoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match verb in 連用形 (stem form), な-Adjective, or noun
+    #[derive(Debug)]
+    struct VerbOrNaAdjectiveOrNounMatcher;
+    impl Matcher for VerbOrNaAdjectiveOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb in 連用形
+            if token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "連用形" || form == "連用タ接続");
+            }
+            // な-Adjective (名詞/形容動詞語幹) or general noun
+            if token.pos.first().is_some_and(|pos| pos == "名詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNaAdjectiveOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NagaraMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoMatcher)))),
+    ]
 }
 
 // Pattern: において・における (at, in, on, regarding)

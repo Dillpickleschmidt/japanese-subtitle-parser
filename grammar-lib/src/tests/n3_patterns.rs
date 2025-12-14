@@ -8113,3 +8113,71 @@ mod kankeigaaru_tests {
         assert_pattern_range(&patterns, "関係がある", 7, 12); // 関係がある
     }
 }
+
+// Pattern: ながらも (although, even while)
+// Data source: grammar_points_data.json["ながらも"]
+// Testing all structure variants
+#[cfg(test)]
+mod nagaramo_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + ながら(も)
+    #[test]
+    fn test_nagaramo_verb() {
+        let sentence = "才能を持ちながらも、彼は色々と苦労した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらも");
+        assert_pattern_range(&patterns, "ながらも", 3, 9); // 持ちながらも
+    }
+
+    // Testing: standard[0] - Verb[stem] + ながらも (another example)
+    #[test]
+    fn test_nagaramo_verb_feeling() {
+        let sentence = "悲しみを感じながらも、笑顔で友達に話しました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらも");
+        assert_pattern_range(&patterns, "ながらも", 4, 10); // 感じながらも
+    }
+
+    // Testing: standard[1] - い-Adjective + ながら(も)
+    // Note: い-Adjective + ながらも is not a common structure in modern Japanese
+    // and is not included in the grammar_points_data.json examples.
+    // Skipping this variant.
+
+    // Testing: standard[2] - な-Adjective + ながら(も)
+    #[test]
+    fn test_nagaramo_na_adjective() {
+        let sentence = "彼は料理が苦手ながらも、一生懸命作りました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらも");
+        assert_pattern_range(&patterns, "ながらも", 5, 11); // 苦手ながらも
+    }
+
+    // Testing: standard[3] - Noun + ながら(も)
+    #[test]
+    fn test_nagaramo_noun() {
+        let sentence = "私達は貧乏ながらも、定期的にコンサートへ行っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらも");
+        assert_pattern_range(&patterns, "ながらも", 3, 9); // 貧乏ながらも
+    }
+
+    // Testing: standard[0] - Verb[stem] + ながらも (with も)
+    #[test]
+    fn test_nagaramo_verb_with_mo() {
+        let sentence = "緊張しながらも、初めての舞台でのびのびと歌うことが出来た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらも");
+        assert_pattern_range(&patterns, "ながらも", 0, 7); // 緊張しながらも
+    }
+}
