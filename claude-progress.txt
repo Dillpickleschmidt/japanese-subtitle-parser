@@ -1,3 +1,88 @@
+## Session 345 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (～かというと ②)
+**Tests added**: 7 (all passing)
+**Total tests**: 2196 passing, 1 ignored (was 2189 passing, 1 ignored)
+
+### ✅ Pattern Completed: ～かというと ② (if I were to say [question word])
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: ～かというと ② is the second usage of かというと, used in conjunction with "who", "what", "where", "which", and "when" question words (as opposed to pattern ① which is used with "why" and "how" words). The phrase combines か (question particle) + と (quotation particle) + いう/言う (to say) + と/ば/たら (conditional particles). The literal meaning is "if (A) were to be asked" or "if I were to say...", where the speaker goes on to highlight their answer/reasoning in the following clause.
+
+**Structures tested**: 7 comprehensive tests covering all variants
+1. 何で + Phrase + かというと: 何で日本に引っ越して来たかというと、私の家族が日本に住んでいるからです。 (If I were to say why I moved to Japan, it is because my family lives here)
+2. 誰 + Phrase + かというと: 誰と旅行に行きたいかというと、大親友と行きたい。 (If I were to say who I wanted to travel with, it would be my best friend)
+3. どの + Phrase + かというと: どの街に住みたいかというと、両親が住んでいる街に住みたいと思っています。 (If I were to say which city I wanted to live in, I think it would be the city that my parents do)
+4. 何で + Phrase + かといえば: 何でこんな事になったかといえば、私がきちんと確認をしなかったからです。 (If I were to say why something like this happened, well, it is because I did not check properly)
+5. 誰 + Phrase + かといったら: 誰が一番上手かといったらＢ組のタカハシさんです。 (If I were to say who was the best, it would be Takahashi-san from class B)
+6. 何 + Phrase + の + かというと: 何が一番好きなのかというと、やっぱりラーメンが好きです。 (If I were to say what I like most, I like ramen after all)
+7. どこ + Phrase + かというと: どこに行きたいかというと、北海道に行きたいです。 (If I were to say where I want to go, I want to go to Hokkaido)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (uff5e_katoiuto_u2461, lines 5258-5350)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (katoiuto_u2461_tests module, lines 11051-11140)
+- Pattern: grammar-lib/src/patterns.rs (Uff5eKatoiutoU2461, lines 3713-3719)
+
+**Tokenization pattern**:
+```
+Six-token matcher: Question Word + Wildcard{0-20} + か + と + いう + と/ば/たら
+- Question word (何, 誰, どこ, どの, いつ, どれ, どちら, 何で, etc.)
+- Wildcard {min: 0, max: 20} - phrase between question word and か
+- か (助詞/副助詞／並立助詞／終助詞) - question particle
+- と (助詞/格助詞/引用) - quotation particle
+- いう/言う (動詞, 基本形/仮定形/連用タ接続) - verb "to say"
+- と/ば (助詞/接続助詞) OR たら (助動詞, 仮定形) - conditional ending
+
+Variants:
+- かというと: か + と + いう (基本形) + と
+- かといえば: か + と + いえ (仮定形) + ば
+- かといったら: か + と + いっ (連用タ接続) + たら
+```
+
+**Key implementation points**:
+1. Six-token matcher with wildcard: Question Word + Wildcard{0-20} + か + と + いう + conditional
+2. QuestionWordMatcher checks for specific question words (何, 誰, どこ, どの, いつ, どれ, どちら, 何で)
+3. Wildcard allows 0-20 tokens between question word and か (for the phrase being questioned)
+4. KaParticleMatcher checks surface == "か" and POS == 助詞/副助詞／並立助詞／終助詞
+5. ToQuoteMatcher checks surface == "と" and POS == 助詞/格助詞/引用
+6. IuVerbMatcher matches いう/言う in any conjugation form (基本形, 仮定形, 連用タ接続)
+7. ConditionalEndMatcher handles と/ば (接続助詞) or たら (助動詞)
+8. Priority set to 1 (low) - same as pattern ①
+9. Pattern ① and ② are structurally identical but semantically different (why/how vs who/what/where/which/when)
+
+**Pattern ranges**: Include full construction from question word to conditional ending
+- Standard form: "何で日本に引っ越して来たかというと" (chars 0-17)
+- With 誰: "誰と旅行に行きたいかというと" (chars 0-14)
+- With どの: "どの街に住みたいかというと" (chars 0-13)
+- かといえば variant: "何でこんな事になったかといえば" (chars 0-15)
+- かといったら variant: "誰が一番上手かといったら" (chars 0-12)
+- With の particle: "何が一番好きなのかというと" (chars 0-13)
+- With どこ: "どこに行きたいかというと" (chars 0-12)
+
+**Test Quality**:
+- All 7 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major question words: 何, 何で, 誰, どこ, どの
+- Cover all three conditional variants: かというと, かといえば, かといったら
+- Cover optional の particle before か
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that かというと has two primary functions - pattern ① for "why/how" questions (なぜ, どうして), and pattern ② for "who/what/where/which/when" questions (誰, 何, どこ, どの, いつ). Both use the same grammatical structure (か + と + いう + conditional) but differ semantically based on which question word precedes them. The pattern often appears with から at the end of the sentence as 'because', emphasizing the speaker's reasoning.
+
+**Implementation Challenge**: Patterns ① and ② are structurally identical - both match Any + かというと/かといえば/かといったら. Pattern ② is distinguished by explicitly checking for specific question words (何, 誰, どこ, etc.) at the start, while pattern ① uses TokenMatcher::Any and therefore matches all instances. In practice, both patterns may detect the same sentence, which is acceptable since they're variations of the same grammatical construction with slightly different semantic uses.
+
+**Related patterns**:
+- "～かというと ①" (sibling pattern) - used with "why/how" question words (なぜ, どうして)
+- Both patterns share the same structure: か + と + いう/言う + と/ば/たら
+
+---
+
 ## Session 344 - 2025-12-14
 
 ### ✅ Session Summary
