@@ -4024,9 +4024,44 @@ pub fn gozaimasu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: でございます
+// Pattern: でございます (more polite than です)
+// Structures: で + ござい + ます / で + ござる (historical)
 pub fn degozaimasu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl super::Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct GozaiGozaruMatcher;
+    impl super::Matcher for GozaiGozaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ござい" || token.surface == "ござる")
+                && token.base_form == "ござる"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl super::Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DeMatcher)),
+        TokenMatcher::Custom(Arc::new(GozaiGozaruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: お〜する

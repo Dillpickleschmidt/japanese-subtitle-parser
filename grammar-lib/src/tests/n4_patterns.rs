@@ -7480,3 +7480,55 @@ mod tesumimasen_tests {
         assert_pattern_range(&patterns, "てすみません", 6, 14); // 忘れてすみません
     }
 }
+
+// でございます Tests
+mod degozaimasu_tests {
+    use super::*;
+
+    // Pattern: でございます (polite copula - more polite than です)
+    // Data source: grammar_points_data.json["でございます"]
+    // Testing structure variants:
+    //   - standard[0]: だ ￫ でござる (historical/quirky)
+    //   - polite[0]: です ￫ でございます (polite)
+
+    #[test]
+    fn test_degozaimasu_polite_location() {
+        let sentence = "郵便局は隣でございます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でございます");
+        assert_pattern_range(&patterns, "でございます", 5, 11); // でございます
+    }
+
+    #[test]
+    fn test_degozaimasu_polite_introduction() {
+        let sentence = "運転手のタナカでございます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でございます");
+        assert_pattern_range(&patterns, "でございます", 7, 13); // でございます
+    }
+
+    #[test]
+    fn test_degozaimasu_polite_question() {
+        let sentence = "こちらでございますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でございます");
+        assert_pattern_range(&patterns, "でございます", 3, 9); // でございます
+    }
+
+    // でござる variant (historical/quirky)
+    #[test]
+    fn test_degozaru_historical() {
+        let sentence = "拙者がハットリでござる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でございます");
+        assert_pattern_range(&patterns, "でございます", 7, 11); // でござる
+    }
+}
