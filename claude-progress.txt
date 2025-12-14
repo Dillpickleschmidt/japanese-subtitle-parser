@@ -1,3 +1,110 @@
+## Session 266 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (にきがつく - to notice/realize)
+**Tests added**: 6 (all passing)
+**Total tests**: 1721 (was 1715)
+
+### Pattern Implemented: にきがつく (to notice/realize)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: A common expression meaning "to notice" or "to realize" something. Literally translates as "attention comes to be attached to (something)". The particle に marks the location to where your 気（き）'attention/presence of mind' becomes attached. Can be used after nouns or nominalized verbs (with こと or の).
+
+**Structures tested**: 6 tests covering all structure variants
+1. Verb + こと + に気がつく (split): 待ち合わせ場所に着いてから、携帯を忘れたことにきがついた
+2. Verb + の + に気がつく (split): 彼が嘘をついているのにきがついた
+3. Noun + に気がつく (split): 猛スピードでこっちに来ている車にきがついた
+4. Verb + こと + に気がつきます (polite/split): 後で間違えたことにきがつきました
+5. こと + に気がつく (kanji/compound): 彼女が泣いていることに気がついた
+6. Noun + にも気がつく (with も particle/kanji/compound): そんな簡単なことにも気がつかないなんて
+
+**Implementation details**:
+- Matcher (compound): grammar-lib/src/matchers/n4.rs (nikigatsuku, lines 5728-5771)
+- Matcher (split): grammar-lib/src/matchers/n4.rs (nikigatsuku_split, lines 5773-5839)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (nikigatsuku_tests, lines 8874-8949)
+- Pattern: grammar-lib/src/patterns.rs (Nikigatsuku, NikigatsukuSplit)
+
+**Tokenization patterns**:
+
+Compound form (kanji 気がつく):
+```
+に (助詞/格助詞/一般)
++ も (助詞/係助詞) - optional
++ 気がつく (動詞/自立, base="気がつく")
+```
+
+Split form (hiragana きがつく):
+```
+に (助詞/格助詞/一般)
++ も (助詞/係助詞) - optional
++ き (動詞/自立, base="くる")
++ が (助詞/格助詞/一般)
++ つく (動詞/自立, base="つく")
+```
+
+**Key implementation points**:
+1. Two separate patterns needed due to different tokenization:
+   - にきがつく: 気がつく as single verb token (kanji)
+   - にきがつく_split: き + が + つく as separate tokens (hiragana)
+2. Optional も particle allows "にも気がつく" (also notice)
+3. Pattern matcher automatically extends to handle conjugations (past, negative, polite)
+4. Pattern range includes full construction: に(も) + 気がつく/きがつく + auxiliary verbs
+5. Priority 2 for both variants
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover all structure variants: Verb + こと, Verb + の, Noun
+- Test both kanji (compound) and hiragana (split) tokenizations
+- Include polite forms (～ました) and negative forms (～ない)
+- Include も particle variant (にも)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Recognizing two distinct tokenization patterns for same expression
+2. Handling optional も particle between に and verb
+3. Understanding that き is from くる (to come) in split form
+4. Avoiding false matches with のに particle (although/even though)
+5. Pattern matcher automatically handles all verb conjugations
+
+**Tokenization Discovery**:
+- Kanji form: 気がつく is a single verb token with base_form="気がつく"
+- Hiragana form: きがつく splits into き (come) + が + つく (attach)
+- The expression literally means "attention/spirit comes and attaches"
+- の can be used as nominalizer (名詞/非自立) but のに as single particle (接続助詞) must be avoided
+- も particle can intervene: に + も + 気がつく pattern
+
+**Linguistic Note**: This expression preserves the literal meaning of "attention becomes attached to something". The に particle marks the destination/location where 気 (presence of mind/attention) attaches itself, making it a location-focused expression rather than just a state-of-being verb.
+
+### Session Statistics
+- **Session time**: Approximately 60 minutes
+- **Patterns completed this session**: 1 (にきがつく with 2 tokenization variants)
+- **Test success rate**: 6/6 (100%)
+- **Total passing tests**: 1721 (up from 1715)
+- **Files modified**: 4 (matchers/n4.rs, patterns.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - にみえる (to appear/look like)
+   - のなかで (among/in)
+   - のように・のような (like/as)
+   - はずがない (cannot be/should not be)
+   - はずだ (should be/ought to be)
+2. **Pattern focus**: More N4 constructions with particles and expressions
+
+### Environment Status
+- All 1721 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+---
+
 ## Session 265 - 2025-12-14
 
 ### ✅ Session Summary
