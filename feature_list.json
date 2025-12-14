@@ -7114,13 +7114,13 @@
   {
     "pattern_name": "～は～で有名",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to describe what certain things/places are famous for, ～は～で有名（ゆうめい） is a common expression that will be used [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

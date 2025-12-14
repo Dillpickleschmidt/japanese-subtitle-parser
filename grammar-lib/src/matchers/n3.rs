@@ -1846,9 +1846,61 @@ pub fn kotoninaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～は～で有名
+// Pattern: ～は～で有名 (famous for)
+// Structures:
+//   Noun + は + Verb/Adj + こと/の + で + 有名
+//   Noun + は + Noun + で + 有名
 pub fn uff5e_ha_uff5e_deyuumei() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches で (格助詞) or ので (接続助詞)
+    #[derive(Debug)]
+    struct DeOrNodeMatcher;
+    impl Matcher for DeOrNodeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                || (token.surface == "ので"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+        }
+    }
+
+    // Matches ゆう (verb, hiragana) OR 有名 (kanji, na-adjective stem)
+    #[derive(Debug)]
+    struct YuuOrYuumeiMatcher;
+    impl Matcher for YuuOrYuumeiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Hiragana form: ゆう (verb)
+            (token.surface == "ゆう"
+                && token.base_form == "ゆう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+                // Kanji form: 有名 (na-adjective stem)
+                || (token.surface == "有名"
+                    && token.base_form == "有名"
+                    && token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+        }
+    }
+
+    // Matches めい (noun) after ゆう verb - only for hiragana form
+    #[derive(Debug)]
+    struct MeiNounMatcher;
+    impl Matcher for MeiNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "めい"
+                && token.base_form == "めい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(DeOrNodeMatcher)),
+        TokenMatcher::Custom(Arc::new(YuuOrYuumeiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MeiNounMatcher)))),
+    ]
 }
 
 // Pattern: ことはない (no need to / never happens)

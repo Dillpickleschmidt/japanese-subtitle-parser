@@ -9689,3 +9689,85 @@ mod nikagiru_tests {
     }
 }
 
+// ========== ～は～で有名 (famous for) ==========
+// Pattern: ～は～で有名 (famous for / renowned for)
+// Data source: grammar_points_data.json["～は～で有名"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + は + Verb + こと + で + 有名
+//   standard[1]: Noun + は + い-Adjective + こと + で + 有名
+//   standard[2]: Noun + は + な-Adjective + な + こと + で + 有名
+//   standard[3]: Noun + は + Noun + で + 有名
+//
+// Note: こと can be replaced with の in all cases
+
+mod deyuumei_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + は + Verb + こと + で + 有名"
+    #[test]
+    fn test_deyuumei_verb_koto() {
+        let sentence = "ウサイン・ボルトは速く走れることでゆうめいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～で有名");
+        assert_pattern_range(&patterns, "～は～で有名", 14, 23); // ことでゆうめいです
+    }
+
+    // Testing: structure.standard[1] - "Noun + は + い-Adjective + こと + で + 有名"
+    #[test]
+    fn test_deyuumei_i_adjective_koto() {
+        let sentence = "この学校は野球が強いことでゆうめいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～で有名");
+        assert_pattern_range(&patterns, "～は～で有名", 10, 19); // ことでゆうめいです
+    }
+
+    // Testing: structure.standard[2] - "Noun + は + な-Adjective + な + こと + で + 有名"
+    #[test]
+    fn test_deyuumei_na_adjective_koto() {
+        let sentence = "日本は安全なことでゆうめいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～で有名");
+        assert_pattern_range(&patterns, "～は～で有名", 6, 15); // ことでゆうめいです
+    }
+
+    // Testing: structure.standard[3] - "Noun + は + Noun + で + 有名"
+    #[test]
+    fn test_deyuumei_noun() {
+        let sentence = "岡山は備前焼でゆうめいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～で有名");
+        assert_pattern_range(&patterns, "～は～で有名", 3, 13); // 備前焼でゆうめいです
+    }
+
+    // Testing: Noun + は + Verb + の + で + 有名 (using の instead of こと)
+    #[test]
+    fn test_deyuumei_verb_no() {
+        let sentence = "あの選手は速く走れるのでゆうめいだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～で有名");
+        assert_pattern_range(&patterns, "～は～で有名", 7, 17); // 走れるのでゆうめいだ
+    }
+
+    // Testing: Noun + は + い-Adjective + の + で + 有名
+    #[test]
+    fn test_deyuumei_i_adjective_no() {
+        let sentence = "この町は景色が美しいので有名です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～で有名");
+        assert_pattern_range(&patterns, "～は～で有名", 7, 16); // 美しいので有名です
+    }
+}
+
