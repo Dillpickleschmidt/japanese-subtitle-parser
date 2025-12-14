@@ -7476,3 +7476,47 @@ mod todoujini_tests {
         assert_pattern_range(&patterns, "と同時に", 4, 10); // 自宅と同時に
     }
 }
+
+// Pattern: どうしても (no matter what, by all means, in any case)
+// Data source: grammar_points_data.json["どうしても"]
+//
+// Structure variants to test:
+//   - standard[0]: Verb + と + どうしても
+//   - standard[1]: どうしても + Phrase
+#[cfg(test)]
+mod doushitemo_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb + と + どうしても
+    #[test]
+    fn test_doushitemo_after_verb() {
+        let sentence = "牛乳飲むとどうしてもお腹が痛くなるんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうしても");
+        assert_pattern_range(&patterns, "どうしても", 5, 10); // どうしても
+    }
+
+    // Testing: structure.standard[1] - どうしても + Phrase (beginning of sentence)
+    #[test]
+    fn test_doushitemo_phrase_desire() {
+        let sentence = "どうしても欲しいのなら、自分で買いなさい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうしても");
+        assert_pattern_range(&patterns, "どうしても", 0, 5); // どうしても
+    }
+
+    // Testing: structure.standard[1] - どうしても + Phrase (negative)
+    #[test]
+    fn test_doushitemo_phrase_negative() {
+        let sentence = "どうしてもヘリコプターには乗りたくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうしても");
+        assert_pattern_range(&patterns, "どうしても", 0, 5); // どうしても
+    }
+}

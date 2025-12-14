@@ -4857,8 +4857,19 @@ pub fn demoaru() -> Vec<TokenMatcher> {
 }
 
 // Pattern: どうしても
+// Pattern: どうしても (no matter what, by all means, in any case)
+// Structures: どうしても as adverb
 pub fn doushitemo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DoushitemoMatcher;
+    impl Matcher for DoushitemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どうしても"
+                && token.base_form == "どうしても"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(DoushitemoMatcher))]
 }
 
 // Pattern: もしも～なら・もしも～でも
