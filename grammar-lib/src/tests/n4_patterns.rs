@@ -4994,3 +4994,53 @@ mod souiu_tests {
         assert_pattern_range(&patterns, "そういう", 4, 8); // どういう
     }
 }
+
+// Pattern: そんな・こんな・あんな・どんな (like that, like this, what kind of)
+// Data source: grammar_points_data.json["そんな・こんな・あんな・どんな"]
+// Testing all 4 structure variants: そんな, こんな, あんな, どんな
+//
+// Abbreviations from: そのような, このような, あのような, どのような
+// All forms tokenize as single tokens (連体詞)
+mod sonna_tests {
+    use super::*;
+
+    #[test]
+    fn test_sonna_sonna() {
+        let sentence = "そんな言い方してはいけません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そんな・こんな・あんな・どんな");
+        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3); // そんな
+    }
+
+    #[test]
+    fn test_sonna_konna() {
+        let sentence = "こんな高いものはもらえないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そんな・こんな・あんな・どんな");
+        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3); // こんな
+    }
+
+    #[test]
+    fn test_sonna_anna() {
+        let sentence = "あんな大人にはなりたくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そんな・こんな・あんな・どんな");
+        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3); // あんな
+    }
+
+    #[test]
+    fn test_sonna_donna() {
+        let sentence = "どんな靴が欲しい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そんな・こんな・あんな・どんな");
+        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3); // どんな
+    }
+}

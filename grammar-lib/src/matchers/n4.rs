@@ -1941,8 +1941,26 @@ pub fn hotondo() -> Vec<TokenMatcher> {
 }
 
 // Pattern: そんな・こんな・あんな・どんな
+// Pattern: そんな・こんな・あんな・どんな (like that, like this, what kind of)
+// Structures: そんな/こんな/あんな/どんな (all single tokens, 連体詞)
+// Abbreviations from: そのような, このような, あのような, どのような
 pub fn sonna_u30fb_konna_u30fb_anna_u30fb_donna() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for all four forms
+    #[derive(Debug)]
+    struct SonnaMatcher;
+    impl Matcher for SonnaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "連体詞")
+                && (token.base_form == "そんな"
+                    || token.base_form == "こんな"
+                    || token.base_form == "あんな"
+                    || token.base_form == "どんな")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SonnaMatcher))]
 }
 
 // Pattern: 各
