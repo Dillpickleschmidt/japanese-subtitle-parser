@@ -1367,3 +1367,60 @@ Examples:
 - "ばかりでなく" (to be implemented) - which means "not only...but also"
 
 ---
+
+## Session 350 - ものだ Pattern (N3) Implementation
+
+**Date**: 2024-12-14
+**Status**: ✅ COMPLETE
+
+### Completed Work
+
+Successfully implemented the **ものだ** (should / naturally is / common sense) pattern for N3 level.
+
+**Tests**: 2222 tests passing (up from 2215, added 7 new tests)
+**Files Modified**: 4 files (matchers/n3.rs, patterns.rs, tests/n3_patterns.rs, feature_list.json)
+
+### Implementation Summary
+
+Created three matcher functions to handle all variants:
+1. monoda() - Base pattern: Any + もの/もん + だ
+2. monoda_dewanai() - Formal negative: Any + もの/もん + ではない
+3. monoda_janai() - Casual negative: Any + もの/もん + じゃない
+
+### Pattern Declarations (patterns.rs)
+
+- Monoda (priority 1) - affirmative forms
+- MonodaDewanai (priority 2) - formal negative
+- MonodaJanai (priority 2) - casual negative
+
+### Tests Created (7 tests in monoda_tests module)
+
+All tests include assert_has_pattern and assert_pattern_range with correct character positions.
+
+1. test_monoda_verb_affirmative - するものだ
+2. test_monoda_i_adjective - 珍しいものだ
+3. test_monoda_na_adjective - 元気なものだ
+4. test_monoda_negative_dewanai - 簡単なものではない
+5. test_monoda_negative_janai - 捨てるものじゃない
+6. test_monoda_abbreviated_mon - 大したもんだ (abbreviation)
+7. test_monoda_abbreviated_mon_negative - 捨てるもんじゃない
+
+### Key Implementation Points
+
+- Created separate patterns for affirmative and negative forms
+- Both もの and もん handled by same matcher checking surface form
+- Higher priority (2) for negative forms over simpler だ pattern
+- All patterns use TokenMatcher::Any to allow verb/adjective/noun preceding
+
+### Tokenization Patterns
+
+**Affirmative**: もの/もん (名詞/非自立) + だ (助動詞, 基本形)
+**Formal Negative**: もの/もん + で (助動詞, 連用形) + は + ない (形容詞)
+**Casual Negative**: もの/もん + じゃ (助詞/副助詞) + ない (助動詞)
+
+### Next Steps
+
+Continue with remaining N3 priority 3 patterns:
+- もの・もん, ような気がする, わけがない, わけだ, わけではない, わけにはいかない, をはじめ, んじゃない, んだって
+
+---
