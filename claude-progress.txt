@@ -1,3 +1,74 @@
+## Session 311 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (と言える)
+**Tests added**: 5 (all passing)
+**Total tests**: 1981 (was 1976)
+
+### Pattern Implemented: と言える (can say that / it is fair to say)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (detected but not highlighted in overlays)
+
+**Pattern**: と言える uses the potential form of 言う (to say) with the quotation particle と to express "it is fair to say (A)", "one could say (A)", or "it can be said that (A)". This is commonly used to express a general idea or opinion that the speaker believes to be correct. When combined with だろう/でしょう, it softens the statement by inviting the listener to agree.
+
+**Structures tested**: 5 comprehensive tests covering all variants from grammar_points_data.json
+1. Basic form: この儀式は日本の文化の一つといえる (it can be said this ceremony is part of Japanese culture)
+2. With だろう: このプランは成功したといえるだろう (we could say this plan was a success, right?)
+3. With でしょう (polite): タナカ選手は国民的アスリートだといえるでしょう (can it not be said that Tanaka is a national athlete?)
+4. Strong form (よう): 人が話しているときに、携帯を見るのは失礼だといえよう (let it be said that looking at your phone while someone is talking is rude)
+5. With も particle: あのビルは日本一高いビルだともいえる (one could also say that building is Japan's tallest)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (toieru, lines 1828-1873)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (toieru_tests module, lines 8435-8502)
+- Pattern: grammar-lib/src/patterns.rs (Toieru, line 3104)
+
+**Tokenization patterns**:
+```
+Basic form (といえる):
+- と (助詞/格助詞/引用) - quotation particle
+- いえる (動詞/自立, base=いえる, 一段, 基本形) - potential form of 言う
+
+Strong form (といえよう):
+- と (助詞/格助詞/引用)
+- いえよ (動詞/自立, base=いえる, 一段, 未然ウ接続)
+- う (助動詞, 不変化型, 基本形) - volitional auxiliary
+
+With も (ともいえる):
+- と (助詞/格助詞/引用)
+- も (助詞/係助詞) - "also" particle
+- いえる (動詞/自立, base=いえる)
+```
+
+**Key implementation points**:
+1. Three custom matchers: ToParticleMatcher, MoParticleMatcher, IeruMatcher
+2. ToParticleMatcher checks と as 助詞/格助詞/引用 (quotation particle)
+3. MoParticleMatcher is optional to handle ともいえる variant
+4. IeruMatcher accepts any conjugation of いえる (base_form check)
+5. Pattern works with following endings: だろう, でしょう, よう (not part of detection)
+6. Pattern range extends to include conjugation endings due to overlapping higher-confidence patterns
+
+**Pattern ranges**: Pattern matcher extends ranges to align with overlapping verb patterns
+- Example: "といえる" [13-17] in basic form
+- Example: "といえるだろう" [10-17] with だろう (extended range)
+- Example: "といえるでしょう" [15-23] with でしょう (extended range)
+- Example: "といえよう" [21-26] strong form
+- Example: "ともいえる" [13-18] with も particle
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: basic, だろう, でしょう, よう, も
+- Correct character ranges verified (including extended ranges from pattern overlap)
+
+**Linguistic Note**: The pattern と言える expresses that something can legitimately be stated. The speaker is relatively confident but using the potential form shows they're open to other interpretations, softening the tone. When combined with よう (volitional auxiliary), it becomes a stronger assertion similar to "let it be said that (A)", carrying an implication that "anyone would say this, so don't make me state the obvious."
+
+---
+
 ## Session 310 - 2025-12-14
 
 ### ✅ Session Summary
