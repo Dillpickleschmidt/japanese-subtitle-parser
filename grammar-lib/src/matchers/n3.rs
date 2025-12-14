@@ -5931,9 +5931,93 @@ pub fn tohakagiranai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: めったに〜ない
+// Pattern: めったに〜ない (rarely/seldom/hardly)
+// Structures: めったに + Wildcard{0-20} + ない
+//             OR
+//             めった + に + Wildcard{0-20} + ない
+//
+// Kagome tokenizes this in two ways:
+// 1. Short form: めったに (副詞/一般) - single adverb token
+// 2. Long form: めった (名詞/形容動詞語幹) + に (助詞/副詞化) - two tokens
+//
+// Both forms are followed by a phrase ending in ない (negative)
 pub fn mettani_u301c_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Matcher for めったに as a single adverb token
+    #[derive(Debug)]
+    struct MettaniAdverbMatcher;
+    impl Matcher for MettaniAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "めったに"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Matcher for めった as na-adjective stem
+    #[derive(Debug)]
+    struct MettaStemMatcher;
+    impl Matcher for MettaStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "めった"
+                && token.base_form == "めった"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Matcher for に particle (adverbializer)
+    #[derive(Debug)]
+    struct NiAdverbializerMatcher;
+    impl Matcher for NiAdverbializerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+        }
+    }
+
+    // Matcher for ない (negative marker)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // We need to match EITHER:
+    // 1. めったに (adverb) + wildcard + ない
+    // 2. めった (stem) + に + wildcard + ない
+    //
+    // Since we can't use alternation in the matcher pattern, we'll use a custom matcher
+    // that checks if we start with either form, then use wildcard + ない
+
+    #[derive(Debug)]
+    struct MettaniOrMettaNiMatcher;
+    impl Matcher for MettaniOrMettaNiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match either めったに (adverb) OR めった (na-adj stem)
+            (token.surface == "めったに" && token.pos.first().is_some_and(|pos| pos == "副詞"))
+                || (token.surface == "めった"
+                    && token.base_form == "めった"
+                    && token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MettaniOrMettaNiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiAdverbializerMatcher,
+        )))),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 20,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: 割に

@@ -11254,3 +11254,69 @@ mod mi_tests {
     // We focus on detecting the な-adjective + み pattern, which has a clear
     // two-token structure that can be reliably identified.
 }
+
+// ========== めったに〜ない (rarely/seldom/hardly) ==========
+// Pattern: めったに〜ない (rarely/seldom/hardly)
+// Data source: grammar_points_data.json["めったに〜ない"]
+//
+// Structure variants to test:
+//   standard[0]: めったに + Verb[ない]
+//   standard[1]: Noun + は + めったにない
+//   polite[0]: めったに + Verb[ない]
+//   polite[1]: Noun + は + めったにありません
+
+mod mettani_u301c_nai_tests {
+    use super::*;
+
+    // Test: めった + に + Verb[ない] (long form tokenization)
+    // Example: "大人になってから駄菓子屋にはめったに行かない"
+    // Tokenization: めった (名詞/形容動詞語幹) + に (助詞/副詞化) + 行か + ない
+    #[test]
+    fn test_mettani_verb_nai_long_form() {
+        let sentence = "大人になってから駄菓子屋にはめったに行かない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めったに〜ない");
+        assert_pattern_range(&patterns, "めったに〜ない", 14, 22); // めったに行かない
+    }
+
+    // Test: めったに + Verb[ない] (short form tokenization)
+    // Example: "親とは正月以外にはめったに会わない"
+    // Tokenization: めったに (副詞/一般) + 会わ + ない
+    #[test]
+    fn test_mettani_verb_nai_short_form() {
+        let sentence = "親とは正月以外にはめったに会わない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めったに〜ない");
+        assert_pattern_range(&patterns, "めったに〜ない", 9, 17); // めったに会わない
+    }
+
+    // Test: Noun + は + めったにない
+    // Example: "こんなチャンスはめったにないぞ！"
+    // Tokenization: めったに (副詞/一般) + ない (形容詞)
+    #[test]
+    fn test_mettani_noun_nai() {
+        let sentence = "こんなチャンスはめったにないぞ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めったに〜ない");
+        assert_pattern_range(&patterns, "めったに〜ない", 8, 14); // めったにない
+    }
+
+    // Test: Noun phrase + は + めったにない
+    // Example: "パーティーに行くことはめったにない"
+    // Tokenization: めったに (副詞/一般) + ない (形容詞)
+    #[test]
+    fn test_mettani_noun_phrase_nai() {
+        let sentence = "パーティーに行くことはめったにない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めったに〜ない");
+        assert_pattern_range(&patterns, "めったに〜ない", 11, 17); // めったにない
+    }
+}

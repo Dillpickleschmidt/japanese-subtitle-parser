@@ -6274,13 +6274,13 @@
   {
     "pattern_name": "めったに〜ない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "めったに～ない is an expression that may be translated as 'hardly', 'seldom', or 'rarely' [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null
