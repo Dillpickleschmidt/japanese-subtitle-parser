@@ -8711,3 +8711,81 @@ mod nazenara_kara_tests {
     }
 }
 
+// ========== なんか・なんて (such as, things like - with dismissive tone) ==========
+// Pattern: なんか・なんて (such as, things like)
+// Data source: grammar_points_data.json["なんか・なんて"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + なんて
+//   standard[1]: い-Adjective + なんて
+//   standard[2]: な-Adjective + なんて
+//   standard[3]: Noun + なんて
+//   standard[4]: Noun + なんか (alternative)
+//
+// Note: なんて is more common after conjugatable words (verbs, adjectives)
+//       なんか is more common after nouns
+
+mod nanka_nante_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + なんて"
+    // Example: こんな嵐の中走るなんて、頭おかしいんじゃない
+    #[test]
+    fn test_verb_nante() {
+        let sentence = "こんな嵐の中走るなんて、頭おかしいんじゃない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なんか・なんて");
+        assert_pattern_range(&patterns, "なんか・なんて", 6, 11); // 走るなんて
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + なんて"
+    // Example: 北海道がこんなに寒いなんておもわなかった
+    #[test]
+    fn test_i_adj_nante() {
+        let sentence = "北海道がこんなに寒いなんておもわなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なんか・なんて");
+        assert_pattern_range(&patterns, "なんか・なんて", 8, 13); // 寒いなんて
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + なんて"
+    // Example: 心配なんてしている場合じゃない
+    #[test]
+    fn test_na_adj_nante() {
+        let sentence = "心配なんてしている場合じゃない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なんか・なんて");
+        assert_pattern_range(&patterns, "なんか・なんて", 0, 5); // 心配なんて
+    }
+
+    // Testing: structure.standard[3] - "Noun + なんて"
+    // Example: お前なんてどうせ、家でゴロゴロしているだけだろ
+    #[test]
+    fn test_noun_nante() {
+        let sentence = "お前なんてどうせ、家でゴロゴロしているだけだろ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なんか・なんて");
+        assert_pattern_range(&patterns, "なんか・なんて", 0, 5); // お前なんて
+    }
+
+    // Testing: structure.standard[4] - "Noun + なんか" (alternative)
+    // Example: テレビなんか叩けばだいたい直るだろ
+    #[test]
+    fn test_noun_nanka() {
+        let sentence = "テレビなんか叩けばだいたい直るだろ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なんか・なんて");
+        assert_pattern_range(&patterns, "なんか・なんて", 0, 6); // テレビなんか
+    }
+}
+

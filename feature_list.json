@@ -5700,13 +5700,13 @@
   {
     "pattern_name": "なんか・なんて",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "なんか is an expression in Japanese that is frequently associated with the adverbial particle など [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

@@ -4662,9 +4662,26 @@ pub fn naikotohanai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なんか・なんて
+// Pattern: なんか・なんて (such as, things like)
+// Structures: Verb/Adjective/Noun + なんて OR Noun + なんか
 pub fn nanka_u30fb_nante() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches なんて or なんか (副助詞 - adverbial particle)
+    #[derive(Debug)]
+    struct NanteNankaMatcher;
+    impl Matcher for NanteNankaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "なんて" || token.surface == "なんか")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Any word (verb, adjective, or noun)
+        TokenMatcher::Custom(Arc::new(NanteNankaMatcher)),
+    ]
 }
 
 // Pattern: 又〜も
