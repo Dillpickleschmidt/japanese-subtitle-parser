@@ -5771,3 +5771,116 @@ Polite form (少なくありません):
 - Custom matchers with Matcher trait provide precise POS and surface matching
 - Pattern priority 2 is appropriate for N4 construction patterns (low priority, won't highlight in overlays)
 - flexible_verb_form() works well for matching both verb conjugation forms
+
+---
+
+## Session 246 - でございます Pattern Implementation (N4)
+**Date**: Current session
+**Status**: ✅ COMPLETE
+**Pattern**: でございます (polite copula - more polite than です)
+**JLPT Level**: N4
+
+### Summary
+Successfully implemented the でございます pattern, which is a highly polite form of the copula (です). The pattern handles both the modern polite form (でございます) and the historical/quirky form (でござる).
+
+### Implementation Details
+
+**Pattern Structure**:
+- Modern polite: で + ござい + ます
+- Historical: で + ござる
+
+**Tokenization Analysis**:
+- で: 助動詞, base_form=だ, conjugation=連用形
+- ござい: 助動詞, base_form=ござる, conjugation=連用形
+- ござる: 助動詞, base_form=ござる, conjugation=基本形
+- ます: 助動詞, base_form=ます, conjugation=基本形 (optional)
+
+**Matcher Implementation** (matchers/n4.rs):
+Created three custom matchers:
+1. DeMatcher - Matches で as auxiliary verb (base=だ)
+2. GozaiGozaruMatcher - Matches both ござい and ござる (base=ござる, POS=助動詞)
+3. MasuMatcher - Optional matcher for ます ending
+
+**Pattern Range Philosophy**:
+The pattern correctly includes the full grammatical construction from で through ます (or ござる), capturing the complete polite copula expression.
+
+### Tests Created (4 tests)
+All tests in `degozaimasu_tests` module:
+
+1. **test_degozaimasu_polite_location** - "郵便局は隣でございます。"
+   - Tests でございます in a location context
+   - Range: [5-11] = "でございます"
+
+2. **test_degozaimasu_polite_introduction** - "運転手のタナカでございます。"
+   - Tests でございます in self-introduction
+   - Range: [7-13] = "でございます"
+
+3. **test_degozaimasu_polite_question** - "こちらでございますか？"
+   - Tests でございます in a question form
+   - Range: [3-9] = "でございます"
+
+4. **test_degozaru_historical** - "拙者がハットリでござる。"
+   - Tests でござる (historical/samurai speech)
+   - Range: [7-11] = "でござる"
+
+### Technical Details
+
+**Custom Matchers**:
+- All matchers check both surface form AND part-of-speech for accuracy
+- GozaiGozaruMatcher handles both conjugated and base forms
+- MasuMatcher is optional to handle both でございます and でござる
+
+**Pattern Ranges**:
+- Include full grammatical construction from で through final particle
+- Correctly captures the entire polite copula expression
+- Examples: でございます (0-6), でござる (0-4)
+
+**Test Quality**:
+- All sentences are realistic, polite/formal Japanese
+- Cover both modern polite and historical variants
+- Test different contexts (location, introduction, question, historical)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Handling two variants (ます ending vs. plain ござる): Used Optional TokenMatcher
+2. Distinguishing from standalone ございます pattern: Added で prefix requirement
+3. POS verification: Ensured all components are properly identified as auxiliary verbs
+
+### Session Statistics
+- **Session time**: Approximately 20 minutes
+- **Patterns completed this session**: 1 (でございます)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1622 (up from 1618)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**: Focus on と-based constructions
+2. **Good candidates from feature_list.json**:
+   - といい (if/I hope that)
+   - とおもう (I think that)
+   - とか～とか (things like... and...)
+   - ときいた (I heard that)
+3. **Pattern focus**: Quotative particle と with various predicates
+
+### Environment Status
+- All 1622 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+- Successfully reused matcher patterns from ございます implementation
+- Custom matchers with Matcher trait provide precise POS and surface matching
+- Pattern priority 1 is appropriate for N4 construction patterns (low priority)
+- Optional TokenMatcher works well for variant endings (ます vs. plain form)
+- The で prefix distinguishes this from the standalone ございます pattern effectively
+
+### Code Quality Observations
+- Followed test-first workflow correctly
+- All structure variants from grammar_points_data.json are tested
+- Realistic subtitle-quality sentences used throughout
+- Correct character ranges verified
+- No debug output in committed code
+- Clean separation between modern and historical usage
