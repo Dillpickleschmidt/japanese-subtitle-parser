@@ -2950,9 +2950,80 @@ pub fn shika_uff5e_nai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: だけでなく
+// Pattern: だけでなく (not only)
+// Structures: Verb/い-Adj/な-Adj/Noun + だけ + で/では/じゃ + なく(て)
 pub fn dakedenaku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Matcher for だけ particle
+    #[derive(Debug)]
+    struct DakeMatcher;
+    impl Matcher for DakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Matcher for で (auxiliary verb だ in 連用形) or じゃ
+    #[derive(Debug)]
+    struct DeJaMatcher;
+    impl Matcher for DeJaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match で (助動詞, base=だ, 連用形)
+            (token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // Match じゃ (助詞/副助詞)
+            || (token.surface == "じゃ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+        }
+    }
+
+    // Matcher for は (optional, after で)
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for なく (助動詞, base=ない)
+    #[derive(Debug)]
+    struct NakuMatcher;
+    impl Matcher for NakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matcher for て (助詞/接続助詞) - optional
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Any word (verb/adjective/noun)
+        TokenMatcher::Custom(Arc::new(DakeMatcher)),
+        TokenMatcher::Custom(Arc::new(DeJaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaMatcher)))),
+        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeMatcher)))),
+    ]
 }
 
 // Pattern: ことができる (can do / be able to)

@@ -5290,3 +5290,102 @@ mod daitai_tests {
         assert_pattern_range(&patterns, "だいたい", 0, 4); // だいたい
     }
 }
+
+// ========== だけでなく (not only) ==========
+// Pattern: だけでなく
+// Data source: grammar_points_data.json["だけでなく"]
+//
+// Structures to test:
+//   - standard[0]: Verb + だけでなく
+//   - standard[1]: い-Adjective + だけでなく
+//   - standard[2]: な-Adjective + な + だけでなく
+//   - standard[3]: Noun + だけでなく
+//   - Variants: だけではなく, だけじゃなく, だけでなくて
+//
+// Examples from data:
+//   - 運動をするだけでなく - not only exercise
+//   - 暑いだけでなく - not only hot
+//   - 静かなだけでなく - not only quiet
+//   - 車だけでなく - not only a car
+#[cfg(test)]
+mod dakedenaku_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb + だけでなく
+    #[test]
+    fn test_dakedenaku_verb() {
+        let sentence = "痩せるためには運動をするだけでなく、食べるものにも気をつけなくてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけでなく");
+        assert_pattern_range(&patterns, "だけでなく", 10, 17); // するだけでなく
+    }
+
+    // Testing: structure.standard[1] - い-Adjective + だけでなく
+    #[test]
+    fn test_dakedenaku_i_adjective() {
+        let sentence = "名古屋の夏は暑いだけでなく、湿気もひどい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけでなく");
+        assert_pattern_range(&patterns, "だけでなく", 6, 13); // 暑いだけでなく
+    }
+
+    // Testing: structure.standard[2] - な-Adjective + な + だけでなく
+    // Note: Range starts from "な" due to tokenization (静か + な are separate tokens)
+    #[test]
+    fn test_dakedenaku_na_adjective() {
+        let sentence = "田舎は静かなだけでなく、空気もきれいだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけでなく");
+        assert_pattern_range(&patterns, "だけでなく", 5, 11); // なだけでなく
+    }
+
+    // Testing: structure.standard[3] - Noun + だけでなく
+    #[test]
+    fn test_dakedenaku_noun() {
+        let sentence = "トーマスは車だけでなく、バイクとボートも持っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけでなく");
+        assert_pattern_range(&patterns, "だけでなく", 5, 11); // 車だけでなく
+    }
+
+    // Testing: Variant - だけではなく (with は)
+    #[test]
+    fn test_dakedenaku_with_wa() {
+        let sentence = "彼は英語だけではなく、フランス語も話せる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけでなく");
+        assert_pattern_range(&patterns, "だけでなく", 2, 10); // 英語だけではなく
+    }
+
+    // Testing: Variant - だけじゃなく (casual with じゃ)
+    #[test]
+    fn test_dakedenaku_janaku() {
+        let sentence = "タケルはピアノだけじゃなく、ギターも弾けると聞いた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけでなく");
+        assert_pattern_range(&patterns, "だけでなく", 4, 13); // ピアノだけじゃなく
+    }
+
+    // Testing: Variant - だけでなくて (with て)
+    #[test]
+    fn test_dakedenaku_with_te() {
+        let sentence = "角にあるラーメン屋はおいしいだけでなくて量も多い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけでなく");
+        assert_pattern_range(&patterns, "だけでなく", 10, 20); // おいしいだけでなくて
+    }
+}
