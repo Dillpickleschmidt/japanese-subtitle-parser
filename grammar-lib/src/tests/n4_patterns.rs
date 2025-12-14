@@ -9625,3 +9625,104 @@ mod mitai_tests {
     }
 }
 
+// ============================================================================
+// ようだ Pattern Tests
+// ============================================================================
+
+mod youda_tests {
+    use super::*;
+
+    // Pattern: ようだ (seems like, appears to be)
+    // Data source: grammar_points_data.json["ようだ"]
+    // More formal than みたい, based on direct observation
+    // Structure variants: 4 standard + 4 polite
+
+    #[test]
+    fn test_youda_verb() {
+        // Testing: Verb + よう + だ
+        let sentence = "ここに大きなビルが出来るようだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようだ");
+        assert_pattern_range(&patterns, "ようだ", 9, 15); // 出来るようだ
+    }
+
+    #[test]
+    fn test_youda_i_adjective() {
+        // Testing: い-Adjective + よう + だ
+        let sentence = "あそこのプールは深いようだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようだ");
+        assert_pattern_range(&patterns, "ようだ", 8, 13); // 深いようだ
+    }
+
+    #[test]
+    fn test_youda_na_adjective() {
+        // Testing: な-Adjective + な + よう + だ
+        let sentence = "彼は明日のテストに自信があると皆に言っているが、本当は不安なようだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようだ");
+        assert_pattern_range(&patterns, "ようだ", 29, 33); // なようだ
+    }
+
+    #[test]
+    fn test_youda_noun() {
+        // Testing: Noun + の + よう + だ
+        let sentence = "ヨーダは宇宙人のようだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようだ");
+        assert_pattern_range(&patterns, "ようだ", 7, 11); // のようだ
+    }
+
+    #[test]
+    fn test_youda_verb_polite() {
+        // Testing: Verb + よう + です
+        let sentence = "明日は雨が降るようです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようだ");
+        assert_pattern_range(&patterns, "ようだ", 5, 11); // 降るようです
+    }
+
+    #[test]
+    fn test_youda_i_adjective_polite() {
+        // Testing: い-Adjective + よう + です
+        let sentence = "この問題は難しいようです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようだ");
+        assert_pattern_range(&patterns, "ようだ", 5, 12); // 難しいようです
+    }
+
+    #[test]
+    fn test_youda_na_adjective_polite() {
+        // Testing: な-Adjective + な + よう + です
+        let sentence = "彼女は料理が上手なようです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようだ");
+        assert_pattern_range(&patterns, "ようだ", 8, 13); // なようです
+    }
+
+    #[test]
+    fn test_youda_noun_polite() {
+        // Testing: Noun + の + よう + です
+        let sentence = "彼は医者のようです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようだ");
+        assert_pattern_range(&patterns, "ようだ", 4, 9); // のようです
+    }
+}
+

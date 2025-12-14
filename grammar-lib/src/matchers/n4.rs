@@ -1543,9 +1543,39 @@ pub fn verb_you() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ようだ
+// Pattern: ようだ (seems like/appears to be - formal observation)
+// Structures: Verb/Adj + よう + だ/です、な-Adj + な + よう + だ/です、Noun + の + よう + だ/です
 pub fn youda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match よう as dependent noun with auxiliary verb stem
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Match だ or です (auxiliary verbs)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "だ" || token.base_form == "です")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Can follow any word (verb, adjective, noun)
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaDesuMatcher)))),
+    ]
 }
 
 // Pattern: ぜんぜん (not at all - with negative expressions)
