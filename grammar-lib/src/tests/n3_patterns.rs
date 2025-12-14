@@ -11729,3 +11729,80 @@ mod youna_ki_ga_suru_tests {
         assert!(has_expected_range, "Expected pattern range [7-18] for 'できるような気がします' not found");
     }
 }
+
+// ========== わけだ (so/no wonder/that's why) ==========
+// Pattern: わけだ (so/no wonder/that's why - logical conclusion)
+// Data source: grammar_points_data.json["わけだ"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + (という) + わけだ
+//   standard[1]: い-Adjective + (という) + わけだ
+//   standard[2]: な-Adjective + な + わけだ
+//   standard[3]: Noun + の + わけだ
+//   polite[0-3]: Same + です
+
+mod wakeda_tests {
+    use super::*;
+
+    // Test: Verb + という + わけだ
+    // Structure: standard[0] - "Verb + (という) + わけだ"
+    #[test]
+    fn test_verb_wakeda() {
+        let sentence = "だから珍しく遅れて来たというわけだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけだ");
+        assert_pattern_range(&patterns, "わけだ", 11, 17); // というわけだ
+    }
+
+    // Test: い-Adjective + わけだ (without という)
+    // Structure: standard[1] - "い-Adjective + (という) + わけだ"
+    // Note: The い-adj 'なわけだ' looks confusing but な is part of the word boundary
+    // The actual match is just わけだ (chars 13-16)
+    #[test]
+    fn test_i_adjective_wakeda() {
+        let sentence = "どうりで一年たっても下手なわけだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけだ");
+        assert_pattern_range(&patterns, "わけだ", 13, 16); // わけだ (な is the な-adj marker for 下手)
+    }
+
+    // Test: な-Adjective + な + わけだ (without という)
+    // Structure: standard[2] - "な-Adjective + な + わけだ"
+    #[test]
+    fn test_na_adjective_wakeda() {
+        let sentence = "だから定休日なわけだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけだ");
+        assert_pattern_range(&patterns, "わけだ", 7, 10); // わけだ
+    }
+
+    // Test: Noun + の + わけだ
+    // Structure: standard[3] - "Noun + の + わけだ"
+    #[test]
+    fn test_noun_no_wakeda() {
+        let sentence = "あなたは学生のわけだね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけだ");
+        assert_pattern_range(&patterns, "わけだ", 7, 10); // わけだ
+    }
+
+    // Test: Verb + という + わけです (polite)
+    // Structure: polite[0] - "Verb + (という) + わけ + です"
+    #[test]
+    fn test_verb_wakeda_polite() {
+        let sentence = "だから指を動かしたら痛かったというわけですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけだ");
+        assert_pattern_range(&patterns, "わけだ", 14, 21); // というわけです
+    }
+}
