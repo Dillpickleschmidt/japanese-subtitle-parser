@@ -2563,9 +2563,27 @@ pub fn tokiita() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 聞こえる
+// Pattern: 聞こえる (to be audible, can be heard)
+// Structures: Noun + が + 聞こえる
 pub fn kikoeru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match が particle (case marker)
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        TokenMatcher::specific_verb("聞こえる"),
+    ]
 }
 
 // Pattern: 見える (to be visible, can be seen)

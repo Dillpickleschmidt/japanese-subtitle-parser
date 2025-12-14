@@ -9419,3 +9419,38 @@ mod mieru_tests {
     }
 }
 
+// Pattern: 聞こえる (to be audible, can be heard)
+// Data source: grammar_points_data.json["聞こえる"]
+// Testing: structure.standard[0] - "Noun + が + 聞（き）こえる"
+//          structure.polite[0] - "Noun + が + 聞（き）こえます"
+//
+// Note: Structures [1-3] are just normal adverbial usage with the verb,
+// not special grammar patterns requiring detection:
+//   - い-Adj[く] + 聞こえる (adverb modifying verb)
+//   - な-Adj/Noun + に + 聞こえる (adverb modifying verb)
+mod kikoeru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + が + 聞（き）こえる"
+    #[test]
+    fn test_kikoeru_standard() {
+        let sentence = "車の音が聞こえる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "聞こえる");
+        assert_pattern_range(&patterns, "聞こえる", 2, 8); // 音が聞こえる
+    }
+
+    // Testing: structure.polite[0] - "Noun + が + 聞（き）こえます"
+    #[test]
+    fn test_kikoeru_polite() {
+        let sentence = "隣の部屋から話し声が聞こえます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "聞こえる");
+        assert_pattern_range(&patterns, "聞こえる", 6, 15); // 話し声が聞こえます
+    }
+}
+
