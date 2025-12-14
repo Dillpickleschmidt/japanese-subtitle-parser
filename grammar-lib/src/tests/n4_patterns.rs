@@ -10631,3 +10631,32 @@ mod rashii_u2461_tests {
     // }
 }
 
+// Pattern: るところだ (about to do, on the verge of)
+// Data source: grammar_points_data.json["るところだ"]
+// Testing all structure variants
+mod rutokoroda_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[る] + ところ + だ"
+    #[test]
+    fn test_rutokoroda_standard() {
+        let sentence = "彼は手紙を書くところだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "るところだ");
+        assert_pattern_range(&patterns, "るところだ", 5, 11); // 書くところだ
+    }
+
+    // Testing: structure.polite[0] - "Verb[る] + ところ + です"
+    #[test]
+    fn test_rutokoroda_polite() {
+        let sentence = "今から友達と会うところです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "るところだ");
+        assert_pattern_range(&patterns, "るところだ", 6, 13); // 会うところです
+    }
+}
+

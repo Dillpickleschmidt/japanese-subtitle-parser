@@ -1089,9 +1089,43 @@ pub fn narubeku() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(NarubekuMatcher))]
 }
 
-// Pattern: るところだ
+// Pattern: るところだ (about to do, on the verge of)
+// Structures: Verb[る] + ところ + だ/です
 pub fn rutokoroda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ところ as dependent noun (非自立) with 副詞可能
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl super::Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.base_form == "ところ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ or です (auxiliary verbs)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl super::Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.features.get(4).is_some_and(|f| f == "特殊・ダ")
+                    || token.features.get(4).is_some_and(|f| f == "特殊・デス"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Verb {
+            conjugation_form: Some("基本形"),
+            base_form: None,
+        },
+        TokenMatcher::Custom(Arc::new(TokoroMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: のに (despite)

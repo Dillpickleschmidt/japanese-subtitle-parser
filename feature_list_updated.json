@@ -3544,13 +3544,13 @@
   {
     "pattern_name": "ほとんど",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The adverb ほとんど is used in many situations in Japanese, and often translates as 'most', 'hardly any', 'almost all', a... [2 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3642,13 +3642,13 @@
   {
     "pattern_name": "みたいに・みたいな",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As learned in our previous lesson about みたい , it is a な-Adjective [5 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3698,13 +3698,13 @@
   {
     "pattern_name": "ように",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When partnered with verbs in the potential form, or in the negative form, the auxiliary verb ようだ (in its adverbial fo... [4 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3712,13 +3712,13 @@
   {
     "pattern_name": "ようにいう",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ようにいう is an expression which combines the auxiliary verb ようだ , with the う-Verb 言（い）う [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3726,13 +3726,13 @@
   {
     "pattern_name": "ようにいのる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As we have seen several times now, the auxiliary verb ようだ is frequently used with verbs, to express that the 'complet... [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3768,13 +3768,13 @@
   {
     "pattern_name": "ように・ような",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "We have seen many cases now where the auxiliary verb ようだ may be modified slightly to show that something is being don... [3 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3796,13 +3796,13 @@
   {
     "pattern_name": "よていだ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "予定（よてい） だ is an expression that functions very similarly to つもりだ 'to intend to do' [2 std, 2 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3824,13 +3824,13 @@
   {
     "pattern_name": "らしい ①",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The auxiliary verb らしい is very similar to the auxiliary verbs そうだ and ようだ , in that it expresses something that the s... [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3838,13 +3838,13 @@
   {
     "pattern_name": "らしい ②",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In our first らしい lesson, we discussed the auxiliary verb use of らしい [3 std, 3 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3852,13 +3852,13 @@
   {
     "pattern_name": "るところだ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The noun ところ (sometimes shortened to とこ ) is often used to describe the 'place' or 'situation' in which something hap... [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null
