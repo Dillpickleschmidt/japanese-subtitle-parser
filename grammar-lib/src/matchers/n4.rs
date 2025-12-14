@@ -2574,9 +2574,65 @@ pub fn verb_te_b_2() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Causative-Passive
+// Pattern: Causative-Passive (to be made to do)
+// Structures:
+//   Long form: Verb[未然形] + せ/させ + られる (e.g., 食べさせられる, 歩かせられる)
+//   Short form: Verb_causative[未然形] + れる (e.g., 飲まされる = 飲ます + れる)
 pub fn causative_passive() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match verb in 未然形 or 未然レル接続 (for する)
+    #[derive(Debug)]
+    struct MizenFormMatcher;
+    impl Matcher for MizenFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Must be a verb
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+
+            // Check conjugation form in features[5]
+            if let Some(conj_form) = token.features.get(5) {
+                conj_form == "未然形" || conj_form == "未然レル接続"
+            } else {
+                false
+            }
+        }
+    }
+
+    // Match causative suffix せる/させる in 未然形 (optional for short form)
+    #[derive(Debug)]
+    struct CausativeSuffixMatcher;
+    impl Matcher for CausativeSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Must be a verb (接尾)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && (token.base_form == "せる" || token.base_form == "させる")
+                && token.features.get(5).is_some_and(|form| form == "未然形")
+        }
+    }
+
+    // Match passive suffix られる (or れる for short form)
+    #[derive(Debug)]
+    struct PassiveSuffixMatcher;
+    impl Matcher for PassiveSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Must be a verb (接尾)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && (token.base_form == "られる" || token.base_form == "れる")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MizenFormMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CausativeSuffixMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(PassiveSuffixMatcher)),
+    ]
 }
 
 // Pattern: Verb[て]・Noun[で] + B

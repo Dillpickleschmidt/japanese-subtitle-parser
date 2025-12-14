@@ -5589,3 +5589,107 @@ mod temo_tests {
         assert_pattern_range(&patterns, "ても", 5, 9); // なくても
     }
 }
+
+// Pattern: Causative-Passive
+// Data source: grammar_points_data.json["Causative-Passive"]
+//
+// Structure variants to test:
+// - る-Verbs: Verb[未然形] + させられる (e.g., 見させられる)
+// - う-Verbs (long form): Verb[未然形] + (a)せられる (e.g., 歩かせられる)
+// - う-Verbs (short form): Verb[未然形] + (a)される (e.g., 歩かされる)
+// - する exception: させられる
+// - くる exception: こさせられる
+// - Polite forms: Add ます
+// - Past forms: Replace る with た
+#[cfg(test)]
+mod causative_passive_tests {
+    use super::*;
+
+    // Testing: る-Verb (る1) + させられる
+    #[test]
+    fn test_ru_verb_saseru_passive() {
+        let sentence = "おばあちゃんの家に行くとお腹がいっぱいでもいっぱい食べさせられる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Causative-Passive");
+        assert_pattern_range(&patterns, "Causative-Passive", 25, 32); // 食べさせられる
+    }
+
+    // Testing: う-Verb (short form) + される - past tense
+    #[test]
+    fn test_u_verb_short_past() {
+        let sentence = "先輩に色んなお酒を飲まされたから頭が痛い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Causative-Passive");
+        assert_pattern_range(&patterns, "Causative-Passive", 9, 14); // 飲まされた
+    }
+
+    // Testing: る-Verb + させられる (non-past negative context)
+    #[test]
+    fn test_ru_verb_negative_context() {
+        let sentence = "友達に冷たい水を浴びさせられるのが嫌いだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Causative-Passive");
+        assert_pattern_range(&patterns, "Causative-Passive", 8, 15); // 浴びさせられる
+    }
+
+    // Testing: する exception → させられる
+    #[test]
+    fn test_suru_exception() {
+        let sentence = "上司に力仕事をさせられる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Causative-Passive");
+        assert_pattern_range(&patterns, "Causative-Passive", 7, 12); // させられる
+    }
+
+    // Testing: くる exception → こさせられる
+    #[test]
+    fn test_kuru_exception() {
+        let sentence = "友達に知らないバンドのコンサートに連れてこさせられる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Causative-Passive");
+        assert_pattern_range(&patterns, "Causative-Passive", 20, 26); // こさせられる
+    }
+
+    // Testing: う-Verb (long form) + せられる
+    #[test]
+    fn test_u_verb_long_form() {
+        let sentence = "子供の頃は親に毎日歩かせられていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Causative-Passive");
+        assert_pattern_range(&patterns, "Causative-Passive", 9, 14); // 歩かせられ
+    }
+
+    // Testing: Polite form + ます
+    #[test]
+    fn test_polite_form() {
+        let sentence = "会社では残業をさせられますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Causative-Passive");
+        assert_pattern_range(&patterns, "Causative-Passive", 7, 13); // させられます
+    }
+
+    // Testing: て-form continuation (させられている)
+    #[test]
+    fn test_te_iru_continuation() {
+        let sentence = "子供の頃は兄が勉強をさせられていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Causative-Passive");
+        assert_pattern_range(&patterns, "Causative-Passive", 10, 14); // させられ
+    }
+}
