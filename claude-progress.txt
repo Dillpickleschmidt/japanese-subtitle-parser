@@ -1,3 +1,87 @@
+## Session 289 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (らしい ② - typical of/characteristic)
+**Tests added**: 2 (all passing)
+**Total tests**: 1837 (was 1835)
+
+### Pattern Implemented: らしい ② (typical of, characteristic)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: The い-adjective usage of らしい means "typical of" or "befitting" and expresses that something has characteristics expected of a particular noun. Unlike らしい ① (auxiliary verb for hearsay/conjecture), this pattern specifically matches **compound adjectives** that are tokenized as single い-Adjective tokens.
+
+**Key Distinction**:
+- **らしい ① (助動詞)**: Hearsay/conjecture - "apparently", "seems like" (based on evidence)
+- **らしい ② (形容詞)**: Characteristic - "typical of", "befitting", "like"
+
+**Tokenization Insight**:
+1. **Compound adjectives** (UNAMBIGUOUS らしい ②):
+   - 男らしい → Single token 形容詞/自立, base=男らしい
+   - 女らしい → Single token 形容詞/自立, base=女らしい
+   - These are unambiguously らしい ② (characteristic)
+
+2. **Auxiliary verb form** (AMBIGUOUS - could be ① OR ②):
+   - お兄ちゃんらしく → Noun + 助動詞(base=らしい)
+   - １０月らしい → Noun + 助動詞(base=らしい)
+   - These are structurally identical to らしい ① (hearsay)
+   - Only semantic context distinguishes them
+
+**Structures tested**: 2 tests covering compound adjective forms
+1. Predicate form: 男らしい (manly - basic form)
+2. Negative form: 女らしくない (not ladylike - negative form)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (rashii_u2461 function, lines 6656-6688)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (rashii_u2461_tests module, lines 10542-10640)
+- Pattern: grammar-lib/src/patterns.rs (RashiiU2461 - already existed at line 2373)
+
+**Tokenization pattern**:
+```
+Compound adjective (unambiguous らしい ②):
+男らしい → Single token 形容詞/自立, base=男らしい
+女らしく → Single token 形容詞/自立, 連用テ接続, base=女らしい
+
+Auxiliary verb (ambiguous - detected by らしい ①):
+春 (Noun) + らしい (助動詞, base=らしい)
+お兄ちゃん (Noun) + らしく (助動詞, base=らしい)
+```
+
+**Key implementation points**:
+1. RashiiAdjMatcher checks token is 形容詞/自立 AND base_form ends with "らしい"
+2. This matches only compound adjectives like 男らしい, 女らしい (unambiguous)
+3. Auxiliary verb forms (Noun + らしい) are ambiguous and detected by らしい ① pattern
+4. Pattern range includes the full adjective (男らしい or 女らしくない)
+5. Priority 1 means detected but not highlighted in browser extension
+
+**Test Quality**:
+- Tests use realistic sentences from grammar_points_data.json
+- Cover both affirmative (男らしい) and negative (女らしくない) forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Correct character ranges verified
+- Commented out undetectable auxiliary verb forms with detailed TODO explanation
+
+**Challenges Solved**:
+1. Understanding that らしい can be tokenized in two ways:
+   - As part of compound adjective (形容詞/自立) → Unambiguously らしい ②
+   - As auxiliary verb (助動詞) → Ambiguous between らしい ① and らしい ②
+2. Recognizing that only certain well-established compounds (男らしい, 女らしい) are tokenized as single adjectives
+3. Most Noun + らしい combinations are tokenized as separate tokens (auxiliary verb form)
+4. Documenting the ambiguity with detailed TODO comments explaining why auxiliary forms are undetectable
+5. Focusing the pattern on the unambiguous cases only (compound adjectives)
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted. This is appropriate as it's a common adjectival construction.
+
+**Linguistic Note**: The adjective らしい (typical of, befitting) expresses that something has characteristics that are expected or appropriate for the noun it modifies. When used as a compound adjective (男らしい = manly, 女らしい = ladylike), it's unambiguously the characteristic meaning. However, when used as an auxiliary verb after a noun (春らしい = spring-like/apparently spring), it's structurally identical to the hearsay usage らしい ① and only context can distinguish the meaning.
+
+**Next pattern to implement**: るところだ (in the process of) - progressive action pattern
+
+---
+
 ## Session 288 - 2025-12-14
 
 ### ✅ Session Summary
