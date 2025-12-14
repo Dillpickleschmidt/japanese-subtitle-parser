@@ -6243,3 +6243,68 @@ mod passive_tests {
         assert_pattern_range(&patterns, "Verb［れる・られる］", 3, 8); // 叱られます
     }
 }
+
+// Pattern: いたす (humble speech - to do)
+// Data source: grammar_points_data.json["いたす"]
+// Testing: structure.standard[0-2] and polite[0-2]
+//
+// Structures:
+//   - standard[0]: する → いたす
+//   - standard[1]: お + Verb[stem] + いたす
+//   - standard[2]: ご + [する]Verb + いたす
+//   - polite[0]: する → いたす (polite form)
+//   - polite[1]: お + Verb[stem] + いたします
+//   - polite[2]: ご + [する]Verb + いたします
+mod itasu_tests {
+    use super::*;
+
+    #[test]
+    fn test_itasu_suru_replacement() {
+        let sentence = "私たちが用意いたします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いたす");
+        assert_pattern_range(&patterns, "いたす", 4, 11); // 用意いたします
+    }
+
+    #[test]
+    fn test_itasu_o_verb_stem() {
+        let sentence = "コートはこちらでお預かりいたします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いたす");
+        assert_pattern_range(&patterns, "いたす", 8, 17); // お預かりいたします
+    }
+
+    #[test]
+    fn test_itasu_go_suru_verb() {
+        let sentence = "こちらからご連絡いたします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いたす");
+        assert_pattern_range(&patterns, "いたす", 5, 13); // ご連絡いたします
+    }
+
+    #[test]
+    fn test_itasu_o_verb_casual() {
+        let sentence = "お手伝いいたす";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いたす");
+        assert_pattern_range(&patterns, "いたす", 0, 7); // お手伝いいたす
+    }
+
+    #[test]
+    fn test_itasu_go_verb_casual() {
+        let sentence = "ご案内いたす";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いたす");
+        assert_pattern_range(&patterns, "いたす", 0, 6); // ご案内いたす
+    }
+}

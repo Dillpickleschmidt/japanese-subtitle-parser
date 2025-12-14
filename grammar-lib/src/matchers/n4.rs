@@ -3262,9 +3262,92 @@ pub fn o_u301c_suru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: いたす
+// Pattern: いたす (humble speech - to do)
+// Structures:
+//   1. Noun[サ変接続] + いたす (する → いたす)
+//   2. お + Verb[連用形] + いたす
+//   3. ご + Noun[サ変接続] + いたす
 pub fn itasu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match サ変接続 nouns (can become する verbs)
+    #[derive(Debug)]
+    struct SahenNounMatcher;
+    impl super::Matcher for SahenNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+        }
+    }
+
+    // Match お or ご prefix
+    #[derive(Debug)]
+    struct OGoPrefixMatcher;
+    impl super::Matcher for OGoPrefixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "お" || token.surface == "ご")
+                && token.pos.first().is_some_and(|pos| pos == "接頭詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "名詞接続")
+        }
+    }
+
+    // Match verb in 連用形 (stem form)
+    #[derive(Debug)]
+    struct VerbStemMatcher;
+    impl super::Matcher for VerbStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match いたす verb (non-independent: 非自立)
+    #[derive(Debug)]
+    struct ItasuMatcher;
+    impl super::Matcher for ItasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いたす"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                    || token.pos.get(1).is_some_and(|pos| pos == "自立"))
+        }
+    }
+
+    // Match ます polite auxiliary
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl super::Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: (Optional お/ご) + (Verb[連用形] OR Noun[サ変接続]) + いたす + (Optional ます)
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            OGoPrefixMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(VerbStemOrSahenNounMatcher)),
+        TokenMatcher::Custom(Arc::new(ItasuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
+}
+
+// Helper matcher: Verb[連用形] OR Noun[サ変接続]
+#[derive(Debug)]
+struct VerbStemOrSahenNounMatcher;
+impl Matcher for VerbStemOrSahenNounMatcher {
+    fn matches(&self, token: &crate::KagomeToken) -> bool {
+        // Verb in 連用形
+        let is_verb_stem = token.pos.first().is_some_and(|pos| pos == "動詞")
+            && token.features.get(5).is_some_and(|f| f == "連用形");
+
+        // Noun with サ変接続
+        let is_sahen_noun = token.pos.first().is_some_and(|pos| pos == "名詞")
+            && token.pos.get(1).is_some_and(|pos| pos == "サ変接続");
+
+        is_verb_stem || is_sahen_noun
+    }
 }
 
 // Pattern: ていただけませんか
