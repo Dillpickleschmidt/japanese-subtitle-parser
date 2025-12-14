@@ -1,3 +1,87 @@
+## Session 330 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (は言うまでもない ①)
+**Tests added**: 6 (all passing)
+**Total tests**: 2097 passing, 1 ignored (was 2091 passing, 1 ignored)
+
+### ✅ Pattern Completed: は言うまでもない ① (it goes without saying / needless to say)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: は言うまでもない is a structure that combines the adverbial particle は, the verb 言う (to say), the adverbial particles まで and も, and the adjective ない. It translates as "it goes without saying that (A)" or "needless to say (A)". This pattern expresses that something is so obvious it doesn't need to be stated.
+
+**Structures tested**: 6 comprehensive tests covering all tokenization variants
+1. Phrase (のは) + 言うまでもない (kanji single-token form): 彼の日本語がうまいのは言うまでもないが (It goes without saying that his Japanese is good)
+2. Noun (ピアノ) + も + いうまでもない (hiragana split form): ピアノもいうまでもない (The piano too, needless to say)
+3. Verb + ことは + いうまでもない (split form): 電気自動車の数が増えることはいうまでもない (It goes without saying that the number of electric cars will increase)
+4. い-Adjective + ということは + いうまでもない (split form): 師匠の戦い方が凄いということはいうまでもない (It goes without saying how amazing the master's fighting style is)
+5. Phrase (なのは) + いうまでもない (split form): 彼の成績がクラスで一番なのはいうまでもない (It goes without saying that his grades are the best in class)
+6. Phrase + は + 言うまでもありません (polite form): 彼の才能は言うまでもありませんが (It goes without saying that his talent is amazing, but...)
+
+**Implementation details**:
+- Matchers: grammar-lib/src/matchers/n3.rs (three variants: haiumademonai_u2460_single, haiumademonai_u2460_split, haiumademonai_u2460_polite, lines 4391-4588)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (haiumademonai_tests module, lines 9929-10005)
+- Patterns: grammar-lib/src/patterns.rs (three definitions: HaiumademonaiU2460Single, HaiumademonaiU2460Split, HaiumademonaiU2460Polite, lines 3617-3639)
+
+**Tokenization patterns**:
+```
+Kagome tokenizes this pattern in THREE different ways:
+
+1. Kanji single-token form:
+   - 言うまでもない (形容詞/自立) - compound adjective
+
+2. Hiragana/kanji split form (standard):
+   - いう/言う (動詞/自立, base='いう'/'言う') - verb "to say"
+   - まで (助詞/副助詞) - particle "until/as far as"
+   - も (助詞/係助詞) - particle "also/even"
+   - ない (形容詞/自立) - adjective "not exist"
+
+3. Polite split form:
+   - 言う/いう (動詞/自立, base='いう'/'言う') - verb "to say"
+   - まで (助詞/副助詞) - particle "until/as far as"
+   - も (助詞/係助詞) - particle "also/even"
+   - あり (動詞/自立, base='ある', 連用形) - verb "to exist"
+   - ませ (助動詞, base='ます', 未然形) - polite auxiliary
+   - ん (助動詞, base='ん') - negative auxiliary
+```
+
+**Key implementation points**:
+1. Created THREE separate pattern definitions to handle different tokenizations
+2. Single-token matcher (priority 3): Any + は/も + 言うまでもない (compound adjective)
+3. Split matcher (priority 3): Any + は/も + いう/言う + まで + も + ない
+4. Polite matcher (priority 3): Any + は/も + いう/言う + まで + も + あり + ませ + ん
+5. HaMoParticleMatcher accepts both は and も (topic/binding particles)
+6. IuVerbMatcher accepts both hiragana (いう) and kanji (言う) surface forms
+7. IuVerbMatcher accepts both hiragana and kanji base_form values
+8. All matchers use specific POS checks to ensure accuracy
+9. Pattern ranges include full construction from preceding element through final particle/adjective
+
+**Pattern ranges**: Include full construction (preceding + は/も + 言うまでもない/いうまでもない/言うまでもありません)
+- Single-token: "のは言うまでもない" (chars 9-18)
+- Split hiragana: "ピアノもいうまでもない" (chars 11-22)
+- Split with こと: "ことはいうまでもない" (chars 24-34)
+- Split with ということ: "ことはいうまでもない" (chars 12-22)
+- Split with なの: "のはいうまでもない" (chars 12-21)
+- Polite: "才能は言うまでもありません" (chars 2-15)
+
+**Test Quality**:
+- All 6 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all three tokenization variants: single, split, polite
+- Test both は and も particles
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The literal meaning is "even to the extent of saying (A), it does not exist". By combining まで (extent/limit) + も (emphasis) + ない (not exist), the pattern expresses that something is so obvious that stating it is unnecessary. The pattern can be preceded by phrases nominalized with の, こと, or ということ.
+
+**Technical Challenge**: This pattern required handling three distinct tokenization strategies from Kagome. The kanji form "言うまでもない" tokenizes as a single compound adjective, while the split forms break into individual components. The IuVerbMatcher needed to accept both hiragana and kanji for both surface and base_form, as Kagome's normalization varies by context. Creating three separate pattern definitions with unique suffixed names (_single, _split, _polite) ensures all forms are detected correctly while maintaining clear test organization.
+
+---
+
 ## Session 329 - 2025-12-14
 
 ### ✅ Session Summary
