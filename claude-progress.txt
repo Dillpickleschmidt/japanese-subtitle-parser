@@ -1,3 +1,73 @@
+## Session 325 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (に限る)
+**Tests added**: 5 (all passing)
+**Total tests**: 2075 passing, 1 ignored (was 2070 passing, 1 ignored)
+
+### ✅ Pattern Completed: に限る (nothing better than / limited to)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: に限る is a combination of the case-marking particle に (marking a location) and the verb 限る (to limit). It expresses "there's nothing better than (A)" or "there's nothing like (A)". The literal meaning of 限る is "to set a boundary", so に限る marks a situation as being "the boundary" or "limited to" something. The pattern can be used with verbs (both affirmative and negative) and nouns.
+
+**Structures tested**: 5 comprehensive tests covering all structure variants
+1. Verb[る] + に限る: 暑い日は冷たいシャワーを浴びるにかぎる (There is nothing better than taking a cold shower on a hot day)
+2. Noun + に限る: 回転寿司はくら寿司にかぎる (There is nothing better than Kurazushi when it comes to kaiten-sushi)
+3. Verb[ない] + に限る: 寒い日には温かい部屋を出ないにかぎる (There is nothing better than not leaving your warm room on a cold day)
+4. Verb[る] + に限ります (polite): 暑い日は冷たいビールを飲むにかぎります (There is nothing better than drinking cold beer on a hot day)
+5. Noun + に限ります (polite): この施設を利用できるのはこのアパートの住民にかぎります (Using this facility is limited to those who live in this apartment complex)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nikagiru, lines 4721-4760)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nikagiru_tests module, lines 9630-9690)
+- Pattern: grammar-lib/src/patterns.rs (Nikagiru, line 3809)
+
+**Tokenization pattern**:
+```
+Standard structure (all variants):
+- Preceding element (verb or noun) - Any token
+- に (助詞/格助詞/一般) - case-marking particle
+- かぎる/かぎり (動詞/自立, base='かぎる', 五段・ラ行) - verb
+  - 基本形 (dictionary): かぎる
+  - 連用形 (conjunctive before ます): かぎり
+- Optional: ます (助動詞) - polite auxiliary
+
+The pattern accepts both hiragana (かぎる) and kanji (限る) forms.
+```
+
+**Key implementation points**:
+1. Single unified matcher handles all variants (verb/noun, affirmative/negative, plain/polite)
+2. NiParticleMatcher checks に as 助詞/格助詞
+3. KagiruVerbMatcher accepts both かぎる/限る (dictionary) and かぎり/限り (conjunctive)
+4. MasuAuxiliaryMatcher is optional to handle polite forms
+5. TokenMatcher::Any allows any preceding token (verb or noun)
+6. Pattern structure: Any + に + かぎる/かぎり + optional ます
+
+**Pattern ranges**: Include full construction (preceding word + に限る/に限ります)
+- Verb examples: "浴びるにかぎる" (chars 12-19), "飲むにかぎります" (chars 11-19)
+- Noun examples: "寿司にかぎる" (chars 7-13), "住民にかぎります" (chars 19-27)
+- Negative verb: "ないにかぎる" (chars 12-18)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: verb (affirmative/negative), noun, plain, polite
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The literal meaning of 限る is "to set a boundary" (境を付ける). The に particle marks the location or situation within which the speaker states as being "the boundary". This is why に限る can translate as:
+1. "There's nothing better than (A)" - when expressing preference
+2. "To be limited to (A)" - when expressing restriction
+3. "To be bound to (A)" - when expressing certainty
+
+When used with negative verbs (Verb[ない] + に限る), care must be taken with translation as it expresses "there is nothing better than NOT doing (A)".
+
+---
+
 ## Session 324 - 2025-12-14
 
 ### ✅ Session Summary
