@@ -1,3 +1,73 @@
+## Session 237 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (そうに・そうな - appearance-based adverbial/attributive forms)
+**Tests added**: 8 (all passing)
+**Total tests**: 1574 (was 1566)
+
+### Pattern Implemented: そうに・そうな (seems like/looks like - adverbial and attributive)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Extends the そう pattern by adding に (adverbial form) or な (attributive form) endings to express appearance-based conjecture in different grammatical contexts.
+
+**Structures tested**: 8 tests covering all structure variants
+1. Verb[stem] + そうに + Verb: 怒りそうに (seems angry - adverbial)
+2. い-Adj[stem] + そうに + Verb: 忙しそうに (seems busy - adverbial)
+3. な-Adj + そうに + Verb: 簡単そうに (seems easy - adverbial)
+4. Verb negative + そうな + Noun: 怒らなそうな (doesn't seem angry - attributive)
+5. い-Adj[stem] + そうな + Noun: つまらなそうな (seems boring - attributive)
+6. な-Adj negative + そうな + Noun: 大事じゃなさそうな (doesn't seem important - attributive)
+7. い-Adj negative + さ + そうに: 辛くなさそうに (doesn't seem spicy - with さ insertion)
+8. な-Adj negative + さ + そうに: 美味しくなさそうに (doesn't seem tasty - with さ insertion)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 1777-1890)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 6991-7091)
+- Pattern structure: (Verb/Adj[stem] | な[negative]) + [さ] + そう + (に | な)
+
+**Tokenization patterns discovered**:
+- そう can be 名詞/接尾/助動詞語幹 OR 副詞/助詞類接続 (negative forms)
+- に can be 助詞/格助詞/一般 OR 助詞/副詞化 (both valid)
+- な (attributive) is 助動詞, 体言接続, base_form=だ
+- さ insertion: ない (adj/aux, ガル接続) + さ (名詞/接尾/特殊) + そう
+
+**Matcher components**:
+1. StemOrNaiMatcher - Matches verb/adj stems OR な (negative auxiliary/adjective)
+2. SaSuffixMatcher (Optional) - Matches さ for negative forms (なさそう)
+3. SouAuxiliaryMatcher - Matches そう (名詞/接尾/助動詞語幹 OR 副詞/助詞類接続)
+4. NiOrNaMatcher - Matches に (adverbial) or な (attributive) endings
+
+**Key characteristics**:
+- Extends そう pattern with grammatical endings for adverbs and adjectives
+- そうに modifies verbs/adjectives adverbially (describes manner)
+- そうな modifies nouns attributively (describes quality)
+- Handles complex negative forms with さ insertion for adjectives
+- Reuses stem matching logic from そう pattern
+- Priority 2 (important construction pattern)
+
+**Workflow followed**:
+1. ✅ Read grammar_points_data.json for structure variants (6 standard, 0 polite)
+2. ✅ Found existing stub function at line 1778-1780
+3. ✅ Wrote 8 tests with print_debug() covering all structure forms
+4. ✅ Analyzed tokenization - identified そう, に, な variations
+5. ✅ Implemented matcher extending そう pattern with に/な endings
+6. ✅ Verified all tests detect patterns correctly (8/8)
+7. ✅ Removed print_debug() and added proper assertions with correct character ranges
+8. ✅ Verified all 1574 tests pass (8 new tests, no regressions)
+9. ✅ Updated feature_list.json (category: "complete", passes: true)
+10. ✅ Committed changes with detailed commit message
+
+**Environment Status**:
+- All 1574 tests passing
+- No regressions
+- Clean git state
+- feature_list.json updated
+- Ready for next pattern
+
 ## Session 236 - 2025-12-14
 
 ### Session Summary
