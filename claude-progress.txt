@@ -1,10 +1,10 @@
 ## Session 348 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully completed 1 N3 pattern
-**Patterns completed**: 1 (めったに〜ない)
-**Tests added**: 4 (all passing)
-**Total tests**: 2207 passing, 1 ignored (was 2203 passing, 1 ignored)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (めったに〜ない, もしかしたら)
+**Tests added**: 8 (all passing)
+**Total tests**: 2211 passing, 1 ignored (was 2203 passing, 1 ignored)
 
 ### ✅ Pattern Completed: めったに〜ない (rarely/seldom/hardly)
 
@@ -74,6 +74,68 @@ TWO FORMS (both handled by the matcher):
 **Related patterns**:
 - This is a standalone adverbial expression pattern requiring negative form
 - Similar to other negative emphasis adverbs like 決して (never)
+
+---
+
+### ✅ Pattern Completed: もしかしたら (maybe/perhaps/possibly)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted)
+
+**Pattern**: もしかしたら and its alternatives (もしかして, もしかすると) are adverbs used to present hypothetical situations. These expressions combine the adverb 若（も）し "if", the case marking particle か, and one of several forms of する (したら, して, or すると). The pattern is often translated as "perhaps", "maybe", or "possibly". It often appears at the beginning of sentences and frequently co-occurs with かもしれない (although not required).
+
+**Structures tested**: 4 comprehensive tests covering all three variants
+1. もしかしたら: もしかしたら、行けるかもしれない (Maybe, I will be able to go)
+2. もしかして: もしかして仕事があるかもしれないから (I may have to work)
+3. もしかすると: もしかすると、アンちゃんも来るかもしれない (Maybe Ann-chan might come)
+4. もしかしたら + かもしれない: もしかしたら明日も休むかもしれない (Perhaps I will take a day off tomorrow)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (moshikashitara, lines 5143-5251)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (moshikashitara_tests module, lines 11332-11386)
+- Pattern: grammar-lib/src/patterns.rs (Moshikashitara, lines 3673-3678)
+
+**Tokenization patterns**:
+```
+THREE FORMS (all handled by single comprehensive matcher):
+
+1. もしかして (single token):
+   - もしかして (副詞/一般) - complete single adverb
+
+2. もしかしたら (three tokens):
+   - もしか (副詞/助詞類接続) + し (動詞, する, 連用形) + たら (助動詞, た, 仮定形)
+
+3. もしかすると (three tokens):
+   - もしか (副詞/助詞類接続) + する (動詞, 基本形) + と (助詞/接続助詞)
+```
+
+**Key implementation points**:
+1. Five-token matcher with optionals: Comprehensive + Optional(し) + Optional(する) + Optional(たら) + Optional(と)
+2. MoshikashitaraComprehensiveMatcher matches EITHER もしかして (complete token) OR もしか (start of multi-token forms)
+3. Optional matchers for し, する, たら, と allow all three forms to match
+4. All three alternatives detected as single pattern "もしかしたら"
+5. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: Just the adverb/adverb phrase itself
+- もしかしたら: chars 0-6
+- もしかして: chars 0-5 (shorter!)
+- もしかすると: chars 0-6
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all three variant forms
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that もしかしたら comes from もし "if", か (question particle), and したら "so happens that". The literal translation is close to "does it so happen that" or "should it so happen that".
+
+**Implementation Challenge**: The challenge was handling THREE different tokenization patterns. もしかして tokenizes as a single complete adverb, while もしかしたら and もしかすると tokenize as three tokens each. The solution uses a comprehensive matcher that accepts either the complete single token OR the starting もしか, followed by optional matchers for all possible continuation tokens.
+
+**Related patterns**:
+- Often appears with かもしれない (maybe/might), though not required
+- Part of a family of hypothetical/speculative adverbs
 
 ---
 
