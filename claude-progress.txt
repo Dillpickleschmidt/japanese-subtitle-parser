@@ -1,3 +1,90 @@
+## Session 297 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (命令形 - imperative form)
+**Tests added**: 9 (all passing)
+**Total tests**: 1895 (was 1886)
+
+### Pattern Implemented: 命令形 (imperative form)
+
+**JLPT Level**: N4
+**Category**: Conjugation (registered as Construction, but it's a verb conjugation)
+**Priority**: 1 (detected but not highlighted)
+
+**Pattern**: The imperative form (命令形) is one of the basic verb conjugations used to express commands, orders, or instructions. It's the most direct and abrasive way to give commands in Japanese, and is commonly seen on signs, shouted at sports events, or used in urgent situations.
+
+**Key verb types tested**: 9 tests covering different imperative conjugations
+1. Godan る-verb: 止まる → 止まれ (stop!)
+2. Godan う-verb: 歌う → 歌え (sing!)
+3. Godan ぶ-verb: 飛ぶ → 飛べ (fly!)
+4. Godan む-verb: 休む → 休め (rest!)
+5. Godan ぐ-verb: 泳ぐ → 泳げ (swim!)
+6. Ichidan verb (ro form): あげる → あげろ (raise!)
+7. Ichidan verb: 食べる → 食べろ (eat!)
+8. Exception verb: する → しろ (do!)
+9. Common imperative with よ: がんばる → がんばれよ (do your best!)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (meireigata function, lines 7028-7049)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (imperative_form_tests module, lines 11306-11439)
+- Pattern: grammar-lib/src/patterns.rs (Meireigata - already existed at line 2350)
+
+**Tokenization pattern**:
+```
+Imperative verbs are marked by conjugation form (features[5]):
+- 命令ｅ (meire-e): Godan verbs (止まれ, 泳げ, 飛べ, 休め)
+- 命令ｒｏ (meire-ro): Ichidan verbs and する (食べろ, あげろ, しろ)
+- 命令ｙｏ (meire-yo): Verbs with よ particle attached (がんばれよ)
+
+Example tokenization:
+surface='止まれ' base='止まる' pos=動詞/自立/*/* [features: 動詞, 自立, *, *, 五段・ラ行, 命令ｅ, ...]
+surface='食べろ' base='食べる' pos=動詞/自立/*/* [features: 動詞, 自立, *, *, 一段, 命令ｒｏ, ...]
+```
+
+**Key implementation points**:
+1. ImperativeMatcher checks token.pos == "動詞" (verb)
+2. Checks features[5] (conjugation form) starts with "命令" (imperative)
+3. Matches all three imperative conjugation types: 命令ｅ, 命令ｒｏ, 命令ｙｏ
+4. Pattern range includes only the imperative verb itself
+5. Priority 1 means detected but not highlighted (conjugation pattern)
+
+**Undetectable cases** (Kagome tokenization ambiguity):
+- 歩け (walk!): Tokenized as 歩ける (can walk, potential verb) instead of 歩く imperative
+- 話せ (speak!): Tokenized as 話せる (can speak, potential verb) instead of 話す imperative
+- These forms are structurally identical without context, so Kagome interprets them as potential verbs
+
+**Test Quality**:
+- Cover godan verbs from different conjugation groups (る, う, ぶ, む, ぐ)
+- Test ichidan verbs (見る → 見ろ, 食べる → 食べろ)
+- Test exception verbs (する → しろ)
+- Test imperative with よ particle (がんばれよ)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that imperative form is marked by conjugation (命令ｅ/ｒｏ/ｙｏ) in features[5]
+2. Recognizing three distinct imperative conjugation markers
+3. Identifying Kagome tokenization ambiguities (え-ending imperatives vs potential verbs)
+4. Writing tests that avoid ambiguous forms
+5. Documenting undetectable cases with TODO comments
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a verb conjugation pattern rather than a grammatical construction. The imperative form is one of the basic verb conjugations that learners should recognize.
+
+**Linguistic Note**: The imperative form is the most direct way to give commands in Japanese. It's considered quite abrasive in daily conversation and is mostly used in specific contexts:
+- **Signs and warnings**: とまれ (stop) on road signs
+- **Sports events**: がんばれ (do your best!) when cheering
+- **Urgent situations**: 手をあげろ (raise your hands!) from police
+- **Men talking to close friends**: 元気出せよ (cheer up!) - casual encouragement
+
+Women tend to use the more polite て-form instead of imperative. The よ particle can soften the imperative slightly, making it more like friendly advice than a harsh command.
+
+**Next pattern to implement**: 真(っ) (ma- prefix for "completely") or ～のだろうか (wondering/questioning)
+
+---
+
 ## Session 296 - 2025-12-14
 
 ### ✅ Session Summary
