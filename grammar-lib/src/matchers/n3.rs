@@ -4388,9 +4388,203 @@ pub fn dakeshika() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: は言うまでもない ①
+// Pattern: は言うまでもない ① (it goes without saying)
+// Handles BOTH tokenization forms:
+// 1. Single-token kanji form: 言うまでもない (形容詞/自立)
+// 2. Split form: いう/言う (verb) + まで + も + ない/ある + polite endings
+//
+// This pattern expresses "it goes without saying that (A)" or "needless to say (A)".
+// Structures tested:
+// - Any + は/も + 言うまでもない (kanji single token)
+// - Any + は/も + いうまでもない (hiragana split: いう + まで + も + ない)
+// - Any + は/も + 言うまでもありません (polite: 言う + まで + も + あり + ませ + ん)
+
+// Matcher for kanji single-token form: 言うまでもない
+pub fn haiumademonai_u2460_single() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct HaMoParticleMatcher;
+    impl Matcher for HaMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "は" || token.surface == "も")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct IumademoinaiAdjectiveMatcher;
+    impl Matcher for IumademoinaiAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "言うまでもない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(HaMoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IumademoinaiAdjectiveMatcher)),
+    ]
+}
+
+// Matcher for split form: いう/言う + まで + も + ない
+pub fn haiumademonai_u2460_split() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct HaMoParticleMatcher;
+    impl Matcher for HaMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "は" || token.surface == "も")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct IuVerbMatcher;
+    impl Matcher for IuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "いう" || token.surface == "言う")
+                && (token.base_form == "いう" || token.base_form == "言う")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiAdjectiveMatcher;
+    impl Matcher for NaiAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(HaMoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAdjectiveMatcher)),
+    ]
+}
+
+// Matcher for polite form: 言う/いう + まで + も + あり + ませ + ん
+pub fn haiumademonai_u2460_polite() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct HaMoParticleMatcher;
+    impl Matcher for HaMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "は" || token.surface == "も")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct IuVerbMatcher;
+    impl Matcher for IuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "いう" || token.surface == "言う")
+                && (token.base_form == "いう" || token.base_form == "言う")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct AriVerbMatcher;
+    impl Matcher for AriVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MaseAuxiliaryMatcher;
+    impl Matcher for MaseAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NNegativeAuxiliaryMatcher;
+    impl Matcher for NNegativeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(HaMoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AriVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(MaseAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(NNegativeAuxiliaryMatcher)),
+    ]
+}
+
+// Main pattern function (for backwards compatibility)
 pub fn haiumademonai_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Default to split form (most common)
+    haiumademonai_u2460_split()
 }
 
 // Pattern: 決して〜ない

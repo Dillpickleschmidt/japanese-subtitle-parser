@@ -9926,3 +9926,81 @@ mod nohaxnohouda_tests {
     }
 }
 
+// Pattern: は言うまでもない ① (it goes without saying / needless to say)
+// Data source: grammar_points_data.json["は言うまでもない ①"]
+// Testing all structure variants:
+//   - standard[0]: Phrase + は + 言（い）うまでもない
+//   - standard[1]: Verb + ということは + 言（い）うまでもない
+//   - standard[2]: い-Adjective + ということは + 言（い）うまでもない
+//   - standard[4]: Noun + は + 言（い）うまでもない
+//   - polite[0]: Phrase + は + 言（い）うまでもありません
+mod haiumademonai_tests {
+    use super::*;
+
+    #[test]
+    fn test_phrase_ha_iumademonai_standard() {
+        // Testing: Phrase (のが) + は + 言うまでもない (kanji single-token form)
+        let sentence = "彼の日本語がうまいのは言うまでもないが、日本語が上手いのは日本に３０年住んでいるからである。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は言うまでもない ①_single");
+        assert_pattern_range(&patterns, "は言うまでもない ①_single", 9, 18); // のは言うまでもない
+    }
+
+    #[test]
+    fn test_noun_ha_iumademonai_standard() {
+        // Testing: Noun (ピアノ) + も + いうまでもない (hiragana split form)
+        let sentence = "彼女は歌うのが上手い。ピアノもいうまでもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は言うまでもない ①_split");
+        assert_pattern_range(&patterns, "は言うまでもない ①_split", 11, 22); // ピアノもいうまでもない
+    }
+
+    #[test]
+    fn test_koto_ha_iumademonai_standard() {
+        // Testing: Verb + ことは + いうまでもない (hiragana split form)
+        let sentence = "ガソリンの値段が上がれば、電気自動車の数が増えることはいうまでもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は言うまでもない ①_split");
+        assert_pattern_range(&patterns, "は言うまでもない ①_split", 24, 34); // ことはいうまでもない
+    }
+
+    #[test]
+    fn test_toiukoto_ha_iumademonai_standard() {
+        // Testing: い-Adjective + ということは + いうまでもない (hiragana split form)
+        let sentence = "師匠の戦い方が凄いということはいうまでもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は言うまでもない ①_split");
+        assert_pattern_range(&patterns, "は言うまでもない ①_split", 12, 22); // ことはいうまでもない
+    }
+
+    #[test]
+    fn test_nanoha_iumademonai_standard() {
+        // Testing: Phrase (なの) + は + いうまでもない (hiragana split form)
+        let sentence = "彼の成績がクラスで一番なのはいうまでもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は言うまでもない ①_split");
+        assert_pattern_range(&patterns, "は言うまでもない ①_split", 12, 21); // のはいうまでもない
+    }
+
+    #[test]
+    fn test_phrase_ha_iumademoarimasen_polite() {
+        // Testing: Phrase + は + 言うまでもありません (polite form)
+        let sentence = "彼の才能は言うまでもありませんが、努力も素晴らしいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は言うまでもない ①_polite");
+        assert_pattern_range(&patterns, "は言うまでもない ①_polite", 2, 15); // 才能は言うまでもありません
+    }
+}
+

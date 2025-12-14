@@ -3614,10 +3614,26 @@ declare_patterns! {
         jlpt: "n3",
     },
 
-    HaiumademonaiU2460 {
-        name: "は言うまでもない ①",
-        matcher_fn: crate::matchers::n3::haiumademonai_u2460,
-        priority: 1,
+    HaiumademonaiU2460Single {
+        name: "は言うまでもない ①_single",
+        matcher_fn: crate::matchers::n3::haiumademonai_u2460_single,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    HaiumademonaiU2460Split {
+        name: "は言うまでもない ①_split",
+        matcher_fn: crate::matchers::n3::haiumademonai_u2460_split,
+        priority: 3,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
+    HaiumademonaiU2460Polite {
+        name: "は言うまでもない ①_polite",
+        matcher_fn: crate::matchers::n3::haiumademonai_u2460_polite,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },
