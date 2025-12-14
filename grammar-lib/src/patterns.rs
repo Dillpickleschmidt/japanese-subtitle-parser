@@ -1997,7 +1997,7 @@ declare_patterns! {
     OUff5eNinaru {
         name: "お～になる ",
         matcher_fn: crate::matchers::n4::o_uff5e_ninaru,
-        priority: 1,
+        priority: 2,
         category: PatternCategory::Construction,
         jlpt: "n4",
     },

@@ -6721,3 +6721,76 @@ mod you_to_omou_tests {
     //     assert!(!has_pattern(&patterns, "お〜する"));
     // }
 }
+
+// Pattern: お～になる (honorific speech)
+// Data source: grammar_points_data.json["お～になる "]
+// Testing all structure variants from standard[] and polite[]
+mod o_ni_naru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "お + Verb[stem] + になる"
+    #[test]
+    fn test_o_ni_naru_verb_stem() {
+        let sentence = "先生はもうお帰りになるそうです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～になる ");
+        assert_pattern_range(&patterns, "お～になる ", 5, 11); // お帰りになる
+    }
+
+    // Testing: structure.standard[1] - "ご + [する]Verb + になる"
+    #[test]
+    fn test_go_ni_naru_suru_verb() {
+        let sentence = "社長はこの件をご存知になりますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～になる ");
+        assert_pattern_range(&patterns, "お～になる ", 7, 15); // ご存知になります
+    }
+
+    // Testing: structure.standard[2] - "いく・くる・いる ￫ おいでになる"
+    #[test]
+    fn test_oide_ni_naru_special() {
+        let sentence = "明日はおいでになりますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～になる ");
+        assert_pattern_range(&patterns, "お～になる ", 3, 11); // おいでになります
+    }
+
+    // Testing: polite[0] - "お + Verb[stem] + になります"
+    #[test]
+    fn test_o_ni_narimasu_polite() {
+        let sentence = "部長は何時にお戻りになりますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～になる ");
+        assert_pattern_range(&patterns, "お～になる ", 6, 14); // お戻りになります
+    }
+
+    // Testing: ご variant with Chinese-origin noun
+    #[test]
+    fn test_go_ni_naru_chinese_origin() {
+        let sentence = "先生はご出席になると思います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～になる ");
+        assert_pattern_range(&patterns, "お～になる ", 3, 9); // ご出席になる
+    }
+
+    // Testing: exceptional お with Chinese-origin (お電話 example)
+    #[test]
+    fn test_o_ni_naru_exceptional() {
+        let sentence = "お客様はお電話になりますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "お～になる ");
+        assert_pattern_range(&patterns, "お～になる ", 4, 12); // お電話になります
+    }
+}
