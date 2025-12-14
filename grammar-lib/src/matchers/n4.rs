@@ -4959,9 +4959,71 @@ pub fn ndakedo_u30fb_ndesuga() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: はずだ
+// Pattern: はずだ (should be, bound to be, supposed to)
+// Structures: Verb + はずだ, i-Adj + はずだ, Na-Adj + な + はずだ, Noun + の + はずだ
 pub fn hazuda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb, i-adjective, or na-adjective/noun stem
+    #[derive(Debug)]
+    struct PreHazuMatcher;
+    impl Matcher for PreHazuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+            // OR i-adjective
+            || token.pos.first().is_some_and(|pos| pos == "形容詞")
+            // OR na-adjective stem (形容動詞語幹)
+            || token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+            // OR noun
+            || token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match optional な (for na-adjectives) or の (for nouns)
+    #[derive(Debug)]
+    struct NaOrNoParticleMatcher;
+    impl Matcher for NaOrNoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match な (auxiliary verb, copula)
+            (token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // OR match の (possessive/modifier particle)
+            || (token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化"))
+        }
+    }
+
+    // Match はず (dependent noun)
+    #[derive(Debug)]
+    struct HazuMatcher;
+    impl Matcher for HazuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "はず"
+                && token.base_form == "はず"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ or です (auxiliary verb)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "だ" || token.base_form == "です")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(PreHazuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaOrNoParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(HazuMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: かどうか (whether or not)

@@ -3460,13 +3460,13 @@
   {
     "pattern_name": "はずだ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "はず , coming from the kanji 筈（はず） , is a word in Japanese that is very similar to 'bound' in English [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null

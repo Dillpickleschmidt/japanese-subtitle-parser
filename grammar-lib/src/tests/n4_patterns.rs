@@ -9190,3 +9190,87 @@ mod hazuganai_tests {
         assert_pattern_range(&patterns, "はずがない", 8, 18); // 言うはずがありません
     }
 }
+
+// Pattern: はずだ (should be, bound to be, supposed to)
+// Data source: grammar_points_data.json["はずだ"]
+// Testing all structure variants from standard[] and polite[]
+mod hazuda_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + はず + だ"
+    #[test]
+    fn test_verb_hazuda() {
+        let sentence = "今日は雨が降るはずだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずだ");
+        assert_pattern_range(&patterns, "はずだ", 5, 10); // 降るはずだ
+    }
+
+    // Testing: structure.standard[1] - "［い］Adjective + はず + だ"
+    #[test]
+    fn test_i_adj_hazuda() {
+        let sentence = "新幹線で行った方が速いはずだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずだ");
+        assert_pattern_range(&patterns, "はずだ", 9, 14); // 速いはずだ
+    }
+
+    // Testing: structure.standard[2] - "［な］Adjective + な + はず + だ"
+    #[test]
+    fn test_na_adj_hazuda() {
+        let sentence = "彼は魚が嫌いだから寿司は嫌いなはずだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずだ");
+        assert_pattern_range(&patterns, "はずだ", 12, 18); // 嫌いなはずだ
+    }
+
+    // Testing: structure.standard[3] - "Noun + の + はず + だ"
+    #[test]
+    fn test_noun_hazuda() {
+        let sentence = "頼んだのはコーヒーのはずだったけどお茶が来た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずだ");
+        assert_pattern_range(&patterns, "はずだ", 5, 14); // コーヒーのはずだっ (includes だった)
+    }
+
+    // Testing: structure.polite[0] - "Verb + はず + です"
+    #[test]
+    fn test_verb_hazudesu() {
+        let sentence = "ハリーも今日のパーティーに行くはずです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずだ");
+        assert_pattern_range(&patterns, "はずだ", 13, 19); // 行くはずです
+    }
+
+    // Testing: structure.polite[2] - "［な］Adjective + な + はず + です"
+    #[test]
+    fn test_na_adj_hazudesu() {
+        let sentence = "あの場所は静かなはずです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずだ");
+        assert_pattern_range(&patterns, "はずだ", 5, 12); // 静かなはずです
+    }
+
+    // Testing: structure.polite[3] - "Noun + の + はず + です"
+    #[test]
+    fn test_noun_hazudesu() {
+        let sentence = "明日の予定は会議のはずです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はずだ");
+        assert_pattern_range(&patterns, "はずだ", 6, 13); // 会議のはずです
+    }
+}
