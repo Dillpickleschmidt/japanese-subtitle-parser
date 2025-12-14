@@ -1039,9 +1039,46 @@ pub fn wazukani() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: および
+// Pattern: および (and, as well as)
+// Structures: Noun + および
 pub fn oyobi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // および can be tokenized as either:
+    // - 助詞/接続助詞 (connective particle) when following a noun directly
+    // - 接続詞 (conjunction) when starting a clause (e.g., after punctuation)
+    #[derive(Debug)]
+    struct OyobiMatcher;
+    impl super::Matcher for OyobiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface != "および" {
+                return false;
+            }
+            // Match either conjunction or connective particle
+            let is_conjunction = token.pos.first().is_some_and(|pos| pos == "接続詞");
+            let is_particle = token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞");
+            is_conjunction || is_particle
+        }
+    }
+
+    // Punctuation matcher for optional comma before および
+    #[derive(Debug)]
+    struct PunctuationMatcher;
+    impl super::Matcher for PunctuationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "記号")
+                && token.pos.get(1).is_some_and(|pos| pos == "読点")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            PunctuationMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(OyobiMatcher)),
+    ]
 }
 
 // Pattern: たちまち

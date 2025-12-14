@@ -243,3 +243,30 @@ mod omakeni_tests {
         assert_pattern_range(&patterns, "おまけに", 23, 27); // おまけに
     }
 }
+
+// および (and, as well as)
+// Data source: grammar_points_data.json["および"]
+// Testing: structure.standard[0] - "Noun + および"
+mod oyobi_tests {
+    use super::*;
+
+    #[test]
+    fn test_oyobi_noun_conjunction() {
+        let sentence = "免許証および印鑑を持ってきてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "および");
+        assert_pattern_range(&patterns, "および", 2, 6); // 証および
+    }
+
+    #[test]
+    fn test_oyobi_sentence_start() {
+        let sentence = "学校説明会に参加されたい方、および体験入学をされたい方は電話をください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "および");
+        assert_pattern_range(&patterns, "および", 12, 17); // 方、および
+    }
+}

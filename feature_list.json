@@ -7282,13 +7282,13 @@
   {
     "pattern_name": "および",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "及（およ）び is a word that functions as a conjunction meaning 'and' or 'as well as', but is originally the conjunctive for... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
