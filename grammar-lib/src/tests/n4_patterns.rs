@@ -5233,3 +5233,60 @@ mod nagara_tests {
         assert_pattern_range(&patterns, "ながら", 0, 5); // 歩きながら
     }
 }
+
+// Pattern: だいたい (generally, mostly, approximately)
+// Data source: grammar_points_data.json["だいたい"]
+//
+// Structure variants to test:
+//   - standard[0]: だいたい + Phrase
+//   - standard[1]: だいたい + Number/Degree
+//   - standard[2]: だいたい + の + Noun
+//   - Also: だいたい as emphatic "in the first place"
+#[cfg(test)]
+mod daitai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - だいたい + Phrase
+    #[test]
+    fn test_daitai_phrase() {
+        let sentence = "水曜日はだいたい５時に起きています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だいたい");
+        assert_pattern_range(&patterns, "だいたい", 4, 8); // だいたい
+    }
+
+    // Testing: structure.standard[1] - だいたい + Number/Degree
+    #[test]
+    fn test_daitai_number() {
+        let sentence = "だいたい１０人くらい来ると思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だいたい");
+        assert_pattern_range(&patterns, "だいたい", 0, 4); // だいたい
+    }
+
+    // Testing: structure.standard[2] - だいたい + の + Noun
+    #[test]
+    fn test_daitai_no_noun() {
+        let sentence = "だいたいの人たちが薔薇という漢字を書けません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だいたい");
+        assert_pattern_range(&patterns, "だいたい", 0, 4); // だいたい (the の pattern also matches だいたいの)
+    }
+
+    // Testing: だいたい as emphatic "in the first place"
+    #[test]
+    fn test_daitai_emphatic() {
+        let sentence = "だいたいなんでお前がここにいるの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だいたい");
+        assert_pattern_range(&patterns, "だいたい", 0, 4); // だいたい
+    }
+}

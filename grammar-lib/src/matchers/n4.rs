@@ -2103,8 +2103,20 @@ pub fn zutto_u2460() -> Vec<TokenMatcher> {
 }
 
 // Pattern: だいたい
+// Pattern: だいたい (generally, mostly, approximately, in the first place)
+// Structures: だいたい as adverb or noun
 pub fn daitai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct DaitaiMatcher;
+    impl Matcher for DaitaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だいたい"
+                && token.base_form == "だいたい"
+                && (token.pos.first().is_some_and(|pos| pos == "副詞")
+                    || token.pos.first().is_some_and(|pos| pos == "名詞"))
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(DaitaiMatcher))]
 }
 
 // Pattern: のなかで

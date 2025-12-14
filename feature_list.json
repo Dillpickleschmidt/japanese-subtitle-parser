@@ -2522,13 +2522,13 @@
   {
     "pattern_name": "だいたい",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "大体（だいたい） is an adverb that is used to highlight the 'main point' of something in Japanese, and therefore has several ... [4 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
