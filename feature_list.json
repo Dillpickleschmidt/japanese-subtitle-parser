@@ -5812,13 +5812,13 @@
   {
     "pattern_name": "によって・による",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "によって , による , and により are all different versions of the same expression, that can basically be translated as 'accordin... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

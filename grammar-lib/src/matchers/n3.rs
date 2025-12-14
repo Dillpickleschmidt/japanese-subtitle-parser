@@ -524,9 +524,27 @@ pub fn niyoruto_u30fb_niyoreba() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: によって・による
+// Pattern: によって・による (depending on, according to, by means of)
+// Structures: Noun + によって / Noun + により / Noun + による
 pub fn niyotte_u30fb_niyoru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Custom matcher for によって/により/による
+    #[derive(Debug)]
+    struct NiYotteMatcher;
+    impl Matcher for NiYotteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "によって" || token.surface == "により" || token.surface == "による")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiYotteMatcher)),
+    ]
 }
 
 // Pattern: 全く～ない

@@ -8912,3 +8912,73 @@ mod nanka_nante_tests {
     }
 }
 
+// Pattern: によって・による (depending on, according to, by means of)
+// Data source: grammar_points_data.json["によって・による"]
+// Testing: structure.standard[0] - "Noun + によって"
+//          structure.standard[1] - "Noun + により"
+//          Also testing: "Noun + による" (adnominal form before noun)
+//          Also testing: "Noun + による" (sentence-ending form)
+mod niyotte_niyoru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + によって"
+    // Example: 地域によって、ゴミ出しルールが違う
+    #[test]
+    fn test_noun_ni_yotte() {
+        let sentence = "地域によって、ゴミ出しルールが違うんだよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によって・による");
+        assert_pattern_range(&patterns, "によって・による", 0, 6); // 地域によって
+    }
+
+    // Testing: structure.standard[1] - "Noun + により"
+    // Example: ベンおじさんは強盗により、命を奪われた
+    #[test]
+    fn test_noun_ni_yori() {
+        let sentence = "ベンおじさんは強盗により、命を奪われた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によって・による");
+        assert_pattern_range(&patterns, "によって・による", 7, 12); // 強盗により
+    }
+
+    // Testing: "Noun + による" (adnominal form before noun)
+    // Example: この地震による津波の心配はありません
+    #[test]
+    fn test_noun_ni_yoru_adnominal() {
+        let sentence = "この地震による津波の心配はありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によって・による");
+        assert_pattern_range(&patterns, "によって・による", 2, 7); // 地震による
+    }
+
+    // Testing: "Noun + による" (sentence-ending form)
+    // Example: それは状況による (It depends on the situation)
+    #[test]
+    fn test_noun_ni_yoru_sentence_end() {
+        let sentence = "それは完全に状況によるんだよね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によって・による");
+        assert_pattern_range(&patterns, "によって・による", 6, 11); // 状況による
+    }
+
+    // Testing: "Noun + によって" with passive construction
+    // Example: このミスは人為的なエラーによって起きた
+    #[test]
+    fn test_noun_ni_yotte_passive() {
+        let sentence = "このミスは人為的なエラーによって起きたんだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "によって・による");
+        assert_pattern_range(&patterns, "によって・による", 9, 16); // エラーによって
+    }
+}
+
