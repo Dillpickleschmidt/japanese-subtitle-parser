@@ -1,3 +1,96 @@
+## Session 295 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (れる・られる (Potential) - potential verb form)
+**Tests added**: 14 (all passing)
+**Total tests**: 1879 (was 1865)
+
+### Pattern Implemented: れる・られる (Potential) - potential verb form / ability
+
+**JLPT Level**: N4
+**Category**: Conjugation
+**Priority**: 1
+
+**Pattern**: The potential form of verbs expresses ability or possibility - "can do" or "able to do". This pattern detects potential verb forms, which differ from passive forms (れる・られる) only in semantic context.
+
+**Key distinctions**:
+- **Godan verbs**: Form distinct potential verbs (歩く → 歩ける, 話す → 話せる) - UNAMBIGUOUS
+- **Ichidan verbs**: Use られる suffix (見る → 見られる) - AMBIGUOUS with passive
+- **Exceptions**: する → できる, 来る → 来られる
+- **ら抜き (ra-nuki)**: Casual form (見る → 見れる instead of 見られる)
+
+**Structures tested**: 14 tests covering all verb types
+1. Godan る-verb: 座る → 座れます (can sit - polite)
+2. う-verb: 歌う → 歌える (can sing)
+3. く-verb: 歩く → 歩ける (can walk)
+4. す-verb: 話す → 話せない (cannot speak)
+5. つ-verb: 打つ → 打てる (can hit)
+6. ぬ-verb: 死ぬ → 死ねる (can die)
+7. ぶ-verb: 飛ぶ → 飛べたら (if can fly)
+8. む-verb: 休む → 休め (can rest - stem)
+9. ぐ-verb: 泳ぐ → 泳げる (can swim)
+10. Ichidan: 見る → 見られる (can see - ambiguous with passive)
+11. Exception: する → ことができる (detected by separate pattern)
+12. Exception: 来る → 来られる (can come - ambiguous with passive)
+13. ら抜き: 見る → 見れる (casual/incorrect form)
+14. Negative: 食べる → 食べられない (cannot eat - ambiguous)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (reru_u30fb_rareru_potential function, lines 5720-5765)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (potential_verb_tests module, lines 11036-11208)
+- Pattern: grammar-lib/src/patterns.rs (ReruU30fbRareruPotential - already existed at line 2141)
+
+**Tokenization patterns**:
+```
+Godan potential verbs (SINGLE TOKEN - UNAMBIGUOUS):
+歩ける → 動詞/自立, 一段, base=歩ける
+話せる → 動詞/自立, 一段, base=話せる
+見れる → 動詞/自立, 一段, base=見れる (ら抜き)
+
+Ichidan + られる (TWO TOKENS - AMBIGUOUS with passive):
+見 (動詞/自立, 一段, 未然形, base=見る)
++ られる (動詞/接尾, 一段, base=られる)
+
+Key: Godan potential verbs have base_form ending in:
+える, ける, せる, てる, ねる, べる, める, げる, れる
+```
+
+**Key implementation points**:
+1. PotentialVerbMatcher checks if verb base_form ends with potential suffix
+2. Detects godan potential verbs (single-token, unambiguous)
+3. Excludes auxiliary れる/られる themselves (base_form == "れる/られる")
+4. Ichidan + られる detected by Verb［れる・られる］ (passive pattern, ambiguous)
+5. Pattern range includes full potential verb form
+6. Priority 1 means detected but not highlighted (conjugation pattern)
+
+**Test Quality**:
+- Cover all 10 godan verb types (る, う, く, す, つ, ぬ, ぶ, む, ぐ)
+- Test ichidan verbs (ambiguous - detected by passive pattern)
+- Test exceptions (できる via ことができる, 来られる ambiguous)
+- Test ら抜き casual form (見れる)
+- Test negative forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that potential and passive forms are structurally identical for ichidan verbs
+2. Recognizing godan potential verbs are single tokens (not verb + suffix)
+3. Identifying all potential verb endings (える, ける, せる, てる, ねる, べる, める, げる, れる)
+4. Excluding auxiliary れる/られる themselves from matching
+5. Accepting that ichidan + られる is ambiguous (both patterns detect it)
+6. Understanding ら抜き form is also a potential verb (見れる = can see)
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a conjugation pattern rather than a construction pattern. The pattern focuses on unambiguous godan potential verbs, while ichidan + られる is handled by the passive pattern (semantically correct since it's ambiguous).
+
+**Linguistic Note**: The potential form expresses ability or possibility. Godan verbs form distinct potential verbs (歩ける, 話せる) that are unambiguously potential. Ichidan verbs use られる, which is structurally identical to the passive form - only context distinguishes "can see" (見られる potential) from "is seen" (見られる passive). The ら抜き form (見れる) is casual and sometimes considered grammatically incorrect, but is widely used in spoken Japanese.
+
+**Next pattern to implement**: 他動詞・自動詞 (transitive/intransitive verbs) or 以上 ① (at least/more than)
+
+---
+
 ## Session 294 - 2025-12-14
 
 ### ✅ Session Summary
