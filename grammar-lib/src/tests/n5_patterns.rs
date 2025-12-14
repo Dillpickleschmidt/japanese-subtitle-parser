@@ -5767,5 +5767,58 @@ mod i_adjectives_tests {
         assert_has_pattern(&patterns, "い-Adjectives");
         assert_pattern_range(&patterns, "い-Adjectives", 4, 6); // 温い
     }
+
+}
+
+// Pattern: な-Adjectives
+// Data source: grammar_points_data.json["な-Adjectives"]
+// Note: Pattern ranges are extended to include following auxiliary verbs (だ/です/な/etc.)
+// similar to how い-Adjectives works
+mod na_adjectives_tests {
+    use super::*;
+
+    // Testing: な-adjective stem with だ
+    #[test]
+    fn test_na_adjective_kirei() {
+        let sentence = "彼女は本当に綺麗だと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な-Adjectives");
+        assert_pattern_range(&patterns, "な-Adjectives", 6, 9); // 綺麗だ (extended to include auxiliary)
+    }
+
+    // Testing: な-adjective stem with な before noun
+    #[test]
+    fn test_na_adjective_shizuka() {
+        let sentence = "静かな場所で勉強したい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な-Adjectives");
+        assert_pattern_range(&patterns, "な-Adjectives", 0, 3); // 静かな (extended to include auxiliary)
+    }
+
+    // Testing: な-adjective stem with です
+    #[test]
+    fn test_na_adjective_kaiteki() {
+        let sentence = "この部屋は快適です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な-Adjectives");
+        assert_pattern_range(&patterns, "な-Adjectives", 5, 9); // 快適です (extended to include auxiliary)
+    }
+
+    // Testing: な-adjective stem with だった (past tense)
+    #[test]
+    fn test_na_adjective_taihen() {
+        let sentence = "昨日は大変だった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "な-Adjectives");
+        assert_pattern_range(&patterns, "な-Adjectives", 3, 8); // 大変だった (extended to include auxiliaries)
+    }
 }
 

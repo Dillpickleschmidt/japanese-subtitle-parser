@@ -194,9 +194,23 @@ pub fn i_adjectives() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(IAdjMatcher))]
 }
 
-// Pattern: な-Adjectives
+// Pattern: な-Adjectives (detecting な-adjective stems)
+// Structures: ［な］Adjective (stem only)
 pub fn na_adjectives() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    #[derive(Debug)]
+    struct NaAdjMatcher;
+    impl Matcher for NaAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match な-adjective stems: 名詞/形容動詞語幹
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NaAdjMatcher))]
 }
 
 // Pattern: か
