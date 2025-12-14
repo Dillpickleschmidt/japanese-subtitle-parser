@@ -1750,3 +1750,63 @@ mod kotoha_ga_tests {
         assert_pattern_range(&patterns, "ことは〜が", 0, 10); // 行くことは行くけれど
     }
 }
+
+// Pattern: さすが (as expected of / that is just like)
+// Data source: grammar_points_data.json["さすが"]
+// Testing: structure.standard[0] - "さすが + （に）+ Phrase"
+// Testing: structure.standard[1] - "さすが + （の）+ Noun"
+//
+// Structure variants:
+//   - standard[0]: さすが + （に）+ Phrase
+//   - standard[1]: さすが + （の）+ Noun
+mod sasuga_tests {
+    use super::*;
+
+    #[test]
+    fn test_sasuga_basic_phrase() {
+        // Example: すごい！さすが先輩！
+        // Structure.standard[0]: "さすが + Phrase" (basic usage)
+        let sentence = "すごい！さすが先輩！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さすが");
+        assert_pattern_range(&patterns, "さすが", 4, 7); // さすが
+    }
+
+    #[test]
+    fn test_sasuga_ni_phrase() {
+        // Example: さすがに今日は雨が降りすぎだろ...
+        // Structure.standard[0]: "さすが + に + Phrase"
+        let sentence = "さすがに今日は雨が降りすぎだろ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さすが");
+        assert_pattern_range(&patterns, "さすが", 0, 4); // さすがに
+    }
+
+    #[test]
+    fn test_sasuga_no_noun() {
+        // Example: さすがの君でもこの問題は難しいだろう
+        // Structure.standard[1]: "さすが + の + Noun"
+        let sentence = "さすがの君でもこの問題は難しいだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さすが");
+        assert_pattern_range(&patterns, "さすが", 0, 4); // さすがの
+    }
+
+    #[test]
+    fn test_sasuga_negative_connotation() {
+        // Example: さすが田中くん！発注ミスの天才だね！
+        // Structure: さすが + Noun (negative/sarcastic usage)
+        let sentence = "さすが田中くん！発注ミスの天才だね！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さすが");
+        assert_pattern_range(&patterns, "さすが", 0, 3); // さすが
+    }
+}

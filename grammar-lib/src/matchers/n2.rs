@@ -2146,9 +2146,33 @@ pub fn youdeha_u30fb_youja() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: さすが
+// Pattern: さすが (as expected of / that is just like)
+// Structures: さすが + （に）+ Phrase, さすが + （の）+ Noun
 pub fn sasuga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct SasugaMatcher;
+    impl Matcher for SasugaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さすが"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiNoParticleMatcher;
+    impl Matcher for NiNoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+                || (token.surface == "の" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SasugaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiNoParticleMatcher)))),
+    ]
 }
 
 // Pattern: ことは〜が - "(A) is true, but (B)" / "although (A), (B)"

@@ -7590,13 +7590,13 @@
   {
     "pattern_name": "さすが",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "さすが , also often appearing in the kanji form 流石（さすが） , is an adverb that indicates the speaker's feeling of being imp... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
