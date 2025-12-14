@@ -1,12 +1,12 @@
 ## Session 296 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N4 pattern
-**Patterns completed**: 1 (以上 ① - at least / more than / that's all)
-**Tests added**: 3 (all passing)
-**Total tests**: 1882 (was 1879)
+**Status**: COMPLETE - Successfully implemented 2 N4 patterns
+**Patterns completed**: 2 (以上 ① - at least / more than, ～ない～はない - double negative)
+**Tests added**: 7 (all passing)
+**Total tests**: 1886 (was 1879)
 
-### Pattern Implemented: 以上 ① - at least / more than / equal to or more than
+### Pattern 1 Implemented: 以上 ① - at least / more than / equal to or more than
 
 **JLPT Level**: N4
 **Category**: Construction
@@ -69,7 +69,71 @@ Preceded by:
 
 **Linguistic Note**: While 以上 primarily means "X or more" when following amounts, it's also naturally used standalone to mean "that's all" when summing up a list or statement. The literal meaning "the above" makes this usage clear - "the above (list of things I said) is all".
 
-**Next pattern to implement**: 他動詞・自動詞 (transitive/intransitive verbs) or 命令形 (imperative form)
+---
+
+### Pattern 2 Implemented: ～ない～はない - double negative (there isn't X that doesn't Y)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: ～ない～はない is a double negative construction meaning "there isn't an X that doesn't Y" or literally "there is no X that is not Y". This creates an emphatic affirmative meaning through double negation.
+
+**Key usages**:
+1. **Verb negative**: Verb[ない] + Noun + は + ない (e.g., 弾けない曲はない "there's no song I can't play")
+2. **i-Adjective negative**: い-Adj[ない] + Noun + は + Verb[ない] (e.g., 美味しくない食べ物は食べない "I don't eat food that isn't delicious")
+3. **Potential negative**: Shows ability through double negative (書けない漢字はない "there's no kanji I can't write")
+
+**Structures tested**: 4 tests covering different negation types
+1. Potential verb negative: 弾けない曲はない (no song can't play)
+2. i-Adjective + Verb negative: 美味しくない食べ物は食べない (don't eat not-delicious food)
+3. i-Adjective + Verb negative: 安くない靴は買わない (don't buy not-cheap shoes)
+4. Potential verb negative: 書けない漢字はない (no kanji can't write)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (uff5e_nai_uff5e_hanai function, lines 3647-3685)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (nai_wa_nai_tests module, lines 11252-11304)
+- Pattern: grammar-lib/src/patterns.rs (already existed at line 1798)
+
+**Tokenization pattern**:
+```
+Structure: ない (助動詞/形容詞) + Noun + は + (0-2 tokens) + ない (助動詞/形容詞)
+
+Example 1 (verb): 弾けない曲はない
+弾け (動詞, 未然形) + ない (助動詞) + 曲 (名詞) + は + ない (形容詞)
+
+Example 2 (i-adj): 美味しくない食べ物は食べない
+美味しく (形容詞, 連用テ接続) + ない (助動詞) + 食べ物 (名詞) + は + 食べ (動詞, 未然形) + ない (助動詞)
+```
+
+**Key implementation points**:
+1. NaiMatcher checks surface=="ない" AND (助動詞 OR 形容詞)
+2. Pattern structure: ない + Noun + は + Wildcard(0-2) + ない
+3. Wildcard allows for verb/adjective stems before final ない
+4. Both ない can be auxiliary (助動詞) or adjective (形容詞)
+5. Pattern range includes: first ない through final ない
+
+**Test Quality**:
+- Cover verb negative + noun + は + ない
+- Cover i-adjective negative + noun + は + verb negative
+- Test potential verb forms (弾けない, 書けない)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that both ない can be either auxiliary or adjective
+2. Recognizing the need for wildcard between は and final ない (for verb/adj stems)
+3. Balancing flexibility (0-2 tokens wildcard) with specificity
+4. Identifying correct POS patterns for ない (助動詞 vs 形容詞)
+5. Understanding the double negative creates emphatic affirmative meaning
+
+**Pattern Priority**: Priority 2 means this pattern has medium importance. It's a grammatically significant construction that learners should recognize, though not as fundamental as basic particles or verb forms.
+
+**Linguistic Note**: This double negative construction is common in Japanese and doesn't sound as awkward as English double negatives. The pattern emphasizes totality or universality - "there is NO X that doesn't Y" is stronger than just saying "all X do Y". For example, 弾けない曲はない (there's no song I can't play) is more emphatic than just saying "I can play all songs".
+
+**Next pattern to implement**: 真(っ) (ma- prefix for "completely") or 命令形 (imperative form)
 
 ---
 
