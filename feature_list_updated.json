@@ -5966,13 +5966,13 @@
   {
     "pattern_name": "のに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Regarded as a conjunction particle by itself, のに is simply a fusion of the case marking particles の and に [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -5980,13 +5980,13 @@
   {
     "pattern_name": "のはXの方だ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "のは～の方（ほう）だ is an expression used to show that (A) (usually despite expectations) is (B) [3 std, 3 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6008,13 +6008,13 @@
   {
     "pattern_name": "はもちろん",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "はもちろん , or occasionally は勿論（もちろん）, is a phrase in Japanese that presents (A) as being something obvious, while (B) sh... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6022,13 +6022,13 @@
   {
     "pattern_name": "は言うまでもない ①",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "は言（い）うまでもない is a structure that combines the adverbial particle は, the う - Verb 言（い）う, two (2) additional adverbial p... [7 std, 7 pol]",
     "priority": 3,
     "skip_reason": null
@@ -7044,13 +7044,13 @@
   {
     "pattern_name": "～かというと ①",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "～かというと is a phrase that has two primary functions [6 std, 6 pol]",
     "priority": 3,
     "skip_reason": null
@@ -7114,13 +7114,13 @@
   {
     "pattern_name": "～は～で有名",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to describe what certain things/places are famous for, ～は～で有名（ゆうめい） is a common expression that will be used [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

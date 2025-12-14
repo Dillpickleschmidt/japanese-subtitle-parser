@@ -10004,3 +10004,62 @@ mod haiumademonai_tests {
     }
 }
 
+// Pattern: ～かというと ① (the reason why / if asked why)
+// Data source: grammar_points_data.json["～かというと ①"]
+// Usage: Used with "why/how" question words (どうして, なぜ)
+//
+// Structures to test:
+//   - standard[0]: どうして + Phrase (A) + かというと + Phrase (B) + からだ
+//   - standard[1]: Phrase (A)。どうして + かというと + Phrase (B) + からだ
+//   - standard[2]: どうして + Verb + （の） + かというと
+//   - standard[3]: なぜ (alternative question word)
+//   - standard[4]: かといえば (alternative form with ば)
+//   - polite variants with です
+mod katoiuto_u2460_tests {
+    use super::*;
+
+    #[test]
+    fn test_doushite_katoiuto_standard() {
+        // Testing: どうして + Phrase + かというと (from example)
+        let sentence = "どうして明日のパーティーに行きたくないかというと、元カレが来ると聞いたからです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ①");
+        assert_pattern_range(&patterns, "～かというと ①", 17, 24); // ないかというと
+    }
+
+    #[test]
+    fn test_naze_katoiuto_standard() {
+        // Testing: なぜ + Phrase + かというと (from example)
+        let sentence = "なぜこの計画で進めようと思ったかというと、以前この計画に似たプランが成功したからです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ①");
+        assert_pattern_range(&patterns, "～かというと ①", 14, 20); // たかというと
+    }
+
+    #[test]
+    fn test_katoieba_variant() {
+        // Testing: かと言えば variant (from caution section)
+        let sentence = "どうして冬でも冷房をかけているかと言えば、お客さんに汗をかかずに買い物をさせる為です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ①");
+        assert_pattern_range(&patterns, "～かというと ①", 13, 20); // いるかと言えば
+    }
+
+    #[test]
+    fn test_katoittara_variant() {
+        // Testing: かといったら variant (from caution section)
+        let sentence = "なぜ安い方を選んだかといったら、安いやつも、高いやつもついている機能が同じだからです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ①");
+        assert_pattern_range(&patterns, "～かというと ①", 8, 15); // だかといったら
+    }
+}
+
