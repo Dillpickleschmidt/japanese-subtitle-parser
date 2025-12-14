@@ -6498,13 +6498,13 @@
   {
     "pattern_name": "一方だ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "一方（いっぽう） is a noun that is often seen after verbs, in order to convey the meaning of 'more and more (A)', 'continuing... [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null

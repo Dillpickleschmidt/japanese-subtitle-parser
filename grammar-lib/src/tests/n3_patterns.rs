@@ -12248,3 +12248,45 @@ mod ndatte_tests {
         assert_pattern_range(&patterns, "んだって", 40, 44); // んだって
     }
 }
+
+// Pattern: 一方だ (more and more / continuing to / getting X-er and X-er)
+// Data source: grammar_points_data.json["一方だ"]
+// Testing all structure variants
+mod ippouda_tests {
+    use super::*;
+
+    #[test]
+    fn test_ippouda_standard() {
+        // Testing: structure.standard[0] - "Verb + 一方（いっぽう）だ"
+        // Tokenization: 一方 (名詞/非自立/副詞可能) + だ (助動詞)
+        let sentence = "アメリカとロシアの関係は悪化する一方だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一方だ");
+        assert_pattern_range(&patterns, "一方だ", 16, 19); // 一方だ
+    }
+
+    #[test]
+    fn test_ippouda_polite() {
+        // Testing: structure.polite[0] - "Verb + 一方（いっぽう）です"
+        // Tokenization: 一方 (名詞/非自立/副詞可能) + です (助動詞)
+        let sentence = "高齢化が進んで、人口が減る一方です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一方だ");
+        assert_pattern_range(&patterns, "一方だ", 13, 17); // 一方です
+    }
+
+    #[test]
+    fn test_ippouda_increase() {
+        // Testing: Verb expressing change + 一方だ (works with both increase and decrease)
+        let sentence = "最近、物価が上がる一方だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一方だ");
+        assert_pattern_range(&patterns, "一方だ", 9, 12); // 一方だ
+    }
+}

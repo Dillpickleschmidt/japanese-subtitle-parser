@@ -7617,8 +7617,40 @@ pub fn masumasu() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 一方だ
+// Pattern: 一方だ (more and more / continuing to / getting X-er and X-er)
+// Structures: Verb + 一方 + だ/です
 pub fn ippouda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 一方 (dependent noun meaning "single direction")
+    // 一方 (名詞/非自立/副詞可能)
+    #[derive(Debug)]
+    struct IppouMatcher;
+    impl Matcher for IppouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "一方"
+                && token.base_form == "一方"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ or です (copula auxiliary)
+    // だ (助動詞, base=だ, 基本形)
+    // です (助動詞, base=です, 基本形)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "だ" || token.base_form == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IppouMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: 一方で
