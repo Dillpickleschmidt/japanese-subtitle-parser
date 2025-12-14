@@ -4,7 +4,7 @@
 **Status**: COMPLETE - Successfully completed 1 N3 pattern
 **Patterns completed**: 1 (もの・もん)
 **Tests added**: 8 (all passing)
-**Total tests**: 2230 passing, 1 ignored (was 2222 passing, 1 ignored)
+**Total tests**: 2229 passing, 1 ignored (was 2222 passing, 1 ignored - net +7 tests)
 
 ### ✅ Pattern Completed: もの・もん (because / 'cause - sentence-ending particle)
 
