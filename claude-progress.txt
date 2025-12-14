@@ -1,3 +1,82 @@
+## Session 293 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (～にする・～くする - to make/do something)
+**Tests added**: 6 (all passing)
+**Total tests**: 1859 (was 1853)
+
+### Pattern Implemented: ～にする・～くする (to make/do something)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: The expression ～にする・～くする is used to express "to make (something) more (adjective)" or "to change (something) to (state)". This pattern combines adjectives or nouns with the verb する to indicate a deliberate action to change something's state or quality. The pattern shows a high level of control over the action.
+
+**Structures tested**: 6 tests covering all structure variants
+1. な-Adj + に + する: 綺麗にする (to make clean)
+2. い-Adj[く] + する: 熱くする (to make hot)
+3. い-Adj[く] + する: 甘くする (to make sweet)
+4. Noun + に + する: 曲にする (to make into a song / to choose as a song)
+5. な-Adj + に + します (polite): 丈夫にします (will make durable)
+6. い-Adj[く] + します (polite): 小さくします (will make small)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (uff5e_nisuru_u30fb_uff5e_kusuru function, lines 2415-2470)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (nisuru_u30fb_kusuru_tests module, lines 10870-10938)
+- Pattern: grammar-lib/src/patterns.rs (Uff5eNisuruU30fbUff5eKusuru - already existed at line 1550)
+
+**Tokenization pattern**:
+```
+Pattern 1 - い-Adj[く] + する:
+い-Adjective (形容詞/自立, 連用テ接続)
++ する (動詞, base=する)
+
+Pattern 2 - な-Adj/Noun + に + する:
+な-Adjective or Noun (名詞/形容動詞語幹 or 名詞)
++ に (助詞/格助詞)
++ する (動詞, base=する)
+
+Examples:
+- 熱くする: 熱く (形容詞/連用テ接続) + する
+- 綺麗にする: 綺麗 (名詞/形容動詞語幹) + に + する
+- 曲にする: 曲 (名詞) + に + する
+- 小さくします: 小さく (形容詞/連用テ接続) + します (動詞/連用形)
+```
+
+**Key implementation points**:
+1. AdjOrNounMatcher accepts EITHER い-adjective in 連用テ接続 form OR any noun (including 形容動詞語幹)
+2. NiCaseParticleMatcher matches に as 助詞/格助詞 (case particle)
+3. The に particle is made OPTIONAL using TokenMatcher::Optional because い-adjectives don't use に
+4. SuruMatcher matches する/します verb (base_form = "する")
+5. Pattern range includes: (Adj/Noun) + (optional に) + する
+6. Priority 1 means detected but not highlighted in browser extension
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all 3 structure types: な-Adj + に + する, い-Adj[く] + する, Noun + に + する
+- Test both standard (する) and polite (します) forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that the pattern needs to handle TWO distinct structures (くする vs にする)
+2. Implementing a flexible matcher using TokenMatcher::Optional for the に particle
+3. Distinguishing い-adjectives (which use く form) from な-adjectives (which use に particle)
+4. Recognizing that な-adjectives are tokenized as 名詞/形容動詞語幹
+5. Ensuring the pattern works with both する and します conjugations
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a common construction pattern used frequently in daily conversation.
+
+**Linguistic Note**: The expression ～にする・～くする literally means "to do/make (something) into (state)". For い-adjectives, the く form (adverbial form) is used directly with する. For な-adjectives and nouns, the particle に is required to mark the target state. This pattern shows a high level of speaker control over the action, distinguishing it from ～になる (spontaneous change) and ～ようになる (gradual change). Examples: 部屋を綺麗にする (to make the room clean), お風呂を熱くする (to make the bath hot), これを自分の曲にする (to make this my song).
+
+**Next pattern to implement**: れる・られる (Potential) or んだけど・んですが (explanatory pattern)
+
+---
+
 ## Session 292 - 2025-12-14
 
 ### ✅ Session Summary
