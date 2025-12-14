@@ -9502,3 +9502,73 @@ mod nikurabete_tests {
     }
 }
 
+// ========== に違いない (must be / no doubt that) ==========
+// Pattern: に違いない (there is no doubt that / must be)
+// Data source: grammar_points_data.json["に違いない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + に違いない
+//   standard[1]: い-Adjective + に違いない
+//   standard[2]: な-Adjective + に違いない
+//   standard[3]: Noun + に違いない
+//   polite[0-3]: Same forms + ありません
+
+mod nichigainai_tests {
+    use super::*;
+
+    // Test: Verb + に違いない
+    #[test]
+    fn test_verb_nichigainai() {
+        let sentence = "彼らは、先生がいなくなったらふざけるにちがいない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に違いない");
+        assert_pattern_range(&patterns, "に違いない", 14, 24); // ふざけるにちがいない
+    }
+
+    // Test: い-Adjective + に違いない
+    #[test]
+    fn test_i_adjective_nichigainai() {
+        let sentence = "あなたが美味しいというなら、美味しいにちがいない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に違いない");
+        assert_pattern_range(&patterns, "に違いない", 14, 24); // 美味しいにちがいない
+    }
+
+    // Test: な-Adjective + に違いない
+    #[test]
+    fn test_na_adjective_nichigainai() {
+        let sentence = "タナカ君は全然料理を食べてない。この料理が嫌いにちがいない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に違いない");
+        assert_pattern_range(&patterns, "に違いない", 21, 29); // 嫌いにちがいない
+    }
+
+    // Test: Noun + に違いない
+    #[test]
+    fn test_noun_nichigainai() {
+        let sentence = "今のピンポンは近所の子供のいたずらにちがいない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に違いない");
+        assert_pattern_range(&patterns, "に違いない", 13, 23); // いたずらにちがいない
+    }
+
+    // Test: Noun + に違いない (kanji form)
+    #[test]
+    fn test_noun_famous_person() {
+        let sentence = "あの人はカメラマンに囲まれている、有名人に違いない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に違いない");
+        assert_pattern_range(&patterns, "に違いない", 17, 25); // 有名人に違いない
+    }
+}
+

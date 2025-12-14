@@ -4441,9 +4441,49 @@ pub fn tonarande() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に違いない
+// Pattern: に違いない (must be / there is no doubt that)
+// Structures: Verb/Adjective/Noun + に違いない, Verb/Adjective/Noun + に違いありません
 pub fn nichigainai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for ちがい/違い (as noun/ナイ形容詞語幹)
+    #[derive(Debug)]
+    struct ChigaiMatcher;
+    impl Matcher for ChigaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ちがい" || token.surface == "違い")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "ナイ形容詞語幹")
+        }
+    }
+
+    // Matcher for ない as auxiliary
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, Adjective, or Noun
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ChigaiMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: 当たり

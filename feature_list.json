@@ -5924,13 +5924,13 @@
   {
     "pattern_name": "に違いない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the case marking particle に is combined with the noun 違（ちが）い 'difference', and the い-Adjective ない, an expression... [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null
