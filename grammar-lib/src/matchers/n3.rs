@@ -1553,9 +1553,61 @@ pub fn kotonisuru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ことなの
+// Pattern: ことなの (explanatory "it is that")
+// Structures: こと + な + の/ん
 pub fn kotonano() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match こと (名詞/非自立)
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.base_form == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match な (助動詞, base=だ)
+    #[derive(Debug)]
+    struct NaMatcher;
+    impl Matcher for NaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match の (名詞/非自立 or 助詞/終助詞) or ん (名詞/非自立)
+    #[derive(Debug)]
+    struct NoOrNMatcher;
+    impl Matcher for NoOrNMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // の as 名詞/非自立 or 助詞/終助詞
+            if token.surface == "の" {
+                (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+                    || (token.pos.first().is_some_and(|pos| pos == "助詞")
+                        && token.pos.get(1).is_some_and(|pos| pos == "終助詞"))
+            } else if token.surface == "ん" {
+                // ん as 名詞/非自立
+                token.base_form == "ん"
+                    && token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+            } else {
+                false
+            }
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(NaMatcher)),
+        TokenMatcher::Custom(Arc::new(NoOrNMatcher)),
+    ]
 }
 
 // Pattern: ことになる (it has been decided / will end up)

@@ -7762,3 +7762,96 @@ mod kaha_niyotte_chigau_tests {
     //     assert_pattern_range(&patterns, "〜かは〜によって違う", 13, 25); // かは仕事の進み具合による
     // }
 }
+
+// ========== ことなの (explanatory "it is that") ==========
+// Pattern: ことなの
+// Data source: grammar_points_data.json["ことなの"]
+//
+// Structures to test:
+//   - standard[0]: Phrase + というのは + い-Adjective + (という)ことなのだ
+//   - standard[1]: Phrase + というのは + Verb + (という)ことなのだ
+//   - standard[2]: Phrase + というのは + な-Adjective + なことなのだ
+//   - standard[3]: Phrase + というのは + Noun + のことなのだ
+//   - Variants: って/とは for というのは, なん for なの
+//   - polite[0-3]: Same structures with です instead of だ
+//
+// Examples from data:
+//   - 漫画家というのは漫画を描く人のことなのだ
+//   - 付属品というのはメインの物に付属している物のことなんだ
+//   - 雨が上がるというのは雨が止むことなのです
+#[cfg(test)]
+mod kotonano_tests {
+    use super::*;
+
+    // Test: Noun + のことなの (standard form)
+    // Structure: Phrase + というのは + Noun + のことなのだ
+    #[test]
+    fn test_kotonano_noun() {
+        let sentence = "漫画家というのは漫画を描く人のことなのだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなの");
+        assert_pattern_range(&patterns, "ことなの", 15, 19); // ことなの
+    }
+
+    // Test: Noun + のことなん (なん variant)
+    // Structure: Phrase + というのは + Noun + のことなんだ
+    #[test]
+    fn test_kotonano_noun_nan() {
+        let sentence = "付属品というのはメインの物に付属している物のことなんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなの");
+        assert_pattern_range(&patterns, "ことなの", 22, 26); // ことなん
+    }
+
+    // Test: Verb + ことなの (polite)
+    // Structure: Phrase + というのは + Verb + ことなのです
+    #[test]
+    fn test_kotonano_verb_polite() {
+        let sentence = "雨が上がるというのは雨が止むことなのです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなの");
+        assert_pattern_range(&patterns, "ことなの", 14, 18); // ことなの
+    }
+
+    // Test: Verb + ということなの (with という before ことなの)
+    // Structure: Phrase + とは + Verb + ということなの
+    #[test]
+    fn test_kotonano_verb_toiu() {
+        let sentence = "輸送とは荷物を送るということなの";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなの");
+        assert_pattern_range(&patterns, "ことなの", 12, 16); // ことなの
+    }
+
+    // Test: Question form (ことなのか)
+    // Structure: Phrase + という + ことなのか
+    #[test]
+    fn test_kotonano_question() {
+        let sentence = "つまりそこに一人で行くと危ないということなのか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなの");
+        assert_pattern_range(&patterns, "ことなの", 18, 22); // ことなの
+    }
+
+    // Test: Simple question (ことなのですか)
+    // Structure: Verb + ことなのですか
+    #[test]
+    fn test_kotonano_question_polite() {
+        let sentence = "そんなに怒ることなのですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことなの");
+        assert_pattern_range(&patterns, "ことなの", 6, 10); // ことなの
+    }
+}

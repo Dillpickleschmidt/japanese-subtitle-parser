@@ -4538,13 +4538,13 @@
   {
     "pattern_name": "ことなの",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the noun こと (or 事（こと） in its kanji form) is combined with なの, it conveys an explanatory meaning that is similar ... [8 std, 8 pol]",
     "priority": 3,
     "skip_reason": null
