@@ -1,3 +1,89 @@
+## Session 281 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ほとんど - most, almost, hardly any)
+**Tests added**: 5 (all passing)
+**Total tests**: 1804 (was 1799)
+
+### Pattern Implemented: ほとんど (most, almost, hardly any)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: The adverb ほとんど is a common adverb that expresses "most", "almost all", or "hardly any" depending on context. In affirmative sentences it means "most/almost all", while in negative sentences it means "hardly any/almost none".
+
+**Structures tested**: 5 tests covering all structure variants
+1. ほとんど + Phrase (affirmative): 宿題はほとんど終わっているよ (Most of my homework is done)
+2. ほとんど + Negative Phrase: 弁当はほとんど食べてない (I didn't eat most of my lunch)
+3. ほとんど + の + Noun: ほとんどの人は私の名前を読めません (Most people can't read my name)
+4. ほとんど + ない (hardly any - existence): 今年は屋台がほとんどないね (There are hardly any food stalls this year)
+5. ほとんど + ない (hardly - action): 週末に出かけることはほとんどないです (I hardly go out during weekends)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (hotondo function, lines 2885-2899)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (hotondo_tests module, lines 10042-10107)
+- Pattern: grammar-lib/src/patterns.rs (Hotondo, line 1677 - already existed)
+
+**Tokenization pattern**:
+```
+Simple single-token pattern:
+ほとんど (副詞/一般)
+  surface='ほとんど'
+  base_form='ほとんど'
+  pos=副詞/一般
+```
+
+**Key implementation points**:
+1. HotondoMatcher checks all three conditions: surface, base_form, and POS tag
+2. Pattern is very simple - just matches the adverb ほとんど
+3. Pattern range includes only ほとんど itself (not following particles or phrases)
+4. The の in ほとんどの is part of the noun phrase, not the grammar pattern itself
+5. Meaning depends on context: affirmative = "most", negative = "hardly any"
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover both affirmative and negative contexts
+- Test standalone usage and usage with の
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+
+**Challenges Solved**:
+1. Understanding that ほとんど is a simple single-token adverb
+2. Recognizing that the pattern range includes only ほとんど, not following elements
+3. Understanding that ほとんどの is just ほとんど + の (連体化 particle) + Noun
+4. Verifying correct detection in both affirmative and negative contexts
+5. Simple implementation: just match the adverb with all three conditions
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate for a common adverb that doesn't need special emphasis.
+
+**Linguistic Note**: The word ほとんど comes from 殆ど (hotondo) and literally means "almost the entirety" or "nearly all". When used with affirmative expressions, it emphasizes that something applies to most of a group. When used with negative expressions (ほとんど～ない), it creates a double emphasis that means "almost none" or "hardly any". This is similar to how English "almost all" becomes "almost none" when negated.
+
+### Session Statistics
+- **Session time**: Approximately 25 minutes
+- **Patterns completed this session**: 1 (ほとんど)
+- **Test success rate**: 5/5 (100%)
+- **Total passing tests**: 1804 (up from 1799)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - ように (so that/in order to) - purpose expression
+   - ように・ような (like/as) - adverbial/attributive forms
+   - みたいに・みたいな (like/as) - casual forms
+   - ようにいう (to tell/ask someone to do)
+   - ほかに(も)・ほか(に)は (other than, besides) - more complex pattern
+2. **Pattern focus**: ように would complement the existing よう-based patterns
+
+### Environment Status
+- All 1804 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 280 - 2025-12-14
 
 ### ✅ Session Summary
