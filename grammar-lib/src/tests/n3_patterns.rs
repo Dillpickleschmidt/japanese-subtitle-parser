@@ -11462,18 +11462,112 @@ mod moshikashitara_tests {
         assert_has_pattern(&patterns, "もしかしたら");
         assert_pattern_range(&patterns, "もしかしたら", 0, 6); // もしかすると
     }
+}
 
-    // Test: もしかしたら with かもしれない
-    // Example: "もしかしたら明日も休むかもしれない"
-    // Tokenization: もしか (副詞) + し (動詞, する) + たら (助動詞, た)
+// ============================================================================
+// Pattern: もの・もん (because / 'cause - sentence-ending particle)
+// ============================================================================
+
+#[cfg(test)]
+mod mono_mon_tests {
+    use super::*;
+
+    // Test 1: Verb + もの (plain form)
+    // Example from grammar data: "だって、あなたはいつも嘘をつくもの"
     #[test]
-    fn test_moshikashitara_with_kamoshirenai() {
-        let sentence = "もしかしたら明日も休むかもしれない";
+    fn test_verb_mono() {
+        let sentence = "だって、あなたはいつも嘘をつくもの";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "もしかしたら");
-        assert_pattern_range(&patterns, "もしかしたら", 0, 6); // もしかしたら
+        assert_has_pattern(&patterns, "もの・もん");
+        assert_pattern_range(&patterns, "もの・もん", 13, 17); // つくもの
+    }
+
+    // Test 2: な-Adj + だもの (plain form)
+    // Note: Original test intended い-Adj but 大切 is a な-Adj
+    // Example: "これはあなたにあげられない。大切だもの"
+    #[test]
+    fn test_na_adj_damono() {
+        let sentence = "これはあなたにあげられない。大切だもの";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もの・もん");
+        assert_pattern_range(&patterns, "もの・もん", 14, 19); // 大切だもの
+    }
+
+    // Test 3: Noun + だもの
+    // Example: "すぐ泣くに決まってるじゃん、まだこどもだもの"
+    #[test]
+    fn test_noun_damono() {
+        let sentence = "すぐ泣くに決まってるじゃん、まだこどもだもの";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もの・もん");
+        assert_pattern_range(&patterns, "もの・もん", 16, 22); // こどもだもの
+    }
+
+    // Test 4: Verb + んだもの (emphasized)
+    // Example: "だって、暑くて寝れないんだもの"
+    #[test]
+    fn test_verb_ndamono() {
+        let sentence = "だって、暑くて寝れないんだもの";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もの・もん");
+        assert_pattern_range(&patterns, "もの・もん", 9, 15); // ないんだもの
+    }
+
+    // Test 5: Noun + なんだもの (emphasized)
+    // Example: "まだ新人なんだもの"
+    #[test]
+    fn test_noun_nandamono() {
+        let sentence = "この子は失敗するに決まってるでしょう、まだ新人なんだもの";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もの・もん");
+        assert_pattern_range(&patterns, "もの・もん", 23, 28); // なんだもの
+    }
+
+    // Test 6: Noun + だもん (casual/childish)
+    // Example: "もうお腹いっぱいだもん"
+    #[test]
+    fn test_noun_damon() {
+        let sentence = "もうお腹いっぱいだもん";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もの・もん");
+        assert_pattern_range(&patterns, "もの・もん", 4, 11); // いっぱいだもん
+    }
+
+    // Test 7: Verb + もん (casual)
+    // Example: "いいよ、お前とはもう遊ばないもん！"
+    // Note: Pattern matches from auxiliary ない, not from verb stem 遊ば
+    #[test]
+    fn test_verb_mon() {
+        let sentence = "いいよ、お前とはもう遊ばないもん！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もの・もん");
+        assert_pattern_range(&patterns, "もの・もん", 12, 16); // ないもん
+    }
+
+    // Test 8: Verb negative + んだもの (emphasized)
+    // This tests auxiliary verb ない + explanatory んだ + もの
+    #[test]
+    fn test_nai_ndamono() {
+        let sentence = "暑くて寝れないんだもの";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もの・もん");
+        assert_pattern_range(&patterns, "もの・もん", 5, 11); // ないんだもの
     }
 }
 

@@ -6330,13 +6330,13 @@
   {
     "pattern_name": "ものだ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "もの (or 物（もの） in its kanji form) is classified as a 形式名詞（けいしきめいし） (dummy noun) in Japanese [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6344,13 +6344,13 @@
   {
     "pattern_name": "もの・もん",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "もの , an extremely common noun in Japanese that means 'thing', can also be used as a sentence ending particle [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null

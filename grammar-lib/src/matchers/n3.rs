@@ -1648,9 +1648,120 @@ pub fn teki() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: もの・もん
+// Pattern: もの・もの (because / 'cause - sentence-ending particle)
+// Structures: Verb/Adj + もの, Verb/Adj + もん, Noun/な-Adj + だ + もの/もん, + ん + だ + もの/もん
 pub fn mono_u30fb_mon() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match もの as dependent noun (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct MonoNounMatcher;
+    impl super::Matcher for MonoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.base_form == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match もん as particle (助詞/終助詞) OR as noun (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct MonMatcher;
+    impl super::Matcher for MonMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もん"
+                && token.base_form == "もん"
+                && ((token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "終助詞"))
+                    || (token.pos.first().is_some_and(|pos| pos == "名詞")
+                        && token.pos.get(1).is_some_and(|pos| pos == "非自立")))
+        }
+    }
+
+    // Match ん as dependent noun (explanatory particle)
+    #[derive(Debug)]
+    struct NParticleMatcher;
+    impl super::Matcher for NParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ as auxiliary (助動詞)
+    #[derive(Debug)]
+    struct DaAuxMatcher;
+    impl super::Matcher for DaAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "な")
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match もの or もん (both as noun OR もん as particle)
+    #[derive(Debug)]
+    struct MonoOrMonMatcher;
+    impl super::Matcher for MonoOrMonMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // もの as noun
+            (token.surface == "もの"
+                && token.base_form == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+                // OR もん as particle
+                || (token.surface == "もん"
+                    && token.base_form == "もん"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "終助詞"))
+                // OR もん as noun
+                || (token.surface == "もん"
+                    && token.base_form == "もん"
+                    && token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+        }
+    }
+
+    // Match content words that can precede もの/もん
+    // This includes verbs, adjectives, nouns, and certain auxiliary verbs (like ない)
+    #[derive(Debug)]
+    struct ContentWordMatcher;
+    impl super::Matcher for ContentWordMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verbs (動詞)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                // OR adjectives (形容詞)
+                || token.pos.first().is_some_and(|pos| pos == "形容詞")
+                // OR nouns (名詞) - but only non-auxiliary nouns
+                || (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && !token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+                // OR auxiliary verbs (助動詞) - for cases like ないんだもの
+                || token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: ContentWord + [optional: ん] + [optional: だ] + (もの|もん)
+    // This matches all variants:
+    // - Verb/Adj + もの
+    // - Verb/Adj + もん
+    // - Noun/な-Adj + だ + もの
+    // - Noun/な-Adj + だ + もん
+    // - Verb/Adj + ん + だ + もの
+    // - Verb/Adj + ん + だ + もん
+    // - Noun/な-Adj + な + ん + だ + もの
+    vec![
+        TokenMatcher::Custom(Arc::new(ContentWordMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NParticleMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DaAuxMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(MonoOrMonMatcher)), // Matches もの or もん
+    ]
 }
 
 // Pattern: ものだ (should / naturally is / common sense)
