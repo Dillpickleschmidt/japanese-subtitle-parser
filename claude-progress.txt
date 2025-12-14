@@ -1,3 +1,107 @@
+## Session 286 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ようにいのる - to pray that, to hope)
+**Tests added**: 5 (all passing)
+**Total tests**: 1826 (was 1821)
+
+### Pattern Implemented: ようにいのる (to pray that, to hope)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: The expression ようにいのる combines the auxiliary verb ようだ (in its adverbial form ように) with the verb 祈る (いのる - to pray). It is used to express hoping or praying for something to happen or not happen. The pattern emphasizes a wish or hope, often used when the speaker has no direct control over the outcome. Unlike ようにする (conscious effort) or ようになる (natural change), this pattern expresses prayer or hope.
+
+**Structures tested**: 5 tests covering all structure variants
+1. Verb[る] + ように + 祈る: なるようにいのる (pray that [something] becomes)
+2. Verb[る] + ように + 祈る: なるようにいのる (pray that [something] becomes)
+3. Verb[ない] + ように + 祈る: れないようにいのる (pray that [I] don't get [called on])
+4. Verb[ない] + ように + 祈る: 死なないようにいのる (pray that [I] don't die)
+5. Verb[る] + ように + 祈ります (polite): 帰れますようにいのります (pray that [I] can return)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (youniinoru function, lines 6374-6455)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (youniinoru_tests module, lines 10353-10419)
+- Pattern: grammar-lib/src/patterns.rs (Youniinoru - already existed)
+
+**Tokenization pattern**:
+```
+Affirmative form:
+Verb (動詞/自立, 基本形 like なる)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/格助詞/一般 or 助詞/副詞化)
++ いのる (動詞/自立, base=いのる)
+
+Negative form:
+Verb (動詞/自立, 未然形)
++ ない (助動詞, base=ない)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/格助詞/一般 or 助詞/副詞化)
++ いのる (動詞/自立)
+
+Polite form:
+Verb (動詞/自立, 連用形)
++ ます (助動詞, 特殊・マス)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/格助詞/一般)
++ いのり (動詞/自立, 連用形)
++ ます (助動詞)
+```
+
+**Key implementation points**:
+1. VerbMatcher accepts any verb (基本形, 未然形, or 連用形 depending on context)
+2. Optional NaiMatcher handles ない auxiliary for negative forms
+3. Optional MasuMatcher handles ます auxiliary for polite forms
+4. YouMatcher ensures よう is 名詞/非自立/助動詞語幹
+5. NiParticleMatcher accepts either 格助詞 or 副詞化 for に particle
+6. InoruMatcher specifically matches いのる/祈る verb
+7. Pattern range includes full construction: Verb(+ない/+ます) + よう + に + いのる
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover affirmative, negative, and polite forms
+- Test both standard (いのる) and polite (いのります) conjugations
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that に can be either 格助詞 or 副詞化 in this pattern
+2. Handling three optional forms: plain verb, verb+ない, and verb+ます
+3. Making both ない and ます optional matchers to cover all cases
+4. Ensuring pattern works with passive+negative forms (呼ばれない)
+5. Coordinating with existing ように patterns (ように, ようにいう, ようになる, ようにする)
+
+**Pattern Priority**: Priority 2 means this pattern is detected and highlighted. This is appropriate as it's a specific grammar construction for expressing hopes and prayers, distinct from other よう-based patterns.
+
+**Linguistic Note**: The expression ようにいのる literally means "to pray in such a way that [action happens]". It comes from よう (様 - manner/way) + に (adverbial particle) + 祈る (to pray). This pattern expresses a wish or hope with religious or spiritual overtones, though it's often used casually in modern Japanese to mean "I hope" rather than literally "I pray". The pattern emphasizes that the speaker has no direct control over the outcome and can only hope/pray for the desired result.
+
+### Session Statistics
+- **Session time**: Approximately 60 minutes
+- **Patterns completed this session**: 1 (ようにいのる)
+- **Test success rate**: 5/5 (100%)
+- **Total passing tests**: 1826 (up from 1821)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - ように～てほしい (want someone to do in order to) - combined よう pattern
+   - ほかに(も)・ほか(に)は (other than, besides) - more complex pattern
+   - よていだ (予定だ - plan to) - intention expression
+   - らしい ① (seems like/apparently) - hearsay/conjecture
+   - らしい ② (typical of) - characteristic expression
+2. **Pattern focus**: よていだ would be a good choice as a new pattern type (not よう-based)
+
+### Environment Status
+- All 1826 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 285 - 2025-12-14
 
 ### ✅ Session Summary
