@@ -7016,13 +7016,13 @@
   {
     "pattern_name": "関係がある",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the noun 関係（かんけい） 'a relation' is paired with がある 'to have', it will be received in a similar way to phrases lik... [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

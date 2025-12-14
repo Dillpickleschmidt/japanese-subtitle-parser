@@ -8021,3 +8021,95 @@ mod toonajikurai_tests {
         assert_pattern_range(&patterns, "と同じくらい", 6, 16); // お母さんと同じぐらい
     }
 }
+
+// ========== 関係がある (to be related to / to have a connection with) ==========
+// Pattern: 関係がある (to be related to / to have a connection with)
+// Data source: grammar_points_data.json["関係がある"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + に + 関係 + がある
+//   standard[1]: Noun + に + 関係 + がある + Noun (as relative clause)
+//   standard[2]: Noun + と + 関係 + がある (variant particle)
+//   standard[3]: Noun + に + 関係 + がない (negative)
+//   standard[4]: Noun + に + 関係 + がの/は + ある (with の/は particle)
+
+mod kankeigaaru_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + に + 関係 + がある
+    #[test]
+    fn test_kankeigaaru_ni_basic() {
+        let sentence = "さっき森の方に逃げた人は事件に関係があると思います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "関係がある");
+        assert_pattern_range(&patterns, "関係がある", 15, 20); // 関係がある
+    }
+
+    // Testing: standard[1] - Noun + に + 関係 + がある + Noun (relative clause)
+    #[test]
+    fn test_kankeigaaru_relative_clause() {
+        let sentence = "この仕事に関係がある資料を全て提出してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "関係がある");
+        assert_pattern_range(&patterns, "関係がある", 5, 10); // 関係がある
+    }
+
+    // Testing: standard[2] - Noun + と + 関係 + がある (と particle)
+    #[test]
+    fn test_kankeigaaru_to_particle() {
+        let sentence = "あの工場は川の汚染と関係があるそうだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "関係がある");
+        assert_pattern_range(&patterns, "関係がある", 10, 15); // 関係がある
+    }
+
+    // Testing: standard[2] - Noun + と + 関係 + がある (another example)
+    #[test]
+    fn test_kankeigaaru_to_particle_question() {
+        let sentence = "それとこれはなんの関係があるのだろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "関係がある");
+        assert_pattern_range(&patterns, "関係がある", 9, 14); // 関係がある
+    }
+
+    // Testing: standard[3] - Noun + に + 関係 + がない (negative)
+    #[test]
+    fn test_kankeigaaru_negative() {
+        let sentence = "それは私に関係がないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "関係がある");
+        assert_pattern_range(&patterns, "関係がある", 5, 12); // 関係がないです
+    }
+
+    // Testing: standard[3] - Noun + に + 関係 + がない (negative, relative clause)
+    #[test]
+    fn test_kankeigaaru_negative_relative() {
+        let sentence = "授業に関係がない本はしまってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "関係がある");
+        assert_pattern_range(&patterns, "関係がある", 3, 8); // 関係がない
+    }
+
+    // Testing: standard[4] - Noun + と + の + 関係 + がある (with の)
+    #[test]
+    fn test_kankeigaaru_no_particle() {
+        let sentence = "この被害者との関係がある人を集めてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "関係がある");
+        assert_pattern_range(&patterns, "関係がある", 7, 12); // 関係がある
+    }
+}

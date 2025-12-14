@@ -2277,9 +2277,52 @@ pub fn ndatte() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 関係がある
+// Pattern: 関係がある (to be related to / to have a connection with)
+// Structures: Noun + に/と(+の) + 関係 + が + ある/ない
 pub fn kankeigaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 関係 (noun)
+    #[derive(Debug)]
+    struct KankeiMatcher;
+    impl Matcher for KankeiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "関係"
+                && token.base_form == "関係"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match が particle
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ある (verb) or ない (adjective)
+    #[derive(Debug)]
+    struct AruNaiMatcher;
+    impl Matcher for AruNaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ある"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+                || (token.surface == "ない"
+                    && token.base_form == "ない"
+                    && token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KankeiMatcher)),
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AruNaiMatcher)),
+    ]
 }
 
 // Pattern: に関する・に関して
