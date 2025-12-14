@@ -1,10 +1,10 @@
 ## Session 342 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: IN PROGRESS
-**Patterns completed**: 1 (まさか)
-**Tests added**: 3 (all passing)
-**Total tests**: 2174 passing, 1 ignored (was 2171 passing, 1 ignored)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (まさか, ますます)
+**Tests added**: 7 (all passing)
+**Total tests**: 2178 passing, 1 ignored (was 2171 passing, 1 ignored)
 
 ### ✅ Pattern Completed: まさか (no way/don't tell me)
 
@@ -51,6 +51,59 @@ Simple single-token matcher: まさか
 
 **Related patterns**:
 - This is a standalone adverb pattern, not part of a larger construction family
+
+---
+
+### ✅ Pattern Completed: ますます (more and more/increasingly)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted)
+
+**Pattern**: ますます is an adverb meaning "increasingly", "more and more", or "to keep (A)ing". It is used to emphasize continuous trends and will regularly be seen at the beginning of sentences or before predicates. The pattern comes from stacking 増（ま）す (an う-verb meaning 'to increase'), and is most often used to highlight verbs that indicate some sort of change, or with adjectives that can increase in intensity.
+
+**Structures tested**: 4 comprehensive tests covering different usage contexts
+1. ますます + verb (positive trend): 彼女は成長するにつれて、ますます美しくなっています。 (She is getting more and more beautiful as she develops)
+2. ますます + adjective (increasing intensity): 年を取るにつれて、ますます目が悪くなっていくよ。 (As I get older, my eyes are getting worse and worse)
+3. ますます + decreasing verb (increasingly negative): 仕事が忙しくて、ますます子供と過ごす時間が減っていく。 (Because work is so busy, I have less and less time to spend with my children)
+4. ますます at beginning of sentence: この匂いを嗅いでるとますますお腹が空いてくる。 (I am going to get more and more hungry if I keep smelling it)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (masumasu, lines 6531-6544)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (masumasu_tests module, lines 10903-10953)
+- Pattern: grammar-lib/src/patterns.rs (Masumasu, lines 4034-4040)
+
+**Tokenization pattern**:
+```
+Simple single-token matcher: ますます
+- ますます (副詞/助詞類接続) - adverb
+```
+
+**Key implementation points**:
+1. Very simple single-token matcher using Custom matcher
+2. MasumasuMatcher checks surface == "ますます" and POS == 副詞 (adverb)
+3. Pattern can appear at various positions in the sentence
+4. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+5. Works with increasing and decreasing trends (both considered "increasingly")
+
+**Pattern ranges**: Just the adverb ますます itself
+- Beginning of sentence: "ますます" (chars 10-14)
+- After comma: "ますます" (chars 9-13)
+- After comma (variant): "ますます" (chars 8-12)
+- After comma (variant 2): "ますます" (chars 12-16)
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover different usage contexts: positive trends, negative trends, increasing/decreasing
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that ますます originally comes from stacking 増（ま）す, though it is sometimes written as 益々（ますます） using the kanji 益 meaning 'gain'. Despite sometimes being translated as "less and less", this situation is still actually considered as "increasing" (increasingly negative). For example, "less and less time" is still an increase in the negative direction.
+
+**Related patterns**:
+- This is a standalone adverb pattern, not part of a larger construction family
+- Related to 増す (masu) meaning "to increase"
 
 ---
 
