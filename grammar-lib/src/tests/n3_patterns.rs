@@ -11806,3 +11806,91 @@ mod wakeda_tests {
         assert_pattern_range(&patterns, "わけだ", 14, 21); // というわけです
     }
 }
+
+// ========== わけではない (it's not the case that / doesn't mean that) ==========
+// Pattern: わけではない (it's not the case that / doesn't mean that)
+// Data source: grammar_points_data.json["わけではない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + わけではない
+//   standard[1]: い-Adjective + わけではない
+//   standard[2]: な-Adjective + な + わけではない
+//   standard[3]: Noun + の + わけではない
+//   standard[4]: わけじゃない (casual)
+//   polite[0-4]: Same + ありません
+
+mod wakedehanai_tests {
+    use super::*;
+
+    // Test: Verb + わけではない
+    // Structure: standard[0] - "Verb + わけではない"
+    #[test]
+    fn test_verb_wakedehanai() {
+        let sentence = "日本語を話せるわけではないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけではない");
+        assert_pattern_range(&patterns, "わけではない", 7, 13); // わけではない
+    }
+
+    // Test: い-Adjective + わけではない
+    // Structure: standard[1] - "い-Adjective + わけではない"
+    #[test]
+    fn test_i_adjective_wakedehanai() {
+        let sentence = "私の家は広いわけではないけど、小さくもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけではない");
+        assert_pattern_range(&patterns, "わけではない", 6, 12); // わけではない
+    }
+
+    // Test: な-Adjective + な + わけではない
+    // Structure: standard[2] - "な-Adjective + な + わけではない"
+    #[test]
+    fn test_na_adjective_wakedehanai() {
+        let sentence = "仕事が大変なわけではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけではない");
+        assert_pattern_range(&patterns, "わけではない", 6, 12); // わけではない
+    }
+
+    // Test: Noun + の + わけではない
+    // Structure: standard[3] - "Noun + の + わけではない"
+    #[test]
+    fn test_noun_no_wakedehanai() {
+        let sentence = "熱のわけではないけど、体がだるい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけではない");
+        assert_pattern_range(&patterns, "わけではない", 2, 8); // わけではない
+    }
+
+    // Test: わけじゃない (casual form)
+    // Structure: standard[4] - "わけじゃない"
+    #[test]
+    fn test_wakejyanai_casual() {
+        let sentence = "あの監督は有名だけど、映画を監督して有名になったわけじゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけではない");
+        assert_pattern_range(&patterns, "わけではない", 24, 30); // わけじゃない
+    }
+
+    // Test: わけではありません (polite form)
+    // Structure: polite[0] - "Verb + わけではありません"
+    #[test]
+    fn test_wakedehanai_polite() {
+        let sentence = "嫌いというわけではありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけではない");
+        assert_pattern_range(&patterns, "わけではない", 5, 14); // わけではありません
+    }
+}

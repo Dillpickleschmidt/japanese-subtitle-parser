@@ -3300,7 +3300,67 @@ pub fn wakeda() -> Vec<TokenMatcher> {
 
 // Pattern: わけではない
 pub fn wakedehanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match わけ (dependent noun)
+    #[derive(Debug)]
+    struct WakeMatcher;
+    impl Matcher for WakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わけ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match で or じゃ
+    #[derive(Debug)]
+    struct DeJyaMatcher;
+    impl Matcher for DeJyaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // で (auxiliary verb, connective form)
+            (token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // じゃ (particle)
+            || (token.surface == "じゃ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞"))
+        }
+    }
+
+    // Match は particle (optional for じゃない case)
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ない or あり (start of negative)
+    #[derive(Debug)]
+    struct NaiAriMatcher;
+    impl Matcher for NaiAriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ない (auxiliary verb or adjective) - plain negative
+            (token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞")))
+            // あり (start of ありません) - polite negative
+            || (token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(WakeMatcher)),
+        TokenMatcher::Custom(Arc::new(DeJyaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaMatcher)))),
+        TokenMatcher::Custom(Arc::new(NaiAriMatcher)),
+    ]
 }
 
 // Pattern: と同時に (at the same time as)
