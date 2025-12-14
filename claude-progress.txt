@@ -1,3 +1,80 @@
+## Session 274 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (見える - to be visible/can be seen)
+**Tests added**: 2 (all passing)
+**Total tests**: 1756 (was 1754)
+
+### Pattern Implemented: 見える (to be visible, can be seen)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2 (Priority 1 in pattern declaration - low priority for highlighting)
+
+**Pattern**: Intransitive verb meaning "to be visible" or "can be seen". Used to describe things that are visible without requiring active concentration - seeing it is unavoidable if looking in its direction. Different from 見られる (potential form of 見る) which implies trying to concentrate on something specific.
+
+**Structures tested**: 2 tests covering all structure variants
+1. Noun + が + 見える (standard): 遠くに建物が見える (A building can be seen in the distance)
+2. Noun + が + 見えます (polite): この部屋からは富士山が見えます (Mount Fuji can be seen from this room)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (mieru, lines 2571-2593)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (mieru_tests, lines 9392-9420)
+- Pattern: grammar-lib/src/patterns.rs (Mieru, line 1645 - already existed)
+
+**Tokenization pattern**:
+```
+Noun (名詞 - any subtype)
++ が (助詞/格助詞/一般)
++ 見える (動詞/自立, base="見える")
+```
+
+**Key implementation points**:
+1. Simple pattern matching Noun + が + 見える
+2. Custom GaParticleMatcher matches が as a case particle (格助詞)
+3. Uses TokenMatcher::specific_verb("見える") to match the verb
+4. Pattern matcher automatically extends through conjugations (見え+ます, 見え+ない, 見え+た, etc.)
+5. Pattern range includes full construction: Noun + が + 見える/見えます
+6. Priority 1 in patterns.rs means it's detected but not highlighted in browser extension overlays
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover both structure variants: standard and polite
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+
+**Challenges Solved**:
+1. Simple pattern with straightforward tokenization
+2. Correctly matching が as case particle (格助詞) not other particle types
+3. Ensuring pattern range includes the full Noun + が + 見える construction
+
+**Linguistic Note**: The verb 見える is intransitive, so the object that is "visible" is marked with が (not を). This is different from the transitive verb 見る (to see/look at) which takes を. The expression emphasizes that something can be perceived visually without effort - it's a natural state of visibility rather than an active attempt to see something.
+
+### Session Statistics
+- **Session time**: Approximately 20 minutes
+- **Patterns completed this session**: 1 (見える)
+- **Test success rate**: 2/2 (100%)
+- **Total passing tests**: 1756 (up from 1754)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - 聞こえる (to be audible) - very similar to 見える (same pattern structure)
+   - ～は～の一つだ (is one of ~)
+   - ～のだろうか (I wonder if ~)
+   - ～にする・～くする (to make/to do)
+   - 化する (to become/to turn into)
+2. **Pattern focus**: 聞こえる would be an excellent next choice as it's identical structure to 見える
+
+### Environment Status
+- All 1756 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 273 - 2025-12-14
 
 ### ✅ Session Summary
