@@ -1,3 +1,59 @@
+## Session 342 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: IN PROGRESS
+**Patterns completed**: 1 (まさか)
+**Tests added**: 3 (all passing)
+**Total tests**: 2174 passing, 1 ignored (was 2171 passing, 1 ignored)
+
+### ✅ Pattern Completed: まさか (no way/don't tell me)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted)
+
+**Pattern**: まさか is an adverb meaning "no way", "don't tell me", or "it can't be true". It's almost always written purely in hiragana and is a combination of まさ (a noun meaning 'precise' or 'exact') and the adverbial particle か. In modern Japanese, まさか is treated as a single adverb that appears at the beginning of sentences to express shock or surprise about something the speaker finds hard to believe.
+
+**Structures tested**: 3 comprehensive tests covering different usage contexts
+1. まさか + と思う construction: まさかタナカ君もこのジムに通っているとは思っていなかったよ。 (I never would have believed that Tanaka also goes to this gym)
+2. まさか + なんて: まさか彼がキャプテンなんて。 (Don't tell me that he is the captain!)
+3. まさか in question form: まさかリアがフランスに帰るって本当なの？ (Is it actually true that Lia is going back to France?)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (masaka, lines 7384-7397)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (masaka_tests module, lines 10856-10894)
+- Pattern: grammar-lib/src/patterns.rs (Masaka, lines 4329-4335)
+
+**Tokenization pattern**:
+```
+Simple single-token matcher: まさか
+- まさか (副詞/一般) - adverb
+```
+
+**Key implementation points**:
+1. Very simple single-token matcher using Custom matcher
+2. MasakaMatcher checks surface == "まさか" and POS == 副詞 (adverb)
+3. Pattern always appears at the beginning of sentences (start=0, end=3)
+4. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+5. Works in all contexts: statements, questions, explanations
+
+**Pattern ranges**: Just the adverb まさか itself
+- All examples: "まさか" (chars 0-3)
+
+**Test Quality**:
+- All 3 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover different usage contexts: と思う constructions, なんて expressions, questions
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that まさか comes from 正（まさ）meaning 'precise' or 'actual', though this noun is very rarely used in modern Japanese. The literal meaning of まさか is closer to 'is it true?' or 'is it actually?' due to か's role in creating questions. This is related to but distinct from まさに (an adverb meaning 'precisely').
+
+**Related patterns**:
+- This is a standalone adverb pattern, not part of a larger construction family
+
+---
+
 ## Session 341 - 2025-12-14
 
 ### ✅ Session Summary

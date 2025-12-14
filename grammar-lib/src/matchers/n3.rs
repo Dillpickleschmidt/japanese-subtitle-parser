@@ -6528,9 +6528,19 @@ pub fn daiichi() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ますます
+// Pattern: ますます (more and more/increasingly)
+// Structures: ますます
 pub fn masumasu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct MasumasuMatcher;
+    impl super::Matcher for MasumasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ますます"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(MasumasuMatcher))]
 }
 
 // Pattern: 一方だ

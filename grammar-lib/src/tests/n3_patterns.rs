@@ -10892,3 +10892,62 @@ mod masaka_tests {
         assert_pattern_range(&patterns, "まさか", 0, 3); // まさか
     }
 }
+
+// ========== ますます (more and more/increasingly) ==========
+// Pattern: ますます (more and more/increasingly)
+// Data source: grammar_points_data.json["ますます"]
+//
+// Structure variants to test:
+//   standard[0]: ますます + Phrase
+
+mod masumasu_tests {
+    use super::*;
+
+    // Test: ますます + verb (increasing positive trend)
+    // Example from grammar data
+    #[test]
+    fn test_masumasu_verb_positive() {
+        let sentence = "彼女は成長するにつれて、ますます美しくなっています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ますます");
+        assert_pattern_range(&patterns, "ますます", 12, 16); // ますます
+    }
+
+    // Test: ますます + adjective (increasing intensity)
+    // Example from grammar data (Caution section)
+    #[test]
+    fn test_masumasu_adjective() {
+        let sentence = "年を取るにつれて、ますます目が悪くなっていくよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ますます");
+        assert_pattern_range(&patterns, "ますます", 9, 13); // ますます
+    }
+
+    // Test: ますます + decreasing verb (increasingly negative)
+    // Example from grammar data (Caution section)
+    #[test]
+    fn test_masumasu_decreasing() {
+        let sentence = "仕事が忙しくて、ますます子供と過ごす時間が減っていく。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ますます");
+        assert_pattern_range(&patterns, "ますます", 8, 12); // ますます
+    }
+
+    // Test: ますます at beginning of sentence
+    // Example from grammar data
+    #[test]
+    fn test_masumasu_beginning() {
+        let sentence = "この匂いを嗅いでるとますますお腹が空いてくる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ますます");
+        assert_pattern_range(&patterns, "ますます", 10, 14); // ますます
+    }
+}
