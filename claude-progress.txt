@@ -1,3 +1,90 @@
+## Session 305 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (関係がある)
+**Tests added**: 7 (all passing)
+**Total tests**: 1955 (was 1948)
+
+### Pattern Implemented: 関係がある (to be related to / to have a connection with)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: 関係がある means "to be related to", "to have a connection with", or "to be involved in". It combines the noun 関係（かんけい）meaning "relation/relationship" with がある "to have/exist". The pattern works with various particles (に, と, との) to indicate what something is related to, and can be negated with がない.
+
+**Structures tested**: 7 comprehensive tests
+1. Noun + に + 関係 + がある: 事件に関係がある (related to the incident)
+2. Noun + に + 関係 + がある + Noun (relative clause): 仕事に関係がある資料 (documents related to work)
+3. Noun + と + 関係 + がある (と particle): 汚染と関係がある (related to pollution)
+4. Noun + の + 関係 + がある (question): なんの関係がある (what relation)
+5. Noun + に + 関係 + がない (negative): 私に関係がない (not related to me)
+6. Noun + に + 関係 + がない + Noun (negative relative): 授業に関係がない本 (books not related to class)
+7. Noun + と + の + 関係 + がある (との): 被害者との関係がある (related to the victim)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (kankeigaaru, lines 2280-2326)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (kankeigaaru_tests module, lines 8025-8115)
+- Pattern: grammar-lib/src/patterns.rs (already existed as stub)
+
+**Tokenization pattern**:
+```
+Structure: 関係 + が + ある/ない
+
+Token breakdown:
+1. 関係 (名詞/サ変接続) - base_form="関係"
+2. が (助詞/格助詞/一般)
+3. ある (動詞/自立, 基本形) OR ない (形容詞/自立, 基本形)
+
+Example (がある):
+- surface='関係' base='関係' pos=名詞/サ変接続
+- surface='が' base='が' pos=助詞/格助詞/一般
+- surface='ある' base='ある' pos=動詞/自立 [基本形]
+
+Example (がない):
+- surface='関係' base='関係' pos=名詞/サ変接続
+- surface='が' base='が' pos=助詞/格助詞/一般
+- surface='ない' base='ない' pos=形容詞/自立 [基本形]
+```
+
+**Key implementation points**:
+1. Three custom matchers: KankeiMatcher, GaParticleMatcher, AruNaiMatcher
+2. KankeiMatcher checks surface/base_form == "関係" AND pos == "名詞"
+3. GaParticleMatcher checks surface == "が" AND pos == "助詞/格助詞"
+4. AruNaiMatcher accepts BOTH ある (動詞) AND ない (形容詞)
+5. Pattern works with に/と/との particles (these are NOT included in pattern range)
+6. Pattern range includes only: 関係 + が + ある/ない (exactly 3 tokens)
+
+**Pattern ranges**: Include 関係 + が + ある/ない only (3 tokens)
+- Example: "関係がある" (chars 15-20) in "事件に関係がある"
+- Example: "関係がある" (chars 5-10) in "仕事に関係がある"
+- Example: "関係がない" (chars 3-8) in "授業に関係がない"
+
+**Test Quality**:
+- All 7 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover all structure variants: に/と/との particles, がある/がない, relative clauses
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern 関係がある is commonly used in detective/mystery contexts (事件に関係がある "related to the crime"), workplace contexts (仕事に関係がある "related to work"), and general explanations of connections. The particle choice has subtle differences:
+- に関係がある: Focus on "relating to" from one direction
+- と関係がある: Focus on mutual relationship between two things
+- との関係がある: Emphasizes the specific connection with something
+
+---
+
+## Session 304 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (と同じくらい)
+**Tests added**: 6 (all passing)
+**Total tests**: 1948 (was 1942)
+
+---
+
 ## Session 303 - 2025-12-14
 
 ### ✅ Session Summary
