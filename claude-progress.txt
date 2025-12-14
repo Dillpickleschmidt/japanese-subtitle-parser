@@ -1,3 +1,107 @@
+## Session 254 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (とか～とか - things like... and...)
+**Tests added**: 4 (all passing)
+**Total tests**: 1657 (was 1653)
+
+### Pattern Implemented: とか～とか (things like... and...)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Listing particle used for providing non-exhaustive examples. とか follows verbs, adjectives, or nouns to indicate "things like" or "among other things". Can appear multiple times in a sentence to list several examples, with the last item optionally omitting とか. Implies there are other items in the category beyond those explicitly stated.
+
+**Structures tested**: 4 tests covering all structure variants
+1. Verb (A) + とか + Verb (B) + とか: 野菜を食べるとか水を飲むとか (things like eating vegetables and drinking water)
+2. Noun (A) + とか + Noun (B) + とか: 亀とかすっぽんとか (things like turtles and softshell turtles)
+3. Multiple nouns with とか: かぼちゃとかサツマイモとか白菜とか (things like pumpkin, sweet potato, and cabbage)
+4. Single とか usage: ドイツとか (things like Germany)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (toka_uff5e_toka, lines 1318-1339)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (toka_uff5e_toka_tests, lines 7974-8032)
+- Pattern: grammar-lib/src/patterns.rs (TokaUff5eToka)
+
+**Tokenization pattern**:
+```
+[Any word: Verb/Noun/Adjective]
++ とか (助詞/並立助詞) - coordinating particle
+```
+
+**Key implementation points**:
+1. Custom matcher checks for とか as 助詞/並立助詞 (particle/coordinating particle)
+2. Pattern uses TokenMatcher::Any to match any preceding word (verb, noun, or adjective)
+3. Multiple instances can appear in one sentence, each detected separately
+4. Pattern range: includes the word + とか (e.g., 食べるとか, 亀とか, ドイツとか)
+5. Priority 1 (listed as priority 1 in patterns.rs)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover verbs, nouns, and multiple listing scenarios
+- Test both multiple とか instances and single とか usage
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Understanding that とか is a listing particle, not a construction requiring specific sequences
+2. Each とか instance is detected separately (multiple pattern matches per sentence)
+3. Pattern matching uses TokenMatcher::Any to allow any word type before とか
+4. Test assertions check the first match returned, which may not be the leftmost occurrence
+
+**Tokenization Discovery**:
+- とか is tokenized as 助詞/並立助詞 (particle/coordinating particle)
+- Can follow any word type: verbs (食べる), nouns (亀), adjectives
+- Each instance creates a separate pattern match
+- Pattern detector finds all instances in left-to-right order
+
+**Pattern Relationship with Other Patterns**:
+- Similar to や (another listing particle, but only for nouns)
+- とか can be used with verbs, while や cannot
+- Both express non-exhaustive listing ("among other things")
+- とか is more casual/conversational than や
+
+**Usage distinction**:
+- とか: Can list verbs, adjectives, or nouns (more versatile, casual)
+- や: Only lists nouns (more formal)
+- Both imply the list is not exhaustive
+
+### Session Statistics
+- **Session time**: Approximately 30 minutes
+- **Patterns completed this session**: 1 (とか～とか)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1657 (up from 1653)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**:
+   - ときいた (I heard that) - past tense hearsay
+   - とみえる (it appears that) - evidential
+   - と～と、どちらが (which is... ?) - comparison question
+   - ないと (must/have to) - conditional negative
+2. **Pattern focus**: More quotative constructions and conditional patterns
+
+### Environment Status
+- All 1657 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+
+**Listing Particles in Japanese**:
+This pattern is part of the listing particle family:
+- とか: Non-exhaustive listing (verbs, adjectives, nouns) - casual
+- や: Non-exhaustive listing (nouns only) - more formal
+- と: Exhaustive listing (complete list)
+- Difference: とか/や imply "among other things", と means "only these items"
+
+**Multiple Pattern Matches**:
+Unlike most patterns that match once per sentence, とか～とか creates multiple matches when とか appears multiple times. This is intentional - each instance of とか is a separate grammatical unit worth highlighting.
+
 ## Session 253 - 2025-12-14
 
 ### ✅ Session Summary
