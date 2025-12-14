@@ -1,3 +1,80 @@
+## Session 354 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (をはじめ)
+**Tests added**: 4 (all passing)
+**Total tests**: 2260 passing, 1 ignored (was 2256 passing, 1 ignored - net +4 tests)
+
+### ✅ Pattern Completed: をはじめ (not only / starting with)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: をはじめ is used to present a topic as a starting point, showing logical progressions from that point. Often translated as "not only (A), but (B)" or "starting with (A), (B)". The pattern emphasizes (A) as the primary example, with additional items following.
+
+**Structures tested**: 4 comprehensive tests covering all major variants
+1. Noun + をはじめ: 車をはじめ (not only cars) - chars 5-10
+2. Noun + をはじめとして: アメリカをはじめとして (with America as starting point) - chars 12-23
+3. Noun + をはじめとする + Noun: 卵をはじめとする (starting with eggs) - chars 6-14
+4. Context variation: 公園をはじめ (not only the park) - chars 7-13
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (wohajime function, lines 4585-4630)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (wohajime_tests module, lines 12074-12127)
+- Pattern: grammar-lib/src/patterns.rs (Wohajime, declared at line 3489)
+
+**Tokenization patterns**:
+```
+Basic pattern: Noun + を + はじめ
+Extended variants:
+  - Noun + を + はじめ + として
+  - Noun + を + はじめ + と + する
+
+を (required):
+- を (助詞/格助詞/一般) - object particle
+
+はじめ (required):
+- はじめ (名詞/副詞可能) - noun meaning "beginning/start"
+
+として (optional):
+- として (助詞/格助詞/連語) - particle meaning "as"
+
+と + する (optional):
+- と (助詞/格助詞/一般) - quotative/case particle
+- する (動詞, base=する) - verb "to do"
+```
+
+**Key implementation points**:
+1. Six-token matcher: Noun + を + はじめ + Optional(として) + Optional(と) + Optional(する)
+2. Includes the preceding noun in the pattern range (full grammatical construction)
+3. HajimeMatcher checks surface == "はじめ", POS == 名詞
+4. ToshiteMatcher matches として as a compound particle (助詞/格助詞/連語)
+5. TosuruMatcher matches the と particle, followed by specific_verb("する")
+6. All optional elements use TokenMatcher::Optional with Box::new()
+7. Pattern priority: 3 (moderate - detected and highlighted in overlay)
+
+**Pattern ranges**: Include full construction from noun to end of pattern
+- Basic: 車をはじめ (chars 5-10)
+- として variant: アメリカをはじめとして (chars 12-23)
+- とする variant: 卵をはじめとする (chars 6-14)
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structural variants: basic, として, とする
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that をはじめ places emphasis on (A) as a starting point. The additional expressions として (or とする) are sometimes paired with it to further emphasize (A), similar to "with (A) as the starting point, (B)". The pattern can be used with multiple items listed after the starting point.
+
+**Related patterns**:
+- て初めて (N3) - different usage of 初めて meaning "for the first time after"
+- など (N5) - "and so on/etc." (used together with をはじめ in examples)
+
+---
+
 ## Session 353 - 2025-12-14
 
 ### ✅ Session Summary
