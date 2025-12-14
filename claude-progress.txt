@@ -2133,3 +2133,27 @@ Together they express speculation or wondering, similar to "I wonder if..." in E
 - All 1911 tests passing
 - No regressions
 - Codebase clean and ready for next session
+
+## Session 299 - 2025-12-14
+
+### ✅ Completed: ～は～の一つだ (A is one of B) - N4
+- Implementation: grammar-lib/src/matchers/n4.rs
+- Tests: 3 passing (standard, polite, ひとり counter)
+- 2 variants undetectable (いっしゅ, いっぽん - Kagome mistokenization)
+- Pattern: Noun + の + Counter + だ/です
+- All tests with proper assertions, no print_debug
+
+### 🚧 WIP: だけでなく(て)～も (not only... but also) - N3
+- Implementation: grammar-lib/src/matchers/n3.rs (partial)
+- Tests: 5 tests with print_debug, only 1/5 detecting
+- Issue: Wildcard/particle matching needs debugging
+- Next session: Fix matching logic, remove print_debug, add assertions
+
+### Stats
+- Tests: 1920 (up from 1917)
+- Commits: 2 (1 complete, 1 WIP)
+- N4 remaining: 1 (他動詞・自動詞 - should skip, not a pattern)
+
+### Next Session
+1. Fix だけでなく(て)～も pattern (priority)
+2. Continue N3 patterns
