@@ -9188,3 +9188,81 @@ mod nitotte_tests {
     }
 }
 
+// ========== に合わせて・に合った (in accordance with / matching) ==========
+// Pattern: に合わせて・に合った (in accordance with, matching, fitting)
+// Data source: grammar_points_data.json["に合わせて・に合った"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + に合わせて
+//   standard[1]: Noun + に合った + Noun
+
+mod niawasete_tests {
+    use super::*;
+
+    // Test: Noun + に合わせて (in accordance with) - music context
+    #[test]
+    fn test_niawasete_music() {
+        let sentence = "音楽にあわせてギターを弾く練習をしています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に合わせて・に合った");
+        assert_pattern_range(&patterns, "に合わせて・に合った", 0, 7); // 音楽にあわせて
+    }
+
+    // Test: Noun + に合わせて (in accordance with) - person context
+    #[test]
+    fn test_niawasete_person() {
+        let sentence = "相手にあわせて話し方を変えるのは疲れる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に合わせて・に合った");
+        assert_pattern_range(&patterns, "に合わせて・に合った", 0, 7); // 相手にあわせて
+    }
+
+    // Test: Noun + に合った + Noun (that matches) - furniture
+    #[test]
+    fn test_niatta_furniture() {
+        let sentence = "このソファーにあったテーブルを買おう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に合わせて・に合った");
+        assert_pattern_range(&patterns, "に合わせて・に合った", 2, 10); // ソファーにあった
+    }
+
+    // Test: Noun + に合った + Noun (that matches) - wallpaper
+    #[test]
+    fn test_niatta_wallpaper() {
+        let sentence = "壁紙にあった家具が欲しい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に合わせて・に合った");
+        assert_pattern_range(&patterns, "に合わせて・に合った", 0, 6); // 壁紙にあった
+    }
+
+    // Test: Noun + に合わせて (at the same time as) - rhythm
+    #[test]
+    fn test_niawasete_rhythm() {
+        let sentence = "リズムに合わせて歌を歌う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に合わせて・に合った");
+        assert_pattern_range(&patterns, "に合わせて・に合った", 0, 8); // リズムに合わせて
+    }
+
+    // Test: Noun + に合わせて (in accordance with) - signal
+    #[test]
+    fn test_niawasete_signal() {
+        let sentence = "合図に合わせてスタートする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に合わせて・に合った");
+        assert_pattern_range(&patterns, "に合わせて・に合った", 0, 7); // 合図に合わせて
+    }
+}
+

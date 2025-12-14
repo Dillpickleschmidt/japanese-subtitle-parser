@@ -1998,9 +1998,84 @@ pub fn au() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: に合わせて・に合った
+// Pattern: に合わせて・に合った (in accordance with / matching)
+// Structures: Noun + に合わせて / Noun + に合った + Noun
 pub fn niawasete_u30fb_niatta() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::noun_matcher;
+
+    // Matcher for に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for the verb: either 合わせ/あわせ (連用形) OR あっ/合っ (連用タ接続)
+    #[derive(Debug)]
+    struct AwaseVerbMatcher;
+    impl Matcher for AwaseVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+
+            // Match 合わせ/あわせ in 連用形 (for に合わせて)
+            if (token.base_form == "合わせる" || token.base_form == "あわせる")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+            {
+                return true;
+            }
+
+            // Match あっ/合っ in 連用タ接続 (for に合った)
+            if (token.base_form == "ある" || token.base_form == "合う")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Matcher for the final particle: either て (接続助詞) OR た (助動詞)
+    #[derive(Debug)]
+    struct TeOrTaMatcher;
+    impl Matcher for TeOrTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match て as 助詞/接続助詞 (for に合わせて)
+            if token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+
+            // Match た as 助動詞 (for に合った)
+            if token.surface == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // This pattern matches both variants:
+    // 1. Noun + に + 合わせ/あわせ + て (に合わせて)
+    // 2. Noun + に + あっ/合っ + た (に合った)
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AwaseVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeOrTaMatcher)),
+    ]
 }
 
 // Pattern: について (about, concerning)

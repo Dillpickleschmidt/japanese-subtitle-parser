@@ -5868,13 +5868,13 @@
   {
     "pattern_name": "に合わせて・に合った",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the る - Verb 合（あ）わせる (sometimes 併（あ）せる) is seen in the form 合（あ）わせて, it conveys that something has been made to ... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
