@@ -5389,3 +5389,90 @@ mod dakedenaku_tests {
         assert_pattern_range(&patterns, "だけでなく", 10, 20); // おいしいだけでなくて
     }
 }
+
+// ========== すくなくない (not few = quite a few, many) ==========
+// Pattern: すくなくない
+// Data source: grammar_points_data.json["すくなくない"]
+//
+// Structures to test:
+//   - standard[0]: Noun + は + 少なくない
+//   - standard[1]: Noun + が + 少なくない
+//   - standard[2]: Noun + も + 少なくない
+//   - polite[0]: Noun + は + 少なくありません
+//   - polite[1]: Noun + が + 少なくありません
+//   - polite[2]: Noun + も + 少なくありません
+//
+// Grammar note:
+//   - Double negative: 少ない (few) -> 少なくない (not few = quite a few)
+//   - 少ない is itself an い-adjective (the ない is part of the word, not negation)
+//   - Pattern conveys "quite a few", "quite a lot", "many"
+#[cfg(test)]
+mod sukunakunai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + は + 少なくない
+    #[test]
+    fn test_sukunakunai_wa_casual() {
+        let sentence = "漢字を書くのが嫌いな子は少なくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すくなくない");
+        assert_pattern_range(&patterns, "すくなくない", 12, 17); // 少なくない
+    }
+
+    // Testing: standard[1] - Noun + が + 少なくない
+    #[test]
+    fn test_sukunakunai_ga_casual() {
+        let sentence = "私は好き嫌いが少なくないんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すくなくない");
+        assert_pattern_range(&patterns, "すくなくない", 7, 12); // 少なくない
+    }
+
+    // Testing: standard[2] - Noun + も + 少なくない
+    #[test]
+    fn test_sukunakunai_mo_casual() {
+        let sentence = "寝る前にお菓子を食べる人も少なくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すくなくない");
+        assert_pattern_range(&patterns, "すくなくない", 13, 18); // 少なくない
+    }
+
+    // Testing: polite[0] - Noun + は + 少なくありません
+    #[test]
+    fn test_sukunakunai_wa_polite() {
+        let sentence = "この問題に関心を持つ学生は少なくありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すくなくない_polite");
+        assert_pattern_range(&patterns, "すくなくない_polite", 13, 21); // 少なくありません
+    }
+
+    // Testing: polite[1] - Noun + が + 少なくありません
+    #[test]
+    fn test_sukunakunai_ga_polite() {
+        let sentence = "最近は在宅勤務を選ぶ人が少なくありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すくなくない_polite");
+        assert_pattern_range(&patterns, "すくなくない_polite", 12, 20); // 少なくありません
+    }
+
+    // Testing: polite[2] - Noun + も + 少なくありません
+    #[test]
+    fn test_sukunakunai_mo_polite() {
+        let sentence = "高校生の中でアルバイトをしている人も少なくありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すくなくない_polite");
+        assert_pattern_range(&patterns, "すくなくない_polite", 18, 26); // 少なくありません
+    }
+}

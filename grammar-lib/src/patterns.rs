@@ -1794,6 +1794,14 @@ declare_patterns! {
         jlpt: "n4",
     },
 
+    SukunakunaiPolite {
+        name: "すくなくない_polite",
+        matcher_fn: crate::matchers::n4::sukunakunai_polite,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
     Baaiha {
         name: "ばあいは",
         matcher_fn: crate::matchers::n4::baaiha,

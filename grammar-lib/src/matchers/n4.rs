@@ -2235,9 +2235,130 @@ pub fn sukoshimo_uff5e_nai() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SukoshimoMatcher))]
 }
 
-// Pattern: すくなくない
+// Pattern: すくなくない - not few (quite a few, many)
+// Structures: 少なく + ない / 少なく + ありません
 pub fn sukunakunai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 少なく (the adjective 少ない in 連用テ接続 form)
+    #[derive(Debug)]
+    struct SukunakuMatcher;
+    impl Matcher for SukunakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "少なく"
+                && token.base_form == "少ない"
+                && token.pos.first().is_some_and(|p| p == "形容詞")
+        }
+    }
+
+    // Match ない (auxiliary verb)
+    #[derive(Debug)]
+    struct NaiAuxMatcher;
+    impl Matcher for NaiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match あり (verb ある in 連用形)
+    #[derive(Debug)]
+    struct AriMatcher;
+    impl Matcher for AriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match ませ (auxiliary verb ます in 未然形)
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match ん (auxiliary verb, negative)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // The pattern can be either:
+    // 1. 少なく + ない (casual)
+    // 2. 少なく + あり + ませ + ん (polite)
+    // We need to use alternatives or check both patterns
+    // For simplicity, we'll match the beginning and use optional matchers
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SukunakuMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxMatcher)),  // Matches casual form
+    ]
+}
+
+// Pattern: すくなくない (polite) - not few (quite a few, many)
+// Structures: 少なく + ありません
+pub fn sukunakunai_polite() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match 少なく (the adjective 少ない in 連用テ接続 form)
+    #[derive(Debug)]
+    struct SukunakuMatcher;
+    impl Matcher for SukunakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "少なく"
+                && token.base_form == "少ない"
+                && token.pos.first().is_some_and(|p| p == "形容詞")
+        }
+    }
+
+    // Match あり (verb ある in 連用形)
+    #[derive(Debug)]
+    struct AriMatcher;
+    impl Matcher for AriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match ませ (auxiliary verb ます in 未然形)
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match ん (auxiliary verb, negative)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SukunakuMatcher)),
+        TokenMatcher::Custom(Arc::new(AriMatcher)),
+        TokenMatcher::Custom(Arc::new(MaseMatcher)),
+        TokenMatcher::Custom(Arc::new(NMatcher)),
+    ]
 }
 
 // Pattern: ばあいは
