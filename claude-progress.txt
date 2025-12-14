@@ -1,3 +1,94 @@
+## Session 283 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ように・ような - like/as - adverbial/attributive forms)
+**Tests added**: 2 (all passing)
+**Total tests**: 1812 (was 1810)
+
+### Pattern Implemented: ように・ような (like, as - adverbial/attributive forms)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: This pattern handles the adverbial (ように) and attributive (ような) forms when preceded by verbs, adjectives, or auxiliaries (NOT nouns with の, which are handled by the separate のように・のような pattern). It expresses similarity or comparison, meaning "like" or "as". When used with verbs, it can also express "as if" or "as though", emphasizing the speaker's uncertainty.
+
+**Structures tested**: 2 tests covering the main variants
+1. Verb + よう + に + Verb: たように (like/as - adverbial form)
+2. Verb + よう + な + Noun: 殺すような (like/as if - attributive form)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (youni_u30fb_youna function, lines 3092-3163)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (youni_youna_tests module, lines 10192-10228)
+- Pattern: grammar-lib/src/patterns.rs (YouniU30fbYouna - already existed)
+
+**Tokenization pattern**:
+```
+Adverbial form (ように):
+Verb/Adj/Auxiliary (動詞/形容詞/助動詞)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/格助詞 or 助詞/副詞化)
+
+Attributive form (ような):
+Verb/Adj/Auxiliary (動詞/形容詞/助動詞)
++ よう (名詞/非自立/助動詞語幹)
++ な (助動詞, base=だ, 体言接続)
+
+Examples:
+- ひっくり返した (Verb) + よう + に
+- 殺す (Verb) + よう + な
+```
+
+**Key implementation points**:
+1. VerbOrAdjMatcher accepts verbs, adjectives, or auxiliaries (like た in ひっくり返したよう)
+2. YouMatcher checks よう is 名詞/非自立/助動詞語幹
+3. NiOrNaMatcher accepts either に (格助詞 or 副詞化) or な (助動詞/体言接続)
+4. Pattern range includes: Verb/Adj/Aux + よう + に/な
+5. This pattern is complementary to のように・のような (which handles Noun + の + よう + に/な)
+6. Priority 1 means detected but not highlighted in browser extension
+
+**Test Quality**:
+- Realistic sentences from grammar_points_data.json
+- Test both adverbial (ように) and attributive (ような) forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Correct character ranges verified
+
+**Challenges Solved**:
+1. Understanding the distinction between ように・ような (after verbs/adj) and のように・のような (after nouns with の)
+2. Recognizing that た (auxiliary) can precede よう in patterns like ひっくり返したように
+3. Handling both に particle types (格助詞 and 副詞化) in the adverbial form
+4. Creating a matcher that accepts both に and な endings in a single pattern
+5. Understanding that these patterns work with verbs in various forms (dictionary, past auxiliary)
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in the browser extension. This is appropriate as it's a common comparison construction that doesn't need special emphasis.
+
+**Linguistic Note**: The よう in ように・ような comes from 様 (yō) meaning "manner" or "way". When combined with に (adverbial) it means "in the manner of", and with な (attributive) it means "of the manner of". The に form modifies verbs/sentences (adverbial), while the な form modifies nouns (attributive). Unlike のように・のような which uses an explicit noun before の, this pattern connects directly to verbs, adjectives, or verb auxiliaries, allowing for more dynamic, action-based comparisons.
+
+### Session Statistics
+- **Session time**: Approximately 35 minutes
+- **Patterns completed this session**: 1 (ように・ような)
+- **Test success rate**: 2/2 (100%)
+- **Total passing tests**: 1812 (up from 1810)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - みたいに・みたいな (like/as) - casual equivalent of ように・ような
+   - ようにいう (to tell/ask someone to do) - instruction expression
+   - ようにいのる (to pray that) - hope/wish expression
+   - ように～てほしい (want someone to do in order to) - combined pattern
+   - ほかに(も)・ほか(に)は (other than, besides) - more complex pattern
+2. **Pattern focus**: みたいに・みたいな would be a natural next choice as it's the casual form of ように・ような
+
+### Environment Status
+- All 1812 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 282 - 2025-12-14
 
 ### ✅ Session Summary
