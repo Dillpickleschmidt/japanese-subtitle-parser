@@ -7660,3 +7660,54 @@ mod toii_tests {
     // - 来週は彼氏が来るといいね → N3 pattern (来るといい)
     // - 明日の試合で勝つといいんだけど → N3 pattern (勝つといい)
 }
+
+// Pattern: といってもいい (you could say / one might say)
+// Data source: grammar_points_data.json["といってもいい"]
+// Testing all structure variants
+mod to_itte_mo_ii_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + といってもいい"
+    #[test]
+    fn test_verb_to_itte_mo_ii() {
+        let sentence = "あの人は一日中食べているといってもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といってもいい");
+        assert_pattern_range(&patterns, "といってもいい", 12, 19); // といってもいい
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + といってもいい"
+    #[test]
+    fn test_i_adj_to_itte_mo_ii() {
+        let sentence = "そのスポーツは危ないといってもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といってもいい");
+        assert_pattern_range(&patterns, "といってもいい", 10, 17); // といってもいい
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + (だ) + といってもいい"
+    #[test]
+    fn test_na_adj_to_itte_mo_ii() {
+        let sentence = "あの人の仕事のやり方は丁寧だといってもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といってもいい");
+        assert_pattern_range(&patterns, "といってもいい", 14, 21); // といってもいい
+    }
+
+    // Testing: structure.standard[3] - "Noun + (だ) + といってもいい"
+    #[test]
+    fn test_noun_to_itte_mo_ii() {
+        let sentence = "彼女はすごい優しい人だといってもいいでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といってもいい");
+        assert_pattern_range(&patterns, "といってもいい", 11, 22); // といってもいいでしょう (includes auxiliary)
+    }
+}

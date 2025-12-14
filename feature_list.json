@@ -2970,13 +2970,13 @@
   {
     "pattern_name": "といってもいい",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "と言（い）ってもいい is a common expression in Japanese which literally means 'even if you say (A), it is good/ok' [4 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

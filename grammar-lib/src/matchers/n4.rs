@@ -2077,6 +2077,66 @@ pub fn toii() -> Vec<TokenMatcher> {
     ]
 }
 
+// Pattern: といってもいい (you could say / one might say)
+// Structures: Verb/い-Adj/な-Adj/Noun + といってもいい
+// Note: This is the quotative と + 言う(say) in て-form + も + いい
+pub fn to_itte_mo_ii() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match と as quotation particle (格助詞/引用)
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl super::Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match いう verb in 連用タ接続 form (いっ)
+    #[derive(Debug)]
+    struct IuVerbMatcher;
+    impl super::Matcher for IuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match て connecting particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match も particle
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(IuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        super::ii_form(),
+    ]
+}
+
 // Pattern: ようになる
 pub fn youninaru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement

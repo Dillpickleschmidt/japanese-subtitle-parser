@@ -1546,6 +1546,14 @@ declare_patterns! {
         jlpt: "n4",
     },
 
+    ToIttemoii {
+        name: "といってもいい",
+        matcher_fn: crate::matchers::n4::to_itte_mo_ii,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
     Youninaru {
         name: "ようになる",
         matcher_fn: crate::matchers::n4::youninaru,
