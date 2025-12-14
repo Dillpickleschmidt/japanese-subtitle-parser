@@ -1,3 +1,99 @@
+## Session 285 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ようにいう - to tell/ask someone to do)
+**Tests added**: 5 (all passing)
+**Total tests**: 1821 (was 1816)
+
+### Pattern Implemented: ようにいう (to tell/ask someone to do)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: The expression ようにいう combines the auxiliary verb ようだ (in its adverbial form ように) with the verb 言う (to say/tell). It is used to express telling, requesting, or ordering someone to do something in a particular way. The pattern emphasizes that something is being said in a way that instigates or encourages a specific action. The expression can use 言う (to tell), 頼む (to request), or 命じる (to order) as the final verb.
+
+**Structures tested**: 5 tests covering all major variants
+1. Verb[ない] + ように + 言う: こぼさないようにいう (tell [someone] not to spill)
+2. Verb[ない] + ように + 言う: 話さないようにいう (tell [someone] not to talk)
+3. Verb[ない] + ように + 頼む: 破らないようにたのむ (request [someone] not to rip)
+4. Verb[ない] + ように + 命じる: 行かないようにめいじる (order [someone] not to go)
+5. Verb[ない] + ように + 言います (polite): 忘れないようにいいます (tell [someone] not to forget)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (youniiu function, lines 6297-6367)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (youniiu_tests module, lines 10285-10351)
+- Pattern: grammar-lib/src/patterns.rs (Youniiu - already existed at line 2309)
+
+**Tokenization pattern**:
+```
+Structure:
+Verb (動詞/自立, 未然形)
++ ない (助動詞, base=ない)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/副詞化)
++ いう/たのむ/めいじる (動詞/自立)
+
+Examples:
+- 話さ (Verb 未然形) + ない + よう + に + いう
+- 破ら (Verb 未然形) + ない + よう + に + たのむ
+- 行か (Verb 未然形) + ない + よう + に + めいじる
+- 忘れ (Verb 未然形) + ない + よう + に + いい (連用形) + ます
+```
+
+**Key implementation points**:
+1. VerbMatcher accepts any verb (will be in 未然形 before ない)
+2. NaiMatcher matches ない auxiliary (助動詞)
+3. YouMatcher ensures よう is 名詞/非自立/助動詞語幹
+4. NiParticleMatcher matches に as 助詞/副詞化 (not 格助詞)
+5. IuTanomuMeijiruMatcher accepts いう, たのむ, or めいじる verbs
+6. Pattern range includes full construction: Verb + ない + よう + に + いう/たのむ/めいじる
+7. All variants use negative form (Verb[ない]) in the examples
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all three verb variants: 言う (tell), 頼む (request), 命じる (order)
+- Test both casual and polite forms (いう vs いいます)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Correct character ranges verified for all variants
+
+**Challenges Solved**:
+1. Understanding that the pattern uses Verb in 未然形 + ない (negative form)
+2. Recognizing that に is 副詞化 (adverbializer), not 格助詞 (case particle)
+3. Matching three different command verbs (いう, たのむ, めいじる) in one pattern
+4. Ensuring the pattern works with various conjugations of the final verb (いう, いいます, etc.)
+5. Coordinating with the existing ように pattern (which has priority 2, same as this pattern)
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a common construction for expressing requests or orders.
+
+**Linguistic Note**: The expression ようにいう literally means "to say in such a way that [action happens]". It comes from よう (様 - manner/way) + に (adverbial particle) + 言う (to say). When used with 頼む (to request) or 命じる (to order), it maintains the same basic structure but changes the nuance from neutral telling to polite requesting or authoritative ordering. The pattern emphasizes that the speaker is communicating something with the intention of making a specific action occur (or not occur with negative forms).
+
+### Session Statistics
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1 (ようにいう)
+- **Test success rate**: 5/5 (100%)
+- **Total passing tests**: 1821 (up from 1816)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - ようにいのる (to pray that) - hope/wish expression using よう + 祈る
+   - ように～てほしい (want someone to do in order to) - combined pattern
+   - ほかに(も)・ほか(に)は (other than, besides) - more complex pattern
+   - よていだ (予定だ - plan to) - intention expression
+   - らしい ① (seems like/apparently) - hearsay/conjecture
+2. **Pattern focus**: ようにいのる would be a natural next choice as it uses similar よう + verb structure
+
+### Environment Status
+- All 1821 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 284 - 2025-12-14
 
 ### ✅ Session Summary
