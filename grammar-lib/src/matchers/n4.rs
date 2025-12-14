@@ -5722,9 +5722,64 @@ pub fn reru_u30fb_rareru_potential() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: んだけど・んですが
+// Pattern: んだけど・んですが (explanatory + but/however)
+// Structures: んだ/のだ + けど/けれど/けれども/けども/が, んです/のです + が/けど/けれど/けれども/けども
 pub fn ndakedo_u30fb_ndesuga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Optional: Match な (for Noun + なんですが pattern)
+    #[derive(Debug)]
+    struct NaAuxMatcher;
+    impl Matcher for NaAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    // Match ん or の (explanatory nominalizer)
+    #[derive(Debug)]
+    struct NOrNoMatcher;
+    impl Matcher for NOrNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ん" || token.surface == "の")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ or です (copula)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match けど/けれど/けれども/けども/が (conjunctive particle)
+    #[derive(Debug)]
+    struct KeDoGaMatcher;
+    impl Matcher for KeDoGaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "けど"
+                || token.surface == "けれど"
+                || token.surface == "けれども"
+                || token.surface == "けども"
+                || token.surface == "が")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaAuxMatcher)))),
+        TokenMatcher::Custom(Arc::new(NOrNoMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+        TokenMatcher::Custom(Arc::new(KeDoGaMatcher)),
+    ]
 }
 
 // Pattern: はずだ (should be, bound to be, supposed to)

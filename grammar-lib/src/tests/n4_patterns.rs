@@ -10937,3 +10937,82 @@ mod nisuru_u30fb_kusuru_tests {
     }
 }
 
+// Pattern: んだけど・んですが (explanatory + but/however)
+// Data source: grammar_points_data.json["んだけど・んですが"]
+// Testing structures:
+//   - standard[0]: Phrase (A) + んだ + けど/けれど/けれども/けども + Phrase (B)
+//   - polite[0]: Phrase (A) + んです + が/けれど/けれども/けども/けど + Phrase (B)
+//
+// This pattern combines んだ (explanatory/giving cause) with けど/が (but/however)
+// to express "but..." where the speaker is looking for a reply or being polite/indirect.
+#[cfg(test)]
+mod ndakedo_ndesuga_tests {
+    use super::*;
+
+    // Testing: Verb + んだけど (standard casual)
+    #[test]
+    fn test_verb_ndakedo_standard() {
+        let sentence = "助かるんだけど一人でできるから帰ってもいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだけど・んですが");
+        assert_pattern_range(&patterns, "んだけど・んですが", 3, 7); // んだけど
+    }
+
+    // Testing: Verb + のですが (polite)
+    #[test]
+    fn test_verb_ndesuga_polite() {
+        let sentence = "私は明日釣りに行くのですが先輩も行きませんか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだけど・んですが");
+        assert_pattern_range(&patterns, "んだけど・んですが", 9, 13); // のですが
+    }
+
+    // Testing: い-Adj + のだけど (standard)
+    #[test]
+    fn test_i_adj_ndakedo() {
+        let sentence = "新しいパソコンを買いたいのだけどどれを買えばいいか分からない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだけど・んですが");
+        assert_pattern_range(&patterns, "んだけど・んですが", 12, 16); // のだけど
+    }
+
+    // Testing: な-Adj + のだけど (standard)
+    #[test]
+    fn test_na_adj_ndakedo() {
+        let sentence = "顔はいいのだけど性格は悪い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだけど・んですが");
+        assert_pattern_range(&patterns, "んだけど・んですが", 4, 8); // のだけど
+    }
+
+    // Testing: Noun + なんですが (polite)
+    #[test]
+    fn test_noun_ndesuga() {
+        let sentence = "学生なんですが割引はありますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだけど・んですが");
+        assert_pattern_range(&patterns, "んだけど・んですが", 2, 7); // なんですが (includes optional な)
+    }
+
+    // Testing: んだけれど variant (slightly more formal than んだけど)
+    #[test]
+    fn test_ndakeredo_variant() {
+        let sentence = "時間はあるんだけれど行きたくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだけど・んですが");
+        assert_pattern_range(&patterns, "んだけど・んですが", 5, 10); // んだけれど
+    }
+}
+
