@@ -1,12 +1,12 @@
 ## Session 216 - 2025-12-13
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N5 pattern
-**Patterns completed**: 1 (は topic marker)
-**Tests added**: 6 (all passing)
-**Total tests**: 1406 (was 1400)
+**Status**: COMPLETE - Successfully implemented 2 patterns (1 N5 + 1 N4)
+**Patterns completed**: 2 (は topic marker, そんなに)
+**Tests added**: 9 total (6 for は + 3 for そんなに, all passing)
+**Total tests**: 1409 (was 1400)
 
-### Pattern Implemented: は (Topic Marker)
+### Pattern 1: は (Topic Marker)
 
 **JLPT Level**: N5
 **Category**: Construction
@@ -54,20 +54,63 @@
 9. ✅ Updated feature_list.json
 10. ✅ Committed changes with detailed commit message
 
-### Statistics
-- **Patterns completed this session**: 1
-- **Test success rate**: 6/6 (100%)
-- **Total passing tests**: 1406
-- **Files modified**: 3 (matchers/n5.rs, tests/n5_patterns.rs, feature_list.json)
-- **N5 patterns remaining**: Very few core patterns left
+### Pattern 2: そんなに (That much/So much)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: そんなに demonstrative adverb ("so much", "that much", "to that extent")
+
+**Structures tested**: 3 tests
+1. test_sonnani_verb - "そんなに食べたらお腹を壊すよ" → そんなに (0-4)
+2. test_sonnani_i_adjective - "そんなに暑いと思うならエアコンをつければいい" → そんなに (0-4)
+3. test_sonnani_na_adjective - "そんなに嫌いなら、無理して食べなくてもいい" → そんなに (0-4)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 2662-2676)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 4896-4947)
+- Pattern detects: そんなに (副詞 - adverb, single token)
+
+**Matcher components**:
+- SonnaniMatcher - Custom matcher checking:
+  - surface == "そんなに"
+  - base_form == "そんなに"
+  - pos[0] == "副詞" (adverb)
+
+**Key characteristics**:
+- Part of こそあど言葉 family (こんなに, そんなに, あんなに, どんなに)
+- Very simple pattern - just a single adverb token
+- Used before verbs and adjectives to express degree/extent
+- Most commonly used demonstrative of degree in casual conversation
+
+**Workflow followed**:
+1. ✅ Checked for existing stub function (found at line 2662)
+2. ✅ Read grammar_points_data.json for structure variants
+3. ✅ Wrote 3 tests with print_debug() for all structure types
+4. ✅ Analyzed tokenization - confirmed single token
+5. ✅ Implemented simple matcher
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug() and added proper assertions
+8. ✅ Verified all 1409 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes
+
+### Session Statistics
+- **Patterns completed this session**: 2 (1 N5 + 1 N4)
+- **Test success rate**: 9/9 (100%)
+- **Total passing tests**: 1409
+- **Files modified**: 6 (matchers/n5.rs, tests/n5_patterns.rs, matchers/n4.rs, tests/n4_patterns.rs, feature_list.json, claude-progress.txt)
+- **N5 patterns**: Mostly complete, very few remaining
+- **N4 patterns**: Many still need implementation
 
 ### Next Session Recommendations
-1. **Continue with higher priority incomplete patterns**: Move to N4/N3/N2/N1 patterns
-2. **Quality focus**: All patterns properly documented and tested
-3. **Check feature_list.json**: Find next highest priority incomplete pattern
+1. **Continue with N4 patterns**: Many demonstratives, particles, and simple patterns remain
+2. **Good candidates**: Simple demonstratives like こういう, そういう, etc.
+3. **Quality focus**: Maintain test-first approach and proper documentation
 
 ### Environment Status
-- ✅ All 1406 tests passing
+- ✅ All 1409 tests passing
 - ✅ No regressions
 - ✅ Clean git state (all changes committed)
 - ✅ feature_list.json updated
