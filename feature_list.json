@@ -6120,13 +6120,13 @@
   {
     "pattern_name": "ばかりに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When paired with the case marking particle に , ばかり regularly conveys the meaning of 'simply because', or 'just because' [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

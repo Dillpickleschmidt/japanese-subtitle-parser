@@ -1875,9 +1875,38 @@ pub fn bakarida() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ばかりに
+// Pattern: ばかりに (simply because / just because)
+// Structures: Verb[た] + ばかりに, Adj + ばかりに, な-Adj + な + ばかりに, Noun + である + ばかりに
 pub fn bakarini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ばかり as adverbial particle (助詞/副助詞)
+    #[derive(Debug)]
+    struct BakariParticleMatcher;
+    impl Matcher for BakariParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ばかり"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match に as case particle (助詞/格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(BakariParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: ことがある (sometimes happens / there are times when)

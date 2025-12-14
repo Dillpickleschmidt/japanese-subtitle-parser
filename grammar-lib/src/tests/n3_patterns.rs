@@ -10457,3 +10457,64 @@ mod bakaridenaku_tests {
     }
 }
 
+// Pattern: ばかりに (simply because / just because)
+// Data source: grammar_points_data.json["ばかりに"]
+// Structures:
+//   standard[0]: Verb[た] + ばかりに
+//   standard[1]: い-Adjective + ばかりに
+//   standard[2]: な-Adjective + な + ばかりに (or である)
+//   standard[3]: Noun + な + ばかりに (or である)
+mod bakarini_tests {
+    use super::*;
+
+    #[test]
+    fn test_bakarini_verb_past() {
+        let sentence = "ボールをキャッチしたばかりに、肩が外れました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりに");
+        assert_pattern_range(&patterns, "ばかりに", 9, 14); // たばかりに
+    }
+
+    #[test]
+    fn test_bakarini_i_adjective() {
+        let sentence = "体が小さいばかりに、クラスメイトにいじめられた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりに");
+        assert_pattern_range(&patterns, "ばかりに", 2, 9); // 小さいばかりに
+    }
+
+    #[test]
+    fn test_bakarini_na_adjective() {
+        let sentence = "彼は練習が大変なばかりに、部活をやめることにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりに");
+        assert_pattern_range(&patterns, "ばかりに", 7, 12); // なばかりに
+    }
+
+    #[test]
+    fn test_bakarini_noun_dearu() {
+        let sentence = "新人であるばかりに、先輩たちがやりたくない仕事を押し付けられた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりに");
+        assert_pattern_range(&patterns, "ばかりに", 3, 9); // あるばかりに
+    }
+
+    #[test]
+    fn test_bakarini_eagerness() {
+        let sentence = "釣りに行きたいばかりに、仕事を休んで海に行った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかりに");
+        assert_pattern_range(&patterns, "ばかりに", 5, 11); // たいばかりに
+    }
+}
+
