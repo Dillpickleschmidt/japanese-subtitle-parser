@@ -11201,3 +11201,56 @@ mod kesshite_u301c_nai_tests {
         assert_pattern_range(&patterns, "決して〜ない", 0, 13); // 決してあなたが嫌いじゃない
     }
 }
+
+// Pattern: み (adjective stem + み → noun suffix)
+// Data source: grammar_points_data.json["み"]
+//
+// DETECTABLE: な-Adjective stem + み (two tokens)
+// UNDETECTABLE: い-Adjective stem + み (single token - indistinguishable from regular nouns)
+//
+// Tokenization:
+// - い-Adjective + み: Single token as 名詞/一般 (e.g., 楽しみ, 甘み, 赤み, 温かみ)
+//   These are indistinguishable from regular nouns without a comprehensive dictionary.
+// - な-Adjective + み: Two tokens - stem (名詞/形容動詞語幹) + み (動詞, base='みる')
+//   This pattern is reliably detectable.
+mod mi_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - な-Adjective stem + み (freshness example)
+    #[test]
+    fn test_mi_na_adjective_shinsenmi() {
+        let sentence = "この色からこのフルーツの新鮮みがかんじられる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "み");
+        assert_pattern_range(&patterns, "み", 12, 15); // 新鮮み
+    }
+
+    // Testing: structure.standard[0] - な-Adjective stem + み (importance example)
+    #[test]
+    fn test_mi_na_adjective_taisetsumi() {
+        let sentence = "友達の大切みがわかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "み");
+        assert_pattern_range(&patterns, "み", 3, 6); // 大切み
+    }
+
+    // TODO: UNDETECTABLE - い-Adjective + み (single-token nouns)
+    //
+    // The following cases are tokenized as single nouns (名詞/一般) ending in み:
+    // - 温かみ (warmth): 温かみのある家に住みたいな
+    // - 楽しみ (fun/enjoyment): 大人になってから将棋の楽しみが分かってきた
+    // - 甘み (sweetness): このケーキの甘みがちょうどいい
+    // - 赤み (redness): 髪を染めてから、赤みがなくなった
+    //
+    // These are indistinguishable from regular nouns like "弓" (bow), "闇" (darkness),
+    // "民" (people), etc. without maintaining a comprehensive dictionary of all
+    // い-adjective + み combinations. Since Kagome treats them as complete nouns,
+    // there's no structural pattern to match.
+    //
+    // We focus on detecting the な-adjective + み pattern, which has a clear
+    // two-token structure that can be reliably identified.
+}

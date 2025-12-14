@@ -5521,9 +5521,44 @@ pub fn futatabi() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(FutatabiMatcher))]
 }
 
-// Pattern: み
+// Pattern: み (adjective stem + み → noun suffix for "-ness")
+// Structures: い-Adjective stem + み, な-Adjective stem + み
+//
+// Tokenization:
+// - い-Adjective + み: Often a single token (e.g., 楽しみ, 甘み, 赤み, 温かみ) as 名詞/一般
+// - な-Adjective + み: Two tokens - adjective stem (名詞/形容動詞語幹) + み (動詞/自立, base='みる')
+//
+// This matcher handles the two-token case (な-adjective stem + み).
+// The single-token case (nouns ending in み) is harder to distinguish from regular nouns,
+// so we focus on the detectable pattern: な-adjective stem followed by み suffix.
 pub fn mi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match な-adjective stems (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct NaAdjectiveStemMatcher;
+    impl super::Matcher for NaAdjectiveStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Match み when misclassified as みる verb (appears after な-adjective stems)
+    #[derive(Debug)]
+    struct MiSuffixMatcher;
+    impl super::Matcher for MiSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "み"
+                && token.base_form == "みる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaAdjectiveStemMatcher)),
+        TokenMatcher::Custom(Arc::new(MiSuffixMatcher)),
+    ]
 }
 
 // Pattern: と同じくらい (about the same as)
