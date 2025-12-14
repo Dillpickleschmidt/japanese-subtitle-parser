@@ -5568,9 +5568,78 @@ pub fn kesshite_u301c_nai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: わけにはいかない
+// Pattern: わけにはいかない (cannot afford to / impossible to / it cannot be so that)
+// Structures: わけ + に + は + いか + ない/ません
 pub fn wakenihaikanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match わけ (dependent noun)
+    #[derive(Debug)]
+    struct WakeMatcher;
+    impl Matcher for WakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わけ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match に particle (case marker)
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match は particle (topic/contrast)
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match いか or いき (from いく verb)
+    #[derive(Debug)]
+    struct IkaMatcher;
+    impl Matcher for IkaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "いか" || token.surface == "いき")
+                && token.base_form == "いく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ない or ませ (negative ending)
+    #[derive(Debug)]
+    struct NaiMaseMatcher;
+    impl Matcher for NaiMaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ない (auxiliary) - plain negative "いかない"
+            (token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // ませ (start of ません) - polite negative "いきません"
+            || (token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(WakeMatcher)),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(WaMatcher)),
+        TokenMatcher::Custom(Arc::new(IkaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMaseMatcher)),
+    ]
 }
 
 // Pattern: 〜ようとしない

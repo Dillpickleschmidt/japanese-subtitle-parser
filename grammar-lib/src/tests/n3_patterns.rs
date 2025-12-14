@@ -11990,3 +11990,83 @@ mod wakeganai_tests {
         assert_pattern_range(&patterns, "わけがない", 15, 23); // わけがありません
     }
 }
+
+// ============================================================================
+// わけにはいかない Tests
+// ============================================================================
+// Pattern: わけにはいかない (cannot afford to / impossible to / it cannot be so that)
+// Data source: grammar_points_data.json["わけにはいかない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + わけにはいかない
+//   polite[0]: Verb + わけにはいきません
+//
+// Note: Expresses that something is highly undesirable or highly unattainable
+// Literal meaning: "it cannot be so that (A)"
+mod wakenihaikanai_tests {
+    use super::*;
+
+    // Test: Verb + わけにはいかない (undesirable action)
+    // Structure: standard[0] - "Verb + わけにはいかない"
+    // Example from grammar data: "残すわけにはいかない" (there's no way I can leave it)
+    #[test]
+    fn test_verb_wakenihaikanai_undesirable() {
+        let sentence = "この料理は妻が頑張って作ってくれたやつだから、不味くても残すわけにはいかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけにはいかない");
+        assert_pattern_range(&patterns, "わけにはいかない", 30, 38); // わけにはいかない
+    }
+
+    // Test: Verb + わけにはいかない (cannot afford to)
+    // Structure: standard[0] - "Verb + わけにはいかない"
+    // Example from grammar data: "休むわけにはいかない" (cannot afford to take a day off)
+    #[test]
+    fn test_verb_wakenihaikanai_cannot_afford() {
+        let sentence = "明日は人手が足りないから、休むわけにはいかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけにはいかない");
+        assert_pattern_range(&patterns, "わけにはいかない", 15, 23); // わけにはいかない
+    }
+
+    // Test: Verb + わけにはいかない (desirable but impossible)
+    // Structure: standard[0] - "Verb + わけにはいかない"
+    // Example from grammar data: "買うわけにはいかない" (it cannot be so that I buy it)
+    #[test]
+    fn test_verb_wakenihaikanai_impossible() {
+        let sentence = "このジャケットが欲しいけど、今月はお金を使い過ぎたから買うわけにはいかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけにはいかない");
+        assert_pattern_range(&patterns, "わけにはいかない", 29, 37); // わけにはいかない
+    }
+
+    // Test: Verb + わけにはいかない (social obligation)
+    // Structure: standard[0] - "Verb + わけにはいかない"
+    // Example from grammar data: "断るわけにはいかない" (there's no way I can decline)
+    #[test]
+    fn test_verb_wakenihaikanai_obligation() {
+        let sentence = "先輩に誘われたから、断るわけにはいかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけにはいかない");
+        assert_pattern_range(&patterns, "わけにはいかない", 12, 20); // わけにはいかない
+    }
+
+    // Test: Verb + わけにはいきません (polite)
+    // Structure: polite[0] - "Verb + わけにはいきません"
+    #[test]
+    fn test_verb_wakenihaikanai_polite() {
+        let sentence = "お客様が来られるので、今日は早く帰るわけにはいきません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わけにはいかない");
+        assert_pattern_range(&patterns, "わけにはいかない", 18, 27); // わけにはいきません
+    }
+}
