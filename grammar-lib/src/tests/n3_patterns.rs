@@ -7621,53 +7621,63 @@ mod verb_volitional_toshitaga_tests {
 mod dakedenaku_te_mo_tests {
     use super::*;
 
-    // Test: だけではなく (without て)
+    // Test: だけではなく (without て, with は)
+    // Structure: Noun + だけ + で + は + なく + punctuation + Noun + particle + も
     #[test]
     fn test_dake_dewanaku_mo() {
         let sentence = "アメリカだけではなく、韓国とチリにも行った事がある";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "だけでなく(て)～も");
+        assert_pattern_range(&patterns, "だけでなく(て)～も", 0, 18); // アメリカだけではなく、韓国とチリにも
     }
 
-    // Test: だけでなく (without て, casual)
+    // Test: だけでなく (without て, without は, casual)
+    // Structure: Noun + だけ + で + なく + punctuation + Noun + も
     #[test]
     fn test_dake_denaku_mo() {
         let sentence = "日本は地震だけでなく、台風も多いです";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "だけでなく(て)～も");
+        assert_pattern_range(&patterns, "だけでなく(て)～も", 3, 14); // 地震だけでなく、台風も
     }
 
-    // Test: だけではなくて (with て)
+    // Test: だけではなくて (with て, with は)
+    // Structure: Noun + だけ + で + は + なく + て + punctuation + Noun + particle + も
     #[test]
     fn test_dake_dewanakute_mo() {
         let sentence = "漫画は子供だけではなくて、大人にも人気がある";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "だけでなく(て)～も");
+        assert_pattern_range(&patterns, "だけでなく(て)～も", 3, 17); // 子供だけではなくて、大人にも
     }
 
-    // Test: だけじゃなく (casual without て)
+    // Test: だけじゃなく (casual with じゃ, without て)
+    // Structure: Noun + だけ + じゃ + なく + punctuation + Noun + も
     #[test]
     fn test_dake_janaku_mo() {
         let sentence = "お年玉は子供だけじゃなく、大人ももらえたらいいのにね";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "だけでなく(て)～も");
+        assert_pattern_range(&patterns, "だけでなく(て)～も", 4, 16); // 子供だけじゃなく、大人も
     }
 
-    // Test: だけじゃなくて (casual with て)
+    // Test: だけじゃなくて (casual with じゃ, with て, no punctuation)
+    // Structure: Noun + だけ + じゃ + なく + て + Noun + particle + も
     #[test]
     fn test_dake_janakute_mo() {
         let sentence = "遊園地だけじゃなくて動物園にも連れて行ってほしい";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
+
+        assert_has_pattern(&patterns, "だけでなく(て)～も");
+        assert_pattern_range(&patterns, "だけでなく(て)～も", 2, 15); // 地だけじゃなくて動物園にも
     }
 }

@@ -3137,6 +3137,30 @@ pub fn dakedenaku_te_uff5e_mo() -> Vec<TokenMatcher> {
         }
     }
 
+    // Pattern: Noun + だけ + でなく(て)/じゃなく(て) + (punctuation) + ... + も
+    // Note: Wildcard stops at punctuation automatically, so we need to handle it explicitly
+
+    // Matcher for も as a stop condition (without consuming the token)
+    #[derive(Debug)]
+    struct StopBeforeMo;
+    impl super::Matcher for StopBeforeMo {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Stop before も particle (係助詞)
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for punctuation (optional comma/period after だけでなく)
+    #[derive(Debug)]
+    struct PunctuationMatcher;
+    impl super::Matcher for PunctuationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "記号")
+        }
+    }
+
     vec![
         // Noun (subject A)
         super::noun_matcher(),
@@ -3150,17 +3174,17 @@ pub fn dakedenaku_te_uff5e_mo() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NakuMatcher)),
         // て (optional)
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeMatcher)))),
-        // Wildcard for intermediate content (0-10 tokens)
+        // Optional punctuation (、)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(PunctuationMatcher)))),
+        // Wildcard for intermediate content until も (0-10 tokens)
+        // This allows for nouns, particles between punctuation and も
+        // Note: Wildcard with min=0 allows for cases like "だけでなく台風も" (no intermediate tokens)
         TokenMatcher::Wildcard {
             min: 0,
             max: 10,
-            stop_conditions: vec![],
+            stop_conditions: vec![TokenMatcher::Custom(Arc::new(StopBeforeMo))],
         },
-        // Noun (subject B)
-        super::noun_matcher(),
-        // Optional case particle (に/と/etc)
-        TokenMatcher::Optional(Box::new(super::particle_matcher())),
-        // も
+        // も (終点)
         TokenMatcher::Custom(Arc::new(MoMatcher)),
     ]
 }
