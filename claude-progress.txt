@@ -1,3 +1,79 @@
+## Session 298 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (Verb[volitional] + としたが)
+**Tests added**: 6 (all passing)
+**Total tests**: 1917 (was 1911)
+
+### Pattern Implemented: Verb[volitional] + としたが
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not highlighted)
+
+**Pattern**: The volitional form (Verb[おう]) + とする expresses intent to do something. When combined with the past form of する (した) and a conjunction particle (が/たら/けど/けれど/けれども), it indicates that something interrupted the action, so it could not be completed. This translates to "was about to do X, but Y", "tried to do X, but Y", or "was on the verge of X, but Y".
+
+**Structures tested**: 6 comprehensive tests
+1. Verb[volitional] + としたが: 掛けようとしたが (was about to make a call, but)
+2. Verb[volitional] + としたら: 泳ごうとしたら (was about to swim, but)
+3. Verb[volitional] + としたけど: 逃げようとしたけど (was about to run away, but)
+4. 五段 verb: 買おうとしたが (was about to buy, but)
+5. 一段 verb: 諦めようとしたら (was about to give up, but)
+6. としたけれど: 説明しようとしたけれど (was about to explain, but)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (verb_volitional_toshitaga function, lines 3728-3814)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (verb_volitional_toshitaga_tests module, lines 7534-7603)
+- Pattern: grammar-lib/src/patterns.rs (VerbVolitionalToshitaga, line 3832)
+
+**Tokenization pattern**:
+```
+Volitional form + としたが/としたら/としたけど tokenizes as:
+1. Verb stem in volitional form (未然ウ接続): 掛けよ, 泳ご, 逃げよ, etc.
+2. う auxiliary verb (助動詞/不変化型/基本形)
+3. と quotation particle (助詞/格助詞/引用)
+4. し from する (動詞/自立/*/*/サ変・スル/連用形)
+5. た or たら (助動詞 - past or conditional)
+6. が/けど/けれど/けれども (助詞/接続助詞) - optional
+
+Example:
+surface='掛けよ' base='掛ける' pos=動詞/自立 features[5]=未然ウ接続
+surface='う' base='う' pos=助動詞/*/*/*/不変化型/基本形
+surface='と' base='と' pos=助詞/格助詞/引用
+surface='し' base='する' pos=動詞/自立 features[5]=連用形
+surface='た' base='た' pos=助動詞/*/*/*/特殊・タ/基本形
+surface='が' base='が' pos=助詞/接続助詞
+```
+
+**Key implementation points**:
+1. VolitionalVerbMatcher checks for 動詞 with features[5]=="未然ウ接続"
+2. VolitionalAuxiliaryMatcher checks for う (助動詞)
+3. ToQuotationMatcher checks for と (格助詞/引用)
+4. ShiVerbMatcher checks for し from する in 連用形
+5. TaTaraMatcher handles both た (basic form) and たら (conditional form)
+6. GaKedoMatcher is optional and matches が/けど/けれど/けれども
+7. Pattern range includes: Verb[volitional] + う + と + し + た(ら) + (が/けど/etc.)
+
+**Test Quality**:
+- All 6 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all three structure variants from grammar data
+- Test both 五段 and 一段 verb types
+- Correct character ranges verified for all variants
+
+**Relationship to existing patterns**:
+- This extends the existing "Verb[volitional]とする" pattern (N3)
+- The base pattern Verb[volitional]とする matches "Verb[おう] + とする" (to try to do X)
+- This pattern adds the past form (とした) plus conjunction particle (が/たら/けど)
+- Both patterns can coexist - this one is more specific (higher priority would be 3.0 vs 3.5)
+
+**Linguistic Note**:
+The volitional form う/よう marks the speaker's intent or volition. When combined with とする, it shows that the speaker has decided on the action and is about to execute it. Adding した (past of する) plus a conjunction particle creates a strong sense that something unexpected interrupted the action. This construction appears frequently in narrative contexts where plans are thwarted.
+
+---
+
 ## Session 297 - 2025-12-14
 
 ### ✅ Session Summary
