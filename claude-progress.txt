@@ -1,3 +1,71 @@
+## Session 313 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (なし)
+**Tests added**: 5 (all passing)
+**Total tests**: 1990 passing, 1 ignored (was 1985 passing, 1 ignored)
+
+### Pattern Implemented: なし (without)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: なし is a noun-like suffix meaning "without (A)" or "thing without". It attaches to nouns to indicate the absence of something. Can be used with particles (で, だ, です, の, に) or in compound forms.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Noun + なしで: 許可なしで公園に店を出さないでください (don't set up a shop without permission)
+2. Phrase + なしだ: その考えは間違いなしだ (that way of thinking is flawless)
+3. Noun + なし + の + Noun: 肉なしの人気料理 (popular dish without meat)
+4. Phrase + なしです (polite): その説明は問題なしです (that explanation has no problems)
+5. なしにする: 今日は昼飯なしにする (going to skip lunch today)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nashi, lines 5149-5200)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nashi_tests module, lines 8581-8651)
+- Pattern: grammar-lib/src/patterns.rs (Nashi, line 4032)
+
+**Tokenization patterns**:
+```
+Pattern 1: Compound form (許可なし as single token)
+- 許可なし (形容詞/自立, base='許可ない') - compound adjective
+- で (助動詞, base='だ') - conjunctive form of だ
+
+Pattern 2: Separate tokens (肉 + なし)
+- 肉 (名詞/一般)
+- なし (形容詞/自立 OR 助動詞, base='ない')
+- の/で/だ/です/に (various particles)
+
+Note: なし can appear as:
+- 助動詞 (auxiliary verb) with base_form='ない'
+- 形容詞 (adjective) with base_form='ない'
+Both are accepted by the matcher.
+```
+
+**Key implementation points**:
+1. Single custom matcher NashiOrCompoundMatcher handles both tokenization patterns
+2. Accepts standalone なし (助動詞 or 形容詞) with base_form='ない'
+3. Accepts compound forms ending in なし (e.g., 許可なし as one token)
+4. Optional following particles: で, だ, です, の, に
+5. Pattern range includes なし + optional particle (1-2 tokens)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover all structure variants: で, だ, です, の, に
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern なし (無し) means "without" and comes from the classical negative ない. It's used almost exclusively as a suffix attached to nouns. The grammar explanation notes it differs from 抜き (nuki) - while both mean "without", 抜き specifically implies intentional removal (from 抜く "to remove"), whereas なし simply indicates absence. Common uses include:
+- 許可なし (without permission)
+- 間違いなし (without error/flawless)
+- 肉なし (without meat)
+- 問題なし (no problem)
+- 〜なしにする (to go without/skip something)
+
+---
+
 ## Session 312 - 2025-12-14
 
 ### ✅ Session Summary
