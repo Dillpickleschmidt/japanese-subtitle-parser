@@ -9057,3 +9057,75 @@ mod niyoruto_niyoreba_tests {
     }
 }
 
+// ========== に代わって (in place of / on behalf of) ==========
+// Pattern: に代わって (in place of / on behalf of)
+// Data source: grammar_points_data.json["に代わって"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + に代わって (in place of - て-form)
+//   standard[1]: Noun + に代わり (in place of - formal conjunctive)
+
+mod nikawatte_tests {
+    use super::*;
+
+    // Test: Noun + に代わって (in place of)
+    // Example: 妹に代わって、私が買い物に行くことに決まった
+    #[test]
+    fn test_nikawatte_basic() {
+        let sentence = "妹に代わって、私が買い物に行くことに決まった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に代わって");
+        assert_pattern_range(&patterns, "に代わって", 0, 6); // 妹に代わって
+    }
+
+    // Test: Noun + に代わって (on behalf of)
+    // Example: 私が彼女に代わって会議に出ます
+    #[test]
+    fn test_nikawatte_on_behalf() {
+        let sentence = "私が彼女に代わって会議に出ます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に代わって");
+        assert_pattern_range(&patterns, "に代わって", 2, 9); // 彼女に代わって
+    }
+
+    // Test: Noun + に代わり (formal conjunctive - in place of)
+    // Example: タナカさんに代わり、今日は私があなたたちの担当をします
+    #[test]
+    fn test_nikawari_formal() {
+        let sentence = "タナカさんに代わり、今日は私があなたたちの担当をします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に代わって");
+        assert_pattern_range(&patterns, "に代わって", 3, 9); // さんに代わり
+    }
+
+    // Test: Noun + に代わって (replacing/succeeding)
+    // Example: 父親に代わって、息子が王になった
+    #[test]
+    fn test_nikawatte_replacing() {
+        let sentence = "父親に代わって、息子が王になった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に代わって");
+        assert_pattern_range(&patterns, "に代わって", 0, 7); // 父親に代わって
+    }
+
+    // Test: Noun + に代わり (being replaced by)
+    // Example: 世界中ではファックスに代わりメールが主流になった
+    #[test]
+    fn test_nikawari_replaced_by() {
+        let sentence = "世界中ではファックスに代わりメールが主流になった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に代わって");
+        assert_pattern_range(&patterns, "に代わって", 5, 14); // ファックスに代わり
+    }
+}
+
