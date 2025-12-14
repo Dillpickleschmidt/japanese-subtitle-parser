@@ -2741,9 +2741,53 @@ pub fn causative_passive() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: Verb[て]・Noun[で] + B
+// Pattern: Verb[て]・Noun[で] + B (means/method/circumstances)
+// Structures: Verb[て] + Phrase / Noun + で + Phrase
+//
+// This pattern highlights て/で when expressing means, method, or circumstances.
+// Note: This overlaps significantly with "Verb + て", "Adjective + て・Noun + で", and "で" patterns.
+// Given the overlap and low priority (1), we implement it to match either variant.
 pub fn verb_te_u30fb_noun_de_b() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Custom matcher for て/で particles expressing means/method
+    #[derive(Debug)]
+    struct TeDeMethodParticleMatcher;
+    impl Matcher for TeDeMethodParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match て or で as conjunction particle (after verbs)
+            let is_conjunction = (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞");
+
+            // Match で as case particle (after nouns - means/method)
+            let is_case_particle = token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞");
+
+            is_conjunction || is_case_particle
+        }
+    }
+
+    // Custom matcher that accepts either a verb OR a noun
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.features.get(5).is_some_and(|form| form == "連用形")
+                    || token.features.get(5).is_some_and(|form| form == "連用タ接続"));
+
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+
+            is_verb || is_noun
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(TeDeMethodParticleMatcher)),
+    ]
 }
 
 // Pattern: てある (state of completion / left in state)

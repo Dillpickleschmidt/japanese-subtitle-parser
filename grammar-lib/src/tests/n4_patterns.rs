@@ -5912,3 +5912,80 @@ mod verb_te_b_tests {
         assert_pattern_range(&patterns, "Verb[て] + B", 4, 10); // 降って夕方は
     }
 }
+
+// ============================================================================
+// Pattern: Verb[て]・Noun[で] + B (means/method/circumstances)
+// Data source: grammar_points_data.json["Verb[て]・Noun[で] + B"]
+// Testing structures:
+//   - standard[0]: Verb[て] + Phrase (means/circumstances)
+//   - standard[1]: Noun + で + Phrase (means/method)
+// ============================================================================
+mod verb_te_noun_de_b_tests {
+    use super::*;
+
+    // Test 1: Verb[て] expressing circumstances - "in a flurry/hurry"
+    #[test]
+    fn test_verb_te_means_hurry() {
+        let sentence = "寝坊をしたので慌てて準備をした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]・Noun[で] + B");
+        assert_pattern_range(&patterns, "Verb[て]・Noun[で] + B", 7, 10); // 慌てて
+    }
+
+    // Test 2: Verb[て] expressing method - "by swimming"
+    #[test]
+    fn test_verb_te_means_swimming() {
+        let sentence = "毎日泳いでトレーニングをしています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]・Noun[で] + B");
+        assert_pattern_range(&patterns, "Verb[て]・Noun[で] + B", 2, 5); // 泳いで
+    }
+
+    // Test 3: Noun + で expressing means of transportation
+    #[test]
+    fn test_noun_de_means_car() {
+        let sentence = "父は車で仕事に行く";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]・Noun[で] + B");
+        assert_pattern_range(&patterns, "Verb[て]・Noun[で] + B", 2, 4); // 車で
+    }
+
+    // Test 4: Noun + で expressing tool/instrument
+    #[test]
+    fn test_noun_de_means_scissors() {
+        let sentence = "私はハサミで野菜を切ります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]・Noun[で] + B");
+        assert_pattern_range(&patterns, "Verb[て]・Noun[で] + B", 2, 6); // ハサミで
+    }
+
+    // Test 5: Verb[て] expressing circumstances - realistic subtitle example
+    #[test]
+    fn test_verb_te_means_running() {
+        let sentence = "走ってここまで来たから息が切れてる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]・Noun[で] + B");
+        assert_pattern_range(&patterns, "Verb[て]・Noun[で] + B", 0, 3); // 走って
+    }
+
+    // Test 6: Noun + で expressing location/place (extended use of で)
+    #[test]
+    fn test_noun_de_means_internet() {
+        let sentence = "ネットで調べれば分かるでしょ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て]・Noun[で] + B");
+        assert_pattern_range(&patterns, "Verb[て]・Noun[で] + B", 0, 4); // ネットで
+    }
+}

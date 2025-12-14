@@ -1738,13 +1738,13 @@
   {
     "pattern_name": "Verb[て]・Noun[で] + B",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The conjunction particle て , or the case marking particle で are often used to highlight when something is being 'used' [2 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
