@@ -1,3 +1,91 @@
+## Session 218 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (Verb[よう])
+**Tests added**: 12 (all passing)
+**Total tests**: 1429 (was 1417)
+
+### Pattern Implemented: Verb[よう] (Volitional Form - "let's", "shall", "I will")
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Volitional form used for suggestions, intentions, and invitations
+
+**Structures tested**: 12 tests covering all verb types
+1. Ichidan verb: 見よう (miyou - let's watch)
+2. Godan る5: 座ろう (suwarou - let's sit)
+3. Godan う: 歌おう (utaou - let's sing)
+4. Godan く: 歩こう (arukou - let's walk)
+5. Godan す: 話そう (hanasou - let's talk)
+6. Godan ぐ: 泳ごう (oyogou - let's swim)
+7. Godan む: 休もう (yasumou - let's rest)
+8. Exception する: しよう (shiyou - let's do)
+9. Exception くる: 来よう (koyou - let's come)
+10. Polite ichidan: 見ましょう (mimashou)
+11. Polite godan: 休みましょう (yasumimashou)
+12. Polite する: 頑張りましょう (ganbarimashou)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 1219-1266)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 5048-5185)
+- Pattern detects: Verb[未然ウ接続] + う (casual) OR Verb[連用形] + ましょ + う (polite)
+
+**Tokenization patterns**:
+- Standard form: Verb[未然ウ接続] + う(助動詞)
+  - Examples: 見よ + う, 座ろ + う, 歩こ + う, 話そ + う, 泳ご + う, 休mo + う
+- Polite form: Verb[連用形] + ましょ(助動詞) + う(助動詞)
+  - Examples: 見 + ましょ + う, 休み + ましょ + う, 頑張り + ましょ + う
+
+**Matcher components**:
+1. VolitionalVerbMatcher - Matches verbs in 未然ウ接続 (standard) or 連用形 (polite)
+2. MashouMatcher (optional) - Matches ましょ auxiliary for polite forms
+3. UMatcher - Matches う auxiliary (volitional marker)
+
+**Key characteristics**:
+- Three usage types: 推量 (conjecture), 意志 (intention), 勧誘 (invitation)
+- Covers all verb types: ichidan, godan (all endings), する, くる
+- Single pattern handles both casual and polite forms via Optional matcher
+- Essential N4 grammar for making suggestions and expressing intentions
+
+**Workflow followed**:
+1. ✅ Checked for existing stub function (found at line 1219)
+2. ✅ Read grammar_points_data.json for structure variants (14 standard, 14 polite)
+3. ✅ Wrote 12 tests with print_debug() covering all major verb types
+4. ✅ Analyzed tokenization - understood 未然ウ接続 for casual, 連用形 for polite
+5. ✅ Implemented matcher with three custom matchers and Optional for ましょ
+6. ✅ Verified all tests detect patterns correctly
+7. ✅ Removed print_debug() and added proper assertions
+8. ✅ Verified all 1429 tests pass (no regressions)
+9. ✅ Updated feature_list.json
+10. ✅ Committed changes
+
+### Session Statistics
+- **Session time**: ~1 hour
+- **Patterns completed this session**: 1
+- **Test success rate**: 12/12 (100%)
+- **Total passing tests**: 1429
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**: Many construction patterns still need implementation
+2. **Good candidates**:
+   - Causative-Passive (causative-passive form)
+   - Question-phrase + か (embedded questions)
+   - Verb[て] + B (te-form connections)
+3. **Pattern focus**: Fundamental N4 grammar forms
+
+### Environment Status
+- ✅ All 1429 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern
+
+---
+
 ## Session 217 - 2025-12-13
 
 ### ✅ Session Summary
