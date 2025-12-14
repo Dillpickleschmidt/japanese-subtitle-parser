@@ -6036,13 +6036,13 @@
   {
     "pattern_name": "は～くらいです",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "は～くらい です is an expression in Japanese used to convey that '(B) is all that exists within (A)' [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null

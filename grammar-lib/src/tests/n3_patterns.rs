@@ -10063,3 +10063,73 @@ mod katoiuto_u2460_tests {
     }
 }
 
+// ========== は～くらいです ==========
+// Pattern: は～くらいです (about the extent of / the only)
+// Data source: grammar_points_data.json["は～くらいです"]
+//
+// Structure variants to test:
+//   standard[0]: は + Verb + くらい/ぐらい + だ
+//   standard[1]: は + い-Adjective + くらい/ぐらい + だ
+//   standard[2]: は + な-Adjective + な + くらい/ぐらい + だ
+//   standard[3]: は + Noun + くらい/ぐらい + だ
+//   polite variants with です instead of だ
+
+mod hakuraidew_tests {
+    use super::*;
+
+    // Test: は + Verb + くらいです (polite)
+    #[test]
+    fn test_ha_verb_kurai_desu() {
+        let sentence = "休日の日に家を出るのは、買い物に行くときくらいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は～くらいです");
+        assert_pattern_range(&patterns, "は～くらいです", 18, 25); // ときくらいです
+    }
+
+    // Test: は + Noun + ぐらいです
+    #[test]
+    fn test_ha_noun_gurai_desu() {
+        let sentence = "私は基本的になんでも食べられますよ。食べ物で嫌いなのは茹で玉子ぐらいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は～くらいです");
+        assert_pattern_range(&patterns, "は～くらいです", 29, 36); // 玉子ぐらいです
+    }
+
+    // Test: は + Noun + ぐらいだ (casual)
+    #[test]
+    fn test_ha_noun_gurai_da() {
+        let sentence = "悪いことをするのは、ほんの一瞬ぐらいだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は～くらいです");
+        assert_pattern_range(&patterns, "は～くらいです", 13, 19); // 一瞬ぐらいだ
+    }
+
+    // Test: くらいのもの variant (emphatic)
+    #[test]
+    fn test_kurai_no_mono() {
+        let sentence = "距離は５キロくらいのものです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は～くらいです");
+        assert_pattern_range(&patterns, "は～くらいです", 4, 14); // キロくらいのものです
+    }
+
+    // Test: くらいなもの variant (emphatic, with verb)
+    #[test]
+    fn test_kurai_na_mono() {
+        let sentence = "電車は仕事に行くときに使っているくらいなものです。プライベートでは車しか使いません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は～くらいです");
+        assert_pattern_range(&patterns, "は～くらいです", 14, 24); // いるくらいなものです
+    }
+}
+

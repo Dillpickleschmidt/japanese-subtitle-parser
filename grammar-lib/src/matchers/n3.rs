@@ -3142,9 +3142,97 @@ pub fn kurai_u2461() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: は～くらいです
+// Pattern: は～くらいです (about the extent of / the only)
+// Structures: は + (phrase) + くらい/ぐらい + (の/な)もの? + です/だ
+//
+// Tokenization:
+// - くらい/ぐらい (助詞/副助詞)
+// - Optional: の (助詞/連体化) + もの (名詞/非自立/一般) for emphasis
+// - Optional: な (助動詞, base='だ', 体言接続) + もの for emphasis with verb/adjective
+// - です/だ (助動詞)
+//
+// Note: This pattern detects くらい/ぐらいです (with optional のもの/なもの).
+// The は particle is part of the sentence structure but not included in the match range,
+// as it marks the topic that comes before the extent expression.
 pub fn ha_uff5e_kuraidesu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    #[derive(Debug)]
+    struct KuraiParticleMatcher;
+    impl Matcher for KuraiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "くらい" || token.surface == "ぐらい")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MonoNounMatcher;
+    impl Matcher for MonoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DesuDaCopulaMatcher;
+    impl Matcher for DesuDaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "です" || token.surface == "だ")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoOrNaMatcher;
+    impl Matcher for NoOrNaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface == "の" {
+                token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+            } else if token.surface == "な" {
+                token.base_form == "だ" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            } else {
+                false
+            }
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding token (verb, noun, adjective, etc.)
+        TokenMatcher::Custom(Arc::new(KuraiParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoOrNaMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MonoNounMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(DesuDaCopulaMatcher)),
+    ]
 }
 
 // Pattern: さ - Interjection (drawing attention, inviting action)
