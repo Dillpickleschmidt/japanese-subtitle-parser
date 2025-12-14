@@ -1,3 +1,75 @@
+## Session 323 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (に違いない)
+**Tests added**: 5 (all passing)
+**Total tests**: 2066 passing, 1 ignored (was 2061 passing, 1 ignored)
+
+### ✅ Pattern Completed: に違いない (must be / there is no doubt that)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (originally set as 1 in patterns.rs)
+
+**Pattern**: に違いない is a grammar construction that expresses strong certainty or conviction. It combines the case-marking particle に with the noun 違い (difference) and the い-adjective ない, literally meaning "there is no difference" or "there is no discrepancy". The expression translates as "must be", "there is no doubt that", or "I'm sure that" in English.
+
+**Structures tested**: 5 comprehensive tests covering all structure variants
+1. Verb + に違いない: 彼らは、先生がいなくなったらふざけるにちがいない (There is no doubt that they will muck around once the teacher has gone)
+2. い-Adjective + に違いない: あなたが美味しいというなら、美味しいにちがいない (If you say that it is good, I have no doubt that it is)
+3. な-Adjective + に違いない: タナカ君は全然料理を食べてない。この料理が嫌いにちがいない (Tanaka-kun is not eating his food at all. There is no doubt that he does not like it)
+4. Noun + に違いない (hiragana): 今のピンポンは近所の子供のいたずらにちがいない (There's no doubt that the doorbell I just heard must have been a prank by the neighbor's kid)
+5. Noun + に違いない (kanji): あの人はカメラマンに囲まれている、有名人に違いない (That person is surrounded by cameramen. There is no discrepancy in that person being famous)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nichigainai, lines 4444-4487)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nichigainai_tests module, lines 9505-9573)
+- Pattern: grammar-lib/src/patterns.rs (Nichigainai, line 3752)
+
+**Tokenization pattern**:
+```
+All forms follow the same structure:
+- Preceding element (verb, い-adjective, な-adjective, or noun)
+- に (助詞/格助詞/一般) - case-marking particle
+- ちがい/違い (名詞/ナイ形容詞語幹) - noun meaning "difference"
+- ない (助動詞) - negative auxiliary verb
+
+Key observations:
+1. Both hiragana (ちがい) and kanji (違い) forms tokenize identically
+2. The ちがい is tokenized as 名詞/ナイ形容詞語幹 (noun/nai-adjective stem)
+3. The ない is tokenized as 助動詞 (auxiliary verb), NOT as the adjective ない
+4. This distinguishes it from 違う (to be different) which would be 違わない in negative form
+```
+
+**Key implementation points**:
+1. Uses TokenMatcher::Any to accept verbs, adjectives, and nouns before に
+2. NiParticleMatcher checks に as 助詞/格助詞
+3. ChigaiMatcher accepts both ちがい and 違い as 名詞/ナイ形容詞語幹
+4. NaiAuxiliaryMatcher checks ない specifically as 助動詞 (not adjective)
+5. Pattern structure: Any + に + ちがい/違い + ない
+6. Handles all four structure variants with a single unified matcher
+
+**Pattern ranges**: Include full construction (preceding word + に違いない/にちがいない)
+- Example: "ふざけるにちがいない" (chars 14-24) - verb form
+- Example: "美味しいにちがいない" (chars 14-24) - い-adjective form
+- Example: "嫌いにちがいない" (chars 21-29) - な-adjective form
+- Example: "いたずらにちがいない" (chars 13-23) - noun form (hiragana)
+- Example: "有名人に違いない" (chars 17-25) - noun form (kanji)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: verb, い-adjective, な-adjective, noun
+- Test both hiragana (にちがいない) and kanji (に違いない) forms
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The literal translation of に違いない is "there is no discrepancy in (A)", where に marks the preceding word as an existing location or state. This explains why the pattern expresses strong certainty - it indicates there's no reason to doubt the statement. The pattern is formed from 違い (difference/discrepancy) as a noun + ない (not existing), NOT from the verb 違う (to differ) which would become 違わない in negative form.
+
+**Implementation Note**: According to the Caution section in grammar_points_data.json, it's important to distinguish に違いない (certainty expression) from 違わない (negative form of the verb 違う "to differ"). The key is that 違いない is noun + adjective, while 違わない would be verb conjugation.
+
+---
+
 ## Session 322 - 2025-12-14
 
 ### ✅ Session Summary
