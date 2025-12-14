@@ -1116,9 +1116,119 @@ pub fn mitai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: そう
+// Pattern: そう (looks like/seems like - appearance-based conjecture)
+// Structures: Verb[stem] + そう、い-Adj[stem] + そう、な-Adj + そう
 pub fn sou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in 連用形 (stem form)
+    #[derive(Debug)]
+    struct VerbStemMatcher;
+    impl super::Matcher for VerbStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match い-adjective in ガル接続 (stem form)
+    #[derive(Debug)]
+    struct IAdjectiveStemMatcher;
+    impl super::Matcher for IAdjectiveStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続")
+        }
+    }
+
+    // Match な-adjective (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct NaAdjectiveMatcher;
+    impl super::Matcher for NaAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Match auxiliary ない in ガル接続 (for negative forms)
+    #[derive(Debug)]
+    struct NaiAuxiliaryGaruMatcher;
+    impl super::Matcher for NaiAuxiliaryGaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続")
+        }
+    }
+
+    // Match さ suffix (for negative forms: なさそう)
+    #[derive(Debug)]
+    struct SaSuffixMatcher;
+    impl super::Matcher for SaSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match verb/adjective stem OR な in negative forms
+    #[derive(Debug)]
+    struct StemOrNaiMatcher;
+    impl super::Matcher for StemOrNaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb stem (連用形)
+            (token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形"))
+            ||
+            // い-Adjective stem (ガル接続)
+            (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続"))
+            ||
+            // な-Adjective (形容動詞語幹)
+            (token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+            ||
+            // ない auxiliary in ガル接続 (for negative forms)
+            (token.surface == "な"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "ガル接続"))
+        }
+    }
+
+    // Match そう auxiliary (名詞/接尾/助動詞語幹)
+    #[derive(Debug)]
+    struct SouAuxiliaryMatcher;
+    impl super::Matcher for SouAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そう"
+                && token.base_form == "そう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Match だ or です copula
+    #[derive(Debug)]
+    struct DaDesuCopulaMatcher;
+    impl super::Matcher for DaDesuCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && (token.base_form == "だ" || token.base_form == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(StemOrNaiMatcher)), // Verb/Adj stem OR な (negative)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(SaSuffixMatcher)))), // Optional さ (for なさそう)
+        TokenMatcher::Custom(Arc::new(SouAuxiliaryMatcher)), // そう
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaDesuCopulaMatcher)))), // Optional だ/です
+    ]
 }
 
 // Pattern: さ (degree/amount suffix)

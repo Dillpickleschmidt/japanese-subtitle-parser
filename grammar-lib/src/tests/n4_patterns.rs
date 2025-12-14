@@ -6880,3 +6880,110 @@ mod o_ni_naru_tests {
         assert_pattern_range(&patterns, "く・に", 0, 4); // よく考え
     }
 }
+
+// ========== そう (looks like/seems like - conjecture based on appearance) ==========
+// Pattern: そう
+// Data source: grammar_points_data.json["そう "]
+//
+// Structures to test:
+//   - standard[0]: Verb[stem] + そう + だ
+//   - standard[1]: い-Adjective[stem] + そう + だ
+//   - standard[2]: な-Adjective + そう + だ
+//   - standard[4]: Verb[ない] + な + そう + だ (negative)
+//   - standard[5]: い-Adjective[ない] + なさ + そう + だ (negative)
+//   - standard[8]: いい → よさそう + だ (exception)
+//   - polite[0]: Verb[stem] + そう + です
+//
+// Note: This is appearance-based conjecture, not hearsay (hearsay is そうだ with plain form)
+#[cfg(test)]
+mod sou_tests {
+    use super::*;
+
+    // Testing: Verb[stem] + そうだ (standard[0])
+    #[test]
+    fn test_sou_verb_affirmative() {
+        let sentence = "明日は朝から雨が降りそうだね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そう ");
+        assert_pattern_range(&patterns, "そう ", 8, 13); // 降りそうだ
+    }
+
+    // Testing: い-Adjective[stem] + そうだ (standard[1])
+    #[test]
+    fn test_sou_i_adjective() {
+        let sentence = "この料理は美味しそうだけど高いね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そう ");
+        assert_pattern_range(&patterns, "そう ", 5, 11); // 美味しそうだ
+    }
+
+    // Testing: な-Adjective + そうだ (standard[2])
+    #[test]
+    fn test_sou_na_adjective() {
+        let sentence = "あの店員は丁寧そうだから聞いてみよう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そう ");
+        assert_pattern_range(&patterns, "そう ", 5, 10); // 丁寧そうだ
+    }
+
+    // Testing: Verb[ない] + なそうだ - negative verb (standard[4])
+    #[test]
+    fn test_sou_verb_negative() {
+        let sentence = "彼はもうイギリスに帰らなさそうだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そう ");
+        assert_pattern_range(&patterns, "そう ", 11, 16); // なさそうだ
+    }
+
+    // Testing: い-Adjective[ない] + なさそうだ - negative adjective (standard[5])
+    #[test]
+    fn test_sou_i_adjective_negative() {
+        let sentence = "彼の部屋は汚くなさそうだね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そう ");
+        assert_pattern_range(&patterns, "そう ", 7, 12); // なさそうだ
+    }
+
+    // Testing: いい → よさそうだ - exception (standard[8])
+    #[test]
+    fn test_sou_yosasou_exception() {
+        let sentence = "この天気ならよさそうだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そう ");
+        assert_pattern_range(&patterns, "そう ", 6, 11); // よさそうだ
+    }
+
+    // Testing: Verb[stem] + そうです - polite form (polite[0])
+    #[test]
+    fn test_sou_polite_verb() {
+        let sentence = "来週から値段が上がりそうです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そう ");
+        assert_pattern_range(&patterns, "そう ", 7, 14); // 上がりそうです
+    }
+
+    // Testing: い-Adjective + そうです - polite form (polite[1])
+    #[test]
+    fn test_sou_polite_i_adjective() {
+        let sentence = "この映画は面白そうですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そう ");
+        assert_pattern_range(&patterns, "そう ", 5, 11); // 面白そうです
+    }
+}
