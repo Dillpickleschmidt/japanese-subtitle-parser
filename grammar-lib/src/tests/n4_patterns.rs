@@ -6308,3 +6308,76 @@ mod itasu_tests {
         assert_pattern_range(&patterns, "いたす", 0, 6); // ご案内いたす
     }
 }
+
+// Pattern: いらっしゃる (honorific - to be/come/go)
+// Data source: grammar_points_data.json["いらっしゃる"]
+// Testing: structure.standard[0-6] and polite[0-6]
+//
+// Structures:
+//   - standard[0]: いる・くる・いく → いらっしゃる
+//   - standard[1]: Verb[て] + いらっしゃる
+//   - polite[0]: います・きます・いきます → いらっしゃいます
+//   - polite[1]: Verb[て] + いらっしゃいます
+mod irassharu_tests {
+    use super::*;
+
+    #[test]
+    fn test_irassharu_replacing_iru() {
+        let sentence = "あなたの隣にいらっしゃるのはお嫁さんですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いらっしゃる");
+        assert_pattern_range(&patterns, "いらっしゃる", 6, 12); // いらっしゃる
+    }
+
+    #[test]
+    fn test_irassharu_replacing_kuru() {
+        let sentence = "あと30分で社長がいらっしゃるので準備をしてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いらっしゃる");
+        assert_pattern_range(&patterns, "いらっしゃる", 9, 15); // いらっしゃる
+    }
+
+    #[test]
+    fn test_irassharu_polite_iku() {
+        let sentence = "先輩は明日の忘年会にはいらっしゃいますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いらっしゃる");
+        assert_pattern_range(&patterns, "いらっしゃる", 11, 19); // いらっしゃいます
+    }
+
+    #[test]
+    fn test_irassharu_te_auxiliary() {
+        let sentence = "田中様が来ていらっしゃったので案内をお願いします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いらっしゃる");
+        assert_pattern_range(&patterns, "いらっしゃる", 6, 13); // いらっしゃった
+    }
+
+    #[test]
+    fn test_irassharu_te_auxiliary_polite() {
+        let sentence = "マユミさんはタクシーに乗っていらっしゃるのでもうすぐ着きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いらっしゃる");
+        assert_pattern_range(&patterns, "いらっしゃる", 14, 20); // いらっしゃる
+    }
+
+    #[test]
+    fn test_irassharu_past() {
+        let sentence = "昨日部長がいらっしゃった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いらっしゃる");
+        assert_pattern_range(&patterns, "いらっしゃる", 5, 12); // いらっしゃった
+    }
+}

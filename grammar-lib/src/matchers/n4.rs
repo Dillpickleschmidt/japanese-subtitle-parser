@@ -3218,9 +3218,51 @@ pub fn o_uff5e_kudasai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: いらっしゃる
+// Pattern: いらっしゃる (honorific - to be/come/go)
+// Structures:
+//   1. いらっしゃる standalone (replacing いる/くる/いく)
+//   2. Verb[て] + いらっしゃる (as auxiliary verb)
 pub fn irassharu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match いらっしゃる verb
+    #[derive(Debug)]
+    struct IrassharuMatcher;
+    impl super::Matcher for IrassharuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いらっしゃる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "自立")
+                    || token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+        }
+    }
+
+    // Match ます polite auxiliary (optional)
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl super::Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match た past auxiliary (optional)
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl super::Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た" && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: いらっしゃる + (Optional ます) + (Optional た)
+    // Handles both standalone usage and as auxiliary verb after て-form
+    vec![
+        TokenMatcher::Custom(Arc::new(IrassharuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TaMatcher)))),
+    ]
 }
 
 // Pattern: ございます (polite form of ある)
