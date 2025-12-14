@@ -4720,9 +4720,48 @@ pub fn kadouka() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ないと
+// Pattern: ないと (must/have to)
+// Structures: Verb[未然形] + ない + と (+ いけない/だめ)
 pub fn naito() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in 未然形 (mizen form, used before ない)
+    #[derive(Debug)]
+    struct VerbMizenMatcher;
+    impl Matcher for VerbMizenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ない (auxiliary verb for negation)
+    #[derive(Debug)]
+    struct NaiAuxMatcher;
+    impl Matcher for NaiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ")
+        }
+    }
+
+    // Match と (connecting particle)
+    #[derive(Debug)]
+    struct ToConnectingMatcher;
+    impl Matcher for ToConnectingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbMizenMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxMatcher)),
+        TokenMatcher::Custom(Arc::new(ToConnectingMatcher)),
+    ]
 }
 
 // Pattern: はずがない

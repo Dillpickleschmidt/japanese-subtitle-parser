@@ -8180,3 +8180,78 @@ mod tomieru_tests {
         assert_pattern_range(&patterns, "とみえる", 6, 11); // とみえます
     }
 }
+
+// ========== ないと (must/have to) ==========
+// Pattern: ないと
+// Data source: grammar_points_data.json["ないと"]
+//
+// Structures to test:
+//   - standard[0]: Verb[ない] + と + (いけない)
+//   - standard[1]: Verb[ない] + と + (だめ)
+//   - polite[0]: Verb[ない] + と + (いけません)
+//   - polite[1]: Verb[ない] + と + (だめです)
+//   - Abbreviated: Verb[ない] + と (without いけない/だめ)
+//
+// Examples from data:
+//   - 謝らないといけない (have to apologize)
+//   - 勉強しないとだめだ (must study)
+//   - 勉強しないと (must study - abbreviated)
+#[cfg(test)]
+mod naito_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[ない] + と + いけない"
+    #[test]
+    fn test_naito_ikenai() {
+        let sentence = "ライト君が悪いんだから、リュウ君に謝らないといけないでしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないと");
+        assert_pattern_range(&patterns, "ないと", 17, 22); // 謝らないと
+    }
+
+    // Testing: structure.standard[1] - "Verb[ない] + と + だめ"
+    #[test]
+    fn test_naito_dame() {
+        let sentence = "今日は勉強しないとだめだから、明日は？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないと");
+        assert_pattern_range(&patterns, "ないと", 3, 9); // 勉強しないと
+    }
+
+    // Testing: abbreviated form - "Verb[ない] + と"
+    #[test]
+    fn test_naito_abbreviated_study() {
+        let sentence = "明日はテストがあるの？！勉強しないと。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないと");
+        assert_pattern_range(&patterns, "ないと", 12, 18); // 勉強しないと
+    }
+
+    // Testing: abbreviated form - "Verb[ない] + と" (different verb)
+    #[test]
+    fn test_naito_abbreviated_prepare() {
+        let sentence = "もう７時じゃん？準備しないと。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないと");
+        assert_pattern_range(&patterns, "ないと", 8, 14); // 準備しないと
+    }
+
+    // Testing: structure.polite[0] - "Verb[ない] + と + いけません"
+    #[test]
+    fn test_naito_ikemasen() {
+        let sentence = "歩行者も信号機を守らないといけません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないと");
+        assert_pattern_range(&patterns, "ないと", 8, 13); // 守らないと
+    }
+}
