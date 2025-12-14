@@ -1,3 +1,99 @@
+## Session 309 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (さ - Interjection)
+**Tests added**: 3 (all passing)
+**Total tests**: 1972 (was 1969)
+
+### Pattern Implemented: さ - Interjection (drawing attention, inviting action)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (detected but not highlighted in overlays)
+
+**Pattern**: さ - Interjection detects the use of さあ as 感動詞 (interjection) to draw attention, invite, or incite action at the beginning of sentences. Similar to English "ok then", "well", or "there we go". This is used to mark a transition, suggest action, or introduce what comes next.
+
+**Structures tested**: 3 comprehensive tests covering different usage contexts
+1. Inviting/encouraging action: さあ、遠慮をせずにどんどん食べてください (ok then, please eat lots)
+2. Suggesting action: さあ、そろそろ行きますか (well, should we go soon?)
+3. Expressing "well let me see" (thinking variant): さあ、それはどうでしょう (well, I wonder about that)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (sa_interjection, lines 2363-2394)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (sa_interjection_tests module, lines 8316-8376)
+- Pattern: grammar-lib/src/patterns.rs (SaInterjection, already existed)
+
+**Tokenization pattern**:
+```
+Structure: さあ (as 感動詞)
+
+Token breakdown:
+- surface='さあ' base='さあ' pos=感動詞 (interjection)
+
+Note: さー (with prolonged sound mark) tokenizes as TWO tokens:
+- surface='さ' pos=副詞/助詞類接続
+- surface='ー' pos=名詞/一般
+This makes さー undetectable as a single interjection pattern. Only さあ is reliably detectable.
+
+Relationship to さ - Filler:
+Both patterns match さあ as 感動詞. The distinction is semantic/contextual:
+- Interjection: Typically at sentence start, drawing attention ("ok then", "well")
+- Filler: Typically mid-sentence, expressing hesitation ("um", "uh")
+
+Since they're structurally identical and "often used interchangeably" (per grammar data),
+both patterns will match the same tokens. Users see both explanations and determine
+meaning from context. This is intentional, similar to the らしい pattern which has
+multiple meanings that can only be distinguished semantically.
+```
+
+**Key Implementation Details**:
+- Custom matcher SaInterjectionMatcher matches さあ as 感動詞
+- Checks surface == "さあ" AND base_form == "さあ" AND pos == "感動詞"
+- Single token matcher (no positional requirements)
+- Pattern range: just the さあ token itself (2 characters)
+- Both "さ - Interjection" and "さ - Filler" will match, showing both grammar explanations
+
+**Test Quality**:
+- All 3 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover invitations, suggestions, and thinking/confusion variants
+- Correct character ranges verified for all variants
+- 1 undetectable variant documented (さー with prolonged sound mark)
+
+**Undetectable Variant**:
+- さー: Tokenizes as two separate tokens (さ + ー), making it impossible to detect as a single interjection
+
+**Session Statistics**:
+- Session time: ~45 minutes
+- Patterns completed: 1 (さ - Interjection)
+- Tests success rate: 3/3 (100%)
+- Total passing tests: 1972 (was 1969, +3)
+- Files modified: 2 (matchers/n3.rs, tests/n3_patterns.rs, feature_list.json)
+- Commits: 1 (complete pattern implementation)
+
+**Environment Status**:
+- All 1972 tests passing
+- No regressions
+- Codebase clean
+- Ready for next pattern
+
+**Next Priorities**:
+Continue with N3 patterns (in order of priority):
+1. と同じで・と違って - "same as / different from" (Noun + と同じで/と違って)
+2. と言える - "can say that" (plain form + と言える)
+3. どんなに〜ても - "no matter how" (どんなに + Adj/Adv + ても)
+4. なし - "without" (Noun + なし)
+5. に違いない - "must be" (plain form + に違いない)
+
+**Notes for Next Session**:
+- The さ patterns (Interjection, Filler, Casual よ) demonstrate how multiple patterns can match the same tokens when the distinction is semantic rather than structural
+- This is an acceptable design pattern - users benefit from seeing multiple explanations
+- Similar to らしい where Noun + らしい could be "seems like" or "typical of"
+
+---
+
 ## Session 308 - 2025-12-14
 
 ### ✅ Session Summary
