@@ -2497,9 +2497,56 @@ pub fn teyokatta() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: Verb［せる・させる］
+// Pattern: Verb［せる・させる］(Causative form - make/let someone do)
+// Structures: Verb[未然形] + せる/させる
 pub fn verb_uff3b_seru_u30fb_saseru_uff3d() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for verbs in 未然形 (negative/causative stem)
+    // This includes all verb types before causative auxiliary せる/させる
+    #[derive(Debug)]
+    struct CausativeStemMatcher;
+    impl Matcher for CausativeStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+            // Match 未然形 (negative/causative stem) or 未然レル接続 (for する verbs)
+            token.features.get(5).is_some_and(|form| {
+                form == "未然形" || form == "未然レル接続"
+            })
+        }
+    }
+
+    // Matcher for causative auxiliary せる/させる as suffix verb
+    // Tokenized as 動詞/接尾 with base form せる or させる
+    #[derive(Debug)]
+    struct CausativeAuxiliaryMatcher;
+    impl Matcher for CausativeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && (token.base_form == "せる" || token.base_form == "させる")
+        }
+    }
+
+    // Optional ます for polite form
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(CausativeStemMatcher)),
+        TokenMatcher::Custom(Arc::new(CausativeAuxiliaryMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: といってもいい
