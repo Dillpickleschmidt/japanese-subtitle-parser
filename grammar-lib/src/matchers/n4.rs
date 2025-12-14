@@ -959,8 +959,54 @@ pub fn teita() -> Vec<TokenMatcher> {
 }
 
 // Pattern: に (Frequency)
+// Pattern: に (Frequency) - per/every
+// Structures: Timeframe + に + Number of Times
 pub fn ni_frequency() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches number (名詞/数)
+    #[derive(Debug)]
+    struct NumberMatcher;
+    impl Matcher for NumberMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "数")
+        }
+    }
+
+    // Matches counter suffix (名詞/接尾/助数詞)
+    #[derive(Debug)]
+    struct CounterSuffixMatcher;
+    impl Matcher for CounterSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助数詞")
+        }
+    }
+
+    // Matches に particle (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![
+        // Timeframe: Number + Counter
+        TokenMatcher::Custom(Arc::new(NumberMatcher)),
+        TokenMatcher::Custom(Arc::new(CounterSuffixMatcher)),
+        // に particle
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        // Frequency: Number + Counter
+        TokenMatcher::Custom(Arc::new(NumberMatcher)),
+        TokenMatcher::Custom(Arc::new(CounterSuffixMatcher)),
+    ]
 }
 
 // Pattern: とうとう (finally/at last)

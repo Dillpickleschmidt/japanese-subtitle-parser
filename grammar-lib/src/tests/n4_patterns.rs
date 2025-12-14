@@ -8815,3 +8815,58 @@ mod nan_counter_ka_tests {
         assert_pattern_range(&patterns, "なん + counter + か", 0, 4); // いくつか
     }
 }
+
+// Pattern: に (Frequency) - per/every
+// Data source: grammar_points_data.json["に (Frequency)"]
+// Structure: Timeframe + に + Number of Times
+mod ni_frequency_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Timeframe + に + Number of Times"
+    // Example from grammar data: 一ヶ月に一回 (once per month)
+    #[test]
+    fn test_once_per_month() {
+        let sentence = "私は一ヶ月に一回友達と遊園地に行く。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に (Frequency)");
+        assert_pattern_range(&patterns, "に (Frequency)", 2, 8); // 一ヶ月に一回
+    }
+
+    // Testing: structure.standard[0] - "Timeframe + に + Number of Times"
+    // Example from grammar data: 一週間に２回 (twice per week)
+    #[test]
+    fn test_twice_per_week() {
+        let sentence = "彼は一週間に２回しか歯を磨かないから、口が臭い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に (Frequency)");
+        assert_pattern_range(&patterns, "に (Frequency)", 2, 8); // 一週間に２回
+    }
+
+    // Testing: structure.standard[0] - "Timeframe + に + Number of Times"
+    // Variation: 一日に３回 (three times per day)
+    #[test]
+    fn test_three_times_per_day() {
+        let sentence = "一日に３回薬を飲んでください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に (Frequency)");
+        assert_pattern_range(&patterns, "に (Frequency)", 0, 5); // 一日に３回
+    }
+
+    // Testing: structure.standard[0] - "Timeframe + に + Number of Times"
+    // Variation: 一年に一度 (once per year) - using 度 instead of 回
+    #[test]
+    fn test_once_per_year() {
+        let sentence = "一年に一度、家族で旅行に行きます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に (Frequency)");
+        assert_pattern_range(&patterns, "に (Frequency)", 0, 5); // 一年に一度
+    }
+}
