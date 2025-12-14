@@ -856,3 +856,89 @@ mod kananika_tests {
         assert_pattern_range(&patterns, "か何か", 0, 6); // 紅茶かなにか
     }
 }
+
+// Pattern: かのようだ (as if, seems like)
+// Data source: grammar_points_data.json["かのようだ"]
+// Testing: structure.standard - "Verb/Adj/Noun + かのようだ"
+//
+// Structure variants:
+//   - standard[0]: Verb + かのようだ
+//   - standard[1]: い-Adjective + かのようだ
+//   - standard[2]: な-Adjective + である + かのようだ
+//   - standard[3]: Noun + である + かのようだ
+//   - standard[4]: かのように + Phrase、かのような + Noun
+//   - polite[0-4]: Same with です instead of だ
+
+mod kanoyouda_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_kanoyouda() {
+        let sentence = "このVRゲームはまるで本物の飛行機を操縦しているかのようだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かのようだ");
+        assert_pattern_range(&patterns, "かのようだ", 22, 29); // いるかのようだ
+    }
+
+    #[test]
+    fn test_i_adj_kanoyouda() {
+        let sentence = "この町には誰もいないかのようだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かのようだ");
+        assert_pattern_range(&patterns, "かのようだ", 8, 15); // ないかのようだ
+    }
+
+    #[test]
+    fn test_na_adj_dearu_kanoyouda() {
+        let sentence = "彼はまるで私と話すのが面倒であるかのようだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かのようだ");
+        assert_pattern_range(&patterns, "かのようだ", 14, 21); // あるかのようだ
+    }
+
+    #[test]
+    fn test_noun_dearu_kanoyouda() {
+        let sentence = "彼と僕は兄弟であるかのようだが、実は彼は僕のパートナーです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かのようだ");
+        assert_pattern_range(&patterns, "かのようだ", 7, 14); // あるかのようだ
+    }
+
+    #[test]
+    fn test_kanoyouni_phrase() {
+        let sentence = "長谷川くんのお母さんは私を自分の子供であるかのように小さい頃から可愛がってくれていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かのようだ");
+        assert_pattern_range(&patterns, "かのようだ", 19, 26); // あるかのように
+    }
+
+    #[test]
+    fn test_kanoyouna_noun() {
+        let sentence = "このスーパーに入ると、まるで母国に帰ってきたかのような感じがする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かのようだ");
+        assert_pattern_range(&patterns, "かのようだ", 21, 27); // たかのような
+    }
+
+    #[test]
+    fn test_kanoyoudesu_polite() {
+        let sentence = "彼女は何も知らないかのようです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かのようだ");
+        assert_pattern_range(&patterns, "かのようだ", 7, 15); // ないかのようです
+    }
+}

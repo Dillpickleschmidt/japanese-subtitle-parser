@@ -1347,9 +1347,89 @@ pub fn u301c_youdehanaika() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: かのようだ
+// Pattern: かのようだ (as if, seems like)
+// Structures: Any + か + の + よう + だ/です/に/な
 pub fn kanoyouda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for か particle (adverbial/parallel/sentence-ending)
+    #[derive(Debug)]
+    struct KaMatcher;
+    impl Matcher for KaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token
+                    .pos
+                    .get(1)
+                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    // Matcher for の particle (nominalization/adnominal)
+    #[derive(Debug)]
+    struct NoMatcher;
+    impl Matcher for NoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Matcher for よう (auxiliary verb stem)
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.base_form == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Matcher for ending: だ/です/に/な
+    #[derive(Debug)]
+    struct EndingMatcher;
+    impl Matcher for EndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // だ or です (auxiliary verb)
+            if (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // に (adverbializer)
+            if token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+            {
+                return true;
+            }
+            // な (adnominal form of だ)
+            if token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f == "体言接続")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(KaMatcher)),
+        TokenMatcher::Custom(Arc::new(NoMatcher)),
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Custom(Arc::new(EndingMatcher)),
+    ]
 }
 
 // Pattern: のではないだろうか
