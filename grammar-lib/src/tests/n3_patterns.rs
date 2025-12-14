@@ -8650,3 +8650,64 @@ mod nashi_tests {
     }
 }
 
+// ========== なぜなら〜から (because / the reason is) ==========
+// Pattern: なぜなら〜から (because / the reason is)
+// Data source: grammar_points_data.json["なぜなら〜から"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase (A)。なぜなら(ば) + Reason for (A) Phrase + から + だ
+//   polite[0]: Phrase (A)。なぜなら(ば) + Reason for (A) Phrase + から + です
+//
+// Note: This pattern emphasizes the reason/cause with なぜなら at the start of
+// a new sentence, followed by the explanation, ending with から + だ/です
+
+mod nazenara_kara_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "なぜなら + Reason Phrase + からだ"
+    // Example: 明日は仕事に来ません。なぜなら、明日は友達の結婚式に行くからです。
+    #[test]
+    fn test_nazenara_kara_da() {
+        let sentence = "彼は来ない。なぜなら、体調が悪いからだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なぜなら〜から");
+        assert_pattern_range(&patterns, "なぜなら〜から", 6, 19); // なぜなら、体調が悪いからだ
+    }
+
+    // Testing: structure.polite[0] - "なぜなら + Reason Phrase + からです"
+    // Polite variant
+    #[test]
+    fn test_nazenara_kara_desu() {
+        let sentence = "明日は仕事に来ません。なぜなら、明日は友達の結婚式に行くからです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なぜなら〜から");
+        assert_pattern_range(&patterns, "なぜなら〜から", 11, 32); // なぜなら、明日は友達の結婚式に行くからです
+    }
+
+    // Testing: Three-token variant "なぜならば + Reason Phrase + からだ"
+    #[test]
+    fn test_nazenaraba_kara_da() {
+        let sentence = "彼は成功した。なぜならば、努力を続けたからだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なぜなら〜から");
+        assert_pattern_range(&patterns, "なぜなら〜から", 7, 22); // なぜならば、努力を続けたからだ
+    }
+
+    // Testing: Three-token variant polite form
+    #[test]
+    fn test_nazenaraba_kara_desu() {
+        let sentence = "卵を使わないでください。なぜならば、私は卵アレルギーだからです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なぜなら〜から");
+        assert_pattern_range(&patterns, "なぜなら〜から", 12, 31); // なぜならば、私は卵アレルギーだからです
+    }
+}
+

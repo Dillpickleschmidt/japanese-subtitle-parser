@@ -1407,13 +1407,6 @@ pub fn ten() -> Vec<TokenMatcher> {
 
 // Pattern: なぜなら〜から (because / the reason is)
 // Structures: なぜなら(ば) + Reason Phrase + から + だ/です
-// Note: なぜなら can be one token (接続詞) or three tokens (なぜ + なら + ば)
-//
-// TODO: Currently only matches なぜなら/なぜならば without the ending から+だ/です
-// The full pattern with Wildcard + から + だ/です matcher is not working correctly.
-// This needs to be debugged in a future session. The issue appears to be with how
-// Wildcard interacts with subsequent matchers when other patterns (like です) have
-// already matched parts of the same tokens.
 pub fn nazenara_u301c_kara() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
@@ -1457,12 +1450,56 @@ pub fn nazenara_u301c_kara() -> Vec<TokenMatcher> {
         }
     }
 
+    // Matches から (connective particle meaning "because")
+    #[derive(Debug)]
+    struct KaraConnectiveMatcher;
+    impl Matcher for KaraConnectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matches だ or です (copula auxiliary verb)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matches comma (optional)
+    #[derive(Debug)]
+    struct CommaMatcher;
+    impl Matcher for CommaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "、"
+                && token.pos.first().is_some_and(|pos| pos == "記号")
+                && token.pos.get(1).is_some_and(|pos| pos == "読点")
+        }
+    }
+
     vec![
         // Match なぜなら (1 token) OR なぜ (first of 3 tokens)
         TokenMatcher::Custom(Arc::new(NazenaraOrNazeMatcher)),
         // Optional なら + ば (only for three-token variant)
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaraMatcher)))),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(BaParticleMatcher)))),
+        // Optional comma
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(CommaMatcher)))),
+        // Wildcard for the reason phrase (1-20 tokens)
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 20,
+            stop_conditions: vec![],
+        },
+        // から (connective particle)
+        TokenMatcher::Custom(Arc::new(KaraConnectiveMatcher)),
+        // だ or です (copula)
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
     ]
 }
 
