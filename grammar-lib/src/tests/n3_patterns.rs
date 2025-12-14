@@ -9266,3 +9266,95 @@ mod niawasete_tests {
     }
 }
 
+// ========== に対して (toward / in regard to / in contrast to) ==========
+// Pattern: に対して (toward, in regard to, in contrast to)
+// Data source: grammar_points_data.json["に対して"]
+//
+// Structure variants to test:
+//   standard[1]: Noun + に対して (toward/in regard to)
+//   standard[2]: Noun + に対する + Noun
+//   standard[4]: Verb + の + に対して (in contrast to)
+//   standard[5]: Adjective + な + の + に対して (in contrast to)
+//   standard[6]: Noun + (な)の + に対して (in contrast to)
+
+mod nitaishite_tests {
+    use super::*;
+
+    // Test: Noun + に対して (toward/in regard to) - feelings
+    #[test]
+    fn test_nitaishite_feelings() {
+        let sentence = "君にたいする気持ちは一生変わらない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に対して");
+        assert_pattern_range(&patterns, "に対して", 0, 6); // 君にたいする
+    }
+
+    // Test: Noun + に対する + Noun - attitude
+    #[test]
+    fn test_nitaisuru_attitude() {
+        let sentence = "私は店員にたいする態度が悪い人が苦手です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に対して");
+        assert_pattern_range(&patterns, "に対して", 2, 9); // 店員にたいする
+    }
+
+    // Test: Noun + に対して (toward) - casual speech
+    #[test]
+    fn test_nitaishite_speech() {
+        let sentence = "ああいう風に、先輩にたいしてタメ口を使うのは良くないと思うよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に対して");
+        assert_pattern_range(&patterns, "に対して", 7, 14); // 先輩にたいして
+    }
+
+    // Test: Noun + に対して (toward) - mean words
+    #[test]
+    fn test_nitaishite_words() {
+        let sentence = "何でいつも私にたいしてそういう酷いことを言うの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に対して");
+        assert_pattern_range(&patterns, "に対して", 5, 11); // 私にたいして
+    }
+
+    // Test: Verb/Adjective + の + に対して (in contrast to)
+    #[test]
+    fn test_nitaishite_contrast_adjective() {
+        let sentence = "私はサッカーが好きなのにたいして、彼はバドミントンが好き";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に対して");
+        assert_pattern_range(&patterns, "に対して", 10, 16); // のにたいして
+    }
+
+    // Test: Verb + の + に対して (in contrast to - whereas)
+    #[test]
+    fn test_nitaishite_contrast_verb() {
+        let sentence = "マサミは難しい本を読んだのにたいして、カスミは簡単な本を読んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に対して");
+        assert_pattern_range(&patterns, "に対して", 12, 18); // のにたいして
+    }
+
+    // Test: Noun + の + に対して (in contrast to)
+    #[test]
+    fn test_nitaishite_contrast_noun() {
+        let sentence = "彼の仕事は楽なのにたいして、僕の仕事はものすごく大変";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に対して");
+        assert_pattern_range(&patterns, "に対して", 7, 13); // のにたいして
+    }
+}
+

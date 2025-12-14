@@ -2731,9 +2731,33 @@ pub fn nikansuru_u30fb_nikanshite() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: に対して
+// Pattern: に対して (toward / in regard to / in contrast to)
+// Structures: Noun + に対して / Noun + に対する + Noun / Verb/Adj/Noun + の + に対して
 pub fn nitaishite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for にたいする or にたいして (tokenized as single particle)
+    #[derive(Debug)]
+    struct NitaishiteMatcher;
+    impl Matcher for NitaishiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "にたいする" || token.surface == "にたいして")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    // This pattern has multiple forms:
+    // 1. Noun + にたいする (に対する)
+    // 2. Noun + にたいして (に対して)
+    // 3. の + にたいして (contrast pattern)
+    // Since Kagome tokenizes these as single particles, we need to be flexible
+    // We'll match: (any token) + にたいする/にたいして
+    vec![
+        TokenMatcher::Any,  // Can be noun, の, etc.
+        TokenMatcher::Custom(Arc::new(NitaishiteMatcher)),
+    ]
 }
 
 // Pattern: くらい ② (degree/extent - so...that)
