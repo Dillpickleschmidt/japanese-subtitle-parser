@@ -2676,13 +2676,13 @@
   {
     "pattern_name": "ていただけませんか",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ていただけませんか is the humble speech form of てもらえませんか, which itself is the negative potential form of てもらう 'to have (A) don... [3 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -2690,13 +2690,13 @@
   {
     "pattern_name": "ているあいだに",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When (A) ている is paired with 間（あいだ） に (B), it expresses that '(B) is happening/happened within the timeframe of (A)' [1 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -2704,13 +2704,13 @@
   {
     "pattern_name": "ているところだ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In the previous grammar point, we learned that たところ (or ていたところ ) will mean 'just did (A)', or 'was just doing (A)' [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null
@@ -7324,13 +7324,13 @@
   {
     "pattern_name": "かと思ったら・かと思うと",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the adverbial particle か is combined with と, the う-Verb 思（おも）う, and either of the hypothetical markers たら or と, ... [6 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

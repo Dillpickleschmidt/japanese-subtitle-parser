@@ -1973,7 +1973,7 @@ declare_patterns! {
     Tekuretearigatou {
         name: "てくれてありがとう",
         matcher_fn: crate::matchers::n4::tekuretearigatou,
-        priority: 1,
+        priority: 2,
         category: PatternCategory::Construction,
         jlpt: "n4",
     },

@@ -3629,9 +3629,87 @@ pub fn verb_naide() -> Vec<TokenMatcher> {
     naide()  // Same implementation as ないで
 }
 
-// Pattern: てくれてありがとう
+// Pattern: てくれてありがとう (thank you for doing)
+// Structures: Verb[て] + くれて + ありがとう(+ ございます)
 pub fn tekuretearigatou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Match て particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match ありがとう as interjection
+    #[derive(Debug)]
+    struct ArigatouMatcher;
+    impl Matcher for ArigatouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ありがとう"
+                && token.pos.first().is_some_and(|pos| pos == "感動詞")
+        }
+    }
+
+    // Match ござい (from ござる auxiliary)
+    #[derive(Debug)]
+    struct GozaiMatcher;
+    impl Matcher for GozaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ござる"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match ます auxiliary
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: Verb[て] + くれ + て + ありがとう + (optional ござい + ます)
+    // We need to match: くれ(動詞,連用形) + て + ありがとう + optional(ござい + ます)
+    // But we want to include the leading verb too, so let's reuse てくれる structure
+
+    // Match くれる verb in 連用形 (くれ)
+    #[derive(Debug)]
+    struct KureMatcher;
+    impl Matcher for KureMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "くれる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match verb in 連用形 or 連用タ接続
+    #[derive(Debug)]
+    struct VerbRenyouMatcher;
+    impl Matcher for VerbRenyouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形" || f == "連用タ接続")
+        }
+    }
+
+    // Pattern structure: Verb(連用形/連用タ接続) + て + くれ + て + ありがとう + optional(ござい + ます)
+    concat(vec![
+        vec![TokenMatcher::Custom(Arc::new(VerbRenyouMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(TeParticleMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(KureMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(TeParticleMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(ArigatouMatcher))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GozaiMatcher))))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher))))],
+    ])
 }
 
 // Pattern: てくれない・てもらえない

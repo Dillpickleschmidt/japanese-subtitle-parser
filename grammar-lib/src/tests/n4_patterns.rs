@@ -7235,3 +7235,59 @@ mod te_iru_tokoro_da_tests {
         assert_pattern_range(&patterns, "ているところだ", 13, 21); // 逃げているところ
     }
 }
+
+// Pattern: てくれてありがとう (thank you for doing)
+// Data source: grammar_points_data.json["てくれてありがとう"]
+// Testing all structure variants: 1 standard, 1 polite
+//
+// Structures:
+//   - standard[0]: Verb[て] + くれて + ありがとう
+//   - polite[0]: Verb[て] + くれて + ありがとう + ございます
+#[cfg(test)]
+mod tekuretearigatou_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[て] + くれて + ありがとう"
+    #[test]
+    fn test_standard_form() {
+        let sentence = "いつもゴキブリを捕まえてくれてありがとう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれてありがとう");
+        assert_pattern_range(&patterns, "てくれてありがとう", 8, 20); // 捕まえてくれてありがとう
+    }
+
+    // Testing: structure.polite[0] - "Verb[て] + くれて + ありがとう + ございます"
+    #[test]
+    fn test_polite_form_gozaimasu() {
+        let sentence = "ケーキを買ってきてくれてありがとうございます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれてありがとう");
+        assert_pattern_range(&patterns, "てくれてありがとう", 7, 22); // きてくれてありがとうございます
+    }
+
+    // Testing: standard form with different verb
+    #[test]
+    fn test_standard_different_verb() {
+        let sentence = "忙しいのに手伝ってくれてありがとう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれてありがとう");
+        assert_pattern_range(&patterns, "てくれてありがとう", 5, 17); // 手伝ってくれてありがとう
+    }
+
+    // Testing: polite form with different verb
+    #[test]
+    fn test_polite_different_verb() {
+        let sentence = "最後まで話を聞いてくれてありがとうございます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれてありがとう");
+        assert_pattern_range(&patterns, "てくれてありがとう", 6, 22); // 聞いてくれてありがとうございます
+    }
+}
