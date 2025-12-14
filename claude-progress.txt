@@ -1921,3 +1921,139 @@ Verb (動詞/自立, 未然形)
 **Patterns completed**: 1 (ようだ - seems like/appears to be - formal observation)
 **Tests added**: 8 (all passing)
 **Total tests**: 1777 (was 1769)
+
+---
+
+## Session 298 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (～のだろうか - I wonder if...)
+**Tests added**: 9 (all passing)
+**Total tests**: 1911 (was 1902)
+
+### Pattern Implemented: ～のだろうか (I wonder if...)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1 (Low - speculation/wondering expression)
+
+**Grammar Description**:
+Expresses wondering or speculation about something, equivalent to "I wonder if..." in English. Uses the nominalizer の (or ん as contraction) + だろう/でしょう + か. For な-adjectives and nouns, な is added before の.
+
+**Structure Variants Tested** (9 total):
+
+1. **Verb + のだろうか** (standard[0])
+   - Sentence: "私たちのチームは勝てるのだろうか"
+   - Pattern: [11-16] = "のだろうか"
+
+2. **Verb + んだろうか** (の → ん contraction)
+   - Sentence: "彼女は本当に彼氏が欲しいんだろうか"
+   - Pattern: [12-17] = "んだろうか"
+
+3. **い-Adj + のだろうか** (standard[1])
+   - Sentence: "そんな高い鉛筆をトムが買うのだろうか"
+   - Pattern: [13-18] = "のだろうか"
+
+4. **な-Adj + なのだろうか** (standard[2])
+   - Sentence: "あの人は大丈夫なのだろうか"
+   - Pattern: [7-13] = "なのだろうか"
+
+5. **Noun + なのだろうか** (standard[3])
+   - Sentence: "あれは本当に食べ物なのだろうか"
+   - Pattern: [9-15] = "なのだろうか"
+
+6. **Verb + のでしょうか** (polite[0])
+   - Sentence: "そんな高い鉛筆をトムが買うのでしょうか"
+   - Pattern: [13-19] = "のでしょうか"
+
+7. **Noun + なのでしょうか** (polite)
+   - Sentence: "あの車はキムの車なのでしょうか"
+   - Pattern: [8-15] = "なのでしょうか"
+
+8. **Verb + だろうか** (の omitted)
+   - Sentence: "トムは私を誘うだろうか"
+   - Pattern: [7-11] = "だろうか"
+
+9. **Noun + だろうか** (なの omitted)
+   - Sentence: "あの人は本当に弁護士だろうか"
+   - Pattern: [10-14] = "だろうか"
+
+**Tokenization Analysis**:
+
+Pattern components tokenize as follows:
+- **の/ん** (nominalizer): 名詞/非自立/一般
+- **な** (for な-adj/noun): 助動詞, base='だ', 体言接続
+- **だろ**: 助動詞, base='だ', 未然形
+- **でしょ**: 助動詞, base='です', 未然形
+- **う**: 助動詞, 不変化型, base='う'
+- **か**: 助詞/副助詞／並立助詞／終助詞
+
+**Implementation Details**:
+
+Created 5 custom matchers in n4.rs:
+1. `NoNNominalizer` - Matches の or ん (名詞/非自立/一般)
+2. `NaAuxiliary` - Matches な (助動詞, base='だ') for な-adj/noun
+3. `DarouDeshouAux` - Matches だろ or でしょ (助動詞)
+4. `UAuxiliary` - Matches う (助動詞, 不変化型)
+5. `KaParticle` - Matches か (助詞)
+
+Pattern structure:
+```rust
+vec![
+    TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaAuxiliary)))),
+    TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoNNominalizer)))),
+    TokenMatcher::Custom(Arc::new(DarouDeshouAux)),
+    TokenMatcher::Custom(Arc::new(UAuxiliary)),
+    TokenMatcher::Custom(Arc::new(KaParticle)),
+]
+```
+
+**Pattern Range Notes**:
+- Includes full construction from nominalizer (if present) to か
+- Examples:
+  - "のだろうか" = の + だろ + う + か (5 chars)
+  - "なのでしょうか" = な + の + でしょ + う + か (7 chars)
+  - "だろうか" = だろ + う + か (4 chars when の omitted)
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all 5 standard structures + 2 polite forms + 2 omitted forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+
+**Challenges Solved**:
+1. Handling optional nominalizer (の/ん) - some sentences omit it
+2. Handling both standard (だろう) and polite (でしょう) forms in one pattern
+3. Handling な-adjective/noun form (なの) vs verb/い-adj form (の)
+4. Ensuring proper POS tag checking for all components
+5. Verifying character ranges match actual tokenization
+
+**Linguistic Note**: This pattern combines several grammatical elements:
+- **の/ん**: Nominalizer that turns the preceding clause into a noun phrase
+- **な**: Copula form used with な-adjectives and nouns before の
+- **だろう/でしょう**: Volitional/presumptive auxiliary (だろう is masculine/casual, でしょう is neutral/polite)
+- **か**: Question particle
+Together they express speculation or wondering, similar to "I wonder if..." in English.
+
+### Session Statistics
+- **Session time**: Approximately 60 minutes
+- **Patterns completed this session**: 1 (～のだろうか)
+- **Test success rate**: 9/9 (100%)
+- **Total passing tests**: 1911 (up from 1902)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - ～は～の一つだ (A is one of B)
+   - ようになる (to come to/to reach the point)
+   - ように (so that/in order to)
+   - みたいに・みたいな (like/as - casual)
+   - ば (conditional) - fundamental conditional form
+2. **Pattern focus**: ～は～の一つだ would be straightforward as next choice
+
+### Environment Status
+- All 1911 tests passing
+- No regressions
+- Codebase clean and ready for next session
