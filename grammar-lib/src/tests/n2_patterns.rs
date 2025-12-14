@@ -395,3 +395,57 @@ mod wo_ni_makaseru_tests {
         assert_pattern_range(&patterns, "～を～に任せる", 2, 8); // を運に任せる
     }
 }
+
+// Pattern: 〜得ない (cannot, impossible)
+// Data source: grammar_points_data.json["〜得ない"]
+// Testing structure variants:
+//   - standard[0]: Verb[stem] + えない
+//   - polite[0]: Verb[stem] + えません
+#[cfg(test)]
+mod enai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb[stem] + えない
+    #[test]
+    fn test_verb_stem_enai() {
+        let sentence = "本人以外は知りえない情報だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜得ない");
+        assert_pattern_range(&patterns, "〜得ない", 5, 10); // 知りえない
+    }
+
+    // Testing: structure.polite[0] - Verb[stem] + えません
+    #[test]
+    fn test_verb_stem_emasen() {
+        let sentence = "10年後の自分なんて想像しえません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜得ない");
+        assert_pattern_range(&patterns, "〜得ない", 10, 17); // 想像しえません
+    }
+
+    // Testing: common set phrase ありえない (impossible)
+    #[test]
+    fn test_arieru_common_phrase() {
+        let sentence = "田中さんが不合格なんて絶対ありえない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜得ない");
+        assert_pattern_range(&patterns, "〜得ない", 13, 18); // ありえない
+    }
+
+    // Testing: another realistic example
+    #[test]
+    fn test_okori_enai() {
+        let sentence = "そんな大きな災害は起こりえないと思います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "〜得ない");
+        assert_pattern_range(&patterns, "〜得ない", 9, 15); // 起こりえない
+    }
+}
