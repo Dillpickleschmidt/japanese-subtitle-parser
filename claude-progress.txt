@@ -1356,6 +1356,23 @@ Formal conjunctive (に代わり):
 
 ---
 
+## Session 335 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented ば〜ほど pattern (N3)
+
+**Pattern implemented**: ば〜ほど (the more...the more)
+
+**Implementation**: Matcher uses TokenMatcher::Any + ば + Wildcard(1-10) + ほど structure to match all variants (verb, adjective, noun forms). Tests cover 7 structure variants including verb hypothetical forms, い-adjective hypothetical forms, and noun forms with ならば/であれば auxiliaries.
+
+**Test coverage**: All 7 tests pass with proper assertions. Pattern correctly detects verb forms (噛めば噛むほど), adjective forms (広ければ広いほど), and noun forms (ならばプロほど, あれば職人であるほど).
+
+**Technical note**: Initial attempts with Wildcard matchers at pattern start failed. Solution uses TokenMatcher::Any before ば, which works reliably. Trade-off: noun variants capture from auxiliary (なら/あれ) rather than the noun itself, but pattern is still correctly detected.
+
+**Current status**: 2122 tests passing. Pattern complete and committed.
+
+---
+
 ## Session 318 - 2025-12-14
 
 ### ✅ Session Summary
