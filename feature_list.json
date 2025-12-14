@@ -3544,13 +3544,13 @@
   {
     "pattern_name": "ほとんど",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The adverb ほとんど is used in many situations in Japanese, and often translates as 'most', 'hardly any', 'almost all', a... [2 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

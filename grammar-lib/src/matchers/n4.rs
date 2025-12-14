@@ -2882,8 +2882,20 @@ pub fn number_mo() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ほとんど
+// Pattern: ほとんど (most, almost, hardly any)
+// Structures: ほとんど (adverb)
 pub fn hotondo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct HotondoMatcher;
+    impl Matcher for HotondoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほとんど"
+                && token.base_form == "ほとんど"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(HotondoMatcher))]
 }
 
 // Pattern: そんな・こんな・あんな・どんな

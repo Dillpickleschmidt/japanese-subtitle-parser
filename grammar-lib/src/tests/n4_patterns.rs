@@ -10039,3 +10039,70 @@ mod ba_tests {
     }
 }
 
+// Pattern: ほとんど (most, almost, hardly any)
+// Data source: grammar_points_data.json["ほとんど"]
+// Testing all structure variants
+mod hotondo_tests {
+    use super::*;
+
+    #[test]
+    fn test_hotondo_affirmative_phrase() {
+        // Testing: structure.standard[0] - "ほとんど + Phrase"
+        // Using example from grammar_points_data.json
+        let sentence = "宿題はほとんど終わっているよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほとんど");
+        assert_pattern_range(&patterns, "ほとんど", 3, 7); // ほとんど
+    }
+
+    #[test]
+    fn test_hotondo_negative_phrase() {
+        // Testing: structure.standard[1] - "ほとんど + (Negative) Phrase"
+        // Using example from grammar_points_data.json
+        let sentence = "弁当はほとんど食べてないけど、おやつは全部食べた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほとんど");
+        assert_pattern_range(&patterns, "ほとんど", 3, 7); // ほとんど
+    }
+
+    #[test]
+    fn test_hotondo_no_noun() {
+        // Testing: ほとんど + の + Noun pattern
+        // Using example from grammar_points_data.json
+        let sentence = "ほとんどの人は私の名前を読めません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほとんど");
+        assert_pattern_range(&patterns, "ほとんど", 0, 4); // ほとんど
+    }
+
+    #[test]
+    fn test_hotondo_negative_exist() {
+        // Testing: ほとんど + ない (hardly any)
+        // Using example from grammar_points_data.json
+        let sentence = "今年は屋台がほとんどないね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほとんど");
+        assert_pattern_range(&patterns, "ほとんど", 6, 10); // ほとんど
+    }
+
+    #[test]
+    fn test_hotondo_negative_action() {
+        // Testing: ほとんど + ない (hardly)
+        // Using example from grammar_points_data.json
+        let sentence = "週末に出かけることはほとんどないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほとんど");
+        assert_pattern_range(&patterns, "ほとんど", 10, 14); // ほとんど
+    }
+}
+
