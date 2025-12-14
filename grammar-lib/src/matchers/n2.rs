@@ -640,9 +640,105 @@ pub fn uff5e_tokoroni_u30fb_uff5e_tokorohe() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: か〜ないかのうちに
+// Pattern: か〜ないかのうちに (as soon as, just when, barely when)
+// Structure: Verb[基本形] + か + Verb[未然形] + ない + かのうちに
+// NOTE: Grammar requires same verb repeated, but matcher doesn't enforce this
+//       due to TokenMatcher API limitations. In practice, this specific pattern
+//       is rarely written with different verbs.
 pub fn ka_u301c_naikanouchini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for か particle (副助詞／並立助詞／終助詞)
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token
+                    .pos
+                    .get(1)
+                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    // Matcher for ない auxiliary
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matcher for の particle (連体化)
+    #[derive(Debug)]
+    struct NoMatcher;
+    impl Matcher for NoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Matcher for うち noun (名詞/非自立/副詞可能)
+    #[derive(Debug)]
+    struct UchiMatcher;
+    impl Matcher for UchiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "うち"
+                && token.base_form == "うち"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for に particle (格助詞)
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        // Verb in 基本形 (dictionary form)
+        TokenMatcher::Verb {
+            conjugation_form: Some("基本形"),
+            base_form: None,
+        },
+        // か particle
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+        // Optional wildcard for compound verbs (e.g., 飲み in 飲み終わる)
+        // Matches 0-1 verb tokens in 連用形 that precede the main verb
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 1,
+            stop_conditions: vec![],
+        },
+        // Verb in 未然形 (negative stem)
+        // TODO: Should verify same verb as first token, but TokenMatcher API doesn't support this
+        TokenMatcher::Verb {
+            conjugation_form: Some("未然形"),
+            base_form: None,
+        },
+        // ない auxiliary
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+        // か particle (second occurrence)
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+        // の particle
+        TokenMatcher::Custom(Arc::new(NoMatcher)),
+        // うち noun
+        TokenMatcher::Custom(Arc::new(UchiMatcher)),
+        // に particle
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+    ]
 }
 
 // Pattern: がけに (on the way, as you go)

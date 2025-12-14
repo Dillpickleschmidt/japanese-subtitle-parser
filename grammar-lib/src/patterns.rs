@@ -5042,7 +5042,7 @@ declare_patterns! {
     KaU301cNaikanouchini {
         name: "か〜ないかのうちに",
         matcher_fn: crate::matchers::n2::ka_u301c_naikanouchini,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

@@ -1215,3 +1215,57 @@ mod kotonaku_tests {
         assert_pattern_range(&patterns, "ことなく", 7, 13); // 言うことなく
     }
 }
+
+// Pattern: か〜ないかのうちに (as soon as, just when, barely when)
+// Data source: grammar_points_data.json["か〜ないかのうちに"]
+// Structure: Verb[る] + か + Verb[ない] + かのうちに (same verb repeated)
+// Testing: structure.standard[0] - "Verb[る] + か + Verb ない + かのうちに"
+mod ka_naika_nouchini_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_dictionary_form() {
+        // Example: 飲み終わるか飲み終わらないかのうちに (as soon as finishing drinking)
+        // Note: Compound verb 飲み終わる tokenizes as 飲み + 終わる
+        // Pattern starts from 終わる (the verb in 基本形)
+        let sentence = "父はビールを飲み終わるか飲み終わらないかのうちに、新しい缶を開けた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か〜ないかのうちに");
+        assert_pattern_range(&patterns, "か〜ないかのうちに", 8, 24); // 終わるか飲み終わらないかのうちに
+    }
+
+    #[test]
+    fn test_simple_verb_sit() {
+        // Example: 座るか座らないかのうちに (just as sitting down)
+        let sentence = "彼は椅子に座るか座らないかのうちに、テレビをつけた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か〜ないかのうちに");
+        assert_pattern_range(&patterns, "か〜ないかのうちに", 5, 17); // 座るか座らないかのうちに
+    }
+
+    #[test]
+    fn test_verb_stop() {
+        // Example: 止まるか止まらないかのうちに (just as stopping)
+        let sentence = "彼女は車が止まるか止まらないかのうちに、ドアを開けて駅へと走っていった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か〜ないかのうちに");
+        assert_pattern_range(&patterns, "か〜ないかのうちに", 5, 19); // 止まるか止まらないかのうちに
+    }
+
+    #[test]
+    fn test_time_period() {
+        // Example: 経つか経たないかのうちに (in just [time period])
+        let sentence = "就活を始めて一週間経つか経たないかのうちに、仕事が見つかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か〜ないかのうちに");
+        assert_pattern_range(&patterns, "か〜ないかのうちに", 9, 21); // 経つか経たないかのうちに
+    }
+}
