@@ -517,9 +517,56 @@ pub fn naide() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: Verb［れる・られる］
+// Pattern: Verb［れる・られる］(Passive form - something happens to the subject)
+// Structures: Verb[未然形] + れる/られる
 pub fn verb_uff3b_reru_u30fb_rareru_uff3d() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for verbs in 未然形 (negative/passive stem)
+    // This includes all verb types before passive auxiliary れる/られる
+    #[derive(Debug)]
+    struct PassiveStemMatcher;
+    impl Matcher for PassiveStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+            // Match 未然形 (negative/passive stem) or 未然レル接続 (for する verbs)
+            token.features.get(5).is_some_and(|form| {
+                form == "未然形" || form == "未然レル接続"
+            })
+        }
+    }
+
+    // Matcher for passive auxiliary れる/られる as suffix verb
+    // Tokenized as 動詞/接尾 with base form れる or られる
+    #[derive(Debug)]
+    struct PassiveAuxiliaryMatcher;
+    impl Matcher for PassiveAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && (token.base_form == "れる" || token.base_form == "られる")
+        }
+    }
+
+    // Optional ます for polite form
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(PassiveStemMatcher)),
+        TokenMatcher::Custom(Arc::new(PassiveAuxiliaryMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: 他動詞・自動詞

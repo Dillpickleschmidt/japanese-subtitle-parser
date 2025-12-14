@@ -1794,13 +1794,13 @@
   {
     "pattern_name": "Verb［れる・られる］",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In Japanese, there are several ways to express that something 'passively' happens [14 std, 14 pol]",
     "priority": 2,
     "skip_reason": null

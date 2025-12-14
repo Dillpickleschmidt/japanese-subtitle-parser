@@ -6113,3 +6113,133 @@ mod causative_tests {
         assert_pattern_range(&patterns, "Verb［せる・させる］", 16, 21); // 買わせます
     }
 }
+
+// Pattern: Verb［れる・られる］(Passive form - something happens to the subject)
+// Data source: grammar_points_data.json["Verb［れる・られる］"]
+// Testing all verb types with passive form
+//
+// Structures to test:
+//   - Ichidan verb (る1): 見る + られる
+//   - Godan verb (る5): 座る + られる
+//   - Godan う verb: 歌う + われる
+//   - Godan く verb: 歩く + かれる
+//   - Godan す verb: 話す + される
+//   - Godan む verb: 休む + まれる
+//   - Godan ぶ verb: 飛ぶ + ばれる
+//   - Godan ぐ verb: 泳ぐ + がれる
+//   - Exception する: される
+//   - Exception くる: こられる
+//   - Polite forms: + ます
+mod passive_tests {
+    use super::*;
+
+    #[test]
+    fn test_passive_ichidan_verb() {
+        let sentence = "私はいつも彼と比べられる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 7, 12); // 比べられる
+    }
+
+    #[test]
+    fn test_passive_godan_ru5_verb() {
+        let sentence = "彼は部長に会議で座られた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 8, 12); // 座られた
+    }
+
+    #[test]
+    fn test_passive_godan_u_verb() {
+        let sentence = "カラオケで友達に歌われて恥ずかしかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 8, 11); // 歌われ
+    }
+
+    #[test]
+    fn test_passive_godan_ku_verb() {
+        let sentence = "静かな公園を歩かれるのが好き";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 6, 10); // 歩かれる
+    }
+
+    #[test]
+    fn test_passive_godan_su_verb() {
+        let sentence = "人の前で悪口を話されて傷ついた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 7, 10); // 話され
+    }
+
+    #[test]
+    fn test_passive_godan_mu_verb() {
+        let sentence = "犬に噛まれるのが怖いから近づけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 2, 6); // 噛まれる
+    }
+
+    #[test]
+    fn test_passive_godan_bu_verb() {
+        let sentence = "鳥が空を飛ばれている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 4, 7); // 飛ばれ
+    }
+
+    #[test]
+    fn test_passive_godan_gu_verb() {
+        let sentence = "プールで泳がれるのは気持ちいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 4, 8); // 泳がれる
+    }
+
+    #[test]
+    fn test_passive_suru_exception() {
+        let sentence = "知らない人からいたずらをされるのが嫌い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 12, 15); // される
+    }
+
+    #[test]
+    fn test_passive_kuru_exception() {
+        let sentence = "急に義理の母に来られると困る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 7, 11); // 来られる
+    }
+
+    #[test]
+    fn test_passive_polite_form() {
+        let sentence = "先生に叱られます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb［れる・られる］");
+        assert_pattern_range(&patterns, "Verb［れる・られる］", 3, 8); // 叱られます
+    }
+}
