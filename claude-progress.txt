@@ -1,3 +1,94 @@
+## Session 339 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (べきではない)
+**Tests added**: 7 (all passing)
+**Total tests**: 2149 passing, 1 ignored (was 2142 passing, 1 ignored)
+
+### ✅ Pattern Completed: べきではない (ought not to / should not)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (in feature_list.json), 1 (in patterns.rs - low priority, not highlighted)
+
+**Pattern**: べきではない is an extension of the auxiliary verb べき, which conveys "ought to do (A)". べきではない means the opposite: "ought not to (A)", "should not (A)", or "must not (A)". Like べき, it is quite strong and implies that doing (A) would be considered improper or incorrect. The pattern is partnered with the plain (non-past) form of verbs.
+
+**Structures tested**: 7 comprehensive tests covering all variants
+1. Verb + べきではない: 濡れている手でコンセントに触れるべきではない (You must not touch the outlet with wet hands)
+2. Verb + べきじゃない: 子供に手をあげるべきじゃない (You ought not to raise your hand at a child)
+3. Verb + するべきではない: 徹夜をするべきではない (You ought not to stay up all night)
+4. Verb + すべきではない: 警察に電話すべきではない (You must not call the cops for something trivial)
+5. Polite + べきではありません: 一人であの山に行くべきではありません (You must not go to that mountain alone)
+6. Polite + べきじゃありません: 夜遅くまで外にいるべきじゃありません (You should not stay out late)
+7. Variation + べきでない: 一人であの山に行くべきでない (without は particle, slightly weaker emphasis)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (bekidehanai, lines 403-491)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (bekidehanai_tests module, lines 10614-10703)
+- Pattern: grammar-lib/src/patterns.rs (Bekidehanai, lines 2632-2638)
+
+**Tokenization patterns**:
+```
+All variants follow the structure: Verb + べき + で/じゃ + (は) + ending
+
+Standard form (べきではない):
+- べき: 助動詞, base='べし', 体言接続
+- で: 助動詞, base='だ', 連用形
+- は: 助詞/係助詞
+- ない: 形容詞/自立 or 助動詞, base='ない', 基本形
+
+Casual form (べきじゃない):
+- べき: 助動詞
+- じゃ: 助詞/副助詞
+- ない: 助動詞, base='ない', 基本形
+
+Polite form (べきではありません):
+- べき: 助動詞
+- で: 助動詞, base='だ', 連用形
+- は: 助詞/係助詞
+- あり: 動詞/自立, base='ある', 連用形
+- ませ: 助動詞, base='ます', 未然形
+- ん: 助動詞, base='ん', 基本形
+
+Variation without は (べきでない):
+- べき: 助動詞
+- で: 助動詞, base='だ'
+- ない: 助動詞 or 形容詞
+```
+
+**Key implementation points**:
+1. Simple 5-token matcher: Any + べき + で/じゃ + は? + Any
+2. BekiMatcher checks surface == "べき", base_form == "べし", POS == 助動詞
+3. DeJaMatcher handles both で (助動詞, base='だ') and じゃ (助詞/副助詞)
+4. WaParticleMatcher is optional to handle variations with/without は
+5. Final TokenMatcher::Any catches the ending: ない (1 token) OR あり+ませ+ん (3+ tokens)
+6. Pattern works with all forms: ではない, でない, じゃない, ではありません, じゃありません
+
+**Pattern ranges**: Include verb + full べきではない construction
+- Standard: "触れるべきではない" (chars 13-22)
+- Casual: "あげるべきじゃない" (chars 20-29)
+- する: "するべきではない" (chars 9-17)
+- すべき: "電話すべきではない" (chars 11-20) - contracted する form
+- Polite で: "行くべきではありません" (chars 7-18)
+- Polite じゃ: "いるべきじゃありません" (chars 7-18)
+- Without は: "行くべきでない" (chars 7-14)
+
+**Test Quality**:
+- All 7 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major structure variants: standard, casual, polite, variations
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data notes that as with all structures using では, は may be omitted. However, the presence of は strengthens the ない, so the phrase sounds slightly weaker without it. The combination of する + べき is a rare grammatical exception where two forms are equally correct: するべき and すべき. Both are valid and commonly used.
+
+**Related patterns**:
+- "べき" (base pattern) - matches Verb + べき (ought to / should)
+- This is the negative form of べき, expressing the opposite meaning
+
+---
+
 ## Session 338 - 2025-12-14
 
 ### ✅ Session Summary
