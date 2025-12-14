@@ -1,3 +1,100 @@
+## Session 247 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (でできる・からできる - made from/out of)
+**Tests added**: 5 (all passing)
+**Total tests**: 1627 (was 1622)
+
+### Pattern Implemented: でできる・からできる (made from/out of)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Indicates the material or ingredients something is made from. Uses で (material obvious) or から (material not obvious). Common in descriptions of food, products, and materials.
+
+**Structures tested**: 5 tests covering all main structure variants
+1. Noun + で + できる: 鶏肉でできる料理 (food made from chicken)
+2. Noun + から + できる: 大豆からできる (made from soybeans)
+3. Noun + で + できている: 竹でできている (made from bamboo - specific item)
+4. Noun + で + できます: 繊維でできます (made from fibers - polite)
+5. Noun + から + できます: 米からできます (made from rice - polite)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 4775-4805)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 7536-7610)
+- Pattern structure: Noun + (で/から as 格助詞) + できる verb (any conjugation)
+
+**Tokenization patterns discovered**:
+- Noun (名詞) - material/ingredient
+- で or から (助詞/格助詞) - case particle indicating material/source
+- できる (動詞, base_form="できる") - verb "to be made"/"can do"
+  - Base form: できる (general/non-past)
+  - 連用形: でき (used with ている for specific items)
+  - Polite: できます (with ます auxiliary)
+
+**Key implementation points**:
+1. Custom matcher for で/から that checks both surface and POS (助詞/格助詞)
+2. Custom matcher for できる verb that checks base_form (handles all conjugations)
+3. Simple 3-token pattern: Noun + Particle + Verb
+4. Works with both で (obvious material) and から (non-obvious material)
+5. Matches できる, できている, できます - all conjugations automatically
+
+**Test Quality**:
+- All sentences are realistic, natural Japanese
+- Cover both で and から variants
+- Test base form, て-form, and polite forms
+- Different contexts: food preparation, traditional crafts, materials
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Distinguishing でできる (made from) from other で + verb patterns: Specific verb matcher for できる
+2. Handling both particles (で/から): Combined matcher accepting either
+3. Supporting all conjugations (できる/できている/できます): Matched by base_form, not surface
+
+### Session Statistics
+- **Session time**: Approximately 25 minutes
+- **Patterns completed this session**: 1 (でできる・からできる)
+- **Test success rate**: 5/5 (100%)
+- **Total passing tests**: 1627 (up from 1622)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**: Focus on quotative と constructions
+2. **Good candidates from feature_list.json**:
+   - といい (if/I hope that)
+   - とおもう (I think that)
+   - とか～とか (things like... and...)
+   - ときいた (I heard that)
+3. **Pattern focus**: Quotative particle と with various predicates
+
+### Environment Status
+- All 1627 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+- Particle matchers need both surface and POS verification for accuracy
+- Using base_form matching allows automatic support for all conjugations
+- Simple 3-token pattern works well for this construction
+- The distinction between で (obvious material) and から (non-obvious material) is semantic, not structural
+- Both particles tokenize identically as 助詞/格助詞, so single matcher handles both
+
+### Code Quality Observations
+- Followed test-first workflow correctly
+- All structure variants from grammar_points_data.json are tested
+- Realistic subtitle-quality sentences used throughout
+- Correct character ranges verified
+- No debug output in committed code
+- Clean separation between で and から variants in tests
+- Simple, maintainable implementation
+
+---
+
 ## Session 245 - 2025-12-14
 
 ### ✅ Session Summary
