@@ -1,3 +1,67 @@
+## Session 328 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (のに)
+**Tests added**: 3 (all passing)
+**Total tests**: 2088 passing, 1 ignored (was 2085 passing, 1 ignored)
+
+### ✅ Pattern Completed: のに (in order to / for)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: のに is used to show that something is required for (A) to be realized, translated as "in order to" or "for". This N3 pattern is structurally distinct from the N4 "のに " (despite) pattern through its tokenization.
+
+**Structures tested**: 3 comprehensive tests covering the standard structure
+1. Verb + のに (purpose/goal): トラックは車と違って、ブレーキをかけてから止まるのに時間がかかる (Trucks take longer to stop after stepping on the brakes)
+2. Verb + のに (struggle to do): 風が強すぎて、ピクニックシートを広げるのに苦労した (I struggled to spread out the picnic blanket because the wind was so strong)
+3. Verb + のに (take time): 食べるのに時間をかけすぎて寝る時間が遅くなった (I took too much time to eat, so I slept at a later time)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (noni_2, lines 1043-1083)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (noni_tests module, lines 9843-9878)
+- Pattern: grammar-lib/src/patterns.rs (Noni2)
+
+**Tokenization patterns**:
+```
+N3 のに (in order to) - TWO separate tokens:
+- Verb (動詞/自立, 基本形) - dictionary form verb
+- の (名詞/非自立/一般) - nominalizing particle
+- に (助詞/格助詞/一般) - case-marking particle (goal marker)
+
+N4 のに (despite) - ONE single token:
+- のに (助詞/接続助詞) - conjunction particle
+```
+
+**Key implementation points**:
+1. This pattern is structurally distinguishable from N4 "のに " through tokenization
+2. N3: の + に tokenize as separate tokens (nominalizer + goal marker)
+3. N4: のに tokenizes as single conjunction particle
+4. NoNominalizerMatcher checks の as 名詞/非自立
+5. NiCaseParticleMatcher checks に as 助詞/格助詞
+6. Matches only dictionary form verbs (基本形)
+7. Pattern range includes full construction: Verb + の + に
+
+**Pattern ranges**: Include full construction (Verb + の + に)
+- Example: "止まるのに" (chars 21-26) - to stop
+- Example: "広げるのに" (chars 16-21) - to spread out
+- Example: "食べるのに" (chars 0-5) - to eat
+
+**Test Quality**:
+- All 3 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover the single structure variant: Verb[る] + のに
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern literally means "to that which is (A)", where の nominalizes the verb (turning it into a noun-phrase) and に marks it as a goal/location. This creates the "in order to" meaning - indicating that something is required or necessary to achieve the stated verb action.
+
+**Technical Discovery**: Initially appeared to be semantically identical to N4 "のに " (despite), but investigation revealed they tokenize differently. When Kagome processes のに with the "in order to" meaning (logical result), it splits it into two tokens (の + に). When processing the "despite" meaning (illogical result), it keeps it as one token (のに). This tokenization difference allows us to distinguish the patterns structurally.
+
+---
+
 ## Session 327 - 2025-12-14
 
 ### ✅ Session Summary
