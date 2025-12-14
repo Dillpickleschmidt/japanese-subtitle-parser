@@ -10845,3 +10845,50 @@ mod hodo_uff5e_nai_tests {
         assert_pattern_range(&patterns, "ほど～ない", 0, 24); // お母さんほどケーキ作りが上手な人はどこにもいない
     }
 }
+
+// ========== まさか (no way/don't tell me) ==========
+// Pattern: まさか (no way/don't tell me/it can't be true)
+// Data source: grammar_points_data.json["まさか"]
+//
+// Structure variants to test:
+//   standard[0]: まさか + Phrase
+
+mod masaka_tests {
+    use super::*;
+
+    // Test: まさか at beginning of sentence with と思う
+    // Example from grammar data
+    #[test]
+    fn test_masaka_to_omou() {
+        let sentence = "まさかタナカ君もこのジムに通っているとは思っていなかったよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まさか");
+        assert_pattern_range(&patterns, "まさか", 0, 3); // まさか
+    }
+
+    // Test: まさか at beginning with なんて
+    // Example from grammar data
+    #[test]
+    fn test_masaka_nante() {
+        let sentence = "まさか彼がキャプテンなんて。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まさか");
+        assert_pattern_range(&patterns, "まさか", 0, 3); // まさか
+    }
+
+    // Test: まさか as question (alternative use)
+    // Example from grammar data (Fun Fact section)
+    #[test]
+    fn test_masaka_question() {
+        let sentence = "まさかリアがフランスに帰るって本当なの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まさか");
+        assert_pattern_range(&patterns, "まさか", 0, 3); // まさか
+    }
+}

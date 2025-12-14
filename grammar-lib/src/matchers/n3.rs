@@ -7381,9 +7381,19 @@ pub fn gatai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: まさか
+// Pattern: まさか (no way/don't tell me)
+// Structures: まさか
 pub fn masaka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct MasakaMatcher;
+    impl super::Matcher for MasakaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まさか"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(MasakaMatcher))]
 }
 
 // Pattern: 前者は・後者は
