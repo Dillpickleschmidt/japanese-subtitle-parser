@@ -3852,3 +3852,94 @@ Polite form (少なくありません):
 - ✅ feature_list.json updated
 - ✅ Ready for next pattern
 
+
+## Session 224 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (Causative-Passive)
+**Tests added**: 8 (all passing)
+**Total tests**: 1468 (was 1460)
+
+### Pattern Implemented: Causative-Passive (to be made to do)
+
+**JLPT Level**: N4
+**Category**: Conjugation
+**Priority**: 1
+
+**Pattern**: Expresses being forced or made to do something against one's will
+
+**Structures tested**: 8 tests covering all major forms
+1. る-Verb + させられる: 食べさせられる (be made to eat)
+2. う-Verb (short form) + される (past): 飲まされた (was made to drink)
+3. る-Verb + させられる (negative context): 浴びさせられる (be made to be doused)
+4. する exception → させられる: させられる (be made to do)
+5. くる exception → こさせられる: こさせられる (be made to come)
+6. う-Verb (long form) + せられる: 歩かせられ (be made to walk)
+7. Polite form: させられます (be made to do - polite)
+8. て-form continuation: させられていた (was being made to do)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 2577-2636)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 5593-5695)
+- Pattern structure: Verb[未然形] + (Optional: せ/させ) + られる/れる
+
+**Tokenization patterns**:
+- Long form: 食べ (未然形) + させ (未然形) + られる (基本形) - 3 tokens
+- Short form: 飲まさ (base='飲ます', 未然形) + れ (連用形) - 2 tokens (causative already in verb)
+- する: さ (未然レル接続) + せ (未然形) + られる
+- くる: こ (未然形) + させ (未然形) + られる
+
+**Matcher components**:
+1. MizenFormMatcher - Matches verbs in 未然形 or 未然レル接続 (for する)
+2. CausativeSuffixMatcher (Optional) - Matches せる/させる in 未然形 (verb suffix)
+3. PassiveSuffixMatcher - Matches られる/れる (verb suffix)
+
+**Key characteristics**:
+- Handles both long form (Verb + せ/させ + られる) and short form (Verb_causative + れる)
+- Short form tokenizes with causative built into verb (e.g., 飲ます instead of 飲む)
+- Optional matcher allows pattern to match both 2-token and 3-token sequences
+- Priority 1 (conjugation pattern, important for N4)
+
+**Challenges encountered**:
+1. Discovered that short form (される) tokenizes differently than long form
+2. Short form has causative already built into verb base (e.g., 飲ます vs 飲む)
+3. Solution: Made causative suffix Optional to handle both patterns
+4. This allows matching both Verb+せ/させ+られる and Verb_causative+られる/れる
+
+**Workflow followed**:
+1. ✅ Checked for existing stub function (found at line 2577)
+2. ✅ Read grammar_points_data.json for structure variants (22 standard, 22 polite)
+3. ✅ Wrote 8 tests with print_debug() covering diverse forms
+4. ✅ Analyzed tokenization - discovered long vs short form difference
+5. ✅ Implemented matcher with 3 custom matchers (one Optional)
+6. ✅ Iterated on pattern to handle short form with Optional matcher
+7. ✅ Verified all tests detect patterns correctly
+8. ✅ Removed print_debug() and added proper assertions with correct ranges
+9. ✅ Verified all 1468 tests pass (no regressions)
+10. ✅ Updated feature_list.json
+11. ✅ Committed changes with detailed commit message
+
+### Session Statistics
+- **Session time**: ~2 hours
+- **Patterns completed this session**: 1
+- **Test success rate**: 8/8 (100%)
+- **Total passing tests**: 1468
+- **Files modified**: 4 (matchers/n4.rs, tests/n4_patterns.rs, patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**: Many construction patterns still need implementation
+2. **Good candidates from feature_list.json**:
+   - たら (conditional "if")
+   - Verb[て] + B (general て-form construction)
+   - そう (hearsay/appearance)
+   - ていただけませんか (polite request)
+   - ているあいだに (while doing)
+3. **Pattern focus**: Common N4 grammar constructions with broad usage
+
+### Environment Status
+- ✅ All 1468 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern
