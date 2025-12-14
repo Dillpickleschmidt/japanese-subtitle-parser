@@ -3536,3 +3536,115 @@ Current session
 - ✅ Clean git state (all changes committed)
 - ✅ feature_list.json updated
 - ✅ Ready for next pattern
+
+## Session 221 - 2025-12-13
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (だけでなく)
+**Tests added**: 7 (all passing)
+**Total tests**: 1446 (was 1439)
+
+### Pattern Implemented: だけでなく (not only)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: だけでなく - "not only (A), but also (B)"
+- Abbreviation of だけではなく
+- Common construction expressing "not only...but also"
+- Can attach to verbs, adjectives, and nouns
+
+**Structures tested**: 7 tests covering all variants
+1. Verb + だけでなく: 運動をするだけでなく → するだけでなく
+2. い-Adjective + だけでなく: 暑いだけでなく
+3. な-Adjective + な + だけでなく: 静かなだけでなく (range: なだけでなく)*
+4. Noun + だけでなく: 車だけでなく
+5. だけではなく (with は): 英語だけではなく
+6. だけじゃなく (casual): ピアノだけじゃなく
+7. だけでなくて (with て): おいしいだけでなくて
+
+*Note: For な-adjectives, the pattern range starts from "な" because 静か (adjective stem) and な (auxiliary verb) are tokenized as separate tokens. While not ideal, this is acceptable as the pattern is still correctly detected.
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 2953-3027)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 5294-5391)
+- Pattern structure: Any word + だけ + (で/じゃ) + (は) + なく + (て)
+
+**Tokenization patterns**:
+- だけ: 助詞/副助詞 (adverbial particle)
+- で: 助動詞 (auxiliary verb だ in 連用形)
+- じゃ: 助詞/副助詞 (casual variant)
+- は: 助詞/係助詞 (topic particle, optional)
+- なく: 助動詞 (auxiliary verb ない in 連用テ接続)
+- て: 助詞/接続助詞 (conjunctive particle, optional)
+
+**Custom matchers implemented**:
+- DakeMatcher: Matches だけ (助詞/副助詞)
+- DeJaMatcher: Matches で (助動詞, base=だ) OR じゃ (助詞/副助詞)
+- WaMatcher: Matches optional は (係助詞)
+- NakuMatcher: Matches なく (助動詞, base=ない)
+- TeMatcher: Matches optional て (接続助詞)
+
+**Key learnings**:
+1. **Multiple variants**: Pattern handles で/では/じゃ variants correctly
+2. **Optional components**: Both は (after で) and て (after なく) are optional
+3. **な-Adjective limitation**: For な-adjectives, range starts from "な" not the stem
+   - This is acceptable because the pattern is still detected correctly
+   - Could be improved in future by adding special handling for な-adjective stems
+4. **Pattern composition**: Simple linear pattern with optional elements
+
+**Grammar explanation**:
+- だけでなく means "not only (A), but also (B)"
+- で is the auxiliary verb だ in its conjunctive form (連用形)
+- In だけではなく, the は emphasizes the exclusion ("not JUST A")
+- じゃ is a casual contraction of では
+- て after なく is grammatically correct (連用テ接続) but often omitted
+
+**Test coverage**:
+✅ Verb + だけでなく (するだけでなく)
+✅ い-Adjective + だけでなく (暑いだけでなく)
+✅ な-Adjective + な + だけでなく (なだけでなく)
+✅ Noun + だけでなく (車だけでなく)
+✅ Variant with は (英語だけではなく)
+✅ Casual variant with じゃ (ピアノだけじゃなく)
+✅ Variant with て (おいしいだけでなくて)
+
+### Workflow followed
+1. ✅ Read key files (app_spec.txt, GRAMMAR_PATTERN_STANDARDS.md, REFERENCE_EXAMPLES.md)
+2. ✅ Ran init.sh to verify environment (all 1439 tests passing)
+3. ✅ Selected だけでなく pattern from feature_list.json (N4, needs_implementation)
+4. ✅ Read grammar_points_data.json for structure information
+5. ✅ Checked for existing stub function (found at line 2954)
+6. ✅ Wrote 7 tests with print_debug() for all structure variants
+7. ✅ Analyzed tokenization output to understand token structure
+8. ✅ Implemented matcher based on actual tokenization patterns
+9. ✅ Verified all tests detect the pattern correctly
+10. ✅ Removed print_debug() and added proper assertions with ranges
+11. ✅ Verified all 1446 tests pass (no regressions)
+12. ✅ Updated feature_list.json (category: complete, passes: true)
+13. ✅ Committed changes with detailed commit message
+
+### Statistics
+- **Patterns completed this session**: 1
+- **Test success rate**: 7/7 (100%)
+- **Total passing tests**: 1446
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**: Many patterns still need implementation
+2. **Simpler patterns to consider**:
+   - Question-phrase + か (Question word + か)
+   - く・に (Adverbial form)
+   - すくなくない (Not few = many)
+3. **More complex patterns**:
+   - Causative-Passive (22 structures)
+   - Verb conjugations (せる・させる, れる・られる)
+
+### Environment Status
+- ✅ All 1446 tests passing
+- ✅ No regressions
+- ✅ Clean git state (all changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next pattern
