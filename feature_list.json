@@ -3348,13 +3348,13 @@
   {
     "pattern_name": "にきがつく",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に気（き）が付（つ）く is a common expression that highlights when someone 'notices that (A)', or 'realizes that (A)' [3 std, 3 pol]",
     "priority": 2,
     "skip_reason": null

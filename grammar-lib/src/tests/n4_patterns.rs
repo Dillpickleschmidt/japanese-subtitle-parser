@@ -8870,3 +8870,80 @@ mod ni_frequency_tests {
         assert_pattern_range(&patterns, "に (Frequency)", 0, 5); // 一年に一度
     }
 }
+
+// Pattern: にきがつく (to notice/realize)
+// Data source: grammar_points_data.json["にきがつく"]
+// Testing all structure variants
+//
+// Note: This pattern has two tokenization variants:
+// - にきがつく: 気がつく tokenized as single verb (kanji form)
+// - にきがつく_split: きがつく tokenized as き + が + つく (hiragana form)
+mod nikigatsuku_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + こと + に気がつく" (hiragana/split)
+    #[test]
+    fn test_verb_koto_ni_ki_ga_tsuku() {
+        let sentence = "待ち合わせ場所に着いてから、携帯を忘れたことにきがついた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にきがつく_split");
+        assert_pattern_range(&patterns, "にきがつく_split", 22, 28); // にきがついた
+    }
+
+    // Testing: structure.standard[0] - "Verb + の + に気がつく" (hiragana/split)
+    #[test]
+    fn test_verb_no_ni_ki_ga_tsuku() {
+        let sentence = "彼が嘘をついているのにきがついた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にきがつく_split");
+        assert_pattern_range(&patterns, "にきがつく_split", 10, 16); // にきがついた
+    }
+
+    // Testing: structure.standard[1] - "Noun + に気がつく" (hiragana/split)
+    #[test]
+    fn test_noun_ni_ki_ga_tsuku() {
+        let sentence = "猛スピードでこっちに来ている車にきがついた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にきがつく_split");
+        assert_pattern_range(&patterns, "にきがつく_split", 15, 21); // にきがついた
+    }
+
+    // Testing: structure.polite[0] - "Verb + こと + に気がつきます" (hiragana/split)
+    #[test]
+    fn test_verb_koto_ni_ki_ga_tsukimasu() {
+        let sentence = "後で間違えたことにきがつきました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にきがつく_split");
+        assert_pattern_range(&patterns, "にきがつく_split", 8, 16); // にきがつきました
+    }
+
+    // Testing: conjugated forms - past tense (kanji/compound)
+    #[test]
+    fn test_ni_ki_ga_tsuita() {
+        let sentence = "彼女が泣いていることに気がついた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にきがつく");
+        assert_pattern_range(&patterns, "にきがつく", 10, 16); // に気がついた
+    }
+
+    // Testing: negative form with も particle (kanji/compound)
+    #[test]
+    fn test_ni_ki_ga_tsukanai() {
+        let sentence = "そんな簡単なことにも気がつかないなんて。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にきがつく");
+        assert_pattern_range(&patterns, "にきがつく", 8, 16); // にも気がつかない
+    }
+}

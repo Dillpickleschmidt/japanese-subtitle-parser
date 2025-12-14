@@ -2413,7 +2413,15 @@ declare_patterns! {
     Nikigatsuku {
         name: "にきがつく",
         matcher_fn: crate::matchers::n4::nikigatsuku,
-        priority: 1,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
+    NikigatsukuSplit {
+        name: "にきがつく_split",
+        matcher_fn: crate::matchers::n4::nikigatsuku_split,
+        priority: 2,
         category: PatternCategory::Construction,
         jlpt: "n4",
     },

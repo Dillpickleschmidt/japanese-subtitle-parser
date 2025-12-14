@@ -5725,9 +5725,117 @@ pub fn gamirareru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にきがつく
+// Pattern: にきがつく (to notice/realize) - compound form
+// Structures: Verb/Noun + (こと/の) + に + (も) + 気がつく
+// This handles the kanji form where 気がつく tokenizes as a single verb
 pub fn nikigatsuku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match も particle (係助詞) - optional
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match 気がつく verb (base form)
+    #[derive(Debug)]
+    struct KigatsukuVerbMatcher;
+    impl super::Matcher for KigatsukuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "気がつく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(KigatsukuVerbMatcher)),
+    ]
+}
+
+// Pattern: にきがつく (to notice/realize) - split form
+// Structures: Verb/Noun + (こと/の) + に + (も) + き + が + つく
+// This handles the hiragana form where きがつく tokenizes as separate tokens
+pub fn nikigatsuku_split() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match も particle (係助詞) - optional
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match き from くる (come) - 連用形
+    #[derive(Debug)]
+    struct KiVerbMatcher;
+    impl super::Matcher for KiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "き"
+                && token.base_form == "くる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match が particle
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl super::Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match つく verb
+    #[derive(Debug)]
+    struct TsukuVerbMatcher;
+    impl super::Matcher for TsukuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "つく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(KiVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TsukuVerbMatcher)),
+    ]
 }
 
 // Pattern: 〜でも 〜でも (whether...or, even if...or)
