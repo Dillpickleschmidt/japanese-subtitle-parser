@@ -1745,9 +1745,62 @@ pub fn u301c_youtoomou_u30fb_u301c_outoomou() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: く・に
+// Pattern: く・に (adverb formation)
+// Structures: い-Adj[く] + Verb, な-Adj + に + Verb, Exception: いい→よく
+// Note: This pattern is very broad and matches adverbial forms modifying verbs.
+// It's not highlighted in overlays (priority < 5) but useful for detection.
 pub fn ku_u30fb_ni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for adverbial forms (い-adj[く], な-adj+に, or よく exception)
+    #[derive(Debug)]
+    struct AdverbialFormMatcher;
+    impl Matcher for AdverbialFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Pattern 1: い-adjective in 連用テ接続 form (ends with く)
+            let is_i_adj_ku = token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|form| form == "連用テ接続")
+                && token.surface.ends_with("く");
+
+            // Pattern 2: な-adjective stem (形容動詞語幹)
+            let is_na_adj_stem = token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹");
+
+            // Pattern 3: よく adverb (exception for いい)
+            let is_yoku = token.surface == "よく"
+                && token.base_form == "よく"
+                && token.pos.first().is_some_and(|pos| pos == "副詞");
+
+            is_i_adj_ku || is_na_adj_stem || is_yoku
+        }
+    }
+
+    // Matcher for に adverbial particle (optional - only for な-adj)
+    #[derive(Debug)]
+    struct NiAdverbialMatcher;
+    impl Matcher for NiAdverbialMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+        }
+    }
+
+    // Matcher for any verb
+    #[derive(Debug)]
+    struct VerbMatcher;
+    impl Matcher for VerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AdverbialFormMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiAdverbialMatcher)))),
+        TokenMatcher::Custom(Arc::new(VerbMatcher)),
+    ]
 }
 
 // Pattern: ～にする・～くする

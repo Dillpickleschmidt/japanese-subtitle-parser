@@ -6793,4 +6793,90 @@ mod o_ni_naru_tests {
         assert_has_pattern(&patterns, "お～になる ");
         assert_pattern_range(&patterns, "お～になる ", 4, 12); // お電話になります
     }
+
+    // Pattern: く・に (adverb formation)
+    // Data source: grammar_points_data.json["く・に"]
+    // Testing: structure.standard[0] - "［い］Adjective［く］ + Verb"
+    //
+    // Structure variants to test:
+    //   - standard[0]: ［い］Adjective［く］+ Verb
+    //   - standard[1]: ［な］Adjective + に + Verb
+    //   - standard[2]: Exception いい→よく
+
+    // Testing: い-Adjective[く] + Verb (standard[0])
+    #[test]
+    fn test_ku_ni_i_adjective_adverb() {
+        let sentence = "この箱を強く引いてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "く・に");
+        assert_pattern_range(&patterns, "く・に", 4, 8); // 強く引い
+    }
+
+    // Testing: い-Adjective[く] + Verb - different adjective
+    #[test]
+    fn test_ku_ni_i_adjective_tight() {
+        let sentence = "ドアをきつく閉めたほうがいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "く・に");
+        assert_pattern_range(&patterns, "く・に", 3, 9); // きつく閉めた
+    }
+
+    // Testing: い-Adjective[く] + Verb - new/newly
+    #[test]
+    fn test_ku_ni_i_adjective_new() {
+        let sentence = "新しく買ったパソコンはどう？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "く・に");
+        assert_pattern_range(&patterns, "く・に", 0, 6); // 新しく買った
+    }
+
+    // Testing: な-Adjective + に + Verb (standard[1])
+    #[test]
+    fn test_ku_ni_na_adjective_polite() {
+        let sentence = "丁寧に書くようにしてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "く・に");
+        assert_pattern_range(&patterns, "く・に", 0, 5); // 丁寧に書く
+    }
+
+    // Testing: な-Adjective + に + Verb - different adjective
+    #[test]
+    fn test_ku_ni_na_adjective_haphazard() {
+        let sentence = "適当に話すなよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "く・に");
+        assert_pattern_range(&patterns, "く・に", 0, 5); // 適当に話す
+    }
+
+    // Testing: な-Adjective + に + Verb - skillfully
+    #[test]
+    fn test_ku_ni_na_adjective_skillful() {
+        let sentence = "上手に歌うのは難しいね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "く・に");
+        assert_pattern_range(&patterns, "く・に", 0, 5); // 上手に歌う
+    }
+
+    // Testing: Exception いい→よく (standard[2])
+    #[test]
+    fn test_ku_ni_yoku_exception() {
+        let sentence = "よく考えてから決めたほうがいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "く・に");
+        assert_pattern_range(&patterns, "く・に", 0, 4); // よく考え
+    }
 }
