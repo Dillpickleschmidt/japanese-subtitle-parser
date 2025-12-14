@@ -1184,8 +1184,39 @@ pub fn nado() -> Vec<TokenMatcher> {
 }
 
 // Pattern: みたい
+// Pattern: みたい (seems like/looks like - resemblance)
+// Structures: Verb/Adj/Noun + みたい + だ/です
 pub fn mitai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match みたい as na-adjective stem (dependent noun)
+    #[derive(Debug)]
+    struct MitaiMatcher;
+    impl Matcher for MitaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "みたい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Match だ or です (auxiliary verbs)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "だ" || token.base_form == "です")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Can follow any word (verb, adjective, noun)
+        TokenMatcher::Custom(Arc::new(MitaiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaDesuMatcher)))),
+    ]
 }
 
 // Pattern: そう (looks like/seems like - appearance-based conjecture)

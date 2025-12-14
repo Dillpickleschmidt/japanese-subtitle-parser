@@ -9507,3 +9507,121 @@ mod kasuru_tests {
     // would match any noun ending in 化, including compound words.
 }
 
+// ========== みたい (seems like/looks like - resemblance) ==========
+// Pattern: みたい
+// Data source: grammar_points_data.json["みたい"]
+//
+// Structures to test:
+//   - standard[0]: Verb + みたい + だ
+//   - standard[1]: い-Adjective + みたい + だ
+//   - standard[2]: な-Adjective + みたい + だ
+//   - standard[3]: Noun + みたい + だ
+//   - polite[0]: Verb + みたい + です
+//   - polite[1]: い-Adjective + みたい + です
+//   - polite[2]: な-Adjective + みたい + です
+//   - polite[3]: Noun + みたい + です
+//
+// Examples from data:
+//   - 雪が降るみたいだ (It seems like it will snow)
+//   - プールは浅いみたいだ (That pool seems shallow)
+//   - 地下鉄が嫌いみたいだ (It seems like he doesn't like subways)
+//   - 携帯はパソコンみたいだ (That cellphone looks like a computer)
+//
+// Note: みたい is a な-Adjective expressing resemblance or appearance.
+// The だ/です is often omitted in casual speech.
+#[cfg(test)]
+mod mitai_tests {
+    use super::*;
+
+    #[test]
+    fn test_mitai_verb_standard() {
+        // Testing: Verb + みたい + だ
+        let sentence = "明日は雪が降るみたいだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたい");
+        assert_pattern_range(&patterns, "みたい", 5, 11); // 降るみたいだ
+    }
+
+    #[test]
+    fn test_mitai_i_adjective_standard() {
+        // Testing: い-Adjective + みたい + だ
+        let sentence = "そこのプールは浅いみたいだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたい");
+        assert_pattern_range(&patterns, "みたい", 7, 13); // 浅いみたいだ
+    }
+
+    #[test]
+    fn test_mitai_na_adjective_standard() {
+        // Testing: な-Adjective + みたい + だ
+        // Note: 嫌い tokenizes as verb (動詞/連用形) from 嫌う
+        let sentence = "彼は地下鉄が嫌いみたいだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたい");
+        assert_pattern_range(&patterns, "みたい", 6, 12); // 嫌いみたいだ
+    }
+
+    #[test]
+    fn test_mitai_noun_standard() {
+        // Testing: Noun + みたい + だ
+        let sentence = "その携帯はパソコンみたいだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたい");
+        assert_pattern_range(&patterns, "みたい", 5, 13); // パソコンみたいだ
+    }
+
+    #[test]
+    fn test_mitai_verb_polite() {
+        // Testing: Verb + みたい + です
+        let sentence = "先輩は今日は来ないみたいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたい");
+        assert_pattern_range(&patterns, "みたい", 7, 14); // ないみたいです
+    }
+
+    #[test]
+    fn test_mitai_i_adjective_polite() {
+        // Testing: い-Adjective + みたい + です
+        let sentence = "この道は危ないみたいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたい");
+        assert_pattern_range(&patterns, "みたい", 4, 12); // 危ないみたいです
+    }
+
+    #[test]
+    fn test_mitai_na_adjective_polite() {
+        // Testing: な-Adjective + みたい + です
+        // Note: 学生 is a noun here, not a na-adjective
+        let sentence = "あの人は学生みたいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたい");
+        assert_pattern_range(&patterns, "みたい", 4, 11); // 学生みたいです
+    }
+
+    #[test]
+    fn test_mitai_noun_polite() {
+        // Testing: Noun + みたい + です
+        // Note: Avoid 夢みたい (tokenizes as 夢みる + たい)
+        let sentence = "彼は子供みたいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "みたい");
+        assert_pattern_range(&patterns, "みたい", 2, 9); // 子供みたいです
+    }
+}
+
