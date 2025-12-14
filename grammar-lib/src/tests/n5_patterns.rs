@@ -5912,3 +5912,93 @@ mod u_verb_dictionary_tests {
     }
 }
 
+// ========== う-Verb (Past) ==========
+// Pattern: う-Verb (Past) - Past tense う-verbs
+// Data source: grammar_points_data.json["う-Verb (Past)"]
+//
+// Structure variants to test:
+//   standard: Various う-verb endings (った, いた, いだ, んだ, した)
+//   polite: Verb[stem]ました forms
+
+#[cfg(test)]
+mod u_verb_past_tests {
+    use super::*;
+
+    // Testing: 買った (bought) - う-ending verb
+    #[test]
+    fn test_u_verb_past_katta() {
+        let sentence = "昨日新しいペンを買った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Past)");
+        assert_pattern_range(&patterns, "う-Verb (Past)", 8, 11); // 買った
+    }
+
+    // Testing: 待った (waited) - つ-ending verb
+    #[test]
+    fn test_u_verb_past_matta() {
+        let sentence = "駅で５分待った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Past)");
+        assert_pattern_range(&patterns, "う-Verb (Past)", 4, 7); // 待った
+    }
+
+    // Testing: 書いた (wrote) - く-ending verb
+    #[test]
+    fn test_u_verb_past_kaita() {
+        let sentence = "ノートに名前を書いた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Past)");
+        assert_pattern_range(&patterns, "う-Verb (Past)", 7, 10); // 書いた
+    }
+
+    // Testing: 泳いだ (swam) - ぐ-ending verb
+    #[test]
+    fn test_u_verb_past_oyoida() {
+        let sentence = "池で泳いだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Past)");
+        assert_pattern_range(&patterns, "う-Verb (Past)", 2, 5); // 泳いだ
+    }
+
+    // Testing: 死んだ (died) - ぬ-ending verb
+    #[test]
+    fn test_u_verb_past_shinda() {
+        let sentence = "金魚が死んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Past)");
+        assert_pattern_range(&patterns, "う-Verb (Past)", 3, 6); // 死んだ
+    }
+
+    // Testing: 消した (turned off) - す-ending verb
+    #[test]
+    fn test_u_verb_past_keshita() {
+        let sentence = "電気を消した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Past)");
+        assert_pattern_range(&patterns, "う-Verb (Past)", 3, 6); // 消した
+    }
+
+    // Testing: 座りました (sat - polite) - polite past
+    #[test]
+    fn test_u_verb_past_polite() {
+        let sentence = "そこに座りました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "う-Verb (Past)");
+        assert_pattern_range(&patterns, "う-Verb (Past)", 3, 8); // 座りました
+    }
+}
+

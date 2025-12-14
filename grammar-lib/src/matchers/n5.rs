@@ -908,9 +908,69 @@ pub fn ru_verb_past() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: う-Verb (Past)
+// Pattern: う-Verb (Past) - Past tense う-verbs
+// Structures: Verb[五段] + た/だ OR Verb[五段] + ました
 pub fn u_verb_past() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match godan (う-verb) in 連用タ接続 or 連用形
+    #[derive(Debug)]
+    struct GodanVerbMatcher;
+    impl Matcher for GodanVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Check if it's a verb
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+
+            // Check conjugation type contains "五段" (godan/う-verb)
+            if let Some(conjugation) = token.features.get(4) {
+                if !conjugation.contains("五段") {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+            // Check it's in 連用タ接続 or 連用形 (stem form for past)
+            if let Some(form) = token.features.get(5) {
+                form == "連用タ接続" || form == "連用形"
+            } else {
+                false
+            }
+        }
+    }
+
+    // Match た or だ auxiliary (past marker)
+    #[derive(Debug)]
+    struct TaDaMatcher;
+    impl Matcher for TaDaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "た" || token.surface == "だ")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|t| t == "特殊・タ")
+        }
+    }
+
+    // Match ます auxiliary (polite marker)
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f.starts_with("特殊・マス"))
+        }
+    }
+
+    // Two patterns:
+    // 1. Godan verb + た/だ (casual past)
+    // 2. Godan verb + ます + た (polite past: ました)
+    vec![
+        TokenMatcher::Custom(Arc::new(GodanVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+        TokenMatcher::Custom(Arc::new(TaDaMatcher)),
+    ]
 }
 
 // Pattern: 好き (like, likable)
