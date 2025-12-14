@@ -1,10 +1,74 @@
 ## Session 320 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully completed 1 N3 pattern
-**Patterns completed**: 1 (に合わせて・に合った)
-**Tests added**: 6 (all passing)
-**Total tests**: 2043 passing, 1 ignored (was 2037 passing, 1 ignored)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (に合わせて・に合った, に対して)
+**Tests added**: 13 (all passing)
+**Total tests**: 2050 passing, 1 ignored (was 2037 passing, 1 ignored)
+
+### ✅ Pattern Completed: に対して (toward / in regard to / in contrast to)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: に対して and に対する are grammar patterns used to show opposition, contrast, or targeting. The verb 対する means "to oppose", but in most contexts it simply means "toward" in the sense of targeting something. に対して creates a pause before the second clause, while に対する directly modifies a following noun.
+
+**Structures tested**: 7 comprehensive tests covering all variants
+1. Noun + に対する + Noun (feelings): 君にたいする気持ちは一生変わらない (My feelings toward you will never change)
+2. Noun + に対する + Noun (attitude): 私は店員にたいする態度が悪い人が苦手です (I don't like people who have a bad attitude towards store employees)
+3. Noun + に対して (speech): ああいう風に、先輩にたいしてタメ口を使うのは良くないと思うよ (I don't think it is best to talk to a senpai using casual speech in that manner)
+4. Noun + に対して (mean words): 何でいつも私にたいしてそういう酷いことを言うの？ (Why do you always say mean things like that to me?)
+5. Adjective + の + に対して (contrast): 私はサッカーが好きなのにたいして、彼はバドミントンが好き (In contrast to me liking soccer, he likes badminton)
+6. Verb + の + に対して (contrast): マサミは難しい本を読んだのにたいして、カスミは簡単な本を読んだ (Masami read a difficult book, whereas Kasumi read an easy book)
+7. Noun + の + に対して (contrast): 彼の仕事は楽なのにたいして、僕の仕事はものすごく大変 (His job is carefree, whereas my job is very difficult)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nitaishite, lines 2734-2761)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nitaishite_tests module, lines 9269-9359)
+- Pattern: grammar-lib/src/patterns.rs (Nitaishite, line in patterns.rs)
+
+**Tokenization pattern**:
+```
+Kagome tokenizes both variants as single particles:
+- にたいする (助詞/格助詞/連語) - particle phrase
+- にたいして (助詞/格助詞/連語) - particle phrase
+
+Pattern matches:
+- Any token (Noun, の, etc.) + にたいする/にたいして
+```
+
+**Key implementation points**:
+1. Both "にたいする" and "にたいして" are tokenized as single multi-word particles (連語)
+2. Simple matcher: TokenMatcher::Any + NitaishiteMatcher
+3. NitaishiteMatcher checks for surface "にたいする" OR "にたいして"
+4. Verifies POS tags: 助詞/格助詞/連語
+5. Handles all three main usages:
+   - Noun + に対して (toward, in regard to)
+   - Noun + に対する (noun modifier)
+   - の + に対して (contrast, "whereas")
+
+**Pattern ranges**: Include preceding token + particle
+- に対する examples: "君にたいする" (0-6), "店員にたいする" (2-9)
+- に対して examples: "先輩にたいして" (7-14), "私にたいして" (5-11)
+- Contrast examples: "のにたいして" (10-16, 12-18, 7-13)
+
+**Test Quality**:
+- All 7 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all three main usages: toward/in regard to (4 tests), contrast (3 tests)
+- Test both に対する (2 tests) and に対して (5 tests) variants
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern has two main meanings:
+1. **向かって/関して** - "toward", "in regard to" (when used with people/things as targets)
+2. **対照的に** - "in contrast to", "whereas" (when comparing two situations with の)
+
+Compared to に関して (another structure showing relation), に対して focuses equally on both A and B, explaining how they interact, compare, or contrast.
+
+---
+
 
 ### ✅ Pattern Completed: に合わせて・に合った (in accordance with / matching)
 
