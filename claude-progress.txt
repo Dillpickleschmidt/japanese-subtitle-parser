@@ -1,3 +1,134 @@
+## Session 256 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (とみえる - it seems/can be deduced that)
+**Tests added**: 6 (all passing)
+**Total tests**: 1668 (was 1662)
+
+### Pattern Implemented: とみえる (it seems/can be deduced that)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Evidential construction expressing deduction or conjecture based on observable evidence. The quotative particle と marks the preceding content, followed by みえる (見える - to appear/be visible). Literally means "from the way it appears, one can conclude that (A)". Translates as "it seems that..." or "it can be deduced that...". Used when the speaker has done some observation or reasoning that led them to draw a conclusion. Implies reasonably confident conjecture.
+
+**Structures tested**: 6 tests covering all structure variants
+1. Verb + とみえる: 入られたとみえる (it seems [they] were broken into)
+2. い-Adjective + とみえる: 暑いとみえる (it seems [he] is hot)
+3. な-Adjective + だ + とみえる: 嫌いだとみえる (it seems [he] dislikes [it])
+4. Noun + だ + とみえる: 休みだとみえる (it seems [it's] a day off)
+5. Verb + とみえます (polite): 入られたとみえます (it seems [they] were broken into)
+6. Noun + だ + とみえます (polite): 休みだとみえます (it seems [it's] a day off)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (tomieru, lines 5214-5245)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (tomieru_tests, lines 8111-8182)
+- Pattern: grammar-lib/src/patterns.rs (Tomieru)
+
+**Tokenization patterns**:
+
+Standard form (とみえる):
+```
+と (助詞/格助詞/引用) - quotation particle
++ みえる (動詞/自立, 基本形, base="みえる") - verb "to appear"
+```
+
+Polite form (とみえます):
+```
+と (助詞/格助詞/引用) - quotation particle
++ みえ (動詞/自立, 連用形, base="みえる") - verb stem
++ ます (助動詞, 特殊・マス, 基本形) - polite auxiliary
+```
+
+**Key implementation points**:
+1. ToQuotationMatcher checks for と as 助詞/格助詞/引用
+2. MieruVerbMatcher accepts both hiragana (みえる) and kanji (見える)
+3. Pattern automatically extends to include ます for polite form
+4. Works with any preceding content: verbs, adjectives, nouns with だ
+5. Pattern range: just とみえる/とみえます (not including preceding content)
+6. Priority 2 (standard evidential construction)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover all major structure variants: verbs, い-adj, な-adj, nouns
+- Test both standard (とみえる) and polite (とみえます) forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Supporting both hiragana and kanji forms of みえる
+2. Polite form detection: pattern automatically extends to include ます
+3. Simple two-token pattern (と + みえる) that works with diverse preceding content
+
+**Tokenization Discovery**:
+- The と quotation particle is consistently tokenized as 助詞/格助詞/引用
+- みえる is a 一段 verb, so conjugates with stem みえ + ます for polite
+- Pattern matcher's automatic extension handles ます insertion correctly
+
+**Pattern Relationship with Other Patterns**:
+- Part of the quotative と family (evidential/conjecture constructions)
+- Related patterns:
+  - とおもう (I think that) - personal opinion, less evidential
+  - といわれている (it is said that) - hearsay, not based on direct observation
+  - とされている (it is considered that) - formal classification
+  - とかんがえられている (it is thought that) - general belief
+  - ときいた (I heard that) - past hearsay
+- All follow pattern: Content + と + Verb
+- Differs in the verb used and level of evidence/confidence
+
+**Usage distinction**:
+- とみえる: Based on direct observation/evidence ("it appears/seems that")
+- とおもう: Personal opinion without necessarily strong evidence
+- といわれている: Based on what people say (hearsay)
+- とかんがえられている: Common public opinion/thought
+
+### Session Statistics
+- **Session time**: Approximately 35 minutes
+- **Patterns completed this session**: 1 (とみえる)
+- **Test success rate**: 6/6 (100%)
+- **Total passing tests**: 1668 (up from 1662)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**:
+   - と～と、どちらが (which is... ?) - comparison question
+   - ないと (must/have to) - conditional negative obligation
+   - なければいけない (must do) - obligation construction
+   - なければならない (must do) - another obligation construction
+2. **Pattern focus**: Comparison and obligation patterns
+
+### Environment Status
+- All 1668 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+
+**Evidential Constructions in Japanese**:
+This pattern is part of evidential/conjecture expressions:
+- とみえる: "it appears/seems that" - based on visible evidence
+- ようだ: "it seems like" - based on observation (more casual)
+- らしい: "apparently/seems like" - based on hearsay or indirect evidence
+- そうだ①: "looks like" - based on appearance (direct observation)
+- そうだ②: "I heard that" - hearsay
+
+**Distinction from similar patterns**:
+- とみえる emphasizes that a conclusion was drawn from evidence
+- ようだ is more general observation without emphasis on reasoning
+- らしい can be hearsay OR appearance, more ambiguous
+- そうだ① is purely about appearance/looks
+- そうだ② is purely hearsay
+
+**と as quotation/result particle**:
+The と particle has multiple uses:
+- Quotation: 彼が「来る」と言った (He said "I'll come")
+- Result/conclusion: 雨が降ると濡れる (If it rains, [you] get wet)
+- In とみえる, と marks the content being concluded/deduced
+
 ## Session 255 - 2025-12-14
 
 ### ✅ Session Summary
