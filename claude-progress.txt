@@ -2335,3 +2335,75 @@ The pattern matching engine behavior needs deeper investigation.
 - ✅ Ready for next session
 
 ---
+
+---
+
+## Session 208 - な-Adjectives Pattern Implementation (Complete)
+
+### Date
+Current session
+
+### Pattern Completed
+**な-Adjectives (N5)** - Pattern that detects な-adjective stems
+
+### Implementation Details
+
+**Matcher function**: `grammar-lib/src/matchers/n5.rs` (lines 197-214)
+- Matches tokens with POS tag: 名詞/形容動詞語幹
+- Returns single TokenMatcher::Custom matcher
+- Pattern is automatically extended by the pattern matching engine to include following auxiliary verbs (だ/です/な/だった)
+
+**Key Learning**: The pattern matching engine has an `extend_with_auxiliary_verbs` function that automatically extends any pattern containing verbs, adjectives, or な-adjective stems to include all following auxiliary verbs (助動詞). This is INTENDED BEHAVIOR for better UX.
+
+**Test file**: `grammar-lib/src/tests/n5_patterns.rs` (lines 5773-5823)
+- 4 tests covering all structure variants:
+  1. test_na_adjective_kirei: 綺麗だ (stem + だ)
+  2. test_na_adjective_shizuka: 静かな (stem + な before noun)
+  3. test_na_adjective_kaiteki: 快適です (stem + です)
+  4. test_na_adjective_taihen: 大変だった (stem + だった)
+
+**Pattern ranges**: Include the full extended range with auxiliary verbs
+- Example: "綺麗だ" is detected as chars 6-9 (not just 6-8 for "綺麗")
+- This matches the behavior of い-Adjectives which also get extended
+
+### Workflow Followed
+1. ✅ Read grammar_points_data.json to understand structure variants
+2. ✅ Checked for existing stub function (found na_adjectives stub at line 198)
+3. ✅ Wrote 4 tests with print_debug for all variants
+4. ✅ Analyzed tokenization output to understand token structure
+5. ✅ Implemented matcher based on actual tokenization (POS: 名詞/形容動詞語幹)
+6. ✅ Discovered automatic range extension behavior through debugging
+7. ✅ Updated test assertions to expect extended ranges
+8. ✅ Verified all 4 tests pass
+9. ✅ Verified all 1342 tests pass (no regressions)
+10. ✅ Updated feature_list.json
+11. ✅ Committed changes with detailed commit message
+
+### Statistics
+- **Session time**: ~1.5 hours
+- **Patterns completed this session**: 1 (な-Adjectives)
+- **Total passing tests**: 1342 tests (4 new tests added)
+- **Incomplete N5 patterns remaining**: Check feature_list.json
+
+### Technical Insights
+1. **Pattern extension**: The `extend_with_auxiliary_verbs` function in pattern_matcher.rs automatically extends patterns that contain verbs, adjectives, or な-adjective stems to include all consecutive auxiliary verbs. This is by design and matches user expectations.
+
+2. **な-adjective tokenization**: な-adjectives are tokenized as 名詞/形容動詞語幹 (noun/adjectival noun stem), which distinguishes them from regular nouns (名詞/一般).
+
+3. **Test philosophy**: Pattern ranges should include the full grammatical construction as extended by the engine, not just the minimal token match.
+
+### Next Session Recommendations
+1. **Continue with N5 patterns**: Pick another incomplete N5 pattern
+2. **Good candidates**:
+   - う-Verb patterns (Dictionary, Negative, Past, Negative-Past)
+   - る-Verb patterns  
+   - の, は particles (if not already complete)
+
+### Environment Status
+- ✅ All 1342 tests passing
+- ✅ No regressions
+- ✅ Clean git state (changes committed)
+- ✅ feature_list.json updated
+- ✅ Ready for next session
+
+---
