@@ -5677,3 +5677,51 @@ mod he_tests {
     }
 }
 
+// ========== Verbs (Non-past) ==========
+// Pattern: Verbs (Non-past)
+// Data source: grammar_points_data.json["Verbs (Non-past)"]
+//
+// Structure variants to test:
+//   standard[0-2]: Dictionary form examples (食べる, 洗う)
+//   polite[0-1]: Polite form examples (食べます, 洗います)
+
+mod verbs_non_past_tests {
+    use super::*;
+
+    // Testing: structure.standard - Dictionary form (る-verb)
+    #[test]
+    fn test_verbs_non_past_dictionary_ru_verb() {
+        let sentence = "嫁は毎晩映画を見る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verbs (Non-past)");
+        assert_pattern_range(&patterns, "Verbs (Non-past)", 7, 9); // 見る
+    }
+
+    // Testing: structure.standard - Dictionary form (う-verb)
+    #[test]
+    fn test_verbs_non_past_dictionary_u_verb() {
+        let sentence = "子供は遊ぶ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verbs (Non-past)");
+        assert_pattern_range(&patterns, "Verbs (Non-past)", 3, 5); // 遊ぶ
+    }
+
+    // Testing: structure.standard - Dictionary form with future context
+    #[test]
+    fn test_verbs_non_past_future_context() {
+        let sentence = "カホは８時に寝る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verbs (Non-past)");
+        assert_pattern_range(&patterns, "Verbs (Non-past)", 6, 8); // 寝る
+    }
+
+    // Note: Polite forms (ます) are covered by the separate "ます" pattern
+    // This pattern specifically detects casual dictionary form verbs in non-past tense
+}
+

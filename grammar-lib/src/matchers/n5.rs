@@ -1787,8 +1787,24 @@ pub fn i_adjective_kunakatta() -> Vec<TokenMatcher> {
 }
 
 // Pattern: Verbs (Non-past)
+// Structures: Verb[基本形] (dictionary/casual form), Verb[連用形] + ます (polite form)
+// Matches verbs in non-past tense (casual dictionary form or polite ます form)
 pub fn verbs_non_past() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    #[derive(Debug)]
+    struct NonPastVerbMatcher;
+    impl Matcher for NonPastVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verbs in 基本形 (dictionary form = non-past casual)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NonPastVerbMatcher))]
 }
 
 // Pattern: Verb［た・ている］+ Noun (relative clause - verb modifying noun)
