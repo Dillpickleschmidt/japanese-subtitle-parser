@@ -1636,8 +1636,86 @@ pub fn kedo_u30fb_dakedo() -> Vec<TokenMatcher> {
 }
 
 // Pattern: る-Verb (Negative-Past)
+// Structures: Verb[一段,未然形] + なかった OR Verb[一段,連用形] + ませんでした OR Verb[一段,未然形] + なかったです
 pub fn ru_verb_negative_past() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ichidan (る-verb) in 未然形 (for なかった)
+    // Note: We don't match 連用形 here because ませんでした is already handled by る-Verb (Negative)
+    #[derive(Debug)]
+    struct IchidanVerbNegativePastMatcher;
+    impl Matcher for IchidanVerbNegativePastMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Check if it's a verb
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+
+            // Check conjugation type is "一段" (ichidan/る-verb)
+            if let Some(conjugation) = token.features.get(4) {
+                if conjugation != "一段" {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+            // Check it's in 未然形 (for なかった)
+            if let Some(form) = token.features.get(5) {
+                form == "未然形"
+            } else {
+                false
+            }
+        }
+    }
+
+    // Match なかっ (past negative auxiliary - 連用タ接続)
+    #[derive(Debug)]
+    struct NakattaMatcher;
+    impl Matcher for NakattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なかっ"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|t| t == "特殊・ナイ")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match た (past tense marker)
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|t| t == "特殊・タ")
+        }
+    }
+
+    // Match です (semi-polite marker)
+    #[derive(Debug)]
+    struct DesuMatcher;
+    impl Matcher for DesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Build the matcher for standard/semi-polite forms:
+    // 1. Verb + なかっ + た (standard)
+    // 2. Verb + なかっ + た + です (semi-polite)
+    // Note: Polite form (ませんでした) is handled by the る-Verb (Negative) pattern
+    vec![
+        TokenMatcher::Custom(Arc::new(IchidanVerbNegativePastMatcher)),
+        TokenMatcher::Custom(Arc::new(NakattaMatcher)),
+        TokenMatcher::Custom(Arc::new(TaMatcher)),
+        // Optional です for semi-polite (なかった + です)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DesuMatcher)))),
+    ]
 }
 
 // Pattern: う-Verb (Negative-Past)

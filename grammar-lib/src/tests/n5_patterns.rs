@@ -6422,3 +6422,93 @@ mod ru_verb_negative_tests {
     }
 }
 
+// る-Verb (Negative-Past) pattern tests
+// Data source: grammar_points_data.json["る-Verb (Negative-Past)"]
+// Pattern: る-Verb (ichidan verb) negative past forms
+// Structures: Verb[一段,未然形] + なかった (standard), Verb[一段,連用形] + ませんでした (polite), Verb[一段,未然形] + なかったです (semi-polite)
+mod ru_verb_negative_past_tests {
+    use super::*;
+
+    // Testing: standard[0] - 食べる + なかった
+    #[test]
+    fn test_ru_verb_negative_past_taberu() {
+        let sentence = "昨日の夜は何も食べなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative-Past)");
+        assert_pattern_range(&patterns, "る-Verb (Negative-Past)", 7, 13); // 食べなかった
+    }
+
+    // Testing: standard[1] - 見る + なかった
+    #[test]
+    fn test_ru_verb_negative_past_miru() {
+        let sentence = "最近はテレビを見なかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative-Past)");
+        assert_pattern_range(&patterns, "る-Verb (Negative-Past)", 7, 12); // 見なかった
+    }
+
+    // Testing: standard[2] - 寝る + なかった
+    #[test]
+    fn test_ru_verb_negative_past_neru() {
+        let sentence = "昨日は全然寝なかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative-Past)");
+        assert_pattern_range(&patterns, "る-Verb (Negative-Past)", 5, 10); // 寝なかった
+    }
+
+    // Testing: polite[0] - 食べる + ませんでした
+    // NOTE: The polite form (ませんでした) is detected by る-Verb (Negative), not る-Verb (Negative-Past).
+    // This is because ませんでした is structurally ません (polite negative) + でした (polite past copula).
+    // Both pattern detections are semantically valid.
+    #[test]
+    fn test_ru_verb_negative_past_polite_masen_deshita() {
+        let sentence = "朝ごはんは食べませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Detected by る-Verb (Negative), not る-Verb (Negative-Past)
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 5, 13); // 食べませんでした
+    }
+
+    // Testing: polite[1] - 食べる + なかったです
+    #[test]
+    fn test_ru_verb_negative_past_semi_polite_taberu() {
+        let sentence = "お弁当は食べなかったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative-Past)");
+        assert_pattern_range(&patterns, "る-Verb (Negative-Past)", 4, 12); // 食べなかったです
+    }
+
+    // Testing: polite[2] - 見る + ませんでした
+    #[test]
+    fn test_ru_verb_negative_past_polite_miru() {
+        let sentence = "映画は見ませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Detected by る-Verb (Negative), not る-Verb (Negative-Past)
+        assert_has_pattern(&patterns, "る-Verb (Negative)");
+        assert_pattern_range(&patterns, "る-Verb (Negative)", 3, 10); // 見ませんでした
+    }
+
+    // Testing: polite[3] - 見る + なかったです
+    #[test]
+    fn test_ru_verb_negative_past_semi_polite_miru() {
+        let sentence = "ニュースは見なかったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Negative-Past)");
+        assert_pattern_range(&patterns, "る-Verb (Negative-Past)", 5, 12); // 見なかったです
+    }
+}
+

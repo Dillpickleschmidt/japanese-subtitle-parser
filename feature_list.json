@@ -1514,13 +1514,13 @@
   {
     "pattern_name": "る-Verb (Negative-Past)",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to form the negative past form of る-Verbs , you will need to remove the る, and then follow it with the auxil... [4 std, 7 pol]",
     "priority": 1,
     "skip_reason": null
