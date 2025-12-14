@@ -1446,3 +1446,92 @@ mod gakininaru_tests {
         assert_pattern_range(&patterns, "が気になる", 7, 16); // ことが気になります
     }
 }
+
+// Pattern: ことだから (it is exactly because / precisely because)
+// Data source: grammar_points_data.json["ことだから"]
+// Testing all structure variants
+//
+// Structure variants:
+//   - standard[0]: Verb + ことだから
+//   - standard[1]: Noun + の + ことだから
+//   - standard[2]: な-Adjective + な + ことだから
+//   - polite[0]: Verb + ことですから
+//   - polite[1]: Noun + の + ことですから
+//   - polite[2]: な-Adjective + な + ことですから
+
+mod kotodakara_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_kotodakara() {
+        // Example: あの人がすることだから、どうせ人を騙して儲けているに違いない
+        // (Precisely because it is something that person does, there is no doubt that he is making money scamming people)
+        let sentence = "あの人がすることだから、どうせ人を騙して儲けているに違いない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだから");
+        assert_pattern_range(&patterns, "ことだから", 6, 11); // ことだから
+    }
+
+    #[test]
+    fn test_noun_no_kotodakara() {
+        // Example: いつも遅れてくる田中くんのことだから、今日も遅れてくるだろう
+        // (It is exactly because Tanaka-kun always arrives late, that he will probably arrive late today)
+        let sentence = "いつも遅れてくる田中くんのことだから、今日も遅れてくるだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだから");
+        assert_pattern_range(&patterns, "ことだから", 13, 18); // ことだから
+    }
+
+    #[test]
+    fn test_na_adj_kotodakara() {
+        // Example: 部長のことだから、またミスをしたらクビにさせられると思う
+        // (It is exactly because it is my boss, he will probably fire me if I mess up again)
+        let sentence = "部長のことだから、またミスをしたらクビにさせられると思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだから");
+        assert_pattern_range(&patterns, "ことだから", 3, 8); // ことだから
+    }
+
+    #[test]
+    fn test_verb_kotodesu_polite() {
+        // Example: 撮影が無事終わったことだから、打ち上げでもしましょう
+        // (Considering that we have finished filming, it is a good opportunity for us to have a party)
+        let sentence = "撮影が無事終わったことですから、打ち上げでもしましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだから");
+        assert_pattern_range(&patterns, "ことだから", 9, 15); // ことですから
+    }
+
+    #[test]
+    fn test_opportunity_meaning() {
+        // Example: お父さんとお母さんが珍しくうちに来ていることだから、久しぶりにみんなで映画でも見よう
+        // (Dad, mom, considering that you guys are here, which is a rare occasion, why don't we watch a movie together)
+        let sentence = "お父さんとお母さんが珍しくうちに来ていることだから、久しぶりにみんなで映画でも見よう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだから");
+        assert_pattern_range(&patterns, "ことだから", 20, 25); // ことだから
+    }
+
+    #[test]
+    fn test_strong_reason() {
+        // Example: お客様のプライバシーに関わることなので、これ以上詳しいことは言えません
+        // Note: The grammar data shows "ことなので" as an alternative form
+        // (Because this is something that has to do with the privacy of our customer, we can't give you further details)
+        let sentence = "お客様のプライバシーに関わることだから、これ以上詳しいことは言えません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだから");
+        assert_pattern_range(&patterns, "ことだから", 14, 19); // ことだから
+    }
+}

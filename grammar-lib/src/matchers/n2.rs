@@ -1987,9 +1987,51 @@ pub fn ge() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ことだから
+// Pattern: ことだから (it is exactly because / precisely because)
+// Structures: (Verb/Noun + の/な-Adj + な) + こと + (だ/です) + から
 pub fn kotodakara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match こと as 名詞/非自立
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.base_form == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ or です (助動詞)
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && (token.base_form == "だ" || token.base_form == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match から as 助詞/接続助詞
+    #[derive(Debug)]
+    struct KaraMatcher;
+    impl Matcher for KaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.base_form == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+        TokenMatcher::Custom(Arc::new(KaraMatcher)),
+    ]
 }
 
 // Pattern: ものだから
