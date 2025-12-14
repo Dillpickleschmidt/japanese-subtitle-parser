@@ -12193,3 +12193,58 @@ mod njanai_tests {
         assert_pattern_range(&patterns, "んじゃない", 7, 16); // 買うんじゃなかった
     }
 }
+
+// Pattern: んだって (I heard that / it's thought that)
+// Data source: grammar_points_data.json["んだって"]
+// Testing all structure variants
+mod ndatte_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_ndatte() {
+        // Testing: structure.standard[0] - "Verb + んだって"
+        // After verbs: ん (助動詞) + だって (助詞/終助詞)
+        let sentence = "サクラちゃん来年結婚するんだって。うらやましいね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだって");
+        assert_pattern_range(&patterns, "んだって", 12, 16); // んだって
+    }
+
+    #[test]
+    fn test_i_adjective_ndatte() {
+        // Testing: structure.standard[1] - "い-Adjective + んだって"
+        // After i-adjectives: ん (名詞/非自立) + だ (助動詞) + って (助詞/格助詞)
+        let sentence = "タケル君が新しいおもちゃが欲しいんだって。どうしよう？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだって");
+        assert_pattern_range(&patterns, "んだって", 16, 20); // んだって
+    }
+
+    #[test]
+    fn test_na_adjective_ndatte() {
+        // Testing: structure.standard[2] - "な-Adjective + な + んだって"
+        // After na-adjectives: な (助動詞) + ん (名詞/非自立) + だ (助動詞) + って (助詞/格助詞)
+        let sentence = "あの博士は凄い事言っているように聞こえるけど、実は言っていること全部適当なんだって。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだって");
+        assert_pattern_range(&patterns, "んだって", 37, 41); // んだって
+    }
+
+    #[test]
+    fn test_noun_ndatte() {
+        // Testing: structure.standard[3] - "Noun + な + んだって"
+        // After nouns: な (助動詞) + ん (名詞/非自立) + だ (助動詞) + って (助詞/格助詞)
+        let sentence = "タクミさんはレスラーみたいな体しているけど、好きなスポーツはフィギュアスケートなんだって。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んだって");
+        assert_pattern_range(&patterns, "んだって", 40, 44); // んだって
+    }
+}

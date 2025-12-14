@@ -3462,8 +3462,83 @@ pub fn datte() -> Vec<TokenMatcher> {
 }
 
 // Pattern: んだって
+// Pattern: んだって (I heard that / it's thought that)
+// Structures: Verb/Adj/Noun + ん + だって (or だ + って)
 pub fn ndatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ん (explanatory particle)
+    // After verbs: ん (助動詞, 不変化型)
+    // After adjectives/nouns: ん (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct NParticleMatcher;
+    impl Matcher for NParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || (token.pos.first().is_some_and(|pos| pos == "名詞")
+                        && token.pos.get(1).is_some_and(|pos| pos == "非自立")))
+        }
+    }
+
+    // Match だって as sentence-ending particle (after verbs)
+    // だって (助詞/終助詞)
+    #[derive(Debug)]
+    struct DatteShuujoMatcher;
+    impl Matcher for DatteShuujoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だって"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    // Match だ (auxiliary verb)
+    #[derive(Debug)]
+    struct DaAuxMatcher;
+    impl Matcher for DaAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "だ" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match って (quotative particle)
+    // って (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct TteMatcher;
+    impl Matcher for TteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "って"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match だって or って
+    // だって (助詞/終助詞) after verbs
+    // って (助詞/格助詞/連語) after adjectives/nouns
+    #[derive(Debug)]
+    struct DatteOrTteMatcher;
+    impl Matcher for DatteOrTteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だって"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞"))
+                || (token.surface == "って"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    // Try two patterns:
+    // Pattern 1 (after verbs): ん + だって (2 tokens)
+    // Pattern 2 (after adjectives/nouns): ん + だ + って (3 tokens)
+    // We use the longer pattern (3 tokens) with Optional(だ)
+    vec![
+        TokenMatcher::Custom(Arc::new(NParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaAuxMatcher)))),
+        TokenMatcher::Custom(Arc::new(DatteOrTteMatcher)),
+    ]
 }
 
 // Pattern: 関係がある (to be related to / to have a connection with)
