@@ -42,8 +42,24 @@ pub fn desu() -> Vec<TokenMatcher> {
 }
 
 // Pattern: は
+// Pattern: は (topic marker - marks sentence topic, pronounced "wa")
+// Structures: Noun + は
 pub fn ha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(HaParticleMatcher)),
+    ]
 }
 
 // Pattern: も (also/too/even)

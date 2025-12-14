@@ -1276,13 +1276,13 @@
   {
     "pattern_name": "は",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "は (pronounced わ) is often considered to be one of the most difficult particles to master in Japanese, alongside が [1 std, 0 pol]",
     "priority": 1,
     "skip_reason": null

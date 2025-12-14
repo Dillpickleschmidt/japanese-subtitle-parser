@@ -6583,3 +6583,95 @@ mod no_pronoun_replacement_tests {
     }
 }
 
+// ========== は (Topic marker) ==========
+// Pattern: は (topic marker - marks sentence topic, pronounced "wa")
+// Data source: grammar_points_data.json["は"]
+//
+// Structure variants to test:
+//   standard[0]: Sentence topic + は
+//
+// Notes:
+//   - は is a 係助詞 (binding particle)
+//   - Pronounced "wa" but written は
+//   - Marks the topic of the sentence (not the subject - that's が)
+//   - Can be used for contrast when used later in sentence
+//   - Very fundamental particle, low priority to avoid over-highlighting
+
+mod ha_topic_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + は (basic topic marker)
+    // Example: "さんは" marking the topic (さん tokenized separately from 田中)
+    #[test]
+    fn test_ha_noun_topic() {
+        let sentence = "田中さんは先生です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は");
+        assert_pattern_range(&patterns, "は", 2, 5); // さんは
+    }
+
+    // Testing: standard[0] - Pronoun + は (topic marker)
+    // Example: "私は" marking the topic
+    #[test]
+    fn test_ha_pronoun_topic() {
+        let sentence = "私はトムです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は");
+        assert_pattern_range(&patterns, "は", 0, 2); // 私は
+    }
+
+    // Testing: standard[0] - Noun + は (with adjective predicate)
+    // Example: "カレーは" marking the topic
+    #[test]
+    fn test_ha_noun_adjective() {
+        let sentence = "カレーは辛い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は");
+        assert_pattern_range(&patterns, "は", 0, 4); // カレーは
+    }
+
+    // Testing: standard[0] - は used for contrast (mid-sentence)
+    // Example: "金曜日は" with contrastive meaning (also "私は" at start)
+    #[test]
+    fn test_ha_contrast() {
+        let sentence = "私は、金曜日は好き";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は");
+        // This sentence has two instances: 私は (0-2) and 金曜日は (3-7)
+        // Testing for the contrastive one (金曜日は)
+        assert_pattern_range(&patterns, "は", 3, 7); // 金曜日は
+    }
+
+    // Testing: standard[0] - Casual speech with は
+    // Example: "俺は" in casual context
+    #[test]
+    fn test_ha_casual_negative() {
+        let sentence = "そんなこと、俺は知らないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は");
+        assert_pattern_range(&patterns, "は", 6, 8); // 俺は
+    }
+
+    // Testing: standard[0] - Question with は
+    // Example: "あなたは" in question
+    #[test]
+    fn test_ha_question() {
+        let sentence = "あなたは誰ですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は");
+        assert_pattern_range(&patterns, "は", 0, 4); // あなたは
+    }
+}
+
