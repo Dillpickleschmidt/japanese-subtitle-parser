@@ -1,10 +1,10 @@
 ## Session 354 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully completed 1 N3 pattern
-**Patterns completed**: 1 (をはじめ)
-**Tests added**: 4 (all passing)
-**Total tests**: 2260 passing, 1 ignored (was 2256 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (をはじめ, んじゃない)
+**Tests added**: 9 (all passing)
+**Total tests**: 2265 passing, 1 ignored (was 2256 passing, 1 ignored - net +9 tests)
 
 ### ✅ Pattern Completed: をはじめ (not only / starting with)
 
@@ -72,6 +72,87 @@ Extended variants:
 **Related patterns**:
 - て初めて (N3) - different usage of 初めて meaning "for the first time after"
 - など (N5) - "and so on/etc." (used together with をはじめ in examples)
+
+---
+
+### ✅ Pattern Completed: んじゃない (don't do / prohibition)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted in overlay)
+
+**Pattern**: んじゃない is a slightly slang grammar pattern used with verbs to prohibit or request that something not be done. It is usually translated as "don't do (A)" or "you mustn't (A)". んじゃない is almost always used from a higher position toward someone of a lower status. It may be used when the speaker is angry, but not always.
+
+**Structures tested**: 5 comprehensive tests covering all major variants
+1. Verb + んじゃない (basic prohibition): 言うんじゃない (don't say) - chars 11-18
+2. Verb + んじゃない (with exclamation): 食べるんじゃない (don't eat) - chars 9-17
+3. Verb + んじゃありません (polite): 取るんじゃありません (you shouldn't take) - chars 10-20
+4. Verb + てん + じゃない (てる abbreviation): てんじゃない (don't be doing) - chars 15-21
+5. Verb + んじゃなかった (past regret): 買うんじゃなかった (shouldn't have bought) - chars 7-16
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (njanai function, lines 4066-4128)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (njanai_tests module, lines 12129-12195)
+- Pattern: grammar-lib/src/patterns.rs (Njanai, declared at line 3393)
+
+**Tokenization patterns**:
+```
+Basic structure: Verb + ん + じゃ + ない/ありません/なかった
+てん variant: Verb + て + ん + じゃ + ない
+
+Verb (required):
+- 動詞 in dictionary form (基本形) - for basic prohibition
+- て (助詞/接続助詞) - for てん contraction
+
+ん (required):
+- ん (名詞/非自立/一般) - explanatory particle
+
+じゃ (required):
+- じゃ (助詞/副助詞) - contraction of では
+
+Negative ending (required):
+- ない (助動詞, 特殊・ナイ, 基本形) - plain negative
+- あり (助動詞, base=ある, 連用形) - start of polite ありません
+- なかっ (助動詞, base=ない) - start of past なかった
+```
+
+**Key implementation points**:
+1. Four-token matcher: Verb/て + ん + じゃ + ない/あり/なかっ
+2. VerbOrTeMatcher matches BOTH dictionary form verbs AND て particle
+3. Handles て + ん contraction (abbreviated ている → てん)
+4. NParticleMatcher checks surface == "ん", POS == 名詞/非自立
+5. JyaMatcher checks surface == "じゃ", POS == 助詞
+6. NegativeFormMatcher handles three endings: ない, あり (from ありません), なかっ (from なかった)
+7. Pattern matcher automatically extends あり to include the full ありません
+8. Pattern priority: 1 (detected but not highlighted in overlay)
+
+**Pattern ranges**: Include verb/て + complete negative construction
+- Basic: 言うんじゃない (chars 11-18) - verb + ん + じゃ + ない
+- Polite: 取るんじゃありません (chars 10-20) - auto-extends to full ません + ん
+- てん form: てんじゃない (chars 15-21) - て + ん + じゃ + ない
+- Past: 買うんじゃなかった (chars 7-16) - verb + ん + じゃ + なかっ + た
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major structural variants: basic, polite, てん abbreviation, past regret
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: んじゃない is a combination of の (case-marking particle) and the abbreviated form of ではない (じゃない). It connects to the dictionary form of verbs. The more literal translation is "it's not (verb)", similar to "you're not (verb)" where a person is directly telling another what they shouldn't do. The てん variant is common in casual speech, contracting ている to てん before じゃない.
+
+**Usage contexts**:
+- Higher to lower status: Parent to child, teacher to student, boss to subordinate
+- May express anger but not always: Can also be gentle correction
+- Polite form (んじゃありません): Less angry, used when adult talks to child
+- Past form (んじゃなかった): Regret or disappointment that action occurred
+
+**Caution**: When んじゃない comes at sentence end with rising intonation, it may be a question (abbreviation of んじゃないか), not a prohibition. The difference is clear from intonation: questions have rising tone, orders have dropping tone.
+
+**Related patterns**:
+- じゃない (N5) - generic negative "is not" (broader pattern)
+- のではない (N3) - explanatory negative (more formal)
+- ないで (N4) - "without doing" or "don't do" (different construction)
 
 ---
 
