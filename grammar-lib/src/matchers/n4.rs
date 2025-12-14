@@ -3357,9 +3357,51 @@ pub fn youni_uff5e_tehoshii() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ているあいだに
+// Pattern: ているあいだに (while/during)
+// Structures: Verb[ている] + 間（あいだ）に
 pub fn teiruaidani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl super::Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match あいだ (interval/while)
+    #[derive(Debug)]
+    struct AidaMatcher;
+    impl super::Matcher for AidaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あいだ"
+                && token.base_form == "あいだ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Match に particle (case particle)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    super::concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeDeParticleMatcher))],
+        vec![TokenMatcher::specific_verb("いる")],
+        vec![TokenMatcher::Custom(Arc::new(AidaMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(NiParticleMatcher))],
+    ])
 }
 
 // Pattern: なくてもいい (don't have to / it's okay not to)

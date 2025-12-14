@@ -7142,3 +7142,49 @@ mod teitadakemasenka_tests {
         assert_pattern_range(&patterns, "ていただけませんか", 4, 14); // 待ってもらえませんか
     }
 }
+
+// ========== ているあいだに (while/during) ==========
+// Pattern: ているあいだに
+// Data source: grammar_points_data.json["ているあいだに"]
+//
+// Structure to test:
+//   - standard[0]: Verb[ている] + 間（あいだ）に
+//
+// Examples from data:
+//   - 数えているあいだには話しかけないで (don't talk to me while I'm counting)
+//   - 運んでいるあいだに転んで怪我をした (tripped when I was carrying)
+//   - 行っているあいだに家に泥棒が入った (while I was on a trip, a burglar came)
+#[cfg(test)]
+mod te_iru_aida_ni_tests {
+    use super::*;
+
+    #[test]
+    fn test_te_iru_aida_ni_basic() {
+        let sentence = "数えているあいだには話しかけないで";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ているあいだに");
+        assert_pattern_range(&patterns, "ているあいだに", 0, 9); // 数えているあいだに
+    }
+
+    #[test]
+    fn test_te_iru_aida_ni_action_during() {
+        let sentence = "荷物を運んでいるあいだに転んで怪我をした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ているあいだに");
+        assert_pattern_range(&patterns, "ているあいだに", 3, 12); // 運んでいるあいだに
+    }
+
+    #[test]
+    fn test_te_iru_aida_ni_uncontrolled_event() {
+        let sentence = "旅行に行っているあいだに家に泥棒が入った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ているあいだに");
+        assert_pattern_range(&patterns, "ているあいだに", 3, 12); // 行っているあいだに
+    }
+}

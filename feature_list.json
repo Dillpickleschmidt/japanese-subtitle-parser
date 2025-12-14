@@ -2690,13 +2690,13 @@
   {
     "pattern_name": "ているあいだに",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When (A) ている is paired with 間（あいだ） に (B), it expresses that '(B) is happening/happened within the timeframe of (A)' [1 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
