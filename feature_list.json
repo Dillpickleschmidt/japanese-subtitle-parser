@@ -3488,13 +3488,13 @@
   {
     "pattern_name": "ばあいは",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "場合（ばあい）は is a phrase in Japanese that is often translated to 'in the event of (A)', or 'in the case of (A)' [4 std, 0 pol]",
     "priority": 2,
     "skip_reason": null

@@ -3228,9 +3228,81 @@ pub fn sukunakunai_polite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ばあいは
+// Pattern: ばあいは (in the event of/in the case of)
+// Structures: Verb/い-Adj + 場合(は)
+//            な-Adj + な + 場合(は)
+//            Noun + の + 場合(は)
 pub fn baaiha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 場合 (名詞/副詞可能)
+    #[derive(Debug)]
+    struct BaaiMatcher;
+    impl Matcher for BaaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "場合"
+                && token.base_form == "場合"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Match は particle (係助詞) - optional
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match な particle (助動詞, base="だ", 体言接続) or の particle (連体化) - optional
+    #[derive(Debug)]
+    struct NaOrNoParticleMatcher;
+    impl Matcher for NaOrNoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続"))
+                || (token.surface == "の"
+                    && token.base_form == "の"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "連体化"))
+        }
+    }
+
+    // Match preceding element: Verb, い-Adjective, な-Adjective, or Noun
+    #[derive(Debug)]
+    struct PreBaaiMatcher;
+    impl Matcher for PreBaaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                // い-Adjective
+                || token.pos.first().is_some_and(|pos| pos == "形容詞")
+                // な-Adjective (名詞/形容動詞語幹)
+                || (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+                // Regular noun
+                || (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && !token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(PreBaaiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NaOrNoParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(BaaiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            WaParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: Verb[て] - casual imperative (て at sentence end)

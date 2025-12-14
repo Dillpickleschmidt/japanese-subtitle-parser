@@ -9274,3 +9274,67 @@ mod hazuda_tests {
         assert_pattern_range(&patterns, "はずだ", 6, 13); // 会議のはずです
     }
 }
+
+// ========== ばあいは (in the event of/in the case of) ==========
+// Pattern: ばあいは
+// Data source: grammar_points_data.json["ばあいは"]
+//
+// Structures to test:
+//   - standard[0]: Verb + 場合（ばあい）(は)
+//   - standard[1]: い-Adjective + 場合（ばあい）(は)
+//   - standard[2]: な-Adjective + な + 場合（ばあい）(は)
+//   - standard[3]: Noun + の + 場合（ばあい）(は)
+//
+// Examples from data:
+//   - オートバイに乗る場合はヘルメットをかぶってください (In the event that you ride a motorbike, wear a helmet)
+//   - 咳がひどい場合はマスクをしてください (In the case that you have a bad cough, wear a mask)
+//   - 仕事が大変な場合は私に電話をしてください (In the case that work is difficult, call me)
+//   - 私の場合は冬が好きです (In my case, I like winter)
+#[cfg(test)]
+mod baaiha_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb + 場合（ばあい）(は)
+    #[test]
+    fn test_baaiha_verb() {
+        let sentence = "オートバイに乗る場合はヘルメットをかぶってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばあいは");
+        assert_pattern_range(&patterns, "ばあいは", 6, 11); // 乗る場合は
+    }
+
+    // Testing: structure.standard[1] - い-Adjective + 場合（ばあい）(は)
+    #[test]
+    fn test_baaiha_i_adjective() {
+        let sentence = "咳がひどい場合はマスクをしてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばあいは");
+        assert_pattern_range(&patterns, "ばあいは", 2, 8); // ひどい場合は
+    }
+
+    // Testing: structure.standard[2] - な-Adjective + な + 場合（ばあい）(は)
+    #[test]
+    fn test_baaiha_na_adjective() {
+        let sentence = "仕事が大変な場合は私に電話をしてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばあいは");
+        assert_pattern_range(&patterns, "ばあいは", 3, 9); // 大変な場合は
+    }
+
+    // Testing: structure.standard[3] - Noun + の + 場合（ばあい）(は)
+    #[test]
+    fn test_baaiha_noun() {
+        let sentence = "私の場合は冬が好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばあいは");
+        assert_pattern_range(&patterns, "ばあいは", 0, 5); // 私の場合は
+    }
+}
