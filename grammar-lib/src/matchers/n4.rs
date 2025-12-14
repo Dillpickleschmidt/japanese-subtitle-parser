@@ -3662,8 +3662,52 @@ pub fn number_shika_u301c_nai() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ～は～の一つだ
+// Pattern: ～は～の一つだ (A is one of B)
+// Structures: Noun (A) + は + Noun (B) + の + Counter + だ/です
 pub fn uff5e_ha_uff5e_nohitotsuda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match counter nouns: ひとつ, ひとり, ふたり, etc.
+    // These are typically 名詞 with surface matching counter patterns
+    #[derive(Debug)]
+    struct CounterNounMatcher;
+    impl super::Matcher for CounterNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Common counters that are reliably tokenized as nouns
+            const COMMON_COUNTERS: &[&str] = &[
+                "ひとつ", "ふたつ", "みっつ", "よっつ", "いつつ",
+                "むっつ", "ななつ", "やっつ", "ここのつ", "とお",
+                "ひとり", "ふたり",  // people counters
+                "一つ", "二つ", "三つ",  // kanji variants
+                "一人", "二人",
+            ];
+
+            token.pos.first().is_some_and(|p| p == "名詞")
+                && (COMMON_COUNTERS.contains(&token.surface.as_str())
+                    || COMMON_COUNTERS.contains(&token.base_form.as_str()))
+        }
+    }
+
+    // Match だ or です auxiliary
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl super::Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "助動詞")
+                && (token.base_form == "だ" || token.base_form == "です")
+        }
+    }
+
+    vec![
+        // Noun (category)
+        super::noun_matcher(),
+        // の particle
+        TokenMatcher::Surface("の"),
+        // Counter noun
+        TokenMatcher::Custom(Arc::new(CounterNounMatcher)),
+        // だ or です
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: ～ない～はない (double negative - there isn't X that doesn't Y)

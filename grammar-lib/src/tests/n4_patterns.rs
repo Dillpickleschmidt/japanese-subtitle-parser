@@ -11637,3 +11637,84 @@ mod nodarouka_tests {
     }
 }
 
+// ========== ～は～の一つだ (A is one of B) ==========
+// Pattern: ～は～の一つだ
+// Data source: grammar_points_data.json["～は～の一つだ"]
+//
+// Structures to test:
+//   - standard[0]: Noun (A) + は + (Category) Noun (B) + の一つ + だ
+//   - polite[0]: Noun (A) + は + (Category) Noun (B) + の一つ + です
+//   - With various counters: ひとつ, ひとり, いっしゅ, いっぽん
+//
+// Examples from data:
+//   - アンドロイドはスマートフォンのOSのひとつだ
+//   - 電車は乗り物のひとつです
+//   - 彼も家族のひとりだ (using ひとり counter)
+//   - トマトはフルーツのいっしゅだ (using いっしゅ counter)
+//   - このクレヨンはこのセットのいっぽんだ (using いっぽん counter)
+#[cfg(test)]
+mod wa_no_hitotsu_tests {
+    use super::*;
+
+    // Test: standard[0] - Noun + は + Noun + の一つ + だ (with ひとつ)
+    #[test]
+    fn test_wa_no_hitotsu_standard_basic() {
+        let sentence = "アンドロイドはスマートフォンのOSのひとつだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～の一つだ");
+        assert_pattern_range(&patterns, "～は～の一つだ", 15, 22); // OSのひとつだ
+    }
+
+    // Test: polite[0] - Noun + は + Noun + の一つ + です
+    #[test]
+    fn test_wa_no_hitotsu_polite() {
+        let sentence = "電車は乗り物のひとつです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～の一つだ");
+        assert_pattern_range(&patterns, "～は～の一つだ", 3, 12); // 乗り物のひとつです
+    }
+
+    // Test: with ひとり counter (people)
+    #[test]
+    fn test_wa_no_hitotsu_hitori_counter() {
+        let sentence = "彼も家族のひとりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～は～の一つだ");
+        assert_pattern_range(&patterns, "～は～の一つだ", 2, 9); // 家族のひとりだ
+    }
+
+    // TODO: Undetectable - いっしゅ counter mistokenized by Kagome
+    // Kagome tokenizes "いっしゅ" as 動詞 "いっす" + 名詞 "ゅだ" instead of a single counter noun.
+    // Cannot reliably detect this variant with current tokenization.
+    //
+    // #[test]
+    // fn test_wa_no_hitotsu_isshu_counter() {
+    //     let sentence = "トマトはフルーツのいっしゅだ";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "～は～の一つだ");
+    //     assert_pattern_range(&patterns, "～は～の一つだ", 4, 14); // フルーツのいっしゅだ
+    // }
+
+    // TODO: Undetectable - いっぽん counter mistokenized by Kagome
+    // Kagome tokenizes "いっぽん" as 動詞 "いう" + 副詞 "ぽん" instead of a single counter noun.
+    // Cannot reliably detect this variant with current tokenization.
+    //
+    // #[test]
+    // fn test_wa_no_hitotsu_ippon_counter() {
+    //     let sentence = "このクレヨンはこのセットのいっぽんだ";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "～は～の一つだ");
+    //     assert_pattern_range(&patterns, "～は～の一つだ", 9, 18); // セットのいっぽんだ
+    // }
+}
+
