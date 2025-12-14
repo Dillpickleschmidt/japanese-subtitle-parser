@@ -1,3 +1,78 @@
+## Session 337 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (ばかりに)
+**Tests added**: 5 (all passing)
+**Total tests**: 2135 passing, 1 ignored (was 2130 passing, 1 ignored)
+
+### ✅ Pattern Completed: ばかりに (simply because / just because)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (in feature_list.json), 1 (in patterns.rs - low priority, not highlighted)
+
+**Pattern**: ばかりに is used to express "simply because" or "just because". It combines the adverbial particle ばかり with the case-marking particle に. The pattern means that "even with just (A), (B) is/was able to occur", often highlighting a surprising or negative result. While typically used with negative outcomes, it can also express eagerness/enthusiasm when paired with たい or ほしい.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Verb[た] + ばかりに: ボールをキャッチしたばかりに、肩が外れました (Simply because I caught a ball, I dislocated my shoulders)
+2. い-Adjective + ばかりに: 体が小さいばかりに、クラスメイトにいじめられた (Simply because I am small, my classmates bullied me)
+3. な-Adjective + な + ばかりに: 彼は練習が大変なばかりに、部活をやめることにした (Simply because practice was difficult, he decided to quit)
+4. Noun + である + ばかりに: 新人であるばかりに、先輩たちがやりたくない仕事を押し付けられた (Simply because I am new, my senpai made me do all the work they didn't want to)
+5. Eagerness variant (Verb + たい + ばかりに): 釣りに行きたいばかりに、仕事を休んで海に行った (Simply because he wanted to go fish, he took a day off)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (bakarini, lines 1878-1910)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (bakarini_tests module, lines 10460-10519)
+- Pattern: grammar-lib/src/patterns.rs (Bakarini, lines 2976-2982)
+
+**Tokenization pattern**:
+```
+All variants follow the same structure:
+- Preceding element (verb/adjective/noun in attributive form)
+- ばかり (助詞/副助詞) - adverbial particle
+- に (助詞/格助詞/一般) - case particle
+
+Examples:
+1. た (助動詞, base='た', 基本形) + ばかり + に
+2. 小さい (形容詞/自立, 基本形) + ばかり + に
+3. な (助動詞, base='だ', 体言接続) + ばかり + に
+4. ある (助動詞, 基本形) + ばかり + に
+5. たい (助動詞, 基本形) + ばかり + に
+```
+
+**Key implementation points**:
+1. Simple three-token matcher: Any + ばかり (助詞/副助詞) + に (助詞/格助詞)
+2. BakariParticleMatcher checks surface == "ばかり" and POS == 助詞/副助詞
+3. NiParticleMatcher checks surface == "に" and POS == 助詞/格助詞
+4. TokenMatcher::Any allows any preceding element (verb, adjective, noun, auxiliary)
+5. Pattern is simple and matches all structure variants with a single implementation
+6. Priority set to 1 (low) to avoid conflicting with higher-priority patterns
+
+**Pattern ranges**: Include the token before ばかり + ばかりに
+- Verb[た] form: "たばかりに" (chars 9-14)
+- い-Adj form: "小さいばかりに" (chars 2-9)
+- な-Adj form: "なばかりに" (chars 7-12)
+- Noun + である form: "あるばかりに" (chars 3-9)
+- たい form: "たいばかりに" (chars 5-11)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants from the grammar data
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data explains that ばかり stems from the kanji 許 (to let off/let through), implying a minimum amount that is deemed permissible. In ばかりに, the (A) part highlights the minimum extent for which the (often surprising) result (B) is/was possible. The pattern has a strong tendency to be used with negative results, but can also express high eagerness when paired with たい/ほしい.
+
+**Related patterns**: This pattern is part of the ばかり family:
+- "ばかり" (basic pattern) - matches Any + ばかり
+- "ばかりだ" (implemented in Session 334) - emphasizes continuous single-direction change
+- "ばかりでなく" (implemented in Session 336) - "not only...but also"
+- "んばかりに" (N1 pattern, to be implemented) - "as if about to..."
+
+---
+
 ## Session 336 - 2025-12-14
 
 ### ✅ Session Summary
