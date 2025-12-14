@@ -1,3 +1,93 @@
+## Session 278 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ようにする - try to/make sure to)
+**Tests added**: 4 (all passing)
+**Total tests**: 1781 (was 1777)
+
+### Pattern Implemented: ようにする (try to, make sure to)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: Expression combining the auxiliary verb ようだ with する. Emphasizes that the speaker is making an effort to achieve an action. The action is something that requires conscious effort and implies trying to make something happen (or not happen in negative form).
+
+**Structures tested**: 4 tests covering all structure variants
+1. Verb[る] + ように + する: 走るようにしています (I try to run)
+2. Verb[ない] + ように + する: 休まないようにする (I make sure not to miss [school])
+3. Verb[る] + ように + します (polite): 勝てるようにします (I will try to be able to win)
+4. Verb[ない] + ように + します (polite): 乗らないようにする (try not to ride)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (younisuru function, lines 5844-5899)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (younisuru_tests module, lines 9729-9777)
+- Pattern: grammar-lib/src/patterns.rs (Younisuru - already existed)
+
+**Tokenization pattern**:
+```
+Affirmative form:
+Verb (動詞/自立, 基本形)
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/格助詞/一般)
++ する (動詞/自立, base="する")
+
+Negative form:
+Verb (動詞/自立, 未然形)
++ ない (助動詞, base="ない")
++ よう (名詞/非自立/助動詞語幹)
++ に (助詞/格助詞/一般)
++ する (動詞/自立, base="する")
+```
+
+**Key implementation points**:
+1. VerbMatcher accepts any verb (will be in 基本形 for affirmative or 未然形 for negative)
+2. Optional NaiMatcher handles the ない auxiliary for negative forms
+3. YouMatcher ensures よう is a dependent noun (非自立) with auxiliary verb stem (助動詞語幹)
+4. NiParticleMatcher matches に as case particle (格助詞)
+5. Uses TokenMatcher::specific_verb("する") to match する and all conjugations
+6. Pattern range includes full construction: Verb(+ない) + よう + に + する
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all 4 structure variants (2 standard + 2 polite forms)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+
+**Challenges Solved**:
+1. Handling both affirmative (Verb[る]) and negative (Verb[ない]) forms in one pattern
+2. Recognizing that negative form has TWO tokens: Verb[未然形] + ない (助動詞)
+3. Using Optional matcher to handle the ない token
+4. Ensuring pattern range includes the full grammatical construction from verb to する
+5. Avoiding conflicts with existing にする patterns (which have different priorities)
+
+**Linguistic Note**: The expression ようにする literally means "to do in the manner/way of [verb]". Because ようだ comes from 様 (よう) meaning "manner", it carries the nuance that the speaker is specifically making an effort to do things in a way that achieves the goal. The する (to do) emphasizes the active effort being made. Different from ようになる which indicates a natural change rather than conscious effort.
+
+### Session Statistics
+- **Session time**: Approximately 45 minutes
+- **Patterns completed this session**: 1 (ようにする)
+- **Test success rate**: 4/4 (100%)
+- **Total passing tests**: 1781 (up from 1777)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - ようになる (to come to/to reach the point) - natural companion to ようにする
+   - ように (so that/in order to) - purpose expression
+   - ように・ような (like/as) - adverbial/attributive forms
+   - みたいに・みたいな (like/as) - casual forms
+   - ば (conditional) - fundamental conditional form
+2. **Pattern focus**: ようになる would be a natural next choice as it's closely related
+
+### Environment Status
+- All 1781 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 277 - 2025-12-14
 
 ### ✅ Session Summary
