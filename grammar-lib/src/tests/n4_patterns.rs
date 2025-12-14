@@ -4945,3 +4945,52 @@ mod sonnani_tests {
         assert_pattern_range(&patterns, "そんなに", 0, 4); // そんなに
     }
 }
+
+// Pattern: そういう (like that, that kind of)
+// Data source: grammar_points_data.json["そういう"]
+// Testing all 4 structure variants: こういう, そういう, ああいう, どういう
+//
+// Note: ああいう tokenizes as ああ + いう (two tokens), while the others are single tokens
+mod souiu_tests {
+    use super::*;
+
+    #[test]
+    fn test_souiu_koiu() {
+        let sentence = "こういう映画は初めて見る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そういう");
+        assert_pattern_range(&patterns, "そういう", 0, 4); // こういう
+    }
+
+    #[test]
+    fn test_souiu_soiu() {
+        let sentence = "そういう人は嫌いだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そういう");
+        assert_pattern_range(&patterns, "そういう", 0, 4); // そういう
+    }
+
+    #[test]
+    fn test_souiu_aaiu() {
+        let sentence = "ああいう車に乗ってみたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そういう");
+        assert_pattern_range(&patterns, "そういう", 0, 4); // ああいう
+    }
+
+    #[test]
+    fn test_souiu_douiu() {
+        let sentence = "あなたはどういう音楽を聴きますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そういう");
+        assert_pattern_range(&patterns, "そういう", 4, 8); // どういう
+    }
+}

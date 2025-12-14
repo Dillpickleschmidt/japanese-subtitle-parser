@@ -1138,8 +1138,81 @@ pub fn toka_uff5e_toka() -> Vec<TokenMatcher> {
 }
 
 // Pattern: そういう
+// Pattern: そういう (like that, that kind of)
+// Structures: こういう/そういう/どういう (single token) OR ああ + いう (two tokens)
 pub fn souiu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for single-token forms: こういう, そういう, どういう
+    #[derive(Debug)]
+    struct SouiuSingleMatcher;
+    impl Matcher for SouiuSingleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "連体詞")
+                && (token.base_form == "こういう"
+                    || token.base_form == "そういう"
+                    || token.base_form == "どういう")
+        }
+    }
+
+    // Matcher for ああ (interjection part of ああいう)
+    #[derive(Debug)]
+    struct AaMatcher;
+    impl Matcher for AaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ああ"
+                && token.base_form == "ああ"
+                && token.pos.first().is_some_and(|pos| pos == "感動詞")
+        }
+    }
+
+    // Matcher for いう (verb part)
+    #[derive(Debug)]
+    struct IuVerbMatcher;
+    impl Matcher for IuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    // We need to match BOTH patterns:
+    // 1. Single token (こういう/そういう/どういう)
+    // 2. Two tokens (ああ + いう)
+    // Since TokenMatcher doesn't support OR logic, we'll use a custom matcher
+    // that checks for either pattern
+
+    #[derive(Debug)]
+    struct SouiuPatternMatcher;
+    impl Matcher for SouiuPatternMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Check single-token forms
+            if token.pos.first().is_some_and(|pos| pos == "連体詞")
+                && (token.base_form == "こういう"
+                    || token.base_form == "そういう"
+                    || token.base_form == "どういう")
+            {
+                return true;
+            }
+
+            // Check first part of ああいう
+            if token.surface == "ああ"
+                && token.base_form == "ああ"
+                && token.pos.first().is_some_and(|pos| pos == "感動詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SouiuPatternMatcher)),
+        // Optional second token for ああいう pattern
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(IuVerbMatcher)))),
+    ]
 }
 
 // Pattern: Verb[よう]
