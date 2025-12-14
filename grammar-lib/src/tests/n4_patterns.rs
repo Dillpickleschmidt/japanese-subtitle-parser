@@ -10350,3 +10350,71 @@ mod youniiu_tests {
     }
 }
 
+// ようにいのる (to pray that, to hope)
+// Data source: grammar_points_data.json["ようにいのる"]
+// Pattern: Verb + よう + に + 祈る (to pray/hope for something to happen/not happen)
+//
+// Structure variants to test:
+//   - standard[0]: Verb[る] + ように + 祈る
+//   - standard[1]: Verb[ない] + ように + 祈る
+//   - polite[0]: Verb[る] + ように + 祈ります
+//   - polite[1]: Verb[ない] + ように + 祈ります
+mod youniinoru_tests {
+    use super::*;
+
+    #[test]
+    fn test_youniinoru_affirmative_1() {
+        // Testing: Verb[る] + ように + 祈る
+        let sentence = "明日雪が降って学校が休みになるようにいのる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいのる");
+        assert_pattern_range(&patterns, "ようにいのる", 13, 21); // なるようにいのる
+    }
+
+    #[test]
+    fn test_youniinoru_affirmative_2() {
+        // Testing: Verb[る] + ように + 祈る
+        let sentence = "世界が平和になるようにいのる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいのる");
+        assert_pattern_range(&patterns, "ようにいのる", 6, 14); // なるようにいのる
+    }
+
+    #[test]
+    fn test_youniinoru_negative_1() {
+        // Testing: Verb[ない] + ように + 祈る
+        let sentence = "授業中に先生に呼ばれないようにいのる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいのる");
+        assert_pattern_range(&patterns, "ようにいのる", 9, 18); // れないようにいのる
+    }
+
+    #[test]
+    fn test_youniinoru_negative_2() {
+        // Testing: Verb[ない] + ように + 祈る
+        let sentence = "友達の車に乗る前に死なないようにいのる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいのる");
+        assert_pattern_range(&patterns, "ようにいのる", 9, 19); // 死なないようにいのる
+    }
+
+    #[test]
+    fn test_youniinoru_polite() {
+        // Testing: Verb[る] + ように + 祈ります (polite)
+        let sentence = "今年は国に帰れますようにいのります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようにいのる");
+        assert_pattern_range(&patterns, "ようにいのる", 5, 17); // 帰れますようにいのります
+    }
+}
+
