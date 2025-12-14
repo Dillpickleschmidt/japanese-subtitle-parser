@@ -9776,3 +9776,81 @@ mod younisuru_tests {
     }
 }
 
+// ========== ようになる (to reach the point of/to come to) ==========
+// Pattern: ようになる
+// Data source: grammar_points_data.json["ようになる"]
+//
+// Structures to test:
+//   - standard[0]: Verb[できる] (potential) + ように + なる
+//   - standard[1]: Verb[ない] + ように + なる
+//   - standard[1]: Verb[る] + ように + なる (also mentioned)
+//   - polite[0]: Verb[できる] (potential) + ように + なります
+//   - polite[1]: Verb[ない] + ように + なります
+//
+// Examples from grammar_points_data.json:
+//   - 漢字を書けるようになります (will reach the point where you can write kanji)
+//   - 早く走れるようになりたい (want to reach the point where I can run faster)
+//   - 髪を綺麗にカット出来るようになるのが夢です (dream to reach the point where I can cut hair nicely)
+//   - 自分から行動が出来るようになってください (please become someone who can act on their own)
+//   - 現金が使えないようになる (will reach the point where you can't use cash)
+//   - 会社で喫煙できないようになります (will reach the point where you can't smoke at company)
+#[cfg(test)]
+mod youninaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_youninaru_potential_verb() {
+        // Testing: structure.standard[0] - Verb[できる] + ように + なる
+        let sentence = "毎日、漢字の練習をすれば綺麗に漢字を書けるようになります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようになる");
+        assert_pattern_range(&patterns, "ようになる", 18, 28); // 書けるようになります
+    }
+
+    #[test]
+    fn test_youninaru_potential_verb_conjugated() {
+        // Testing: structure.standard[0] - Verb[できる] + ように + なる (conjugated: なりたい)
+        let sentence = "早く走れるようになりたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようになる");
+        assert_pattern_range(&patterns, "ようになる", 2, 12); // 走れるようになりたい
+    }
+
+    #[test]
+    fn test_youninaru_dekiru_verb() {
+        // Testing: structure.standard[0] - 出来る + ように + なる
+        let sentence = "髪を綺麗にカット出来るようになるのが夢です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようになる");
+        assert_pattern_range(&patterns, "ようになる", 8, 16); // 出来るようになる
+    }
+
+    #[test]
+    fn test_youninaru_negative_verb() {
+        // Testing: structure.standard[1] - Verb[ない] + ように + なる
+        let sentence = "来年から現金が使えないようになる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようになる");
+        assert_pattern_range(&patterns, "ようになる", 7, 16); // 使えないようになる
+    }
+
+    #[test]
+    fn test_youninaru_negative_polite() {
+        // Testing: structure.polite[1] - Verb[ない] + ように + なります
+        let sentence = "来月から会社で喫煙できないようになります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようになる");
+        assert_pattern_range(&patterns, "ようになる", 9, 20); // できないようになります
+    }
+}
+
