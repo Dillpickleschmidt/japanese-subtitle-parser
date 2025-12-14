@@ -12070,3 +12070,58 @@ mod wakenihaikanai_tests {
         assert_pattern_range(&patterns, "わけにはいかない", 18, 27); // わけにはいきません
     }
 }
+
+#[cfg(test)]
+mod wohajime_tests {
+    use super::*;
+
+    // Pattern: をはじめ (not only / starting with)
+    // Data source: grammar_points_data.json["をはじめ"]
+    // Testing structures:
+    //   - standard[0]: Noun + をはじめ(として)
+    //   - standard[1]: Noun + をはじめとする + Noun
+
+    #[test]
+    fn test_wohajime_basic() {
+        // Testing: Noun + をはじめ
+        let sentence = "この会社は車をはじめ、ロケットなども作っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をはじめ");
+        assert_pattern_range(&patterns, "をはじめ", 5, 10); // 車をはじめ
+    }
+
+    #[test]
+    fn test_wohajime_toshite() {
+        // Testing: Noun + をはじめとして
+        let sentence = "ストリートファッションはアメリカをはじめとして、世界中に進出していく";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をはじめ");
+        assert_pattern_range(&patterns, "をはじめ", 12, 23); // アメリカをはじめとして
+    }
+
+    #[test]
+    fn test_wohajime_tosuru_noun() {
+        // Testing: Noun + をはじめとする + Noun
+        let sentence = "この商品には卵をはじめとする多くのアレルゲンが含まれている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をはじめ");
+        assert_pattern_range(&patterns, "をはじめ", 6, 14); // 卵をはじめとする
+    }
+
+    #[test]
+    fn test_wohajime_context() {
+        // Testing: Noun + をはじめ (with context)
+        let sentence = "私の近所には、公園をはじめ、博物館など、プラネタリウムがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をはじめ");
+        assert_pattern_range(&patterns, "をはじめ", 7, 13); // 公園をはじめ
+    }
+}

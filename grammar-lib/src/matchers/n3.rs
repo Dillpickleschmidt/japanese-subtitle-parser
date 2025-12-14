@@ -4582,9 +4582,51 @@ pub fn hamochiron() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: をはじめ
+// Pattern: をはじめ (not only / starting with)
+// Structures: Noun + をはじめ(として) / Noun + をはじめとする + Noun
 pub fn wohajime() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match はじめ as noun
+    #[derive(Debug)]
+    struct HajimeMatcher;
+    impl Matcher for HajimeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "はじめ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match として particle
+    #[derive(Debug)]
+    struct ToshiteMatcher;
+    impl Matcher for ToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "として"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match とする sequence
+    #[derive(Debug)]
+    struct TosuruMatcher;
+    impl Matcher for TosuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("を"),
+        TokenMatcher::Custom(Arc::new(HajimeMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ToshiteMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TosuruMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::specific_verb("する"))),
+    ]
 }
 
 // Pattern: て初めて
