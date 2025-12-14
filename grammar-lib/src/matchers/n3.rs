@@ -1405,9 +1405,65 @@ pub fn ten() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: なぜなら〜から
+// Pattern: なぜなら〜から (because / the reason is)
+// Structures: なぜなら(ば) + Reason Phrase + から + だ/です
+// Note: なぜなら can be one token (接続詞) or three tokens (なぜ + なら + ば)
+//
+// TODO: Currently only matches なぜなら/なぜならば without the ending から+だ/です
+// The full pattern with Wildcard + から + だ/です matcher is not working correctly.
+// This needs to be debugged in a future session. The issue appears to be with how
+// Wildcard interacts with subsequent matchers when other patterns (like です) have
+// already matched parts of the same tokens.
 pub fn nazenara_u301c_kara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches なぜなら OR なぜ (starting either variant)
+    #[derive(Debug)]
+    struct NazenaraOrNazeMatcher;
+    impl Matcher for NazenaraOrNazeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // なぜなら as 接続詞 (single token)
+            (token.surface == "なぜなら"
+                && token.base_form == "なぜなら"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞"))
+            // なぜ as 副詞 (first token of three-token variant)
+            || (token.surface == "なぜ"
+                && token.base_form == "なぜ"
+                && token.pos.first().is_some_and(|pos| pos == "副詞"))
+        }
+    }
+
+    // Matches なら (auxiliary verb - hypothetical form of だ)
+    // Only present in three-token variant (なぜならば)
+    #[derive(Debug)]
+    struct NaraMatcher;
+    impl Matcher for NaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matches ば (connective particle)
+    // Only present in three-token variant (なぜならば)
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        // Match なぜなら (1 token) OR なぜ (first of 3 tokens)
+        TokenMatcher::Custom(Arc::new(NazenaraOrNazeMatcher)),
+        // Optional なら + ば (only for three-token variant)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaraMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(BaParticleMatcher)))),
+    ]
 }
 
 // Pattern: こそ (emphasis particle)

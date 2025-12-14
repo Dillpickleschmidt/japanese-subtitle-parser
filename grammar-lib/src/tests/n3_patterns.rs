@@ -8649,3 +8649,4 @@ mod nashi_tests {
         assert_pattern_range(&patterns, "なし", 16, 19); // なしに
     }
 }
+
