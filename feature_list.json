@@ -6162,13 +6162,13 @@
   {
     "pattern_name": "べきではない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As an extension of the auxiliary verb べき , that is partnered with verbs to convey 'ought to do (A)', べきではない (or べきじゃな... [8 std, 8 pol]",
     "priority": 3,
     "skip_reason": null

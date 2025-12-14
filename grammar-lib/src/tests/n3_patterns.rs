@@ -10611,3 +10611,94 @@ mod furiwosuru_tests {
     }
 }
 
+// ========== べきではない (ought not to / should not) ==========
+// Pattern: べきではない (ought not to / should not)
+// Data source: grammar_points_data.json["べきではない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + べきではない
+//   standard[1]: Verb + べきじゃない
+//   standard[2-7]: Adjective/Noun + である/くある forms (rare, may skip some)
+//   polite[0-7]: べきではありません / べきじゃありません
+
+mod bekidehanai_tests {
+    use super::*;
+
+    // Test: Verb + べきではない (standard negative)
+    #[test]
+    fn test_bekidehanai_verb_standard() {
+        let sentence = "濡れている手でコンセントに触れるべきではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べきではない");
+        assert_pattern_range(&patterns, "べきではない", 13, 22); // 触れるべきではない
+    }
+
+    // Test: Verb + べきじゃない (casual negative)
+    #[test]
+    fn test_bekidehanai_verb_casual() {
+        let sentence = "どんなに言う事を聞かなくても、子供に手をあげるべきじゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べきではない");
+        assert_pattern_range(&patterns, "べきではない", 20, 29); // あげるべきじゃない
+    }
+
+    // Test: Verb + べきではない (with する)
+    #[test]
+    fn test_bekidehanai_suru_verb() {
+        let sentence = "テストの前に徹夜をするべきではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べきではない");
+        assert_pattern_range(&patterns, "べきではない", 9, 17); // するべきではない
+    }
+
+    // Test: Verb + すべきではない (contracted する form)
+    #[test]
+    fn test_bekidehanai_subeki() {
+        let sentence = "くだらないことで警察に電話すべきではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べきではない");
+        assert_pattern_range(&patterns, "べきではない", 11, 20); // 電話すべきではない
+    }
+
+    // Test: Polite form - Verb + べきではありません
+    #[test]
+    fn test_bekidehanai_polite_dehanai() {
+        let sentence = "一人であの山に行くべきではありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べきではない");
+        assert_pattern_range(&patterns, "べきではない", 7, 18); // 行くべきではありません
+    }
+
+    // Test: Polite form - Verb + べきじゃありません
+    #[test]
+    fn test_bekidehanai_polite_janai() {
+        let sentence = "夜遅くまで外にいるべきじゃありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べきではない");
+        assert_pattern_range(&patterns, "べきではない", 7, 18); // いるべきじゃありません
+    }
+
+    // Test: Variation without は (べきでない)
+    #[test]
+    fn test_bekidehanai_without_wa() {
+        let sentence = "一人であの山に行くべきでない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べきではない");
+        assert_pattern_range(&patterns, "べきではない", 7, 14); // 行くべきでない
+    }
+}
+

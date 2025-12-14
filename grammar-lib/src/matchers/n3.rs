@@ -400,9 +400,94 @@ pub fn beki() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: べきではない
+// Pattern: べきではない (ought not to / should not)
+// Structures: Verb + べき + ではない/じゃない/でない/ではありません/じゃありません
 pub fn bekidehanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match べき auxiliary verb
+    #[derive(Debug)]
+    struct BekiMatcher;
+    impl super::Matcher for BekiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "べき"
+                && token.base_form == "べし"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match で (助動詞, base='だ') or じゃ (助詞/副助詞)
+    #[derive(Debug)]
+    struct DeJaMatcher;
+    impl super::Matcher for DeJaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ")
+                || (token.surface == "じゃ" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+        }
+    }
+
+    // Match は (助詞/係助詞)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl super::Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match ない as 助動詞 or 形容詞
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Match あり (動詞, base='ある')
+    #[derive(Debug)]
+    struct AriMatcher;
+    impl super::Matcher for AriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ませ (助動詞, base='ます')
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl super::Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match ん (助動詞)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl super::Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern structure - match ending explicitly
+    // Matches: べきではない, べきでない, べきじゃない, べきではありません, べきじゃありません
+    vec![
+        TokenMatcher::Any, // Verb (基本形)
+        TokenMatcher::Custom(Arc::new(BekiMatcher)), // べき
+        TokenMatcher::Custom(Arc::new(DeJaMatcher)), // で or じゃ
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))), // optional は
+        TokenMatcher::Any, // ない, あり, etc. - at least one more token to complete the pattern
+    ]
 }
 
 // Pattern: なかなか (quite/considerably/very)
