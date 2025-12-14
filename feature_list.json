@@ -7478,13 +7478,13 @@
   {
     "pattern_name": "が気になる",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the many collocations in Japanese based on 気（き） 'attention', or 'focus', is 気（き）になる [3 std, 3 pol]",
     "priority": 4,
     "skip_reason": null

@@ -1364,3 +1364,85 @@ mod katoomottara_tests {
         assert_pattern_range(&patterns, "かと思ったら・かと思うと", 3, 11); // 静かかと思ったら
     }
 }
+
+// Pattern: が気になる (be concerned about, be interested in)
+// Data source: grammar_points_data.json["が気になる"]
+// Testing multiple structures from grammar_points_data
+//
+// Structure variants:
+//   - standard[0]: Noun + が気になる
+//   - standard[1]: Verb + こと + が気になる
+//   - standard[2]: Verb + の + が気になる
+//   - polite[0]: Noun + が気になります
+//   - polite[1]: Verb + こと + が気になります
+//   - polite[2]: Verb + の + が気になります
+
+mod gakininaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_basic() {
+        // Example: 値段が気になる (be concerned about the price)
+        let sentence = "家自体は良いと思うんですけど、やっぱり値段が気になります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が気になる");
+        assert_pattern_range(&patterns, "が気になる", 19, 28); // 値段が気になります
+    }
+
+    #[test]
+    fn test_noun_person() {
+        // Example: 高橋さんが気になる (be interested in Takahashi-san)
+        let sentence = "私は高橋さんが気になる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が気になる");
+        assert_pattern_range(&patterns, "が気になる", 4, 11); // さんが気になる
+    }
+
+    #[test]
+    fn test_verb_koto() {
+        // Example: 言ったことが気になる (be concerned about what was said)
+        let sentence = "やっぱりお前がさっき言ったことが気になる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が気になる");
+        assert_pattern_range(&patterns, "が気になる", 13, 20); // ことが気になる
+    }
+
+    #[test]
+    fn test_verb_no() {
+        // Example: 考えているのが気になる (be interested in what someone is thinking)
+        let sentence = "私は好きな人が考えているのが気になる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が気になる");
+        assert_pattern_range(&patterns, "が気になる", 12, 18); // のが気になる
+    }
+
+    #[test]
+    fn test_noun_polite() {
+        // Example: 結果が気になります (be concerned about the results)
+        let sentence = "テストの結果が気になります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が気になる");
+        assert_pattern_range(&patterns, "が気になる", 4, 13); // 結果が気になります
+    }
+
+    #[test]
+    fn test_verb_koto_polite() {
+        // Example: 起こることが気になります (be concerned about what will happen)
+        let sentence = "これから起こることが気になります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が気になる");
+        assert_pattern_range(&patterns, "が気になる", 7, 16); // ことが気になります
+    }
+}

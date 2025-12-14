@@ -381,9 +381,70 @@ pub fn nimukatte_u30fb_nimukete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: が気になる
+// Pattern: が気になる (be concerned about, be interested in)
+// Structures: Noun/こと/の + が + 気 + に + なる/なります
 pub fn gakininaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+
+    // Custom matcher for noun-like elements (nouns, こと, の)
+    #[derive(Debug)]
+    struct NounLikeMatcher;
+    impl Matcher for NounLikeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Custom matcher for が particle (case particle)
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Custom matcher for 気 (ki - attention/focus) as noun
+    #[derive(Debug)]
+    struct KiNounMatcher;
+    impl Matcher for KiNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "気"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Custom matcher for に particle (case particle)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Custom matcher for ます (polite auxiliary verb)
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    concat(vec![
+        vec![TokenMatcher::Custom(Arc::new(NounLikeMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(GaParticleMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(KiNounMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(NiParticleMatcher))],
+        vec![TokenMatcher::specific_verb("なる")],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher))))],
+    ])
 }
 
 // Pattern: に気をつける
