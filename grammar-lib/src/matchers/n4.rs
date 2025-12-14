@@ -3853,9 +3853,27 @@ pub fn temorau() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: なさい
+// Pattern: なさい (imperative command)
+// Structures: Verb[連用形] + なさい
 pub fn nasai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NasaiMatcher;
+    impl super::Matcher for NasaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なさい"
+                && token.base_form == "なさる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.features.get(5).is_some_and(|form| form == "命令ｉ")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("連用形"),
+        TokenMatcher::Custom(Arc::new(NasaiMatcher)),
+    ]
 }
 
 // Pattern: Verb[ないで]

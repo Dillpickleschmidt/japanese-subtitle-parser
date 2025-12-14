@@ -8465,3 +8465,62 @@ mod nakerebanaranai_tests {
         assert_pattern_range(&patterns, "なければならない", 6, 14); // なきゃなりません
     }
 }
+
+// ========== なさい (imperative command) ==========
+// Pattern: なさい
+// Data source: grammar_points_data.json["なさい"]
+//
+// Structure to test:
+//   - standard[0]: Verb[stem] + なさい
+//
+// Examples from data:
+//   - 早く寝なさい (Hurry up and sleep!)
+//   - 勉強しなさい (Study!)
+//
+// Note: The shortened form な is harder to distinguish from
+// the negative particle な, so we'll focus on なさい first
+#[cfg(test)]
+mod nasai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Verb[stem] + なさい
+    #[test]
+    fn test_nasai_basic_command() {
+        let sentence = "早く寝なさい！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさい");
+        assert_pattern_range(&patterns, "なさい", 2, 6); // 寝なさい
+    }
+
+    #[test]
+    fn test_nasai_study_command() {
+        let sentence = "遊んでいないで勉強しなさい！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさい");
+        assert_pattern_range(&patterns, "なさい", 7, 13); // 勉強しなさい
+    }
+
+    #[test]
+    fn test_nasai_apologize() {
+        let sentence = "お前も悪いから謝りなさい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさい");
+        assert_pattern_range(&patterns, "なさい", 7, 12); // 謝りなさい
+    }
+
+    #[test]
+    fn test_nasai_eat_command() {
+        let sentence = "このクッキーを食べなさい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なさい");
+        assert_pattern_range(&patterns, "なさい", 7, 12); // 食べなさい
+    }
+}
