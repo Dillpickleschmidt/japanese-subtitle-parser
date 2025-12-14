@@ -10702,3 +10702,146 @@ mod bekidehanai_tests {
     }
 }
 
+// Pattern: ほど (to the extent that / so much that / about)
+// Data source: grammar_points_data.json["ほど"]
+// Testing all structure variants
+mod hodo_tests {
+    use super::*;
+
+    // Test: Verb + ほど
+    // Structure: standard[0] - "Verb + ほど"
+    #[test]
+    fn test_hodo_verb() {
+        let sentence = "死ぬほど練習したけれど、試合に出られなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど");
+        assert_pattern_range(&patterns, "ほど", 0, 4); // 死ぬほど
+    }
+
+    // Test: い-Adjective + ほど
+    // Structure: standard[1] - "い-Adjective + ほど"
+    #[test]
+    fn test_hodo_i_adjective() {
+        let sentence = "その気持ちは痛いほど分かるけど、だからってそういう事言ってもいいという訳ではないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど");
+        assert_pattern_range(&patterns, "ほど", 6, 10); // 痛いほど
+    }
+
+    // Test: な-Adjective + な + ほど
+    // Structure: standard[2] - "な-Adjective + な + ほど"
+    #[test]
+    fn test_hodo_na_adjective() {
+        let sentence = "それは嫌なほど聞かされたから、分かってる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど");
+        assert_pattern_range(&patterns, "ほど", 4, 7); // なほど (includes the な connector)
+    }
+
+    // Test: Noun + ほど
+    // Structure: standard[3] - "Noun + ほど"
+    #[test]
+    fn test_hodo_noun() {
+        let sentence = "あと１０分ほどで着きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど");
+        assert_pattern_range(&patterns, "ほど", 4, 7); // 分ほど
+    }
+
+    // Test: Verb + ほど (complex example with exaggeration)
+    // Structure: standard[0] - showing "exaggerated limit" usage
+    #[test]
+    fn test_hodo_verb_exaggerated() {
+        let sentence = "今日はもう二度と走りたくないと思うほど走った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど");
+        assert_pattern_range(&patterns, "ほど", 15, 19); // 思うほど
+    }
+}
+
+// ========== ほど～ない (not as...as / not to the extent of) ==========
+// Pattern: ほど～ない (not as...as / not to the extent of)
+// Data source: grammar_points_data.json["ほど～ない"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + ほど + Verb[ない]
+//   standard[1]: Noun + ほど + Verb[ない] (with の particle)
+//   standard[2]: Noun + ほど + Adjective[ない]
+mod hodo_uff5e_nai_tests {
+    use super::*;
+
+    // Test: Verb + ほど + い-Adjective[ない]
+    // Structure: standard[0] - "Verb + ほど + Verb[ない]"
+    // Example from grammar data
+    #[test]
+    fn test_hodo_nai_verb_i_adjective() {
+        let sentence = "今日は思ったほど暑くなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど～ない");
+        assert_pattern_range(&patterns, "ほど～ない", 5, 14); // たほど暑くなかった
+    }
+
+    // Test: Verb + ほど + の + Verb[ない]
+    // Structure: standard[1] - "Noun + ほど + Verb[ない]" (with の particle)
+    // Example from grammar data
+    #[test]
+    fn test_hodo_nai_verb_no_particle() {
+        let sentence = "悩むほどの事じゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど～ない");
+        assert_pattern_range(&patterns, "ほど～ない", 0, 10); // 悩むほどの事じゃない
+    }
+
+    // Test: Noun + ほど + い-Adjective[ない]
+    // Structure: standard[2] - comparison with い-Adjective
+    // Example from grammar data
+    #[test]
+    fn test_hodo_nai_noun_i_adjective() {
+        let sentence = "自転車は車ほど速くないけど、健康にいいから自転車で会社に行っています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど～ない");
+        assert_pattern_range(&patterns, "ほど～ない", 4, 11); // 車ほど速くない
+    }
+
+    // Test: Noun + ほど + い-Adjective + Noun + は + ない
+    // Structure: standard[2] - complex comparison with existential ない
+    // Example from grammar data
+    #[test]
+    fn test_hodo_nai_noun_adjective_existential() {
+        let sentence = "この世にこのカレーほど辛い食べ物はない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど～ない");
+        assert_pattern_range(&patterns, "ほど～ない", 6, 19); // カレーほど辛い食べ物はない
+    }
+
+    // Test: Noun + ほど + な-Adjective + Noun + は + ない
+    // Structure: standard[2] - comparison with な-adjective
+    // Example from grammar data
+    #[test]
+    fn test_hodo_nai_noun_na_adjective() {
+        let sentence = "お母さんほどケーキ作りが上手な人はどこにもいない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ほど～ない");
+        assert_pattern_range(&patterns, "ほど～ない", 0, 24); // お母さんほどケーキ作りが上手な人はどこにもいない
+    }
+}

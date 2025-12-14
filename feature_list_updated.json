@@ -6036,13 +6036,13 @@
   {
     "pattern_name": "は～くらいです",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "は～くらい です is an expression in Japanese used to convey that '(B) is all that exists within (A)' [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6050,13 +6050,13 @@
   {
     "pattern_name": "ば〜ほど",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ば～ほど is a combination of the conjunction particle ば , and the noun ほど [7 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6078,13 +6078,13 @@
   {
     "pattern_name": "ばかり",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used after verbs followed by the conjunction particle て, or nouns, the adverbial particle ばかり highlights that 'n... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6092,13 +6092,13 @@
   {
     "pattern_name": "ばかりだ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Occasionally, the adverbial particle ばかり is combined with verbs in their attributive form , to show that (A) is the o... [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6106,13 +6106,13 @@
   {
     "pattern_name": "ばかりでなく",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ばかりでなく is a combination of the adverbial particle ばかり, with the conjugated (and negated) form of the auxiliary verb だ [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6120,13 +6120,13 @@
   {
     "pattern_name": "ばかりに",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When paired with the case marking particle に , ばかり regularly conveys the meaning of 'simply because', or 'just because' [5 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6134,13 +6134,13 @@
   {
     "pattern_name": "ふりをする",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ふりをする is an expression in Japanese that is used to show that someone is 'pretending to be (A)', 'putting on airs of (... [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6162,13 +6162,13 @@
   {
     "pattern_name": "べきではない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As an extension of the auxiliary verb べき , that is partnered with verbs to convey 'ought to do (A)', べきではない (or べきじゃな... [8 std, 8 pol]",
     "priority": 3,
     "skip_reason": null
@@ -6176,13 +6176,13 @@
   {
     "pattern_name": "ほど",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ほど, coming from the kanji 程（ほど） 'an extent', is used for describing rough estimates about the 'amount' of something [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
@@ -7562,13 +7562,13 @@
   {
     "pattern_name": "ことにはならない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことにはならない is an expression which is often seen at the end of sentences when the speaker wants to emphasize that someth... [2 std, 2 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7576,13 +7576,13 @@
   {
     "pattern_name": "ことは〜が",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことは～が is a set expression which indicates that 'while something is (A), also (B)' [6 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

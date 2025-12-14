@@ -1153,9 +1153,28 @@ pub fn tokorode() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(TokorodeMatcher))]
 }
 
-// Pattern: ほど
+// Pattern: ほど (to the extent that / so much that / about)
+// Structures: Verb + ほど, Adjective + ほど, な-Adj + な + ほど, Noun + ほど
 pub fn hodo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match ほど as particle
+    #[derive(Debug)]
+    struct HodoParticleMatcher;
+    impl Matcher for HodoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほど"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match: Any (word in attributive form) + ほど
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(HodoParticleMatcher)),
+    ]
 }
 
 // Pattern: ば〜ほど (the more...the more)
@@ -1202,9 +1221,45 @@ pub fn ba_u301c_hodo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ほど～ない
+// Pattern: ほど～ない (not as...as / not to the extent of)
+// Structures: Verb + ほど + Verb[ない], Noun + ほど + Adjective[ない], etc.
 pub fn hodo_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match ほど as particle (reuse from hodo())
+    #[derive(Debug)]
+    struct HodoParticleMatcher;
+    impl Matcher for HodoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほど"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match ない in various forms (助動詞 or 形容詞)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Match: Any + ほど + Wildcard{1-15} + ない
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(HodoParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 15,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: では・それでは・じゃあ (conjunction/transition)
