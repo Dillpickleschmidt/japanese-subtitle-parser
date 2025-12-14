@@ -8030,3 +8030,80 @@ mod toka_uff5e_toka_tests {
         assert_pattern_range(&patterns, "とか～とか", 5, 10); // ドイツとか
     }
 }
+
+// ========== ときいた (I heard that) ==========
+// Pattern: ときいた
+// Data source: grammar_points_data.json["ときいた"]
+//
+// Structures to test:
+//   - standard[0]: Phrase + と聞（き）いた
+//   - standard[1]: Verb + と聞（き）いた
+//   - standard[2]: ［い］Adjective + と聞（き）いた
+//   - standard[3]: ［な］Adjective + （だ） + と聞（き）いた
+//   - standard[4]: Noun + （だ） + と聞（き）いた
+//   - polite[0]: Phrase + と聞（き）きました
+//
+// Examples from data:
+//   - 住むときいた (I heard that [someone] will live)
+//   - 寒いときいた (I heard that it's cold)
+//   - 上手だときいた (I heard that [they] are good at)
+//   - 大学生だときいた (I heard that [they] are a college student)
+#[cfg(test)]
+mod tokiita_tests {
+    use super::*;
+
+    // Testing: structure.standard[1] - "Verb + ときいた"
+    #[test]
+    fn test_verb_to_kiita() {
+        let sentence = "来年から先輩が私と同じマンションに住むときいた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ときいた");
+        assert_pattern_range(&patterns, "ときいた", 19, 23); // ときいた
+    }
+
+    // Testing: structure.standard[2] - "［い］Adjective + ときいた"
+    #[test]
+    fn test_i_adj_to_kiita() {
+        let sentence = "北海道の冬は、沖縄の冬より寒いときいた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ときいた");
+        assert_pattern_range(&patterns, "ときいた", 15, 19); // ときいた
+    }
+
+    // Testing: structure.standard[3] - "［な］Adjective + だ + ときいた"
+    #[test]
+    fn test_na_adj_da_to_kiita() {
+        let sentence = "友達からあなたは歌うのが上手だときいた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ときいた");
+        assert_pattern_range(&patterns, "ときいた", 15, 19); // ときいた
+    }
+
+    // Testing: structure.standard[4] - "Noun + だ + ときいた"
+    #[test]
+    fn test_noun_da_to_kiita() {
+        let sentence = "社長の息子がもう大学生だときいた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ときいた");
+        assert_pattern_range(&patterns, "ときいた", 12, 16); // ときいた
+    }
+
+    // Testing: polite[0] - "Phrase + と聞きました"
+    #[test]
+    fn test_to_kikimashita_polite() {
+        let sentence = "あれが世界一高い山と聞きました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ときいた");
+        assert_pattern_range(&patterns, "ときいた", 9, 15); // と聞きました
+    }
+}

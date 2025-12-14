@@ -2379,9 +2379,44 @@ pub fn tehoshii() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ときいた
+// Pattern: ときいた (I heard that)
+// Structures: Phrase/Verb/Adj/Noun + (だ) + ときいた/と聞きました
 pub fn tokiita() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と quotation particle (can be 接続助詞 or 格助詞/引用)
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl super::Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                    || (token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                        && token.pos.get(2).is_some_and(|pos| pos == "引用")))
+        }
+    }
+
+    // Match きく/聞く verb in 連用形 or 連用タ接続 (for both polite and standard past)
+    #[derive(Debug)]
+    struct KikuVerbMatcher;
+    impl super::Matcher for KikuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "きく" || token.base_form == "聞く")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && (token.features.get(5).is_some_and(|f| f == "連用形")
+                    || token.features.get(5).is_some_and(|f| f == "連用タ接続"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(KikuVerbMatcher)),
+        // Pattern matcher will automatically extend to include:
+        // - た (standard past: ときいた)
+        // - ます + た (polite past: と聞きました)
+    ]
 }
 
 // Pattern: 聞こえる

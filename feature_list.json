@@ -3068,13 +3068,13 @@
   {
     "pattern_name": "ときいた",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the particle と is used for citation in Japanese, it is regularly partnered with other verbs, to form set phrases [5 std, 5 pol]",
     "priority": 2,
     "skip_reason": null
