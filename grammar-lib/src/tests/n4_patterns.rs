@@ -11438,3 +11438,95 @@ mod imperative_form_tests {
     }
 }
 
+// Pattern: 真(っ) (ma- prefix for "completely")
+// Data source: grammar_points_data.json["真(っ)"]
+// Testing prefix patterns with different conjugations
+//
+// Structures to test:
+//   - 真ん + ま/な column words: 真ん中, 真ん前, 真ん丸
+//   - 真っ + か/さ/しゃ column words: 真っ黄色, 真っ白, 真っ先, 真っ正直
+//   - 真っ + は column words (H→P): 真っ平, 真っ裸 (はだか→ぱだか)
+//   - Exceptions: 真っ青 (青い→さお), 真っ赤 (赤い→か)
+mod ma_prefix_tests {
+    use crate::tests::{assert_has_pattern, assert_pattern_range, detect_patterns, tokenize_sentence};
+
+    // Test: 真ん + ま-column word (真ん中 - dead center)
+    #[test]
+    fn test_man_ma_column() {
+        let sentence = "真ん中にある本をとってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "真(っ)");
+        assert_pattern_range(&patterns, "真(っ)", 0, 3); // 真ん中
+    }
+
+    // Test: 真ん + な-column word (真ん丸 - perfectly round)
+    // Note: Range includes で because 真ん丸 is 形容動詞語幹 (na-adj stem)
+    #[test]
+    fn test_man_na_column() {
+        let sentence = "この猫は真ん丸でかわいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "真(っ)");
+        assert_pattern_range(&patterns, "真(っ)", 4, 8); // 真ん丸で (includes で)
+    }
+
+    // Test: 真っ + さ-column word (真っ白 - pure white)
+    #[test]
+    fn test_matsu_sa_column() {
+        let sentence = "道が雪で真っ白になった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "真(っ)");
+        assert_pattern_range(&patterns, "真(っ)", 4, 7); // 真っ白
+    }
+
+    // Test: 真っ + か-column word (真っ黄色 - bright yellow) - PREFIX pattern
+    #[test]
+    fn test_matsu_ka_column() {
+        let sentence = "バナナが真っ黄色に熟れた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "真(っ)");
+        assert_pattern_range(&patterns, "真(っ)", 4, 6); // 真っ (prefix only)
+    }
+
+    // Test: Exception - 真っ赤 (completely red)
+    #[test]
+    fn test_makka_exception() {
+        let sentence = "顔が真っ赤になってるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "真(っ)");
+        assert_pattern_range(&patterns, "真(っ)", 2, 5); // 真っ赤
+    }
+
+    // Test: Exception - 真っ青 (completely blue)
+    // Note: Range includes で because 真っ青 is 形容動詞語幹 (na-adj stem)
+    #[test]
+    fn test_massao_exception() {
+        let sentence = "空が真っ青できれいだね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "真(っ)");
+        assert_pattern_range(&patterns, "真(っ)", 2, 6); // 真っ青で (includes で)
+    }
+
+    // Test: 真っ + は-column word with H→P (真っ裸 - completely naked)
+    #[test]
+    fn test_matsu_ha_column_h_to_p() {
+        let sentence = "何で真っ裸なの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "真(っ)");
+        assert_pattern_range(&patterns, "真(っ)", 2, 5); // 真っ裸
+    }
+}
+

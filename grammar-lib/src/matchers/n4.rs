@@ -3568,9 +3568,31 @@ pub fn nan_counter_ka() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 真(っ)
+// Pattern: 真(っ) (ma- prefix for "completely")
+// Structures: Matches both prefix (真っ + Noun) and compound words (真ん中, 真っ赤, etc.)
 pub fn ma() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MaPatternMatcher;
+    impl super::Matcher for MaPatternMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Pattern 1: 真っ as prefix (接頭詞/名詞接続) - TWO tokens (prefix + noun)
+            let is_prefix = token.surface == "真っ"
+                && token.base_form == "真っ"
+                && token.pos.first().is_some_and(|p| p == "接頭詞")
+                && token.pos.get(1).is_some_and(|p| p == "名詞接続");
+
+            // Pattern 2: Compound words starting with 真ん or 真っ - SINGLE token
+            // Examples: 真ん中, 真ん丸, 真っ赤, 真っ青, 真っ裸
+            let is_compound = (token.surface.starts_with("真ん") || token.surface.starts_with("真っ"))
+                && (token.base_form.starts_with("真ん") || token.base_form.starts_with("真っ"))
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.surface.chars().count() > 2;  // More than just 真ん or 真っ
+
+            is_prefix || is_compound
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(MaPatternMatcher))]
 }
 
 // Pattern: Number + しか〜ない
