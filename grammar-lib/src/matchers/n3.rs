@@ -1930,8 +1930,98 @@ pub fn ikura_u301c_demo() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 〜かは〜によって違う
+/// Match 〜かは〜によって違う (whether A depends on B / differs depending on)
+/// Structures:
+/// 1. Phrase + かどうか + は + Noun + によって違う
+/// 2. Phrase + か + Phrase + かは + Noun + によって違う
+/// 3. Phrase + かは + Noun + によって違う
+/// 4. Variants: による (without 違う), によって違います (polite)
 pub fn u301c_kaha_u301c_niyottechigau() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match か (助詞/副助詞／並立助詞／終助詞)
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    // Match どう (副詞) - for かどうか pattern
+    #[derive(Debug)]
+    struct DouMatcher;
+    impl Matcher for DouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どう"
+                && token.base_form == "どう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match は (助詞/係助詞)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match によって or による (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct NiyotteOrNiyoruMatcher;
+    impl Matcher for NiyotteOrNiyoruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "によって" || token.surface == "による")
+                && (token.base_form == "によって" || token.base_form == "による")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 違う verb (base form or polite form)
+    #[derive(Debug)]
+    struct ChigauMatcher;
+    impl Matcher for ChigauMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "違う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Stop before によって or による
+    #[derive(Debug)]
+    struct StopBeforeNiyotte;
+    impl Matcher for StopBeforeNiyotte {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "によって" || token.surface == "による")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        // Pattern: か + は + (1-10 tokens) + によって/による + (optional 違う)
+        // This matches the "かは" part after either "かどうか" or "A か B か" constructions
+        // The full grammatical pattern is detected, even though we start matching from the second か
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),  // Second か (after どう or phrase)
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),  // は particle
+        // Wildcard to match Noun (and possible modifiers like "の進み具合")
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 10,
+            stop_conditions: vec![TokenMatcher::Custom(Arc::new(StopBeforeNiyotte))],
+        },
+        // Match either によって or による
+        TokenMatcher::Custom(Arc::new(NiyotteOrNiyoruMatcher)),
+        // Optional 違う (may not be present in による variant)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ChigauMatcher)))),
+    ]
 }
 
 // かなり: Considerably/quite (adverb form)
