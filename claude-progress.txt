@@ -2157,3 +2157,99 @@ Together they express speculation or wondering, similar to "I wonder if..." in E
 ### Next Session
 1. Fix だけでなく(て)～も pattern (priority)
 2. Continue N3 patterns
+## Session 300 - 2025-12-14
+
+### ✅ Session Summary - COMPLETE
+**Status**: Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (だけでなく(て)～も - not only... but also)
+**Tests added**: 5 (all passing with proper assertions)
+**Total tests**: 1925 (no change - tests existed with print_debug, now completed)
+
+### Pattern Implemented: だけでなく(て)～も (not only... but also with も emphasis)
+
+**JLPT Level**: N3
+**Category**: Construction  
+**Priority**: 1 (detected but not highlighted)
+
+**Pattern**: Extension of だけでなく, adding も to the (B) part for extra emphasis. Translates as "not only A, but also B" where the emphasis is on including B in the same category as A.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. だけではなく + punctuation + も: アメリカだけではなく、韓国とチリにも
+2. だけでなく (casual) + punctuation + も: 地震だけでなく、台風も
+3. だけではなくて (with て) + punctuation + も: 子供だけではなくて、大人にも
+4. だけじゃなく (casual じゃ) + punctuation + も: 子供だけじゃなく、大人も
+5. だけじゃなくて (casual + て, no punctuation): 地だけじゃなくて動物園にも
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (dakedenaku_te_uff5e_mo, lines 3071-3190)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (dakedenaku_te_mo_tests, lines 7620-7683)
+- Pattern: grammar-lib/src/patterns.rs (already existed)
+
+**Key challenge solved**: Wildcard behavior with punctuation
+- Problem: Wildcard automatically stops at punctuation (記号), preventing pattern from matching sentences with commas
+- Solution: Made punctuation explicitly optional in the matcher before wildcard
+- Pattern now matches both "だけでなく、XYZも" (with comma) and "だけでなくXYZも" (without comma)
+
+**Tokenization pattern**:
+```
+Noun + だけ(助詞/副助詞) + で/じゃ + [は optional] + なく(助動詞) + [て optional] + [punctuation optional] + Wildcard(0-10) + も(助詞/係助詞)
+```
+
+**Matcher structure**:
+1. Noun (subject A)
+2. だけ (助詞/副助詞)
+3. で (助動詞/連用形) OR じゃ (助詞/副助詞)
+4. は (助詞/係助詞) - OPTIONAL
+5. なく (助動詞 OR 形容詞, base=ない)
+6. て (助詞/接続助詞) - OPTIONAL
+7. Punctuation (記号) - OPTIONAL (key fix!)
+8. Wildcard (min=0, max=10, stop_conditions=[StopBeforeMo])
+9. も (助詞/係助詞)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major variants: で/じゃ, は presence, て presence, punctuation presence
+- Correct character ranges verified for all variants
+
+**Pattern ranges**: Include full construction from noun A through も
+- Example: "アメリカだけではなく、韓国とチリにも" (chars 0-18)
+- Example: "地震だけでなく、台風も" (chars 3-14)
+
+**Linguistic Note**: The pattern だけでなく means "not only", and adding も to the second part emphasizes that B is ALSO included along with A. This is more emphatic than just saying "AとB" (A and B). The pattern commonly appears with punctuation (、) separating the two parts, creating natural separation in speech.
+
+---
+
+### 🚧 WIP: 〜かは〜によって違う (depends on / differs depending on)
+
+**Status**: Tests added with print_debug, implementation not started
+**Next steps**: 
+1. Analyze tokenization from test output
+2. Implement matcher based on actual token structure
+3. Remove print_debug and add assertions
+4. Verify all tests pass
+
+**Tests added**: 5 tests covering:
+- かどうか + によって違う
+- か + かは + によって違う  
+- Adjective + かは + によって違う
+- による (without 違う)
+- Polite form (によって違います)
+
+---
+
+### Session Statistics
+- **Session time**: ~90 minutes
+- **Patterns completed**: 1 (だけでなく(て)～も)
+- **Tests success rate**: 5/5 (100%)
+- **Total passing tests**: 1925 (unchanged)
+- **Files modified**: 3 (matchers/n3.rs, tests/n3_patterns.rs, feature_list.json)
+- **Commits**: 1 (complete pattern implementation)
+
+### Environment Status
+- All 1925 tests passing
+- No regressions
+- Codebase clean
+- WIP tests for next pattern added but not yet implemented
+

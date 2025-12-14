@@ -7681,3 +7681,76 @@ mod dakedenaku_te_mo_tests {
         assert_pattern_range(&patterns, "だけでなく(て)～も", 2, 15); // 地だけじゃなくて動物園にも
     }
 }
+
+// ========== 〜かは〜によって違う (depends on / differs depending on) ==========
+// Pattern: 〜かは〜によって違う
+// Data source: grammar_points_data.json["〜かは〜によって違う"]
+//
+// Structures to test:
+//   - standard[0]: Phrase + かどうか + Noun + によって違う
+//   - standard[1]: WH-Word + A + かは + Noun + によって違う
+//   - standard[2]: A か + B かは + Noun + によって違う
+//   - variant: Noun + による (without 違う)
+//
+// Examples from data:
+//   - 銃を簡単に買えるかどうかは国によって違う
+//   - お酒を飲んで肌が赤くなるかならないかは体質によって違う
+//   - 今日、早く帰れるか帰れないかは仕事の進み具合による
+#[cfg(test)]
+mod kaha_niyotte_chigau_tests {
+    use super::*;
+
+    // Test: かどうか + によって違う
+    // Structure: Verb phrase + かどうか + は + Noun + によって違う
+    #[test]
+    fn test_kadouka_niyotte_chigau() {
+        let sentence = "銃を簡単に買えるかどうかは国によって違うんだよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: か + かは + によって違う (A or B)
+    // Structure: Verb + か + Verb + かは + Noun + によって違う
+    #[test]
+    fn test_ka_kaha_niyotte_chigau() {
+        let sentence = "お酒を飲んで肌が赤くなるかならないかは体質によって違う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: Adj + かは + によって違う
+    // Structure: Adjective + か + Adjective + かは + Noun + によって違う
+    #[test]
+    fn test_adj_kaha_niyotte_chigau() {
+        let sentence = "日本が好きか嫌いかは人によって違うと思います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: による (without 違う)
+    // Structure: Verb + か + Verb + かは + Noun + による
+    #[test]
+    fn test_kaha_niyoru() {
+        let sentence = "今日、早く帰れるか帰れないかは仕事の進み具合による";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    // Test: polite form (によって違います)
+    #[test]
+    fn test_niyotte_chigaimasu() {
+        let sentence = "川の流れが早いか遅いかは場所によって違います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+}
