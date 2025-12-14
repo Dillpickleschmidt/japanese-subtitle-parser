@@ -7291,3 +7291,131 @@ mod tekuretearigatou_tests {
         assert_pattern_range(&patterns, "てくれてありがとう", 6, 22); // 聞いてくれてありがとうございます
     }
 }
+
+// ========== てくれない・てもらえない (won't you do for me?) ==========
+// Pattern: てくれない・てもらえない
+// Data source: grammar_points_data.json["てくれない・てもらえない"]
+//
+// Structures to test:
+//   - standard[0]: Verb[て] + くれない (か)?
+//   - standard[1]: Verb[て] + もらえない (か)?
+//   - standard[3]: Verb[ないで] + くれない (か)?
+//   - standard[4]: Verb[ないで] + もらえない (か)?
+//   - polite[0]: Verb[て] + くれません (か)?
+//   - polite[1]: Verb[て] + もらえません (か)?
+//   - polite[3]: Verb[ないで] + くれません (か)?
+//   - polite[4]: Verb[ないで] + もらえません (か)?
+#[cfg(test)]
+mod tekurenai_temoraenai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[て] + くれない (か)?
+    #[test]
+    fn test_te_kurenai_basic() {
+        let sentence = "私に漢字を教えてくれない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 5, 12); // 教えてくれない
+    }
+
+    // Testing: standard[0] - Verb[て] + くれない + か?
+    #[test]
+    fn test_te_kurenai_with_ka() {
+        let sentence = "今日だけ自転車を貸してくれないか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 8, 15); // 貸してくれない
+    }
+
+    // Testing: standard[1] - Verb[て] + もらえない (か)?
+    #[test]
+    fn test_te_moraenai_basic() {
+        let sentence = "道を調べてもらえない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 2, 10); // 調べてもらえない
+    }
+
+    // Testing: standard[1] - Verb[て] + もらえない + か
+    #[test]
+    fn test_te_moraenai_with_ka() {
+        let sentence = "電気を消してもらえないか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 3, 11); // 消してもらえない
+    }
+
+    // Testing: standard[3] - Verb[ないで] + くれない (か)?
+    #[test]
+    fn test_naide_kurenai_basic() {
+        let sentence = "あんまり無理しないでくれない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 6, 14); // しないでくれない
+    }
+
+    // Testing: standard[4] - Verb[ないで] + もらえない (か)?
+    #[test]
+    fn test_naide_moraenai_basic() {
+        let sentence = "そこに触らないでもらえない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 3, 13); // 触らないでもらえない
+    }
+
+    // Testing: polite[0] - Verb[て] + くれません (か)?
+    #[test]
+    fn test_te_kuremasen_polite() {
+        let sentence = "ここで待っていてくれませんか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 6, 13); // いてくれません
+    }
+
+    // Testing: polite[1] - Verb[て] + もらえません (か)?
+    #[test]
+    fn test_te_moraemasen_polite() {
+        let sentence = "窓を開けてもらえませんか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 2, 11); // 開けてもらえません
+    }
+
+    // Testing: polite[3] - Verb[ないで] + くれません (か)?
+    #[test]
+    fn test_naide_kuremasen_polite() {
+        let sentence = "そんなに怒らないでくれませんか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 4, 14); // 怒らないでくれません
+    }
+
+    // Testing: polite[4] - Verb[ないで] + もらえません (か)?
+    #[test]
+    fn test_naide_moraemasen_polite() {
+        let sentence = "勝手に使わないでもらえませんか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てくれない・てもらえない");
+        assert_pattern_range(&patterns, "てくれない・てもらえない", 3, 14); // 使わないでもらえません
+    }
+}

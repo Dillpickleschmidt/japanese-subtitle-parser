@@ -3712,9 +3712,86 @@ pub fn tekuretearigatou() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: てくれない・てもらえない
+// Pattern: てくれない・てもらえない (won't you do for me?)
+// Structures: Verb[て/ないで] + くれない(か)/くれません(か)/もらえない(か)/もらえません(か)
 pub fn tekurenai_u30fb_temoraenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::concat;
+    use std::sync::Arc;
+
+    // Match verb in 連用形, 連用タ接続 (for て-form), or 未然形 (for ないで-form)
+    #[derive(Debug)]
+    struct VerbFormMatcher;
+    impl super::Matcher for VerbFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.pos.first().is_none_or(|pos| pos != "動詞") {
+                false
+            } else {
+                let form = token.features.get(5);
+                form.is_some_and(|f| f == "連用形" || f == "連用タ接続" || f == "未然形")
+            }
+        }
+    }
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl super::Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match ない auxiliary (used in ないで construction)
+    #[derive(Debug)]
+    struct NaiAuxMatcher;
+    impl super::Matcher for NaiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match くれる or もらえる in 未然形 or 連用形
+    #[derive(Debug)]
+    struct KureruMoraeruMatcher;
+    impl super::Matcher for KureruMoraeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "くれる" || token.base_form == "もらえる")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ない (negative) or ませ (polite negative)
+    #[derive(Debug)]
+    struct NaiMaseMatcher;
+    impl super::Matcher for NaiMaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ない" && token.base_form == "ない" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            || (token.surface == "ませ" && token.base_form == "ます" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    // Match ん (polite negative contraction)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl super::Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: Verb + (ない) + て/で + くれる/もらえる + ない/ません
+    concat(vec![
+        vec![TokenMatcher::Custom(Arc::new(VerbFormMatcher))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaiAuxMatcher))))],
+        vec![TokenMatcher::Custom(Arc::new(TeDeParticleMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(KureruMoraeruMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(NaiMaseMatcher))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher))))],
+    ])
 }
 
 // Pattern: ～のだろうか
