@@ -10133,3 +10133,70 @@ mod hakuraidew_tests {
     }
 }
 
+// Pattern: ばかり (nothing but / only)
+// Data source: grammar_points_data.json["ばかり"]
+// Testing all structure variants
+mod bakari_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[て] + ばかり"
+    // Example: 怒ってばかりいる (does nothing but get angry)
+    #[test]
+    fn test_verb_te_bakari_iru() {
+        let sentence = "先生はいつも怒ってばかりいる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかり");
+        assert_pattern_range(&patterns, "ばかり", 8, 12); // てばかり
+    }
+
+    // Testing: structure.standard[1] - "Noun + ばかり"
+    // Example: お菓子ばかり (nothing but sweets)
+    #[test]
+    fn test_noun_bakari() {
+        let sentence = "最近はお菓子ばかり食べている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかり");
+        assert_pattern_range(&patterns, "ばかり", 3, 9); // お菓子ばかり
+    }
+
+    // Testing: structure.standard[0] - "Verb[て] + ばかり + いて"
+    // Example: 泣いてばかりいて (does nothing but cry)
+    #[test]
+    fn test_verb_te_bakari_ite() {
+        let sentence = "先月生まれた息子がずっと泣いてばかりいて、全然寝れない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかり");
+        assert_pattern_range(&patterns, "ばかり", 14, 18); // てばかり
+    }
+
+    // Testing: structure.standard[0] - "Verb[て] + ばかり + で"
+    // Example: 残業してばかりで (all he does is work overtime)
+    #[test]
+    fn test_verb_te_bakari_de() {
+        let sentence = "彼は毎日残業してばかりで、全然家の事を手伝ってくれない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかり");
+        assert_pattern_range(&patterns, "ばかり", 7, 11); // てばかり
+    }
+
+    // Testing: structure.standard[1] - "Noun + ばかり + で"
+    // Example: 文句ばかりで (all he can do is complain)
+    #[test]
+    fn test_noun_bakari_de() {
+        let sentence = "彼は口を開けると文句ばかりで、一緒にいるだけで疲れる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ばかり");
+        assert_pattern_range(&patterns, "ばかり", 8, 13); // 文句ばかり
+    }
+}
+

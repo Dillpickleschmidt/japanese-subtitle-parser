@@ -1781,8 +1781,26 @@ pub fn karakoso() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ばかり
+// Pattern: ばかり (nothing but / only)
+// Structures: Verb[て] + ばかり, Noun + ばかり
 pub fn bakari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ばかり as adverbial particle (助詞/副助詞)
+    #[derive(Debug)]
+    struct BakariParticleMatcher;
+    impl Matcher for BakariParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ばかり"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(BakariParticleMatcher)),
+    ]
 }
 
 // Pattern: ばかりだ

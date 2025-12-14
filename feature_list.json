@@ -6078,13 +6078,13 @@
   {
     "pattern_name": "ばかり",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used after verbs followed by the conjunction particle て, or nouns, the adverbial particle ばかり highlights that 'n... [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
