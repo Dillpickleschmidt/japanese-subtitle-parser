@@ -1,3 +1,87 @@
+## Session 307 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern
+**Patterns completed**: 1 (～は～となっている)
+**Tests added**: 5 (all passing)
+**Total tests**: 1965 (was 1960)
+
+### Pattern Implemented: ～は～となっている (A is B / has become B)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (detected but not highlighted)
+
+**Pattern**: ～は～となっている is a formal expression meaning "(A) is (B)", "(A) has become (B)", or "it has been established that (A) is (B)". It uses the particle と (marking a result) with なる (to become) in the te-iru form, expressing that something has arrived at a state and remains in that state. The は particle marks the topic (A) and is NOT included in the pattern range - we only detect "となっている/となっています".
+
+**Structures tested**: 5 comprehensive tests covering all variants from grammar_points_data.json
+1. な-Adjective + となっている: 人気となっている (has become popular)
+2. Noun + となっている: 違法となっている (has been established as illegal)
+3. Noun + となっている: 禁止となっている (has been established as prohibited)
+4. な-Adjective + となっています (polite): 必要となっています (has become necessary)
+5. Noun + となっています (polite): 禁止となっています (has been established as prohibited)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (uff5e_ha_uff5e_tonatteiru, lines 5873-5946)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (tonatteiru_tests module, lines 8197-8254)
+- Pattern: grammar-lib/src/patterns.rs (Uff5eHaUff5eTonatteiru, line 4408)
+
+**Tokenization pattern**:
+```
+Structure: と + なっ + て + いる/います
+
+Token breakdown:
+1. と (助詞/格助詞/一般) - "to" particle marking result
+2. なっ (動詞/自立, base=なる, 五段・ラ行, 連用タ接続) - "become" verb stem
+3. て (助詞/接続助詞) - te particle
+4. いる/い (動詞/非自立, base=いる, 一段) - auxiliary verb "to exist"
+5. ます (助動詞) - optional polite ending
+
+Example (となっている):
+- surface='と' base='と' pos=助詞/格助詞/一般
+- surface='なっ' base='なる' pos=動詞/自立 [連用タ接続]
+- surface='て' base='て' pos=助詞/接続助詞
+- surface='いる' base='いる' pos=動詞/非自立 [基本形]
+
+Example (となっています):
+- surface='と' base='と' pos=助詞/格助詞/一般
+- surface='なっ' base='なる' pos=動詞/自立 [連用タ接続]
+- surface='て' base='て' pos=助詞/接続助詞
+- surface='い' base='いる' pos=動詞/非自立 [連用形]
+- surface='ます' base='ます' pos=助動詞 [基本形]
+```
+
+**Key implementation points**:
+1. Five custom matchers: ToParticleMatcher, NatMatcher, TeParticleMatcher, IruMatcher, MasuMatcher
+2. ToParticleMatcher checks と as 助詞/格助詞 (case-marking particle)
+3. NatMatcher accepts なっ with base_form=なる in 連用タ接続 or 連用形
+4. IruMatcher accepts both いる and い (contracted form before ます)
+5. MasuMatcher is optional to handle both standard and polite forms
+6. Pattern range includes only と + なっ + て + いる/います (4-5 tokens)
+
+**Pattern ranges**: Include と + なっ + て + いる/います only
+- Example: "となっている" (chars 10-16) in "人気となっている"
+- Example: "となっています" (chars 16-23) in "必要となっています"
+- Example: "となっている" (chars 15-21) in "禁止となっている"
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all structure variants: な-adjective and noun, standard and polite forms
+- Correct character ranges verified for all variants
+
+**Pattern Priority**: Priority 1 means this pattern is detected but not highlighted in browser extension overlays. This is appropriate as it's a common formal expression that appears frequently in news articles, legal documents, and formal writing. While grammatically interesting, it's more of a stylistic choice than a complex construction learners need to focus on.
+
+**Linguistic Note**: The pattern ～は～となっている expresses that something has reached a certain state and remains in that state. The と particle marks the result state (coming from its role as a case-marking particle for results/quotations), and the te-iru form indicates the completed state continues to exist. This is commonly used in formal contexts to state established facts, rules, or situations:
+- **Regulations**: このプールでは飛び込みが禁止となっている (diving is prohibited at this pool)
+- **Current status**: 鬼滅の刃は人気となっている (Demon Slayer is popular / has become popular)
+- **Formal statements**: 違法となっている (it has been established as illegal)
+
+The grammar data notes that this can be rephrased as "になっている" but with a different nuance - に removes the feeling of finality/result, making it sound more like an ongoing process rather than an established state.
+
+---
+
 ## Session 305 - 2025-12-14
 
 ### ✅ Session Summary
