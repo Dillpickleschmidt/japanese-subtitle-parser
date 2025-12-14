@@ -942,3 +942,57 @@ mod kanoyouda_tests {
         assert_pattern_range(&patterns, "かのようだ", 7, 15); // ないかのようです
     }
 }
+
+// Pattern: げ (seeming, appearance)
+// Data source: grammar_points_data.json["げ"]
+// Testing: structure.standard - "Adj/Verb[stem] + げ + に/な"
+//
+// Structure variants:
+//   - standard[0]: Verb[stem] + げ + に
+//   - standard[1]: い-Adjective[stem] + げ + に
+//   - standard[2]: な-Adjective + げ + に
+//   - standard[3]: (All forms) + な + Noun
+
+mod ge_tests {
+    use super::*;
+
+    #[test]
+    fn test_i_adj_ge_ni() {
+        let sentence = "高校生たちがファストフード店で楽しげに話しているのを見た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "げ");
+        assert_pattern_range(&patterns, "げ", 15, 19); // 楽しげに
+    }
+
+    #[test]
+    fn test_na_adj_ge_ni() {
+        let sentence = "高橋くんは不安げに手を上げました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "げ");
+        assert_pattern_range(&patterns, "げ", 5, 9); // 不安げに
+    }
+
+    #[test]
+    fn test_verb_stem_ge_ni() {
+        let sentence = "自信ありげに見えたかもしれないけど、実はめちゃくちゃ緊張してた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "げ");
+        assert_pattern_range(&patterns, "げ", 2, 6); // ありげに
+    }
+
+    #[test]
+    fn test_ge_na_noun() {
+        let sentence = "彼は意味ありげな笑みを浮かべていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "げ");
+        assert_pattern_range(&patterns, "げ", 4, 8); // ありげな
+    }
+}

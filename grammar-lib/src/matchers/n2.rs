@@ -1523,9 +1523,56 @@ pub fn ki() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: げ
+// Pattern: げ (seeming, appearance)
+// Structures: Adj[stem]/Verb[連用形]/Noun + げ + に/な
 pub fn ge() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for げ suffix (名詞/接尾/一般)
+    #[derive(Debug)]
+    struct GeMatcher;
+    impl Matcher for GeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "げ"
+                && token.base_form == "げ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Matcher for に/な ending
+    #[derive(Debug)]
+    struct NiNaMatcher;
+    impl Matcher for NiNaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // に (case particle)
+            if token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            {
+                return true;
+            }
+            // な (adnominal form of だ)
+            if token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f == "体言接続")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(GeMatcher)),
+        TokenMatcher::Custom(Arc::new(NiNaMatcher)),
+    ]
 }
 
 // Pattern: ことだから
