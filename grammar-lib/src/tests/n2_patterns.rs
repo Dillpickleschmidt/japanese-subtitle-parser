@@ -996,3 +996,57 @@ mod ge_tests {
         assert_pattern_range(&patterns, "げ", 4, 8); // ありげな
     }
 }
+
+// Pattern: きっかけ (opportunity, chance, trigger)
+// Data source: grammar_points_data.json["きっかけ"]
+// Testing: structure.standard - various きっかけ constructions
+//
+// Structure variants:
+//   - standard[0]: Verb + の + をきっかけ + に
+//   - standard[1]: Noun + をきっかけ + に
+//   - standard[2]: Verb + の + がきっかけ + で
+//   - standard[3]: Noun + がきっかけ + で
+
+mod kikkake_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_no_wo_kikkake_ni() {
+        let sentence = "彼女とは、パーティーで会ったのをきっかけに付き合い始めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きっかけ");
+        assert_pattern_range(&patterns, "きっかけ", 15, 21); // のをきっかけに
+    }
+
+    #[test]
+    fn test_noun_wo_kikkake_ni() {
+        let sentence = "私は入院をきっかけにタバコを止めることにしました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きっかけ");
+        assert_pattern_range(&patterns, "きっかけ", 4, 10); // をきっかけに
+    }
+
+    #[test]
+    fn test_verb_no_ga_kikkake_de() {
+        let sentence = "この音楽は有名な歌手がカバーしたのがきっかけで再び有名になった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きっかけ");
+        assert_pattern_range(&patterns, "きっかけ", 17, 23); // のがきっかけで
+    }
+
+    #[test]
+    fn test_noun_ga_kikkake_de() {
+        let sentence = "このゲームがきっかけで、プログラマーになる事ができた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きっかけ");
+        assert_pattern_range(&patterns, "きっかけ", 5, 11); // がきっかけで
+    }
+}

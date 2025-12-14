@@ -756,9 +756,50 @@ pub fn ageku() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: きっかけ
+// Pattern: きっかけ (opportunity, chance, trigger)
+// Structures: を/が + きっかけ + に/で
 pub fn kikkake() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for を or が particle
+    #[derive(Debug)]
+    struct WoGaMatcher;
+    impl Matcher for WoGaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "を" || token.surface == "が")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for きっかけ noun
+    #[derive(Debug)]
+    struct KikkakeMatcher;
+    impl Matcher for KikkakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "きっかけ"
+                && token.base_form == "きっかけ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Matcher for に or で particle
+    #[derive(Debug)]
+    struct NiDeMatcher;
+    impl Matcher for NiDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(WoGaMatcher)),
+        TokenMatcher::Custom(Arc::new(KikkakeMatcher)),
+        TokenMatcher::Custom(Arc::new(NiDeMatcher)),
+    ]
 }
 
 // Pattern: にかけては
