@@ -3292,13 +3292,13 @@
   {
     "pattern_name": "なら",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned in our lesson about ば , なら is often used by itself to mean 'if' [4 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3320,13 +3320,13 @@
   {
     "pattern_name": "なん + counter + か",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The expression なん + counter + か in Japanese is a way of highlighting an uncertain number of something, and comes acro... [3 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3334,13 +3334,13 @@
   {
     "pattern_name": "に (Frequency)",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the case marking particle に is used, sometimes it has the nuance of 'frequency' [1 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3348,13 +3348,13 @@
   {
     "pattern_name": "にきがつく",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に気（き）が付（つ）く is a common expression that highlights when someone 'notices that (A)', or 'realizes that (A)' [3 std, 3 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3376,13 +3376,13 @@
   {
     "pattern_name": "にみえる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にみえる (primarily written only in hiragana) is a phrase that combines the case marking particle に , with the る-Verb 見（み... [6 std, 6 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3390,13 +3390,13 @@
   {
     "pattern_name": "のなかで",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Just like the grammar point の中（なか）で～が一番（いちばん）～ , this grammar point may be used when marking one thing from within a ... [3 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3418,13 +3418,13 @@
   {
     "pattern_name": "のように・のような ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The auxiliary verb ようだ is used for making observations [3 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3446,13 +3446,13 @@
   {
     "pattern_name": "はずがない",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like はず , coming from the kanji 筈（はず） , which suggests that something is 'bound' to be true, はずがない suggests that some... [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3460,13 +3460,13 @@
   {
     "pattern_name": "はずだ",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "はず , coming from the kanji 筈（はず） , is a word in Japanese that is very similar to 'bound' in English [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3488,13 +3488,13 @@
   {
     "pattern_name": "ばあいは",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "場合（ばあい）は is a phrase in Japanese that is often translated to 'in the event of (A)', or 'in the case of (A)' [4 std, 0 pol]",
     "priority": 2,
     "skip_reason": null
@@ -3516,13 +3516,13 @@
   {
     "pattern_name": "ひつようがある",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like が必要（ひつよう） , 必要（ひつよう）がある is an expression which is used to highlight the 'need' or 'necessity' of something [1 std, 1 pol]",
     "priority": 2,
     "skip_reason": null

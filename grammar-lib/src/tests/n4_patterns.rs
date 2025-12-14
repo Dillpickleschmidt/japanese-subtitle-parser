@@ -9454,3 +9454,56 @@ mod kikoeru_tests {
     }
 }
 
+// Pattern: 化する (to become/transform into ~)
+// Data source: grammar_points_data.json["化する"]
+// Testing structure variants for Noun + 化(する)
+mod kasuru_tests {
+    use super::*;
+
+    #[test]
+    fn noun_ka_suru_basic() {
+        // Testing: structure.standard[0] - "Noun + 化（か）(する)"
+        // Example: 自動化する (to automate)
+        let sentence = "あと数年で運転は自動化する。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "化する");
+        assert_pattern_range(&patterns, "化する", 8, 13); // 自動化する
+    }
+
+    #[test]
+    fn noun_ka_suru_in_sentence() {
+        // Testing: structure.standard[0] - "Noun + 化（か）(する)"
+        // Example: データ化する (to digitize)
+        let sentence = "私は仕事で書類をデータ化する。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "化する");
+        assert_pattern_range(&patterns, "化する", 8, 14); // データ化する
+    }
+
+    #[test]
+    fn noun_ka_shita_polite() {
+        // Testing: structure.standard[1] - "Noun + 化（か） + する(1) + Noun"
+        // where (1) = した (conjugated form)
+        // Example: オンライン化するのは厳しい (digitalization is difficult)
+        let sentence = "日本は紙社会なので仕事をオンライン化するのは厳しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "化する");
+        assert_pattern_range(&patterns, "化する", 12, 20); // オンライン化する
+    }
+
+    // TODO: Undetectable - Noun + 化 without する
+    // In formal/scientific writing, する may be dropped (e.g., 高齢化が進む).
+    // However, detecting just Noun + 化 is too general and would create many
+    // false positives. The main pattern requires する for reliable detection.
+    //
+    // Example: 日本では高齢化が進んでいる (Japan's aging population is progressing)
+    // In this case, 高齢化 is Noun + 化 without する, but detecting this alone
+    // would match any noun ending in 化, including compound words.
+}
+

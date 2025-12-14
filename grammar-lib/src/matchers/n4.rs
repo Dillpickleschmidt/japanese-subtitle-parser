@@ -5982,9 +5982,29 @@ pub fn tabakari() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 化する
+// Pattern: 化する (to become/transform into ~)
+// Structures: Noun + 化（か）+ する
 pub fn kasuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 化 as a suffix (名詞/接尾/サ変接続)
+    #[derive(Debug)]
+    struct KaSuffixMatcher;
+    impl super::Matcher for KaSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "化"
+                && token.base_form == "化"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "接尾")
+                && token.pos.get(2).is_some_and(|p| p == "サ変接続")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(KaSuffixMatcher)),
+        TokenMatcher::specific_verb("する"),
+    ]
 }
 
 // Pattern: 命令形
