@@ -1528,13 +1528,13 @@
   {
     "pattern_name": "る-Verb (Past)",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "To make the past form of a る-Verb in Japanese, just like all other conjugations of る-Verbs , you will need to remove ... [4 std, 4 pol]",
     "priority": 1,
     "skip_reason": null

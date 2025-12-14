@@ -6002,3 +6002,60 @@ mod u_verb_past_tests {
     }
 }
 
+// ========== る-Verb (Past) ==========
+// Pattern: る-Verb (Past) - Past tense る-verbs (ichidan verbs)
+// Data source: grammar_points_data.json["る-Verb (Past)"]
+//
+// Structure variants to test:
+//   standard: Verb[stem] + た (食べた, 見た, 寝た)
+//   polite: Verb[stem] + ました (食べました, 見ました, 寝ました)
+
+#[cfg(test)]
+mod ru_verb_past_tests {
+    use super::*;
+
+    // Testing: 食べた (ate) - standard past
+    #[test]
+    fn test_ru_verb_past_tabeta() {
+        let sentence = "昼ごはんを食べた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Past)");
+        assert_pattern_range(&patterns, "る-Verb (Past)", 5, 8); // 食べた
+    }
+
+    // Testing: 見た (saw) - standard past
+    #[test]
+    fn test_ru_verb_past_mita() {
+        let sentence = "映画を見た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Past)");
+        assert_pattern_range(&patterns, "る-Verb (Past)", 3, 5); // 見た
+    }
+
+    // Testing: 寝た (slept) - standard past
+    #[test]
+    fn test_ru_verb_past_neta() {
+        let sentence = "昨日は早く寝た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Past)");
+        assert_pattern_range(&patterns, "る-Verb (Past)", 5, 7); // 寝た
+    }
+
+    // Testing: 食べました (ate - polite) - polite past
+    #[test]
+    fn test_ru_verb_past_polite() {
+        let sentence = "朝ごはんを食べました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "る-Verb (Past)");
+        assert_pattern_range(&patterns, "る-Verb (Past)", 5, 10); // 食べました
+    }
+}
+
