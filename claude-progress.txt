@@ -1,3 +1,88 @@
+## Session 271 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (はずだ - should be/bound to be/supposed to)
+**Tests added**: 7 (all passing)
+**Total tests**: 1746 (was 1739)
+
+### Pattern Implemented: はずだ (should be, bound to be, supposed to)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: Expression meaning "should be", "bound to be", or "supposed to". Literally translates as "(A) is bound to be true". The speaker is quite sure something is true but cannot confirm. Coming from the kanji 筈（はず）, which means "bound" or "expectation". Different from はずがない (which negates this expectation).
+
+**Structures tested**: 7 tests covering all structure variants
+1. Verb + はず + だ: 今日は雨が降るはずだ (It is supposed to rain today)
+2. い-Adjective + はず + だ: 新幹線で行った方が速いはずだ (It is bound to be faster if we go by shinkansen)
+3. な-Adjective + な + はず + だ: 寿司は嫌いなはずだ (He is sure to dislike sushi)
+4. Noun + の + はず + だ: コーヒーのはずだった (I was sure that I ordered coffee)
+5. Verb + はず + です (polite): 行くはずです (Should go)
+6. な-Adjective + な + はず + です (polite): 静かなはずです (Should be quiet)
+7. Noun + の + はず + です (polite): 会議のはずです (Should be a meeting)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (hazuda, lines 4962-5028)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (hazuda_tests, lines 9194-9277)
+- Pattern: grammar-lib/src/patterns.rs (Hazuda, line 2157)
+
+**Tokenization pattern**:
+```
+Verb/i-Adj/Na-Adj/Noun (preceding element)
++ (optional) な (助動詞, base="だ") OR の (助詞/連体化)
++ はず (名詞/非自立/一般)
++ だ (助動詞, base="だ") OR です (助動詞, base="です")
+```
+
+**Key implementation points**:
+1. Single pattern handles all variants (verb/adj/noun) with optional particles
+2. Custom PreHazuMatcher accepts verbs, adjectives (both i- and na-), and nouns
+3. Optional NaOrNoParticleMatcher handles な (for na-adj) and の (for nouns)
+4. DaDesuMatcher handles both plain だ and polite です (also だった, でした, etc.)
+5. Pattern range includes full construction: word + (optional particle) + はず + だ/です
+6. Pattern matcher automatically extends through conjugations (だった = だ + た)
+7. Reused matchers from はずがない implementation for consistency
+
+**Test Quality**:
+- All sentences from grammar_points_data.json examples
+- Cover all structure variants: Verb, i-Adj, na-Adj + な, Noun + の, polite forms
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+
+**Challenges Solved**:
+1. Handling multiple preceding element types (verb/i-adj/na-adj/noun) in single pattern
+2. Including optional particles (な/の) that only appear with certain element types
+3. Matching both plain だ and polite です and their conjugations
+4. Ensuring pattern range includes the full grammatical construction
+5. Coordinating with はずがない pattern (similar structure but different meaning)
+
+**Linguistic Note**: The expression はずだ comes from 筈 (はず) meaning "expectation/bound/norm". It expresses something the speaker believes is true with high confidence but cannot confirm 100%. This is stronger than 多分 (probably) but weaker than complete certainty. The pattern cannot be used for suggestions or advice - only for expectations about facts.
+
+### Session Statistics
+- **Session time**: Approximately 40 minutes
+- **Patterns completed this session**: 1 (はずだ)
+- **Test success rate**: 7/7 (100%)
+- **Total passing tests**: 1746 (up from 1739)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns needing implementation**:
+   - ば (conditional) - fundamental conditional form
+   - ばあいは (in case of) - conditional expression
+   - ひつようがある (need to) - necessity expression
+   - みたい (seems like) - similar to ようだ
+2. **Pattern focus**: ば would be a natural next choice as it's a fundamental grammar point
+
+### Environment Status
+- All 1746 tests passing
+- No regressions
+- Codebase clean and ready for next session
+
+---
+
 ## Session 270 - 2025-12-14
 
 ### ✅ Session Summary
