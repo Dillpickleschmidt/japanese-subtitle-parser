@@ -8107,3 +8107,76 @@ mod tokiita_tests {
         assert_pattern_range(&patterns, "ときいた", 9, 15); // と聞きました
     }
 }
+
+// Pattern: とみえる (it seems/can be deduced that)
+// Data source: grammar_points_data.json["とみえる"]
+// Structures: Verb/Adjective/Noun + (だ) + とみえる/とみえます
+mod tomieru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + とみえる"
+    #[test]
+    fn test_verb_tomieru() {
+        let sentence = "泥棒に入られたとみえる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とみえる");
+        assert_pattern_range(&patterns, "とみえる", 7, 11); // とみえる
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + とみえる"
+    #[test]
+    fn test_i_adjective_tomieru() {
+        let sentence = "彼は暑いとみえる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とみえる");
+        assert_pattern_range(&patterns, "とみえる", 4, 8); // とみえる
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + だ + とみえる"
+    #[test]
+    fn test_na_adjective_tomieru() {
+        let sentence = "彼はサンドイッチが嫌いだとみえる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とみえる");
+        assert_pattern_range(&patterns, "とみえる", 12, 16); // とみえる
+    }
+
+    // Testing: structure.standard[3] - "Noun + だ + とみえる"
+    #[test]
+    fn test_noun_tomieru() {
+        let sentence = "今日は休みだとみえる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とみえる");
+        assert_pattern_range(&patterns, "とみえる", 6, 10); // とみえる
+    }
+
+    // Testing: structure.polite[0] - "Verb + とみえます"
+    #[test]
+    fn test_verb_tomiemasu_polite() {
+        let sentence = "泥棒に入られたとみえます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とみえる");
+        assert_pattern_range(&patterns, "とみえる", 7, 12); // とみえます
+    }
+
+    // Testing: structure.polite[3] - "Noun + だ + とみえます"
+    #[test]
+    fn test_noun_tomiemasu_polite() {
+        let sentence = "今日は休みだとみえます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とみえる");
+        assert_pattern_range(&patterns, "とみえる", 6, 11); // とみえます
+    }
+}

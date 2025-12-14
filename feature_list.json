@@ -3096,13 +3096,13 @@
   {
     "pattern_name": "とみえる",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "とみえる (primarily written only in hiragana) is a phrase that combines the case marking particle と , with the る-Verb 見（み... [4 std, 4 pol]",
     "priority": 2,
     "skip_reason": null
