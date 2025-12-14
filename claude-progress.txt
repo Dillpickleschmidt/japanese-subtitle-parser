@@ -1,3 +1,82 @@
+## Session 320 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (に合わせて・に合った)
+**Tests added**: 6 (all passing)
+**Total tests**: 2043 passing, 1 ignored (was 2037 passing, 1 ignored)
+
+### ✅ Pattern Completed: に合わせて・に合った (in accordance with / matching)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: に合わせて・に合った is a construction using the verb 合わせる (to match/fit) or 合う (to fit/match). It has two main forms:
+1. に合わせて - "in accordance with", "matching", "at the same time as"
+2. に合った - "that matched", "that fit with"
+
+The pattern combines a noun with the particle に, followed by the verb 合わせる/合う in different conjugations.
+
+**Structures tested**: 6 comprehensive tests covering both variants
+1. Noun + に合わせて (music): 音楽にあわせてギターを弾く練習をしています (I am practicing playing my guitar along with music)
+2. Noun + に合わせて (person): 相手にあわせて話し方を変えるのは疲れる (It is exhausting to change how you talk in accordance with who you are talking to)
+3. Noun + に合った + Noun (furniture): このソファーにあったテーブルを買おう (Let's buy a table that matches this couch)
+4. Noun + に合った + Noun (wallpaper): 壁紙にあった家具が欲しい (I want furniture that matches the wallpaper)
+5. Noun + に合わせて (rhythm): リズムに合わせて歌を歌う (I sing while matching the rhythm)
+6. Noun + に合わせて (signal): 合図に合わせてスタートする (To start in accordance with the signal)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (niawasete_u30fb_niatta, lines 2001-2079)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (niawasete_tests module, lines 9191-9267)
+- Pattern: grammar-lib/src/patterns.rs (NiawaseteU30fbNiatta, line 3080)
+
+**Tokenization patterns**:
+```
+に合わせて variant:
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- 合わせ/あわせ (動詞/自立, base='合わせる'/'あわせる', 一段, 連用形)
+- て (助詞/接続助詞)
+
+に合った variant:
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- あっ/合っ (動詞/自立, base='ある'/'合う', 連用タ接続)
+- た (助動詞, base='た', 特殊・タ, 基本形)
+```
+
+**Key implementation points**:
+1. Single unified matcher handles both variants using OR logic in custom matchers
+2. AwaseVerbMatcher matches EITHER:
+   - 合わせる/あわせる in 連用形 (for に合わせて)
+   - ある/合う in 連用タ接続 (for に合った)
+3. TeOrTaMatcher matches EITHER:
+   - て as 助詞/接続助詞 (for に合わせて)
+   - た as 助動詞 (for に合った)
+4. Supports both kanji (合わせて, 合った) and hiragana (あわせて, あった) forms
+5. Note: Kagome tokenizes "あった" as base='ある' (to exist) even when it means "matched"
+
+**Pattern ranges**: Include full construction (Noun + に + verb + particle)
+- に合わせて examples: "音楽にあわせて" (0-7), "相手にあわせて" (0-7), "リズムに合わせて" (0-8)
+- に合った examples: "ソファーにあった" (2-10), "壁紙にあった" (0-6)
+
+**Test Quality**:
+- All 6 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both variants: に合わせて (4 tests) and に合った (2 tests)
+- Test multiple contexts: music, person, furniture, wallpaper, rhythm, signal
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The pattern has two main meanings:
+1. **に合わせて** - "in accordance with", "matching", "at the same time as" (て-form, connective)
+2. **に合った** - "that matched", "that fit with" (past tense, used as noun modifier)
+
+Both use the same root verb (合わせる/合う) but in different conjugations for different grammatical purposes.
+
+---
+
 ## Session 319 - 2025-12-14
 
 ### ✅ Session Summary
