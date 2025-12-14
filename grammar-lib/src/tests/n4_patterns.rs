@@ -8947,3 +8947,81 @@ mod nikigatsuku_tests {
         assert_pattern_range(&patterns, "にきがつく", 8, 16); // にも気がつかない
     }
 }
+
+// Pattern: にみえる (appears/looks like)
+// Data source: grammar_points_data.json["にみえる"]
+// Structures to test:
+//   - standard[0]: Verb + ように + みえる
+//   - standard[1]: い-Adj + そうに + みえる
+//   - standard[2]: な-Adj + そうに + みえる
+//   - standard[3]: Noun + のように + みえる
+//   - polite: Same forms with みえます
+mod nimieru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + ように + みえる"
+    #[test]
+    fn test_verb_you_ni_mieru() {
+        let sentence = "サムの泳ぎ方は溺れているようにみえる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にみえる");
+        assert_pattern_range(&patterns, "にみえる", 12, 18); // ようにみえる
+    }
+
+    // Testing: structure.standard[1] - "い-Adj + そうに + みえる"
+    #[test]
+    fn test_i_adj_sou_ni_mieru() {
+        let sentence = "寒そうにみえるけど、大丈夫？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にみえる");
+        assert_pattern_range(&patterns, "にみえる", 1, 7); // そうにみえる
+    }
+
+    // Testing: structure.standard[2] - "な-Adj + そうに + みえる"
+    #[test]
+    fn test_na_adj_sou_ni_mieru() {
+        let sentence = "あの仕事は大変そうにみえる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にみえる");
+        assert_pattern_range(&patterns, "にみえる", 7, 13); // そうにみえる
+    }
+
+    // Testing: structure.standard[3] - "Noun + に + みえる" (direct, without よう)
+    #[test]
+    fn test_noun_ni_mieru_direct() {
+        let sentence = "あの雲はアイスクリームにみえる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にみえる");
+        assert_pattern_range(&patterns, "にみえる", 4, 15); // アイスクリームにみえる
+    }
+
+    // Testing: structure.standard[3] - "Noun + のように + みえる"
+    #[test]
+    fn test_noun_you_ni_mieru() {
+        let sentence = "一人で暗い所にいるとなんでも顔のようにみえる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にみえる");
+        assert_pattern_range(&patterns, "にみえる", 16, 22); // ようにみえる
+    }
+
+    // Testing: structure.polite[0] - "Verb + ように + みえます"
+    #[test]
+    fn test_you_ni_miemasu_polite() {
+        let sentence = "溺れているようにみえますが、大丈夫ですか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にみえる");
+        assert_pattern_range(&patterns, "にみえる", 5, 12); // ようにみえます
+    }
+}

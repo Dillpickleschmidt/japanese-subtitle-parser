@@ -5602,9 +5602,53 @@ pub fn rashii_u2461() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: にみえる
+// Pattern: にみえる (appears/looks like)
+// Structures: Verb + ように + みえる, Adj + そうに + みえる, Noun + (のように/に) + みえる
 pub fn nimieru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match よう or そう (auxiliary verb stems) OR a noun (for direct "Noun + に + みえる")
+    #[derive(Debug)]
+    struct NounOrYouSouMatcher;
+    impl super::Matcher for NounOrYouSouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match よう or そう (auxiliary verb stems)
+            ((token.surface == "よう" || token.surface == "そう")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "非自立" || pos == "接尾")))
+            ||
+            // OR match any noun (for direct "Noun + に + みえる" pattern)
+            (token.pos.first().is_some_and(|pos| pos == "名詞")
+                && !token.pos.get(1).is_some_and(|pos| pos == "非自立" || pos == "接尾"))
+        }
+    }
+
+    // Match に particle (either 副詞化 or 格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "副詞化" || pos == "格助詞"))
+        }
+    }
+
+    // Match みえる verb (見える - to appear/be visible)
+    #[derive(Debug)]
+    struct MieruVerbMatcher;
+    impl super::Matcher for MieruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "みえる" || token.base_form == "見える")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NounOrYouSouMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MieruVerbMatcher)),
+    ]
 }
 
 // Pattern: とみえる (it seems/can be deduced that)
