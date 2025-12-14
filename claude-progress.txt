@@ -1,3 +1,69 @@
+## Session 314 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed なぜなら〜から pattern (N3)
+**Patterns completed**: 1 (なぜなら〜から)
+**Tests added**: 4 (all passing)
+**Total tests**: 1994 passing, 1 ignored (was 1990 passing, 1 ignored)
+
+### ✅ Pattern Completed: なぜなら〜から (because / the reason is)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: なぜなら〜から is used to emphasize the reason/cause with なぜなら at the start of a new sentence, followed by the explanation, ending with から + だ/です. Literally "why is (A) so, (B) is the cause" - a natural way to highlight important reasoning in Japanese.
+
+**Structures tested**: 4 comprehensive tests covering all variants
+1. なぜなら + からだ: なぜなら、体調が悪いからだ (because I'm not feeling well)
+2. なぜなら + からです: なぜなら、明日は友達の結婚式に行くからです (because I'll be going to my friend's wedding tomorrow)
+3. なぜならば + からだ: なぜならば、努力を続けたからだ (because I continued to make an effort)
+4. なぜならば + からです: なぜならば、私は卵アレルギーだからです (because I'm allergic to eggs)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (nazenara_u301c_kara, lines 1408-1504)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (nazenara_kara_tests module, lines 8653-8712)
+- Pattern: grammar-lib/src/patterns.rs (NazenaraU301cKara)
+
+**Tokenization patterns**:
+```
+Single-token variant:
+- なぜなら (接続詞, base='なぜなら')
+- 、 (optional comma)
+- [reason phrase - wildcard 1-20 tokens]
+- から (助詞/接続助詞)
+- だ OR です (助動詞)
+
+Three-token variant:
+- なぜ (副詞, base='なぜ')
+- なら (助動詞, base='だ', 仮定形)
+- ば (助詞/接続助詞)
+- 、 (optional comma)
+- [reason phrase - wildcard 1-20 tokens]
+- から (助詞/接続助詞)
+- だ OR です (助動詞)
+```
+
+**Key implementation points**:
+1. NazenaraOrNazeMatcher handles both なぜなら (接続詞) and なぜ (副詞)
+2. Optional NaraMatcher + BaParticleMatcher for three-token variant
+3. Optional CommaMatcher for common punctuation after なぜなら(ば)
+4. Wildcard for flexible reason phrase (1-20 tokens)
+5. KaraConnectiveMatcher for から (助詞/接続助詞)
+6. DaDesuMatcher for だ or です (助動詞)
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from actual examples
+- Cover both single-token and three-token variants
+- Cover both casual and polite forms
+- Correct character ranges verified: includes full pattern from なぜなら to です
+
+**Solution to previous session's issue**: The problem was that the wildcard needed an explicit minimum of 1 (not 0) and the optional comma needed to be explicitly handled before the wildcard. The pattern now correctly matches the full construction.
+
+---
+
 ## Session 313 - 2025-12-14
 
 ### ✅ Session Summary
@@ -7,7 +73,7 @@
 **Tests added**: 5 (all passing for なし)
 **Total tests**: 1990 passing, 1 ignored (was 1985 passing, 1 ignored)
 
-### ⚠️ Pattern Needs Work: なぜなら〜から (because / the reason is)
+### ⚠️ Pattern Needs Work: なぜなら〜から (because / the reason is) [RESOLVED IN SESSION 314]
 
 **JLPT Level**: N3
 **Status**: Partially implemented - matcher exists but incomplete
