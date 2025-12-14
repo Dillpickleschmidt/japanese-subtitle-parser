@@ -5910,13 +5910,13 @@
   {
     "pattern_name": "に比べて",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に比（くら）べて is a set expression in Japanese, used when comparing one thing to another [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

@@ -9432,3 +9432,73 @@ mod niataru_tests {
     }
 }
 
+// ========== に比べて (compared to) ==========
+// Pattern: に比べて (compared to / in comparison to)
+// Data source: grammar_points_data.json["に比べて"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + に比べて
+//   standard[1]: Noun + に比べたら
+//   standard[2]: Noun + に比べれば
+//   standard[3]: Noun + に比べると
+
+mod nikurabete_tests {
+    use super::*;
+
+    // Test: Noun + に比べて (standard て-form)
+    #[test]
+    fn test_nikurabete_te_form() {
+        let sentence = "東京の冬は北海道の冬にくらべて全然寒くない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に比べて");
+        assert_pattern_range(&patterns, "に比べて", 9, 15); // 冬にくらべて
+    }
+
+    // Test: Noun + に比べて (standard て-form, sentence initial)
+    #[test]
+    fn test_nikurabete_te_form_initial() {
+        let sentence = "去年にくらべて今年の冬は暖かい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に比べて");
+        assert_pattern_range(&patterns, "に比べて", 0, 7); // 去年にくらべて
+    }
+
+    // Test: Noun + に比べたら (conditional たら form)
+    #[test]
+    fn test_nikurabete_tara_form() {
+        let sentence = "他の地域に比べたら、この地域は住みやすい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に比べて");
+        assert_pattern_range(&patterns, "に比べて", 2, 9); // 地域に比べたら
+    }
+
+    // Test: Noun + に比べれば (conditional ば form)
+    #[test]
+    fn test_nikurabete_ba_form() {
+        let sentence = "去年に比べれば今年は寒いけど、昨日に比べたら今日は暖かい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に比べて");
+        assert_pattern_range(&patterns, "に比べて", 0, 7); // 去年に比べれば (first occurrence)
+        // Note: This sentence also contains 昨日に比べたら at chars 15-22
+    }
+
+    // Test: Noun + に比べると (conditional と form)
+    #[test]
+    fn test_nikurabete_to_form() {
+        let sentence = "新型のパソコンに比べるとこのパソコンは遅く感じるけど、そんなに遅くない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に比べて");
+        assert_pattern_range(&patterns, "に比べて", 3, 12); // パソコンに比べると
+    }
+}
+

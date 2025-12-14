@@ -2249,9 +2249,62 @@ pub fn sonokekka() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に比べて
+// Pattern: に比べて (compared to)
+// Structures: Noun + に + 比べて/比べたら/比べれば/比べると
 pub fn nikurabete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 比べる/くらべる verb in various forms
+    #[derive(Debug)]
+    struct KuraberuVerbMatcher;
+    impl super::Matcher for KuraberuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form == "比べる" || token.base_form == "くらべる")
+        }
+    }
+
+    // Match て/ば/と/たら particles (conjunctive/conditional)
+    #[derive(Debug)]
+    struct ConditionalParticleMatcher;
+    impl super::Matcher for ConditionalParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // て (接続助詞) - for に比べて
+            (token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+            // ば (接続助詞) - for に比べれば
+            || (token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+            // と (接続助詞) - for に比べると
+            || (token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+            // たら (助動詞, 仮定形) - for に比べたら
+            || (token.surface == "たら"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KuraberuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ConditionalParticleMatcher)),
+    ]
 }
 
 // Pattern: どんなに〜ても (no matter how)
