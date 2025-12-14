@@ -1,3 +1,88 @@
+## Session 350 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (もの・もん)
+**Tests added**: 8 (all passing)
+**Total tests**: 2230 passing, 1 ignored (was 2222 passing, 1 ignored)
+
+### ✅ Pattern Completed: もの・もん (because / 'cause - sentence-ending particle)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: もの is a common noun meaning "thing" that can also function as a sentence-ending particle. When used as a particle, it adds emotion to a statement and presents it as a reason, similar to "because" or "'cause" in English. The literal meaning is "it's an (A) thing!". もの is quite casual and should be avoided in formal situations. It can be shortened to もん for a more casual/childish tone.
+
+**Structures tested**: 8 comprehensive tests covering major variants
+1. Verb + もの: だって、あなたはいつも嘘をつくもの → つくもの (13-17)
+2. な-Adj + だもの: これはあなたにあげられない。大切だもの → 大切だもの (14-19)
+3. Noun + だもの: すぐ泣くに決まってるじゃん、まだこどもだもの → こどもだもの (16-22)
+4. Verb + んだもの (emphasized): だって、暑くて寝れないんだもの → ないんだもの (9-15)
+5. Noun + なんだもの (emphasized): この子は失敗するに決まってるでしょう、まだ新人なんだもの → なんだもの (23-28)
+6. Noun + だもん (casual): もうお腹いっぱいだもん → いっぱいだもん (4-11)
+7. Verb + もん (casual): いいよ、お前とはもう遊ばないもん！ → ないもん (12-16)
+8. Verb negative + んだもの: 暑くて寝れないんだもの → ないんだもの (5-11)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (mono_u30fb_mon, lines 1651-1762)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (mono_mon_tests module, lines 11471-11572)
+- Pattern: grammar-lib/src/patterns.rs (MonoU30fbMon)
+
+**Tokenization patterns**:
+```
+もの (noun):
+- もの (名詞/非自立/一般) - dependent noun
+
+もん (particle OR noun):
+- もん (助詞/終助詞) - sentence-ending particle (after verbs/adjectives)
+- もん (名詞/非自立/一般) - dependent noun (after だ)
+
+ん (explanatory particle):
+- ん (名詞/非自立/一般) - dependent noun (explanatory)
+
+だ (copula):
+- だ (助動詞, base=だ, 基本形)
+- な (助動詞, base=だ, 体言接続) - for noun + な + ん patterns
+```
+
+**Key implementation points**:
+1. Four-token matcher: ContentWord + Optional(ん) + Optional(だ) + MonoOrMon
+2. ContentWordMatcher matches verbs (動詞), adjectives (形容詞), nouns (名詞), and auxiliary verbs (助動詞)
+3. NParticleMatcher matches ん as explanatory particle (名詞/非自立/一般)
+4. DaAuxMatcher matches だ or な as auxiliary (助動詞, base=だ)
+5. MonoOrMonMatcher matches:
+   - もの as dependent noun (名詞/非自立/一般)
+   - もん as particle (助詞/終助詞)
+   - もん as dependent noun (名詞/非自立/一般)
+6. Pattern priority: 3 (moderate priority)
+
+**Pattern ranges**: Include the content word + optional particles + もの/もん
+- Verb + もの: `つくもの` (chars 13-17) - verb + もの
+- Noun + だもの: `こどもだもの` (chars 16-22) - noun + だ + もの
+- Verb + んだもの: `ないんだもの` (chars 5-11) - auxiliary + ん + だ + もの
+- Noun + なんだもの: `なんだもの` (chars 23-28) - な + ん + だ + もの
+- Noun + だもん: `いっぱいだもん` (chars 4-11) - noun + だ + もん
+- Verb + もん: `ないもん` (chars 12-16) - auxiliary + もん
+
+**Test Quality**:
+- All 8 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major structural variants: もの/もん, with/without だ, with/without ん
+- Correct character ranges verified for all variants
+
+**Tokenization Notes**:
+1. **もん has two tokenizations**: As a particle (助詞/終助詞) when directly after verbs/adjectives, or as a noun (名詞/非自立/一般) when after だ
+2. **Pattern matches from auxiliary verbs**: In negative verb forms like `遊ばないもん`, the pattern matches from the auxiliary `ない` (助動詞) rather than from the verb stem `遊ば` (動詞). This is a tokenization limitation - ideally we'd capture the full verb phrase, but detecting where verb phrases start is complex.
+3. **Content word scope**: The matcher includes auxiliary verbs (助動詞) in ContentWordMatcher to handle patterns like `ないんだもの` and `ないもん`, where ない is an auxiliary that can precede もの/もん.
+
+**Related patterns**:
+- ～んです・のです (N4) - explanatory ん pattern
+- ものだ (N3) - different meaning ("should" / "naturally is")
+
+---
+
 ## Session 349 - 2025-12-14
 
 ### ✅ Session Summary
