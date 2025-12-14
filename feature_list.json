@@ -5896,13 +5896,13 @@
   {
     "pattern_name": "に当たる",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned in our 当（あ）たり lesson, 当（あ）たる often has a meaning that is similar to に対（たい）して 'to be in regard to' [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null

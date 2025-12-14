@@ -9358,3 +9358,77 @@ mod nitaishite_tests {
     }
 }
 
+// Pattern: に当たる (corresponds to / amounts to / is in regard to)
+// Data source: grammar_points_data.json["に当たる"]
+// Testing all structure variants
+#[cfg(test)]
+mod niataru_tests {
+    use super::*;
+
+    // Test: Noun + の + に当たる (corresponds to - expression)
+    #[test]
+    fn test_niataru_expression() {
+        let sentence = "英語の「what's up」は日本語の「元気」にあたる表現だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に当たる_particle");
+        assert_pattern_range(&patterns, "に当たる_particle", 22, 27); // 」にあたる
+    }
+
+    // Test: Noun + に当たる + Noun (relative relationship)
+    #[test]
+    fn test_niataru_relative() {
+        let sentence = "その人は私の親戚にあたる人です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に当たる_particle");
+        assert_pattern_range(&patterns, "に当たる_particle", 6, 12); // 親戚にあたる
+    }
+
+    // Test: Noun + に当たる (is - relationship)
+    #[test]
+    fn test_niataru_cousin() {
+        let sentence = "先生はタナカ君のいとこにあたる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に当たる");
+        assert_pattern_range(&patterns, "に当たる", 8, 15); // いとこにあたる
+    }
+
+    // Test: Noun + に当たる (amounts to - time period)
+    #[test]
+    fn test_niataru_amounts_to() {
+        let sentence = "今年は仕事を始めてから５年目にあたる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に当たる_particle");
+        assert_pattern_range(&patterns, "に当たる_particle", 13, 18); // 目にあたる
+    }
+
+    // Test: Noun + に当たる + Noun (corresponds to - language)
+    #[test]
+    fn test_niataru_language() {
+        let sentence = "「Hello」は日本で「こんにちは」にあたる言葉です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に当たる_particle");
+        assert_pattern_range(&patterns, "に当たる_particle", 17, 22); // 」にあたる
+    }
+
+    // Test: Polite form - Noun + に当たります
+    #[test]
+    fn test_niataru_polite() {
+        let sentence = "この言葉は英語の「thank you」にあたります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に当たる");
+        assert_pattern_range(&patterns, "に当たる", 18, 25); // 」にあたります
+    }
+}
+

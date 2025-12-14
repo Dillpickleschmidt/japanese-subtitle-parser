@@ -4398,9 +4398,76 @@ pub fn atari() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: に当たる
+// Pattern: に当たる (corresponds to / amounts to / is in regard to)
+// Structures: Noun + にあたる, Noun + にあたる + Noun, Noun + にあたります
+// Note: Kagome tokenizes this in two ways:
+// 1. "にあたる" as single particle (助詞/格助詞/連語) when followed by noun or at end
+// 2. "に" + "あたる" verb when at end or with ます
 pub fn niataru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for あたる verb
+    #[derive(Debug)]
+    struct AtaruVerbMatcher;
+    impl Matcher for AtaruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "あたる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Matcher for ます auxiliary (optional)
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match: Any token + に + あたる + optional ます
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AtaruVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
+}
+
+// Pattern: に当たる (compound particle tokenization)
+// Structures: Any token + にあたる (as single particle token)
+pub fn niataru_particle() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for にあたる as a single particle (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct NiataruParticleMatcher;
+    impl Matcher for NiataruParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "にあたる"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    // Match: Any token + にあたる (as single particle)
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NiataruParticleMatcher)),
+    ]
 }
 
 // Pattern: に限る

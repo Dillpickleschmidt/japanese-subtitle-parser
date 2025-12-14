@@ -3773,6 +3773,14 @@ declare_patterns! {
         jlpt: "n3",
     },
 
+    NiataruParticle {
+        name: "に当たる_particle",
+        matcher_fn: crate::matchers::n3::niataru_particle,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n3",
+    },
+
     Nikagiru {
         name: "に限る",
         matcher_fn: crate::matchers::n3::nikagiru,
