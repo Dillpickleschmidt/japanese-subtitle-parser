@@ -5277,3 +5277,81 @@ Polite form (少なくありません):
 - Optional() wrapper works well for conditional pattern elements
 - Custom matchers with Matcher trait provide precise token matching
 - Pattern priority 4 is appropriate for N2 construction patterns
+
+## Session 240 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (ているあいだに - while/during)
+**Tests added**: 3 (all passing)
+**Total tests**: 1589 (was 1586)
+
+### Pattern Implemented: ているあいだに (while/during)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: Expresses that event (B) is happening/happened within the timeframe of ongoing action (A). The (B) event does not need to be related to (A) in any specific way, but must occur somewhere within the duration of (A).
+
+**Structures tested**: 3 tests covering the main structure variant
+1. Verb[ている] + あいだに (basic): 数えているあいだに (while counting)
+2. Verb[ている] + あいだに (action during): 運んでいるあいだに (while carrying)
+3. Verb[ている] + あいだに (uncontrolled event): 行っているあいだに (while on a trip)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (lines 3360-3405)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (lines 7146-7190)
+- Pattern structure: Verb[連用形/連用タ接続] + て/で + いる + あいだ + に
+
+**Custom Matchers Created**:
+1. TeDeParticleMatcher - Matches て or で as conjunction particle
+2. AidaMatcher - Matches あいだ (interval/while) as noun
+3. NiParticleMatcher - Matches に as case particle
+
+**Pattern Ranges**:
+- Include full grammatical construction from verb through に particle
+- Correctly captures the entire ている form plus あいだに ending
+- Examples: 数えているあいだに (0-9), 運んでいるあいだに (3-12)
+
+**Test Quality**:
+- All sentences are realistic, subtitle-quality Japanese
+- Cover the main structure variant from grammar_points_data.json
+- Test different verb types (一段, 五段)
+- Test different contexts (basic action, action during, uncontrolled event)
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Verb conjugation handling: Used flexible_verb_form() to handle both 連用形 and 連用タ接続
+2. Te-form particle: Created custom matcher to distinguish て/で as conjunction particle (not other uses)
+3. Particle specificity: Created specific matchers for あいだ and に to avoid false positives
+
+### Session Statistics
+- **Session time**: Approximately 30 minutes
+- **Patterns completed this session**: 1
+- **Test success rate**: 3/3 (100%)
+- **Total passing tests**: 1589
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 patterns**: Many construction patterns still need implementation
+2. **Good candidates from feature_list.json**:
+   - ているところだ (in the middle of doing)
+   - てくれてありがとう (thank you for doing)
+   - てくれない・てもらえない (won't do for me)
+   - てすみません (sorry for doing)
+3. **Pattern focus**: Common N4 te-form extensions with practical usage
+
+### Environment Status
+- All 1589 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+- Successfully used concat() helper to compose multi-token patterns
+- Custom matchers with Matcher trait provide precise POS and surface matching
+- Pattern priority 2 is appropriate for N4 construction patterns (low priority, won't highlight in overlays)
+- flexible_verb_form() works well for matching both verb conjugation forms
