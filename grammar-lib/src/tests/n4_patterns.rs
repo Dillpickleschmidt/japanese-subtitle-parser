@@ -11530,3 +11530,110 @@ mod ma_prefix_tests {
     }
 }
 
+// ～のだろうか (I wonder if...) - N4
+// Pattern: Wondering/speculation with の nominalizer + だろう/でしょう + か
+// Data source: grammar_points_data.json["～のだろうか"]
+// Testing all structure variants
+mod nodarouka_tests {
+    use super::*;
+
+    // Test: Verb + のだろうか (standard[0])
+    #[test]
+    fn test_verb_no_darouka() {
+        let sentence = "私たちのチームは勝てるのだろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のだろうか");
+        assert_pattern_range(&patterns, "～のだろうか", 11, 16); // のだろうか
+    }
+
+    // Test: Verb + んだろうか (の → ん contraction)
+    #[test]
+    fn test_verb_n_darouka() {
+        let sentence = "彼女は本当に彼氏が欲しいんだろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のだろうか");
+        assert_pattern_range(&patterns, "～のだろうか", 12, 17); // んだろうか
+    }
+
+    // Test: い-Adj + のだろうか (standard[1])
+    #[test]
+    fn test_i_adj_no_darouka() {
+        let sentence = "そんな高い鉛筆をトムが買うのだろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のだろうか");
+        assert_pattern_range(&patterns, "～のだろうか", 13, 18); // のだろうか
+    }
+
+    // Test: な-Adj + なのだろうか (standard[2])
+    #[test]
+    fn test_na_adj_nano_darouka() {
+        let sentence = "あの人は大丈夫なのだろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のだろうか");
+        assert_pattern_range(&patterns, "～のだろうか", 7, 13); // なのだろうか
+    }
+
+    // Test: Noun + なのだろうか (standard[3])
+    #[test]
+    fn test_noun_nano_darouka() {
+        let sentence = "あれは本当に食べ物なのだろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のだろうか");
+        assert_pattern_range(&patterns, "～のだろうか", 9, 15); // なのだろうか
+    }
+
+    // Test: Verb + のでしょうか (polite[0])
+    #[test]
+    fn test_verb_no_deshouka() {
+        let sentence = "そんな高い鉛筆をトムが買うのでしょうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のだろうか");
+        assert_pattern_range(&patterns, "～のだろうか", 13, 19); // のでしょうか
+    }
+
+    // Test: Noun + なのでしょうか (polite - from about section)
+    #[test]
+    fn test_noun_nano_deshouka() {
+        let sentence = "あの車はキムの車なのでしょうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のだろうか");
+        assert_pattern_range(&patterns, "～のだろうか", 8, 15); // なのでしょうか
+    }
+
+    // Test: Verb + だろうか (without の - mentioned as often omitted)
+    #[test]
+    fn test_verb_darouka_no_omitted() {
+        let sentence = "トムは私を誘うだろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のだろうか");
+        assert_pattern_range(&patterns, "～のだろうか", 7, 11); // だろうか
+    }
+
+    // Test: Noun + だろうか (without なの - mentioned as omitted)
+    #[test]
+    fn test_noun_darouka_nano_omitted() {
+        let sentence = "あの人は本当に弁護士だろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のだろうか");
+        assert_pattern_range(&patterns, "～のだろうか", 10, 14); // だろうか
+    }
+}
+

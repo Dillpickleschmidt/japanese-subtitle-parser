@@ -5057,9 +5057,76 @@ pub fn tekurenai_u30fb_temoraenai() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: ～のだろうか
+// Pattern: ～のだろうか (I wonder if...)
+// Structures: (の/ん/なの/なん) + だろうか/でしょうか
 pub fn uff5e_nodarouka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の or ん (nominalizer, 名詞/非自立/一般)
+    #[derive(Debug)]
+    struct NoNNominalizer;
+    impl Matcher for NoNNominalizer {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "の" || token.surface == "ん")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match な (助動詞, base='だ') - used for な-adj/noun + なの
+    #[derive(Debug)]
+    struct NaAuxiliary;
+    impl Matcher for NaAuxiliary {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match だろ or でしょ (auxiliary verb)
+    #[derive(Debug)]
+    struct DarouDeshouAux;
+    impl Matcher for DarouDeshouAux {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だろ" && token.base_form == "だ"
+                || token.surface == "でしょ" && token.base_form == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match う (auxiliary verb, 不変化型)
+    #[derive(Debug)]
+    struct UAuxiliary;
+    impl Matcher for UAuxiliary {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match か (question particle)
+    #[derive(Debug)]
+    struct KaParticle;
+    impl Matcher for KaParticle {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        // Optional な (for な-adj/noun)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaAuxiliary)))),
+        // Optional の/ん (nominalizer)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoNNominalizer)))),
+        // だろ or でしょ
+        TokenMatcher::Custom(Arc::new(DarouDeshouAux)),
+        // う
+        TokenMatcher::Custom(Arc::new(UAuxiliary)),
+        // か
+        TokenMatcher::Custom(Arc::new(KaParticle)),
+    ]
 }
 
 // Pattern: お～になる (honorific speech)
