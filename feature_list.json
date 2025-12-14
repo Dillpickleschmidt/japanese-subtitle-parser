@@ -6358,13 +6358,13 @@
   {
     "pattern_name": "ような気がする",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ような気（き）がする is a phrase that takes the base meaning of 気（き）がする 'to have a feeling that (A)', or 'to give off a vibe th... [5 std, 5 pol]",
     "priority": 3,
     "skip_reason": null

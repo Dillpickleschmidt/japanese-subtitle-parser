@@ -11631,3 +11631,101 @@ mod moshimo_nara_demo_tests {
         assert_pattern_range(&patterns, "もしも～なら・もしも～でも", 0, 11); // もしも彼がいたとしても
     }
 }
+
+// ========== ような気がする (have a feeling that) ==========
+// Pattern: ような気がする (have a feeling that / kinda feel like)
+// Data source: grammar_points_data.json["ような気がする"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + (ような) + 気がする
+//   standard[1]: い-Adjective + (ような) + 気がする
+//   standard[2]: Noun + (の + ような) + 気がする
+//   standard[3]: な-Adjective + (な/の + ような) + 気がする
+//   polite[0-3]: Same + します
+
+mod youna_ki_ga_suru_tests {
+    use super::*;
+
+    // Test: Verb + ような + 気がする
+    // Example from grammar data: "あの技はなんか簡単そう。俺でも出来るような気がする。"
+    // Structure: standard[0] - "Verb + (ような) + 気がする"
+    #[test]
+    fn test_verb_youna() {
+        let sentence = "俺でも出来るような気がする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ような気がする");
+        // Multiple matches possible due to wildcard, check that one of them has the expected range
+        let has_expected_range = patterns.iter().any(|p| {
+            p.pattern_name == "ような気がする" && p.start_char == 3 && p.end_char == 13
+        });
+        assert!(has_expected_range, "Expected pattern range [3-13] for '出来るような気がする' not found");
+    }
+
+    // Test: い-Adjective + ような + 気がする
+    // Example from grammar data: "そこへ一人で行くのは危ないような気がする。"
+    // Structure: standard[1] - "い-Adjective + (ような) + 気がする"
+    #[test]
+    fn test_i_adjective_youna() {
+        let sentence = "一人で行くのは危ないような気がする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ような気がする");
+        let has_expected_range = patterns.iter().any(|p| {
+            p.pattern_name == "ような気がする" && p.start_char == 7 && p.end_char == 17
+        });
+        assert!(has_expected_range, "Expected pattern range [7-17] for '危ないような気がする' not found");
+    }
+
+    // Test: な-Adjective + な + ような + 気がする
+    // Example from grammar data: "あいつと話した感じでは元気なような気がするけど…"
+    // Structure: standard[3] - "な-Adjective + (な/の + ような) + 気がする"
+    #[test]
+    fn test_na_adjective_youna() {
+        let sentence = "あいつと話した感じでは元気なような気がするけど";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ような気がする");
+        let has_expected_range = patterns.iter().any(|p| {
+            p.pattern_name == "ような気がする" && p.start_char == 11 && p.end_char == 21
+        });
+        assert!(has_expected_range, "Expected pattern range [11-21] for '元気なような気がする' not found");
+    }
+
+    // Test: Noun + の + ような + 気がする
+    // Example from grammar data: "前にいる人は警察のような気がする。"
+    // Structure: standard[2] - "Noun + (の + ような) + 気がする"
+    #[test]
+    fn test_noun_no_youna() {
+        let sentence = "前にいる人は警察のような気がする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ような気がする");
+        let has_expected_range = patterns.iter().any(|p| {
+            p.pattern_name == "ような気がする" && p.start_char == 6 && p.end_char == 16
+        });
+        assert!(has_expected_range, "Expected pattern range [6-16] for '警察のような気がする' not found");
+    }
+
+    // Note: Verb + 気がする (without ような) is handled by the separate "がする" pattern
+    // The "ような気がする" pattern specifically requires ような to be present
+
+    // Test: Polite form - Verb + ような + 気がします
+    // Structure: polite[0] - "Verb + (ような) + 気がします"
+    #[test]
+    fn test_polite_verb_youna() {
+        let sentence = "もう少しで完成できるような気がします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ような気がする");
+        let has_expected_range = patterns.iter().any(|p| {
+            p.pattern_name == "ような気がする" && p.start_char == 7 && p.end_char == 18
+        });
+        assert!(has_expected_range, "Expected pattern range [7-18] for 'できるような気がします' not found");
+    }
+}

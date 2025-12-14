@@ -4686,9 +4686,75 @@ pub fn marude_u2026_youda() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ような気がする
+// Pattern: ような気がする (have a feeling that / kinda feel like)
+// Structures: (Verb/Adj/Noun) + (ような) + 気がする/気がします
 pub fn younakigasuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match よう (auxiliary verb stem)
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Match な (auxiliary verb, base=だ)
+    #[derive(Debug)]
+    struct NaMatcher;
+    impl Matcher for NaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match 気 (dependent noun)
+    #[derive(Debug)]
+    struct KiMatcher;
+    impl Matcher for KiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "気"
+                && token.base_form == "気"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match が (particle)
+    #[derive(Debug)]
+    struct GaMatcher;
+    impl Matcher for GaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Pattern: [content] + よう + な + 気 + が + する
+    // The wildcard should stop before よう or 気
+    // Note: ような is required - "気がする" alone is matched by the separate "がする" pattern
+    vec![
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 20,
+            stop_conditions: vec![
+                TokenMatcher::Custom(Arc::new(YouMatcher)),
+                TokenMatcher::Custom(Arc::new(KiMatcher)),
+            ],
+        },
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Custom(Arc::new(NaMatcher)),
+        TokenMatcher::Custom(Arc::new(KiMatcher)),
+        TokenMatcher::Custom(Arc::new(GaMatcher)),
+        TokenMatcher::specific_verb("する"),
+    ]
 }
 
 // Pattern: とても～ない (not at all)
