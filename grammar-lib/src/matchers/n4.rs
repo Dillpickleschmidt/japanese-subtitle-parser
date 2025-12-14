@@ -4602,9 +4602,44 @@ pub fn tatokoroda() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ているところだ
+// Pattern: ているところだ (in the middle of doing)
+// Structures: Verb[ている] + ところ + だ/です
 pub fn teirutokoroda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for ところ as 名詞/非自立/副詞可能
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl super::Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for だ or です as auxiliary
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl super::Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: Verb[ている] + ところ + だ/です
+    // We need to match the ている pattern first, then ところ, then optional だ/です
+    use super::concat;
+
+    // Get the ている pattern from N5
+    let teiru_pattern = crate::matchers::n5::teiru_u2460();
+
+    concat(vec![
+        teiru_pattern,
+        vec![TokenMatcher::Custom(Arc::new(TokoroMatcher))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaDesuMatcher))))],
+    ])
 }
 
 // Pattern: と～と、どちらが 

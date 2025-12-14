@@ -7188,3 +7188,50 @@ mod te_iru_aida_ni_tests {
         assert_pattern_range(&patterns, "ているあいだに", 3, 12); // 行っているあいだに
     }
 }
+
+// Pattern: ているところだ (in the middle of doing)
+// Data source: grammar_points_data.json["ているところだ"]
+// Structure: Verb[ている] + ところ + だ/です
+mod te_iru_tokoro_da_tests {
+    use super::*;
+
+    #[test]
+    fn test_standard_form() {
+        let sentence = "仕事をしているところだから後で電話するね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ているところだ");
+        assert_pattern_range(&patterns, "ているところだ", 3, 11); // しているところだ
+    }
+
+    #[test]
+    fn test_polite_form() {
+        let sentence = "今、資料を準備しているところです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ているところだ");
+        assert_pattern_range(&patterns, "ているところだ", 5, 16); // 準備しているところです
+    }
+
+    #[test]
+    fn test_past_form_datta() {
+        let sentence = "映画を見ているところだったから電話に出れなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ているところだ");
+        assert_pattern_range(&patterns, "ているところだ", 3, 13); // 見ているところだった
+    }
+
+    #[test]
+    fn test_without_copula() {
+        let sentence = "昨日は近所で泥棒が警察から逃げているところを見た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ているところだ");
+        assert_pattern_range(&patterns, "ているところだ", 13, 21); // 逃げているところ
+    }
+}
