@@ -11047,3 +11047,94 @@ mod marude_youda_tests {
         assert_pattern_range(&patterns, "まるで…ようだ", 6, 20); // まるで天使が歌っているようだ
     }
 }
+
+// Pattern: ～かというと ② (if I were to say [question word])
+// Data source: grammar_points_data.json["～かというと ②"]
+// Testing all structure variants
+mod katoiuto_u2461_tests {
+    use super::*;
+
+    #[test]
+    fn test_nande_katoiuto_standard() {
+        // Question Word + Phrase + かというと
+        // Example from grammar data
+        let sentence = "何で日本に引っ越して来たかというと、私の家族が日本に住んでいるからです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ②");
+        assert_pattern_range(&patterns, "～かというと ②", 0, 17); // 何で日本に引っ越して来たかというと
+    }
+
+    #[test]
+    fn test_dare_katoiuto_standard() {
+        // Question Word + Phrase + かというと
+        // Example from grammar data
+        let sentence = "誰と旅行に行きたいかというと、大親友と行きたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ②");
+        assert_pattern_range(&patterns, "～かというと ②", 0, 14); // 誰と旅行に行きたいかというと
+    }
+
+    #[test]
+    fn test_dono_katoiuto_standard() {
+        // Question Word + Phrase + かというと
+        // Example from grammar data
+        let sentence = "どの街に住みたいかというと、両親が住んでいる街に住みたいと思っています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ②");
+        assert_pattern_range(&patterns, "～かというと ②", 0, 13); // どの街に住みたいかというと
+    }
+
+    #[test]
+    fn test_nande_katoieba_variant() {
+        // Question Word + Phrase + かといえば (variant with ば)
+        // Example from grammar data
+        let sentence = "何でこんな事になったかといえば、私がきちんと確認をしなかったからです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ②");
+        assert_pattern_range(&patterns, "～かというと ②", 0, 15); // 何でこんな事になったかといえば
+    }
+
+    #[test]
+    fn test_dare_katoitara_variant() {
+        // Question Word + Phrase + かといったら (variant with たら)
+        // Example from grammar data
+        let sentence = "誰が一番上手かといったらＢ組のタカハシさんです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ②");
+        assert_pattern_range(&patterns, "～かというと ②", 0, 12); // 誰が一番上手かといったら
+    }
+
+    #[test]
+    fn test_nani_katoiuto_no_variant() {
+        // Question Word + の + かというと (with の particle)
+        // Testing optional の before か
+        let sentence = "何が一番好きなのかというと、やっぱりラーメンが好きです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ②");
+        assert_pattern_range(&patterns, "～かというと ②", 0, 13); // 何が一番好きなのかというと
+    }
+
+    #[test]
+    fn test_doko_katoiuto_standard() {
+        // Question Word + Phrase + かというと
+        // Testing どこ (where) question word
+        let sentence = "どこに行きたいかというと、北海道に行きたいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～かというと ②");
+        assert_pattern_range(&patterns, "～かというと ②", 0, 12); // どこに行きたいかというと
+    }
+}

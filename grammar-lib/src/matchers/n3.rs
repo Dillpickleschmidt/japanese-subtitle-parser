@@ -5255,9 +5255,98 @@ pub fn uff5e_katoiuto_u2460() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～かというと ②
+// Pattern: ～かというと ② (if I were to say [question word])
+// Structures: Question Word + Phrase + (の/ん) + か + と + いう + と/ば/たら
+// Question words: 何, 誰, どこ, どの, いつ, どれ, どちら, 何で
 pub fn uff5e_katoiuto_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Question words to match (who, what, where, which, when, how)
+    const QUESTION_WORDS: &[&str] = &[
+        "何", "誰", "どこ", "どの", "いつ", "どれ", "どちら", "何で", "なに", "だれ", "いくつ",
+    ];
+
+    // Matches question words
+    #[derive(Debug)]
+    struct QuestionWordMatcher;
+    impl Matcher for QuestionWordMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            QUESTION_WORDS.contains(&token.surface.as_str())
+                || QUESTION_WORDS.contains(&token.base_form.as_str())
+        }
+    }
+
+    // Matches か as question particle
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token
+                    .pos
+                    .get(1)
+                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    // Matches と as quotation particle
+    #[derive(Debug)]
+    struct ToQuoteMatcher;
+    impl Matcher for ToQuoteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Matches いう/言う verb (any conjugation form)
+    #[derive(Debug)]
+    struct IuVerbMatcher;
+    impl Matcher for IuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "いう" || token.base_form == "言う")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Matches と/ば as conditional/connective particles OR たら as auxiliary
+    #[derive(Debug)]
+    struct ConditionalEndMatcher;
+    impl Matcher for ConditionalEndMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Matches と or ば as 接続助詞
+            if (token.surface == "と" || token.surface == "ば")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            // Matches たら as auxiliary in 仮定形
+            if token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(QuestionWordMatcher)), // Question word
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 20,
+            stop_conditions: vec![],
+        }, // Phrase between question word and か
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ToQuoteMatcher)),
+        TokenMatcher::Custom(Arc::new(IuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ConditionalEndMatcher)),
+    ]
 }
 
 // Pattern: で言うと (if said with, speaking of)
