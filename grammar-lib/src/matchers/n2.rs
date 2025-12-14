@@ -1021,9 +1021,53 @@ pub fn karasuruto_u30fb_karasureba() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: からして
+// Pattern: からして (based on, judging from)
+// Structures: Noun + から + し + て
 pub fn karashite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match から as case particle
+    #[derive(Debug)]
+    struct KaraMatcher;
+    impl Matcher for KaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.base_form == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match し as the 連用形 of する
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match て as connective particle
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.base_form == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun
+        TokenMatcher::Custom(Arc::new(KaraMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiMatcher)),
+        TokenMatcher::Custom(Arc::new(TeMatcher)),
+    ]
 }
 
 // Pattern: からといって

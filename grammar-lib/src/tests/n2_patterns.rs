@@ -614,3 +614,43 @@ mod karaniha_tests {
         assert_pattern_range(&patterns, "からには", 3, 9); // あるからには
     }
 }
+
+// Pattern: からして (based on, judging from)
+// Data source: grammar_points_data.json["からして"]
+// Testing: structure.standard[0] - "Noun + からして"
+//
+// からして tokenizes as: から (particle) + し (する verb) + て (particle)
+// Pattern includes noun + から + し + て
+mod karashite_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_karashite_personality() {
+        let sentence = "彼の性格からして、一緒に住むのは無理だろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からして");
+        assert_pattern_range(&patterns, "からして", 2, 8); // 性格からして
+    }
+
+    #[test]
+    fn test_noun_karashite_price() {
+        let sentence = "値段からして、このお店は高級だと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からして");
+        assert_pattern_range(&patterns, "からして", 0, 6); // 値段からして
+    }
+
+    #[test]
+    fn test_noun_karashite_name() {
+        let sentence = "名前からしてつまらなそうなゲームだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からして");
+        assert_pattern_range(&patterns, "からして", 0, 6); // 名前からして
+    }
+}
