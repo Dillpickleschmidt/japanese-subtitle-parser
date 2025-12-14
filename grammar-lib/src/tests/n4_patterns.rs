@@ -11207,3 +11207,45 @@ mod potential_verb_tests {
     }
 }
 
+// Pattern: 以上 ① (at least / more than / equal to or more than)
+// Data source: grammar_points_data.json["以上 ①"]
+// Testing structures:
+//   - standard[0]: Noun + Amount + 以上（いじょう）
+//   - standard[1]: それ(1) + 以上（いじょう） (meaning "that's all")
+mod ijou_1_tests {
+    use super::*;
+
+    // Test: structure.standard[0] - Counter + 以上 (age)
+    #[test]
+    fn test_age_amount_or_more() {
+        let sentence = "七十歳以上の人は運転をしない方がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上 ①");
+        assert_pattern_range(&patterns, "以上 ①", 2, 5); // 歳以上
+    }
+
+    // Test: structure.standard[0] - Counter + 以上 (people count)
+    #[test]
+    fn test_people_amount_or_more() {
+        let sentence = "コンサートには５００人以上のファンが集まった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上 ①");
+        assert_pattern_range(&patterns, "以上 ①", 10, 13); // 人以上
+    }
+
+    // Test: Standalone 以上 meaning "that's all"
+    #[test]
+    fn test_thats_all() {
+        let sentence = "ビッグマックのセットを下さい。以上です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上 ①");
+        assert_pattern_range(&patterns, "以上 ①", 15, 17); // 以上
+    }
+}
+

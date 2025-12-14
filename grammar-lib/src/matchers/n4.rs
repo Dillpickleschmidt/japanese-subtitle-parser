@@ -3198,9 +3198,46 @@ pub fn kaku() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 以上 ①
+// Pattern: 以上 ① (at least / more than / equal to or more than / that's all)
+// Structures: Noun/Amount + 以上, それ/これ/あれ + 以上, standalone 以上
 pub fn ijou_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 以上 as 名詞/非自立/副詞可能
+    #[derive(Debug)]
+    struct IjouMatcher;
+    impl super::Matcher for IjouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "以上"
+                && token.base_form == "以上"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match numbers, counters, or demonstratives (名詞/数, 名詞/接尾/助数詞, or demonstratives)
+    #[derive(Debug)]
+    struct NumberCounterOrDemonstrativeMatcher;
+    impl super::Matcher for NumberCounterOrDemonstrativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match demonstratives (それ, これ, あれ)
+            let is_demonstrative = ["それ", "これ", "あれ"].contains(&token.surface.as_str())
+                && token.pos.first().is_some_and(|pos| pos == "名詞");
+
+            // Match numbers or counters
+            let is_number_or_counter = token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "数")
+                    || (token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                        && token.pos.get(2).is_some_and(|pos| pos == "助数詞")));
+
+            is_demonstrative || is_number_or_counter
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberCounterOrDemonstrativeMatcher)))),
+        TokenMatcher::Custom(Arc::new(IjouMatcher)),
+    ]
 }
 
 // Pattern: いか (equal to or less than / the following)
