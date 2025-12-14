@@ -112,9 +112,24 @@ pub fn ikasu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: おおよそ
+// Pattern: おおよそ (approximately, roughly)
+// Structure: おおよそ/およそ + (Noun/Number)
 pub fn ooyoso() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct OoyosoMatcher;
+    impl super::Matcher for OoyosoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match both おおよそ (副詞) and およそ (接頭詞/副詞)
+            (token.surface == "おおよそ" && token.pos.first().is_some_and(|pos| pos == "副詞"))
+                || (token.surface == "およそ"
+                    && (token.pos.first().is_some_and(|pos| pos == "接頭詞")
+                        || token.pos.first().is_some_and(|pos| pos == "副詞")))
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(OoyosoMatcher))]
 }
 
 // Pattern: まい

@@ -179,3 +179,36 @@ mod iwayuru_tests {
         assert_pattern_range(&patterns, "いわゆる", 3, 7); // いわゆる
     }
 }
+
+// Pattern: おおよそ (approximately, roughly)
+// Data source: grammar_points_data.json["おおよそ"]
+// Testing: structure.standard[0] - "おおよそ + Noun"
+// Testing: structure.standard[1] - "およそ + Noun"
+//
+// Structure variants:
+//   - standard[0]: おおよそ + Noun
+//   - standard[1]: およそ + Noun (alternative form)
+
+mod ooyoso_tests {
+    use super::*;
+
+    #[test]
+    fn test_ooyoso_full_form() {
+        let sentence = "私はおおよそ理解したけど、周りの子達はポカーンとした表情で先生を見ていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おおよそ");
+        assert_pattern_range(&patterns, "おおよそ", 2, 6); // おおよそ
+    }
+
+    #[test]
+    fn test_oyoso_abbreviated_form() {
+        let sentence = "この物件から最寄りの駅までは徒歩でおよそ１０分かかります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "おおよそ");
+        assert_pattern_range(&patterns, "おおよそ", 17, 20); // およそ
+    }
+}
