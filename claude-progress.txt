@@ -1,3 +1,162 @@
+## Session 262 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N4 pattern
+**Patterns completed**: 1 (なさる - honorific verb)
+**Tests added**: 8 (all passing)
+**Total tests**: 1699 (was 1691)
+
+### Pattern Implemented: なさる (honorific verb)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 2
+
+**Pattern**: なさる is an honorific language verb which acknowledges and respects the actions of another (never the speaker). It is a direct replacement for する (to do), used to show respect for the actions of others. Like お～になる, なさる has exactly the same meaning as する but with an honorific tone. It conjugates as a special-class 五段・ラ行特殊 verb.
+
+**Structures tested**: 8 tests covering all major conjugation variants
+1. する → なさる (basic standard): 仕事をなさる (to work - honorific)
+2. Noun + する → Noun + なさる (compound): 勉強なさる (to study - honorific)
+3. Verb[た] → なさった (past): なさった (did - honorific)
+4. Verb[ない] → なさらない (negative): なさらない (doesn't do - honorific)
+5. Verb[ます] → なさいます (polite): なさいます (does - polite honorific)
+6. Verb[ました] → なさいました (polite past): なさいました (did - polite honorific)
+7. Verb[ません] → なさいません (polite negative): なさいません (doesn't do - polite honorific)
+8. Verb[ませんでした] → なさいませんでした (polite negative past): なさいませんでした (didn't do - polite honorific)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (nasaru, lines 4115-4130)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (nasaru_tests, lines 8528-8629)
+- Pattern: grammar-lib/src/patterns.rs (Nasaru)
+
+**Tokenization patterns**:
+
+Basic form (なさる):
+```
+surface='なさる' base='なさる' pos=動詞/自立, 五段・ラ行特殊, 基本形
+```
+
+Polite form (なさいます):
+```
+surface='なさい' base='なさる' pos=動詞/自立, 五段・ラ行特殊, 連用形
++ surface='ます' base='ます' pos=助動詞, 特殊・マス
+```
+
+Past tense (なさった):
+```
+surface='なさっ' base='なさる' pos=動詞/自立, 五段・ラ行特殊, 連用タ接続
++ surface='た' base='た' pos=助動詞, 特殊・タ
+```
+
+Negative (なさらない):
+```
+surface='なさら' base='なさる' pos=動詞/自立, 五段・ラ行特殊, 未然形
++ surface='ない' base='ない' pos=助動詞, 特殊・ナイ
+```
+
+**Key implementation points**:
+1. Custom NasaruMatcher checks:
+   - base_form == "なさる"
+   - pos == 動詞/自立
+   - features[4] == "五段・ラ行特殊" (special godan ra-row verb)
+2. Pattern automatically extends to include auxiliary verbs (ます, た, ない)
+3. Pattern range: just the verb token (なさる/なさった/なさいます/etc.)
+4. Works with any conjugation: basic, past, negative, polite, combinations
+5. Priority 2 (standard honorific verb)
+
+**Test Quality**:
+- All sentences are realistic, from grammar_points_data.json examples
+- Cover all major conjugation forms: basic, past, negative, polite variants
+- Test both standalone usage and noun+verb compounds
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+
+**Challenges Solved**:
+1. Understanding that なさる is a verb (動詞/自立), not a suffix
+2. Recognizing the special conjugation type: 五段・ラ行特殊 (same as なさい)
+3. Pattern works across all conjugations because it matches on base_form
+4. Polite forms have special conjugation: なさいます (not なさります)
+
+**Tokenization Discovery**:
+- なさる is tokenized as 動詞/自立 (independent verb) with base_form="なさる"
+- Uses special conjugation type 五段・ラ行特殊 (special godan ra-row verb)
+- This is the same conjugation type as くださる and いらっしゃる
+- Special polite conjugation: る → い + ます (なさいます, not なさります)
+- Standard godan conjugations: なさる/なさらない/なさった
+- The pattern matcher automatically extends to include auxiliary verbs
+
+**Pattern Relationship with Other Patterns**:
+- なさる is the base honorific verb form (dictionary form)
+- なさい is the imperative/command form of なさる (implemented in previous session)
+- Related honorific verbs with 五段・ラ行特殊 conjugation:
+  - くださる: honorific form of くれる (to give)
+  - いらっしゃる: honorific form of いる/行く/来る (to be/go/come)
+  - おっしゃる: honorific form of 言う (to say)
+- All share the special polite conjugation: る → い + ます
+
+**Usage distinction**:
+- なさる: Honorific verb respecting others' actions (never speaker's)
+- する: Plain form for any actions
+- お～になる: Alternative honorific form (more modern, less old-fashioned)
+- なさい: Imperative/command form of なさる (polite command)
+
+**Special conjugation note**:
+The 五段・ラ行特殊 verbs have a unique polite conjugation:
+- Regular 五段 verb: 書く → 書きます (dictionary form → stem + ます)
+- なさる: なさる → なさいます (NOT なさります)
+- This is because the 連用形 for these special verbs is い-form instead of り-form
+
+### Session Statistics
+- **Session time**: Approximately 40 minutes
+- **Patterns completed this session**: 1 (なさる)
+- **Test success rate**: 8/8 (100%)
+- **Total passing tests**: 1699 (up from 1691)
+- **Files modified**: 3 (matchers/n4.rs, tests/n4_patterns.rs, feature_list.json)
+
+### Next Session Recommendations
+1. **Continue with N4 conditional patterns**:
+   - なら (conditional "if")
+   - Related to other conditional forms (たら, ば, と)
+2. **Or continue with N4 counter patterns**:
+   - なん + counter + か (uncertain number)
+3. **Or continue with N4 frequency patterns**:
+   - に (Frequency) - frequency marking particle
+4. **Pattern focus**: Conditionals or counters/frequency markers
+
+### Environment Status
+- All 1699 tests passing
+- No regressions
+- Clean git state (all changes committed)
+- feature_list.json updated
+- Ready for next pattern
+
+### Technical Notes
+
+**Honorific Language (敬語) System**:
+Japanese has three levels of honorific language:
+1. **Respectful language (尊敬語)**: Honors the actions of others
+   - なさる (for する), いらっしゃる (for いる/行く/来る)
+2. **Humble language (謙譲語)**: Lowers speaker's actions
+   - いたす (for する), 申す (for 言う)
+3. **Polite language (丁寧語)**: Polite speech register
+   - です/ます endings
+
+**五段・ラ行特殊 Verbs**:
+This special conjugation class includes honorific verbs:
+- なさる (to do - honorific)
+- くださる (to give - honorific)
+- いらっしゃる (to be/go/come - honorific)
+- おっしゃる (to say - honorific)
+
+All have the special い-form polite conjugation instead of り-form.
+
+**Comparison: なさる vs なさい**:
+- なさる: Full verb, can be conjugated in all forms
+- なさい: Imperative form only (command)
+- Both use base_form="なさる" but different conjugation forms
+- なさい specifically uses features[5]="命令ｉ" (imperative i-form)
+- なさる uses various forms: 基本形, 連用形, 未然形, etc.
+
 ## Session 261 - 2025-12-14
 
 ### ✅ Session Summary
