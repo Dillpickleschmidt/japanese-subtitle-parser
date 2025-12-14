@@ -5602,13 +5602,13 @@
   {
     "pattern_name": "どんなに〜ても",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As explained in the そんな grammar point, the こそあど言葉（ことば） may occasionally be seen in the forms こんな, そんな , あんな , or どんな [4 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

@@ -1974,9 +1974,88 @@ pub fn nikurabete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: どんなに〜ても
+// Pattern: どんなに〜ても (no matter how)
+// Structures: どんなに + Verb/Adj[ても] OR どんなに + Noun/な-Adj + でも
 pub fn donnani_u301c_temo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match どんなに (adverb) OR どんな (adnominal without に)
+    #[derive(Debug)]
+    struct DonnaniMatcher;
+    impl Matcher for DonnaniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "どんなに" && token.base_form == "どんなに"
+                && token.pos.first().is_some_and(|p| p == "副詞"))
+            || (token.surface == "どんな" && token.base_form == "どんな"
+                && token.pos.first().is_some_and(|p| p == "連体詞"))
+        }
+    }
+
+    // Match Verb/Adjective in conjunctive form, OR Noun/な-Adjective
+    #[derive(Debug)]
+    struct PreTemoMatcher;
+    impl Matcher for PreTemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb in 連用タ接続 or 連用形
+            if token.pos.first().is_some_and(|p| p == "動詞") {
+                return token.features.get(5).is_some_and(|f|
+                    f == "連用タ接続" || f == "連用形");
+            }
+            // い-Adjective in 連用テ接続
+            if token.pos.first().is_some_and(|p| p == "形容詞") {
+                return token.features.get(5).is_some_and(|f| f == "連用テ接続");
+            }
+            // Noun or な-Adjective (形容動詞語幹)
+            if token.pos.first().is_some_and(|p| p == "名詞") {
+                return true;
+            }
+            // 助動詞 like たい in 連用テ接続 (for たくても)
+            if token.pos.first().is_some_and(|p| p == "助動詞") {
+                return token.features.get(5).is_some_and(|f| f == "連用テ接続");
+            }
+            false
+        }
+    }
+
+    // Match ても (て + も) OR でも (as single token OR で + も)
+    #[derive(Debug)]
+    struct TemoOrDemoMatcher;
+    impl Matcher for TemoOrDemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // て particle (before も)
+            (token.surface == "て" && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞"))
+            // OR で particle (before も)
+            || (token.surface == "で" && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞"))
+            // OR でも as single token (副助詞)
+            || (token.surface == "でも" && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞"))
+        }
+    }
+
+    // Match も particle (only if not already matched as でも)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DonnaniMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 3,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(PreTemoMatcher)),
+        TokenMatcher::Custom(Arc::new(TemoOrDemoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+    ]
 }
 
 // Pattern: いくら〜でも
