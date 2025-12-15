@@ -2674,3 +2674,78 @@ mod yorihokanai_tests {
         assert_pattern_range(&patterns, "よりほかない", 17, 27); // 探すよりほかにはない
     }
 }
+
+// Pattern: に相違ない (without a doubt, no mistaking)
+// Data source: grammar_points_data.json["に相違ない"]
+// Testing: structure.standard[] - Various forms + に相違ない
+//
+// Structure variants to test:
+//   - Verb + に相違ない
+//   - い-Adjective + に相違ない
+//   - な-Adjective + に相違ない
+//   - Noun + に相違ない
+//   - から + に相違ない (emphasizing cause)
+
+mod nisouinai_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_nisouinai() {
+        // Example: いい大学に行けるに相違ない
+        // (There's no doubt that he can go to a good university)
+        let sentence = "一生懸命勉強をし続けたので、いい大学に行けるに相違ない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に相違ない");
+        assert_pattern_range(&patterns, "に相違ない", 19, 27); // 行けるに相違ない
+    }
+
+    #[test]
+    fn test_i_adj_nisouinai() {
+        // Example: 美味しいに相違ない
+        // (There is no doubt that it will be delicious)
+        let sentence = "このコースは世界的に有名なシェフによって作られたものなので美味しいに相違ない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に相違ない");
+        assert_pattern_range(&patterns, "に相違ない", 29, 38); // 美味しいに相違ない
+    }
+
+    #[test]
+    fn test_na_adj_nisouinai() {
+        // Example: 便利に相違ない
+        // (There is no doubt that it is convenient)
+        let sentence = "この街には電車が３分に１本来るので便利に相違ない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に相違ない");
+        assert_pattern_range(&patterns, "に相違ない", 17, 24); // 便利に相違ない
+    }
+
+    #[test]
+    fn test_noun_nisouinai() {
+        // Example: あの人に相違ない
+        // (There is no doubt that that person is the culprit)
+        let sentence = "あの事件の犯人はあの人に相違ない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に相違ない");
+        assert_pattern_range(&patterns, "に相違ない", 10, 16); // 人に相違ない
+    }
+
+    #[test]
+    fn test_kara_nisouinai() {
+        // Example: 嘘をついているからに相違ない
+        // (There is no doubt that he's being restless because he's lying)
+        let sentence = "彼がキョロキョロしているのは、嘘をついているからに相違ない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に相違ない");
+        assert_pattern_range(&patterns, "に相違ない", 22, 29); // からに相違ない
+    }
+}

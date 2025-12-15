@@ -421,9 +421,48 @@ pub fn ichiou_u2461() -> Vec<TokenMatcher> {
     vec![ichiou_matcher()]
 }
 
-// Pattern: に相違ない
+// Pattern: に相違ない (without a doubt, no mistaking)
+// Structure: Verb/Adj/Noun/(から) + に + 相違 + ない
 pub fn nisouinai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "副詞化"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct SouiMatcher;
+    impl Matcher for SouiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "相違"
+                && token.base_form == "相違"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiAdjMatcher;
+    impl Matcher for NaiAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ない" && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Any)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(SouiMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAdjMatcher)),
+    ]
 }
 
 // Pattern: 万が一 (in the unlikely event, just in case)
