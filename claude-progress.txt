@@ -1,10 +1,10 @@
 ## Session 458 - 2025-12-15
 
-### Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented としても pattern (N2)
-**Patterns completed**: 1 (N2, priority 4)
-**Tests added**: 4 new tests (all passing with range assertions)
-**Total tests**: 3024 passing, 1 ignored (was 3020 before session, net +4 tests)
+### Session Summary - IN PROGRESS
+**Status**: IN PROGRESS - Successfully implemented 2 N2 patterns (としても, それにしても)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 7 new tests (4 + 3, all passing with range assertions)
+**Total tests**: 3027 passing, 1 ignored (was 3020 before session, net +7 tests)
 
 **Session highlights**:
 - Implemented としても (even if we assume that) - N2 pattern
@@ -90,7 +90,54 @@
 - には - emphatic には
 - 思うように - as one wishes/thinks
 
-**Session outcome**: Successfully completed 1 N2 pattern with full coverage! Total of 4 new tests added, all passing, no regressions. Pattern uses compound particle として + binding particle も. Clean implementation following test-first workflow.
+---
+
+### ✅ Pattern Implemented: それにしても (even so, nevertheless)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: それにしても is used as an extension of にしても ('even though', 'even if'). Translated as "nevertheless" or "even so". Points out that despite what was said previously, the speaker's primary opinion is the following statement. Highlights that while the speaker accepts/acknowledges the previous statement as true, that is not all there is to be considered.
+
+**Structures tested**: 1 structure variant, 3 test contexts (all from grammar_points_data.json)
+1. After comma: それにしても (chars 15-21) - conjunction after が particle
+2. Sentence beginning: それにしても (chars 17-23) - conjunction starting new sentence
+3. After period: それにしても (chars 26-32) - conjunction after completed thought
+
+**Implementation details**:
+- Matcher structure: Single token matcher for それにしても as 接続詞 (conjunction)
+- Custom matcher created:
+  - SorenishitemoMatcher: matches それにしても as conjunction (接続詞)
+- Very simple pattern - single token, no surrounding context needed
+- Pattern appears at sentence beginnings or after commas/periods
+- Priority defaulted to 4 (matches feature_list.json, though was originally set to 1 in patterns.rs)
+
+**Test count**: 3 tests (all passing)
+- test_after_comma: それにしても after が particle and comma
+- test_sentence_beginning: それにしても at beginning after period
+- test_comparison_context: それにしても expressing exceeded expectations
+
+**Tokenization observations**:
+- それにしても: Single token, 接続詞 (conjunction)
+- NOT split into individual particles (それ + に + し + て + も)
+- Appears standalone - no required context before or after
+- Pattern confidence: 3.0 (base confidence, simple pattern)
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented sorenishitemo() function with 1 custom matcher
+- grammar-lib/src/tests/n2_patterns.rs: Added sorenishitemo_tests module with 3 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Used when speaker accepts situation (A) but statement (B) highlights something beyond expectation
+- Primarily appears at beginning of sentences or directly after a comma
+- Emphasizes contrast between acceptance and additional consideration
+- Very straightforward to implement - just match the conjunction token
+
+---
+
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 7 new tests added (4 + 3), all passing, no regressions. Both patterns use として compound particle - one with も binding particle, one as standalone conjunction それにしても. Clean implementation following test-first workflow.
 
 ---
 
