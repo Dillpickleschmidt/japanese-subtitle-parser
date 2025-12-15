@@ -8499,9 +8499,41 @@ pub fn kanarazushimo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(KanarazushimoMatcher))]
 }
 
-// Pattern: 連用形
+// Pattern: 連用形 (Conjunctive Form - Formal Clause Connector)
+// Structures: Verb[stem] + 、+ Phrase | い-Adjective[く] + 、+ Phrase
 pub fn renyoukei() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Matcher for verb in 連用形 OR い-Adjective in 連用テ接続
+    #[derive(Debug)]
+    struct RenyoukeiMatcher;
+    impl Matcher for RenyoukeiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in 連用形 (stem form)
+            let is_verb_renyoukei = token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形");
+
+            // Match い-Adjective in 連用テ接続 (く-form)
+            let is_iadj_ku = token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続");
+
+            is_verb_renyoukei || is_iadj_ku
+        }
+    }
+
+    // Matcher for comma (、)
+    #[derive(Debug)]
+    struct CommaMatcher;
+    impl Matcher for CommaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "、"
+                && token.pos.first().is_some_and(|pos| pos == "記号")
+                && token.pos.get(1).is_some_and(|pos| pos == "読点")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(RenyoukeiMatcher)),
+        TokenMatcher::Custom(Arc::new(CommaMatcher)),
+    ]
 }
 
 // Pattern: 向き (suitable for / facing toward)

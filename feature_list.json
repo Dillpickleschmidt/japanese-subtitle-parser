@@ -6764,13 +6764,13 @@
   {
     "pattern_name": "連用形",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In Japanese, the conjunctive form is often called 'the ます form', or 'the conjunctive form' [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

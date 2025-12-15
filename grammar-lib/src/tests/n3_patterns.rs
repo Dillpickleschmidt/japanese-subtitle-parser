@@ -13935,3 +13935,89 @@ mod kawarini_tests {
         assert_pattern_range(&patterns, "代わりに", 1, 6); // の代わりに
     }
 }
+
+// ========== 連用形 (Conjunctive Form - Formal Clause Connector) ==========
+// Pattern: 連用形 (conjunctive form - formal clause connection)
+// Data source: grammar_points_data.json["連用形"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + Phrase
+//   standard[1]: い-Adjective[て] + Phrase
+//
+// Note: This pattern is used in formal writing to connect clauses with a comma
+// instead of using て-form. The verb stem (連用形) or adjective く-form is
+// followed by a comma (、) and then continues with another clause.
+
+mod renyoukei_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + 、+ Phrase (verb stem connecting clauses)
+    // Example from grammar data: 爆発を**し**、海に墜落した (exploded and crashed)
+    #[test]
+    fn test_verb_stem_suru() {
+        let sentence = "飛行機のエンジンが爆発をし、海に墜落した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "連用形");
+        assert_pattern_range(&patterns, "連用形", 12, 14); // し、
+    }
+
+    // Testing: standard[0] - Verb[stem] + 、+ Phrase (different verb)
+    // Example from grammar data: 朝食を食**べ**、出かける準備をしてください
+    #[test]
+    fn test_verb_stem_taberu() {
+        let sentence = "朝食を食べ、出かける準備をしてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "連用形");
+        assert_pattern_range(&patterns, "連用形", 3, 6); // 食べ、
+    }
+
+    // Testing: standard[0] - Verb[stem] + 、+ Phrase (another verb type)
+    #[test]
+    fn test_verb_stem_kuru() {
+        let sentence = "東京から友達が来、一緒に観光した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "連用形");
+        assert_pattern_range(&patterns, "連用形", 7, 9); // 来、
+    }
+
+    // Testing: standard[1] - い-Adjective[く] + 、+ Phrase
+    // Example from grammar data: 北海道は寒**く**、景色が綺麗
+    #[test]
+    fn test_i_adjective_ku_form() {
+        let sentence = "北海道は寒く、景色が綺麗だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "連用形");
+        assert_pattern_range(&patterns, "連用形", 4, 7); // 寒く、
+    }
+
+    // Testing: standard[1] - い-Adjective[く] + 、+ Phrase (different adjective)
+    // Example from grammar data: 学校は楽し**く**、色々学べるので
+    #[test]
+    fn test_i_adjective_ku_form_tanoshii() {
+        let sentence = "学校は楽しく、色々学べるので好きです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "連用形");
+        assert_pattern_range(&patterns, "連用形", 3, 7); // 楽しく、
+    }
+
+    // Testing: standard[1] - い-Adjective[く] + 、+ Phrase (negative form)
+    #[test]
+    fn test_i_adjective_ku_form_negative() {
+        let sentence = "この部屋は広く、明るくない場所もある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "連用形");
+        assert_pattern_range(&patterns, "連用形", 5, 8); // 広く、
+    }
+}
