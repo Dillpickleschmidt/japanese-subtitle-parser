@@ -4698,9 +4698,35 @@ pub fn ittan() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(IttanMatcher))]
 }
 
-// Pattern: はもとより
+// Pattern: はもとより (not only... but also, let alone)
+// Structures: Noun/の/こと + は + もとより
 pub fn hamotoyori() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct WaKakariMatcher;
+    impl Matcher for WaKakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MotoyoriMatcher;
+    impl Matcher for MotoyoriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もとより"
+                && token.base_form == "もとより"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(WaKakariMatcher)),
+        TokenMatcher::Custom(Arc::new(MotoyoriMatcher)),
+    ]
 }
 
 // Pattern: そうにない

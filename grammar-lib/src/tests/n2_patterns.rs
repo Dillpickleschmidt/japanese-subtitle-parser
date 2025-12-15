@@ -8301,3 +8301,54 @@ mod ittan_tests {
         assert_pattern_range(&patterns, "一旦", 0, 4); // いったん
     }
 }
+
+// Pattern: はもとより (not only... but also, let alone)
+// Data source: grammar_points_data.json["はもとより"]
+// Testing: structure.standard[0] - "Noun + はもとより + Phrase"
+// Testing: structure.standard[1] - "Verb + こと + はもとより + Phrase"
+// Testing: structure.standard[2] - "Verb + の + はもとより + Phrase"
+//
+// Structure variants:
+//   - standard[0]: Noun + はもとより (basic noun usage)
+//   - standard[1]: Verb + こと + はもとより (nominalized with こと)
+//   - standard[2]: Verb + の + はもとより (nominalized with の)
+
+mod hamotoyori_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_hamotoyori() {
+        // Structure: Noun + はもとより
+        // Example from grammar data: 地元の人はもとより、全国からの観光客で賑わっています
+        let sentence = "この商店街は地元の人はもとより、全国からの観光客で賑わっています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はもとより");
+        assert_pattern_range(&patterns, "はもとより", 9, 15); // 人はもとより
+    }
+
+    #[test]
+    fn test_verb_koto_hamotoyori() {
+        // Structure: Verb + こと + はもとより
+        // Example from grammar data: 日本語が上手になることはもとより
+        let sentence = "この学校では日本語が上手になることはもとより、日本でのマナーや文化を理解できる授業が行われています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はもとより");
+        assert_pattern_range(&patterns, "はもとより", 15, 22); // ことはもとより
+    }
+
+    #[test]
+    fn test_verb_no_hamotoyori() {
+        // Structure: Verb + の + はもとより
+        // Example from grammar data: 自分の子供を守るのはもとより
+        let sentence = "親は自分の子供を守るのはもとより、何不自由ない生活をしてほしいと思っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はもとより");
+        assert_pattern_range(&patterns, "はもとより", 10, 16); // のはもとより
+    }
+}

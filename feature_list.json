@@ -8823,13 +8823,13 @@
   {
     "pattern_name": "はもとより",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "は元（もと）より , commonly seen purely in hiragana, is a grammar pattern that indicates 'not only (A), but also (B) ', or 'l... [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
