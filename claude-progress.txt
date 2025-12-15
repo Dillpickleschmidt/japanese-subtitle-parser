@@ -1,15 +1,16 @@
 ## Session 408 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented 1 N2 pattern (ところだった ②)
-**Patterns completed**: 1 (ところだった ② - N2)
-**Tests added**: 4 new tests (all passing)
-**Total tests**: 2664 passing, 1 ignored (was 2660 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (ところだった ②, どころではない)
+**Patterns completed**: 2 (ところだった ② and どころではない - both N2)
+**Tests added**: 9 new tests (all passing)
+**Total tests**: 2669 passing, 1 ignored (was 2660 passing, 1 ignored - net +9 tests)
 
 **Session highlights**:
 - Implemented ところだった ② (was just about to) - simple pattern with 2 structure variants
-- Structurally identical to ところだった ① (N3) but used in different contexts
-- 4 passing tests with proper range assertions
+- Implemented どころではない (far from, out of the question) - flexible pattern with 4 structure variants
+- Both patterns follow test-first workflow with comprehensive coverage
+- 9 passing tests with proper range assertions
 - Clean implementation following test-first workflow
 - All tests passing, no regressions
 
@@ -52,21 +53,56 @@
 
 ---
 
+### ✅ Pattern Implemented: どころではない (far from, out of the question)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: どころではない is a set phrase that highlights that something is 'far from (A)', or that '(A) is out of the question'. These translations appear when the actual situation is considered to be even more remarkable than the phrase that どころではない is attached to. May also be translated as 'it is not the time for (A)' when there are far more important matters.
+
+**Structures tested**: All 4 structure variants from grammar_points_data.json
+1. Standard: Phrase + どころ + ではない - 痛いどころではない (chars 3-15), 仕事どころではない (chars 24-33)
+2. Casual: Phrase + どころ + じゃない - 取るどころじゃない (chars 17-26), 結婚どころじゃない (chars 20-29)
+3. Polite: Phrase + どころ + ではありません - 休暇どころではありません (chars 7-19)
+
+**Implementation**: Matcher in n2.rs (lines 2871-2936), tests in n2_patterns.rs (lines 5431-5505)
+
+**Key notes**:
+- Pattern structure: Phrase + どころ (名詞/非自立) + (で/じゃ) + (は) + (ない/あり+ません)
+- Custom matchers: DokoroMatcher (どころ as 名詞/非自立), DeJaMatcher (で from だ or じゃ casual), HaParticleMatcher (は particle), NegativeEndingMatcher (ない or あり for polite)
+- Uses TokenMatcher::Any to match any preceding phrase (verb, adjective, or noun)
+- Optional は particle (present in ではない, absent in じゃない)
+- For polite form (ではありません), matcher catches up to あり, then continues through ません
+- Register: standard
+
+**Tokenization observations**:
+- **Standard**: どころ(名詞/非自立) + で(助動詞/特殊・ダ/連用形) + は(助詞/係助詞) + ない(形容詞/基本形)
+- **Casual**: どころ(名詞/非自立) + じゃ(助詞/副助詞) + ない(助動詞/特殊・ナイ/基本形)
+- **Polite**: どころ(名詞/非自立) + で(助動詞/連用形) + は(助詞/係助詞) + あり(動詞/連用形) + ませ(助動詞/未然形) + ん(助動詞/基本形)
+
+**Pattern ranges**: Full construction from phrase through negative ending
+- All 5 test cases verified with correct character ranges
+- Pattern detected in standard, casual, and polite forms
+- Note: Pattern may extend to include following auxiliary verbs (e.g., らしい) in some cases due to pattern aggregation
+
+---
+
 **Current stats**:
 - N5: ✅ All complete
 - N4: 2 remaining (meta-patterns)
 - N3: ✅ All complete
-- N2: 136 remaining (down from 137 - completed 1 pattern!)
+- N2: 135 remaining (down from 137 - completed 2 patterns!)
 - N1: 186 remaining
-- Total: ~324 patterns remaining
+- Total: ~323 patterns remaining
 
 ### Quality Metrics
-✅ All 4 tests have assert_pattern_range
+✅ All 9 tests have assert_pattern_range
 ✅ No print_debug in committed tests
 ✅ Realistic sentence examples from grammar_points_data.json
 ✅ Correct character ranges verified
-✅ Both documented structure variants tested
-✅ No regressions (all 2664 tests passing)
+✅ All documented structure variants tested (2 for ところだった ②, 4 for どころではない)
+✅ No regressions (all 2669 tests passing)
 
 ### Technical Notes
 
@@ -76,24 +112,32 @@
 - Copied implementation from N3's tokorodatta_u2460() to N2's tokorodatta_u2461()
 - Same tokenization, same matchers, different semantic usage contexts
 
+### Technical Notes
+
+**どころではない - Flexible negative construction**:
+- Uses TokenMatcher::Any to match any preceding phrase (verb, adjective, or noun)
+- Handles both standard (ではない) and casual (じゃない) forms
+- Different tokenization for で (助動詞 from だ) vs じゃ (助詞/副助詞)
+- Optional は particle depending on formality
+- Polite form (ではありません) has different structure: あり + ませ + ん
+- Pattern may extend beyond core structure to include following auxiliary verbs
+
 ### Implementation Approach
-- Followed test-first workflow strictly
-- Wrote all 4 tests with print_debug first
-- Analyzed actual tokenization from Kagome
-- Noticed pattern ① was already detecting the structures
-- Copied N3 implementation to N2 with appropriate comments
+- Followed test-first workflow strictly for both patterns
+- **ところだった ②**: Wrote 4 tests with print_debug, noticed N3 pattern was already detecting, copied implementation
+- **どころではない**: Wrote 5 tests with print_debug, analyzed tokenization variations, built flexible matcher
 - Removed print_debug and added assertions after verification
 - Verified no regressions before committing
 
 ### Next Steps
-Continue with simple N2 patterns (1-2 structure variants). Good candidates from feature_list.json:
-- どころではない - 2 structures (next after ところだった ②)
-- ぶりに - 3 structures
+Continue with simple N2 patterns (1-3 structure variants). Good candidates from feature_list.json:
+- ぶりに - 3 structures (next after どころではない)
+- ては - 6 structures
 - Other simple conjunction/particle patterns
 
 Target: Continue implementing 1-2 patterns per session, prioritizing quality and simple patterns.
 
-**Session outcome**: Successfully completed 1 N2 pattern with full coverage of both structure variants! Total of 4 new tests added, all passing, no regressions.
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage of all structure variants! Total of 9 new tests added, all passing, no regressions.
 
 ---
 
