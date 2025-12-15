@@ -8190,3 +8190,63 @@ mod dakenokotohaaru_tests {
         assert_pattern_range(&patterns, "だけのことはある", 27, 36); // ただけのことはある
     }
 }
+
+// Pattern: やら～やら (A and B, and so on)
+// Data source: grammar_points_data.json["やら～やら"]
+// Testing structure variants from grammar data
+//
+// Structure variants:
+//   - standard[0]: A + やら + B + やら (A and B can be Verb[る], Noun, い-Adjective)
+mod yara_yara_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_yara_verb_yara() {
+        // Structure: Verb[る] + やら + Verb[る] + やら
+        // Example from grammar data: 世話をするやら家事をするやら
+        let sentence = "毎日子供の世話をするやら家事をするやらで忙しいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やら～やら");
+        // Pattern detects multiple instances: するやら (8-12) and するやらで (15-20)
+        // Testing the first detected instance
+        assert_pattern_range(&patterns, "やら～やら", 15, 20); // するやらで (includes で)
+    }
+
+    #[test]
+    fn test_i_adj_yara_i_adj_yara() {
+        // Structure: い-Adjective + やら + い-Adjective + やら
+        // Example from grammar data: 痛いやら悪いやら
+        let sentence = "先週は身体中が痛いやら、体調が悪いやらで大変でした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やら～やら");
+        assert_pattern_range(&patterns, "やら～やら", 15, 20); // 悪いやらで
+    }
+
+    #[test]
+    fn test_noun_yara_noun_yara() {
+        // Structure: Noun + やら + Noun + やら
+        // Example from grammar data: 不安やら怒りやら
+        let sentence = "あのニュースを聞いてから不安やら怒りやら、色々な感情が溢れ出てきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やら～やら");
+        assert_pattern_range(&patterns, "やら～やら", 12, 16); // 不安やら
+    }
+
+    #[test]
+    fn test_mixed_noun_yara() {
+        // Structure: Noun + やら + Noun + やら (another example)
+        // Example from grammar data: 漢字やら単語やら
+        let sentence = "文法だけではなく漢字やら単語やらも勉強した方がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やら～やら");
+        assert_pattern_range(&patterns, "やら～やら", 8, 12); // 漢字やら
+    }
+}

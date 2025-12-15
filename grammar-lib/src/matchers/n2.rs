@@ -6192,9 +6192,27 @@ pub fn naratomokaku() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: やら～やら
+// Pattern: やら～やら (A and B, and so on)
+// Structures: A + やら + B + やら (where A/B can be Verb[る], Noun, い-Adj)
 pub fn yara_uff5e_yara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for やら (並立助詞 or 終助詞)
+    #[derive(Debug)]
+    struct YaraMatcher;
+    impl super::Matcher for YaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "やら"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "並立助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "終助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Matches preceding word (verb, adjective, noun)
+        TokenMatcher::Custom(Arc::new(YaraMatcher)),
+    ]
 }
 
 // Pattern: しかしながら (however, nevertheless)
