@@ -1,10 +1,74 @@
 ## Session 386 - 2025-12-15
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented にほかならない pattern (N2)
-**Patterns completed**: 1 (にほかならない - N2 newly implemented)
-**Tests added**: 4 new tests (all passing)
-**Total tests**: 2497 passing, 1 ignored (was 2493 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (にほかならない, っこない)
+**Patterns completed**: 2 (にほかならない and っこない - both N2 newly implemented)
+**Tests added**: 8 new tests (all passing)
+**Total tests**: 2501 passing, 1 ignored (was 2493 passing, 1 ignored - net +8 tests)
+
+**Session highlights**:
+- Implemented にほかならない (nothing but, simply) - 4 tests
+- Implemented っこない (there is no chance of / impossible) - 4 tests
+- Handled complex tokenization patterns in っこない
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: っこない (there is no chance of / impossible)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: っこない is a combination of the suffix っこ and the い-Adjective ない. When attached to the conjunctive form (stem) of verbs, it creates new い-Adjectives that express the impossibility of (A). Common translations include 'there is no chance of (A)', or 'doing (A) is impossible'.
+
+**Structures tested**: 4 comprehensive tests covering various tokenization patterns
+1. Verb[stem]+っこない (できっこない): きっこない (22-27) - "there's no chance you can"
+2. Verb[stem]+っこない (勝てっこない): てっこない (16-21) - "there's no chance I can beat him"
+3. Verb[stem]+っこない (買えっこない): 買えっこない (17-23) - "not be able to buy"
+4. Verb[stem]+っこない (past): 読めっこなかった (14-22) - "there was no way I could read"
+
+**Implementation**: Matcher in n2.rs (lines 608-670), tests in n2_patterns.rs (lines 2977-3026)
+
+**Key notes**:
+- Complex tokenization: っこ tokenizes as two verb tokens rather than a suffix
+  - っ tokenizes as 動詞/非自立 (base_form='く')
+  - こ tokenizes as 動詞/非自立 (base_form='くる', 未然形)
+- Two different tokenization patterns:
+  1. Verb stem includes っ: きっ (連用タ接続), てっ (連用タ接続)
+  2. Verb stem separate from っ: 買え (連用形) + っ (動詞/非自立)
+- Matcher handles both patterns with Optional(っ) matcher
+- Past tense forms (っこなかった) work automatically via NaiAuxMatcher
+
+**Tokenization observations**:
+- **Pattern 1** (verb+っ compound): Verb[連用タ接続 ending in っ] + こ (動詞/未然形) + ない (助動詞)
+  - Example: きっ (base='きる', 連用タ接続) + こ + ない
+- **Pattern 2** (split tokenization): Verb[連用形] + っ (base='く', 動詞/非自立) + こ (base='くる', 動詞/非自立, 未然形) + ない (助動詞)
+  - Example: 買え (base='買える', 連用形) + っ + こ + ない
+- Matcher uses VerbOrVerbWithKkoMatcher to match either pattern
+- Optional KkuMatcher handles standalone っ token when not included in verb
+
+**Pattern ranges**: Include full verb stem through ない/なかった
+- Standard: verb+っこない (5-8 characters depending on verb)
+- Past: verb+っこなかった (adds 2 characters for past marker)
+
+### Test Quality Metrics (Session 386)
+✅ All 8 tests (4+4) have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json examples
+✅ No regressions (all 2501 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 165 remaining (down from 167!)
+- N1: 186 remaining
+- Total: ~353 patterns remaining (down from ~355!)
+
+**Next priority**: Continue with N2 patterns - それなら, ものなら①, 活かす, まい, 上, 上に, etc.
+
+---
 
 ### ✅ Pattern Implemented: にほかならない (nothing but, simply)
 
