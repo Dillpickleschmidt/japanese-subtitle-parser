@@ -2760,9 +2760,38 @@ impl Matcher for EndingMatcher {
     }
 }
 
-// Pattern: 合う
+// Pattern: 合う (to do mutually/reciprocally with another)
+// Structures: Verb[stem] + 合う
 pub fn au() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for verb in 連用形 (stem form)
+    #[derive(Debug)]
+    struct VerbStemMatcher;
+    impl Matcher for VerbStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Matcher for 'あう' as dependent verb (non-self-standing)
+    // Note: Kagome may tokenize this as either "あう" or "ある" in the base form
+    // Both forms appear when あう is used as a suffix meaning "to do together"
+    #[derive(Debug)]
+    struct AuDependentVerbMatcher;
+    impl Matcher for AuDependentVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "あう" || token.base_form == "ある")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbStemMatcher)),
+        TokenMatcher::Custom(Arc::new(AuDependentVerbMatcher)),
+    ]
 }
 
 // Pattern: に合わせて・に合った (in accordance with / matching)

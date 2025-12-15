@@ -12666,3 +12666,71 @@ mod sugata_tests {
         assert_pattern_range(&patterns, "～(の)姿", 8, 9); // 姿
     }
 }
+
+// ========== 合う (to do mutually/reciprocally) ==========
+// Pattern: 合う (to do mutually/reciprocally with another)
+// Data source: grammar_points_data.json["合う"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + 合う
+//   polite[0]: Verb[stem] + 合います
+
+mod au_tests {
+    use super::*;
+
+    // Testing: Verb[stem] + 合う (standard form - dictionary)
+    #[test]
+    fn test_au_verb_stem_dictionary() {
+        let sentence = "彼女と将来の事を話しあう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "合う");
+        assert_pattern_range(&patterns, "合う", 8, 12); // 話しあう
+    }
+
+    // Testing: Verb[stem] + 合う (連用形 conjugation)
+    // Using "見せあう" which should split as 見せ + あう
+    #[test]
+    fn test_au_verb_stem_present() {
+        let sentence = "友達とポケモンカードを見せあう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "合う");
+        assert_pattern_range(&patterns, "合う", 11, 15); // 見せあう
+    }
+
+    // Testing: Verb[stem] + 合う (past tense)
+    #[test]
+    fn test_au_verb_stem_past() {
+        let sentence = "友達とポケモンカードを見せあった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "合う");
+        assert_pattern_range(&patterns, "合う", 11, 16); // 見せあった
+    }
+
+    // Testing: Verb[stem] + 合います (polite form)
+    #[test]
+    fn test_au_verb_stem_polite() {
+        let sentence = "こういう時こそ、助けあうのが大切です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "合う");
+        assert_pattern_range(&patterns, "合う", 8, 12); // 助けあう
+    }
+
+    // Testing: Verb[stem] + 合わないといけない (negative + obligation)
+    #[test]
+    fn test_au_verb_stem_negative_obligation() {
+        let sentence = "夫婦なんだから、どんなことがあっても協力しあわないといけないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "合う");
+        assert_pattern_range(&patterns, "合う", 18, 25); // 協力しあわない
+    }
+}
