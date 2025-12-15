@@ -9051,3 +9051,43 @@ mod tetamaranai_tests {
         assert_pattern_range(&patterns, "てたまらない", 5, 14); // 退屈でたまりません
     }
 }
+
+// Pattern: でしかない (nothing but / no more than)
+// Data source: grammar_points_data.json["でしかない"]
+mod deshikanai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + でしかない"
+    #[test]
+    fn test_deshikanai_standard() {
+        // Example from grammar data: それは言い訳でしかない
+        let sentence = "それは言い訳でしかないと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でしかない");
+        assert_pattern_range(&patterns, "でしかない", 3, 11); // 言い訳でしかない
+    }
+
+    #[test]
+    fn test_deshikanai_standard2() {
+        // Example from grammar data: 暴言でしかない
+        let sentence = "先輩は愛のムチだと言っているが、暴言でしかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でしかない");
+        assert_pattern_range(&patterns, "でしかない", 16, 23); // 暴言でしかない
+    }
+
+    // Testing: structure.polite[0] - "Noun + でしかありません"
+    #[test]
+    fn test_deshikanai_polite() {
+        let sentence = "それはただの言い訳でしかありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でしかない");
+        assert_pattern_range(&patterns, "でしかない", 6, 17); // 言い訳でしかありません
+    }
+}

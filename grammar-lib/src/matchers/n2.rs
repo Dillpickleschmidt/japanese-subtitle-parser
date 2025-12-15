@@ -6507,8 +6507,45 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
 }
 
 // Pattern: でしかない
+// Pattern: でしかない (nothing but / no more than)
+// Structures: Noun + で + しか + ない/ありません
 pub fn deshikanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match しか particle
+    #[derive(Debug)]
+    struct ShikaMatcher;
+    impl super::Matcher for ShikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しか"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ない (adjective) or あり (verb for ありません)
+    #[derive(Debug)]
+    struct NaiOrAriMatcher;
+    impl super::Matcher for NaiOrAriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない as adjective
+            (token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞"))
+            ||
+            // Match あり (for ありません)
+            (token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("で"),
+        TokenMatcher::Custom(Arc::new(ShikaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiOrAriMatcher)),
+    ]
 }
 
 // Pattern: てたまらない (can't help but / extremely)
