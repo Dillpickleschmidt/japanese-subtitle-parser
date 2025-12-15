@@ -1,3 +1,151 @@
+## Session 445 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (だけのことはある, やら～やら)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 10 new tests (6 + 4, all passing with range assertions)
+**Total tests**: 2931 passing, 1 ignored (was 2921 before session, net +10 tests)
+
+**Session highlights**:
+- Implemented だけのことはある (no wonder, as expected) - N2 pattern
+- Implemented やら～やら (A and B, and so on) - N2 particle pattern
+- だけのことはある: Tests all structure variants (verb, i-adj, noun, な-adj, noun+だった)
+- やら～やら: Particle pattern that matches each instance separately (並立助詞 or 終助詞)
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 10 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented #1: だけのことはある (no wonder, as expected)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: だけのことはある is a grammar structure consisting of the particle だけ, の, こと, は, and the う-Verb ある. It is used when indicating that something about (A) is 'as expected', or 'not surprising'. The pattern expresses that simply because (A) is (A), (B) is to be expected. It may appear following verbs, い-Adjectives, な-Adjectives or nouns. な will be required after な-Adjectives. Often appears with other words that add emphasis to the expectation of (A), such as さすが, やはり, or やっぱり.
+
+**Structures tested**: 6 test variants
+1. Verb + だけのことはある: 行っていただけのことはある (chars 29-38)
+2. い-Adjective + だけのことはある: 若いだけのことはある (chars 27-37)
+3. Noun + な + だけのことはある: 有名なだけのことはある (chars 25-34)
+4. Noun + だけのことはある: 先生だけのことはある (chars 25-35)
+5. Noun + だった + だけのことはある: ボクサーだっただけのことはある (chars 24-33)
+6. な-Adjective + だった + だけのことはある: 正直だっただけのことはある (chars 27-36)
+
+**Implementation details**:
+- Core pattern: だけ (副助詞) + の (連体化) + こと (名詞/非自立) + は (係助詞) + ある (動詞)
+- Custom matchers created:
+  - DakeMatcher: matches だけ as adverbial particle (助詞/副助詞)
+  - NoRentaikaMatcher: matches の as nominalizer (助詞/連体化)
+  - KotoMatcher: matches こと as non-independent noun (名詞/非自立)
+  - WaKakariMatcher: matches は as binding particle (助詞/係助詞)
+  - AruVerbMatcher: matches ある verb (基本形 or 連用形 for polite)
+- TokenMatcher::Any handles preceding word (verb, adjective, noun)
+- Works for both standard (ある) and polite (あります) forms
+
+**Test count**: 6 tests (all passing)
+- test_verb_dakeno: Verb + だけのことはある
+- test_i_adjective_dakeno: い-Adjective + だけのことはある
+- test_noun_dakeno: な-Adjective (treated as noun) + な + だけのことはある
+- test_na_adjective_dakeno: Noun + だけのことはある
+- test_noun_datta_dakeno: Noun + だった + だけのことはある
+- test_na_adjective_datta_dakeno: な-Adjective + だった + だけのことはある
+
+**Tokenization observations**:
+- だけ: Always 助詞/副助詞
+- の: Always 助詞/連体化
+- こと: Always 名詞/非自立/一般
+- は: Always 助詞/係助詞
+- ある: 動詞/自立 (基本形 or 連用形)
+- Pattern includes one token before だけ (captured by TokenMatcher::Any)
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented dakenokotohaaru() function with 5 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added dakenokotohaaru_tests module with 6 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Only used for positive evaluations, not negative expectations
+- Expresses that result is as expected from the quality/nature of (A)
+- More formal than alternatives
+
+---
+
+### ✅ Pattern Implemented #2: やら～やら (A and B, and so on)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: やら is an adverbial particle that expresses lack of determination or limitation in regard to (A). When repeated as (A) やら (B) やら, it translates as '(A) and so on', or '(A) and the like'. May appear following verbs in their dictionary form, nouns, い-Adjectives, or な-Adjectives. Both (A) and (B) will often be the same type of word. Compared to とか, やら puts more emphasis on the scope of things, making (A) and (B) seem like only a small fraction of many different things within a complex pool.
+
+**Structures tested**: 4 test variants
+1. Verb[る] + やら + Verb[る] + やら: 世話をするやら家事をするやら (chars 15-20)
+2. い-Adjective + やら + い-Adjective + やら: 痛いやら悪いやら (chars 15-20)
+3. Noun + やら + Noun + やら: 不安やら怒りやら (chars 12-16)
+4. Noun + やら + Noun + やら: 漢字やら単語やら (chars 8-12)
+
+**Implementation details**:
+- Matcher structure: Any + やら
+- Custom matcher created:
+  - YaraMatcher: matches やら as 並立助詞 OR 終助詞 (both forms occur)
+- Pattern detects each instance of "X + やら" separately
+- Multiple instances detected per sentence (typical usage is A やら B やら)
+- TokenMatcher::Any handles preceding word (verb, adjective, noun)
+
+**Test count**: 4 tests (all passing)
+- test_verb_yara_verb_yara: Verb + やら pattern
+- test_i_adj_yara_i_adj_yara: い-Adjective + やら pattern
+- test_noun_yara_noun_yara: Noun + やら pattern
+- test_mixed_noun_yara: Another noun + やら example
+
+**Tokenization observations**:
+- やら can be: 助詞/並立助詞 OR 助詞/終助詞
+- First やら often: 並立助詞
+- Second やら may be: 並立助詞 OR 終助詞 (varies by context)
+- Pattern matches each instance independently
+- May include following particles (e.g., で) in some detections
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented yara_uff5e_yara() function with YaraMatcher
+- grammar-lib/src/tests/n2_patterns.rs: Added yara_yara_tests module with 4 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Pattern matches each occurrence separately, not the full A やら B やら structure
+- More formal than とか, emphasizes breadth of category
+- Can also appear as のやら～のやら to express uncertainty between options
+
+---
+
+**Current stats** (after both patterns):
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 106 remaining (down from 108 - completed 2 patterns!)
+- N1: 176 remaining
+- Total: ~284 patterns remaining
+
+### Quality Metrics
+✅ All 10 tests have assert_pattern_range (6 + 4)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2931 tests passing, up from 2921)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- ならともかく - apart from / setting aside
+- はともかく - aside from
+- にしろ～にしろ - whether... or...
+- 何しろ - at any rate, after all
+- にせよ・にしろ - even if, whether or not
+
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 10 new tests added (6 + 4), all passing, no regressions. One pattern handles multiple word types before the construction (だけのことはある), the other is a particle pattern that matches repeated instances (やら～やら). Clean implementation following test-first workflow.
+
+---
+
 ## Session 444 - 2025-12-15
 
 ### Session Summary - COMPLETE
