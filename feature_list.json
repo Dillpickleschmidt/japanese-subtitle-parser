@@ -100,14 +100,14 @@
   {
     "pattern_name": "の",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "",
+    "passes": true,
+    "description": "の functions as a pronoun replacement, dropping the previously mentioned noun. Used for possession and nominalization.",
     "priority": 1,
     "skip_reason": null
   },
@@ -156,28 +156,28 @@
   {
     "pattern_name": "か",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "",
+    "passes": true,
+    "description": "か is a particle expressing questions or presenting alternatives (or). Used at sentence end for questions or between options.",
     "priority": 1,
     "skip_reason": null
   },
   {
     "pattern_name": "が",
     "jlpt_level": "n5",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "",
+    "passes": true,
+    "description": "が is a particle with multiple uses: subject marker, contrast/but connector. Essential grammar for sentence structure.",
     "priority": 1,
     "skip_reason": null
   },
@@ -996,14 +996,14 @@
   {
     "pattern_name": "って",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "",
+    "passes": true,
+    "description": "って is a casual topic marker (replacing は) and casual quotation marker (replacing と). Used in informal speech.",
     "priority": 1,
     "skip_reason": null
   },
