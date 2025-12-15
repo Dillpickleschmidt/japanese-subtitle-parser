@@ -1,3 +1,73 @@
+## Session 394 - 2025-12-15
+
+### ✅ Session Summary (In Progress)
+**Status**: IN PROGRESS - Successfully implemented 1 N2 pattern (にわたって)
+**Patterns completed**: 1 (にわたって - N2 newly implemented)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2570 passing, 1 ignored (was 2566 passing, 1 ignored - net +4 tests)
+
+**Session highlights**:
+- Implemented にわたって (across, throughout, over the period of)
+- Comprehensive coverage of all structure variants
+- Handled both single-token and multi-token forms
+- Clean implementation with proper test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: にわたって (across, throughout, over the period of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: Partnered with the case marking particle に, the う-Verb 渡（わた）る 'to cross' in its て-form highlights a span of something in regard to breadth, size, or time. This structure is often translated as either 'across (A)', 'throughout (A)', 'extending through (A)', or 'over the period of (A)'.
+
+**Structures tested**: 4 comprehensive tests covering all variants
+1. Noun + にわたって: 長年にわたって (5-12) - "over many years"
+2. Noun + にわたる + Noun: 年にわたる (2-7) - "lasting 15 years"
+3. Noun + にわたり: 日間にわたり (4-10) - "continuing for 3 days"
+4. Noun + にわたった: 年間にわたった (1-8) - "lasted for 10 years"
+
+**Implementation**: Matcher in n2.rs (lines 1476-1526), tests in n2_patterns.rs (lines 3872-3918)
+
+**Key notes**:
+- Pattern handles TWO tokenization variants:
+  * Single-token compound particles: にわたって, にわたる, にわたり (助詞/格助詞/連語)
+  * Multi-token form: に + わたる verb (e.g., にわたった = に + わたっ + た)
+- Combined matcher checks both cases in one custom matcher
+- Optional わたる verb matcher for multi-token form
+- Pattern includes full construction from noun through particle/verb
+
+**Tokenization observations**:
+- **Single tokens**: にわたって/にわたる/にわたり tokenize as 助詞/格助詞/連語
+- **Multi-token**: に (助詞/格助詞) + わたっ (動詞/自立, base='わたる') + た (助動詞)
+- All forms express the same meaning with different conjugations
+
+**Pattern ranges**: Full construction from noun through particle/verb form
+- にわたって: 長年にわたって (includes noun + compound particle)
+- にわたる: 年にわたる (includes noun + compound particle)
+- にわたり: 日間にわたり (includes noun + compound particle)
+- にわたった: 年間にわたった (includes noun + に + わたっ + た)
+
+### Test Quality Metrics (にわたって)
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 147 remaining (down from 148!)
+- N1: 186 remaining
+- Total: ~335 patterns remaining (down from ~336!)
+
+**Next priority**: Continue with N2 patterns - に沿って, た末・の末, にしたがって, に伴って, etc.
+
+---
+
 ## Session 393 - 2025-12-15
 
 ### ✅ Session Summary
