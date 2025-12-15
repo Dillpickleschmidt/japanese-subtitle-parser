@@ -8625,3 +8625,68 @@ mod gyakuni_tests {
         assert_pattern_range(&patterns, "逆に", 0, 2); // 逆に
     }
 }
+
+// Pattern: 反面 (on the other hand, while)
+// Data source: grammar_points_data.json["反面"]
+// Testing multiple structure variants showing contrast between opposing features
+//
+// Structure variants:
+//   - standard[0]: Verb + 反面（はんめん）
+//   - standard[1]: ［い］Adjective + 反面（はんめん）
+//   - standard[2]: ［な］Adjective + な(1) + 反面（はんめん）
+//   - standard[3]: Noun + である + 反面（はんめん）
+//   - standard[4]: Phrase + が + （、）+ 反面（はんめん）
+//
+// Notes: Shows contrast between positive and negative features of same thing
+
+mod hanmen_tests {
+    use super::*;
+
+    #[test]
+    fn test_hanmen_verb() {
+        // Structure: Verb + 反面
+        // Example from grammar data: 都内に引っ越して色々と便利になった反面
+        let sentence = "都内に引っ越して色々と便利になった反面、家賃が前住んでいた所の倍になった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "反面");
+        assert_pattern_range(&patterns, "反面", 16, 19); // た反面
+    }
+
+    #[test]
+    fn test_hanmen_i_adjective() {
+        // Structure: い-Adjective + 反面
+        // Example from grammar data: カリフォルニアの夏は日本より暑い反面
+        let sentence = "カリフォルニアの夏は日本より暑い反面、湿度が低いので過ごしやすいそうです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "反面");
+        assert_pattern_range(&patterns, "反面", 14, 18); // 暑い反面
+    }
+
+    #[test]
+    fn test_hanmen_na_adjective() {
+        // Structure: な-Adjective + な + 反面
+        // Example from grammar data: 日本語を教えるのがとても上手な反面
+        let sentence = "あの日本語教室の先生達は日本語を教えるのがとても上手な反面、生徒達にはとても厳しいそうだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "反面");
+        assert_pattern_range(&patterns, "反面", 26, 29); // な反面
+    }
+
+    #[test]
+    fn test_hanmen_noun_dearu() {
+        // Structure: Noun + である + 反面
+        // Example from grammar data: 田中くんはとても頭のいい子である反面
+        let sentence = "田中くんはとても頭のいい子である反面、怠け者なのでいつも先生に怒られています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "反面");
+        assert_pattern_range(&patterns, "反面", 14, 18); // ある反面
+    }
+}

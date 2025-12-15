@@ -4883,9 +4883,23 @@ pub fn gyakuni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 反面
+// Pattern: 反面 (on the other hand, while)
+// Structures: [Verb/Adjective/Noun phrase] + 反面 (conjunction)
 pub fn hanmen() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct HanmenMatcher;
+    impl Matcher for HanmenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "反面"
+                && token.base_form == "反面"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding word (verb, adjective, noun, etc.)
+        TokenMatcher::Custom(Arc::new(HanmenMatcher)),
+    ]
 }
 
 // Pattern: 抜く

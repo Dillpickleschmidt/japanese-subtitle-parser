@@ -5459,7 +5459,7 @@ declare_patterns! {
     Hanmen {
         name: "反面",
         matcher_fn: crate::matchers::n2::hanmen,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },
