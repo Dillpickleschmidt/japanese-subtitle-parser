@@ -5922,3 +5922,87 @@ mod momata_tests {
         assert_pattern_range(&patterns, "も又", 16, 20); // のもまた
     }
 }
+
+// Pattern: にかかわらず (regardless of)
+// Data source: grammar_points_data.json["にかかわらず"]
+// Structures to test:
+//   - standard[0]: Noun (A) + 、 + Noun (B) + にかかわらず
+//   - standard[1]: A + か + B + か + にかかわらず
+//   - standard[2]: Adj/Verb + (Antonym) Adj/Verb + にかかわらず
+//   - standard[3]: A + かどうか + にかかわらず
+//   - standard[4]: A + Aない + にかかわらず
+mod nikakawarazu_tests {
+    use super::*;
+
+    #[test]
+    fn test_nikakawarazu_noun_with_comma() {
+        // Structure: Noun (A) + や + Noun (B) + にかかわらず
+        // Example from grammar_points_data.json: 性別や国籍にかかわらず
+        let sentence = "彼は性別や国籍にかかわらず、誰とでも友達になれる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかわらず");
+        assert_pattern_range(&patterns, "にかかわらず", 2, 13); // 性別や国籍にかかわらず
+    }
+
+    #[test]
+    fn test_nikakawarazu_ka_ka() {
+        // Structure: A + か + B + か + にかかわらず
+        // Example from grammar_points_data.json: 降るか降らないかにかかわらず
+        let sentence = "雨が降るか降らないかにかかわらず、運動会は開催されます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかわらず");
+        assert_pattern_range(&patterns, "にかかわらず", 2, 16); // 降るか降らないかにかかわらず
+    }
+
+    #[test]
+    fn test_nikakawarazu_adjective_antonym() {
+        // Structure: い-Adj + な-Adj antonym + にかかわらず
+        // Example from grammar_points_data.json: 上手い下手にかかわらず
+        let sentence = "上手い下手にかかわらず、何事も一生懸命やるのが大切だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかわらず");
+        assert_pattern_range(&patterns, "にかかわらず", 0, 11); // 上手い下手にかかわらず
+    }
+
+    #[test]
+    fn test_nikakawarazu_kadouka() {
+        // Structure: A + かどうか + にかかわらず
+        // Example from grammar_points_data.json: いいかどうかにかかわらず
+        let sentence = "このビーチは天気がいいかどうかにかかわらず、毎日サーファーたちで賑わっています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかわらず");
+        assert_pattern_range(&patterns, "にかかわらず", 9, 21); // いいかどうかにかかわらず
+    }
+
+    #[test]
+    fn test_nikakawarazu_affirmative_negative() {
+        // Structure: Verb + Verbない + にかかわらず
+        // Example: できるできないにかかわらず
+        let sentence = "できるできないにかかわらず、まずはやってみることが大事です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかわらず");
+        assert_pattern_range(&patterns, "にかかわらず", 0, 13); // できるできないにかかわらず
+    }
+
+    #[test]
+    fn test_nikakawarazu_simple_noun() {
+        // Structure: Noun + にかかわらず
+        // Example from grammar_points_data.json: 年齢にかかわらず
+        let sentence = "このゲームは年齢にかかわらず、誰でも楽しめます！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかわらず");
+        assert_pattern_range(&patterns, "にかかわらず", 6, 14); // 年齢にかかわらず
+    }
+}

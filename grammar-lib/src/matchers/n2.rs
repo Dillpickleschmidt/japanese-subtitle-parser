@@ -2304,9 +2304,80 @@ pub fn wonozoite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にかかわらず
+// Pattern: にかかわらず (regardless of)
+// Structures: Noun/Verb/Adjective (+ variations) + にかかわらず
 pub fn nikakawarazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に particle (助詞/格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match かかわる verb in 未然形
+    #[derive(Debug)]
+    struct KakawaranaiMatcher;
+    impl Matcher for KakawaranaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かかわら"
+                && token.base_form == "かかわる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ず auxiliary verb (助動詞/特殊・ヌ, base=ぬ)
+    #[derive(Debug)]
+    struct ZuAuxiliaryMatcher;
+    impl Matcher for ZuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match は particle (助詞/係助詞) as stop condition
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match が particle (助詞/格助詞) as stop condition
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 10,
+            stop_conditions: vec![
+                TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+                TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+            ],
+        },
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KakawaranaiMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: にもかかわらず (despite, in spite of)
