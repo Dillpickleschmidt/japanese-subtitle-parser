@@ -12406,3 +12406,47 @@ Continue with remaining N2 priority 4 patterns:
 - ものの (although, while)
 - Other N2 patterns
 
+
+=== Session 463: と考えられる Pattern (N2) - COMPLETE ===
+Date: 2025-01-XX
+Status: COMPLETE - Pattern fully implemented and tested
+
+Pattern implemented: と考えられる (can be considered, is thought to be)
+- JLPT Level: N2
+- Priority: 4
+- Category: Construction
+
+Pattern meaning:
+Expresses objective opinions based on observable facts (not subjective feelings).
+Common translations: can be considered as, is thought to be, it is conceivable that
+
+Compare with:
+- と思われる (subjective opinion - based on feelings/preferences)
+- と考えられている (widely accepted opinion - continuous form)
+
+Implementation details:
+Matcher function: tokangaerareru() in matchers/n2.rs
+- ToQuotationMatcher: matches と (助詞/格助詞/引用)
+- KangaeMatcher: matches 考え (動詞, base=考える, 未然形)
+- RareruMatcher: matches られる/られ (動詞/接尾, base=られる)
+
+Pattern handles all conjugations:
+- Standard: と考えられる
+- Polite: と考えられます
+- Negative: と考えられない
+- Past: と考えられた
+
+Test count: 5 tests (all passing)
+- test_standard_form
+- test_standard_complex
+- test_polite_form
+- test_negative_form
+- test_past_form
+
+Files modified: 4
+- grammar-lib/src/matchers/n2.rs
+- grammar-lib/src/tests/n2_patterns.rs
+- grammar-lib/src/patterns.rs
+- feature_list.json
+
+Next priorities: Other N2 priority 4 patterns
