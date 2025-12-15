@@ -1,10 +1,10 @@
 ## Session 383 - 2025-12-15
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented よりほかない pattern (N2)
-**Patterns completed**: 1 (よりほかない - N2 newly implemented)
-**Tests added**: 4 new tests (all passing)
-**Total tests**: 2476 passing, 1 ignored (was 2472 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (よりほかない, に相違ない)
+**Patterns completed**: 2 (よりほかない and に相違ない - both N2 newly implemented)
+**Tests added**: 9 new tests total (4 for よりほかない + 5 for に相違ない, all passing)
+**Total tests**: 2481 passing, 1 ignored (was 2472 passing, 1 ignored - net +9 tests)
 
 ### ✅ Pattern Implemented: よりほかない (have no choice but / nothing but)
 
@@ -48,15 +48,60 @@
 ✅ Realistic sentences from grammar_points_data.json
 ✅ No regressions (all 2476 tests passing)
 
+---
+
+### ✅ Pattern Implemented: に相違ない (without a doubt, no mistaking)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: に相違（そうい）ない is a structure that firmly states that something is 'without a doubt (A)', or that there is 'no mistaking (A)'. Similar to に違いない, it may be used to strengthen one's own opinions or to strongly agree with the opinion of another. Although 相違 may be used by itself meaning 'to differ', 相違ない is considered as a set い-Adjective. The literal meaning is 'there is no discrepancy in (A)'. This grammar structure is very formal, with に違いない almost always being used in its place.
+
+**Structures tested**: 5 comprehensive tests covering all structure variants
+1. Verb + に相違ない: いい大学に行けるに相違ない (19-27) - "There's no doubt that he can go to a good university"
+2. い-Adjective + に相違ない: 美味しいに相違ない (29-38) - "There is no doubt that it will be delicious"
+3. な-Adjective + に相違ない: 便利に相違ない (17-24) - "There is no doubt that it is convenient"
+4. Noun + に相違ない: 人に相違ない (10-16) - "There is no doubt that that person is the culprit"
+5. から + に相違ない: からに相違ない (22-29) - "There is no doubt that he's being restless because he's lying"
+
+**Implementation**: Matcher in n2.rs (lines 424-466), tests in n2_patterns.rs (lines 2689-2751)
+
+**Key notes**:
+- Pattern structure: Verb/Adj/Noun/(から) + に + 相違 + ない
+- **IMPORTANT**: Must use kanji 相違, NOT hiragana そうい (different tokenization)
+- に can be 助詞/格助詞/一般 OR 助詞/副詞化 (when after から)
+- 相違 tokenizes as 名詞/サ変接続
+- ない tokenizes as 形容詞/自立 (adjective form)
+
+**Tokenization observations**:
+- に (before から): surface="に", pos=助詞/格助詞/一般
+- に (after から): surface="に", pos=助詞/副詞化
+- 相違: surface="相違", base="相違", pos=名詞/サ変接続
+- ない: base="ない", pos=形容詞/自立
+- Hiragana "にそういない" tokenizes as: に + そう (副詞) + い (いる verb) + ない (auxiliary) ❌
+
+**Pattern ranges**: Include preceding element + に相違ない
+- Verb form: 行けるに相違ない (verb + に相違ない)
+- Adjective form: 美味しいに相違ない, 便利に相違ない
+- Noun form: 人に相違ない (noun + に相違ない)
+- から emphasis: からに相違ない (から + に相違ない)
+
+### Test Quality Metrics
+✅ All 9 tests (4 + 5) have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions (all 2481 tests passing)
+
 **Current stats**:
 - N5: All complete
 - N4: 2 remaining (meta-patterns)
 - N3: All complete! 🎉
-- N2: 168 remaining (down from 169!)
+- N2: 167 remaining (down from 169!)
 - N1: 186 remaining
-- Total: ~356 patterns remaining (down from ~357!)
+- Total: ~355 patterns remaining (down from ~357!)
 
-**Next priority**: Continue with N2 patterns - に相違ない, ようがない・ようもない, にほかならない, etc.
+**Next priority**: Continue with N2 patterns - ようがない・ようもない, にほかならない, っこない, etc.
 
 ---
 
