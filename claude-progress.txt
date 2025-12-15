@@ -1,7 +1,71 @@
+## Session 395 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented た末・の末 (N2)
+**Patterns completed**: 1 (た末・の末 - N2)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2576 passing, 1 ignored (was 2572 passing, 1 ignored - net +4 tests)
+
+**Session highlights**:
+- Implemented た末・の末 (after, as a result of) - all 2 structure variants
+- Pattern handles both Verb[た] + すえ and Noun + の + すえ forms
+- Flexible matcher using TokenMatcher::Any to match both patterns
+- Clean implementation with comprehensive test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: た末・の末 (after, as a result of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: Appearing with verbs in their past form, or grouped with nouns after の is 末（すえ）, a word meaning 'end tip'. に will follow 末（すえ）, marking the 'tip' as the point from which something will result. This pattern expresses that various things happened along the way, and then finally reached the 'point' or 'conclusion', often after long-lasting effort or struggle. Usually translated as 'after (A), (B)' or 'as a result of (A), (B)'.
+
+**Structures tested**: 2 comprehensive tests covering all variants
+1. Verb[た] + すえ (に): 考えたすえに (3-9), 迷ったすえ (3-8) - "after much thought/hesitation"
+2. Noun + の + すえ (に): 争いのすえ (7-12), 議論のすえに (5-11) - "after the conflict/discussion"
+
+**Implementation**: Matcher in n2.rs (lines 1579-1643), tests in n2_patterns.rs (lines 3962-4017)
+
+**Key notes**:
+- Pattern uses TokenMatcher::Any to match either Verb (連用形/連用タ接続) or Noun
+- Custom matcher VerbTaOrNounNoMatcher checks for EITHER た (助動詞) OR の (助詞/連体化)
+- すえ always tokenizes as 名詞/非自立/一般
+- Optional に particle at the end (格助詞)
+- Pattern includes full construction: (Verb+た or Noun+の) + すえ + optional に
+
+**Tokenization observations**:
+- **Verb pattern**: 考え (動詞/連用形) + た (助動詞) + すえ (名詞/非自立) + に (optional)
+- **Noun pattern**: 議論 (名詞) + の (助詞/連体化) + すえ (名詞/非自立) + に (optional)
+- すえ always has POS tags: 名詞/非自立/一般
+
+**Pattern ranges**: Full construction from verb/noun through optional に
+- 考えたすえに: includes verb stem + た + すえ + に
+- 迷ったすえ: includes verb stem + た + すえ (without に)
+- 争いのすえ: includes noun + の + すえ
+- 議論のすえに: includes noun + の + すえ + に
+
+### Test Quality Metrics (た末・の末)
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json examples
+✅ No regressions
+✅ Both structure variants (Verb[た] and Noun+の) tested with/without に
+
+### Implementation Approach
+- Used flexible TokenMatcher::Any to match either verb or noun before た/の
+- Created custom matcher that checks for EITHER た OR の (since there's no TokenMatcher::Or)
+- This approach allows a single pattern to handle both grammatical structures
+- Verified all 4 structure variants work correctly: た+すえ, た+すえ+に, の+すえ, の+すえ+に
+
+---
+
 ## Session 394 - 2025-12-15
 
-### ✅ Session Summary (In Progress)
-**Status**: IN PROGRESS - Successfully implemented 2 N2 patterns (にわたって, に沿って)
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (にわたって, に沿って)
 **Patterns completed**: 2 (にわたって and に沿って - both N2 newly implemented)
 **Tests added**: 6 new tests (all passing)
 **Total tests**: 2572 passing, 1 ignored (was 2566 passing, 1 ignored - net +6 tests)
