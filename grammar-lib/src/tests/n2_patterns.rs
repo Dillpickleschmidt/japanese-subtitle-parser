@@ -4272,3 +4272,52 @@ mod ni_kagirazu_tests {
         assert_pattern_range(&patterns, "に限らず", 11, 17); // 文法に限らず
     }
 }
+
+// Pattern: なお② (furthermore, moreover, in addition)
+// Data source: grammar_points_data.json["なお②"]
+// Testing: structure.standard[0] - "Phrase. なお、+ Phrase"
+//
+// Structure variants:
+//   - standard[0]: Phrase. なお、+ Phrase (used at sentence beginning as conjunction)
+//
+// Note: Formal expression used in letters, posters, commercials. Often without kanji (尚).
+
+mod nao_u2461_tests {
+    use super::*;
+
+    #[test]
+    fn test_nao_u2461_information_session() {
+        // Testing: なお as conjunction meaning "in addition"
+        // それでは只今から説明会を開始したいと思います。なお、ご不明な点がある場合はお気軽にお申し付けください
+        let sentence = "それでは只今から説明会を開始したいと思います。なお、ご不明な点がある場合はお気軽にお申し付けください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なお②");
+        assert_pattern_range(&patterns, "なお②", 23, 25); // なお
+    }
+
+    #[test]
+    fn test_nao_u2461_meeting_place() {
+        // Testing: なお as conjunction meaning "moreover"
+        // ５日の土曜日には１１時までに待ち合わせ場所に集合してください。なお、遅れる場合は私のＬＩＮＥまで連絡をください
+        let sentence = "５日の土曜日には１１時までに待ち合わせ場所に集合してください。なお、遅れる場合は私のＬＩＮＥまで連絡をください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なお②");
+        assert_pattern_range(&patterns, "なお②", 31, 33); // なお
+    }
+
+    #[test]
+    fn test_nao_u2461_click_next() {
+        // Testing: なお as conjunction meaning "furthermore"
+        // 内容の確認が出来ましたら、「次へ」をクリックしてください。なお、「次へ」をクリックした後には内容の変更ができないのでご注意ください
+        let sentence = "内容の確認が出来ましたら、「次へ」をクリックしてください。なお、「次へ」をクリックした後には内容の変更ができないのでご注意ください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なお②");
+        assert_pattern_range(&patterns, "なお②", 29, 31); // なお
+    }
+}

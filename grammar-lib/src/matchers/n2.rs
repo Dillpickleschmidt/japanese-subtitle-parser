@@ -1975,9 +1975,23 @@ pub fn nao_u2460() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: なお②
+// Pattern: なお② (furthermore, moreover, in addition)
+// Structures: なお (conjunction)
 pub fn nao_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match なお as conjunction
+    #[derive(Debug)]
+    struct NaoConjunctionMatcher;
+    impl super::Matcher for NaoConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なお"
+                && token.base_form == "なお"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NaoConjunctionMatcher))]
 }
 
 // Pattern: 限り
