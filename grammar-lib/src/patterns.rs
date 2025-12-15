@@ -5296,6 +5296,14 @@ declare_patterns! {
         jlpt: "n2",
     },
 
+    KekkaU30fbNokekka_Noun {
+        name: "結果・の結果",
+        matcher_fn: crate::matchers::n2::kekka_u30fb_nokekka_noun,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
     Irai {
         name: "以来",
         matcher_fn: crate::matchers::n2::irai,

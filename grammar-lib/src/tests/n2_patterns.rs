@@ -7308,3 +7308,60 @@ mod irai_tests {
         assert_pattern_range(&patterns, "以来", 0, 4); // それ以来
     }
 }
+
+// Pattern: 結果・の結果 (as a result of)
+// Data source: grammar_points_data.json["結果・の結果"]
+// Testing: structure.standard[0] - "Verb[た] + 結果 + Phrase"
+// Testing: structure.standard[1] - "Noun + の + 結果 + Phrase"
+//
+// Structure variants:
+//   - standard[0]: Verb[た] + 結果 + Phrase (as a result of doing)
+//   - standard[1]: Noun + の + 結果 + Phrase (as a result of noun)
+
+mod kekka_u30fb_nokekka_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_ta_kekka() {
+        // Structure: Verb[た] + 結果 (result)
+        let sentence = "お酒を飲んで運転した結果、電柱にぶつかって免許を取り消された";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "結果・の結果");
+        assert_pattern_range(&patterns, "結果・の結果", 6, 12); // 運転した結果
+    }
+
+    #[test]
+    fn test_verb_ta_kekka_positive() {
+        // Structure: Verb[た] + 結果 (positive outcome)
+        let sentence = "みんなが努力した結果、大会で優勝することができた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "結果・の結果");
+        assert_pattern_range(&patterns, "結果・の結果", 4, 10); // 努力した結果
+    }
+
+    #[test]
+    fn test_noun_no_kekka() {
+        // Structure: Noun + の + 結果 (result)
+        let sentence = "話し合いの結果、親が学費を払ってくれることになりました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "結果・の結果");
+        assert_pattern_range(&patterns, "結果・の結果", 0, 7); // 話し合いの結果
+    }
+
+    #[test]
+    fn test_noun_no_kekka_investigation() {
+        // Structure: Noun + の + 結果 (investigation result)
+        let sentence = "調査の結果、この土地の土は汚染されていることが確認できました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "結果・の結果");
+        assert_pattern_range(&patterns, "結果・の結果", 0, 5); // 調査の結果
+    }
+}

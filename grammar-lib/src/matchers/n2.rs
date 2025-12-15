@@ -4187,9 +4187,54 @@ pub fn momata() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 結果・の結果
+// Pattern: 結果・の結果 (as a result of) - Verb[た] + 結果
+// Structures: Verb[た] + 結果
 pub fn kekka_u30fb_nokekka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![
+        super::flexible_verb_form(),
+        super::past_auxiliary(),
+        kekka_noun_matcher(),
+    ]
+}
+
+// Pattern: 結果・の結果 (as a result of) - Noun + の + 結果
+// Structures: Noun + の + 結果
+pub fn kekka_u30fb_nokekka_noun() -> Vec<TokenMatcher> {
+    vec![
+        super::noun_matcher(),
+        no_particle_rentaika_matcher(),
+        kekka_noun_matcher(),
+    ]
+}
+
+// Helper: Match 結果 (result) as 名詞/副詞可能
+fn kekka_noun_matcher() -> TokenMatcher {
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct KekkaMatcher;
+    impl super::Matcher for KekkaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "結果"
+                && token.base_form == "結果"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(KekkaMatcher))
+}
+
+// Helper: Match の particle (連体化)
+fn no_particle_rentaika_matcher() -> TokenMatcher {
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(NoParticleMatcher))
 }
 
 // Pattern: 以来
