@@ -1976,3 +1976,73 @@ mod eru_u30fb_eru_tests {
         assert_pattern_range(&patterns, "得る・得る", 20, 25); // ありえない
     }
 }
+
+// ============================================================================
+// ざるを得ない Tests - "cannot help but / have no choice but to"
+// ============================================================================
+#[cfg(test)]
+mod zaruwoenai_tests {
+    use super::*;
+
+    // Pattern: ざるを得ない (cannot help but / have no choice but to)
+    // Data source: grammar_points_data.json["ざるを得ない"]
+    // Testing: structure.standard[0] - "Verb[ない] + ざるを得ない"
+    //
+    // Grammar: Classical auxiliary ざる (negative) + を + 得る + ない
+    // Means: Cannot help doing (A), no choice but to (A), can't not (A)
+    // Note: Special conjugation with する → せざる (not しざる)
+    //
+    // Structures to test:
+    //   - standard[0]: Verb[ない] + ざるを得ない
+    //   - polite[0]: Verb[ない] + ざるを得ません
+    //   - Special: する → せざるを得ない (not しざるを得ない)
+
+    #[test]
+    fn test_zaruwoenai_standard_akirame() {
+        // Example from data: 諦めざるをえない
+        // Testing: structure.standard[0] - Regular verb + ざるを得ない
+        let sentence = "山の頂上まで登りたかったが、天候が悪くなって来たから諦めざるを得ない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ざるを得ない");
+        assert_pattern_range(&patterns, "ざるを得ない", 26, 34); // 諦めざるを得ない
+    }
+
+    #[test]
+    fn test_zaruwoenai_polite_shitagawa() {
+        // Example from data: 従わざるをえません
+        // Testing: structure.polite[0] - Regular verb + ざるを得ません
+        let sentence = "先輩に指示されたので従わざるを得ません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ざるを得ない");
+        assert_pattern_range(&patterns, "ざるを得ない", 10, 19); // 従わざるを得ません
+    }
+
+    #[test]
+    fn test_zaruwoenai_suru_verb_special() {
+        // Example from data: 勉強せざるを得ない (not 勉強しざるを得ない)
+        // Testing: Special conjugation - する → せざる (classical form)
+        let sentence = "フランスの大学へ行くため、フランス語を勉強せざるを得ない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ざるを得ない");
+        assert_pattern_range(&patterns, "ざるを得ない", 19, 28); // 勉強せざるを得ない
+    }
+
+    #[test]
+    fn test_zaruwoenai_regular_verb_shitagaw() {
+        // Testing: Another regular verb example with だろう following
+        let sentence = "会社の方針だから、従わざるを得ないだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ざるを得ない");
+        // Note: Range includes ないだろう due to auxiliary verb extension
+        // This is acceptable as だろう modifies the entire ざるを得ない construction
+        assert_pattern_range(&patterns, "ざるを得ない", 9, 20); // 従わざるを得ないだろう
+    }
+}

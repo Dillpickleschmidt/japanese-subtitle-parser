@@ -79,9 +79,85 @@ pub fn u301c_enai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ざるを得ない
+// Pattern: ざるを得ない (cannot help but / have no choice but to)
+// Structures: Verb[未然形] + ざる + を + 得 + ない/ません
 pub fn zaruwoenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in 未然形 (negative form stem)
+    #[derive(Debug)]
+    struct MizenVerbMatcher;
+    impl Matcher for MizenVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| {
+                    f == "未然形" || f == "未然レル接続" || f == "未然ヌ接続"
+                })
+        }
+    }
+
+    // Match ざる (classical negative auxiliary)
+    #[derive(Debug)]
+    struct ZaruMatcher;
+    impl Matcher for ZaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ざる"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match を particle
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match 得 (える) verb
+    #[derive(Debug)]
+    struct EruVerbMatcher;
+    impl Matcher for EruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "得る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ない OR ませ auxiliary verb
+    #[derive(Debug)]
+    struct NaiMaseMatcher;
+    impl Matcher for NaiMaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && ((token.surface == "ない" && token.base_form == "ない")
+                    || (token.surface == "ませ" && token.base_form == "ます"))
+        }
+    }
+
+    // Match ん auxiliary verb (for ません)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MizenVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZaruMatcher)),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(EruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMaseMatcher)),
+        // Don't use Optional - it causes issues. We'll just match up to ない or ませ
+        // For ません, a separate pattern detection would be needed, but for now this works.
+    ]
 }
 
 // Pattern: ～ざる
