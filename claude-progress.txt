@@ -7354,3 +7354,85 @@ Solution: Added stop_conditions to the Wildcard to prevent it from expanding pas
 Continue with remaining N2 priority 4 patterns: 限り, を問わず, に越したことはない, ないではいられない, ねばならない
 
 **Session outcome**: Successfully completed 1 new N2 pattern (にかかわらず) with full test coverage across 6 structure variants. Total of 6 new tests added, all passing, no regressions. All 2733 tests passing.
+---
+
+## Session 419 - 限り Pattern (N2) Implementation + Verb[て] + B Pattern Update
+
+**Date**: 2025-12-15
+**Status**: COMPLETE
+
+### Completed Work
+
+1. **Updated Verb[て] + B pattern status** (N4, priority 1)
+   - Found tests already existed and passing
+   - Updated feature_list.json to mark as complete
+   - Both N5 and N4 versions already complete
+
+2. **Implemented 限り pattern** (N2, priority 4)
+   - Successfully implemented matcher and all tests
+   - Tests: 2739 tests passing (up from 2733, added 6 new tests)
+   - Files modified: matchers/n2.rs, tests/n2_patterns.rs, feature_list.json
+
+### Implementation Summary - 限り Pattern
+
+Created matcher function kagiri() to handle the pattern:
+- Core structure: [Any token] + かぎり/限り (名詞/非自立/副詞可能)
+- Simple matcher using TokenMatcher::Any to allow any preceding form
+- Matches both hiragana かぎり and kanji 限り
+
+### Tests Created (6 tests in kagiri_tests module)
+
+All tests include assert_has_pattern and assert_pattern_range with correct character positions.
+
+1. test_kagiri_verb_ru_form - 言っているかぎり (Verb[ru] + かぎり)
+2. test_kagiri_verb_nai_form - 諦めないかぎり (Verb[ない] + かぎり)
+3. test_kagiri_verb_teiru_form - いるかぎり (Verb[ている] + かぎり)
+4. test_kagiri_noun_dearu_form - であるかぎり (Noun + である + かぎり)
+5. test_kagiri_verb_ta_form - 聞いたかぎり (Verb[た] + かぎり)
+6. test_kagiri_living_in_japan - 住むかぎり (Verb[ru] + かぎり, different context)
+
+### Key Implementation Points
+
+**Tokenization Pattern:**
+- かぎり/限り: 名詞/非自立/副詞可能/*
+- base_form: かぎり
+- Appears after various verb forms and noun + である constructions
+
+**Matcher Strategy:**
+- Used TokenMatcher::Any to match any preceding token
+- This allows the pattern to match after verbs in any form (る/ない/た/ている)
+- Also matches after である (noun + である + かぎり)
+- Checks both surface forms (かぎり and 限り) for completeness
+
+### Structure Variants Covered
+
+All variants from grammar_points_data.json tested:
+- standard[0]: Verb[る] + 限り + Phrase
+- standard[1]: Verb[ない] + 限り + Phrase
+- standard[2]: Verb[ている] + 限り + Phrase
+- standard[3]: Noun + である + 限り
+- standard[4]: Verb[た] + 限り (note in data)
+
+### Pattern Meanings
+
+The pattern has three main meanings depending on context:
+1. Limited to scope of A: "limited to (A), (B)"
+2. Within scope of knowledge/senses: "as far as (A), (B)", "as long as (A), (B)"
+3. Assuming A is true: "while (A) is the case, (B)", "assuming (A), (B)"
+
+All meanings are unified by the concept of 限り limiting/constraining the scope of (B).
+
+### Next Steps
+
+Continue with remaining N2 priority 4 patterns:
+- を問わず
+- に越したことはない
+- ないではいられない
+- ねばならない
+- ～のうち(で)
+- に際して
+- にあたり・にあたって
+- を契機に
+- ～ところに・～ところへ
+
+**Session outcome**: Successfully completed 1 new N2 pattern (限り) with full test coverage across 6 structure variants, plus updated status for 1 N4 pattern. Total of 6 new tests added, all passing, no regressions. All 2739 tests passing.
