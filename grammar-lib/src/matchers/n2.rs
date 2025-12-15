@@ -1473,9 +1473,56 @@ pub fn womegutte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にわたって
+// Pattern: にわたって (across, throughout, over the period of)
+// Structures: Noun + にわたって/にわたる/にわたり/にわたった
 pub fn niwatatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match either:
+    // 1. Compound particle forms (にわたって/にわたる/にわたり) - single token
+    // 2. に + わたる verb - multi-token form (e.g., にわたった)
+    #[derive(Debug)]
+    struct NiwatatteMatcher;
+    impl super::Matcher for NiwatatteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Case 1: Compound particle
+            if token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+                && (token.base_form == "にわたって"
+                    || token.base_form == "にわたる"
+                    || token.base_form == "にわたり")
+            {
+                return true;
+            }
+
+            // Case 2: Particle に
+            if token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Match わたる verb (for multi-token form like にわたった)
+    #[derive(Debug)]
+    struct WataruVerbMatcher;
+    impl super::Matcher for WataruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "わたる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding noun
+        TokenMatcher::Custom(Arc::new(NiwatatteMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WataruVerbMatcher)))),
+    ]
 }
 
 // Pattern: に沿って

@@ -3868,3 +3868,51 @@ mod sonoue_tests {
         assert_pattern_range(&patterns, "を巡って", 4, 12); // ルールをめぐって
     }
 }
+
+// Pattern: にわたって (across, throughout, over the period of)
+// Data source: grammar_points_data.json["にわたって"]
+// Testing all structure variants with print_debug
+
+#[test]
+fn test_niwatatte_te_form() {
+    // Testing: structure.standard[0] - "Noun + にわたって"
+    let sentence = "彼は脱獄後長年にわたって警察から身を隠し続けた";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "にわたって");
+    assert_pattern_range(&patterns, "にわたって", 5, 12); // 長年にわたって
+}
+
+#[test]
+fn test_niwatatte_ru_form() {
+    // Testing: structure.standard[1] - "Noun + にわたる + Noun"
+    let sentence = "１５年にわたる戦争は、ついにその幕を閉じた";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "にわたって");
+    assert_pattern_range(&patterns, "にわたって", 2, 7); // 年にわたる
+}
+
+#[test]
+fn test_niwatatte_ri_form() {
+    // Testing: structure.standard[2] - "にわたり"
+    let sentence = "会議は三日間にわたり続けられた";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "にわたって");
+    assert_pattern_range(&patterns, "にわたって", 4, 10); // 日間にわたり
+}
+
+#[test]
+fn test_niwatatte_ta_form() {
+    // Testing: structure.standard[3] - "にわたった"
+    let sentence = "十年間にわたった研究がようやく完成した";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "にわたって");
+    assert_pattern_range(&patterns, "にわたって", 1, 8); // 年間にわたった
+}
