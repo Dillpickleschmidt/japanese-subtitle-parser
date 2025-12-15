@@ -7702,13 +7702,13 @@
   {
     "pattern_name": "以上 ②",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When combined with the adverbial particle は, 以上（いじょう） is frequently translated as 'since (A), (B)', 'now that (A), (B... [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

@@ -3387,3 +3387,75 @@ mod nakawo_tests {
         assert_pattern_range(&patterns, "中を", 18, 21); // の中を
     }
 }
+
+// Pattern: 以上 ② (since, now that, as long as)
+// Data source: grammar_points_data.json["以上 ②"]
+mod ijou_u2461_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + 以上（いじょう）(は)"
+    #[test]
+    fn test_ijou_verb_with_wa() {
+        let sentence = "猫を飼うと決めた以上は、最後まで責任を持って育てないといけないと思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上 ②");
+        assert_pattern_range(&patterns, "以上 ②", 7, 11); // た以上は
+    }
+
+    // Testing: structure.standard[0] - "Verb + 以上（いじょう）(は)" without は
+    #[test]
+    fn test_ijou_verb_without_wa() {
+        let sentence = "キャプテンに選ばれた以上、結果を残すために精一杯頑張ります！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上 ②");
+        assert_pattern_range(&patterns, "以上 ②", 9, 12); // た以上
+    }
+
+    // Testing: structure.standard[1] - "［い］Adjective + 以上（いじょう）(は)"
+    #[test]
+    fn test_ijou_i_adjective() {
+        let sentence = "体調が悪い以上は、会社に来ないでください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上 ②");
+        assert_pattern_range(&patterns, "以上 ②", 3, 8); // 悪い以上は
+    }
+
+    // Testing: structure.standard[2] - "［な］Adjective + である + 以上（いじょう）(は)"
+    #[test]
+    fn test_ijou_na_adjective_dearu() {
+        let sentence = "有名である以上は、テレビではもちろん、ＳＮＳでも発言に気をつけなければいけません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上 ②");
+        assert_pattern_range(&patterns, "以上 ②", 3, 8); // ある以上は (from 有名である以上は)
+    }
+
+    // Testing: structure.standard[3] - "Noun + である + 以上（いじょう）(は)"
+    #[test]
+    fn test_ijou_noun_dearu_with_wa() {
+        let sentence = "この地域の住民である以上は、この地域のルールをしっかりと守ってもらわないと困ります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上 ②");
+        assert_pattern_range(&patterns, "以上 ②", 8, 13); // ある以上は (from 住民である以上は)
+    }
+
+    // Testing: structure.standard[3] - "Noun + である + 以上（いじょう）(は)" without は
+    #[test]
+    fn test_ijou_noun_dearu_without_wa() {
+        let sentence = "どんなに気を付けていても、人間である以上、ミスは防げないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上 ②");
+        assert_pattern_range(&patterns, "以上 ②", 16, 20); // ある以上 (from 人間である以上)
+    }
+}

@@ -969,9 +969,60 @@ pub fn ueni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 以上 ②
+// Pattern: 以上 ② (since, now that, as long as)
+// Structures: Verb + 以上, い-Adj + 以上, な-Adj/Noun + である + 以上, (optional は)
 pub fn ijou_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches any token that can precede 以上② (Verb, い-Adj, or ある from である)
+    #[derive(Debug)]
+    struct IjouPreMatcher;
+    impl super::Matcher for IjouPreMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if let Some(first_pos) = token.pos.first() {
+                match first_pos.as_str() {
+                    "動詞" => true, // Any verb form
+                    "形容詞" => true, // い-Adjectives
+                    "助動詞" => {
+                        // ある (from である), た (past tense), etc.
+                        token.base_form == "ある" || token.base_form == "た" || token.base_form == "だ"
+                    }
+                    _ => false,
+                }
+            } else {
+                false
+            }
+        }
+    }
+
+    // Matches 以上 (名詞/非自立/副詞可能)
+    #[derive(Debug)]
+    struct IjouMatcher;
+    impl super::Matcher for IjouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "以上"
+                && token.base_form == "以上"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Matches は (係助詞) - optional
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl super::Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IjouPreMatcher)),
+        TokenMatcher::Custom(Arc::new(IjouMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaMatcher)))),
+    ]
 }
 
 // Pattern: 以上に
