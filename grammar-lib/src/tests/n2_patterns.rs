@@ -10974,3 +10974,59 @@ mod tokorowomiruto_tests {
         assert_pattern_range(&patterns, "ところを見ると", 15, 24); // いるところをみると
     }
 }
+
+// Pattern: だけに (as might be expected of, because)
+// Data source: grammar_points_data.json["だけに"]
+// Testing all structure variants:
+//   - standard[0]: Verb + だけに
+//   - standard[1]: い-Adjective + だけに
+//   - standard[2]: な-Adjective + な + だけに
+//   - standard[3]: Noun + だけに
+
+mod dakeni_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_dakeni() {
+        // "Tom has been studying Japanese for 8 years and as one might expect, he is fluent"
+        let sentence = "トムさんは日本語を８年勉強しているだけに、日本語がペラペラだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけに");
+        assert_pattern_range(&patterns, "だけに", 15, 20); // いるだけに
+    }
+
+    #[test]
+    fn test_i_adj_dakeni() {
+        // "This apartment is very close to Tokyo station, and as one might expect, the rent is expensive"
+        let sentence = "このアパートは東京駅に近いだけに、家賃が高い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけに");
+        assert_pattern_range(&patterns, "だけに", 11, 16); // 近いだけに
+    }
+
+    #[test]
+    fn test_na_adj_dakeni() {
+        // "This application is becoming more and more popular just because it is so useful"
+        let sentence = "このアプリは便利なだけに、どんどんとユーザーが増えてきています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけに");
+        assert_pattern_range(&patterns, "だけに", 8, 12); // なだけに
+    }
+
+    #[test]
+    fn test_noun_dakeni() {
+        // "It is summer vacation and as one might expect, there are a lot of people at the beach"
+        let sentence = "夏休みであるだけに、海水浴場には人がたくさんいる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけに");
+        assert_pattern_range(&patterns, "だけに", 4, 9); // あるだけに
+    }
+}

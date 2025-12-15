@@ -7144,9 +7144,53 @@ pub fn habetsutoshite() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: だけに
+// Pattern: だけに (as might be expected of, because)
+// Structures: Verb/い-Adj/な-Adj + な/Noun + である + だけに
 pub fn dakeni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だけ as adverbial particle
+    #[derive(Debug)]
+    struct DakeMatcher;
+    impl super::Matcher for DakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.base_form == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match に as case particle
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl super::Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match any verb, adjective, noun, or auxiliary verb before だけに
+    // This includes: verbs (動詞), i-adjectives (形容詞), na-adjectives (助動詞 な),
+    // auxiliary verbs like ある in である, etc.
+    #[derive(Debug)]
+    struct PreDakeniMatcher;
+    impl super::Matcher for PreDakeniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| {
+                pos == "動詞" || pos == "形容詞" || pos == "助動詞"
+            })
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(PreDakeniMatcher)),
+        TokenMatcher::Custom(Arc::new(DakeMatcher)),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+    ]
 }
 
 // Pattern: だけは
