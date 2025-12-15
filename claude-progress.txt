@@ -1,3 +1,83 @@
+## Session 402 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (にかかわる, に向かって・に向けて)
+**Patterns completed**: 2 (にかかわる and に向かって・に向けて - both N2)
+**Tests added**: 7 new tests (all passing)
+**Total tests**: 2632 passing, 1 ignored (was 2625 passing, 1 ignored - net +7 tests)
+
+**Session highlights**:
+- Implemented にかかわる (relating to, concerning) - 2 structure variants
+- Implemented に向かって・に向けて (towards, facing, aimed at) - 3 structure variants
+- Both patterns follow Noun + に + Verb construction
+- Clean implementation with comprehensive test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: にかかわる (relating to, concerning)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: にかかわる shows a relation between (A) and (B), where (B) is concerning/relating to (A). Often used to emphasize that (A) is something important or serious that should be considered carefully. May be translated as "relating to (A)", "concerning (A)", or "(B) that has to do with (A)".
+
+**Structures tested**: 2 structure variants with 3 comprehensive tests
+1. Noun + にかかわる: 人生にかかわる (chars 7-14), 人生にかかわる (chars 7-14) - "relating to life"
+2. Noun + にかかわる + Noun: 命にかかわる (chars 2-8) + 病気 - "life-threatening disease"
+
+**Implementation**: Matcher in n2.rs (lines 1890-1921), tests in n2_patterns.rs (lines 4807-4849)
+
+**Key notes**:
+- Pattern structure: Noun + に(格助詞) + かかわる(動詞)
+- Custom matchers: NiParticleMatcher, KakawaruVerbMatcher
+- Implies a deeper, more important relationship than に関する
+- Used when (A) has significant impact or consequences on (B)
+- Register: standard/formal
+
+**Tokenization observations**:
+- Noun + に (助詞/格助詞/一般) + かかわる (動詞/自立/五段・ラ行/基本形, base=かかわる)
+
+**Pattern ranges**: Full construction from noun through verb
+- 人生にかかわる: includes noun + に + かかわる
+- 命にかかわる: includes noun + に + かかわる (followed by noun 病気)
+
+---
+
+### ✅ Pattern Implemented: に向かって・に向けて (towards, facing, aimed at)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: に向かって (using intransitive verb 向かう "to face") indicates an action done "towards (A)" or "facing (A)", where (A) is usually a stationary object or destination. に向けて (using transitive verb 向ける "to direct") implies intentionally "aiming" or "facing" something towards (A), especially to make it "suitable" for (A).
+
+**Structures tested**: 3 structure variants with 4 comprehensive tests
+1. Noun + に向かって: マイクにむかって (chars 0-8), 空にむかって (chars 0-6) - "towards mic/sky"
+2. Noun + に向けて: 社員にむけて (chars 2-8), 大会にむけて (chars 5-11) - "aimed at employees/championship"
+3. Noun + に向けて + の + Noun: (covered by structure 2 tests)
+
+**Implementation**: Matcher in n2.rs (lines 1923-1966), tests in n2_patterns.rs (lines 4851-4905)
+
+**Key notes**:
+- Pattern structure: Noun + に(格助詞) + (むかう OR むける)(動詞) + て(接続助詞)
+- Custom matchers: NiParticleMatcher, MukauMukeruVerbMatcher, TeParticleMatcher
+- むかう (intransitive): facing/going towards a direction
+- むける (transitive): intentionally directing/aiming at something
+- Both verbs work with same grammar pattern
+- Register: standard
+
+**Tokenization observations**:
+- **に向かって**: に (助詞/格助詞) + むかっ (動詞, base='むかう', 連用タ接続) + て (助詞/接続助詞)
+- **に向けて**: に (助詞/格助詞) + むけ (動詞, base='むける', 連用形) + て (助詞/接続助詞)
+
+**Pattern ranges**: Full construction from noun through て particle
+- All 4 test cases verified with correct character ranges
+- Covers both intransitive (向かう) and transitive (向ける) forms
+
+---
+
 ## Session 401 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
