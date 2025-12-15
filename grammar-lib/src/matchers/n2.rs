@@ -3967,9 +3967,55 @@ pub fn dokorodehanai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ぶりに
+// Pattern: ぶりに (for the first time in [time period])
+// Structures: Noun + ぶり + だ/です/に/の
 pub fn burini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+
+    // Match ぶり as a suffix noun
+    #[derive(Debug)]
+    struct BuriMatcher;
+    impl Matcher for BuriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ぶり"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "接尾")
+        }
+    }
+
+    // Match time-related nouns (numbers, counters, time words)
+    #[derive(Debug)]
+    struct TimeNounMatcher;
+    impl Matcher for TimeNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Match に, の, だ, or です after ぶり
+    #[derive(Debug)]
+    struct BuriFollowMatcher;
+    impl Matcher for BuriFollowMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match に (格助詞)
+            (token.surface == "に" && token.pos.first().is_some_and(|p| p == "助詞"))
+            // Match の (連体化)
+            || (token.surface == "の" && token.pos.first().is_some_and(|p| p == "助詞"))
+            // Match だ (助動詞)
+            || (token.surface == "だ" && token.pos.first().is_some_and(|p| p == "助動詞"))
+            // Match です (助動詞)
+            || (token.surface == "です" && token.pos.first().is_some_and(|p| p == "助動詞"))
+        }
+    }
+
+    vec![
+        // One or more time nouns before ぶり (e.g., 一 + 年, or just 三年)
+        TokenMatcher::Custom(Arc::new(TimeNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TimeNounMatcher)))),
+        TokenMatcher::Custom(Arc::new(BuriMatcher)),
+        // Optional ending (に, の, だ, です)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(BuriFollowMatcher)))),
+    ]
 }
 
 // Pattern: ては

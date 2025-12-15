@@ -8542,13 +8542,13 @@
   {
     "pattern_name": "ぶりに",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used as a suffix , the voiced form of 振（ふ）り 'style', 振（ぶ）り will be used to indicate either the way something app... [3 std, 3 pol]",
     "priority": 4,
     "skip_reason": null

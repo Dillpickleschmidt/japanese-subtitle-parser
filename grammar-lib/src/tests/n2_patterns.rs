@@ -7049,3 +7049,82 @@ mod tokoroni_tests {
         assert_pattern_range(&patterns, "～ところに・～ところへ", 7, 18); // 落ち込んでいたところへ
     }
 }
+
+// Pattern: ぶりに (for the first time in [time period])
+// Data source: grammar_points_data.json["ぶりに"]
+// Testing all structure variants with print_debug to see tokenization
+//
+// Structure variants:
+//   - standard[0]/polite[0]: Noun + ぶり + だ/です
+//   - standard[1]/polite[1]: Noun + ぶりに
+//   - standard[2]/polite[2]: Noun + ぶりの + Noun
+
+mod burini_tests {
+    use super::*;
+
+    #[test]
+    fn test_burida_standard() {
+        // Structure: Noun + ぶり + だ
+        let sentence = "彼女との再会は五年ぶりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぶりに");
+        assert_pattern_range(&patterns, "ぶりに", 7, 12); // 五年ぶりだ
+    }
+
+    #[test]
+    fn test_buridesu_polite() {
+        // Structure: Noun + ぶり + です
+        let sentence = "実家に帰るのは三年ぶりです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぶりに");
+        assert_pattern_range(&patterns, "ぶりに", 7, 13); // 三年ぶりです
+    }
+
+    #[test]
+    fn test_burini_standard() {
+        // Structure: Noun + ぶりに
+        let sentence = "一年ぶりに五キロも走ったから明日は絶対に筋肉痛だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぶりに");
+        assert_pattern_range(&patterns, "ぶりに", 0, 5); // 一年ぶりに
+    }
+
+    #[test]
+    fn test_burinino_with_noun() {
+        // Structure: Noun + ぶりの + Noun
+        let sentence = "四年ぶりの寿司だ！やっぱり日本の寿司はうまいな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぶりに");
+        assert_pattern_range(&patterns, "ぶりに", 0, 5); // 四年ぶりの
+    }
+
+    #[test]
+    fn test_burini_verb_following() {
+        // Structure: Noun + ぶりに + Verb (風呂に入る)
+        let sentence = "三年ぶりに風呂に入る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぶりに");
+        assert_pattern_range(&patterns, "ぶりに", 0, 5); // 三年ぶりに
+    }
+
+    #[test]
+    fn test_burinino_victory() {
+        // Structure: Noun + ぶりの + Noun (優勝)
+        let sentence = "高橋選手が十年ぶりの優勝！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぶりに");
+        assert_pattern_range(&patterns, "ぶりに", 5, 10); // 十年ぶりの
+    }
+}
