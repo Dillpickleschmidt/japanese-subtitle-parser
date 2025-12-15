@@ -13335,3 +13335,65 @@ Files modified: 3
 **Pattern implemented**: にすぎない
 **Commit**: f0b2469
 **Next priorities**: Other N2 priority 4 patterns (のみならず, てならない, 何といっても, 何より)
+
+## Session 476 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern
+**Pattern completed**: のみならず (N2, priority 4)
+**Tests added**: 6 new tests (all passing with range assertions)
+**Total tests**: 3130 passing, 1 ignored (was 3124 before session, net +6 tests)
+
+**Session highlights**:
+- Implemented のみならず (not only...but also) - N2 formal construction
+- Pattern handles all structure variants: verb, adjective, noun forms
+- Supports optional である before のみならず
+- Test-first workflow with tokenization analysis
+- All 6 structure variants tested
+- No regressions
+
+**Pattern implemented**: のみならず
+**Commit**: 85dcc8f
+**Next priorities**: Other N2 priority 4 patterns (てならない, 何といっても, 何より, てしょうがない)
+
+---
+
+### ✅ Pattern Implemented: のみならず (not only...but also)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: のみならず is a formal construction consisting of のみ (literary equivalent of だけ "only"), the negative stem なら of なる, and ず (classical negative auxiliary). Used to express "not only A but also B" in formal contexts like speeches and literature.
+
+**Structures tested**: 6 test variants (from grammar_points_data.json)
+1. Verb + のみならず: 遅刻したのみならず (chars 9-15) - past tense verb
+2. い-Adjective + のみならず: 暑いのみならず (chars 5-12) - i-adjective
+3. な-Adjective + のみならず: 便利なのみならず (chars 9-15) - na-adjective
+4. Noun + のみならず: 子供のみならず (chars 5-12) - simple noun
+5. Noun + である + のみならず: 先生であるのみならず (chars 6-16) - noun with である
+6. Sentence-initial conjunction: 。のみならず (chars 10-16) - sentence beginning
+
+**Implementation details**:
+- Matcher structure: TokenMatcher::Any + Optional(で) + Optional(ある) + のみ + なら + ず
+- Four custom matchers: NomiMatcher, NaraMatcher, ZuMatcher, DeAruMatcher
+- NomiMatcher: surface=="のみ", pos=助詞/副助詞
+- NaraMatcher: surface=="なら", base=="なる", pos=動詞, 未然形
+- ZuMatcher: surface=="ず", base=="ぬ", pos=助動詞
+- DeAruMatcher: matches で or ある from である construction (both optional)
+- TokenMatcher::Any matches preceding word (verb/adjective/noun)
+
+**Tokenization observations**:
+- のみ tokenizes as 副助詞 (adverbial particle)
+- なら tokenizes as 動詞 未然形 (verb imperfective form, base: なる)
+- ず tokenizes as 助動詞 (auxiliary verb, base: ぬ)
+- である appears as で (助動詞) + ある (助動詞) when present
+- Pattern can attach to any verb, adjective, or noun
+- Can appear sentence-initially as a conjunction (following 。)
+
+**Test count**: 6 tests (all passing)
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs (implementation)
+- grammar-lib/src/tests/n2_patterns.rs (tests)
+- feature_list.json (status update)
+
