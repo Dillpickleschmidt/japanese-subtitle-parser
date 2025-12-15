@@ -1,3 +1,49 @@
+## Session 459 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented ぬ pattern (N2)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 6 new tests (all passing with range assertions)
+**Total tests**: 3033 passing, 1 ignored (was 3027 before session, net +6 tests)
+
+**Session highlights**:
+- Implemented ぬ (classical negative - "not") - N2 pattern
+- Pattern structure: Verb[未然形 or 未然ヌ接続] + ぬ (auxiliary)
+- Tests cover all structure variants including する→せぬ, くる→こぬ, いる→おらぬ exceptions
+- Classical/literary negative form, archaic alternative to ない
+- Used existing stub function in n2.rs (nu function was already declared in patterns.rs)
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 6 tests pass with proper range assertions covering all structure variants
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: ぬ (classical negative - "not")
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: ぬ is the attributive form of ず, a classical auxiliary verb that is used for negation like ない. It connects to verbs in the same way as ない but is archaic/literary. Often used in set expressions, artistic writing, or to make characters seem classical.
+
+**Structures tested**: 6 test variants
+1. Verb[未然形] + ぬ: 通れぬ (chars 8-11) - basic negative "cannot pass"
+2. Verb[未然形] + ぬ: 入れぬ (chars 13-16) - imperative "will not put"
+3. Verb[未然形] + ぬ + Noun: 知らぬ (chars 7-10) - attributive form modifying noun
+4. する → せぬ: せぬ (chars 16-18) - exception for する verb
+5. くる → こぬ: こぬ (chars 10-12) - exception for くる verb
+6. いる → おらぬ: おらぬ (chars 8-11) - exception using classical おる form
+
+**Implementation details**:
+- Matcher: ImperfectiveVerbMatcher checks for 動詞 with 未然形 or 未然ヌ接続 conjugation
+- NuAuxiliaryMatcher checks for ぬ (助動詞) with base_form ぬ
+- Pattern handles regular verbs and special forms (する, くる, おる)
+- Tests use realistic classical/literary Japanese sentences from grammar data
+
+**Key learning**: Pattern was already declared in patterns.rs with a stub function. Following the instructions to check for existing stubs prevented duplicate definition errors.
+
+---
+
 ## Session 458 - 2025-12-15
 
 ### Session Summary - COMPLETE
