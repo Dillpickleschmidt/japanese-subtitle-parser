@@ -12540,3 +12540,65 @@ mod mattaku_nai_tests {
         assert_pattern_range(&patterns, "全く～ない", 0, 7); // 全く分からない
     }
 }
+
+// Pattern: 点 (point / aspect / respect)
+// Data source: grammar_points_data.json["点"]
+// Testing all structure variants from structure.standard[]
+mod ten_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + 点（てん）(で)"
+    #[test]
+    fn test_ten_verb() {
+        let sentence = "分からない点がありましたら、こちらまでお電話をください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "点");
+        assert_pattern_range(&patterns, "点", 5, 6); // 点
+    }
+
+    // Testing: structure.standard[1] - "［い］Adjective + 点（てん）(で)"
+    #[test]
+    fn test_ten_i_adjective() {
+        let sentence = "漢字の一番難しい点は、読み方が沢山あることです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "点");
+        assert_pattern_range(&patterns, "点", 8, 9); // 点
+    }
+
+    // Testing: structure.standard[2] - "［な］Adjective + な + 点（てん）(で)"
+    #[test]
+    fn test_ten_na_adjective() {
+        let sentence = "アプリは使いやすさと便利さが一番重要な点で、見た目などはあまり綺麗じゃなくてもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "点");
+        assert_pattern_range(&patterns, "点", 19, 20); // 点
+    }
+
+    // Testing: structure.standard[3] - "Noun + の + 点（てん）(で)"
+    #[test]
+    fn test_ten_noun() {
+        let sentence = "イギリスの食文化はいくつかの点でスペインの食文化と違う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "点");
+        assert_pattern_range(&patterns, "点", 14, 15); // 点
+    }
+
+    // Testing: structure.standard[4] - "Phrase + という + 点（てん）(で)"
+    #[test]
+    fn test_ten_toiu() {
+        let sentence = "十万人のユーザーが居るという点では凄いと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "点");
+        assert_pattern_range(&patterns, "点", 14, 15); // 点
+    }
+}

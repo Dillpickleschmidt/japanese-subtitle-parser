@@ -4874,15 +4874,15 @@
   {
     "pattern_name": "点",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "点（てん） is a kanji that is regularly used to express a specific 'point', 'spot', 'aspect', or something similar [5 std, 0 pol]",
-    "priority": 3,
+    "priority": 1,
     "skip_reason": null
   },
   {

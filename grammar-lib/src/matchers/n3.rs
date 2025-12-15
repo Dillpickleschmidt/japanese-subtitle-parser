@@ -2138,9 +2138,23 @@ pub fn nimotozuite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 点
+// Pattern: 点 (point / aspect / respect)
+// Structures: Verb/Adj/Noun + 点（で/が/は/etc）
 pub fn ten() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TenMatcher;
+    impl Matcher for TenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "点"
+                && token.base_form == "点"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(TenMatcher))]
 }
 
 // Pattern: なぜなら〜から (because / the reason is)
