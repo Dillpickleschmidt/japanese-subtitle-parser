@@ -8234,13 +8234,13 @@
   {
     "pattern_name": "に越したことはない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Used to convey the meanings of 'there is nothing better than (A)', or '(A) would be the best', に越（こ）したことはない is a phra... [4 std, 4 pol]",
     "priority": 4,
     "skip_reason": null

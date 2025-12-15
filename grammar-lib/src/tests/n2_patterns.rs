@@ -6289,4 +6289,112 @@ mod wotowazu_tests {
             assert_pattern_range(&patterns, "たって_naku", 2, 10); // 家じゃなくたって
         }
     }
+
+    // Pattern: に越したことはない (there is nothing better than)
+    // Data source: grammar_points_data.json["に越したことはない"]
+    // Testing all structure variants from structure.standard[] and structure.polite[]
+    //
+    // Structure variants:
+    //   - standard[0]: Verb + に越したことはない
+    //   - standard[1]: い-Adjective + に越したことはない
+    //   - standard[2]: な-Adjective + (である) + に越したことはない
+    //   - standard[3]: Noun + (である) + に越したことはない
+    //   - polite[0]: Verb + に越したことはありません
+    //   - polite[1]: い-Adjective + に越したことはありません
+    //   - polite[2]: な-Adjective + (である) + に越したことはありません
+    //   - polite[3]: Noun + (である) + に越したことはありません
+    //
+    // Also common: ない + に越したことはない (it's best if not X)
+
+    mod nikoshitakotohanai_tests {
+        use super::*;
+
+        #[test]
+        fn test_verb_standard() {
+            // Structure: Verb + に越したことはない
+            let sentence = "先輩と待ち合わせているなら、待ち合わせ時間の10分前に着くにこしたことはない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "に越したことはない");
+            assert_pattern_range(&patterns, "に越したことはない", 27, 38); // 着くにこしたことはない
+        }
+
+        #[test]
+        fn test_i_adjective_standard() {
+            // Structure: い-Adjective + に越したことはない
+            let sentence = "家は広いにこしたことはないが、値段と場所も大切だ";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "に越したことはない");
+            assert_pattern_range(&patterns, "に越したことはない", 2, 13); // 広いにこしたことはない
+        }
+
+        #[test]
+        fn test_na_adjective_dearu() {
+            // Structure: な-Adjective + である + に越したことはない
+            let sentence = "部屋は綺麗であるにこしたことはないので、毎日掃除をしています";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "に越したことはない");
+            assert_pattern_range(&patterns, "に越したことはない", 6, 17); // あるにこしたことはない
+        }
+
+        #[test]
+        fn test_noun_dearu() {
+            // Structure: Noun + である + に越したことはない
+            let sentence = "億万長者であるにこしたことはない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "に越したことはない");
+            assert_pattern_range(&patterns, "に越したことはない", 5, 16); // あるにこしたことはない
+        }
+
+        #[test]
+        fn test_verb_polite() {
+            // Structure: Verb + に越したことはありません
+            let sentence = "健康でいるにこしたことはありません";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "に越したことはない");
+            assert_pattern_range(&patterns, "に越したことはない", 3, 17); // いるにこしたことはありません
+        }
+
+        #[test]
+        fn test_nai_verb() {
+            // Structure: Verb[ない] + に越したことはない (it's best if not X)
+            let sentence = "災害は起きないにこしたことはない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "に越したことはない");
+            assert_pattern_range(&patterns, "に越したことはない", 5, 16); // ないにこしたことはない
+        }
+
+        #[test]
+        fn test_nai_i_adjective() {
+            // Structure: い-Adjective[なく] + ない + に越したことはない
+            let sentence = "映画はつまらなくないにこしたことはない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "に越したことはない");
+            assert_pattern_range(&patterns, "に越したことはない", 8, 19); // ないにこしたことはない
+        }
+
+        #[test]
+        fn test_nai_na_adjective() {
+            // Structure: な-Adjective + ではない + に越したことはない
+            let sentence = "テストは複雑ではないにこしたことはない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "に越したことはない");
+            assert_pattern_range(&patterns, "に越したことはない", 8, 19); // ないにこしたことはない
+        }
+    }
 }
