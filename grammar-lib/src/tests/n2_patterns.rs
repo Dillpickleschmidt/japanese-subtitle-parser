@@ -11309,3 +11309,69 @@ mod techoudai_tests {
         assert_pattern_range(&patterns, "～て頂戴", 9, 16); // してちょうだい
     }
 }
+
+// Pattern: てならない (can't help but feel, extremely)
+// Data source: grammar_points_data.json["てならない"]
+// Testing: structure.standard[0-2] and structure.polite[0-2]
+//
+// Structure variants:
+//   - standard[0]: Verb[て] + ならない
+//   - standard[1]: い-Adjective[て] + ならない (くて form)
+//   - standard[2]: な-Adjective + で + ならない
+//   - polite[0]: Verb[て] + ならない (same as standard)
+//   - polite[1]: い-Adjective[て] + なりません
+//   - polite[2]: な-Adjective + で + なりません
+
+mod tenaranai_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_te_naranai() {
+        let sentence = "彼女のことを思い出してならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てならない");
+        assert_pattern_range(&patterns, "てならない", 6, 15); // 思い出してならない
+    }
+
+    #[test]
+    fn test_i_adj_kute_naranai() {
+        let sentence = "愛知県の夏は暑くてならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てならない");
+        assert_pattern_range(&patterns, "てならない", 6, 13); // 暑くてならない
+    }
+
+    #[test]
+    fn test_na_adj_de_naranai() {
+        let sentence = "五年間娘と連絡がつかないから、心配でならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てならない");
+        assert_pattern_range(&patterns, "てならない", 15, 22); // 心配でならない
+    }
+
+    #[test]
+    fn test_i_adj_kute_narimasen() {
+        let sentence = "彼女はいつも僕に嘘をつくからむかついてなりません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てならない");
+        assert_pattern_range(&patterns, "てならない", 14, 24); // むかついてなりません
+    }
+
+    #[test]
+    fn test_na_adj_de_narimasen() {
+        let sentence = "最近の政治情勢が不安でなりません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てならない");
+        assert_pattern_range(&patterns, "てならない", 8, 16); // 不安でなりません
+    }
+}
