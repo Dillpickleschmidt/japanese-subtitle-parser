@@ -1,13 +1,14 @@
 ## Session 416 - 2025-12-15
 
 ### Session Summary - IN PROGRESS
-**Status**: IN PROGRESS - Successfully implemented 1 N2 pattern (しかしながら)
-**Patterns completed**: 1 (N2, priority 4)
-**Tests added**: 3 new tests (all passing)
-**Total tests**: 2718 passing, 1 ignored (was 2715 passing, 1 ignored - net +3 tests)
+**Status**: IN PROGRESS - Successfully implemented 2 N2 patterns (しかしながら, も又)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 7 new tests (3 for しかしながら, 4 for も又, all passing)
+**Total tests**: 2722 passing, 1 ignored (was 2715 passing, 1 ignored - net +7 tests)
 
 **Session highlights**:
 - Implemented しかしながら (however, nevertheless) - simple conjunction pattern
+- Implemented も又 (also, in addition) - 4 structure variants
 - Single structure variant - just the conjunction itself
 - Very straightforward implementation
 - Clean test-first workflow
@@ -53,6 +54,51 @@
 - grammar-lib/src/tests/n2_patterns.rs (added 3 tests)
 - feature_list.json (marked しかしながら as complete)
 - claude-progress.txt (this file)
+
+---
+
+### ✅ Pattern Implemented: も又 (also, in addition)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: も又 is a formal/emphatic adverbial combination of も (also) and また (again/also), meaning "in addition to (A), (B)" or "also with (A), (B)". It's stronger and more formal than using も alone, emphasizing that something important needs to be considered about (A) in addition to other things.
+
+**Structures tested**: All 4 structure variants from grammar_points_data.json
+1. Noun + もまた:
+   - 明日もまた (chars 0-5) - "tomorrow also"
+2. な-Adjective + なの + もまた:
+   - のもまた (chars 6-10) - "(being necessary) is also" (経験が必要なのもまた)
+3. い-Adjective + の + もまた:
+   - のもまた (chars 17-21) - "(being spicy) is also" (辛いのもまた)
+4. Verb + の + もまた:
+   - のもまた (chars 16-20) - "(to implement) is also" (実行するのもまた)
+
+**Implementation details**:
+- Matcher: TokenMatcher::Any + も(係助詞) + また(接続詞)
+- Custom matchers: MoParticleMatcher (も as 助詞/係助詞), MataMatcher (また as 接続詞)
+- Uses TokenMatcher::Any to match any noun, adjective, or verb (with optional nominalizers)
+- The pattern automatically handles の nominalization for verbs/adjectives and なの for な-adjectives
+- Pattern range: Includes the preceding element + も + また
+- Register: formal
+
+**Test count**: 4 tests (all passing)
+- test_momata_noun
+- test_momata_na_adjective
+- test_momata_i_adjective
+- test_momata_verb
+
+**Tokenization observations**:
+- も is always 助詞/係助詞
+- また is always 接続詞
+- の (nominalizer) appears as 名詞/非自立/一般 for verb/い-adjective nominalization
+- な (from な-adjectives) comes from だ (助動詞/体言接続)
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs (implemented momata())
+- grammar-lib/src/tests/n2_patterns.rs (added 4 tests)
+- feature_list.json (marked も又 as complete)
 
 ---
 
