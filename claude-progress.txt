@@ -1,3 +1,102 @@
+## Session 408 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (ところだった ②)
+**Patterns completed**: 1 (ところだった ② - N2)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2664 passing, 1 ignored (was 2660 passing, 1 ignored - net +4 tests)
+
+**Session highlights**:
+- Implemented ところだった ② (was just about to) - simple pattern with 2 structure variants
+- Structurally identical to ところだった ① (N3) but used in different contexts
+- 4 passing tests with proper range assertions
+- Clean implementation following test-first workflow
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: ところだった ② (was just about to, was in the middle of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not highlighted prominently)
+
+**Pattern**: When combined with the dictionary form of verbs, ところだった indicates that something was about to happen, and will regularly be translated as 'was just about to do (A)', or 'was in the middle of (A)'. In many cases, ところだった ② indicates either a positive or negative result that came about from 'not doing (A)'.
+
+**Structures tested**: Both structure variants from grammar_points_data.json
+1. Standard: Verb[る] + ところだった - ひくところだった (chars 13-21), 遅刻するところだった (chars 13-23), 出るところだった (chars 5-13)
+2. Polite: Verb[る] + ところでした - 乗り遅れるところでした (chars 15-26)
+
+**Implementation**: Matcher in n2.rs (lines 2833-2869), tests in n2_patterns.rs (lines 5367-5429)
+
+**Key notes**:
+- Pattern structure: Verb (基本形) + ところ (名詞/非自立) + だった/でした (助動詞)
+- Custom matchers: TokoroMatcher (checks surface="ところ", pos=名詞/非自立), DaDattaMatcher (checks だっ/でし + past auxiliary)
+- Uses TokenMatcher::Any to match any verb in 基本形
+- Identical structure to ところだった ① (N3), but N2 version emphasizes the result from not doing (A)
+- Register: standard
+
+**Tokenization observations**:
+- **Standard**: ひく(動詞/基本形) + ところ(名詞/非自立) + だっ(助動詞/特殊・ダ/連用タ接続) + た(助動詞/特殊・タ/基本形)
+- **Polite**: 乗り遅れる(動詞/基本形) + ところ(名詞/非自立) + でし(助動詞/特殊・デス/連用形) + た(助動詞/特殊・タ/基本形)
+
+**Pattern ranges**: Full construction from verb through だった/でした
+- All 4 test cases verified with correct character ranges
+- Pattern detected in both standard and polite forms
+
+**Difference from ところだった ①**:
+- Structurally identical pattern definition
+- ところだった ① (N3): emphasizes that something almost happened but didn't
+- ところだった ② (N2): emphasizes the result/consequence from not doing the action
+- Both patterns will match the same grammatical constructions
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 136 remaining (down from 137 - completed 1 pattern!)
+- N1: 186 remaining
+- Total: ~324 patterns remaining
+
+### Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ Both documented structure variants tested
+✅ No regressions (all 2664 tests passing)
+
+### Technical Notes
+
+**Simple pattern reuse**:
+- ところだった ① and ところだった ② are structurally identical
+- Both use: Verb[基本形] + ところ + だった/でした
+- Copied implementation from N3's tokorodatta_u2460() to N2's tokorodatta_u2461()
+- Same tokenization, same matchers, different semantic usage contexts
+
+### Implementation Approach
+- Followed test-first workflow strictly
+- Wrote all 4 tests with print_debug first
+- Analyzed actual tokenization from Kagome
+- Noticed pattern ① was already detecting the structures
+- Copied N3 implementation to N2 with appropriate comments
+- Removed print_debug and added assertions after verification
+- Verified no regressions before committing
+
+### Next Steps
+Continue with simple N2 patterns (1-2 structure variants). Good candidates from feature_list.json:
+- どころではない - 2 structures (next after ところだった ②)
+- ぶりに - 3 structures
+- Other simple conjunction/particle patterns
+
+Target: Continue implementing 1-2 patterns per session, prioritizing quality and simple patterns.
+
+**Session outcome**: Successfully completed 1 N2 pattern with full coverage of both structure variants! Total of 4 new tests added, all passing, no regressions.
+
+---
+
 ## Session 407 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
