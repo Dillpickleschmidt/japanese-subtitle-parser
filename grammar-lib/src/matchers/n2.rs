@@ -1300,9 +1300,47 @@ pub fn ueha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: の下で
+// Pattern: の下で (under, on the basis of)
+// Structures: Noun + のもと + (で|に|ø)
 pub fn noshitade() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MotoMatcher;
+    impl Matcher for MotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match もと as either 名詞/非自立/一般 or 名詞/一般
+            token.surface == "もと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                    || token.pos.get(1).is_some_and(|pos| pos == "一般"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct DeNiParticleMatcher;
+    impl Matcher for DeNiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で" || token.surface == "に")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MotoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeNiParticleMatcher)))),
+    ]
 }
 
 // Pattern: 後(の) Noun

@@ -3734,4 +3734,40 @@ mod sonoue_tests {
         assert_has_pattern(&patterns, "上は");
         assert_pattern_range(&patterns, "上は", 6, 11); // 始めた上は
     }
+
+    // Pattern: の下で (under, on the basis of)
+    // Data source: grammar_points_data.json["の下で"]
+
+    // Testing: structure.standard[0] - Noun + のもとで
+    #[test]
+    fn test_noshitade_moto_de() {
+        let sentence = "こんな厳しい環境のもとで試料を採取できたのは皆様のおかげです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の下で");
+        assert_pattern_range(&patterns, "の下で", 6, 12); // 環境のもとで
+    }
+
+    // Testing: structure.standard[1] - Noun + のもとに (using で in example)
+    #[test]
+    fn test_noshitade_moto_ni() {
+        let sentence = "先輩のもとで働けて光栄です！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の下で");
+        assert_pattern_range(&patterns, "の下で", 0, 6); // 先輩のもとで
+    }
+
+    // Testing: Noun + のもと (without particle)
+    #[test]
+    fn test_noshitade_moto_only() {
+        let sentence = "皆さんの協力のもと、このプロジェクトを無事に終えることができました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の下で");
+        assert_pattern_range(&patterns, "の下で", 4, 9); // 協力のもと
+    }
 }
