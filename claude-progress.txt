@@ -1,3 +1,68 @@
+## Session 375 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 次第 pattern (N3)
+**Patterns completed**: 1 (次第 - N3 newly implemented)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2409 passing, 1 ignored (was 2405 passing, 1 ignored - net +4 tests)
+
+### ✅ Pattern Implemented: 次第 (as soon as)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not highlighted in overlay)
+
+**Pattern**: 次第（しだい） is a noun that means "next in sequence after (A)" and is often translated as "as soon as (A)". It attaches to the conjunctive form (連用形) of verbs.
+
+**Structures tested**: 4 comprehensive tests covering both structure variants
+1. Verb[stem] + 次第 (終わり次第 - as soon as it ends): ミュージカルが終わり次第、連絡をください。 → 終わり次第 (7-12)
+2. [する]Verb + 次第 (到着し次第 - as soon as arrival): 待ち合わせ場所に到着し次第、私に連絡してください。 → 到着し次第 (8-13)
+3. Verb[stem] + 次第 (決まり次第 - as soon as decided): 計画が決まり次第、あなたに報告します。 → 決まり次第 (3-8)
+4. [する]Verb + 次第 (準備し次第 - as soon as ready): 準備し次第、出発しますので少々お待ちください。 → 準備し次第 (0-5)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (shidai function, lines 8957-8978)
+  - Custom matcher for 次第 as noun with 副詞可能 feature
+  - Checks: surface="次第" AND base_form="次第" AND pos="名詞" AND pos[1]="副詞可能"
+  - Preceded by verb in 連用形 (conjunctive form)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (shidai_tests module, lines 13825-13879)
+- Pattern: grammar-lib/src/patterns.rs (Shidai variant, lines 4313-4319)
+
+**Tokenization observations**:
+- Standard verbs: 終わり (終わる, 連用形) + 次第 (名詞/副詞可能)
+- Suru verbs: し (する, 連用形) + 次第 (名詞/副詞可能)
+- Pattern range includes verb stem + 次第 (full grammatical construction)
+- 次第 always tokenizes as noun with subtype 副詞可能
+
+**Initial challenge**: First test used "用意が出来し次第" where "し" was tokenized as classical auxiliary verb "き" (文語・キ) rather than the suru verb. Replaced with proper suru-verb construction "準備し次第".
+
+### Test Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples
+✅ Correct character ranges
+✅ Tests cover both standard verbs and suru verbs
+✅ No regressions (all 2409 tests passing)
+
+### Session Summary
+**Patterns completed**: 1
+- 次第 (shidai) - 4 tests
+
+**Total tests added**: 4 tests (all passing)
+**Total test count**: 2409 (up from 2405)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 9 remaining (down from 10!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~380 patterns remaining (down from ~381!)
+
+**Next priority**: 代わりに (kawarini), 前者は・後者は, or 連用形 (N3 patterns)
+
+---
+
 ## Session 374 - 2025-12-14
 
 ### ✅ Session Summary
