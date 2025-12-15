@@ -9929,13 +9929,13 @@
   {
     "pattern_name": "だけは",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "だけは is another one of the many grammar patterns in Japanese that includes the particle だけ, meaning 'just' or 'only' [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

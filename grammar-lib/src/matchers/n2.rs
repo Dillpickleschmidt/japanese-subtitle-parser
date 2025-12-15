@@ -7193,9 +7193,49 @@ pub fn dakeni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: だけは
+// Pattern: だけは (as much as one can)
+// Structures: Verb/Noun + だけは
 pub fn dakeha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だけ as adverbial particle
+    #[derive(Debug)]
+    struct DakeMatcher;
+    impl super::Matcher for DakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.base_form == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match は as topic particle
+    #[derive(Debug)]
+    struct HaMatcher;
+    impl super::Matcher for HaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match verb or noun before だけは
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl super::Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞" || pos == "名詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(DakeMatcher)),
+        TokenMatcher::Custom(Arc::new(HaMatcher)),
+    ]
 }
 
 // Pattern: だけあって (as might be expected of, only natural for)

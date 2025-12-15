@@ -11030,3 +11030,47 @@ mod dakeni_tests {
         assert_pattern_range(&patterns, "だけに", 4, 9); // あるだけに
     }
 }
+
+// Pattern: だけは (as much as one can)
+// Data source: grammar_points_data.json["だけは"]
+// Testing all structure variants:
+//   - standard[0]: Verb + だけは + (same) Verb[past]
+//   - standard[1]: Verb + だけは + (same) Verb[ている]
+//   - Also: Noun (action noun) + だけは + する
+
+mod dakeha_tests {
+    use super::*;
+
+    #[test]
+    fn test_potential_verb_dakeha_past() {
+        // "It was all you could drink, so I drank as much as I could"
+        let sentence = "飲み放題だったから、飲めるだけは飲んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけは");
+        assert_pattern_range(&patterns, "だけは", 10, 16); // 飲めるだけは
+    }
+
+    #[test]
+    fn test_verb_dakeha_teiru() {
+        // "I go to piano lessons as much as I can, but I am not very interested in piano"
+        let sentence = "ピアノのレッスンには通うだけは通っているけど、ピアノにはあまり興味がない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけは");
+        assert_pattern_range(&patterns, "だけは", 10, 15); // 通うだけは
+    }
+
+    #[test]
+    fn test_noun_dakeha_suru() {
+        // "I studied as much as I could, but I didn't get any information in my head"
+        let sentence = "勉強だけはしたが、全然頭に情報が入ってこなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけは");
+        assert_pattern_range(&patterns, "だけは", 0, 5); // 勉強だけは
+    }
+}
