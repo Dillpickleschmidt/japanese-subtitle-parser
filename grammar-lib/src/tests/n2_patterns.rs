@@ -5503,3 +5503,63 @@ mod dokorodehanai_tests {
         assert_pattern_range(&patterns, "どころではない", 7, 19); // 休暇どころではありません
     }
 }
+
+// Pattern: にもかかわらず (despite, in spite of)
+// Data source: grammar_points_data.json["にもかかわらず"]
+// Structures to test (4 variants):
+//   - standard[0]: Verb + にもかかわらず
+//   - standard[1]: い-Adjective + にもかかわらず
+//   - standard[2]: な-Adjective + である + にもかかわらず
+//   - standard[3]: Noun + (である) + にもかかわらず
+#[cfg(test)]
+mod nimokakawarazu_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_nimokakawarazu() {
+        // Structure: Verb + にもかかわらず
+        // Example from grammar_points_data.json: 働いていたのにもかかわらず (despite working)
+        let sentence = "浜崎さんは毎日一生懸命働いていたのにもかかわらず、会社をクビになった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもかかわらず");
+        assert_pattern_range(&patterns, "にもかかわらず", 15, 24); // たのにもかかわらず
+    }
+
+    #[test]
+    fn test_i_adjective_nimokakawarazu() {
+        // Structure: い-Adjective + にもかかわらず
+        // Example from grammar_points_data.json: 悪いのにもかかわらず (despite being bad/wrong)
+        let sentence = "彼が悪いのにもかかわらず、私に謝らせようとしてきた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもかかわらず");
+        assert_pattern_range(&patterns, "にもかかわらず", 2, 12); // 悪いのにもかかわらず
+    }
+
+    #[test]
+    fn test_na_adjective_dearu_nimokakawarazu() {
+        // Structure: な-Adjective + である + にもかかわらず
+        // Example from grammar_points_data.json: 親切であるにもかかわらず (despite being kind)
+        let sentence = "田中さんは優しくて親切であるにもかかわらず、見た目が怖いから避けられている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもかかわらず");
+        assert_pattern_range(&patterns, "にもかかわらず", 9, 21); // 親切であるにもかかわらず
+    }
+
+    #[test]
+    fn test_noun_nimokakawarazu() {
+        // Structure: Noun + にもかかわらず (without である)
+        // Example from grammar_points_data.json: 深夜にもかかわらず (despite being late at night)
+        let sentence = "深夜にもかかわらず上司が鬼電をしてきたので、労基に報告しようと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもかかわらず");
+        assert_pattern_range(&patterns, "にもかかわらず", 0, 9); // 深夜にもかかわらず
+    }
+}

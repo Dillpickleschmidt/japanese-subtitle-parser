@@ -8080,13 +8080,13 @@
   {
     "pattern_name": "にもかかわらず",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にもかかわらず is a formal grammar structure in Japanese used to convey that something is 'in spite of (A)', or 'despite (A)' [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
