@@ -13275,3 +13275,43 @@ Files modified: 3
 - feature_list.json
 
 Next priorities: Other N2 priority 4 patterns (だけは, だけましだ, たちまち, たった(の), etc.)
+
+## Session 474 (continued) - 2025-12-15
+
+### Second Pattern - だけは
+**Pattern completed**: だけは (as much as one can) - N2 pattern
+**Tests added**: 3 new tests (all passing with range assertions)
+**Total tests**: 3116 passing, 1 ignored (was 3113 after first pattern, net +3 tests)
+
+**Pattern details**:
+- Pattern name: だけは
+- Structures tested:
+  1. Verb + だけは (飲めるだけは, 通うだけは)
+  2. Noun (サ変) + だけは (勉強だけは)
+- Indicates doing something "as much as one can"
+- Priority: 4 (construction)
+- Category: Construction
+- JLPT level: N2
+
+**Tests implemented**:
+- test_potential_verb_dakeha_past: 飲み放題だったから、飲めるだけは飲んだ
+- test_verb_dakeha_teiru: ピアノのレッスンには通うだけは通っているけど、ピアノにはあまり興味がない
+- test_noun_dakeha_suru: 勉強だけはしたが、全然頭に情報が入ってこなかった
+
+**Implementation approach**:
+1. Analyzed tokenization showing Verb/Noun + だけ (副助詞) + は (係助詞)
+2. Created matchers for だけ and は particles
+3. Used VerbOrNounMatcher to match preceding word
+4. Pattern matches the construction [Verb/Noun] + だけは
+5. All tests passing with proper range assertions
+
+**Session total**:
+- 2 patterns completed (だけに, だけは)
+- 7 new tests (all passing)
+- Total: 3116 tests passing
+- No regressions
+
+Files modified: 3
+- grammar-lib/src/matchers/n2.rs
+- grammar-lib/src/tests/n2_patterns.rs
+- feature_list.json
