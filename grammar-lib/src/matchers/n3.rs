@@ -8588,9 +8588,28 @@ pub fn kiru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 切れない
+// Pattern: 切れない (unable to finish completely)
+// Structures: Verb[stem] + 切れない/切れません
 pub fn kirenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for きれる as auxiliary verb (negative potential form)
+    // Must be 一段 conjugation (ichidan), pos=動詞/非自立
+    #[derive(Debug)]
+    struct KirenaiAuxiliaryMatcher;
+    impl Matcher for KirenaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.base_form == "きれる"
+                && token.features.get(4).is_some_and(|f| f == "一段")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(), // Verb in 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(KirenaiAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: きり (only/just/since)

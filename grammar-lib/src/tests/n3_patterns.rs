@@ -13611,3 +13611,79 @@ mod kiru_tests {
         assert_pattern_range(&patterns, "切る", 11, 17); // 使いきります
     }
 }
+
+// Pattern: 切れない (unable to finish completely / can't possibly)
+// Data source: grammar_points_data.json["切れない"]
+// Structures:
+//   standard[0]: Verb[stem] + 切れない
+//   polite[0]: Verb[stem] + 切れません
+
+mod kirenai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + 切れない (can't finish eating)
+    #[test]
+    fn test_verb_stem_kirenai_eat() {
+        let sentence = "大盛頼むの？いくらあなたでもここの大盛は食べきれないと思うよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切れない");
+        assert_pattern_range(&patterns, "切れない", 20, 26); // 食べきれない
+    }
+
+    // Testing: standard[0] - Verb[stem] + 切れない (can't finish climbing)
+    #[test]
+    fn test_verb_stem_kirenai_climb() {
+        let sentence = "あの山は一日では登りきれない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切れない");
+        assert_pattern_range(&patterns, "切れない", 8, 14); // 登りきれない
+    }
+
+    // Testing: standard[0] - Verb[stem] + 切れない (can't finish counting)
+    #[test]
+    fn test_verb_stem_kirenai_count() {
+        let sentence = "宇宙には数えきれないほどの星がある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切れない");
+        assert_pattern_range(&patterns, "切れない", 4, 10); // 数えきれない
+    }
+
+    // Testing: standard[0] - Verb[stem] + 切れない (can't wait)
+    #[test]
+    fn test_verb_stem_kirenai_wait() {
+        let sentence = "楽しみ過ぎて待ちきれない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切れない");
+        assert_pattern_range(&patterns, "切れない", 6, 12); // 待ちきれない
+    }
+
+    // Testing: standard[0] - Verb[stem] + 切れない (can't express)
+    #[test]
+    fn test_verb_stem_kirenai_express() {
+        let sentence = "私のこの気持ちは言葉では表しきれない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切れない");
+        assert_pattern_range(&patterns, "切れない", 12, 18); // 表しきれない
+    }
+
+    // Testing: polite[0] - Verb[stem] + 切れません
+    #[test]
+    fn test_verb_stem_kiremasen() {
+        let sentence = "この料理は多すぎて全部食べきれません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切れない");
+        assert_pattern_range(&patterns, "切れない", 11, 18); // 食べきれません
+    }
+}
