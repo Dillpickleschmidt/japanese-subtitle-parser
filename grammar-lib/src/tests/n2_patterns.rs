@@ -4715,3 +4715,47 @@ mod nitomonatte_tests {
         assert_pattern_range(&patterns, "に伴って・に伴い", 17, 22); // 工事に伴う
     }
 }
+
+// Pattern: つつ (while doing, in the course of)
+// Data source: grammar_points_data.json["つつ"]
+// Testing: structure.standard[0] - "Verb[stem] + つつ"
+//
+// Note: つつ is a formal construction used when (A) is an ongoing state
+// rather than a physical action. More formal than ながら.
+mod tsutsu_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[stem] + つつ"
+    #[test]
+    fn test_tsutsu_while_knowing() {
+        // Example from grammar_points_data.json: 環境に悪いと知りつつ
+        let sentence = "環境に悪いと知りつつ、レジ袋を使い続けている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つつ");
+        assert_pattern_range(&patterns, "つつ", 6, 10); // 知りつつ
+    }
+
+    #[test]
+    fn test_tsutsu_while_looking() {
+        // Example from grammar_points_data.json: レシピを見つつ
+        let sentence = "インターネットでレシピを見つつ、料理をした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つつ");
+        assert_pattern_range(&patterns, "つつ", 12, 15); // 見つつ
+    }
+
+    #[test]
+    fn test_tsutsu_while_thinking() {
+        // Example from grammar_points_data.json: 仕事に関係ないことを考えつつ
+        let sentence = "仕事に関係ないことを考えつつ仕事をしていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つつ");
+        assert_pattern_range(&patterns, "つつ", 10, 14); // 考えつつ
+    }
+}

@@ -2277,9 +2277,26 @@ pub fn uff5e_nouchi_de() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: つつ
+// Pattern: つつ (while doing, in the course of)
+// Structures: Verb[stem] + つつ
 pub fn tsutsu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TsutsuParticleMatcher;
+    impl super::Matcher for TsutsuParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "つつ"
+                && token.base_form == "つつ"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("連用形"),
+        TokenMatcher::Custom(Arc::new(TsutsuParticleMatcher)),
+    ]
 }
 
 // Pattern: つつ(も)
