@@ -1,3 +1,114 @@
+## Session 409 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (にもかかわらず)
+**Patterns completed**: 1 (にもかかわらず - N2)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2673 passing, 1 ignored (was 2669 passing, 1 ignored - net +4 tests)
+
+**Session highlights**:
+- Implemented にもかかわらず (despite, in spite of) - formal construction
+- Comprehensive pattern matcher handling verbs, adjectives, and nouns
+- 4 structure variants: Verb + の, i-Adj + の, na-Adj + である, Noun (direct)
+- All tests pass with proper range assertions
+- Clean implementation following test-first workflow
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: にもかかわらず (despite, in spite of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: にもかかわらず is a formal grammar structure combining に, も, the verb かかわる 'to be affected', and the literary auxiliary verb ず (negative, equivalent to ない). Translates as "in spite of (A)", "despite (A)", conveying that (B) happens without consideration for (A).
+
+**Structures tested**: All 4 structure variants from grammar_points_data.json
+1. Verb + の + にもかかわらず: たのにもかかわらず (chars 15-24) - "despite working"
+2. い-Adjective + の + にもかかわらず: 悪いのにもかかわらず (chars 2-12) - "despite being bad"
+3. な-Adjective + である + にもかかわらず: 親切であるにもかかわらず (chars 9-21) - "despite being kind"
+4. Noun + にもかかわらず: 深夜にもかかわらず (chars 0-9) - "despite late at night"
+
+**Implementation**: Matcher in n2.rs (lines 2312-2417), tests in n2_patterns.rs (lines 5507-5565)
+
+**Key notes**:
+- Core structure: に(格助詞) + も(係助詞) + かかわら(動詞/未然形, base=かかわる) + ず(助動詞/特殊・ヌ, base=ぬ)
+- Custom matchers: NoNominalizerMatcher (の/名詞/非自立), DeAruSequenceMatcher (で from だ), AruAuxiliaryMatcher, NiParticleMatcher, MoParticleMatcher, KakawaruMatcher, ZuAuxiliaryMatcher
+- Uses TokenMatcher::Any for flexible verb/adjective/noun matching
+- Optional の nominalizer for verbs and adjectives
+- Optional である for na-adjectives
+- Register: formal
+
+**Tokenization observations**:
+- **Verb**: た(助動詞) + の(名詞/非自立) + に(助詞/格助詞) + も(助詞/係助詞) + かかわら(動詞/未然形) + ず(助動詞/特殊・ヌ)
+- **i-Adjective**: 悪い(形容詞) + の(名詞/非自立) + に(助詞/格助詞) + も(助詞/係助詞) + かかわら(動詞/未然形) + ず(助動詞)
+- **na-Adjective**: 親切(名詞/形容動詞語幹) + で(助動詞/特殊・ダ) + ある(助動詞) + に(助詞/格助詞) + も(助詞/係助詞) + かかわら(動詞/未然形) + ず(助動詞)
+- **Noun**: 深夜(名詞) + に(助詞/格助詞) + も(助詞/係助詞) + かかわら(動詞/未然形) + ず(助動詞)
+
+**Pattern ranges**: Full construction including preceding element through ず
+- All 4 test cases verified with correct character ranges
+- Pattern successfully matches all structure variants
+
+**Difference from に関わらず**:
+- にもかかわらず: "despite, in spite of" - emphasizes contradiction
+- に関わらず (not yet implemented): "regardless of, no matter if" - emphasizes independence
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 136 remaining (down from 137 - completed 1 pattern!)
+- N1: 186 remaining
+- Total: ~324 patterns remaining
+
+### Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All 4 documented structure variants tested
+✅ No regressions (all 2673 tests passing)
+
+### Technical Notes
+
+**Flexible pattern matching with Optional matchers**:
+- TokenMatcher::Any matches any verb, adjective, or noun
+- Optional の nominalizer for verb/adjective nominalization
+- Optional である (で + ある) for na-adjectives specifically
+- Required core: に + も + かかわら + ず
+
+**Literary auxiliary verb ず**:
+- Classical/literary negative (equivalent to modern ない)
+- Base form is ぬ (助動詞/特殊・ヌ)
+- Attaches to verbs in 未然形 (imperfective/irrealis form)
+- Used in formal/written contexts
+
+### Implementation Approach
+- Followed test-first workflow strictly
+- Wrote all 4 tests with print_debug first
+- Analyzed actual tokenization from Kagome for each variant
+- Built matcher based on observed token structure (not assumptions)
+- Removed print_debug and added assertions after verification
+- Verified no regressions before committing
+
+### Next Steps
+Continue with simple N2 patterns (1-4 structure variants). Good candidates from feature_list.json:
+- にかかわらず - 10 structures (more complex, save for later)
+- 限り - 5 structures
+- 次第だ・次第で - 4 structures (2 std, 2 pol)
+- を問わず - 11 structures (complex)
+- よりしかたがない - 2 structures
+- に越したことはない - 8 structures (4 std, 4 pol)
+
+Target: Continue implementing 1-2 patterns per session, prioritizing simple patterns with fewer structure variants.
+
+**Session outcome**: Successfully completed 1 N2 pattern with full coverage of all 4 structure variants! Total of 4 new tests added, all passing, no regressions.
+
+---
+
 ## Session 408 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
