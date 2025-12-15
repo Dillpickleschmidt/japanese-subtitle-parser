@@ -1701,9 +1701,63 @@ pub fn nitomonatte_u30fb_nitomonai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: につき
+// Pattern: につき (due to, per) - split tokenization
+// Structures: Noun + に + つき (as separate tokens)
+// Example: "閉店につき" → 閉店(noun) + に(particle) + つき(verb)
 pub fn nitsuki() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for つき verb (連用形)
+    #[derive(Debug)]
+    struct TsukiVerbMatcher;
+    impl super::Matcher for TsukiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "つき"
+                && token.base_form == "つく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TsukiVerbMatcher)),
+    ]
+}
+
+// Pattern: につき (due to, per) - compound tokenization
+// Structures: Noun + につき (as single particle token)
+// Example: "一人につき" → 一(noun) + 人(noun) + につき(particle)
+pub fn nitsuki_compound() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for につき as a single particle token
+    #[derive(Debug)]
+    struct NitsukiParticleMatcher;
+    impl super::Matcher for NitsukiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "につき"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NitsukiParticleMatcher)),
+    ]
 }
 
 // Pattern: につけ

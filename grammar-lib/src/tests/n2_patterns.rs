@@ -4073,3 +4073,53 @@ mod nishitagatte_tests {
         assert_pattern_range(&patterns, "にしたがって", 4, 11); // 書にしたがって
     }
 }
+
+// Pattern: につき (due to, per)
+// Data source: grammar_points_data.json["につき"]
+// Testing: structure.standard[0] - "Noun + につき"
+//
+// Structure variants:
+//   - standard[0]: Noun + につき (only one structure)
+
+mod nitsuki_tests {
+    use super::*;
+
+    #[test]
+    fn test_nitsuki_store_closing() {
+        // Testing: structure.standard[0] - "Noun + につき"
+        // Example: 閉店につき - Due to store closing
+        // Tokenization: 閉店(noun) + に(particle) + つき(verb)
+        let sentence = "閉店につき、特別セール開催中！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "につき");
+        assert_pattern_range(&patterns, "につき", 0, 5); // 閉店につき
+    }
+
+    #[test]
+    fn test_nitsuki_construction() {
+        // Testing: structure.standard[0] - "Noun + につき"
+        // Example: 工事中につき - Due to construction
+        // Tokenization: 工事(noun) + 中(noun suffix) + に(particle) + つき(verb)
+        let sentence = "工事中につき、この先立ち入り禁止";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "につき");
+        assert_pattern_range(&patterns, "につき", 2, 6); // 中につき
+    }
+
+    #[test]
+    fn test_nitsuki_per_person() {
+        // Testing: structure.standard[0] - "Noun + につき"
+        // Example: 一人につき - Per person
+        // Tokenization: 一(noun) + 人(noun suffix) + につき(single particle token)
+        let sentence = "この商品は大人気のため、一人につき二つまでとさせていただいております";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "につき_compound");
+        assert_pattern_range(&patterns, "につき_compound", 13, 17); // 人につき
+    }
+}

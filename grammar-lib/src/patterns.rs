@@ -4872,6 +4872,14 @@ declare_patterns! {
         jlpt: "n2",
     },
 
+    NitsukiCompound {
+        name: "につき_compound",
+        matcher_fn: crate::matchers::n2::nitsuki_compound,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
     Nitsuke {
         name: "につけ",
         matcher_fn: crate::matchers::n2::nitsuke,
