@@ -1,8 +1,26 @@
 use crate::pattern_matcher::TokenMatcher;
+use std::sync::Arc;
 
-// Pattern: という
+use super::Matcher;
+
+// Pattern: という (called/named)
+// Structures: Noun (A) + という + Noun (B)
 pub fn toiu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ToiuMatcher;
+    impl Matcher for ToiuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "という"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(ToiuMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: まま(に)
