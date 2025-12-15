@@ -1,20 +1,21 @@
 ## Session 434 - 2025-12-15
 
 ### Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully completed 1 N2 pattern (ては〜ては)
-**Patterns completed**: 1 (N2, priority 4)
-**Tests added**: 2 new tests (all passing with range assertions)
-**Total tests**: 2843 passing, 1 ignored (was 2841 before WIP, net +2 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (ては〜ては, 以来)
+**Patterns completed**: 2 (both N2, priority 4)
+**Tests added**: 6 total (2 for ては〜ては, 4 for 以来, all passing with range assertions)
+**Total tests**: 2847 passing, 1 ignored (was 2841 before session, net +6 tests)
 
 **Session highlights**:
-- Resolved WIP pattern from Session 433 (ては〜ては)
+- Resolved WIP pattern from Session 433 (ては〜ては) + implemented new pattern (以来)
 - Investigated Wildcard matching behavior - found it works correctly!
-- Pattern successfully detects repeated て+は structures
-- Handles both same verb (食べては...食べては) and contrasting verbs (ミスしては...怒られては)
-- Removed non-working casual contraction tests (ちゃ/じゃ without explicit は)
-- Finalized with 2 comprehensive tests covering both structure variants
+- ては〜ては: Successfully detects repeated て+は structures
+- ては〜ては: Handles both same verb and contrasting verbs
+- ては〜ては: Removed non-working casual contraction tests (noted limitation)
+- 以来: Clean test-first implementation, all 4 structure variants tested
+- 以来: Simple pattern with TokenMatcher::Any - very effective
 - All tests pass with proper range assertions
-- No regressions - clean completion
+- No regressions - clean completion of both patterns
 
 **Key discovery**: The "Wildcard matching bug" from Session 433 was actually not a bug - the Wildcard works fine. The issue was:
 1. Commas in wildcard gaps (limitation of current matcher - noted for future)
@@ -57,6 +58,52 @@
 - Current implementation successfully detects core て+は repeated structures
 - Casual contractions (ちゃ/じゃ) without explicit は are not included as they would require additional matcher logic (they tokenize differently)
 - Pattern works best with continuous text; punctuation in wildcard gaps may cause detection limitations
+
+---
+
+### ✅ Pattern Implemented #2: 以来 (since, ever since)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: 以来（いらい） 'ever since' is paired with the て-form of verbs or with nouns to indicate that (B) is something that has continued non-stop since (A), or will continue non-stop from (A). May be interpreted as 'since (A)', 'henceforth', or 'ever since (A)'. Key point: indicates an ongoing state that continues until an external change occurs.
+
+**Structures tested**: 4 test variants covering all main structure types
+1. Verb[て] + いらい (hiragana): 来ていらい (chars 4-8) - "ever since I came"
+2. Noun + いらい (hiragana): 卒業いらい (chars 0-5) - "since graduation"
+3. Noun + 以来 (kanji): 入社以来 (chars 0-4) - "since joining the company"
+4. Demonstrative + 以来 (kanji): それ以来 (chars 0-4) - "ever since then"
+
+**Implementation details**:
+- Matcher structure: Any + いらい/以来
+- Custom matcher created:
+  - IraiMatcher: matches both いらい (副詞/一般) and 以来 (名詞/副詞可能)
+- TokenMatcher::Any successfully matches verbs (て-form), nouns, and demonstratives (これ/それ/あれ)
+- Simple two-token pattern handles all structural variations
+- Accepts both hiragana and kanji forms seamlessly
+
+**Tokenization observations**:
+- いらい (hiragana): 副詞/一般, base_form=いらい
+- 以来 (kanji): 名詞/副詞可能, base_form=以来
+- Both forms reliably detected by checking surface and base_form
+- Verb て-form, nouns, and demonstratives all work with TokenMatcher::Any
+
+**Test sentences used**:
+- "日本に来ていらい全然母国の友達と連絡をとっていない" - verb て-form example
+- "卒業いらいじゃない？" - noun with hiragana form
+- "入社以来、あの先輩には色々とお世話になっている" - noun with kanji form
+- "それ以来ずっと音沙汰がない" - demonstrative with kanji form
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented irai() function with IraiMatcher
+- grammar-lib/src/tests/n2_patterns.rs: Added irai_tests module with 4 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Straightforward pattern with clean implementation
+- TokenMatcher::Any provides excellent flexibility for multiple preceding types
+- Both writing systems (hiragana/kanji) handled in single matcher
 
 ---
 
