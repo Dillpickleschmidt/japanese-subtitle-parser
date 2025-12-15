@@ -7598,3 +7598,51 @@ mod tehairarenai_tests {
         assert_pattern_range(&patterns, "てはいられない", 10, 17); // ではいられない
     }
 }
+
+// Pattern: したがって (therefore, accordingly, as a result)
+// Data source: grammar_points_data.json["したがって"]
+// Testing: structure.standard[0] - "(Cause) + したがって + (Result)"
+//
+// Structure variants:
+//   - standard[0]: (Cause) + したがって + (Result) - logical conclusion
+//
+// Note: This is a formal conjunction that connects cause and result
+// It appears at the beginning of the result clause (after the cause)
+// Only used for logical conclusions, not subjective opinions
+
+mod shitagatte_tests {
+    use super::*;
+
+    #[test]
+    fn test_shitagatte_basic() {
+        // Cause: 工事が行われている → Result: したがって、通行止めとなっている
+        let sentence = "現在東名高速でリニューアル工事が行われている。したがって、その区間は現在通行止めとなっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "したがって");
+        assert_pattern_range(&patterns, "したがって", 23, 28); // したがって
+    }
+
+    #[test]
+    fn test_shitagatte_comparison() {
+        // Cause: 台風が多かった → Result: したがって、米の値段が高くなる
+        let sentence = "今年は去年より台風が多かった。したがって、今年の米の値段は去年より高くなるでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "したがって");
+        assert_pattern_range(&patterns, "したがって", 15, 20); // したがって
+    }
+
+    #[test]
+    fn test_shitagatte_decision() {
+        // Cause: インフルエンザが流行っている → Result: したがって、会議はオンラインで行われる
+        let sentence = "会社ではインフルエンザが流行っている。したがって、会議は全てオンラインで行われることになった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "したがって");
+        assert_pattern_range(&patterns, "したがって", 19, 24); // したがって
+    }
+}

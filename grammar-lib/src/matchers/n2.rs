@@ -4281,9 +4281,19 @@ pub fn yagate() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: したがって
+// Pattern: したがって (therefore, accordingly)
+// Structures: (Cause) + したがって + (Result)
 pub fn shitagatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct ShitagatteMatcher;
+    impl super::Matcher for ShitagatteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "したがって"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(ShitagatteMatcher))]
 }
 
 // Pattern: あげく (in the end, after all)
