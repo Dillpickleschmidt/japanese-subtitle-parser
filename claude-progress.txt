@@ -1,3 +1,64 @@
+## Session 483 - 2025-12-15
+
+### Session Summary - に決まっている Pattern Complete ✓
+**Status**: Successfully implemented に決まっている pattern
+**Patterns completed**: 1 (N2, priority 4)
+**Total tests**: 3171 passing, 1 ignored (added 6 new tests)
+
+**Session highlights**:
+- Implemented に決まっている (surely, bound to be, certainly) - 6 tests
+- Pattern handles verb/adjective/noun + に決まっている/てる/ています forms
+- All structure variants tested: standard, casual (てる), and polite (ています) forms
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: に決まっている (surely, bound to be, certainly)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb + に決まっている/てる/ています
+- い-Adjective + に決まっている/てる/ています
+- な-Adjective + に決まっている/てる/ています
+- Noun + に決まっている/てる/ています
+
+**Implementation details**:
+- Uses TokenMatcher::Any to match preceding verb/adjective/noun
+- Custom `NiParticleMatcher` for に particle (格助詞)
+- Custom `KimatsuMatcher` for 決まっ verb (連用タ接続)
+- Custom `TeOrTeruMatcher` handles both て particle and てる casual form
+- Optional `IruMatcher` for いる/い (needed after て, not after てる)
+- Optional `MasuMatcher` for polite ます ending
+
+**Tests created**: 6 tests
+1. `test_verb_nikimatteru` - 勝つに決まっている (verb + standard form)
+2. `test_i_adj_nikimatteru` - 怖いに決まってる (い-adj + casual てる)
+3. `test_na_adj_nikimatteru` - 丈夫に決まってる (な-adj + casual てる)
+4. `test_noun_nikimatteru` - 人に決まっている (noun + standard form)
+5. `test_verb_nikimatteimasu_polite` - 成功するに決まっています (verb + polite form)
+6. `test_na_adj_nikimatteru_casual` - 簡単に決まってる (な-adj + casual てる)
+
+**Key implementation notes**:
+- に決まっている expresses strong belief or expectation: "surely (A)", "bound to be (A)", "certainly (A)"
+- The pattern handles three forms:
+  - Standard: に決まっている (て + いる)
+  - Casual: に決まってる (てる as single token)
+  - Polite: に決まっています (て + い + ます)
+- The `TeOrTeruMatcher` elegantly handles both tokenizations with a single custom matcher
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented nikimatteiru() function (84 lines)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 6 comprehensive tests
+- `feature_list.json` - Updated に決まっている to complete status
+
+---
+
 ## Session 482 - 2025-12-15
 
 ### Session Summary - Two N2 Patterns Complete ✓
