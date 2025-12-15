@@ -8304,13 +8304,13 @@
   {
     "pattern_name": "ないではいられない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to express that something cannot be helped or cannot be resisted in Japanese, the phrase ないではいられない will be used [2 std, 2 pol]",
     "priority": 4,
     "skip_reason": null

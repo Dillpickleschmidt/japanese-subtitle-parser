@@ -6397,4 +6397,62 @@ mod wotowazu_tests {
             assert_pattern_range(&patterns, "に越したことはない", 8, 19); // ないにこしたことはない
         }
     }
+
+    // Pattern: ないではいられない (can't help but, can't resist)
+    // Data source: grammar_points_data.json["ないではいられない"]
+    // Testing all structure variants from structure.standard[] and structure.polite[]
+    //
+    // Structure variants:
+    //   - standard[0]: Verb[ない] + ではいられない (formal)
+    //   - standard[1]: Verb[ない] + じゃいられない (casual)
+    //   - polite[0]: Verb[ない] + ではいられません
+    //   - polite[1]: Verb[ない] + じゃいられません
+
+    mod naidehairarenai_tests {
+        use super::*;
+
+        #[test]
+        fn test_naide_wa_standard() {
+            // Structure: Verb[ない] + ではいられない
+            let sentence = "セール品を見ると、買わないではいられなくなる";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "ないではいられない");
+            assert_pattern_range(&patterns, "ないではいられない", 9, 20); // 買わないではいられなく
+        }
+
+        #[test]
+        fn test_naide_wa_past() {
+            // Structure: Verb[ない] + ではいられなかった
+            let sentence = "大親友が事故でなくなったときは、泣かないではいられなかった";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "ないではいられない");
+            assert_pattern_range(&patterns, "ないではいられない", 16, 29); // 泣かないではいられなかった
+        }
+
+        #[test]
+        fn test_nai_jya_casual() {
+            // Structure: Verb[ない] + じゃいられない
+            let sentence = "彼女の笑顔を見ると、笑わないじゃいられない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "ないではいられない");
+            assert_pattern_range(&patterns, "ないではいられない", 10, 21); // 笑わないじゃいられない
+        }
+
+        #[test]
+        fn test_naide_wa_polite() {
+            // Structure: Verb[ない] + ではいられません
+            let sentence = "おばあさんが困っているのを見ると助けないではいられません";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "ないではいられない");
+            assert_pattern_range(&patterns, "ないではいられない", 16, 28); // 助けないではいられません
+        }
+    }
 }
