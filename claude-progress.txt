@@ -1,3 +1,141 @@
+## Session 447 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (ならともかく, はともかく)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 7 new tests (4 + 3, all passing with range assertions)
+**Total tests**: 2944 passing, 1 ignored (was 2937 before session, net +7 tests)
+
+**Session highlights**:
+- Implemented ならともかく (if it's A, sure, but...) - N2 conditional expression
+- Implemented はともかく (setting aside, apart from) - N2 topic-changing expression
+- ならともかく: Handles verb, i-adj, na-adj, and noun forms + なら + ともかく
+- はともかく: Simpler pattern with noun/phrase + は + ともかく
+- Both patterns share the same ともかく adverb component
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 7 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented #1: ならともかく (if it's A, sure, but...)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: When なら, the hypothetical form of the auxiliary verb だ is paired with the adverb ともかく 'to set aside', it will often be translated as 'if it is (A), sure, but not in the case of (B)', or more simply 'putting (A) aside, (B)'. This structure usually indicates that if it were (A), then the result or situation would be different, but because it is not (A), the result or situation is not different (it is as it currently is).
+
+**Structures tested**: 4 test variants
+1. Verb + ならともかく: ものならともかく (chars 9-17)
+2. い-Adjective + ならともかく: 高いならともかく (chars 3-11)
+3. な-Adjective + ならともかく: 丁寧ならともかく (chars 3-11)
+4. Noun + ならともかく: 妹ならともかく (chars 2-9)
+
+**Implementation details**:
+- Matcher structure: Any + なら (助動詞, 仮定形) + ともかく (副詞)
+- Custom matchers created:
+  - NaraMatcher: matches なら as auxiliary verb (助動詞) in hypothetical form (仮定形), base=だ
+  - TomokakuMatcher: matches ともかく as general adverb (副詞/一般)
+- TokenMatcher::Any handles preceding word (verb, adjective, noun)
+- Pattern includes one token before なら through ともかく
+
+**Test count**: 4 tests (all passing)
+- test_verb_naratomokaku: Verb + ならともかく (nominalized with もの)
+- test_i_adj_naratomokaku: い-Adjective + ならともかく
+- test_na_adj_naratomokaku: な-Adjective + ならともかく
+- test_noun_naratomokaku: Noun + ならともかく
+
+**Tokenization observations**:
+- なら: Always 助動詞, base=だ, 仮定形 (hypothetical form)
+- ともかく: Always 副詞/一般 (general adverb)
+- Preceding word can be verb, adjective, or noun in various forms
+- Pattern range includes full construction from preceding word through ともかく
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented naratomokaku() function with 2 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added naratomokaku_tests module with 4 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- More formal than だけど or けど for contrasts
+- Often used when (A) would be acceptable but (B) is not
+- Primarily follows nouns in actual usage, though grammar allows verbs/adjectives
+
+---
+
+### ✅ Pattern Implemented #2: はともかく (setting aside, apart from)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: はともかく is an expression which makes use of the adverbial-particle は, and the adverb 兎（と）も角（かく） meaning 'to set aside', or 'at any rate'. This structure is used when the speaker wants to change the topic from (A) to (B), or mention (B) as being something additional on top of (A). In many cases, (A) is something the speaker thinks is not worth considering when (B) is more important.
+
+**Structures tested**: 3 test variants
+1. Noun + は + ともかく: 給料はともかく (chars 0-7)
+2. Phrase + か + は + ともかく: かはともかく (chars 8-14) - from "高いか安いかはともかく"
+3. Noun phrase + は + ともかく: 見た目はともかく (chars 5-13)
+
+**Implementation details**:
+- Matcher structure: Any + は (係助詞) + ともかく (副詞)
+- Custom matchers created:
+  - WaKakariMatcher: matches は as binding particle (助詞/係助詞)
+  - TomokakuMatcher: matches ともかく as general adverb (副詞/一般) - same as in ならともかく
+- TokenMatcher::Any handles preceding word (noun, particle, etc.)
+- Pattern includes one token before は through ともかく
+
+**Test count**: 3 tests (all passing)
+- test_noun_hatomokaku: Simple noun + は + ともかく
+- test_phrase_hatomokaku: Phrase ending with か + は + ともかく
+- test_appearance_hatomokaku: Noun phrase + は + ともかく
+
+**Tokenization observations**:
+- は: Always 助詞/係助詞 (binding particle)
+- ともかく: Always 副詞/一般 (general adverb)
+- Preceding word can be noun, particle (like か), or other elements
+- Pattern detection captures only the final token + は + ともかく
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented hatomokaku() function with 2 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added hatomokaku_tests module with 3 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Related to ならともかく but uses は instead of なら
+- More about setting aside topics rather than hypothetical contrasts
+- Etymology: 兎角亀毛 (horns on rabbits, fur on turtles) - things that don't exist
+- Can be written in kanji as 兎も角 but commonly seen in hiragana
+
+---
+
+**Current stats** (after both patterns):
+- N5: ✅ All complete
+- N4: 1 remaining (meta-pattern)
+- N3: ✅ All complete
+- N2: 106 remaining (down from 108 - completed 2 patterns!)
+- N1: 176 remaining
+- Total: ~283 patterns remaining
+
+### Quality Metrics
+✅ All 7 tests have assert_pattern_range (4 + 3)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2944 tests passing, up from 2937)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- にしろ～にしろ - whether... or...
+- 何しろ - at any rate, after all
+- にせよ・にしろ - even if, whether or not
+- てたまらない - unbearably
+- でしかない - nothing but
+
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 7 new tests added (4 + 3), all passing, no regressions. Both patterns involve the adverb ともかく, with different preceding particles (なら vs は). Clean implementation following test-first workflow.
+
+---
+
 ## Session 446 - 2025-12-15
 
 ### Session Summary - COMPLETE
