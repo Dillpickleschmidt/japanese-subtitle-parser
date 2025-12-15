@@ -1,3 +1,66 @@
+## Session 479 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented とか pattern (N2)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 4 new tests (all passing with range assertions)
+**Total tests**: 3143 passing, 1 ignored (was 3139 before session, net +4 tests)
+
+**Session highlights**:
+- Implemented とか (I heard that, or something like that) - N2 pattern
+- Pattern structure: Any + と(引用) + か(副助詞)
+- Captures hearsay/uncertainty about statements
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 4 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: とか (I heard that, or something like that)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: とか is a combination of the particles と and か that 'quotes' the previous statement as being something that has been heard, but is unconfirmed or uncertain. In English, this translates as 'I heard something like (A)', or '(A) or something was said'. This is the hearsay/uncertainty usage of とか, distinct from the listing particle とか～とか used in N4.
+
+**Structures tested**: 4 test variants (all from grammar_points_data.json)
+1. Verb + とか: 結婚するとか (chars 10-16) - "I heard they're getting married"
+2. い-Adjective + とか: 重いとか (chars 30-34) - "I heard it's slow/heavy"
+3. な-Adjective + だ + とか: だとか (chars 10-13) - "I heard she's beautiful"
+4. Noun + だ + とか: だとか (chars 10-13) - "I heard he's rich"
+
+**Implementation details**:
+- Matcher structure: TokenMatcher::Any + と(引用) + か(副助詞)
+- Two custom matchers:
+  1. ToQuotationMatcher: matches と as quotation particle (助詞/格助詞/引用)
+  2. KaParticleMatcher: matches か as 副助詞／並立助詞／終助詞
+- TokenMatcher::Any captures preceding verb/adjective/noun (or だ for な-Adj/Noun)
+
+**Tokenization observations**:
+- と: 助詞/格助詞/引用 (quotation particle)
+- か: 助詞/副助詞／並立助詞／終助詞
+- For verbs/adjectives: pattern includes word + とか
+- For nouns/な-adjectives: pattern includes だ + とか (とか attaches to predicate)
+
+**Pattern range notes**:
+- Verb: 結婚するとか (includes full verb + とか)
+- い-Adjective: 重いとか (includes adjective + とか)
+- な-Adjective/Noun: だとか (includes だ + とか, not the noun itself)
+- This is correct - とか marks uncertainty about the predicate, and だ is part of the predicate
+
+**Test count**: 4 tests (all passing)
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs (implementation)
+- grammar-lib/src/tests/n2_patterns.rs (4 tests)
+- feature_list.json (status update)
+
+**Pattern implemented**: とか
+**Commit**: cd11f88
+**Next priorities**: Other N2 priority 4 patterns (のではないだろうか, て当然だ, のも当然だ, たった(の), ものか, etc.)
+
+---
+
 ## Session 478 - 2025-12-15
 
 ### Session Summary - COMPLETE
