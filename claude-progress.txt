@@ -1,13 +1,14 @@
 ## Session 422 - 2025-12-15
 
 ### Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented 1 N2 pattern (に越したことはない)
-**Patterns completed**: 1 (N2, priority 4)
-**Tests added**: 8 new tests (all passing)
-**Total tests**: 2767 passing, 1 ignored (was 2759 passing, 1 ignored - net +8 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (に越したことはない, ないではいられない)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 12 new tests (8 for に越したことはない + 4 for ないではいられない, all passing)
+**Total tests**: 2771 passing, 1 ignored (was 2759 passing, 1 ignored - net +12 tests)
 
 **Session highlights**:
 - Implemented に越したことはない (there is nothing better than) - 8 structure variants
+- Implemented ないではいられない (can't help but) - 4 structure variants
 - Clean test-first workflow following REFERENCE_EXAMPLES.md
 - All structure variants tested (verb, i-adj, na-adj, noun, polite forms, negative forms)
 - All tests pass with proper range assertions
@@ -66,25 +67,66 @@
 
 ---
 
+### ✅ Pattern Implemented #2: ないではいられない (can't help but, can't resist)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: ないではいられない expresses that something cannot be helped or cannot be resisted. It combines verbs in the negative form (ない) connected to で/じゃ, は, and the negative-potential form of いる. Literally means "to be unable to be without (A)". Primarily expresses the inability of the speaker to tolerate (A) not happening, due to wanting to do it. Also highlights that some particular emotion, feeling, or reaction cannot be repressed.
+
+**Structures tested**: All 4 structure variants from grammar_points_data.json
+1. Verb[ない] + ではいられない: 買わないではいられなく (chars 9-20)
+2. Verb[ない] + ではいられなかった (past): 泣かないではいられなかった (chars 16-29)
+3. Verb[ない] + じゃいられない (casual): 笑わないじゃいられない (chars 10-21)
+4. Verb[ない] + ではいられません (polite): 助けないではいられません (chars 16-28)
+
+**Implementation details**:
+- Matcher structure: Any + ない(助動詞) + で/じゃ + (は) + い(いる/未然形) + られ(られる/接尾) + Any
+- Custom matchers: NaiAuxiliaryMatcher, DeJyaMatcher, WaKakariParticleMatcher, IruMizenMatcher, RareMatcher
+- Handles dual tokenization for で: either 助詞/接続助詞 or 助動詞/だ
+- Optional は matcher handles both では (formal) and じゃ (casual) forms
+- Final TokenMatcher::Any captures various endings (ない, なく, なかった, ません)
+
+**Test count**: 4 tests (all passing)
+- test_naide_wa_standard (ではいられなく form)
+- test_naide_wa_past (ではいられなかった)
+- test_nai_jya_casual (じゃいられない)
+- test_naide_wa_polite (ではいられません)
+
+**Tokenization observations**:
+- Two different tokenizations for で:
+  1. ない(助動詞/連用デ接続) + で(助詞/接続助詞) - in standard form
+  2. ない(助動詞/基本形) + で(助動詞/だ, 連用形) - in polite form
+- じゃ: 助詞/接続助詞
+- い: 動詞/自立 or 動詞/非自立, いる, 未然形
+- られ: 動詞/接尾, られる, 未然形 or 連用形
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs (implemented naidehairarenai())
+- grammar-lib/src/tests/n2_patterns.rs (added 4 tests in naidehairarenai_tests module)
+- feature_list.json (marked ないではいられない as complete)
+
+---
+
 **Current stats**:
 - N5: ✅ All complete
 - N4: 2 remaining (meta-patterns)
 - N3: ✅ All complete
-- N2: 116 remaining (down from 117!)
+- N2: 115 remaining (down from 117 - completed 2 patterns!)
 - N1: 179 remaining
-- Total: ~297 patterns remaining
+- Total: ~296 patterns remaining
 
 ### Quality Metrics
-✅ All 8 tests have assert_pattern_range
+✅ All 12 tests have assert_pattern_range (8 + 4)
 ✅ No print_debug in committed tests
 ✅ Realistic sentence examples from grammar_points_data.json
 ✅ Correct character ranges verified
-✅ All documented structure variants tested (including polite and negative forms)
-✅ No regressions (all 2767 tests passing)
+✅ All documented structure variants tested
+✅ No regressions (all 2771 tests passing)
 
 ### Next Steps
 Continue with N2 priority 4 patterns. Good candidates:
-- ないではいられない - 1 structure
 - ねばならない - 2 structures
 - ～のうち(で) - 2 structures
 - に際して - 1 structure
@@ -92,7 +134,7 @@ Continue with N2 priority 4 patterns. Good candidates:
 
 Target: Continue implementing 1-2 patterns per session for steady progress.
 
-**Session outcome**: Successfully completed 1 N2 pattern with full coverage of all 8 structure variants! Total of 8 new tests added, all passing, no regressions.
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage of all structure variants! Total of 12 new tests added (8 + 4), all passing, no regressions.
 
 ---
 
