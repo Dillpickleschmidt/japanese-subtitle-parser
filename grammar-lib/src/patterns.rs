@@ -3136,7 +3136,7 @@ declare_patterns! {
     Uff5eNoSugata {
         name: "～(の)姿",
         matcher_fn: crate::matchers::n3::uff5e_no_sugata,
-        priority: 1,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },

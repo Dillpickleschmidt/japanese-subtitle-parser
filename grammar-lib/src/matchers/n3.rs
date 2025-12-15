@@ -2867,9 +2867,24 @@ pub fn nitsuite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～(の)姿
+// Pattern: ～(の)姿 (figure / appearance / state)
+// Structures: Verb + 姿, Noun + (の) + 姿
 pub fn uff5e_no_sugata() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for 姿 as a noun (名詞/一般)
+    #[derive(Debug)]
+    struct SugataMatcher;
+    impl super::Matcher for SugataMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "姿"
+                && token.base_form == "姿"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SugataMatcher))]
 }
 
 // Pattern: と言える (can say that / it is fair to say)

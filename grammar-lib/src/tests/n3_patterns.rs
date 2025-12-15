@@ -12602,3 +12602,67 @@ mod ten_tests {
         assert_pattern_range(&patterns, "点", 14, 15); // 点
     }
 }
+
+// ～(の)姿 pattern tests
+// Pattern: ～(の)姿 (figure / appearance / state)
+// Data source: grammar_points_data.json["～(の)姿"]
+// Testing all structural variants
+mod sugata_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + 姿（すがた）"
+    #[test]
+    fn test_verb_sugata() {
+        let sentence = "昨日初めてお父さんが働いている姿を見た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～(の)姿");
+        assert_pattern_range(&patterns, "～(の)姿", 15, 16); // 姿
+    }
+
+    // Testing: structure.standard[0] - "Verb + 姿（すがた）" (another example)
+    #[test]
+    fn test_verb_sugata_te_iru() {
+        let sentence = "息子が悲しんでいる姿を見ると、私まで悲しくなってくる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～(の)姿");
+        assert_pattern_range(&patterns, "～(の)姿", 9, 10); // 姿
+    }
+
+    // Testing: structure.standard[1] - "Noun + （の） + 姿（すがた）" - with の
+    #[test]
+    fn test_noun_no_sugata() {
+        let sentence = "さっき男の人の姿が見えたけど、気のせいかな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～(の)姿");
+        assert_pattern_range(&patterns, "～(の)姿", 7, 8); // 姿
+    }
+
+    // Testing: structure.standard[1] - "Noun + （の） + 姿（すがた）" - with の
+    #[test]
+    fn test_noun_no_sugata_walking() {
+        let sentence = "娘の歩く姿が夫に似ている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～(の)姿");
+        assert_pattern_range(&patterns, "～(の)姿", 4, 5); // 姿
+    }
+
+    // Testing: Noun + 姿 without の (kanji compound)
+    // Note: の is optional after certain nouns (compounds, clothing terms)
+    #[test]
+    fn test_noun_sugata_no_particle() {
+        let sentence = "やっとお前の花嫁姿が見れて嬉しいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～(の)姿");
+        assert_pattern_range(&patterns, "～(の)姿", 8, 9); // 姿
+    }
+}
