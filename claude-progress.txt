@@ -1,3 +1,76 @@
+## Session 388 - 2025-12-15
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented まい pattern (N2)
+**Patterns completed**: 1 (まい - N2 negative volition auxiliary verb)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2517 passing, 1 ignored (was 2511 passing, 1 ignored - net +6 tests)
+
+**Session highlights**:
+- Implemented まい (won't / intend not to / probably not) - negative volition auxiliary
+- Comprehensive coverage of all conjugation patterns (basic, stem, polite)
+- Handles special forms for する and 来る verbs
+- Clean implementation with proper test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: まい (negative volition auxiliary verb)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: The auxiliary verb まい expresses negative volition - the opposite of う/よう. It means "won't (A)", "intend not to (A)", or "probably not (A)". It's a condensed way of expressing ～ないだろう. Considered slightly formal.
+
+**Structures tested**: 6 comprehensive tests covering all variants
+1. Verb[基本形] + まい: 行くまい (17-21) - "probably won't go"
+2. する → し + まい: しまい (23-26) - stem form variant
+3. する → す + まい: すまい (8-11) - classical stem form variant
+4. 来る[基本形] + まい: 来るまい (27-31) - standard form
+5. 来る → こ + まい: こまい (27-30) - stem form variant
+6. Verb[連用形] + ます + まい: 住みますまい (20-26) - polite form
+
+**Implementation**: Matcher in n2.rs (lines 853-891), tests in n2_patterns.rs (lines 3168-3238)
+
+**Key notes**:
+- Three token patterns: Verb + Optional(ます) + まい
+- まい always tokenizes as 助動詞, base_form='まい', 不変化型
+- Handles all verb forms: 基本形 (dictionary), 未然形 (stem), 連用形+ます (polite)
+- Special handling for する (し/す variants) and 来る (こ variant)
+- Pattern includes full grammatical construction (verb through まい)
+
+**Tokenization observations**:
+- Basic: Verb[基本形] + まい(助動詞) - 行くまい, 来るまい
+- Stem: Verb[未然形] + まい(助動詞) - しまい, すまい, こまい
+  * し: base='する', 未然形
+  * す: base='する', 文語基本形
+  * こ: base='くる', 未然形
+- Polite: Verb[連用形] + ます(助動詞) + まい(助動詞) - 住みますまい
+
+**Pattern ranges**: Full construction from verb through まい
+- Standard: 行くまい (verb + auxiliary), 来るまい
+- Stem forms: しまい, すまい, こまい
+- Polite: 住みますまい (verb + ます + まい)
+
+### Test Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions (all 2517 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 164 remaining (down from 165!)
+- N1: 186 remaining
+- Total: ~352 patterns remaining (down from ~353!)
+
+**Next priority**: Continue with N2 patterns - 上, 上に, 以上②, 以上に, 途中に・途中で, etc.
+
+---
+
 ## Session 387 - 2025-12-15
 
 ### ✅ Session Summary
