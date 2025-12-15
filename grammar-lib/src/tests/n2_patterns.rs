@@ -12224,3 +12224,43 @@ mod nikuwaete_tests {
         assert_pattern_range(&patterns, "に加えて", 11, 15); // に加えて
     }
 }
+
+// Pattern: 更に (furthermore, moreover, even more)
+// Data source: grammar_points_data.json["更に"]
+// Testing: structure.standard[0] - "さらに + Phrase"
+//
+// Structure variants:
+//   - standard[0]: さらに + Phrase (only one structure)
+mod sarani_tests {
+    use super::*;
+
+    #[test]
+    fn test_sarani_even_more_expensive() {
+        let sentence = "電気代がさらに高くなった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "更に");
+        assert_pattern_range(&patterns, "更に", 4, 7); // さらに
+    }
+
+    #[test]
+    fn test_sarani_even_better() {
+        let sentence = "刺身には刺身専用の醤油をかけると、さらに美味しくなります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "更に");
+        assert_pattern_range(&patterns, "更に", 17, 20); // さらに
+    }
+
+    #[test]
+    fn test_sarani_even_slower() {
+        let sentence = "パソコンにウイルス対策ソフトを入れたら、パソコンがさらに遅くなった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "更に");
+        assert_pattern_range(&patterns, "更に", 25, 28); // さらに
+    }
+}

@@ -7519,9 +7519,10 @@ pub fn kotoha_u301c_ga() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 更に
+// Pattern: 更に (furthermore, moreover, even more)
+// Structures: さらに + Phrase
 pub fn sarani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![TokenMatcher::Surface("さらに")]
 }
 
 // Pattern: 精々

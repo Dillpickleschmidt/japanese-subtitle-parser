@@ -9761,13 +9761,13 @@
   {
     "pattern_name": "更に",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "更（さら）に is word that is often used adverbially in Japanese to convey the meaning of 'more and more', 'even more than (... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
