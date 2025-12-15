@@ -785,9 +785,63 @@ pub fn mademonai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ともなると・にもなると
+// Pattern: ともなると・にもなると (when it comes to, once)
+// Structures: Noun/Verb + と/に + (も) + なる(と/ば)
 pub fn tomonaruto_u30fb_nimonaruto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と or に as quotation/general case particle
+    #[derive(Debug)]
+    struct ToNiMatcher;
+    impl Matcher for ToNiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "と" || token.surface == "に")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match optional も (係助詞)
+    #[derive(Debug)]
+    struct MoKakariMatcher;
+    impl Matcher for MoKakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match なる (基本形) or なれ (仮定形)
+    #[derive(Debug)]
+    struct NaruNareMatcher;
+    impl Matcher for NaruNareMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "なる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && ((token.surface == "なる" && token.features.get(5).is_some_and(|f| f == "基本形"))
+                    || (token.surface == "なれ" && token.features.get(5).is_some_and(|f| f == "仮定形")))
+        }
+    }
+
+    // Match と (接続助詞) or ば (接続助詞)
+    #[derive(Debug)]
+    struct ToBaMatcher;
+    impl Matcher for ToBaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "と" || token.surface == "ば")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ToNiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoKakariMatcher)))),
+        TokenMatcher::Custom(Arc::new(NaruNareMatcher)),
+        TokenMatcher::Custom(Arc::new(ToBaMatcher)),
+    ]
 }
 
 // Pattern: をいいことに

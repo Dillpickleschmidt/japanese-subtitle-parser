@@ -857,3 +857,95 @@ mod toiedomo_tests {
         assert_pattern_range(&patterns, "といえども", 7, 15); // 優しいといえども
     }
 }
+
+// ============================================================================
+// ともなると・にもなると Tests
+// ============================================================================
+
+mod tomonaruto_tests {
+    use super::*;
+
+    // Pattern: ともなると・にもなると (when it comes to, once)
+    // Data source: grammar_points_data.json["ともなると・にもなると"]
+    // Testing all structure variants:
+    //   - standard[0]: Noun + と + (も) + なると
+    //   - standard[1]: Verb[る] + と + (も) + なると
+    //   - standard[2]: (1) に (using に instead of と)
+    //   - standard[3]: (2) なれば (using なれば instead of なると)
+
+    // Testing: Noun + ともなると (with も)
+    #[test]
+    fn test_noun_tomonaruto() {
+        let sentence = "ゴールデンウィークともなると、遊園地などは混む。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなると・にもなると");
+        assert_pattern_range(&patterns, "ともなると・にもなると", 0, 14); // ゴールデンウィークともなると
+    }
+
+    // Testing: Verb[る] + ともなると (with も)
+    #[test]
+    fn test_verb_tomonaruto() {
+        let sentence = "あなたも行くともなると、席が足りないので車を増やしましょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなると・にもなると");
+        assert_pattern_range(&patterns, "ともなると・にもなると", 4, 11); // 行くともなると
+    }
+
+    // Testing: Noun + となると (without も)
+    #[test]
+    fn test_noun_tonaruto() {
+        let sentence = "５０代となると体が思うように動かなくなる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなると・にもなると");
+        assert_pattern_range(&patterns, "ともなると・にもなると", 2, 7); // 代となると
+    }
+
+    // Testing: Noun + にもなると (using に instead of と)
+    #[test]
+    fn test_noun_nimonaruto() {
+        let sentence = "社会人にもなると、色々な社会的ルールを守らなければいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなると・にもなると");
+        assert_pattern_range(&patterns, "ともなると・にもなると", 2, 8); // 人にもなると
+    }
+
+    // Testing: Noun + ともなれば (using なれば instead of なると)
+    #[test]
+    fn test_noun_tomonareba() {
+        let sentence = "社会人ともなれば、責任が重くなる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなると・にもなると");
+        assert_pattern_range(&patterns, "ともなると・にもなると", 2, 8); // 人ともなれば
+    }
+
+    // Testing: Verb[る] + ともなれば (verb + も + なれば)
+    #[test]
+    fn test_verb_tomonareba() {
+        let sentence = "会社のウェブページを作成するともなれば、優秀なプログラマーが必要だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなると・にもなると");
+        assert_pattern_range(&patterns, "ともなると・にもなると", 10, 19); // 作成するともなれば
+    }
+
+    // NOTE: Noun + になると is NOT this pattern - it's a different construction
+    // The grammar specifically states that と (not に) is used for this pattern
+    // になると simply means "when it becomes X" without the emphasis on unavoidability
+    //
+    // Example that does NOT match this pattern:
+    // "週末になると観光地も賑わう。" - This is just "when it becomes weekend"
+    //
+    // Example that DOES match:
+    // "週末ともなると観光地も賑わう。" - "Once it's the weekend (inevitably)..."
+}
