@@ -265,9 +265,43 @@ pub fn yorihokanai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 確かに
+// Pattern: 確かに (certainly, surely)
+// Structure: たしかに (adverb) OR 確か (na-adjective stem) + に (adverbial particle)
 pub fn tashikani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for に as adverbial particle
+    #[derive(Debug)]
+    struct NiAdverbialMatcher;
+    impl super::Matcher for NiAdverbialMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+        }
+    }
+
+    // Combined matcher for たしかに (adverb) OR 確か (na-adjective stem)
+    #[derive(Debug)]
+    struct TashikaniCombinedMatcher;
+    impl super::Matcher for TashikaniCombinedMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match たしかに as adverb
+            (token.surface == "たしかに"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般"))
+            ||
+            // Match 確か as na-adjective stem (will be followed by に)
+            (token.surface == "確か"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(TashikaniCombinedMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiAdverbialMatcher)))),
+    ]
 }
 
 // Pattern: 一応 ①

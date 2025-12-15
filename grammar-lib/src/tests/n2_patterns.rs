@@ -2300,3 +2300,54 @@ mod semete_tests {
         assert_pattern_range(&patterns, "せめて", 19, 22); // せめて
     }
 }
+
+// Pattern: 確かに (certainly, surely)
+// Data source: grammar_points_data.json["確かに"]
+// Testing: structure.standard[0] - "確（たし）かに + Phrase"
+//
+// Structure variants:
+//   - standard[0]: 確（たし）かに + Phrase (only one structure)
+//
+// Usage contexts:
+//   - Expressing certainty or agreement
+//   - Both hiragana (たしかに) and kanji (確かに) forms
+
+mod tashikani_tests {
+    use super::*;
+
+    #[test]
+    fn test_tashikani_hiragana_agreement() {
+        // Example: たしかに彼はイケメンですが、マナーが悪いです
+        // (He is certainly handsome, but he has bad manners)
+        let sentence = "たしかに彼はイケメンですが、マナーが悪いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "確かに");
+        assert_pattern_range(&patterns, "確かに", 0, 4); // たしかに
+    }
+
+    #[test]
+    fn test_tashikani_kanji_apology() {
+        // Example: 確かにさっきのは言い過ぎだった
+        // (What I said earlier was certainly out of line)
+        let sentence = "確かにさっきのは言い過ぎだった。ごめん";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "確かに");
+        assert_pattern_range(&patterns, "確かに", 0, 3); // 確かに
+    }
+
+    #[test]
+    fn test_tashikani_difficult() {
+        // Example: 確かに結構難しいね
+        // (This is certainly difficult)
+        let sentence = "確かに結構難しいね。ちょっと甘く見てたわ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "確かに");
+        assert_pattern_range(&patterns, "確かに", 0, 3); // 確かに
+    }
+}
