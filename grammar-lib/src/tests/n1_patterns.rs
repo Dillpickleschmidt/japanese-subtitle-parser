@@ -949,3 +949,74 @@ mod tomonaruto_tests {
     // Example that DOES match:
     // "週末ともなると観光地も賑わう。" - "Once it's the weekend (inevitably)..."
 }
+
+// ============================================================================
+// をいいことに Tests
+// ============================================================================
+
+mod woiikotoni_tests {
+    use super::*;
+
+    // Pattern: をいいことに (take advantage of)
+    // Data source: grammar_points_data.json["をいいことに"]
+    // Testing all structure variants:
+    //   - standard[0]: Verb + の + をいいことに(して)
+    //   - standard[1]: Noun + (なの) + をいいことに(して)
+    //   - standard[2]: い-Adjective + の + をいいことに(して)
+    //   - standard[3]: な-Adjective + なの + をいいことに(して)
+
+    // Testing: Verb + の + をいいことに
+    #[test]
+    fn test_verb_no_woiikotoni() {
+        let sentence = "顔が見えないのをいいことに、ひどいことを書き込む人は最低だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をいいことに");
+        assert_pattern_range(&patterns, "をいいことに", 4, 13); // ないのをいいことに
+    }
+
+    // Testing: Verb + の + をいいことにして
+    #[test]
+    fn test_verb_no_woiikotoni_shite() {
+        let sentence = "先生の耳が遠いのをいいことにして、授業中に友達と話していた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をいいことに");
+        assert_pattern_range(&patterns, "をいいことに", 5, 16); // 遠いのをいいことにして
+    }
+
+    // Testing: い-Adjective + の + をいいことに
+    #[test]
+    fn test_i_adj_no_woiikotoni() {
+        let sentence = "彼が優しいのをいいことに、クラスメイトたちは彼をいじめた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をいいことに");
+        assert_pattern_range(&patterns, "をいいことに", 2, 12); // 優しいのをいいことに
+    }
+
+    // Testing: Noun + なの + をいいことに
+    #[test]
+    fn test_noun_nano_woiikotoni() {
+        let sentence = "休みなのをいいことに、友達と一日中ゲームをした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をいいことに");
+        assert_pattern_range(&patterns, "をいいことに", 0, 10); // 休みなのをいいことに
+    }
+
+    // Testing: な-Adjective/Noun + である + の + をいいことに
+    #[test]
+    fn test_dearu_no_woiikotoni() {
+        let sentence = "彼女は美人であるのをいいことに、色々な男からお金を騙し取った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をいいことに");
+        assert_pattern_range(&patterns, "をいいことに", 6, 15); // あるのをいいことに
+    }
+}

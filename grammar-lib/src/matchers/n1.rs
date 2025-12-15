@@ -844,9 +844,112 @@ pub fn tomonaruto_u30fb_nimonaruto() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: をいいことに
+// Pattern: をいいことに (take advantage of)
+// Structures: (の/なの) + を + いい + こと + に + (して)
 pub fn woiikotoni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の as nominalizer (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match な from だ (助動詞, 特殊・ダ, 体言接続)
+    #[derive(Debug)]
+    struct NaFromDaMatcher;
+    impl Matcher for NaFromDaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match を (格助詞)
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match いい (形容詞, 基本形)
+    #[derive(Debug)]
+    struct IiMatcher;
+    impl Matcher for IiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いい"
+                && token.base_form == "いい"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match こと (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match に (格助詞)
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match し from する (動詞, 連用形)
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match て (接続助詞)
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding verb/noun/adjective
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaFromDaMatcher)))),
+        TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
+        TokenMatcher::Custom(Arc::new(WoMatcher)),
+        TokenMatcher::Custom(Arc::new(IiMatcher)),
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ShiMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeMatcher)))),
+    ]
 }
 
 // Pattern: 如何
