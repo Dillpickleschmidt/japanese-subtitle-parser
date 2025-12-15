@@ -10303,3 +10303,65 @@ mod tokangaerareru_tests {
         assert_pattern_range(&patterns, "と考えられる", 11, 17); // と考えられた
     }
 }
+
+// Pattern: という点から考えると (from the viewpoint of, speaking in terms of)
+// Data source: grammar_points_data.json["という点から考えると"]
+// Testing: All structure variants
+//
+// Structure variants:
+//   - standard[0]: Noun + の点から考えると
+//   - standard[1]: Noun + という点から考えると
+//   - standard[2]: Verb + という点から考えると
+//   - standard[3]: その点から考えると
+
+mod toiutenkarakangaeruto_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_no_ten() {
+        // Testing: Noun + の点から考えると
+        // Example from grammar data: 健康の点から考えると
+        let sentence = "健康の点から考えると休む時はちゃんと休まなければ身体を壊す可能性が高まります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という点から考えると");
+        assert_pattern_range(&patterns, "という点から考えると", 0, 10); // 健康の点から考えると
+    }
+
+    #[test]
+    fn test_noun_toiu_ten() {
+        // Testing: Noun + という点から考えると
+        // Example from grammar data: 子供の教育という点から考えると
+        let sentence = "子供の教育という点から考えると、楽しく勉強をさせる事が重要です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という点から考えると");
+        assert_pattern_range(&patterns, "という点から考えると", 0, 15); // 子供の教育という点から考えると
+    }
+
+    #[test]
+    fn test_verb_toiu_ten() {
+        // Testing: Verb + という点から考えると
+        // Example from grammar data: デジタル化が遅れているという点から考えると
+        let sentence = "日本のデジタル化が遅れているという点から考えると、デジタル人材の育成に力を入れなければならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という点から考えると");
+        assert_pattern_range(&patterns, "という点から考えると", 9, 24); // 遅れているという点から考えると
+    }
+
+    #[test]
+    fn test_sono_ten() {
+        // Testing: その点から考えると
+        // This tests the demonstrative その + 点から考えると variant
+        let sentence = "価格が高いのは問題だ。その点から考えると、もっと手頃な選択肢を探すべきだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という点から考えると");
+        assert_pattern_range(&patterns, "という点から考えると", 11, 20); // その点から考えると
+    }
+}

@@ -9187,13 +9187,13 @@
   {
     "pattern_name": "という点から考えると",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "と言（い）う点（てん）から考（かんが）えると is a set phrase which indicates that something is being discussed from the 'point of view of (A)' [5 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

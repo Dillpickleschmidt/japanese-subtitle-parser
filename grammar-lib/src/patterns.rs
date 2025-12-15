@@ -5643,7 +5643,7 @@ declare_patterns! {
     Toiutenkarakangaeruto {
         name: "という点から考えると",
         matcher_fn: crate::matchers::n2::toiutenkarakangaeruto,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

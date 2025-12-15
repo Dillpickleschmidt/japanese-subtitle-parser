@@ -5765,9 +5765,68 @@ pub fn tokangaerareru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: という点から考えると
+// Pattern: という点から考えると (from the viewpoint of, speaking in terms of)
+// Structures:
+//   - Noun + の点から考えると
+//   - Noun/Verb + という点から考えると
+//   - その点から考えると
 pub fn toiutenkarakangaeruto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TenMatcher;
+    impl Matcher for TenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "点"
+                && token.base_form == "点"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KaraMatcher;
+    impl Matcher for KaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.base_form == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KangaeruMatcher;
+    impl Matcher for KangaeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "考える"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.base_form == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match 1-4 tokens before 点 (handles Noun + の, Noun/Verb + という, その, etc.)
+    // followed by 点から考えると
+    // The wildcard captures the viewpoint/aspect being discussed
+    vec![
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 4,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(TenMatcher)),
+        TokenMatcher::Custom(Arc::new(KaraMatcher)),
+        TokenMatcher::Custom(Arc::new(KangaeruMatcher)),
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+    ]
 }
 
 // Pattern: ということは
