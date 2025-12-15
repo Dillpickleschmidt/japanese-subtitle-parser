@@ -1,3 +1,91 @@
+## Session 360 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented の1 (N4) pattern
+**Patterns completed**: 1 (の1 - nominalization)
+**Tests added**: 5 new tests for の1 (all passing)
+**Total tests**: 2300 passing, 1 ignored (was 2295 passing, 1 ignored - net +5 tests)
+
+### ✅ Pattern Implemented: の1 (nominalization - that which / the one who)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1 (low - not highlighted in overlay)
+
+**Pattern**: の1 is a nominalization particle that converts verb clauses into nouns, allowing them to function as subjects or objects in sentences. It's followed by は (topic marker) or が (subject marker). Translates to "that which", "the one who", or "the one that" in English.
+
+**Structures tested**: 5 comprehensive tests covering all major variants
+1. Verb[る] + のは: 食べるのは (the one that eats) - chars 5-7
+2. Verb[る] + のが: 乗るのが (that which is riding) - chars 7-9
+3. Verb[た] + のは: 食べたのは (the one that ate) - chars 9-11
+4. Verb[ている] + のは: 登っているのは (the one who is climbing) - chars 7-9
+5. Verb[る] + のが: 走るのが (that which is running) - chars 4-6
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (no1 function, lines 8124-8162)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (no1_tests module, lines 11721-11790)
+- Pattern: grammar-lib/src/patterns.rs (No1 variant, lines 1061-1067)
+
+**Tokenization patterns**:
+```
+の as nominalizer (dependent noun):
+- の (名詞/非自立/一般) - dependent noun
+- Surface: の, Base: の
+- POS: 名詞/非自立/一般
+
+は or が following の:
+- は (助詞/係助詞) - topic particle
+- が (助詞/格助詞) - subject particle
+- Surface: は or が
+```
+
+**Key implementation points**:
+1. Two-token matcher: の + (は|が)
+2. NoNominalizerMatcher checks surface == "の", POS == 名詞/非自立/一般
+3. WaGaMatcher matches BOTH は and が as particles
+4. Pattern matches ONLY のは or のが (not the preceding verb clause)
+5. Pattern priority: 1 (detected but not highlighted in overlay)
+6. The verb clause before の can be any tense or form (dictionary, past, progressive, etc.)
+
+**Pattern ranges**: Include only の + は/が (2 tokens)
+- After verb[る]: のは or のが
+- After verb[た]: のは
+- After verb[ている]: のは
+- Pattern captures just the nominalization marker, not the entire clause being nominalized
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover all major structural variants: dictionary form, past, progressive, with は/が
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: の1 (nominalization) is distinct from the N5 の (pronoun replacement). The key difference:
+- **N5 の**: Can stand alone as pronoun replacement (これは私の "this is mine")
+- **N4 の1**: MUST be followed by は or が to form nominalization (食べるのは "the one that eats")
+
+The nominalization allows entire verb clauses to function as noun phrases in the sentence. For example:
+- 食べるのは彼です - "The one that eats is him" (literally: "As for eating, it's him")
+- バスに乗るのが嫌い - "I hate riding the bus" (literally: "That which is riding a bus, [I] hate")
+
+**Usage contexts**:
+- Nominalizing verb clauses: Converting actions into noun phrases
+- Topic/subject marking: Used with は or が to mark nominalized clauses as topics or subjects
+- All registers: Works in both formal and informal contexts
+- Cannot replace こと in set expressions: ことができる, ことがある (these require こと, not の)
+
+**Caution from grammar data**:
+- の cannot be used as substitute for こと in set expressions like ことができる or ことがある
+- の may NOT be followed by だ, である, or です (this becomes explanatory のです/んです pattern)
+
+**Related patterns**:
+- の (N5) - pronoun replacement (already implemented)
+- のです・んです (N4) - explanatory pattern (not yet implemented)
+- こと (N4) - alternative nominalizer (not yet implemented)
+- ことができる (N5) - "can do" (uses こと, not の)
+
+---
+
 ## Session 359 - 2025-12-14
 
 ### ✅ Session Summary
