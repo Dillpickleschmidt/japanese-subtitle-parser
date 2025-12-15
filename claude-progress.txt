@@ -1,10 +1,10 @@
 ## Session 382 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented どうやら pattern (N2)
-**Patterns completed**: 1 (どうやら - N2 newly implemented)
-**Tests added**: 4 new tests (all passing)
-**Total tests**: 2461 passing, 1 ignored (was 2457 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 adverb patterns (どうやら, なにやら)
+**Patterns completed**: 2 (どうやら and なにやら - N2 newly implemented)
+**Tests added**: 8 new tests (4 for どうやら + 4 for なにやら, all passing)
+**Total tests**: 2465 passing, 1 ignored (was 2457 passing, 1 ignored - net +8 tests)
 
 ### ✅ Pattern Implemented: どうやら (apparently, it seems like)
 
@@ -44,11 +44,47 @@
 - N5: All complete
 - N4: 2 remaining (meta-patterns)
 - N3: All complete! 🎉
-- N2: 177 remaining (down from 178!)
+- N2: 176 remaining (down from 178!)
 - N1: 186 remaining
-- Total: ~365 patterns remaining (down from ~366!)
+- Total: ~364 patterns remaining (down from ~366!)
 
-**Next priority**: Continue with N2 patterns - なにやら, よりほかない, 一応, etc.
+**Next priority**: Continue with N2 patterns - よりほかない, 一応, に相違ない, etc.
+
+---
+
+### ✅ Pattern Implemented: なにやら (something or other, some kind of, for some reason)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: 何（なに）やら is an adverb expressing uncertainty about what exactly something is or why something is happening. Similar to どうやら, it is composed of the question word 何（なに） and the particle やら which denotes uncertainty and self-questioning. Different from 何か which can be used for general statements, 何（なに）やら is only used when the speaker is unsure of what the thing in question is.
+
+**Structures tested**: 4 comprehensive tests covering different translation contexts
+1. "something": あの人に何やら言われても何にも感じない (4-7) - "I don't feel anything when that person says something to me"
+2. "some kind of": やっと子供が落ち着いたと思ったら、何やら歌い出した (17-20) - "He started to sing some kind of song"
+3. "for some reason": 家に帰ってカバンを開けたら何やら見覚えのないレシートが入ってた (13-16) - "There was a receipt in there for some reason"
+4. "something happened": あの二人の間で何やらあったらしい (7-10) - "Apparently something happened between those two"
+
+**Implementation**: Matcher in n2.rs (lines 272-289), tests in n2_patterns.rs (lines 2423-2486)
+
+**Key notes**:
+- なにやら tokenizes as 副詞/一般 (general adverb), same as どうやら
+- Simple single-token pattern matching surface='何やら' and base_form='何やら'
+- Expresses uncertainty about what something is (not general "something" like 何か)
+- Translation depends on context: "something or other", "some kind of", "for some reason"
+- Etymology: 何（なに） + やら (particle denoting uncertainty)
+
+**Tokenization observations**:
+- surface="何やら", base_form="何やら", pos=副詞/一般
+- Consistent tokenization as a single adverb token
+- No conjugation forms (static adverb)
+
+### Test Quality Metrics
+✅ All 8 tests (4 + 4) have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json examples
+✅ No regressions (all 2465 tests passing)
 
 ---
 
