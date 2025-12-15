@@ -605,9 +605,68 @@ pub fn nihokanaranai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: っこない
+// Pattern: っこない (there is no chance of / impossible)
+// Structures: Verb[stem] + っこない
 pub fn kkonai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for verb stem OR verb+っ
+    #[derive(Debug)]
+    struct VerbOrVerbWithKkoMatcher;
+    impl Matcher for VerbOrVerbWithKkoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "動詞")
+                && (
+                    // Regular verb stem (連用形)
+                    token.features.get(5).is_some_and(|f| f == "連用形")
+                    ||
+                    // Verb+っ compound (連用タ接続, like きっ, てっ)
+                    token.features.get(5).is_some_and(|f| f == "連用タ接続")
+                )
+        }
+    }
+
+    // Matcher for っ alone (when verb stem is separate)
+    #[derive(Debug)]
+    struct KkuMatcher;
+    impl Matcher for KkuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "っ"
+                && token.base_form == "く"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Matcher for こ (tokenizes as verb base='くる')
+    #[derive(Debug)]
+    struct KoMatcher;
+    impl Matcher for KoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こ"
+                && token.base_form == "くる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Matcher for ない (助動詞)
+    #[derive(Debug)]
+    struct NaiAuxMatcher;
+    impl Matcher for NaiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ない"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrVerbWithKkoMatcher)),  // Verb stem (may include っ)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KkuMatcher)))),  // Optional っ (if not included in verb)
+        TokenMatcher::Custom(Arc::new(KoMatcher)),  // こ
+        TokenMatcher::Custom(Arc::new(NaiAuxMatcher)),  // ない
+    ]
 }
 
 // Pattern: それなら

@@ -2973,3 +2973,54 @@ mod nihokanaranai_tests {
         assert_pattern_range(&patterns, "にほかならない", 21, 27); // にほかならぬ
     }
 }
+
+// Pattern: っこない (there is no chance of / impossible)
+// Data source: grammar_points_data.json["っこない"]
+// Testing all structure variants
+mod kkonai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[stem] + っこない"
+    #[test]
+    fn test_kkonai_potential_verb() {
+        let sentence = "今年中に３０万円貯めたいの？お前の給料じゃできっこないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っこない");
+        assert_pattern_range(&patterns, "っこない", 22, 27); // きっこない
+    }
+
+    // Testing: Verb[stem] + っこない (another example)
+    #[test]
+    fn test_kkonai_verb_win() {
+        let sentence = "どんなに鍛えてもあの人だけには勝てっこないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っこない");
+        assert_pattern_range(&patterns, "っこない", 16, 21); // てっこない
+    }
+
+    // Testing: Verb[stem] + っこない (another example)
+    #[test]
+    fn test_kkonai_verb_buy() {
+        let sentence = "あんなデカい家、どんなに貯金しても買えっこないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っこない");
+        assert_pattern_range(&patterns, "っこない", 17, 23); // 買えっこない
+    }
+
+    // Testing: Verb[stem] + っこない (past tense example)
+    #[test]
+    fn test_kkonai_past() {
+        let sentence = "こんな漢字だらけの新聞なんて読めっこなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "っこない");
+        assert_pattern_range(&patterns, "っこない", 14, 22); // 読めっこなかった
+    }
+}
