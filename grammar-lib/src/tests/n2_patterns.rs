@@ -6987,3 +6987,65 @@ mod naiwakenihaikanai_tests {
         assert_pattern_range(&patterns, "ないわけにはいかない", 10, 24); // 挨拶しないわけにはいきません
     }
 }
+
+// Pattern: ～ところに・～ところへ (at the time of, while, when)
+// Data source: grammar_points_data.json["～ところに・～ところへ"]
+// Testing: structure.standard[0] - "Verb［ている］+ ところに"
+// Testing: structure.standard[1] - "Verb［ていた］+ ところに"
+// Testing: structure.standard[2] - "(1) へ" (use へ instead of に)
+//
+// Structure variants:
+//   - standard[0]: Verb［ている］+ ところに (progressive)
+//   - standard[1]: Verb［ていた］+ ところに (past progressive)
+//   - standard[2]: Can use へ instead of に for both variants
+//
+// Note: This pattern highlights the precise moment when something unexpected happens.
+// Usually (A)ところに/へ, (B) happened - emphasizing timing and unexpectedness.
+
+mod tokoroni_tests {
+    use super::*;
+
+    #[test]
+    fn test_teiru_tokoroni() {
+        // Structure: Verb［ている］+ ところに (standard[0])
+        let sentence = "車で左折しているところに、急に自転車が飛び出してきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ところに・～ところへ");
+        assert_pattern_range(&patterns, "～ところに・～ところへ", 2, 12); // 左折しているところに
+    }
+
+    #[test]
+    fn test_teita_tokoroni() {
+        // Structure: Verb［ていた］+ ところに (standard[1])
+        let sentence = "休憩室で踊っていたところに後輩たちが入ってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ところに・～ところへ");
+        assert_pattern_range(&patterns, "～ところに・～ところへ", 4, 13); // 踊っていたところに
+    }
+
+    #[test]
+    fn test_teiru_tokorohe() {
+        // Structure: Verb［ている］+ ところへ (standard[2] with へ)
+        let sentence = "倉庫を取り壊しているところへ近所の人が来て手伝ってくれた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ところに・～ところへ");
+        assert_pattern_range(&patterns, "～ところに・～ところへ", 3, 14); // 取り壊しているところへ
+    }
+
+    #[test]
+    fn test_teita_tokorohe() {
+        // Structure: Verb［ていた］+ ところへ (standard[2] with ていた + へ)
+        let sentence = "上司に怒られて落ち込んでいたところへ、先輩が来て慰めてくれた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ところに・～ところへ");
+        assert_pattern_range(&patterns, "～ところに・～ところへ", 7, 18); // 落ち込んでいたところへ
+    }
+}

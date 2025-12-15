@@ -3618,9 +3618,63 @@ pub fn tsutsuaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～ところに・～ところへ
+// Pattern: ～ところに・～ところへ (at the time of, while, when)
+// Structures: Verb［ている］+ ところに/へ, Verb［ていた］+ ところに/へ
 pub fn uff5e_tokoroni_u30fb_uff5e_tokorohe() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::{concat, flexible_verb_form};
+    use std::sync::Arc;
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+        }
+    }
+
+    // Match いる in 基本形 (いる) or 連用形 (い)
+    #[derive(Debug)]
+    struct IruMatcher;
+    impl Matcher for IruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && (token.features.get(5).is_some_and(|f| f == "基本形")
+                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+        }
+    }
+
+    // Match ところ noun
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Match に or へ particle
+    #[derive(Debug)]
+    struct NiHeParticleMatcher;
+    impl Matcher for NiHeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "へ")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    concat(vec![
+        vec![flexible_verb_form()],
+        vec![TokenMatcher::Custom(Arc::new(TeDeFormMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(IruMatcher))],
+        vec![TokenMatcher::Optional(Box::new(super::past_auxiliary()))], // Optional た
+        vec![TokenMatcher::Custom(Arc::new(TokoroMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(NiHeParticleMatcher))],
+    ])
 }
 
 // Pattern: か〜ないかのうちに (as soon as, just when, barely when)

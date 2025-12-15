@@ -5211,7 +5211,7 @@ declare_patterns! {
     Uff5eTokoroniU30fbUff5eTokorohe {
         name: "～ところに・～ところへ",
         matcher_fn: crate::matchers::n2::uff5e_tokoroni_u30fb_uff5e_tokorohe,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },
