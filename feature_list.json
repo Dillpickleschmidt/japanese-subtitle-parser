@@ -8248,13 +8248,13 @@
   {
     "pattern_name": "要するに",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "要（よう）するに is an expression in Japanese used to highlight important information in a similar way to 'to sum up', 'in su... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

@@ -2134,9 +2134,19 @@ pub fn nikoshitakotohanai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 要するに
+// Pattern: 要するに (To sum up, in summary, in short)
+// Structure: 要するに + Phrase (sentence-initial discourse marker)
 pub fn yousuruni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct YousuruniMatcher;
+    impl Matcher for YousuruniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "要するに"
+                && token.base_form == "要するに"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(YousuruniMatcher))]
 }
 
 // Pattern: てからでないと

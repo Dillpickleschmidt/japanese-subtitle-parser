@@ -4505,3 +4505,51 @@ mod nitsuke_tests {
         assert_pattern_range(&patterns, "につけ", 4, 7); // につけ
     }
 }
+
+// Pattern: 要するに (To sum up, in summary, in short)
+// Data source: grammar_points_data.json["要するに"]
+// Testing: structure.standard[0] - "要するに + Phrase"
+//
+// Structure variants:
+//   - standard[0]: 要するに + Phrase (sentence-initial discourse marker)
+//   - polite: (none)
+
+mod yousuruni_tests {
+    use super::*;
+
+    #[test]
+    fn test_yousuruni_sentence_initial_1() {
+        // Testing: structure.standard[0] - "要するに + Phrase"
+        // Example from grammar_points_data.json
+        let sentence = "要するに、あなたは履歴書に嘘を書いたと言う事ですね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "要するに");
+        assert_pattern_range(&patterns, "要するに", 0, 4); // 要するに
+    }
+
+    #[test]
+    fn test_yousuruni_sentence_initial_2() {
+        // Testing: structure.standard[0] - "要するに + Phrase"
+        // Example from grammar_points_data.json
+        let sentence = "要するに、小麦が入っている食べ物は食べれないと言う事ですね？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "要するに");
+        assert_pattern_range(&patterns, "要するに", 0, 4); // 要するに
+    }
+
+    #[test]
+    fn test_yousuruni_sentence_initial_3() {
+        // Testing: structure.standard[0] - "要するに + Phrase"
+        // Example from grammar_points_data.json
+        let sentence = "要するに、俺はあいつに使われていたと言うことだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "要するに");
+        assert_pattern_range(&patterns, "要するに", 0, 4); // 要するに
+    }
+}
