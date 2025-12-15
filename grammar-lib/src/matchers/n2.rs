@@ -7045,9 +7045,60 @@ pub fn dakeha() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: だけあって
+// Pattern: だけあって (as might be expected of, only natural for)
+// Structures: Verb/Adjective/Noun + だけ + あって
 pub fn dakeatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だけ as adverbial particle
+    #[derive(Debug)]
+    struct DakeMatcher;
+    impl super::Matcher for DakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.base_form == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match あって (て-form of ある)
+    // This is: あっ (動詞 ある in 連用タ接続) + て (助詞/接続助詞)
+    fn atte_matcher() -> Vec<TokenMatcher> {
+        #[derive(Debug)]
+        struct AruMatcher;
+        impl super::Matcher for AruMatcher {
+            fn matches(&self, token: &crate::KagomeToken) -> bool {
+                token.base_form == "ある"
+                    && token.pos.first().is_some_and(|pos| pos == "動詞")
+                    && token
+                        .features
+                        .get(5)
+                        .is_some_and(|f| f == "連用タ接続" || f == "連用形")
+            }
+        }
+
+        #[derive(Debug)]
+        struct TeMatcher;
+        impl super::Matcher for TeMatcher {
+            fn matches(&self, token: &crate::KagomeToken) -> bool {
+                token.surface == "て"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            }
+        }
+
+        vec![
+            TokenMatcher::Custom(Arc::new(AruMatcher)),
+            TokenMatcher::Custom(Arc::new(TeMatcher)),
+        ]
+    }
+
+    super::concat(vec![
+        vec![TokenMatcher::Any],
+        vec![TokenMatcher::Custom(Arc::new(DakeMatcher))],
+        atte_matcher(),
+    ])
 }
 
 // Pattern: 何より

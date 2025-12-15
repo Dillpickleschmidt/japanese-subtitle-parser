@@ -10754,3 +10754,63 @@ mod sorenanoni_tests {
         assert_pattern_range(&patterns, "それなのに", 11, 16); // それなのに
     }
 }
+
+// Pattern: だけあって (as might be expected of, only natural for)
+// Data source: grammar_points_data.json["だけあって"]
+// Testing structure variants:
+//   - standard[0]: Verb + だけ（のことは）あって
+//   - standard[1]: ［い］Adjective + だけ（のことは）あって
+//   - standard[2]: ［な］Adjective + な + だけ（のことは）あって
+//   - standard[3]: Noun + だけ（のことは）あって
+//
+// Note: Pattern includes optional のことは between だけ and あって
+// Expresses that something is only natural/expected given (A)
+// Only used when result is positive in relation to (A)
+
+mod dakeatte_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_dakeatte() {
+        // "As one might expect, he can speak Japanese like a Japanese person because he lived in Japan for 10 years"
+        let sentence = "彼は１０年間日本に住んでいただけあって、日本語を日本人のように話せる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけあって");
+        assert_pattern_range(&patterns, "だけあって", 13, 19); // ただけあって
+    }
+
+    #[test]
+    fn test_i_adjective_dakeatte() {
+        // "As one might expect, that hotel has great service because it is expensive"
+        let sentence = "あのホテルは高いだけあって、サービスがとてもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけあって");
+        assert_pattern_range(&patterns, "だけあって", 6, 13); // 高いだけあって
+    }
+
+    #[test]
+    fn test_na_adjective_dakeatte() {
+        // "As might be expected with how popular Asakusa is, it is crowded with tourists even on weekdays"
+        let sentence = "浅草は有名なだけあって、平日でも観光客で賑わっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけあって");
+        assert_pattern_range(&patterns, "だけあって", 5, 11); // なだけあって
+    }
+
+    #[test]
+    fn test_noun_dakeatte() {
+        // "As expected, Tanaka-sensei is good at writing kanji because she is a calligraphy teacher"
+        let sentence = "田中先生は習字の先生だけあって、漢字を書くのが上手です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけあって");
+        assert_pattern_range(&patterns, "だけあって", 8, 15); // 先生だけあって
+    }
+}
