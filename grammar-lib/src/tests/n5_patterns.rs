@@ -377,6 +377,71 @@ mod kara_from_tests {
     }
 }
 
+// ========== から (Because/Since - Reason) ==========
+// Pattern: から (because, since - subjective reasoning)
+// Data source: grammar_points_data.json["から"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + から
+//   standard[1]: い-Adjective + から
+//   standard[2]: な-Adjective + だ + から
+//   standard[3]: Noun + だ + から
+//
+// Note: More subjective/personal than ので
+// Requires だ after nouns and な-adjectives
+
+mod kara_because_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + から
+    // Example from grammar data: "昨日、アイスクリームを沢山食べたから、お腹が痛いです"
+    #[test]
+    fn test_verb_kara() {
+        let sentence = "昨日、アイスクリームを沢山食べたから、お腹が痛いです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から");
+        assert_pattern_range(&patterns, "から", 15, 18); // たから
+    }
+
+    // Testing: standard[1] - い-Adjective + から
+    // Example from grammar data: "彼女は優しいから、好きです"
+    #[test]
+    fn test_i_adjective_kara() {
+        let sentence = "彼女は優しいから、好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から");
+        assert_pattern_range(&patterns, "から", 3, 8); // 優しいから
+    }
+
+    // Testing: standard[2] - な-Adjective + だ + から
+    // Example from grammar data: "スマホは便利だから、人気がある"
+    #[test]
+    fn test_na_adjective_dakara() {
+        let sentence = "スマホは便利だから、人気がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から");
+        assert_pattern_range(&patterns, "から", 4, 9); // 便利だから
+    }
+
+    // Testing: standard[3] - Noun + だ + から
+    // Example from grammar data: "大きい会社だから、人が沢山いる"
+    #[test]
+    fn test_noun_dakara() {
+        let sentence = "大きい会社だから、人が沢山いる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "から");
+        assert_pattern_range(&patterns, "から", 3, 8); // 会社だから
+    }
+}
+
 // ========== ので (Because/Since) ==========
 // Pattern: ので (because, since - objective reasoning)
 // Data source: grammar_points_data.json["ので"]

@@ -1655,20 +1655,51 @@ pub fn node() -> Vec<TokenMatcher> {
 // Pattern: から (from a starting point)
 // Structures: Starting Point + から
 pub fn kara() -> Vec<TokenMatcher> {
-    use super::noun_matcher;
+    // Match から as BOTH:
+    // 1. 格助詞 (from) - Noun + から
+    // 2. 接続助詞 (because) - Verb/Adjective/Auxiliary + (だ) + から
 
+    // Helper: Match verb, adjective, noun, or auxiliary (like た)
+    #[derive(Debug)]
+    struct VerbAdjNounAuxMatcher;
+    impl Matcher for VerbAdjNounAuxMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| {
+                p == "動詞" || p == "形容詞" || p == "名詞" || p == "助動詞"
+            })
+        }
+    }
+
+    // Helper: Match だ as auxiliary verb (copula)
+    // Note: This will only match after nouns/な-adjectives since VerbAdjNounAuxMatcher
+    // already catches other auxiliaries (like た after verbs)
+    #[derive(Debug)]
+    struct DaCopulaMatcher;
+    impl Matcher for DaCopulaMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Helper: Match から as particle (both 格助詞 and 接続助詞)
     #[derive(Debug)]
     struct KaraParticleMatcher;
     impl Matcher for KaraParticleMatcher {
         fn matches(&self, token: &KagomeToken) -> bool {
             token.surface == "から"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && (token.pos.get(1).is_some_and(|p| p == "格助詞")
+                    || token.pos.get(1).is_some_and(|p| p == "接続助詞"))
         }
     }
 
     vec![
-        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(VerbAdjNounAuxMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DaCopulaMatcher,
+        )))),
         TokenMatcher::Custom(Arc::new(KaraParticleMatcher)),
     ]
 }
