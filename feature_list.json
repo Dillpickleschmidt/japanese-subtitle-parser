@@ -10320,13 +10320,13 @@
   {
     "pattern_name": "ないわけにはいかない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As an extension of the grammar pattern 訳（わけ）にはいかない 'can't afford to do (A)', or 'impossible to do (A)', ない訳（わけ）にはいかない... [1 std, 1 pol]",
     "priority": 4,
     "skip_reason": null

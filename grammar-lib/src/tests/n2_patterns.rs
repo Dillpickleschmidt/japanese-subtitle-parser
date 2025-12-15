@@ -6942,3 +6942,48 @@ mod wokeikini_tests {
         assert_pattern_range(&patterns, "を契機に", 4, 12); // 暗殺を契機として
     }
 }
+
+// Pattern: ないわけにはいかない (cannot afford not to, no way to avoid)
+// Data source: grammar_points_data.json["ないわけにはいかない"]
+// Testing: structure.standard[0] - "Verb[ない] + わけにはいかない"
+//
+// Structure variants:
+//   - standard[0]: Verb[ない] + わけにはいかない
+//   - polite[0]: Verb[ない] + わけにはいきません
+
+mod naiwakenihaikanai_tests {
+    use super::*;
+
+    #[test]
+    fn test_nai_wakenihaikanai_standard() {
+        // Structure: Verb[ない] + わけにはいかない (standard)
+        let sentence = "いつもお世話になっている先輩の結婚式だから、行きたくなくても行かないわけにはいかない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないわけにはいかない");
+        assert_pattern_range(&patterns, "ないわけにはいかない", 30, 42); // 行かないわけにはいかない
+    }
+
+    #[test]
+    fn test_nai_wakenihaikanai_diet() {
+        // Structure: Verb[ない] + わけにはいかない (standard)
+        let sentence = "ダイエット中だからといって、何も食べないわけにはいかない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないわけにはいかない");
+        assert_pattern_range(&patterns, "ないわけにはいかない", 16, 28); // 食べないわけにはいかない
+    }
+
+    #[test]
+    fn test_nai_wakenihaikimasen_polite() {
+        // Structure: Verb[ない] + わけにはいきません (polite)
+        let sentence = "忙しいからといって、挨拶しないわけにはいきません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないわけにはいかない");
+        assert_pattern_range(&patterns, "ないわけにはいかない", 10, 24); // 挨拶しないわけにはいきません
+    }
+}

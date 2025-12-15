@@ -5805,9 +5805,68 @@ pub fn tomo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ないわけにはいかない
+// Pattern: ないわけにはいかない (can't not do, must do)
+// Structures: Verb[未然形] + ない + わけにはいかない/わけにはいきません
 pub fn naiwakenihaikanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ない auxiliary after verb
+    #[derive(Debug)]
+    struct NaiAuxiliary;
+    impl super::Matcher for NaiAuxiliary {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match わけ as noun
+    #[derive(Debug)]
+    struct WakeMatcher;
+    impl super::Matcher for WakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わけ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Match いく verb (未然形 for ない, 連用形 for ません)
+    #[derive(Debug)]
+    struct IkuVerb;
+    impl super::Matcher for IkuVerb {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いく"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && (token.features.get(5).is_some_and(|f| f == "未然形")
+                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+        }
+    }
+
+    // Match ない, ませ, or ん as ending
+    #[derive(Debug)]
+    struct EndingMatcher;
+    impl super::Matcher for EndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "助動詞")
+                && (token.surface == "ない"
+                    || token.surface == "ませ"
+                    || token.surface == "ん")
+        }
+    }
+
+    // Standard: Verb[未然形] + ない + わけ + に + は + いか + ない
+    // Polite: Verb[未然形] + ない + わけ + に + は + いき + ませ + ん
+    vec![
+        TokenMatcher::verb_with_form("未然形"),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliary)),
+        TokenMatcher::Custom(Arc::new(WakeMatcher)),
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Surface("は"),
+        TokenMatcher::Custom(Arc::new(IkuVerb)),
+        TokenMatcher::Custom(Arc::new(EndingMatcher)),
+        // Optional second ending token (ん after ませ in polite form)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(EndingMatcher)))),
+    ]
 }
 
 // Pattern: というわけではない (doesn't mean that, it's not that)
