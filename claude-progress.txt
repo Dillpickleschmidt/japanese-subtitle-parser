@@ -1,3 +1,57 @@
+## Session 380 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented ～ざる pattern (N2)
+**Patterns completed**: 1 (～ざる - N2 newly implemented)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2443 passing, 1 ignored (was 2439 passing, 1 ignored - net +4 tests)
+
+### ✅ Pattern Implemented: ～ざる (attributive form of classical negative auxiliary ず)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: ざる is the attributive form of the classical auxiliary verb ず. It keeps the same negation 'not' meaning as ず, and conjugates with verbs in the same way as ない. ざる is often translated as "un~" (like "unstoppable", "unknown") and is primarily used in set expressions or before nouns (attributive position).
+
+**Structures tested**: 4 comprehensive tests covering various verb types
+1. 五段 verb: 言わざる人 (13-17) - "a person who will not complain"
+2. Passive construction: 知られざる過去 (20-23, れざる) - "the unknown past"
+3. 一段 verb: 与えざる影響 (10-14) - "influence that cannot be given"
+4. 一段 verb: 恐れざる勇気 (6-10) - "fearless courage"
+
+**Implementation**: Matcher in n2.rs (lines 163-184), tests in n2_patterns.rs (lines 2050-2119)
+
+**Key notes**:
+- Classical auxiliary ざる has base_form="ぬ" and conjugation form "体言接続" (attributive)
+- Attaches to verbs in 未然形 (irrealis/negative form)
+- For passive constructions like 知られざる, ざる attaches to the auxiliary れる (in 未然形)
+- Primarily used in formal/literary contexts and set expressions
+- Modern Japanese prefers ない for most negations
+
+**Tokenization observations**:
+- surface="ざる", base_form="ぬ", pos=助動詞
+- features[4]="特殊・ヌ", features[5]="体言接続"
+- Appears after verbs/auxiliaries in 未然形
+
+### Test Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions (all 2443 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 179 remaining (down from 180!)
+- N1: 186 remaining
+- Total: ~367 patterns remaining (down from ~368!)
+
+**Next priority**: Continue with N2 patterns - つもりで, どうせ, せめて, どうやら, etc.
+
+---
+
 ## Session 379 - 2025-12-14
 
 ### ✅ Session Summary
