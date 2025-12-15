@@ -9229,13 +9229,13 @@
   {
     "pattern_name": "という風に",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like ふうに , the grammar point indicating that something is being done 'in the way of (A)', というふうに uses the same suffix... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

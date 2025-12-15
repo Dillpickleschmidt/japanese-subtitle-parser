@@ -5667,7 +5667,7 @@ declare_patterns! {
     Toiukazeni {
         name: "という風に",
         matcher_fn: crate::matchers::n2::toiukazeni,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

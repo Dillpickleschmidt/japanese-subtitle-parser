@@ -10589,3 +10589,74 @@ mod mo_ba_mo_tests {
     //     assert_pattern_range(&patterns, "も～ば～も", 2, 15); // 方も騙す方なら騙される方も
     // }
 }
+
+// Pattern: という風に (in such a way as to suggest, as if to say)
+// Data source: grammar_points_data.json["という風に"]
+// Testing: structure.standard[0] - "Verb + というふうに + Phrase"
+// Testing: structure.standard[1] - "(Topic)は(Method) + というふうに + Phrase"
+//
+// Structure variants:
+//   - standard[0]: Verb + というふうに (after verb, expresses uncertainty about appearance)
+//   - standard[1]: (Topic)は(Method) + というふうに (describing method/manner)
+
+mod toiukazeni_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_toiuhuuni() {
+        // Testing: Verb + というふうに pattern
+        // "I heard as if to suggest she's going home during lunch break"
+        // Pattern captures full context: topic + context + verb + というふうに
+        let sentence = "彼女は昼休憩に帰るというふうに聞いています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という風に");
+        assert_pattern_range(&patterns, "という風に", 0, 15); // 彼女は昼休憩に帰るというふうに
+    }
+
+    #[test]
+    fn test_verb_clause_toiuhuuni() {
+        // Testing: Verb clause + というふうに pattern
+        // "Suzuki studied as if to suggest his life depended on this exam"
+        // Pattern captures full clause being quoted
+        let sentence = "鈴木さんはこの試験に命がかかっているというふうに勉強をした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という風に");
+        assert_pattern_range(&patterns, "という風に", 2, 24); // さんはこの試験に命がかかっているというふうに
+    }
+
+    #[test]
+    fn test_copula_toiuhuuni() {
+        // Testing: Copula clause + というふうに pattern
+        // "I always thought as if to suggest I was the most capable person"
+        // Pattern captures full thought being expressed
+        let sentence = "私は今まで自分が一番仕事ができる人だというふうに思っていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "という風に");
+        assert_pattern_range(&patterns, "という風に", 2, 24); // 今まで自分が一番仕事ができる人だというふうに
+    }
+
+    // Note: This test demonstrates the difference between という風に and ふうに.
+    // When という follows an enumeration/list (not a quotable clause),
+    // it functions as a conjunction meaning "in the manner of" or "as follows",
+    // which is better captured by the general ふうに pattern rather than という風に.
+    // The grammar point という風に specifically emphasizes quotation/reported speech.
+    #[test]
+    fn test_method_enumeration_fuuni() {
+        // Testing: Enumeration + というふうに → matches ふうに (not という風に)
+        // "We decided to divide roles in the following way: he does design, I do programming"
+        let sentence = "彼はデザイン、僕はプログラミング、というふうに役割を分けてアプリを開発することにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // In this context, という acts as "in the following manner", not as quotation
+        // So ふうに pattern matches, not という風に
+        assert_has_pattern(&patterns, "ふうに");
+        assert_pattern_range(&patterns, "ふうに", 17, 23); // というふうに (caught by general ふうに pattern)
+    }
+}

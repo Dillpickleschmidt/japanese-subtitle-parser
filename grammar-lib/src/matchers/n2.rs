@@ -5919,9 +5919,56 @@ pub fn fuuni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: という風に
+// Pattern: という風に (as if to say, as if to suggest)
+// Structures: (Content) + というふうに
 pub fn toiukazeni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match という as compound case particle
+    #[derive(Debug)]
+    struct ToiuMatcher;
+    impl super::Matcher for ToiuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "という"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    // Match ふう as non-independent noun (same as ふうに pattern)
+    #[derive(Debug)]
+    struct FuuMatcher;
+    impl super::Matcher for FuuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ふう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match に particle (adverbializing)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 10,
+            stop_conditions: vec![],
+        }, // Content being quoted (verb, clause, etc.) - at least 1 token for meaningful context
+        TokenMatcher::Custom(Arc::new(ToiuMatcher)),
+        TokenMatcher::Custom(Arc::new(FuuMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: ものの
