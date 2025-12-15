@@ -250,9 +250,23 @@ pub fn semete() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SemeteMatcher))]
 }
 
-// Pattern: どうやら
+// Pattern: どうやら (apparently, it seems like)
+// Structures: どうやら
 pub fn douyara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct DouyaraMatcher;
+
+    impl super::Matcher for DouyaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どうやら"
+                && token.base_form == "どうやら"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(DouyaraMatcher))]
 }
 
 // Pattern: なにやら

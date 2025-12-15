@@ -2351,3 +2351,71 @@ mod tashikani_tests {
         assert_pattern_range(&patterns, "確かに", 0, 3); // 確かに
     }
 }
+
+// Pattern: どうやら (apparently, it seems like)
+// Data source: grammar_points_data.json["どうやら"]
+// Testing: structure.standard[0] - "どうやら + Phrase + みたいだ"
+// Testing: structure.standard[1] - "(ようだ、そうだ、らしい、って感じだ)"
+//
+// Structure notes:
+//   - どうやら is an adverb that appears at the beginning of sentences
+//   - Often used with speculation markers: ようだ, そうだ, らしい, みたいだ
+//   - Emphasizes uncertainty/speculation
+//
+// Test strategy:
+//   - Test どうやら + みたいだ (standard[0])
+//   - Test どうやら + ようだ (standard[1])
+//   - Test どうやら + そうだ (standard[1])
+//   - Test どうやら + らしい (standard[1])
+
+mod douyara_tests {
+    use super::*;
+
+    #[test]
+    fn test_douyara_mitaida() {
+        // Example: どうやら今日も休んでいるみたいだね
+        // (It seems like he's taking today off as well)
+        let sentence = "鈴木くんはいるか？どうやら今日も休んでいるみたいだね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうやら");
+        assert_pattern_range(&patterns, "どうやら", 9, 13); // どうやら
+    }
+
+    #[test]
+    fn test_douyara_youda() {
+        // Example: どうやら私は彼女には必要がないようだ
+        // (It seems like I am not needed by her)
+        let sentence = "どうやら私は彼女には必要がないようだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうやら");
+        assert_pattern_range(&patterns, "どうやら", 0, 4); // どうやら
+    }
+
+    #[test]
+    fn test_douyara_rashii() {
+        // Example: どうやら彼は結婚しているらしいよ
+        // (I heard that he is apparently married)
+        let sentence = "どうやら彼は結婚しているらしいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうやら");
+        assert_pattern_range(&patterns, "どうやら", 0, 4); // どうやら
+    }
+
+    #[test]
+    fn test_douyara_mid_sentence() {
+        // Example: お隣の鈴木さんがどうやら来月からイギリスに行くらしいですよ
+        // (Our neighbor, Suzuki-san, is apparently going to England next month)
+        let sentence = "お隣の鈴木さんがどうやら来月からイギリスに行くらしいですよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうやら");
+        assert_pattern_range(&patterns, "どうやら", 8, 12); // どうやら
+    }
+}
