@@ -2840,3 +2840,65 @@ The pattern range includes the full verb construction: 考えられない/ませ
 ✅ No regressions (all 2389 tests passing)
 
 **Next priority**: 切れない (kirenai) - "unable to finish completely"
+
+---
+
+## Session 376 Update: 連用形 Pattern Implementation
+
+**Pattern completed**: 連用形 (renyoukei)
+- **Meaning**: Conjunctive Form - Formal Clause Connector (formal writing pattern)
+- **Structure**: Verb stem + comma + Phrase OR i-Adjective ku-form + comma + Phrase
+- **JLPT Level**: N3
+- **Priority**: 1 (low - common construction pattern, not highlighted in browser extension)
+- **Tests added**: 6
+
+### Implementation Details
+
+**Matcher type**: Custom matchers for formal conjunctive form + comma requirement
+- RenyoukeiMatcher: Matches verb in 連用形 (stem form) OR i-Adjective in 連用テ接続 (ku-form)
+- CommaMatcher: Ensures pattern is followed by Japanese comma (、)
+- Key distinction: Requires comma to differentiate from regular te-form connections
+
+**Pattern structure**:
+- Verb in 連用形 (stem form) + comma (、)
+- i-Adjective in 連用テ接続 (ku-form) + comma (、)
+
+**Test coverage**:
+1. test_verb_stem_suru: 爆発をし、海に墜落した (exploded and crashed)
+2. test_verb_stem_taberu: 朝食を食べ、出かける準備を (eat breakfast and get ready)
+3. test_verb_stem_kuru: 友達が来、一緒に観光した (friend came and toured together)
+4. test_i_adjective_ku_form: 北海道は寒く、景色が綺麗 (Hokkaido is cold and scenery is beautiful)
+5. test_i_adjective_ku_form_tanoshii: 学校は楽しく、色々学べる (school is fun and can learn various things)
+6. test_i_adjective_ku_form_negative: 部屋は広く、明るくない (room is spacious and not bright)
+
+**Tokenization observations**:
+- Verbs in 連用形 have features[5] = "連用形" (e.g., し from する, 食べ from 食べる, 来 from 来る)
+- i-Adjectives in ku-form have features[5] = "連用テ接続" (e.g., 寒く, 楽しく, 広く)
+- Japanese comma tokenizes as 記号/読点 (symbol/reading point)
+- Pattern ranges include both the conjunctive form and the comma
+
+### Session 376 Summary
+
+**Patterns completed**: 1
+- 連用形 (renyoukei) - 6 tests
+
+**Total tests added**: 6 tests (all passing)
+**Total test count**: 2419 (up from 2413)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 1 remaining (down from 2!) - Only 前者は・後者は left
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~372 patterns remaining (down from ~373!)
+
+**Quality metrics**:
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples (subtitle-quality)
+✅ Correct character ranges
+✅ Tests cover both verb stems and adjective ku-forms
+✅ No regressions (all 2419 tests passing)
+
+**Next priority**: 前者は・後者は (zensha/kousha) - "the former/the latter"
