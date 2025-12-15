@@ -12822,3 +12822,72 @@ mod kaette_tests {
         assert_pattern_range(&patterns, "却って", 15, 19); // かえって
     }
 }
+
+// ========== 別に〜ない (not particularly, not really) ==========
+// Pattern: 別に〜ない (not particularly, not really)
+// Data source: grammar_points_data.json["別に〜ない"]
+//
+// Structure variants to test:
+//   standard[0]: 別（べつ）に + Verb［ない］
+//   standard[1]: 別（べつ）に + ［い］Adjective［ない］
+//   standard[2]: 別（べつ）に + ［な］Adjective + ではない
+//   standard[3]: 別（べつ）に + Noun + ではない
+
+mod betsuni_nai_tests {
+    use super::*;
+
+    // Testing: 別に + Verb[ない]
+    #[test]
+    fn test_betsuni_verb_nai() {
+        let sentence = "私はべつに構わないけど、お父さんはそういうの気にするから";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "別に〜ない");
+        assert_pattern_range(&patterns, "別に〜ない", 2, 9); // べつに構わない
+    }
+
+    // Testing: 別に + い-Adjective[ない]
+    #[test]
+    fn test_betsuni_i_adj_nai() {
+        let sentence = "べつに痛くないよ。少しチクってするだけ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "別に〜ない");
+        assert_pattern_range(&patterns, "別に〜ない", 0, 7); // べつに痛くない
+    }
+
+    // Testing: 別に + な-Adjective + ではない
+    #[test]
+    fn test_betsuni_na_adj_denai() {
+        let sentence = "あなたの事はべつに嫌いではないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "別に〜ない");
+        assert_pattern_range(&patterns, "別に〜ない", 6, 15); // べつに嫌いではない
+    }
+
+    // Testing: 別に + Noun + ではない
+    #[test]
+    fn test_betsuni_noun_denai() {
+        let sentence = "パーティーって言ってるけど、べつにそんなに大したものではないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "別に〜ない");
+        assert_pattern_range(&patterns, "別に〜ない", 14, 30); // べつにそんなに大したものではない
+    }
+
+    // Testing: 別に + Noun + じゃない (casual variant)
+    #[test]
+    fn test_betsuni_noun_janai() {
+        let sentence = "べつに嘘じゃないんだけどね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "別に〜ない");
+        assert_pattern_range(&patterns, "別に〜ない", 0, 8); // べつに嘘じゃない
+    }
+}

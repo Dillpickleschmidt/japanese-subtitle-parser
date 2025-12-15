@@ -5306,9 +5306,40 @@ pub fn totemo_uff5e_nai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 別に〜ない
+// Pattern: Not particularly (べつに構わない)
+// Structures: 別に + ... + ない/ではない/じゃない
 pub fn betsuni_u301c_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct BetsuniMatcher;
+    impl Matcher for BetsuniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "べつに"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiFormMatcher;
+    impl Matcher for NaiFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない as auxiliary verb or い-adjective
+            (token.surface == "ない" || token.base_form == "ない")
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(BetsuniMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NaiFormMatcher)),
+    ]
 }
 
 // Pattern: ばかりでなく (not only...but also)
