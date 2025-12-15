@@ -4967,9 +4967,51 @@ pub fn nuku_compound() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(CompoundNukuVerbMatcher))]
 }
 
-// Pattern: 抜きで
+// Pattern: 抜きで (without, leaving out)
+// Structures: Noun + 抜きで/抜きに/抜きにして/抜きとして/抜きの
+//
+// Tokenization: Noun + 抜き(名詞) + (で/に/として/の/にして/にしては/でも/では)
+// 抜き is tokenized as a noun (名詞/一般)
 pub fn nukide() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NukiNounMatcher;
+    impl super::Matcher for NukiNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "抜き"
+                && token.base_form == "抜き"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NukideParticleMatcher;
+    impl super::Matcher for NukideParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match で, に, または として
+            if token.surface == "で" || token.surface == "に" {
+                token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            } else if token.surface == "として" {
+                token.base_form == "として"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            } else if token.surface == "の" {
+                token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+            } else {
+                false
+            }
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NukiNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NukideParticleMatcher)),
+    ]
 }
 
 // Pattern: いよいよ (finally, at last, more and more)

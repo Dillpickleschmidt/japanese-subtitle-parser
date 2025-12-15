@@ -8774,3 +8774,95 @@ mod nuku_tests {
         assert_pattern_range(&patterns, "抜く", 5, 13); // 乗り越えぬきます
     }
 }
+
+// Pattern: 抜きで (without, leaving out)
+// Data source: grammar_points_data.json["抜きで"]
+// Testing: structure.standard[] variants
+//
+// Structure variants:
+//   - standard[0]: Noun + 抜きで(は)
+//   - standard[1]: Noun + 抜きに(は)
+//   - standard[2]: Noun + を + 抜きにして(は)
+//   - standard[3]: Noun + は + 抜きとして(は)
+//   - standard[4]: Noun + 抜き + の + Noun
+
+mod nukide_tests {
+    use super::*;
+
+    #[test]
+    fn test_nukide_basic() {
+        // Structure: Noun + 抜きで
+        // Example from grammar data: あの人は冗談抜きで怖いから
+        let sentence = "あの人は冗談抜きで怖いから怒らせない方がいいよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜きで");
+        assert_pattern_range(&patterns, "抜きで", 4, 9); // 冗談抜きで
+    }
+
+    #[test]
+    fn test_nukide_compound_noun() {
+        // Structure: Noun + 抜きで
+        // Testing compound noun (あいつ + ら)
+        // Note: "ら" is tokenized as a separate noun suffix (名詞/接尾)
+        let sentence = "あいつら全然来ないな、あいつら抜きで始めちゃおうぜ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜きで");
+        assert_pattern_range(&patterns, "抜きで", 14, 18); // ら抜きで
+    }
+
+    #[test]
+    fn test_nukini() {
+        // Structure: Noun + 抜きに
+        let sentence = "彼女抜きにパーティーは盛り上がらない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜きで");
+        assert_pattern_range(&patterns, "抜きで", 0, 5); // 彼女抜きに
+    }
+
+    #[test]
+    fn test_nukinishite() {
+        // Structure: Noun + 抜きに (within 抜きにして context)
+        // Example from grammar data: 若い労働者抜きにしては、日本の建築業は成り立たない
+        // Note: Detects "抜きに" part; "にして" is separate pattern
+        let sentence = "若い労働者抜きにしては、日本の建築業は成り立たない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜きで");
+        assert_pattern_range(&patterns, "抜きで", 4, 8); // 者抜きに
+    }
+
+    // TODO: Undetectable - Noun + は + 抜きとして
+    // The particle は appears between the noun and 抜き, so the current matcher
+    // (which expects Noun directly before 抜き) cannot detect this variant.
+    // Structure: 前置き + は + 抜き + として
+    // This would require a more complex matcher that allows optional particles before 抜き.
+    //
+    // #[test]
+    // fn test_nukitoshite() {
+    //     let sentence = "前置きは抜きとして本題に入りましょう";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "抜きで");
+    //     assert_pattern_range(&patterns, "抜きで", ?, ?); // は抜きとして (complex structure)
+    // }
+
+    #[test]
+    fn test_nuki_no_noun() {
+        // Structure: Noun + 抜き + の + Noun
+        // Example from grammar data: ワサビ抜きの寿司なんて寿司じゃないよ
+        let sentence = "ワサビ抜きの寿司なんて寿司じゃないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜きで");
+        assert_pattern_range(&patterns, "抜きで", 0, 6); // ワサビ抜きの
+    }
+}

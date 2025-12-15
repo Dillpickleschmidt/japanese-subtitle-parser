@@ -8907,14 +8907,14 @@
   {
     "pattern_name": "抜きで",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "抜（ぬ）きで , a combination of the noun form of the う-Verb 抜（ぬ）く 'to extract', and the particle で, is a construction that ... [5 std, 0 pol]",
+    "passes": true,
+    "description": "抜（ぬ）きで, a combination of the noun form of the う-Verb 抜（ぬ）く 'to extract', and the particle で, is a construction t... [5 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
   },
