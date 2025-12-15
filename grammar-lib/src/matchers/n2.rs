@@ -4683,9 +4683,19 @@ pub fn itsunomanika() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(ItsunomaniकaMatcher))]
 }
 
-// Pattern: 一旦
+// Pattern: 一旦 (once, for a moment)
+// Structures: 一旦 + Verb[ば/たら] + と
 pub fn ittan() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct IttanMatcher;
+    impl Matcher for IttanMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いったん"
+                && token.base_form == "いったん"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(IttanMatcher))]
 }
 
 // Pattern: はもとより

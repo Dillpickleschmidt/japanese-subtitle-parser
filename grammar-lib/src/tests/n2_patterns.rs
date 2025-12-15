@@ -8250,3 +8250,54 @@ mod yara_yara_tests {
         assert_pattern_range(&patterns, "やら～やら", 8, 12); // 漢字やら
     }
 }
+
+// Pattern: 一旦 (once, for a moment)
+// Data source: grammar_points_data.json["一旦"]
+// Testing: structure.standard[0] - "一旦（いったん） + Verb［ば］"
+// Testing: structure.standard[1] - "一旦（いったん） + Verb［たら］"
+// Testing: structure.standard[2] - "一旦（いったん） + Verb + と"
+//
+// Structure variants:
+//   - standard[0]: 一旦 + Verb[ば] (conditional ば)
+//   - standard[1]: 一旦 + Verb[たら] (conditional たら)
+//   - standard[2]: 一旦 + Verb + と (conditional と)
+
+mod ittan_tests {
+    use super::*;
+
+    #[test]
+    fn test_ittan_ba() {
+        // Structure: 一旦 + Verb[ば]
+        // Example from grammar data: いったん再起動をすれば、もとに戻るはずです
+        let sentence = "いったん再起動をすれば、もとに戻るはずです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一旦");
+        assert_pattern_range(&patterns, "一旦", 0, 4); // いったん
+    }
+
+    #[test]
+    fn test_ittan_tara() {
+        // Structure: 一旦 + Verb[たら]
+        // Example from grammar data: 娘はいったん泣き出したら、しばらく泣き止まない
+        let sentence = "娘はいったん泣き出したら、しばらく泣き止まないので大変です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一旦");
+        assert_pattern_range(&patterns, "一旦", 2, 6); // いったん
+    }
+
+    #[test]
+    fn test_ittan_to() {
+        // Structure: 一旦 + Verb + と
+        // Example from grammar data: いったん集中力が切れてしまうと、再び集中するのに時間がかかる
+        let sentence = "いったん集中力が切れてしまうと、再び集中するのに時間がかかる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一旦");
+        assert_pattern_range(&patterns, "一旦", 0, 4); // いったん
+    }
+}

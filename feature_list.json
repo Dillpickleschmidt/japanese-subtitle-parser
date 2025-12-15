@@ -8809,13 +8809,13 @@
   {
     "pattern_name": "一旦",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "一旦（いったん） , an adverb meaning 'for a short time', or 'briefly', is a structure that is used in Japanese to indicate th... [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
