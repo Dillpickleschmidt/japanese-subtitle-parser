@@ -3514,3 +3514,88 @@ Continue with simple N2 adverb patterns:
 - 万が一 (mangaichi) - 1 structure
 
 **Session outcome**: Successfully implemented 3 N2 patterns with perfect test coverage!
+
+## Session 382 - Three More N2 Patterns Completed
+
+**Date**: Current session
+**Focus**: Implementing simple N2 adverb patterns
+
+### Patterns Completed
+
+#### 1. 万が一 (mangaichi) - "in the unlikely event, just in case"
+**Pattern structure**:
+- 万が一 (full form) - 名詞/一般
+- 万一 (abbreviated form) - 副詞/助詞類接続
+
+**Tests**: 3 tests covering both forms
+- test_mangaichi_full_form: 万が一の時のために [chars 0-3]
+- test_mangaichi_with_condition: 万が一来れなくなった [chars 0-3]
+- test_man_ichi_abbreviated: 万一分からないことがあれば [chars 0-2]
+
+**Tokenization observations**:
+- Full form (万が一): Single token 名詞/一般
+- Abbreviated (万一): Single token 副詞/助詞類接続
+- Different POS tags require custom matcher checking both
+
+**Implementation**: Custom matcher checking both surface forms with appropriate POS tags
+
+#### 2. 一応 ① (ichiou) - "just in case, just to be sure"
+#### 3. 一応 ② (ichiou) - "more or less, for the time being, tentatively"
+
+**Pattern structure**: 一応 (副詞/助詞類接続) - both patterns identical
+**Tests**: 4 tests covering different contexts (2 for each semantic meaning)
+- test_ichiou_just_in_case: 一応傘を持って行った [chars 28-30]
+- test_ichiou_just_to_be_sure: 一応チェックして [chars 13-15]
+- test_ichiou_more_or_less: 一応私が店長です [chars 0-2]
+- test_ichiou_for_time_being: 一応ここまでに [chars 3-5]
+
+**Tokenization observations**:
+- Single adverb token: 一応 (副詞/助詞類接続)
+- Both ① and ② tokenize identically
+- Meaning differs by context (similar to らしい① vs らしい②)
+
+**Implementation**:
+- Single shared matcher: ichiou_matcher()
+- Both ichiou_u2460() and ichiou_u2461() use same matcher
+- When detected, both patterns shown - user determines meaning from context
+
+### Test Statistics
+**Patterns completed**: 3 patterns (万が一 counts as 1, 一応① and 一応② count as 2)
+**Total tests added**: 7 tests (all passing)
+**Total test count**: 2472 (up from 2465)
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 175 remaining (down from 178!)
+- N1: 186 remaining
+- Total: ~363 patterns remaining
+
+### Quality Metrics
+✅ All 7 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ Tests cover different usage contexts
+✅ No regressions (all 2472 tests passing)
+
+### Technical Notes
+
+**Pattern implementation approach**:
+- 万が一: Handles both full and abbreviated forms with different POS tags
+- 一応: Single matcher for structurally identical patterns with different meanings
+- Both demonstrate handling of semantic vs structural disambiguation
+
+**Key learning**:
+- Same surface form can have different POS based on variant (万が一 vs 万一)
+- Multiple semantic meanings may share identical structure (like らしい①/②)
+- When ambiguous, detect both patterns and let user choose from context
+
+### Next Priority
+Continue with simple N2 patterns:
+- よりほかない (yorihoka nai) - 2 structures
+- に相違ない (ni souinai) - 5 structures
+- それなら (sorenara) - 1 structure (conjunction)
+
+**Session outcome**: Successfully implemented 3 N2 patterns with perfect test coverage! Total of 7 new tests added.
