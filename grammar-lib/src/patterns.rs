@@ -5315,7 +5315,7 @@ declare_patterns! {
     Nisakidachi {
         name: "に先立ち",
         matcher_fn: crate::matchers::n2::nisakidachi,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

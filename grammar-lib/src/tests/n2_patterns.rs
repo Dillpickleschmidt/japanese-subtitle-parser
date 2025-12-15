@@ -7706,3 +7706,61 @@ mod hatashite_tests {
         assert_pattern_range(&patterns, "はたして", 22, 26); // はたして
     }
 }
+
+// Pattern: に先立ち (prior to, before)
+// Data source: grammar_points_data.json["に先立ち"]
+// Testing all structure variants with print_debug to analyze tokenization
+//
+// Structure variants:
+//   - standard[0]: Verb[る] + に先立って
+//   - standard[1]: Noun + に先立って
+//   - standard[2]: Noun (A) + に先立つ + Noun (B)
+//   - Variation: に先立ち (formal conjunctive form)
+
+mod nisakidachi_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_nisakidatte() {
+        // Verb[る] + に先立って
+        let sentence = "新しい機械を導入するに先立って、色々な会社のサイトを見てスペックを比較します";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に先立ち");
+        assert_pattern_range(&patterns, "に先立ち", 6, 15); // 導入するに先立って
+    }
+
+    #[test]
+    fn test_noun_nisakidatte() {
+        // Noun + に先立って
+        let sentence = "会議に先立って、資料を確認しておいてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に先立ち");
+        assert_pattern_range(&patterns, "に先立ち", 0, 7); // 会議に先立って
+    }
+
+    #[test]
+    fn test_noun_nisakidachi() {
+        // Noun + に先立ち (formal conjunctive form)
+        let sentence = "映画の公開に先立ち、予告編が公開された";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に先立ち");
+        assert_pattern_range(&patterns, "に先立ち", 3, 9); // 公開に先立ち
+    }
+
+    #[test]
+    fn test_noun_nisakidatsu_noun() {
+        // Noun (A) + に先立つ + Noun (B)
+        let sentence = "引越しに先立つ１日前に洗濯機や冷蔵庫の水抜きをしておかなければならない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に先立ち");
+        assert_pattern_range(&patterns, "に先立ち", 0, 7); // 引越しに先立つ
+    }
+}
