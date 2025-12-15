@@ -1,3 +1,104 @@
+## Session 414 - 2025-12-15
+
+### Session Summary - IN PROGRESS
+**Status**: IN PROGRESS - Successfully implemented 2 N1 patterns (を機に, すら)
+**Patterns completed**: 2 (both N1, both priority 5)
+**Tests added**: 7 new tests (3 for を機に, 4 for すら, all passing)
+**Total tests**: 2708 passing, 1 ignored (was 2701 passing, 1 ignored - net +7 tests)
+
+**Session highlights**:
+- Implemented を機に (taking advantage of, on the occasion of) - 2 structure variants
+- Implemented すら (even - extreme example) - 1 structure with multiple particle options
+- Both patterns simple and straightforward
+- Clean test-first implementation for both
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: を機に (taking advantage of, on the occasion of)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: を機に uses 機（き） 'opportunity' with particles を and に to indicate "taking advantage of (A), (B)" or "on the occasion of (A), (B)". It's slightly formal and emphasizes actively making use of an opportunity to do something.
+
+**Structures tested**: Both structure variants from grammar_points_data.json
+1. Verb[た] + の + を機に: 別れたのを機に (chars 5-10) - "taking advantage of the breakup"
+2. Noun + を機に:
+   - 妊娠を機に (chars 2-7) - "taking advantage of pregnancy"
+   - 車検を機に (chars 0-5) - "on the occasion of car inspection"
+
+**Implementation details**:
+- Pattern structure: (Verb[た] or Noun) + (optional の nominalizer) + を(格助詞) + 機(名詞/一般) + に(格助詞)
+- Custom matchers: WoParticleMatcher, KiNounMatcher, NiParticleMatcher, NoNominalizerMatcher
+- Uses TokenMatcher::Any to flexibly match noun or verb+past
+- Optional の nominalizer handles verb nominalization
+- Register: standard
+
+**Test count**: 3 tests (all passing)
+
+---
+
+### ✅ Pattern Implemented: すら (even - extreme example)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: すら is a formal adverbial particle meaning "even", more formal than さえ. It presents the most extreme example from a large group, implying that if this extreme case applies, all less extreme cases also apply. Usually used with negative nuance.
+
+**Structures tested**: Single structure with multiple variations from grammar_points_data.json
+1. Noun + すら: 鉛筆すら (chars 0-4) - "even a pencil"
+2. Noun + で + すら: 子供ですら (chars 0-5) - "even a child"
+3. Noun + に + すら: 彼にすら (chars 0-4) - "even to him"
+4. Noun + すら + も: ガラケーすらも (chars 0-7) - "even a flip phone" (emphatic)
+
+**Implementation details**:
+- Pattern structure: Noun + (optional particle) + すら(係助詞) + (optional も)
+- Custom matchers: SuraParticleMatcher, MoParticleMatcher, OptionalParticleMatcher
+- OptionalParticleMatcher handles both に(格助詞) and で(助動詞 from だ)
+- Uses TokenMatcher::Any to match any noun
+- Two optional matchers for particle before すら and も after すら
+- Register: formal
+
+**Test count**: 4 tests (all passing)
+
+**Key difference from さえ**: すら is more formal and emphasizes the most extreme example from a large group, while さえ places more emphasis on specific individuals.
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 115 remaining
+- N1: 179 remaining (down from 181 - completed 2 patterns!)
+- Total: ~296 patterns remaining
+
+### Quality Metrics
+✅ All 7 tests have assert_pattern_range (3 for を機に, 4 for すら)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2708 tests passing)
+
+### Next Steps
+Continue with simple N1 priority 5 patterns (1-2 structure variants). Good candidates:
+- あっての - 1 structure
+- を経て - 1 structure
+- の極み - 1 structure
+- あくまでも - 1 structure
+- たなり・なり - 1 structure
+
+Target: Continue implementing 2-3 patterns per session for steady progress.
+
+**Session outcome**: Successfully completed 2 N1 patterns with full coverage of all structure variants! Total of 7 new tests added (3 + 4), all passing, no regressions.
+
+---
+
 ## Session 413 - 2025-12-15
 
 ### Session Summary - COMPLETE
