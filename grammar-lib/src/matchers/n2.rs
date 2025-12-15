@@ -218,9 +218,20 @@ pub fn tsumoride() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: どうせ
+// Pattern: どうせ (in any case, anyway)
+// Structure: どうせ (adverb)
 pub fn douse() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct DouseMatcher;
+    impl super::Matcher for DouseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どうせ"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(DouseMatcher))]
 }
 
 // Pattern: せめて

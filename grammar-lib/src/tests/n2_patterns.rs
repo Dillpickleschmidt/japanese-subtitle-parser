@@ -2198,3 +2198,54 @@ mod tsumoride_tests {
         assert_pattern_range(&patterns, "つもりで", 7, 12); // だつもりで
     }
 }
+
+// Pattern: どうせ (in any case, anyway)
+// Data source: grammar_points_data.json["どうせ"]
+// Testing: structure.standard[0] - "どうせ + Phrase"
+//
+// Structure variants:
+//   - standard[0]: どうせ + Phrase (only one structure)
+//
+// Usage contexts:
+//   - Expressing inevitability/resignation
+//   - "Might as well" with なら or だから
+
+mod douse_tests {
+    use super::*;
+
+    #[test]
+    fn test_douse_resignation() {
+        // Example: どうせまたパチンコに行くんでしょ
+        // (In any case, you are going to the pachinko parlor again, aren't you?)
+        let sentence = "どうせまたパチンコに行くんでしょ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうせ");
+        assert_pattern_range(&patterns, "どうせ", 0, 3); // どうせ
+    }
+
+    #[test]
+    fn test_douse_with_nara() {
+        // Example: どうせ新しいスマホを買うならもうちょっといい奴買いなよ
+        // (If you're going to buy a new smartphone, you might as well buy something a little better)
+        let sentence = "どうせ新しいスマホを買うならもうちょっといい奴買いなよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうせ");
+        assert_pattern_range(&patterns, "どうせ", 0, 3); // どうせ
+    }
+
+    #[test]
+    fn test_douse_with_dakara() {
+        // Example: どうせまた負けるんだから頑張っても時間と体力の無駄だよ
+        // (We're going to lose again anyway, so trying our best would be a waste)
+        let sentence = "どうせまた負けるんだから頑張っても時間と体力の無駄だよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうせ");
+        assert_pattern_range(&patterns, "どうせ", 0, 3); // どうせ
+    }
+}
