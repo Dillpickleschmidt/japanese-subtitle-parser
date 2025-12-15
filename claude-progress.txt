@@ -1,3 +1,94 @@
+## Session 485 - 2025-12-15
+
+### Session Summary - Two N2 Patterns Complete ✓
+**Status**: Successfully implemented 何といっても and は別として patterns
+**Patterns completed**: 2 (both N2, priority 4)
+**Total tests**: 3192 passing, 1 ignored (added 9 new tests)
+
+**Session highlights**:
+- Implemented 何といっても (after all, above all, without a doubt) - 4 tests
+- Implemented は別として (setting aside, except for, save for) - 5 tests
+- Both patterns use custom matchers to ensure accurate detection
+- All structure variants tested appropriately
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: 何といっても (after all, above all, without a doubt)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- 何（なん）といっても + Phrase (fixed expression)
+
+**Implementation details**:
+- Fixed expression tokenized as: 何 (代名詞) + と (格助詞/引用) + いう (動詞, 連用タ接続) + て (接続助詞) + も (係助詞)
+- Custom matchers for each component to ensure accurate detection
+- Used at beginning of sentences to emphasize something positive (or occasionally negative)
+- Means "no matter what is said", "by any account", "without a doubt"
+
+**Tests created**: 4 tests
+1. `test_nanitoittemo_positive` - Emphasizing positive aspect (cafe example)
+2. `test_nanitoittemo_teacher` - Mid-sentence usage (teacher example)
+3. `test_nanitoittemo_negative` - Negative nuance example (rare usage)
+4. `test_nanitoittemo_sentence_beginning` - At beginning of sentence
+
+**Key implementation notes**:
+- Pattern has higher priority (3.6) than generic "～と言っても" pattern (2.4)
+- All components require specific POS tags to avoid false matches
+- IuMatcher specifically checks for 連用タ接続 form (いっ)
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented nanitoittemo() function (35 lines with custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 4 comprehensive tests
+- `feature_list.json` - Updated 何といっても to complete status
+
+---
+
+### ✓ Completed: は別として (setting aside, except for, save for)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Noun + は別として + Phrase
+- A + かどうか + は別として + Phrase
+- A + A[ない] + は別として + Phrase (whether or not)
+
+**Implementation details**:
+- Simple three-token pattern: は (係助詞) + 別 (名詞) + として (格助詞/連語)
+- Works with various preceding structures (nouns, かどうか, whether-or-not constructions)
+- Custom matchers for all three components to ensure accurate detection
+- Declares that (A) is being disregarded before discussing the main point
+
+**Tests created**: 5 tests
+1. `test_noun_habetsutoshite_simple` - Simple noun case (exterior example)
+2. `test_noun_habetsutoshite_horror` - Direct noun case (horror example)
+3. `test_kadouka_habetsutoshite` - With かどうか (salary example)
+4. `test_whether_or_not_habetsutoshite` - Adjective whether-or-not (tea example)
+5. `test_verb_whether_or_not_habetsutoshite` - Verb whether-or-not (match example)
+
+**Key implementation notes**:
+- Pattern range includes only "は別として" itself, not preceding content
+- Works seamlessly with かどうか pattern (detected separately)
+- Handles both positive/negative form pairs (A + A[ない])
+- Pattern primarily used to exclude (A) from discussion while highlighting (B)
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented habetsutoshite() function (44 lines with custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 5 comprehensive tests
+- `feature_list.json` - Updated は別として to complete status
+
+---
+
 ## Session 484 - 2025-12-15
 
 ### Session Summary - Three N2 Patterns Complete ✓
