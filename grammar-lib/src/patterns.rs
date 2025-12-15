@@ -1066,6 +1066,14 @@ declare_patterns! {
         jlpt: "n4",
     },
 
+    To2 {
+        name: "と2",
+        matcher_fn: crate::matchers::n4::to2,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n4",
+    },
+
     Demo {
         name: "でも",
         matcher_fn: crate::matchers::n4::demo,

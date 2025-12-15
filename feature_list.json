@@ -982,14 +982,14 @@
   {
     "pattern_name": "と2",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "",
+    "passes": true,
+    "description": "Quotation particle - marks quoted speech/thoughts (said/think/hear)",
     "priority": 1,
     "skip_reason": null
   },
