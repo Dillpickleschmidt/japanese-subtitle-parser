@@ -1,3 +1,97 @@
+## Session 425 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (～のうち(で))
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2789 passing, 1 ignored (was 2783 passing, 1 ignored - net +6 tests)
+
+**Session highlights**:
+- Implemented ～のうち(で) (among, out of) - 5 structure variants
+- Created two matcher functions to handle different tokenizations (Noun + の + うち vs この/その + うち)
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All structure variants tested with realistic sentences
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: ～のうち(で) (among, out of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: のうち comes from the noun 内（うち） meaning "within" or "inside". It appears after nouns or numbers to signify "amongst (A)" or "out of (A)", similar to の中（なか）. The pattern is often followed by particles like で, の, or から to complete the meaning. It's less common than のなか but more formal.
+
+**Structures tested**: All 5 structure variants from grammar_points_data.json
+1. Noun + のうちで: 会社のうちで (chars 2-8) - "among the company"
+2. Noun + のうちで + Number: 人のうちで (chars 6-11) - "among the people"
+3. Noun + のうちの + Number: 本のうちの (chars 10-15) - "of the [fishing rods]"
+4. Number + Counter + のうち + から: 全てのうちから (chars 5-12) - "from among all"
+5. この/その + うち: このうち (chars 0-4), そのうちで (chars 12-17) - "among these/those"
+
+**Implementation details**:
+- Created TWO matcher functions due to different tokenization patterns:
+  1. **uff5e_nouchi_de()**: Any + の(助詞/連体化) + うち(名詞/非自立) + optional(で/の/から)
+  2. **uff5e_nouchi_de_kono()**: この/その/あの(連体詞) + うち(名詞/非自立) + optional(で/の/から)
+- Both patterns registered in patterns.rs with same name "～のうち(で)"
+- Custom matchers: UchiMatcher, NoRentaikaMatcher, KonoSonoMatcher, DeNoKaraMatcher
+- うち is always tokenized as 名詞/非自立/副詞可能
+- Optional particle matcher handles で, の, から variations
+
+**Test count**: 6 tests (all passing)
+- test_noun_nouchi_de (Noun + の + うちで)
+- test_noun_nouchi_de_number (Noun + の + うちで + context)
+- test_noun_nouchi_no_number (Noun + の + うちの + Number)
+- test_number_counter_nouchi (Counter + の + うちから)
+- test_sono_uchi_de (その + うちで)
+- test_kono_uchi (この + うち)
+
+**Tokenization observations**:
+- Noun + の + うち: Noun + の(助詞/連体化) + うち(名詞/非自立/副詞可能)
+- この/その + うち: この/その(連体詞) + うち(名詞/非自立/副詞可能)
+- で after うち: 助詞/格助詞/一般
+- の after うち: 助詞/連体化
+- から after うち: 助詞/格助詞/一般
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs (implemented uff5e_nouchi_de() and uff5e_nouchi_de_kono())
+- grammar-lib/src/patterns.rs (registered both patterns with priority 4)
+- grammar-lib/src/tests/n2_patterns.rs (added 6 tests in nouchi_de_tests module)
+- feature_list.json (marked ～のうち(で) as complete)
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 114 remaining (down from 115 - completed 1 pattern!)
+- N1: 179 remaining
+- Total: ~295 patterns remaining
+
+### Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested (Noun + の + うち variants, この/その + うち)
+✅ No regressions (all 2789 tests passing)
+
+### Next Steps
+Continue with N2 priority 4 patterns. Good candidates (simple structures):
+- に際して - 3 structures
+- にあたり・にあたって - 3 structures
+- を契機に - 4 structures
+- ～ところに・～ところへ - 3 structures
+
+Target: Continue implementing 1 pattern per session for steady progress.
+
+**Session outcome**: Successfully completed 1 N2 pattern with full coverage of all 5 structure variants! Total of 6 new tests added, all passing, no regressions. Clean implementation using two matcher functions to handle different tokenization patterns.
+
+---
+
 ## Session 423 - 2025-12-15
 
 ### Session Summary - COMPLETE
