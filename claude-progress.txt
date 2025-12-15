@@ -1,3 +1,108 @@
+## Session 411 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (てからでないと)
+**Patterns completed**: 1 (てからでないと - N2)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2679 passing, 1 ignored (was 2675 passing, 1 ignored - net +4 tests)
+
+**Session highlights**:
+- Implemented てからでないと (unless you do, until you do)
+- Simple pattern with 2 structure variants (でないと and でなければ)
+- Extension of てから pattern with conditional negative
+- Clean test-first implementation
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: てからでないと (unless you do, until you do)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not prominently highlighted)
+
+**Pattern**: てからでないと combines the て-form sequence (てから "after doing"), で (copula auxiliary だ in 連用形), ない (negative auxiliary), and と/ば (conditional particles). Translates as "unless (A), (B) will not happen" or "until (A), you cannot (B)". Emphasizes that (B) must come after (A) is completed.
+
+**Structures tested**: Both structure variants from grammar_points_data.json
+1. Verb[て] + からでないと: 揃ってからでないと (chars 6-15), してからでないと (chars 12-20)
+2. Verb[て] + からでなければ: とってからでなければ (chars 3-13), 相談してからでなければ (chars 11-22)
+
+**Implementation**: Matcher in n2.rs (lines 2619-2687), tests in n2_patterns.rs (lines 5597-5652)
+
+**Key notes**:
+- Pattern structure: Verb (連用形/連用タ接続) + て/で(接続助詞) + から(格助詞) + で(助動詞/だ) + ない/なけれ(助動詞) + と/ば(接続助詞)
+- Custom matchers: TeDeParticleMatcher, KaraAfterMatcher, DeAuxiliaryMatcher, NaiNakerebaMatcher, ToOrBaMatcher
+- Handles both conditional forms: でないと (with と) and でなければ (with ば)
+- Extension of base てから pattern with negative conditional
+- Register: standard
+
+**Tokenization observations**:
+- **でないと form**: て/で(助詞/接続助詞) + から(助詞/格助詞) + で(助動詞/特殊・ダ) + ない(助動詞/基本形) + と(助詞/接続助詞)
+- **でなければ form**: て/で(助詞/接続助詞) + から(助詞/格助詞) + で(助動詞/特殊・ダ) + なけれ(助動詞/仮定形) + ば(助詞/接続助詞)
+
+**Pattern ranges**: Full construction from verb through conditional particle
+- All 4 test cases verified with correct character ranges
+- Pattern successfully matches both と and ば conditional forms
+
+**Related patterns**:
+- てから (N5): Base pattern "after doing"
+- てからというもの (N2): "ever since" (emphatic variant)
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 135 remaining (down from 136 - completed 1 pattern!)
+- N1: 186 remaining
+- Total: ~323 patterns remaining
+
+### Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All 2 documented structure variants tested (both と and ば forms)
+✅ No regressions (all 2679 tests passing)
+
+### Technical Notes
+
+**Pattern composition**:
+- Built on existing てから pattern logic
+- Reused helper matchers from N5 (flexible_verb_form)
+- Five custom matchers for precise token matching:
+  - TeDeParticleMatcher: て/で as 接続助詞
+  - KaraAfterMatcher: から as 格助詞 (not 接続助詞 "because")
+  - DeAuxiliaryMatcher: で from copula だ
+  - NaiNakerebaMatcher: ない (基本形) or なけれ (仮定形)
+  - ToOrBaMatcher: と or ば conditional particles
+
+**Implementation Approach**:
+- Followed test-first workflow strictly
+- Wrote all 4 tests with print_debug first
+- Analyzed actual tokenization from Kagome (observed both conditional forms)
+- Built matcher based on observed token structure (not assumptions)
+- Removed print_debug and added assertions after verification
+- Verified no regressions before committing
+
+### Next Steps
+Continue with simple N2 patterns (2-4 structure variants). Good candidates from feature_list.json:
+- ないではいられない - 2 std, 2 pol (4 total)
+- ねばならない - 3 std, 3 pol (6 total)
+- に際して - 3 structures
+- にあたり・にあたって - 3 structures
+- ～ところに・～ところへ - 3 structures
+- ぶりに - 3 std, 3 pol (6 total)
+- ては〜ては - 2 structures
+
+Target: Continue implementing 1-2 patterns per session, prioritizing patterns with fewer structures for steady progress.
+
+**Session outcome**: Successfully completed 1 N2 pattern with full coverage of both structure variants! Total of 4 new tests added, all passing, no regressions.
+
+---
+
 ## Session 410 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
