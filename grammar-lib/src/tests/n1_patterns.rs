@@ -806,3 +806,54 @@ mod kiwamarinai_kiwamaru_tests {
         assert_pattern_range(&patterns, "極まりない・極まる", 0, 10); // 危ないこと極まりない
     }
 }
+
+// Pattern: といえども (even if, although)
+// Data source: grammar_points_data.json["といえども"]
+// Testing all structure variants (4 standard, 0 polite)
+mod toiedomo_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + といえども"
+    #[test]
+    fn test_verb_toiedomo() {
+        let sentence = "いくらお金に困っているといえども、闇金には絶対手を出さないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といえども");
+        assert_pattern_range(&patterns, "といえども", 9, 16); // いるといえども
+    }
+
+    // Testing: structure.standard[1] - "Noun + といえども"
+    #[test]
+    fn test_noun_toiedomo() {
+        let sentence = "たとえ犯罪者といえども、動物みたいに扱ってはいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といえども");
+        assert_pattern_range(&patterns, "といえども", 5, 11); // 者といえども
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + (だ) + といえども"
+    #[test]
+    fn test_na_adj_toiedomo() {
+        let sentence = "運転が上手だといえども、シートベルトは必ず着用しなくてはならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といえども");
+        assert_pattern_range(&patterns, "といえども", 5, 11); // だといえども
+    }
+
+    // Testing: structure.standard[3] - "い-Adjective + といえども"
+    #[test]
+    fn test_i_adj_toiedomo() {
+        let sentence = "彼女がどれだけ優しいといえども、そんなことばかりやってたら別れられるぞ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といえども");
+        assert_pattern_range(&patterns, "といえども", 7, 15); // 優しいといえども
+    }
+}

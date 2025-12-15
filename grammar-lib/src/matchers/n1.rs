@@ -497,9 +497,52 @@ pub fn kiwamarinai_u30fb_kiwamaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: といえども
+// Pattern: といえども (even if, although)
+// Structures: Verb/Noun/Adj + と + いえ + ども
 pub fn toiedomo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と (助詞/格助詞/引用)
+    #[derive(Debug)]
+    struct ToQuoteMatcher;
+    impl Matcher for ToQuoteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.get(0).is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "引用")
+        }
+    }
+
+    // Match いえ (動詞, 仮定形, base=いう)
+    #[derive(Debug)]
+    struct IeMatcher;
+    impl Matcher for IeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いえ"
+                && token.base_form == "いう"
+                && token.pos.get(0).is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match ども (助詞/接続助詞)
+    #[derive(Debug)]
+    struct DomoMatcher;
+    impl Matcher for DomoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ども"
+                && token.pos.get(0).is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ToQuoteMatcher)),
+        TokenMatcher::Custom(Arc::new(IeMatcher)),
+        TokenMatcher::Custom(Arc::new(DomoMatcher)),
+    ]
 }
 
 // Pattern: を以て (by means of, with) - compound particle
