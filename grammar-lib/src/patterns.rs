@@ -5603,7 +5603,7 @@ declare_patterns! {
     Niha {
         name: "には",
         matcher_fn: crate::matchers::n2::niha,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

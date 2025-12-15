@@ -9864,3 +9864,67 @@ mod nite_tests {
         assert_pattern_range(&patterns, "にて", 9, 13); // 電話にて
     }
 }
+
+// Pattern: には (emphatic に + は)
+// Data source: grammar_points_data.json["には"]
+// Testing: structure.standard[0] - "Verb + には"
+// Testing: structure.standard[1] - "Noun + には"
+//
+// Structure variants:
+//   - standard[0]: Verb (dictionary form) + には
+//   - standard[1]: Noun + には
+//
+// Usage: Expresses contrast/emphasis for the topic (に + は)
+// Meaning: "in order to", "for", "in regard to"
+
+mod niha_tests {
+    use super::*;
+
+    #[test]
+    fn test_niha_verb() {
+        // Testing: Verb + には
+        // Example from grammar data: 買い物をするには会員登録が必要
+        let sentence = "このホームセンターは会員制なので、買い物をするには会員登録が必要です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には");
+        assert_pattern_range(&patterns, "には", 21, 25); // するには
+    }
+
+    #[test]
+    fn test_niha_verb_passport() {
+        // Testing: Verb + には
+        // Example from grammar data: 海外に行くにはパスポートが必要
+        let sentence = "海外に行くにはパスポートが必要です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には");
+        assert_pattern_range(&patterns, "には", 3, 7); // 行くには
+    }
+
+    #[test]
+    fn test_niha_noun() {
+        // Testing: Noun + には
+        // Example from grammar data: この本は子供には難しすぎる
+        let sentence = "この本は子供には難しすぎるだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には");
+        assert_pattern_range(&patterns, "には", 4, 8); // 子供には
+    }
+
+    #[test]
+    fn test_niha_noun_commute() {
+        // Testing: Noun + には
+        // Example from grammar data: 通勤には車を使わないで
+        let sentence = "通勤には車を使わないでください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には");
+        assert_pattern_range(&patterns, "には", 0, 4); // 通勤には
+    }
+}

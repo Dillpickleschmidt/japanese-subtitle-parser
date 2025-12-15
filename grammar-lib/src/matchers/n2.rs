@@ -5445,9 +5445,38 @@ pub fn nite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: には
+// Pattern: には (emphatic に + は)
+// Structures: Verb + には, Noun + には
 pub fn niha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NiCaseMatcher;
+    impl Matcher for NiCaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Verb (dictionary form) or Noun
+        TokenMatcher::Custom(Arc::new(NiCaseMatcher)),
+        TokenMatcher::Custom(Arc::new(HaParticleMatcher)),
+    ]
 }
 
 // Pattern: 思うように
