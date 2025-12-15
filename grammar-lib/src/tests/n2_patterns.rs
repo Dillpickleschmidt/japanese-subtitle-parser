@@ -11074,3 +11074,106 @@ mod dakeha_tests {
         assert_pattern_range(&patterns, "だけは", 0, 5); // 勉強だけは
     }
 }
+
+// Pattern: にすぎない (no more than, merely)
+// Data source: grammar_points_data.json["にすぎない"]
+// Testing all structure variants
+//
+// Structure variants:
+//   - standard[0]: Verb + (だけ)にすぎない
+//   - standard[1]: い-Adjective + (だけ)にすぎない
+//   - standard[2]: な-Adjective + (なだけ)にすぎない
+//   - standard[3]: Noun + (だけ)にすぎない
+//   - polite[0-3]: Same forms + にすぎません
+
+mod ni_suginai_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_ni_suginai() {
+        // "I helped you just because I wanted money"
+        let sentence = "お金が欲しかったから、あなたを助けたにすぎない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にすぎない");
+        assert_pattern_range(&patterns, "にすぎない", 17, 23); // たにすぎない
+    }
+
+    #[test]
+    fn test_verb_dake_ni_suginai() {
+        // "No matter how much you study, if you don't focus properly, you are just wasting your time"
+        let sentence = "集中して勉強しないと時間を無駄にしているにすぎない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にすぎない");
+        assert_pattern_range(&patterns, "にすぎない", 18, 25); // いるにすぎない
+    }
+
+    #[test]
+    fn test_i_adj_dake_ni_suginai() {
+        // "That building is nothing more than old"
+        let sentence = "あの建物は古いだけにすぎない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にすぎない");
+        assert_pattern_range(&patterns, "にすぎない", 7, 14); // だけにすぎない
+    }
+
+    #[test]
+    fn test_na_adj_nadake_ni_suginai() {
+        // "Tanaka-san is nothing more than handsome"
+        let sentence = "田中さんはハンサムなだけにすぎない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にすぎない");
+        assert_pattern_range(&patterns, "にすぎない", 10, 17); // だけにすぎない
+    }
+
+    #[test]
+    fn test_noun_ni_suginai() {
+        // "You are nothing more than a child"
+        let sentence = "君は子供にすぎない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にすぎない");
+        assert_pattern_range(&patterns, "にすぎない", 2, 9); // 子供にすぎない
+    }
+
+    #[test]
+    fn test_verb_ni_sugimasen_polite() {
+        // Polite form
+        let sentence = "これはただの推測にすぎません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にすぎない");
+        assert_pattern_range(&patterns, "にすぎない", 6, 14); // 推測にすぎません
+    }
+
+    #[test]
+    fn test_i_adj_tada_dake_ni_suginai() {
+        // "This natto just smells (emphasis with ただ)"
+        let sentence = "この納豆はただくさいだけにすぎない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にすぎない");
+        assert_pattern_range(&patterns, "にすぎない", 10, 17); // だけにすぎない
+    }
+
+    #[test]
+    fn test_na_adj_tada_nadake_ni_suginai() {
+        // "The countryside is nothing more than inconvenient (emphasis with ただ)"
+        let sentence = "田舎はただ不便なだけにすぎない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にすぎない");
+        assert_pattern_range(&patterns, "にすぎない", 8, 15); // だけにすぎない
+    }
+}

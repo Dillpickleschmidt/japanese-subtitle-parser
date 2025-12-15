@@ -10055,13 +10055,13 @@
   {
     "pattern_name": "にすぎない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にすぎない is a common structure in Japanese used for indicating that something is 'no more than (A)', or 'merely (A)' [4 std, 4 pol]",
     "priority": 4,
     "skip_reason": null

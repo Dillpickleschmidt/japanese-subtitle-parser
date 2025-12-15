@@ -7398,9 +7398,72 @@ pub fn iwayuru() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(IwayuruMatcher))]
 }
 
-// Pattern: にすぎない
+// Pattern: にすぎない (no more than, merely)
+// Structures: [Verb/Adj/Noun] + (だけ) + に + すぎない/すぎません
 pub fn nisuginai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match すぎ verb (in 未然形 or 連用形)
+    #[derive(Debug)]
+    struct SugiruMatcher;
+    impl Matcher for SugiruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "すぎる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.features.get(5).is_some_and(|f| f == "未然形")
+                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+        }
+    }
+
+    // Match ない or ません (both negative forms)
+    #[derive(Debug)]
+    struct NegativeMatcher;
+    impl Matcher for NegativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (negative auxiliary)
+            if token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // Match ませ (polite negative) - we'll match ん separately
+            if token.base_form == "ます" && token.surface == "ませ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match ん (for ません)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ん" && token.surface == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Match anything before に (verb, adj, noun, だけ, etc.)
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(SugiruMatcher)),
+        TokenMatcher::Custom(Arc::new(NegativeMatcher)), // Matches ない or ませ
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))), // Optional ん for ません
+    ]
 }
 
 // Pattern: も～ば～も (both...and...)
