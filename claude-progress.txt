@@ -1,16 +1,16 @@
 ## Session 407 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented 1 N2 pattern (つつある)
-**Patterns completed**: 1 (つつある - N2)
-**Tests added**: 3 new tests (all passing)
-**Total tests**: 2657 passing, 1 ignored (was 2654 passing, 1 ignored - net +3 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (つつある, ていては)
+**Patterns completed**: 2 (つつある and ていては - both N2)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2660 passing, 1 ignored (was 2654 passing, 1 ignored - net +6 tests)
 
 **Session highlights**:
 - Implemented つつある (to be -ing, in the process of) - formal construction for gradual change
-- Simple pattern: Verb[stem] + つつ + ある
-- 3 passing tests covering standard and polite forms
-- Pattern reuses つつ particle matcher logic
+- Implemented ていては (if you keep doing) - continuation with negative outcome
+- Both patterns are simple with 1-2 structure variants each
+- 6 passing tests with proper range assertions
 - Clean implementation following test-first workflow
 - All tests passing, no regressions
 
@@ -48,56 +48,92 @@
 
 ---
 
+### ✅ Pattern Implemented: ていては (if you keep doing, if one continues with)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: ていては expresses "if one continues with (A), (B)" where (B) is typically a negative outcome. Combines Verb[て] + いる (in 連用形) + て + は. The final ては is a conjunctive structure expressing hypothetical situations or repetitive actions.
+
+**Structures tested**: 1 structure variant from grammar_points_data.json
+1. Standard: Verb[て] + いては - 食べていては (chars 9-15), 遊んでいては (chars 2-8), していては (chars 10-15)
+
+**Implementation**: Matcher in n2.rs (lines 2771-2831), tests in n2_patterns.rs (lines 5320-5366)
+
+**Key notes**:
+- Pattern structure: Verb (連用形/連用タ接続) + て/で (助詞/接続助詞) + い (いる, 動詞/連用形) + て (助詞/接続助詞) + は (助詞/係助詞)
+- Custom matchers: TeDeParticleMatcher (て/で after verb), IRuyoukeiMatcher (い in 連用形), TeParticleMatcher (て after いる), HaParticleMatcher (は topic marker)
+- Uses flexible_verb_form() to handle both 連用形 and 連用タ接続
+- Works with both て and で variants (depending on verb type)
+- Indicates continuing action leading to negative consequence
+- Register: standard
+
+**Tokenization observations**:
+- **て variant**: 食べ(動詞/連用形) + て(助詞/接続助詞) + い(動詞/非自立/連用形) + て(助詞/接続助詞) + は(助詞/係助詞)
+- **で variant**: 遊ん(動詞/連用タ接続) + で(助詞/接続助詞) + い(動詞/非自立/連用形) + て(助詞/接続助詞) + は(助詞/係助詞)
+
+**Pattern ranges**: Full construction from verb through は particle
+- All 3 test cases verified with correct character ranges
+- Pattern includes ている progressive form + は for hypothetical/negative
+
+---
+
 **Current stats**:
 - N5: ✅ All complete
 - N4: 2 remaining (meta-patterns)
 - N3: ✅ All complete
-- N2: 136 remaining (down from 137 - completed 1 pattern!)
+- N2: 135 remaining (down from 137 - completed 2 patterns!)
 - N1: 186 remaining
-- Total: ~324 patterns remaining
+- Total: ~323 patterns remaining
 
 ### Quality Metrics
-✅ All 3 tests have assert_pattern_range
+✅ All 6 tests have assert_pattern_range
 ✅ No print_debug in committed tests
 ✅ Realistic sentence examples from grammar_points_data.json
 ✅ Correct character ranges verified
-✅ Both documented structure variants tested
-✅ No regressions (all 2657 tests passing)
+✅ All documented structure variants tested
+✅ No regressions (all 2660 tests passing)
 
 ### Technical Notes
 
-**Simple pattern extension**:
-- つつある is a straightforward extension of つつ pattern
+**つつある - Simple pattern extension**:
+- Straightforward extension of つつ pattern
 - Reuses TsutsuParticleMatcher logic (same custom matcher as tsutsu())
 - TokenMatcher::specific_verb("ある") handles all conjugations of ある
-- Priority set to 4 (same as base priority, but つつある is more specific so it matches with higher confidence)
-
-**Usage context**:
 - Unlike ている (general progressive), つつある emphasizes slow, gradual change
-- Preferred for ongoing processes: prices rising, population decreasing, etc.
-- Unnatural for actions with clear endpoints: eating an apple, reading a book
-- Formal register - primarily used in writing
+- Formal register - primarily used in writing for ongoing processes
+
+**ていては - Progressive + hypothetical construction**:
+- Combines ている (progressive) + ては (hypothetical/conditional)
+- Five custom matchers ensure precise detection:
+  - TeDeParticleMatcher for て/で after verb
+  - IRuyoukeiMatcher for い (いる in 連用形)
+  - TeParticleMatcher for て after いる
+  - HaParticleMatcher for は topic particle
+- Uses flexible_verb_form() to handle both 連用形 and 連用タ接続
+- Indicates continuing action with negative consequence
 
 ### Implementation Approach
-- Followed test-first workflow strictly
-- Wrote all 3 tests with print_debug first
-- Analyzed actual tokenization from Kagome
-- Built matcher based on observed token structure
+- Followed test-first workflow strictly for both patterns
+- Wrote ALL tests with print_debug first
+- Analyzed actual tokenization from Kagome (not assumptions)
+- Built matchers based on observed token structure
 - Removed print_debug and added assertions after verification
 - Verified no regressions before committing
 
 ### Next Steps
 Continue with simple N2 patterns (1-2 structure variants). Good candidates from feature_list.json:
-- ていては - 1 structure
 - ところだった ② - 1 std, 1 pol
-- ならともかく - 4 structures (but might be simple)
 - 何しろ - 1 structure
 - しかしながら - 1 structure
-- Other simple conjunction/particle patterns
+- はたして - 2 structures
+- 結果・の結果 - 2 structures
+- Other simple conjunction/adverb patterns
 
 Target: Continue implementing 1-2 patterns per session, prioritizing quality and simple patterns.
 
-**Session outcome**: Successfully completed 1 N2 pattern with full coverage of both structure variants! Total of 3 new tests added, all passing, no regressions.
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage of all structure variants! Total of 6 new tests added, all passing, no regressions.
 
 ---
 
