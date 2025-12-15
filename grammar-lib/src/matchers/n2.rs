@@ -4085,9 +4085,77 @@ pub fn teha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ては〜ては
+// Pattern: ては〜ては (doing A and B repeatedly)
+// Structures: Verb[て] + は + (gap) + Verb[て] + は
 pub fn teha_u301c_teha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て/で particle (from verb te-form)
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl super::Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match ちゃ/じゃ particle (casual contractions that include は)
+    #[derive(Debug)]
+    struct ChaJaParticleMatcher;
+    impl super::Matcher for ChaJaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ちゃ" || token.surface == "じゃ")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match は particle
+    #[derive(Debug)]
+    struct HaKakariMatcher;
+    impl super::Matcher for HaKakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match either て/で OR ちゃ/じゃ
+    #[derive(Debug)]
+    struct TeOrCasualMatcher;
+    impl super::Matcher for TeOrCasualMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if !token.pos.first().is_some_and(|pos| pos == "助詞") {
+                return false;
+            }
+            if !token.pos.get(1).is_some_and(|pos| pos == "接続助詞") {
+                return false;
+            }
+            token.surface == "て"
+                || token.surface == "で"
+                || token.surface == "ちゃ"
+                || token.surface == "じゃ"
+        }
+    }
+
+    // Pattern: Verb + (て/で/ちゃ/じゃ) + [optional は] + (gap) + Verb + (て/で/ちゃ/じゃ) + [optional は]
+    // Note: ちゃ/じゃ already include the は meaning, so は is only needed after て/で
+    vec![
+        super::flexible_verb_form(),                                                        // First verb
+        TokenMatcher::Custom(Arc::new(TeOrCasualMatcher)),                                  // て/で/ちゃ/じゃ
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(HaKakariMatcher)))), // Optional は
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 15,
+            stop_conditions: vec![],
+        }, // Gap between patterns (0-15 tokens)
+        super::flexible_verb_form(),                                                        // Second verb
+        TokenMatcher::Custom(Arc::new(TeOrCasualMatcher)),                                  // て/で/ちゃ/じゃ
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(HaKakariMatcher)))), // Optional は
+    ]
 }
 
 // Pattern: も又 (also, in addition)
