@@ -1,3 +1,65 @@
+## Session 383 - 2025-12-15
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented よりほかない pattern (N2)
+**Patterns completed**: 1 (よりほかない - N2 newly implemented)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2476 passing, 1 ignored (was 2472 passing, 1 ignored - net +4 tests)
+
+### ✅ Pattern Implemented: よりほかない (have no choice but / nothing but)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: より他（ほか）ない is a structure that emphasizes that only (A) is possible, when attached to the end of verbs. This grammar pattern is a combination of the case marking particle より 'than' or 'from', the noun 他（ほか） 'other', and the い-Adjective ない. From this it can be translated directly as 'there is nothing other than (A)'. Common interpretations include 'to have no choice but to (A)', 'there is no other way than (A)', or simply 'have to (A)'.
+
+**Structures tested**: 4 comprehensive tests covering all structure variants
+1. Verb + より + ほか + ない: 靴に穴が空いたので、新しいのを買うよりほかない (15-23) - "I have no choice but to buy new shoes"
+2. Verb + より + ほか + は + ない: 私が助けるよりほかはなかった (22-34) - "I had no choice but to help her"
+3. Verb + より + ほか + に + ない: 被害者が無事であることを祈るよりほかにない (12-21) - "There is nothing we can do other than pray"
+4. Verb + より + ほか + には + ない: 新しい仕事を探すよりほかにはない (17-27) - "I have no choice but to look for a new job"
+
+**Implementation**: Matcher in n2.rs (lines 291-358), tests in n2_patterns.rs (lines 2626-2676)
+
+**Key notes**:
+- Pattern structure: Verb[基本形] + より + ほか + (は/に/には) + ない
+- より tokenizes as 助詞/格助詞/一般 (case-marking particle)
+- ほか tokenizes as 名詞/副詞可能 (noun with adverbial capability)
+- Optional particles は (係助詞) and/or に (格助詞) can appear between ほか and ない
+- ない can be 形容詞 (adjective) or 助動詞 (auxiliary verb)
+- Handles both present (ない) and past (なかった) forms
+
+**Tokenization observations**:
+- より: surface="より", base="より", pos=助詞/格助詞/一般
+- ほか: surface="ほか", base="ほか", pos=名詞/副詞可能
+- は: surface="は", pos=助詞/係助詞
+- に: surface="に", pos=助詞/格助詞
+- ない: base="ない", pos=形容詞/自立 OR 助動詞
+
+**Pattern ranges**: Include full construction from verb through final ない
+- Basic form: 買うよりほかない (verb + より + ほか + ない)
+- With particles: 助けるよりほかはなかった, 祈るよりほかにない, 探すよりほかにはない
+- Past forms automatically handled by NaiMatcher checking base_form="ない"
+
+### Test Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions (all 2476 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 168 remaining (down from 169!)
+- N1: 186 remaining
+- Total: ~356 patterns remaining (down from ~357!)
+
+**Next priority**: Continue with N2 patterns - に相違ない, ようがない・ようもない, にほかならない, etc.
+
+---
+
 ## Session 382 - 2025-12-14
 
 ### ✅ Session Summary
