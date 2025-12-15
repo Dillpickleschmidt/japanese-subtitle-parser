@@ -4803,3 +4803,47 @@ mod tsutsumo_tests {
         assert_pattern_range(&patterns, "つつ(も)", 12, 17); // 思いつつも
     }
 }
+
+// Pattern: にかかわる (relating to, concerning)
+// Data source: grammar_points_data.json["にかかわる"]
+// Testing: structure.standard[0-1]
+//
+// Structures:
+//   - standard[0]: Noun + にかかわる
+//   - standard[1]: Noun + にかかわる + Noun
+mod nikakawaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_nikakawaru_life_depends() {
+        // Example from grammar_points_data.json: 人生にかかわる
+        let sentence = "あの試験は私の人生にかかわるので、一生懸命勉強しなくてはならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかわる");
+        assert_pattern_range(&patterns, "にかかわる", 7, 14); // 人生にかかわる
+    }
+
+    #[test]
+    fn test_nikakawaru_life_affecting_disease() {
+        // Example from grammar_points_data.json: 命にかかわる病気 (structure[1])
+        let sentence = "別に命にかかわる病気では無いので、すぐに治療する必要はないです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかわる");
+        assert_pattern_range(&patterns, "にかかわる", 2, 8); // 命にかかわる
+    }
+
+    #[test]
+    fn test_nikakawaru_interview_concerns() {
+        // Example from grammar_points_data.json: 人生にかかわる
+        let sentence = "この面接は私の人生にかかわるので、頑張らなければいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかわる");
+        assert_pattern_range(&patterns, "にかかわる", 7, 14); // 人生にかかわる
+    }
+}

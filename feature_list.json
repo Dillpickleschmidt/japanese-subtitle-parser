@@ -7954,13 +7954,13 @@
   {
     "pattern_name": "にかかわる",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When grouped with に, the う-Verb 関（かか）わる 'to be concerned with' is frequently used to show a relation between (A) and (B) [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

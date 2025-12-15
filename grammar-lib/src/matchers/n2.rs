@@ -1887,9 +1887,37 @@ pub fn nitsukete() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にかかわる
+// Pattern: にかかわる (relating to, concerning)
+// Structures: Noun + にかかわる, Noun + にかかわる + Noun
 pub fn nikakawaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::noun_matcher;
+
+    // Custom matcher for に particle (case particle)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Custom matcher for かかわる verb (any conjugation)
+    #[derive(Debug)]
+    struct KakawaruVerbMatcher;
+    impl Matcher for KakawaruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "かかわる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KakawaruVerbMatcher)),
+    ]
 }
 
 // Pattern: に向かって・に向けて
