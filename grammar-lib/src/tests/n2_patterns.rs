@@ -12304,3 +12304,43 @@ mod seizeiseizei_tests {
         assert_pattern_range(&patterns, "精々", 8, 12); // せいぜい
     }
 }
+
+// Pattern: 僅かに (slightly, barely, merely)
+// Data source: grammar_points_data.json["僅かに"]
+// Testing: structure.standard[0] - "わずかに + Phrase"
+//
+// Structure variants:
+//   - standard[0]: わずかに + Phrase (only one structure)
+mod wazukani_tests {
+    use super::*;
+
+    #[test]
+    fn test_wazukani_slightly_tilted() {
+        let sentence = "この建物は真下からみると、わずかに傾いているように見える";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "僅かに");
+        assert_pattern_range(&patterns, "僅かに", 13, 17); // わずかに
+    }
+
+    #[test]
+    fn test_wazukani_slightly_heard() {
+        let sentence = "隣の人のテレビの音がわずかに聞こえる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "僅かに");
+        assert_pattern_range(&patterns, "僅かに", 10, 14); // わずかに
+    }
+
+    #[test]
+    fn test_wazukani_slightly_visible() {
+        let sentence = "建物と建物の間から富士山がわずかに見えた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "僅かに");
+        assert_pattern_range(&patterns, "僅かに", 13, 17); // わずかに
+    }
+}

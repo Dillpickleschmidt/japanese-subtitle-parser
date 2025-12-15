@@ -7531,9 +7531,25 @@ pub fn kiyoshi_u3005() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Surface("せいぜい")]
 }
 
-// Pattern: 僅かに
+// Pattern: 僅かに (slightly, barely, merely)
+// Structures: わずかに + Phrase
 pub fn wazukani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NiAdverbializerMatcher;
+    impl Matcher for NiAdverbializerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "副詞化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Surface("わずか"),
+        TokenMatcher::Custom(Arc::new(NiAdverbializerMatcher)),
+    ]
 }
 
 // Pattern: および (and, as well as)
