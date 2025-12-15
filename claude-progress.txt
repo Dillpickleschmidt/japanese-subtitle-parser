@@ -9681,3 +9681,61 @@ Total session time: ~45 minutes
 - Ready for next session
 
 Total session time: ~45 minutes
+
+---
+
+## Session 439 - 2025-12-15
+
+### Pattern Implemented: 陸に～ない (ろくに～ない - barely, hardly, not properly)
+
+**JLPT Level**: N2, **Category**: Construction, **Priority**: 1
+
+**Pattern**: ろくに is an adverb meaning "satisfactorily" that appears with negative phrases to indicate something is "not done properly", "barely", "hardly", or "not enough". It can be written as ろくに, 陸に, or 碌に (ateji).
+
+**Structures tested**: 5 variants
+1. ろくに + Verb[potential] + ない: 話せない (chars 6-13)
+2. ろくに + Verb[potential] + なかった: 寝れなかった (chars 3-12)
+3. ろくに + Noun + も + Verb + ない: 仕事も出来ない (chars 4-14)
+4. ろくに + Verb + ない: 食べない (chars 4-11)
+5. ろくに + Verb[て] + いない: 会えていない (chars 10-23)
+
+**Implementation**:
+- RokuNiMatcher: matches ろくに/陸に/碌に as adverb (副詞/一般)
+- Wildcard(0-10): allows intermediate tokens between adverb and negative
+- NaiMatcher: matches ない/なかった as negative auxiliary (助動詞)
+
+**Files modified**: 3 (n2.rs matchers, n2_patterns.rs tests, feature_list.json)
+
+**Stats**:
+- Tests: 2882 passing (was 2877, net +5)
+- N2 patterns remaining: 89 (down from 90)
+- Total patterns remaining: ~271
+
+### Session Notes
+
+**Implementation highlights**:
+- Clean test-first workflow: wrote 5 tests with print_debug(), analyzed tokenization, implemented matcher
+- Pattern uses Wildcard matcher to handle variable-length phrases between ろくに and ない
+- All three kanji variants supported (ろくに, 陸に, 碌に)
+- Tests cover diverse structures: potential form, past tense, with particles, te-iru form
+
+**Workflow followed**:
+1. ✅ Get bearings (read spec, progress, reference examples)
+2. ✅ Initialize environment (./init.sh)
+3. ✅ Verify no regressions (2877 tests passing)
+4. ✅ Choose pattern (陸に～ない - N2 priority 4)
+5. ✅ Read grammar_points_data.json
+6. ✅ Write tests with print_debug()
+7. ✅ Analyze tokenization
+8. ✅ Implement matcher
+9. ✅ Remove print_debug(), add assertions
+10. ✅ Update feature_list.json
+11. ✅ Commit changes
+12. ✅ Update claude-progress.txt
+
+### Session End Notes
+- All tests passing (2882 passing, 1 ignored)
+- Codebase clean, feature_list.json updated
+- Ready for next session
+
+Total session time: ~30 minutes
