@@ -12734,3 +12734,47 @@ mod au_tests {
         assert_pattern_range(&patterns, "合う", 18, 25); // 協力しあわない
     }
 }
+
+// ========== 即ち (in other words) ==========
+// Pattern: 即ち (in other words, namely, that is to say)
+// Data source: grammar_points_data.json["即ち"]
+//
+// Structure variants to test:
+//   standard[0]: すなわち + Phrase
+
+mod sunawachi_tests {
+    use super::*;
+
+    // Testing: すなわち + Phrase (at beginning of sentence)
+    #[test]
+    fn test_sunawachi_basic() {
+        let sentence = "この人は私の妻のお母さんです。すなわち、義理の母です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "即ち");
+        assert_pattern_range(&patterns, "即ち", 15, 19); // すなわち
+    }
+
+    // Testing: すなわち + Phrase (mid-sentence)
+    #[test]
+    fn test_sunawachi_mid_sentence() {
+        let sentence = "私はゲームしてお金を稼いでいます。すなわち、プロゲーマーです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "即ち");
+        assert_pattern_range(&patterns, "即ち", 17, 21); // すなわち
+    }
+
+    // Testing: すなわち in more casual context
+    #[test]
+    fn test_sunawachi_casual() {
+        let sentence = "この車はもう動かないです。すなわち廃車です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "即ち");
+        assert_pattern_range(&patterns, "即ち", 13, 17); // すなわち
+    }
+}

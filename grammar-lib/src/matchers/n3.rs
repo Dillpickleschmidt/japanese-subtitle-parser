@@ -5119,8 +5119,18 @@ pub fn tsumari() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 即ち
+// Pattern: In other words (すなわち、義理の母です)
+// Structure: すなわち
 pub fn sunawachi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SunawachiMatcher;
+    impl Matcher for SunawachiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "すなわち"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(SunawachiMatcher))]
 }
 
 // Pattern: 却って
