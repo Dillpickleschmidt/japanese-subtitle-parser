@@ -6681,9 +6681,130 @@ pub fn kanoyouda() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: のではないだろうか
+// Pattern: のではないだろうか (I think, isn't it?, don't you think?)
+// Structures:
+//   - の/ん + じゃ/では + ない + だろう/でしょう + か
+//   - なの/なん + では/じゃ + ない + だろう/でしょう + か
 pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の or ん as dependent noun (名詞/非自立)
+    #[derive(Debug)]
+    struct NoNMatcher;
+    impl Matcher for NoNMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "の" || token.surface == "ん")
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Match じゃ or で as particle/auxiliary
+    // じゃ: 助詞/副助詞
+    // で: 助動詞/特殊・ダ/連用形
+    #[derive(Debug)]
+    struct JaDeMatcher;
+    impl Matcher for JaDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "じゃ"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞"))
+                || (token.surface == "で"
+                    && token.pos.first().is_some_and(|p| p == "助動詞")
+                    && token.pos.get(1).is_some_and(|p| p == "特殊・ダ")
+                    && token.pos.get(4).is_some_and(|p| p == "連用形"))
+        }
+    }
+
+    // Match は as topic particle (only for では form)
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match ない as auxiliary
+    #[derive(Debug)]
+    struct NaiAuxMatcher;
+    impl Matcher for NaiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.pos.get(1).is_some_and(|p| p == "特殊・ナイ")
+        }
+    }
+
+    // Match だろ or でしょ as auxiliary
+    #[derive(Debug)]
+    struct DaroDeshoMatcher;
+    impl Matcher for DaroDeshoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            ((token.surface == "だろ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.pos.get(1).is_some_and(|p| p == "特殊・ダ")
+                && token.pos.get(4).is_some_and(|p| p == "未然形"))
+                || (token.surface == "でしょ"
+                    && token.base_form == "です"
+                    && token.pos.first().is_some_and(|p| p == "助動詞")
+                    && token.pos.get(1).is_some_and(|p| p == "特殊・デス")
+                    && token.pos.get(4).is_some_and(|p| p == "未然形")))
+        }
+    }
+
+    // Match う as volitional auxiliary
+    #[derive(Debug)]
+    struct UMatcher;
+    impl Matcher for UMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.pos.get(1).is_some_and(|p| p == "不変化型")
+        }
+    }
+
+    // Match か as final particle
+    #[derive(Debug)]
+    struct KaFinalMatcher;
+    impl Matcher for KaFinalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token
+                    .pos
+                    .get(1)
+                    .is_some_and(|p| p == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    // Match じゃ specifically (助詞/副助詞)
+    #[derive(Debug)]
+    struct JaMatcher;
+    impl Matcher for JaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "じゃ"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 10,
+            stop_conditions: vec![],
+        }, // Preceding clause (verb/adj/noun phrase)
+        TokenMatcher::Custom(Arc::new(NoNMatcher)),       // の or ん
+        TokenMatcher::Custom(Arc::new(JaMatcher)),        // じゃ
+        TokenMatcher::Custom(Arc::new(NaiAuxMatcher)),    // ない
+        TokenMatcher::Custom(Arc::new(DaroDeshoMatcher)), // だろ or でしょ
+        TokenMatcher::Custom(Arc::new(UMatcher)),         // う
+        TokenMatcher::Custom(Arc::new(KaFinalMatcher)),   // か
+    ]
 }
 
 // Pattern: て当然だ
