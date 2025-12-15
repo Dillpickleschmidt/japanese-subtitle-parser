@@ -5451,7 +5451,7 @@ declare_patterns! {
     Gyakuni {
         name: "逆に",
         matcher_fn: crate::matchers::n2::gyakuni,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

@@ -8576,3 +8576,52 @@ mod nihanshite_tests {
         assert_pattern_range(&patterns, "に反して", 0, 6); // 予想に反して
     }
 }
+
+// Pattern: 逆に (conversely, on the contrary)
+// Data source: grammar_points_data.json["逆に"]
+// Testing: structure.standard[0] - "Phrase (A) + 逆（ぎゃく）に + Phrase (B)"
+//
+// Structure variants:
+//   - standard[0]: Phrase (A) + 逆（ぎゃく）に + Phrase (B)
+//
+// Notes: Can appear between phrases for contrast or at beginning of sentences for rebuttal
+
+mod gyakuni_tests {
+    use super::*;
+
+    #[test]
+    fn test_gyakuni_between_phrases() {
+        // Structure: Phrase (A) + 逆に + Phrase (B)
+        // Example from grammar data: 近道だと思っていたのに...逆に回り道だった
+        let sentence = "近道だと思っていたのに、地図アプリで調べてみたら逆に回り道だった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "逆に");
+        assert_pattern_range(&patterns, "逆に", 24, 26); // 逆に
+    }
+
+    #[test]
+    fn test_gyakuni_easier_harder() {
+        // Structure: Phrase + 逆に + Phrase
+        // Example from grammar data: 食べやすいようにスパゲティを半分にして茹でたけど、逆に食べにくくなった
+        let sentence = "食べやすいようにスパゲティを半分にして茹でたけど、逆に食べにくくなった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "逆に");
+        assert_pattern_range(&patterns, "逆に", 25, 27); // 逆に
+    }
+
+    #[test]
+    fn test_gyakuni_sentence_start() {
+        // Structure: 逆に + question (rebuttal/slang usage)
+        // Example from grammar data: 逆に、何歳に見えますか？
+        let sentence = "逆に、何歳に見えますか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "逆に");
+        assert_pattern_range(&patterns, "逆に", 0, 2); // 逆に
+    }
+}

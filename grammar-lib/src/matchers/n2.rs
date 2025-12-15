@@ -4852,9 +4852,35 @@ pub fn nihanshite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 逆に
+// Pattern: 逆に (conversely, on the contrary)
+// Structures: 逆 (noun) + に (case particle)
 pub fn gyakuni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct GyakuNounMatcher;
+    impl Matcher for GyakuNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "逆"
+                && token.base_form == "逆"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiCaseMatcher;
+    impl Matcher for NiCaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(GyakuNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiCaseMatcher)),
+    ]
 }
 
 // Pattern: 反面
