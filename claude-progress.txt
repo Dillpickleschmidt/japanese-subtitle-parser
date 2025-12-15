@@ -11456,3 +11456,25 @@ Continue with remaining N2 patterns in priority order:
 - にしたら (conditional variant)
 - にしても～にしても (paired structure)
 - としては, としても (conditional structures)
+
+### Update: それとも Pattern Added
+
+**それとも** (N2, priority 4) - 3 tests
+- それとも (or, or rather)  
+- Structure: Option (A) + それとも + Option (B)
+- Implementation: Simple surface matcher for the conjunction それとも
+- Extremely straightforward pattern - single token (接続詞)
+- Tests cover 3 contexts: between sentences, mid-sentence, with comma
+
+### Combined Session Stats
+- Tests: 2999 passing (was 2991, net +8 tests for session)
+- Patterns completed: 2 (に応えて + それとも)
+- N2 patterns remaining: ~59 (down from ~61)
+- No regressions (all existing tests still passing)
+
+### Files Modified (Total)
+- grammar-lib/src/matchers/n2.rs: Implemented nikotaete() and soretomo() functions
+- grammar-lib/src/tests/n2_patterns.rs: Added nikotaete_tests (5 tests) and soretomo_tests (3 tests) modules
+- feature_list.json: Updated に応えて and それとも to complete status
+
+Total session time: ~60 minutes
