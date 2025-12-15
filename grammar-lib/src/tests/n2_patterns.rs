@@ -4170,3 +4170,56 @@ mod shidaini_tests {
         assert_pattern_range(&patterns, "次第に", 11, 14); // 次第に
     }
 }
+
+// Pattern: に限って (particularly when, only when, those who)
+// Data source: grammar_points_data.json["に限って"]
+// Testing: structure.standard[0] - "Noun + に限（かぎ）って"
+//
+// Structure variants:
+//   - standard[0]: Noun + に限（かぎ）って
+//
+// Note: This pattern has 3 different meanings/uses:
+//   1. When (A) is unbelievable/unexpected
+//   2. When something is limited to (A)
+//   3. When (B) is generally true for (A)
+// All use the same grammatical structure: Noun + に限って
+
+mod ni_kagitte_tests {
+    use super::*;
+
+    #[test]
+    fn test_ni_kagitte_unbelievable() {
+        // Testing: Meaning 1 - unbelievable thing about (A)
+        // うちの子に限って、他の子に手を出すなんて考えられない
+        let sentence = "うちの子に限って、他の子に手を出すなんて考えられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限って");
+        assert_pattern_range(&patterns, "に限って", 3, 8); // 子に限って
+    }
+
+    #[test]
+    fn test_ni_kagitte_limited_to() {
+        // Testing: Meaning 2 - limited to (A)
+        // 武くんと釣りに行く日に限って、いつも雨が降るんだよな
+        let sentence = "武くんと釣りに行く日に限って、いつも雨が降るんだよな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限って");
+        assert_pattern_range(&patterns, "に限って", 9, 14); // 日に限って
+    }
+
+    #[test]
+    fn test_ni_kagitte_those_who() {
+        // Testing: Meaning 3 - (B) is true in most cases of (A)
+        // 「クレームを入れるぞ」って言う人に限ってクレームを入れないからあまり気にしていない
+        let sentence = "クレームを入れるぞって言う人に限ってクレームを入れないからあまり気にしていない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限って");
+        assert_pattern_range(&patterns, "に限って", 13, 18); // 人に限って
+    }
+}

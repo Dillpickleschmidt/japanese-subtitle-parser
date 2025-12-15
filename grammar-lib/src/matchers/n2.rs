@@ -4124,3 +4124,34 @@ pub fn nomomottomoda() -> Vec<TokenMatcher> {
 pub fn tatte() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
+
+// Pattern: に限って (particularly when, only when, those who)
+// Structures: Noun + に + 限って
+pub fn ni_kagitte() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct KagitteVerbMatcher;
+    impl super::Matcher for KagitteVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "限る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Custom(Arc::new(KagitteVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
+}

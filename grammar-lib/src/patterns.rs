@@ -5024,6 +5024,14 @@ declare_patterns! {
         jlpt: "n2",
     },
 
+    NiKagitte {
+        name: "に限って",
+        matcher_fn: crate::matchers::n2::ni_kagitte,
+        priority: 6,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
     Uff5eTekoso {
         name: "～てこそ",
         matcher_fn: crate::matchers::n2::uff5e_tekoso,

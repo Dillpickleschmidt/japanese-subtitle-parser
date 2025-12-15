@@ -8094,13 +8094,13 @@
   {
     "pattern_name": "に限って",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The expression に限（かぎ）って in Japanese is a phrase that has three primary uses, the first is to show that (B) is an unbe... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
