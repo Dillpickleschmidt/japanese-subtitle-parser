@@ -5971,9 +5971,26 @@ pub fn toiukazeni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ものの
+// Pattern: ものの (although, even though)
+// Structures: Verb/Adjective + ものの, Noun + である/ではある + ものの
 pub fn monono() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ものの as conjunctive particle (助詞/接続助詞)
+    #[derive(Debug)]
+    struct MononoMatcher;
+    impl super::Matcher for MononoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ものの"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb/Adjective/Noun (or ある for である pattern)
+        TokenMatcher::Custom(Arc::new(MononoMatcher)),
+    ]
 }
 
 // Pattern: というものだ

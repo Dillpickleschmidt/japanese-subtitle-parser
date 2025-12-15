@@ -10814,3 +10814,61 @@ mod dakeatte_tests {
         assert_pattern_range(&patterns, "だけあって", 8, 15); // 先生だけあって
     }
 }
+
+// Pattern: ものの (although, even though)
+// Data source: grammar_points_data.json["ものの"]
+// Testing all structure variants
+//
+// Structure variants:
+//   - standard[0]: Verb + ものの
+//   - standard[1]: い-Adjective + ものの
+//   - standard[2]: な-Adjective + な + ものの
+//   - standard[3]: Noun + である/ではある + ものの
+
+mod monono_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_monono() {
+        // "Although I went on a date with someone I met on a matching app, we had nothing in common"
+        let sentence = "マッチングアプリで出会った人とデートに行ったものの、共通点が何もなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものの");
+        assert_pattern_range(&patterns, "ものの", 21, 25); // たものの
+    }
+
+    #[test]
+    fn test_i_adjective_monono() {
+        // "Although my current job pays well, I am considering changing jobs"
+        let sentence = "今の仕事の給料は高いものの、家族と過ごせる時間が少ない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものの");
+        assert_pattern_range(&patterns, "ものの", 8, 13); // 高いものの
+    }
+
+    #[test]
+    fn test_na_adjective_monono() {
+        // "Although the products offered by that store are unique, they are too expensive"
+        let sentence = "あの店が出す商品はユニークではあるものの、高すぎる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものの");
+        assert_pattern_range(&patterns, "ものの", 15, 20); // あるものの
+    }
+
+    #[test]
+    fn test_noun_dearu_monono() {
+        // "Even though Ms. Ito is an English teacher, she doesn't speak everyday English"
+        let sentence = "伊藤先生は英語の先生ではあるものの、日常的な英語は話せない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものの");
+        assert_pattern_range(&patterns, "ものの", 12, 17); // あるものの
+    }
+}
