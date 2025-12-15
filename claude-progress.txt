@@ -1,3 +1,88 @@
+## Session 427 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented というわけではない pattern (N2)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 7 new tests (all passing with range assertions)
+**Total tests**: 2802 passing, 1 ignored (was 2795 passing, 1 ignored - net +7 tests)
+
+**Session highlights**:
+- Implemented というわけではない (doesn't mean that, it's not that)
+- Pattern matches: [Verb/Adj/Noun] + という + わけ + では/じゃ + ない/ありません
+- Comprehensive implementation covering all 7 structure variants
+- Supports both standard (では) and casual (じゃ) forms
+- Supports both plain (ない) and polite (ありません) forms
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: というわけではない (doesn't mean that, it's not that)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: というわけではない is an emphasized version of わけではない. It states that something 'doesn't mean that (A)', '(A) is not always the case', or 'it's not that (A)'. The という presents (A) as a matter for discussion or an important quotation, often referring to something another person has said to clarify it may not be 100% accurate.
+
+**Structures tested**: All 7 structure variants from grammar_points_data.json
+1. Verb + という + わけではない: 話せるというわけではない (chars 22-34)
+2. い-Adjective + という + わけではない: 嫌いというわけではない (chars 3-14)
+3. な-Adjective + だ + という + わけではない: だというわけではない (chars 18-28)
+4. Noun + という + わけではない: 離婚というわけではない (chars 0-11)
+5. Polite form: いるというわけではありません (chars 4-18)
+6. Casual じゃ variation: だというわけじゃない (chars 2-12)
+7. Noun + だ + という + わけではない: だというわけではない (chars 4-14)
+
+**Implementation details**:
+- Custom matchers created:
+  - ToiuMatcher: matches という as 助詞/格助詞/連語
+  - WakeMatcher: matches わけ as 名詞/非自立
+  - DeJaMatcher: matches both で (from だ, 助動詞) and じゃ (助詞/副助詞)
+  - HaParticleMatcher: matches は (係助詞) - optional for じゃ form
+  - NegativeEndingMatcher: matches both ない (形容詞 or 助動詞) and あり (start of ありません)
+  - MaseMatcher, NMatcher: matches ませ and ん for polite ending
+- Pattern structure: Any + という + わけ + で/じゃ + [optional は] + ない/あり + [optional ませ + ん]
+- Handles three variations:
+  1. わけではない (standard negative)
+  2. わけじゃない (casual negative)
+  3. わけではありません (polite negative)
+
+**Test count**: 7 tests (all passing)
+- test_verb_standard (Verb + という + わけではない)
+- test_i_adjective_standard (い-Adj + という + わけではない)
+- test_na_adjective_standard (な-Adj + だ + という + わけではない)
+- test_noun_standard (Noun + という + わけではない)
+- test_verb_polite (Verb + という + わけではありません)
+- test_na_adjective_with_ja (な-Adj + だ + というわけじゃない)
+- test_noun_with_da (Noun + だ + という + わけではない)
+
+**Tokenization observations**:
+- という: Always tokenized as 助詞/格助詞/連語 (particle/case-particle/phrase)
+- わけ: Always 名詞/非自立/一般 (non-independent noun)
+- では form: で (助動詞, base=だ, 連用形) + は (助詞/係助詞) + ない (形容詞)
+- じゃ form: じゃ (助詞/副助詞) + ない (助動詞, 特殊・ナイ)
+- Polite form: で + は + あり (動詞, base=ある) + ませ (助動詞) + ん (助動詞)
+- TokenMatcher::Any successfully matches verbs, adjectives, and nouns before という
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Added toiuwakedehanai() function with 8 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added toiuwakedehanai_tests module with 7 tests
+- feature_list.json: Updated status to "complete" with passing tests
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- ないわけにはいかない
+- とも
+- 陸に～ない
+- てはいられない
+- てはならない
+- だけのことはある
+- やら～やら
+- ならともかく
+
+---
+
 ## Session 426 - 2025-12-15
 
 ### Session Summary - COMPLETE
