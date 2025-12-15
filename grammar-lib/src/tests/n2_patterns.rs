@@ -5188,3 +5188,82 @@ mod nakuhanai_tests {
         assert_pattern_range(&patterns, "なくはない", 6, 11); // なくはない
     }
 }
+
+// Pattern: も構わず (without worrying about, without minding)
+// Data source: grammar_points_data.json["も構わず"]
+// Testing: structure.standard[0] - "Verb + の + も + かまわず"
+// Testing: structure.standard[1] - "い-Adjective + の + も + かまわず"
+// Testing: structure.standard[2] - "な-Adjective + である + も + かまわず"
+// Testing: structure.standard[3] - "Noun + も + かまわず"
+// Testing: structure.standard[4] - "にも can replace も for emphasis"
+//
+// Structure variants (5 structures):
+//   - standard[0]: Verb + の + も + かまわず
+//   - standard[1]: い-Adjective + の + も + かまわず
+//   - standard[2]: な-Adjective + である + も + かまわず
+//   - standard[3]: Noun + も + かまわず
+//   - standard[4]: にも can replace も (for emphasis)
+
+mod mokamawazu_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_no_mo_kamawazu() {
+        // Structure: Verb + の + も + かまわず
+        // Example from grammar_points_data.json: レポートの提出日が迫っているのもかまわず
+        let sentence = "娘はレポートの提出日が迫っているのもかまわず、友達と遊んでばかりいる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も構わず");
+        assert_pattern_range(&patterns, "も構わず", 14, 22); // いるのもかまわず
+    }
+
+    #[test]
+    fn test_i_adjective_no_mo_kamawazu() {
+        // Structure: い-Adjective + にも + かまわず (using にも emphatic variant)
+        // Example from grammar_points_data.json: 遠いにもかまわず
+        let sentence = "彼は遠いにもかまわず、広島まで休憩なしで運転し続けた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も構わず");
+        assert_pattern_range(&patterns, "も構わず", 2, 10); // 遠いにもかまわず
+    }
+
+    #[test]
+    fn test_na_adjective_dearu_mo_kamawazu() {
+        // Structure: な-Adjective + な + の + も + かまわず
+        // Example: 危険なのもかまわず
+        let sentence = "彼女は危険なのもかまわず、池で溺れていた猫を救出した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も構わず");
+        assert_pattern_range(&patterns, "も構わず", 5, 12); // なのもかまわず
+    }
+
+    #[test]
+    fn test_noun_mo_kamawazu() {
+        // Structure: Noun + も + かまわず
+        // Example from grammar_points_data.json: 時間もかまわず
+        let sentence = "鈴木先輩は時間もかまわず、電話を掛けてくるから困っている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も構わず");
+        assert_pattern_range(&patterns, "も構わず", 5, 12); // 時間もかまわず
+    }
+
+    #[test]
+    fn test_noun_nimo_kamawazu() {
+        // Structure: Verb[past] + にも + かまわず (emphatic variant)
+        // Example from grammar_points_data.json: ストップをかけられていたにもかまわず
+        let sentence = "医者にストップをかけられていたにもかまわず試合に出て、大怪我をしてしまいました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も構わず");
+        assert_pattern_range(&patterns, "も構わず", 14, 21); // たにもかまわず
+    }
+}

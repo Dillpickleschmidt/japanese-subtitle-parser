@@ -2101,9 +2101,75 @@ pub fn nikiwotsukeru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: も構わず
+// Pattern: も構わず (without worrying about, without minding)
+// Structures: Verb/Adj + の + も + かまわず, Noun + も + かまわず, Any + にも + かまわず
 pub fn mokamawazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の as nominalizer (名詞/非自立)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match に particle (助詞/格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match も particle (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match かまう verb in 未然形 (動詞/自立/五段・ワ行促音便/未然形)
+    #[derive(Debug)]
+    struct KamawaMatcher;
+    impl Matcher for KamawaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かまわ"
+                && token.base_form == "かまう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ず auxiliary verb (助動詞/特殊・ヌ, base=ぬ)
+    #[derive(Debug)]
+    struct ZuAuxiliaryMatcher;
+    impl Matcher for ZuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, Adjective, or Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)))), // Optional の for nominalization
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiParticleMatcher)))), // Optional に for にも variant
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)), // も particle
+        TokenMatcher::Custom(Arc::new(KamawaMatcher)), // かまわ verb
+        TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)), // ず auxiliary
+    ]
 }
 
 // Pattern: かねる
