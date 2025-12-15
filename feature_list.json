@@ -8164,13 +8164,13 @@
   {
     "pattern_name": "次第だ・次第で",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Coming after another noun, 次第（しだい） 'directly following' is a noun that will often be used in a similar way to a suffix [2 std, 2 pol]",
     "priority": 4,
     "skip_reason": null

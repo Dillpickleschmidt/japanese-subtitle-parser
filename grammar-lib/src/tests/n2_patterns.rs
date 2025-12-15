@@ -5650,3 +5650,62 @@ mod tekaradenaito_tests {
         assert_pattern_range(&patterns, "てからでないと", 11, 22); // 相談してからでなければ
     }
 }
+
+// Pattern: 次第だ・次第で (depending on, depends on)
+// Data source: grammar_points_data.json["次第だ・次第で"]
+// Testing structures:
+//   - standard[0]: Noun + 次第（しだい） + だ
+//   - standard[1]: Noun + 次第（しだい）で
+//   - polite[0]: Noun + 次第（しだい） + です
+//   - polite[1]: Noun + 次第（しだい）で (same as standard)
+mod shidaida_shidaide_tests {
+    use super::*;
+
+    #[test]
+    fn test_shidai_da_standard() {
+        // Structure: Noun + 次第（しだい） + だ
+        // Example from grammar_points_data.json: 努力しだいだ
+        let sentence = "夢をかなえられるかどうかは君の努力しだいだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第だ・次第で");
+        assert_pattern_range(&patterns, "次第だ・次第で", 15, 21); // 努力しだいだ
+    }
+
+    #[test]
+    fn test_shidai_da_polite() {
+        // Structure: Noun + 次第（しだい） + です
+        // Example: 試験の結果しだいです
+        let sentence = "第一希望の大学へ入れるかは、試験の結果しだいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第だ・次第で");
+        assert_pattern_range(&patterns, "次第だ・次第で", 17, 24); // 結果しだいです
+    }
+
+    #[test]
+    fn test_shidai_de_standard() {
+        // Structure: Noun + 次第（しだい）で
+        // Example from grammar_points_data.json: 完成日しだいで
+        let sentence = "内装工事の完成日しだいで、鍵の引き渡し日が変わる可能性があります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第だ・次第で");
+        assert_pattern_range(&patterns, "次第だ・次第で", 7, 12); // 日しだいで
+    }
+
+    #[test]
+    fn test_shidai_de_polite() {
+        // Structure: Noun + 次第（しだい）で (same in polite)
+        // Example from grammar_points_data.json: 値段しだいで
+        let sentence = "値段しだいで、ナビを付けるか付けないかを決めます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第だ・次第で");
+        assert_pattern_range(&patterns, "次第だ・次第で", 0, 6); // 値段しだいで
+    }
+}

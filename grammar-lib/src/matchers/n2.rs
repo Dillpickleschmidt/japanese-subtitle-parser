@@ -2468,9 +2468,48 @@ pub fn kagiri() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 次第だ・次第で
+// Pattern: 次第だ・次第で (depending on, depends on)
+// Structures: Noun + しだい + だ/です/で
 pub fn shidaida_u30fb_shidaide() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match しだい (noun suffix)
+    #[derive(Debug)]
+    struct ShidaiMatcher;
+    impl Matcher for ShidaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しだい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match だ, です, or で
+    #[derive(Debug)]
+    struct DaDesuDeMatcher;
+    impl Matcher for DaDesuDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // だ or です (auxiliary)
+            if (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // で (case particle)
+            if token.surface == "で" && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(ShidaiMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuDeMatcher)),
+    ]
 }
 
 // Pattern: 次第に (gradually, bit by bit)
