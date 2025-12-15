@@ -13135,3 +13135,72 @@ mod mata_mo_tests {
         assert_pattern_range(&patterns, "又〜も", 11, 18); // また、古くても
     }
 }
+
+// ========== 第一 (first of all/most important) ==========
+// Pattern: 第一 (first of all, foremost, most important)
+// Data source: grammar_points_data.json["第一"]
+//
+// Structure variants to test:
+//   standard[0]: 第一（だいいち）に + Phrase (adverbial)
+//   standard[1]: 第一（だいいち） + の + Noun (noun)
+//   standard[3]: Phrase + 第一（だいいち） + だ (noun, end of sentence)
+//   polite[3]: Phrase + 第一（だいいち） + です
+
+mod daiichi_tests {
+    use super::*;
+
+    // Test: だいいちに + Phrase (adverbial - "first of all")
+    #[test]
+    fn test_daiichi_ni_adverbial() {
+        let sentence = "だいいち彼は何であんな時間にここにいたんだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "第一");
+        assert_pattern_range(&patterns, "第一", 0, 4); // だいいち
+    }
+
+    // Test: だいいち + の + Noun (noun - "number one")
+    #[test]
+    fn test_daiichi_no_noun() {
+        let sentence = "これはここのだいいちのルールだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "第一");
+        assert_pattern_range(&patterns, "第一", 6, 10); // だいいち
+    }
+
+    // Test: Phrase + だいいち + だ (noun - "most important")
+    #[test]
+    fn test_daiichi_da_copula() {
+        let sentence = "お金よりも健康でいることがだいいちだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "第一");
+        assert_pattern_range(&patterns, "第一", 13, 17); // だいいち
+    }
+
+    // Test: まず + だいいちに (emphatic - "very first")
+    #[test]
+    fn test_mazu_daiichi_ni() {
+        let sentence = "まずだいいちにこの計画を担当する人を決めましょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "第一");
+        assert_pattern_range(&patterns, "第一", 2, 6); // だいいち
+    }
+
+    // Test: Polite form - Phrase + 第一 + です (kanji form)
+    #[test]
+    fn test_daiichi_desu_polite() {
+        let sentence = "家族との時間が第一です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "第一");
+        assert_pattern_range(&patterns, "第一", 7, 9); // 第一
+    }
+}

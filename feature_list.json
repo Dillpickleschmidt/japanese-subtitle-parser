@@ -6596,13 +6596,13 @@
   {
     "pattern_name": "第一",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "第一（だいいち） is an expression in Japanese which may be used either as an adverb , or as a noun [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null

@@ -8007,9 +8007,38 @@ pub fn nioite_u30fb_niokeru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 第一
+// Pattern: 第一 (first of all/foremost/most important)
+// Structures: だいいち(に), 第一(に), だいいち + の, Phrase + だいいち + だ/です
 pub fn daiichi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だいいち as adverb OR 第 as prefix
+    #[derive(Debug)]
+    struct DaiichiMatcher;
+    impl Matcher for DaiichiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Hiragana form: だいいち as adverb
+            (token.surface == "だいいち" && token.pos.first().is_some_and(|pos| pos == "副詞"))
+            // Kanji form: 第 as prefix
+            || (token.surface == "第" && token.pos.first().is_some_and(|pos| pos == "接頭詞"))
+        }
+    }
+
+    // Match 一 (kanji number "one") - only needed for kanji form
+    #[derive(Debug)]
+    struct IchiMatcher;
+    impl Matcher for IchiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "一" && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "数")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DaiichiMatcher)),
+        // 一 is optional because it's only present in the kanji form
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(IchiMatcher)))),
+    ]
 }
 
 // Pattern: ますます (more and more/increasingly)
