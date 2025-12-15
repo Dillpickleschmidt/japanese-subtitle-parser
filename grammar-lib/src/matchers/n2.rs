@@ -6906,9 +6906,41 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: たった(の)
+// Pattern: たった(の) (only/just - emphasizing small amount)
+// Structures: たった + (の) + Number + (Counter/Number)
 pub fn tatta_no() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NumberMatcher;
+    impl Matcher for NumberMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.features.first().is_some_and(|f| f == "名詞")
+                && token.features.get(1).is_some_and(|f| f == "数")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NumberOrCounterMatcher;
+    impl Matcher for NumberOrCounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match additional numbers (like ０ in １０) or counters (like 人, 分, メートル)
+            token.features.first().is_some_and(|f| f == "名詞")
+                && (token.features.get(1).is_some_and(|f| f == "数")
+                    || (token.features.get(1).is_some_and(|f| f == "接尾")
+                        && token.features.get(2).is_some_and(|f| f == "助数詞")))
+        }
+    }
+
+    vec![
+        TokenMatcher::Surface("たった"),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Surface("の"))),
+        TokenMatcher::Custom(Arc::new(NumberMatcher)),
+        // Optional: Additional numbers or a counter (for １０人, ３分, etc.)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberOrCounterMatcher)))),
+        // Optional: One more number/counter (for cases like １０メートル = １ + ０ + メートル)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberOrCounterMatcher)))),
+    ]
 }
 
 // Pattern: 恐れがある (fear/risk of - negative possibility)

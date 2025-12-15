@@ -11605,3 +11605,62 @@ mod nomotouzenda_tests {
         assert_pattern_range(&patterns, "のも当然だ", 13, 23); // 成功するのも当然です
     }
 }
+
+// Pattern: たった(の) (only/just - emphasizing small amount)
+// Data source: grammar_points_data.json["たった(の)"]
+// Testing: structure.standard[0] - "たった + （の）+ Number"
+//
+// Structure variants:
+//   - standard[0]: たった + Number (without の)
+//   - standard[0]: たった + の + Number (with の)
+
+mod tatta_no_tests {
+    use super::*;
+
+    #[test]
+    fn test_tatta_without_no_minutes() {
+        let sentence = "カップ麺はたった３分で出来上がる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たった(の)");
+        assert_pattern_range(&patterns, "たった(の)", 5, 10); // たった３分
+    }
+
+    #[test]
+    fn test_tatta_without_no_person() {
+        let sentence = "僕、たった一人でここまで歩いてきたのかい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たった(の)");
+        assert_pattern_range(&patterns, "たった(の)", 2, 7); // たった一人
+    }
+
+    #[test]
+    fn test_tatta_with_no_people() {
+        let sentence = "招待したのに、たったの３人しか来なかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たった(の)");
+        assert_pattern_range(&patterns, "たった(の)", 7, 13); // たったの３人
+    }
+
+    #[test]
+    fn test_tatta_with_no_meters() {
+        let sentence = "このホテルからビーチまでの距離はたったの１０メートルです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たった(の)");
+        assert_pattern_range(&patterns, "たった(の)", 16, 26); // たったの１０メートル
+    }
+
+    // NOTE: たった今 (just now) is a separate expression tokenized as a single word,
+    // not the たった(の) + Number pattern. たった今 is an adverb meaning "just now" or
+    // "right at this moment", distinct from the "only X" emphasis pattern.
+    //
+    // Example: その電車はたった今出発したので次の電車が来るまで待ってください
+    // Token: たった今 (副詞/助詞類接続) - single token, different pattern
+}
