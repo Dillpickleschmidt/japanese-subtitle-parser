@@ -1,18 +1,63 @@
 ## Session 479 - 2025-12-15
 
-### Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented とか pattern (N2)
-**Patterns completed**: 1 (N2, priority 4)
-**Tests added**: 4 new tests (all passing with range assertions)
-**Total tests**: 3143 passing, 1 ignored (was 3139 before session, net +4 tests)
+### Session Summary - COMPLETE (1 pattern) + WIP (1 pattern)
+**Status**: Successfully implemented とか (COMPLETE) + のではないだろうか (WIP - needs debugging)
+**Patterns completed**: 1 (とか - N2, priority 4)
+**Patterns in progress**: 1 (のではないだろうか - N2, priority 4, matcher not detecting)
+**Tests added**: 8 new test functions (4 passing with assertions, 4 with print_debug for debugging)
+**Total tests**: 3147 passing, 1 ignored (was 3139 before session, net +8 tests)
 
 **Session highlights**:
-- Implemented とか (I heard that, or something like that) - N2 pattern
-- Pattern structure: Any + と(引用) + か(副助詞)
-- Captures hearsay/uncertainty about statements
-- Clean test-first workflow following REFERENCE_EXAMPLES.md
-- All 4 tests pass with proper range assertions
-- No regressions
+- ✅ Implemented とか (I heard that, or something like that) - N2 pattern COMPLETE
+  - Pattern structure: Any + と(引用) + か(副助詞)
+  - Captures hearsay/uncertainty about statements
+  - Clean test-first workflow following REFERENCE_EXAMPLES.md
+  - All 4 tests pass with proper range assertions
+- 🚧 Started のではないだろうか (I think, isn't it?) - N2 pattern IN PROGRESS
+  - 4 tests written with print_debug showing correct tokenization
+  - Matcher implemented with wildcard + token sequence
+  - Issue: Pattern not being detected by pattern matcher
+  - Needs debugging - likely wildcard configuration or matcher logic issue
+- No regressions - all 3147 tests passing
+
+---
+
+### 🚧 Pattern In Progress: のではないだろうか (I think, isn't it?, don't you think?)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+**Status**: WIP - Tests written, matcher needs debugging
+
+**Pattern**: のではないだろうか is a rhetorical question construction used to express opinions indirectly. Translates as "I think it's (A), isn't it?" or "it might be that (A)". Combination of の + ではない/じゃない + だろう/でしょう + か.
+
+**Tests written** (4 variants with print_debug):
+1. Verb + のじゃないだろうか: 疲れているのじゃないだろうか
+2. い-Adjective + のじゃないだろうか: 欲しいのじゃないだろうか
+3. な-Adjective + なのではないでしょうか: 好きなのではないでしょうか
+4. Noun + なのではないでしょうか: 犯人なのではないでしょうか
+
+**Tokenization observed**:
+- のじゃない form: の (名詞/非自立) + じゃ (助詞/副助詞) + ない (助動詞) + だろ (助動詞/未然形) + う (助動詞) + か (助詞)
+- のではない form: の (名詞/非自立) + で (助動詞/連用形) + は (助詞/係助詞) + ない (助動詞) + でしょ (助動詞/未然形) + う (助動詞) + か (助詞)
+
+**Implementation attempted**:
+- Matcher: Wildcard (1-10) + の/ん + じゃ + ない + だろ/でしょ + う + か
+- Custom matchers created: NoNMatcher, JaMatcher, NaiAuxMatcher, DaroDeshoMatcher, UMatcher, KaFinalMatcher
+- Issue: Pattern not appearing in detected patterns list
+
+**Next steps for debugging**:
+1. Verify wildcard matcher is finding appropriate starting points
+2. Consider simpler approach without wildcard (just match from の)
+3. May need separate patterns for じゃない vs ではない forms
+4. Check if priority (currently 1) is preventing detection
+5. Add debug logging to matcher to trace execution
+
+**Files modified**:
+- grammar-lib/src/matchers/n2.rs: Implemented nodehanaidarouka() with 7 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added nodehanaidarouka_tests module with 4 tests
+
+**Commit**: d7bb8b0 (WIP commit with clear debugging notes)
 
 ---
 
