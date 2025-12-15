@@ -1,16 +1,16 @@
 ## Session 390 - 2025-12-15
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 以上② pattern (N2)
-**Patterns completed**: 1 (以上② - since/now that/as long as)
-**Tests added**: 6 new tests (all passing)
-**Total tests**: 2535 passing, 1 ignored (was 2529 passing, 1 ignored - net +6 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (以上②, 以上に)
+**Patterns completed**: 2 (以上② and 以上に - both N2 newly implemented)
+**Tests added**: 11 new tests total (6 for 以上② + 5 for 以上に, all passing)
+**Total tests**: 2540 passing, 1 ignored (was 2529 passing, 1 ignored - net +11 tests)
 
 **Session highlights**:
 - Implemented 以上② (since, now that, as long as) - conditional/causal pattern
-- Comprehensive coverage of all structure variants (Verb, い-Adj, な-Adj+である, Noun+である)
-- Handles optional は particle
-- Clean implementation with proper test coverage
+- Implemented 以上に (more than, even more than) - comparative pattern
+- Comprehensive coverage of all structure variants for both patterns
+- Clean implementations with proper test coverage
 - All tests passing, no regressions
 
 ---
@@ -53,21 +53,68 @@
 - Adj+は: 悪い以上は (adjective + 以上 + は)
 - である+は: ある以上は (ある from である + 以上 + は)
 
-### Test Quality Metrics
+### Test Quality Metrics (以上②)
 ✅ All 6 tests have assert_pattern_range
 ✅ No print_debug in committed tests
 ✅ Realistic sentences from grammar_points_data.json
-✅ No regressions (all 2535 tests passing)
+✅ No regressions
+
+---
+
+### ✅ Pattern Implemented: 以上に (more than, even more than)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: Like other structures that include 以上（いじょう） 'beyond', 以上に highlights that (A) is beyond some specific extent. The case marking particle に indicates the word that 以上に is attached to as an amount. Translates as 'more than (A)', or 'even more than (A)'. Can also use の when a specific amount/quantity is being indicated with a second noun.
+
+**Structures tested**: 5 comprehensive tests covering all variants
+1. Verb + 以上に: た以上に (17-21 from 思っていた以上に) - "more than I thought"
+2. い-Adjective + 以上に: 冷たい以上に (5-11) - "more than it is cold"
+3. な-Adjective + 以上に: 必要以上に (7-12) - "more than necessary"
+4. Noun + 以上に: スキー以上に (2-8) - "more than skiing"
+5. 以上 + の + Noun: た以上の (14-18 from 想像していた以上の) - "more than I imagined"
+
+**Implementation**: Matcher in n2.rs (lines 1028-1091), tests in n2_patterns.rs (lines 3463-3522)
+
+**Key notes**:
+- Pattern matches: (Verb|い-Adj|な-Adj|Noun|た) + 以上 + (に|の)
+- 以上 tokenizes as 名詞/非自立/副詞可能 (same as 以上②)
+- に tokenizes as 助詞/格助詞
+- の tokenizes as 助詞/連体化 (when before a noun)
+- Pattern includes full grammatical construction from preceding element through に/の
+
+**Tokenization observations**:
+- **以上**: surface="以上", base="以上", pos=名詞/非自立/副詞可能
+- **Verb form**: Any verb (思っていた) + た (助動詞) + 以上に
+- **い-Adj form**: 形容詞/自立 (冷たい) + 以上に
+- **な-Adj form**: 名詞/形容動詞語幹 (必要) + 以上に
+- **Noun form**: 名詞 (スキー) + 以上に
+- **の variant**: 以上 + の (助詞/連体化) + Noun
+
+**Pattern ranges**: Full construction from preceding element through に or の
+- Verb: た以上に (includes auxiliary + 以上 + に)
+- い-Adj: 冷たい以上に
+- な-Adj: 必要以上に
+- Noun: スキー以上に
+- の variant: た以上の
+
+### Test Quality Metrics (以上に)
+✅ All 5 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
 
 **Current stats**:
 - N5: All complete
 - N4: 2 remaining (meta-patterns)
 - N3: All complete! 🎉
-- N2: 164 remaining (down from 165!)
+- N2: 163 remaining (down from 165 - completed 2!)
 - N1: 186 remaining
-- Total: ~352 patterns remaining (down from ~353!)
+- Total: ~351 patterns remaining (down from ~353!)
 
-**Next priority**: Continue with N2 patterns - 以上に, 途中に・途中で, を中心に, その上, 上は, の下で, etc.
+**Next priority**: Continue with N2 patterns - 途中に・途中で, を中心に, その上, 上は, の下で, etc.
 
 ---
 
