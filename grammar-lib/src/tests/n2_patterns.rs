@@ -5427,3 +5427,79 @@ mod tokorodatta_u2461_tests {
         assert_pattern_range(&patterns, "ところだった ②", 15, 26); // 乗り遅れるところでした
     }
 }
+
+// ========== どころではない (far from, out of the question) ==========
+// Pattern: どころではない (far from, out of the question)
+// Data source: grammar_points_data.json["どころではない"]
+//
+// Structure variants:
+//   standard[0]: Phrase + どころ + ではない
+//   standard[1]: Phrase + どころ + じゃない (casual)
+//   polite[0]: Phrase + どころ + ではありません
+//   polite[1]: Phrase + どころ + じゃありません
+//
+// Pattern highlights that the actual situation is even more remarkable than (A),
+// or that it is not the time for (A) due to more important matters.
+
+mod dokorodehanai_tests {
+    use super::*;
+
+    #[test]
+    fn test_dokoro_dehanai_far_from() {
+        // Structure: Phrase + どころ + ではない
+        // Example from grammar_points_data.json: 痛いどころではない (far from painful)
+        let sentence = "出産は痛いどころではないらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころではない");
+        assert_pattern_range(&patterns, "どころではない", 3, 15); // 痛いどころではないらしい
+    }
+
+    #[test]
+    fn test_dokoro_janai_out_of_question() {
+        // Structure: Phrase + どころ + じゃない (casual)
+        // Example from grammar_points_data.json: 取るどころじゃない (out of the question)
+        let sentence = "締め切りが迫って来てるから、休憩を取るどころじゃない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころではない");
+        assert_pattern_range(&patterns, "どころではない", 17, 26); // 取るどころじゃない
+    }
+
+    #[test]
+    fn test_dokoro_dehanai_not_time_for() {
+        // Structure: Phrase + どころ + ではない
+        // Example from grammar_points_data.json: 仕事どころではない (not the time for work)
+        let sentence = "お母さんからお父さんが倒れたと連絡があったので、仕事どころではない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころではない");
+        assert_pattern_range(&patterns, "どころではない", 24, 33); // 仕事どころではない
+    }
+
+    #[test]
+    fn test_dokoro_janai_marriage() {
+        // Structure: Phrase + どころ + じゃない (casual)
+        // Example from grammar_points_data.json: 結婚どころじゃない (not the time for marriage)
+        let sentence = "今は仕事が忙しいし、お金も全然ないから、結婚どころじゃない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころではない");
+        assert_pattern_range(&patterns, "どころではない", 20, 29); // 結婚どころじゃない
+    }
+
+    #[test]
+    fn test_dokoro_dearimasen_polite() {
+        // Structure: Phrase + どころ + ではありません (polite)
+        let sentence = "この状況では、休暇どころではありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どころではない");
+        assert_pattern_range(&patterns, "どころではない", 7, 19); // 休暇どころではありません
+    }
+}

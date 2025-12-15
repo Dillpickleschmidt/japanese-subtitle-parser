@@ -2868,9 +2868,71 @@ pub fn tokorodatta_u2461() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: どころではない
+// Pattern: どころではない (far from, out of the question)
+// Structures: Phrase + どころ + ではない/じゃない/ではありません/じゃありません
 pub fn dokorodehanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for どころ as 名詞/非自立
+    #[derive(Debug)]
+    struct DokoroMatcher;
+    impl Matcher for DokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どころ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for で (from だ) or じゃ (casual contraction)
+    #[derive(Debug)]
+    struct DeJaMatcher;
+    impl Matcher for DeJaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // で (from だ): 助動詞/特殊・ダ/連用形
+            (token.surface == "で" && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            // じゃ: 助詞/副助詞
+            || (token.surface == "じゃ" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+        }
+    }
+
+    // Matcher for は particle
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for negative ending: ない or あり (for ありません)
+    #[derive(Debug)]
+    struct NegativeEndingMatcher;
+    impl Matcher for NegativeEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ない (adjective or auxiliary verb)
+            (token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                    || token.pos.first().is_some_and(|pos| pos == "助動詞")))
+            // あり (ある in 連用形 for ありません)
+            || (token.surface == "あり" && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    // Pattern: Phrase + どころ + (で/じゃ) + (は) + (ない/あり)
+    // Matches: ではない, じゃない, ではありません (will continue to ません)
+    // Using TokenMatcher::Any to match any preceding phrase
+    vec![
+        TokenMatcher::Any,  // Phrase (verb, adjective, or noun)
+        TokenMatcher::Custom(Arc::new(DokoroMatcher)),
+        TokenMatcher::Custom(Arc::new(DeJaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(HaParticleMatcher)))),  // は is optional for じゃない
+        TokenMatcher::Custom(Arc::new(NegativeEndingMatcher)),  // ない or あり
+    ]
 }
 
 // Pattern: ぶりに
