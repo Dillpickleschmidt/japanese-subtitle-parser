@@ -7257,3 +7257,54 @@ mod teha_uff5e_teha_tests {
         assert_pattern_range(&patterns, "ては〜ては", 0, 13); // ミスしては怒られ怒られては
     }
 }
+
+// Pattern: 以来 (since, ever since)
+// Data source: grammar_points_data.json["以来"]
+// Structures: 3 main (Verb[て] + 以来, Noun + 以来, Demonstrative + 以来)
+mod irai_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_te_irai() {
+        // Structure: Verb[て] + いらい (hiragana form)
+        let sentence = "日本に来ていらい全然母国の友達と連絡をとっていない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以来");
+        assert_pattern_range(&patterns, "以来", 4, 8); // ていらい
+    }
+
+    #[test]
+    fn test_noun_irai() {
+        // Structure: Noun + いらい (hiragana form)
+        let sentence = "卒業いらいじゃない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以来");
+        assert_pattern_range(&patterns, "以来", 0, 5); // 卒業いらい
+    }
+
+    #[test]
+    fn test_noun_irai_with_kanji() {
+        // Structure: Noun + 以来 (kanji form)
+        let sentence = "入社以来、あの先輩には色々とお世話になっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以来");
+        assert_pattern_range(&patterns, "以来", 0, 4); // 入社以来
+    }
+
+    #[test]
+    fn test_demonstrative_irai() {
+        // Structure: Demonstrative (それ/これ/あれ) + 以来 (kanji form)
+        let sentence = "それ以来ずっと音沙汰がない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以来");
+        assert_pattern_range(&patterns, "以来", 0, 4); // それ以来
+    }
+}

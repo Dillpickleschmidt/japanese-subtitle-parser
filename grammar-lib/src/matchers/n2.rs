@@ -4193,8 +4193,27 @@ pub fn kekka_u30fb_nokekka() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 以来
+// Pattern: 以来 (since, ever since)
+// Structures: Verb[て] + いらい/以来, Noun + 以来, Demonstrative + 以来
 pub fn irai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match いらい (hiragana, 副詞/一般) or 以来 (kanji, 名詞/副詞可能)
+    #[derive(Debug)]
+    struct IraiMatcher;
+    impl super::Matcher for IraiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "いらい" || token.surface == "以来")
+                && (token.base_form == "いらい" || token.base_form == "以来")
+                && (token.pos.first().is_some_and(|pos| pos == "副詞")
+                    || token.pos.first().is_some_and(|pos| pos == "名詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb[て] / Noun / Demonstrative
+        TokenMatcher::Custom(Arc::new(IraiMatcher)),
+    ]
 }
 
 // Pattern: に先立ち

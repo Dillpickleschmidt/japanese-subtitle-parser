@@ -8613,13 +8613,13 @@
   {
     "pattern_name": "以来",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the noun, 以来（いらい） 'ever since' is paired with the て-form of verbs, or with nouns, it indicates that (B) is somet... [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
