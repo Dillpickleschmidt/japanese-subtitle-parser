@@ -5515,7 +5515,7 @@ declare_patterns! {
     WotsuujiteU30fbWotooshite {
         name: "を通じて・を通して",
         matcher_fn: crate::matchers::n2::wotsuujite_u30fb_wotooshite,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

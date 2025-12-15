@@ -5147,9 +5147,27 @@ pub fn nioujite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を通じて・を通して
+// Pattern: を通じて・を通して (through, via)
+// Structures: Noun + を通して, Noun + を通じて
 pub fn wotsuujite_u30fb_wotooshite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を通して or を通じて as compound case particle
+    #[derive(Debug)]
+    struct WotsuujiteWotooshiteMatcher;
+    impl Matcher for WotsuujiteWotooshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "を通じて" || token.surface == "を通して")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Noun
+        TokenMatcher::Custom(Arc::new(WotsuujiteWotooshiteMatcher)),
+    ]
 }
 
 // Pattern: に応えて

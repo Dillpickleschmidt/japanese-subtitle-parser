@@ -8915,3 +8915,64 @@ mod nioujite_tests {
         assert_pattern_range(&patterns, "に応じて", 11, 17); // 要望に応じた
     }
 }
+
+// Pattern: を通じて・を通して (through, via)
+// Data source: grammar_points_data.json["を通じて・を通して"]
+// Testing: structure.standard[0] - "Noun + を通して"
+// Testing: structure.standard[1] - "Noun + を通じて"
+//
+// Structure variants:
+//   - standard[0]: Noun + を通して (transitive - intentional/by use of)
+//   - standard[1]: Noun + を通じて (intransitive - throughout/via)
+
+mod wotsuujite_wotooshite_tests {
+    use super::*;
+
+    #[test]
+    fn test_wotooshite_language_study() {
+        // Structure: Noun + を通して
+        // Example from grammar data: 語学留学を通して日本の文化などを学びました
+        let sentence = "語学留学を通して日本の文化などを学びました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を通じて・を通して");
+        assert_pattern_range(&patterns, "を通じて・を通して", 2, 8); // 留学を通して
+    }
+
+    #[test]
+    fn test_wotooshite_work() {
+        // Structure: Noun + を通して
+        // Example from grammar data: 仕事を通して今の妻と出会いました
+        let sentence = "仕事を通して今の妻と出会いました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を通じて・を通して");
+        assert_pattern_range(&patterns, "を通じて・を通して", 0, 6); // 仕事を通して
+    }
+
+    #[test]
+    fn test_wotsuujite_news() {
+        // Structure: Noun + を通じて
+        // Example from grammar data: ネットニュースを通じて知りました
+        let sentence = "その事件はネットニュースを通じて知りました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を通じて・を通して");
+        assert_pattern_range(&patterns, "を通じて・を通して", 8, 16); // ニュースを通じて
+    }
+
+    #[test]
+    fn test_wotsuujite_anime() {
+        // Structure: Noun + を通じて
+        // Example from grammar data: アニメを通じて日本語を学んだ
+        let sentence = "彼はアニメを通じて日本語を学んだそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を通じて・を通して");
+        assert_pattern_range(&patterns, "を通じて・を通して", 2, 9); // アニメを通じて
+    }
+}

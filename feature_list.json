@@ -8963,13 +8963,13 @@
   {
     "pattern_name": "を通じて・を通して",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を通（つう）じて and を通（とお）して are two grammar patterns in Japanese that have very similar meanings to each other, and are use... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
