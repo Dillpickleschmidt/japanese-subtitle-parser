@@ -1,5 +1,60 @@
 ## Session 412 - 2025-12-15
 
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N1 patterns (という, まま(に))
+**Patterns completed**: 2 (という, まま(に) - both N1)
+**Tests added**: 9 new tests (3 for という + 6 for まま(に), all passing)
+**Total tests**: 2692 passing, 1 ignored (was 2683 passing, 1 ignored - net +9 tests)
+
+**Session highlights**:
+- Created n1_patterns.rs test file (first N1 patterns implemented)
+- Implemented という (called/named) - simple but foundational N1 pattern
+- Implemented まま(に) (as it is, while remaining) - complex pattern with 6 variants
+- Clean test-first implementation following REFERENCE_EXAMPLES.md
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### Pattern Implemented: という (called/named)
+
+**JLPT Level**: N1
+**Priority**: 1
+
+Pattern: Noun (A) + という + Noun (B) = "the (B) called/named (A)"
+
+**Test count**: 3 tests (all passing)
+
+---
+
+### Pattern Implemented: まま(に) (as it is, while remaining)
+
+**JLPT Level**: N1
+**Priority**: 1
+
+Created 6 pattern variants for different structures:
+1. まま(に) - Verb[た] + まま (without に)
+2. まま(に)_with_ni - Verb[た] + まま + に (with required に)
+3. まま(に)_nai - Verb[ない] + まま
+4. まま(に)_i_adj - い-Adjective + まま
+5. まま(に)_na_adj - な-Adjective + な + まま
+6. まま(に)_noun - Noun + の + まま
+
+**Test count**: 6 tests (all passing)
+
+**Note**: Discovered pattern engine quirk with Optional matcher causing incorrect ranges. Workaround: separate patterns for with/without optional tokens.
+
+---
+
+### Next Priorities
+
+Remaining Priority 1 patterns from N4 may require skip analysis.
+Recommend focusing on Priority 4 N2 patterns next.
+
+---
+
+## Session 412 - 2025-12-15
+
 ### ✅ Session Summary - IN PROGRESS
 **Status**: IN PROGRESS - Successfully implemented 1 N1 pattern (という)
 **Patterns completed**: 1 (という - N1)
