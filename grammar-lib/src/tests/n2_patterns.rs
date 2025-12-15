@@ -6785,3 +6785,94 @@ mod niatari_niatatte_tests {
         assert_pattern_range(&patterns, "にあたり・にあたって", 0, 7); // 卒業にあたって
     }
 }
+
+// Pattern: というわけではない (doesn't mean that, it's not that)
+// Data source: grammar_points_data.json["というわけではない"]
+// Testing structure variants:
+//   - standard[0]: Verb + という + わけではない
+//   - standard[1]: い-Adjective + という + わけではない
+//   - standard[2]: な-Adjective + (だ) + という + わけではない
+//   - standard[3]: Noun + (だ) + という + わけではない
+//   - polite[0-3]: Same with わけではありません
+//   - Variation: じゃ instead of では
+
+mod toiuwakedehanai_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_standard() {
+        // Structure: Verb + という + わけではない
+        let sentence = "日本に２年間住んでいたからと言って、日本語を話せるというわけではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というわけではない");
+        assert_pattern_range(&patterns, "というわけではない", 22, 34); // 話せるというわけではない
+    }
+
+    #[test]
+    fn test_i_adjective_standard() {
+        // Structure: い-Adjective + という + わけではない
+        let sentence = "数学が嫌いというわけではない、ただ苦手なだけだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というわけではない");
+        assert_pattern_range(&patterns, "というわけではない", 3, 14); // 嫌いというわけではない
+    }
+
+    #[test]
+    fn test_na_adjective_standard() {
+        // Structure: な-Adjective + だ + という + わけではない
+        let sentence = "いつもニコニコしているからって、親切だというわけではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というわけではない");
+        assert_pattern_range(&patterns, "というわけではない", 18, 28); // だというわけではない
+    }
+
+    #[test]
+    fn test_noun_standard() {
+        // Structure: Noun + という + わけではない
+        let sentence = "離婚というわけではないが、しばらく別居することになった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というわけではない");
+        assert_pattern_range(&patterns, "というわけではない", 0, 11); // 離婚というわけではない
+    }
+
+    #[test]
+    fn test_verb_polite() {
+        // Structure: Verb + という + わけではありません
+        let sentence = "勉強しているというわけではありませんが、少し見ていただけです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というわけではない");
+        assert_pattern_range(&patterns, "というわけではない", 4, 18); // いるというわけではありません
+    }
+
+    #[test]
+    fn test_na_adjective_with_ja() {
+        // Structure: な-Adjective + だ + というわけじゃない (casual variation)
+        let sentence = "嫌いだというわけじゃないけど、あんまり好きでもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というわけではない");
+        assert_pattern_range(&patterns, "というわけではない", 2, 12); // だというわけじゃない
+    }
+
+    #[test]
+    fn test_noun_with_da() {
+        // Structure: Noun + だ + という + わけではない
+        let sentence = "彼が犯人だというわけではないけど、怪しいことは確かだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というわけではない");
+        assert_pattern_range(&patterns, "というわけではない", 4, 14); // だというわけではない
+    }
+}

@@ -10334,13 +10334,13 @@
   {
     "pattern_name": "というわけではない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "と言（い）うわけではない is often considered an emphasized version of わけではない in stating that something 'doesn't mean that (A)', '... [5 std, 6 pol]",
     "priority": 4,
     "skip_reason": null
