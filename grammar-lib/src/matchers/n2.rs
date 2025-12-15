@@ -2393,9 +2393,47 @@ pub fn tekaradenaito() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: なくはない
+// Pattern: なくはない (it's not that it isn't, somewhat)
+// Structures: なく + は + ない (double negative construction)
 pub fn nakuhanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match なく (auxiliary or adjective)
+    #[derive(Debug)]
+    struct NakuMatcher;
+    impl Matcher for NakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Match は particle
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match ない (auxiliary or adjective)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        TokenMatcher::Custom(Arc::new(WaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: ないことには～ない

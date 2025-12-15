@@ -5081,3 +5081,110 @@ mod wonozoite_tests {
         assert_pattern_range(&patterns, "を除いて", 2, 7); // 先生を除く
     }
 }
+
+// Pattern: なくはない (it's not that it isn't, somewhat, slightly)
+// Data source: grammar_points_data.json["なくはない"]
+// Testing: structure.standard[0-3]
+//
+// Structure variants:
+//   - standard[0]: Verb［なくて］+ はない
+//   - standard[1]: ［い］Adjective［く］ + なくはない
+//   - standard[2]: ［な］Adjective + では(じゃ) + なくはない
+//   - standard[3]: Noun + が(は、に) + なくはない
+
+mod nakuhanai_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_negative_form() {
+        // Structure: Verb［なくて］+ はない
+        // Example from grammar_points_data.json
+        let sentence = "別に出来なくはないけど、めんどくさいから業者に頼むわ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくはない");
+        assert_pattern_range(&patterns, "なくはない", 4, 9); // なくはない
+    }
+
+    #[test]
+    fn test_i_adjective() {
+        // Structure: ［い］Adjective［く］ + なくはない
+        // Example: "it's not that it isn't heavy" = "somewhat heavy"
+        let sentence = "このカバンは重くなくはないけど、まあ持ち運べるレベルだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくはない");
+        assert_pattern_range(&patterns, "なくはない", 8, 13); // なくはない
+    }
+
+    #[test]
+    fn test_na_adjective_dewa() {
+        // Structure: ［な］Adjective + ではなくはない
+        let sentence = "彼女の話は確かに複雑ではなくはないが、理解できないわけではない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくはない");
+        assert_pattern_range(&patterns, "なくはない", 12, 17); // なくはない
+    }
+
+    #[test]
+    fn test_na_adjective_jya() {
+        // Structure: ［な］Adjective + じゃなくはない
+        let sentence = "この仕事は大変じゃなくはないけど、やりがいはある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくはない");
+        assert_pattern_range(&patterns, "なくはない", 9, 14); // なくはない
+    }
+
+    #[test]
+    fn test_noun_ga() {
+        // Structure: Noun + が + なくはない
+        // Example from grammar_points_data.json
+        let sentence = "それを買うお金がなくはないが、そんなくだらないことにお金を使いたくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくはない");
+        assert_pattern_range(&patterns, "なくはない", 8, 13); // なくはない
+    }
+
+    #[test]
+    fn test_noun_wa() {
+        // Structure: Noun + は + なくはない
+        // Example from grammar_points_data.json
+        let sentence = "時間はなくはないんですが、もっと時間を有効に使いたいだけです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくはない");
+        assert_pattern_range(&patterns, "なくはない", 3, 8); // なくはない
+    }
+
+    #[test]
+    fn test_noun_ni() {
+        // Structure: Noun + に + なくはない
+        let sentence = "家にテレビがなくはないけど、アンテナがつながっていないからモニターとして使ってる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくはない");
+        assert_pattern_range(&patterns, "なくはない", 6, 11); // なくはない
+    }
+
+    #[test]
+    fn test_potential_verb() {
+        // Structure: Verb（potential）［なくて］+ はない
+        // Example from grammar_points_data.json - very common usage
+        let sentence = "納豆は食べれなくはないけど、どうせ食べるならもっと美味しいものを食べたいかな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくはない");
+        assert_pattern_range(&patterns, "なくはない", 6, 11); // なくはない
+    }
+}
