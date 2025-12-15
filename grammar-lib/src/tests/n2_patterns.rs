@@ -10525,3 +10525,67 @@ mod fuuni_tests {
         assert!(!has_pattern(&patterns, "ふうに"));
     }
 }
+
+// Pattern: も～ば～も (both...and...)
+// Data source: grammar_points_data.json["も～ば～も"]
+// Testing all structure variants:
+//   - standard[0]: Noun (A)も + Verb［ば］+ Noun (B)も
+//   - standard[1]: Noun (A)も + ［い］Adjective［ば］+ Noun (B)も
+//   - standard[2]: Noun (A)も + ［な］Adjective + なら + Noun (B)も
+//   - standard[3]: Noun (A)も + Noun + なら + Noun (B)も
+//
+// Meaning: Expresses that both (A) and (B) share the same characteristic
+// Translation: "both (A) and (B)", "if (A) then also (B)"
+
+mod mo_ba_mo_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_verb_ba_noun() {
+        // Testing: Noun (A)も + Verb［ば］+ Noun (B)も
+        let sentence = "お父さんはイタリア語も出来ればスペイン語も話せる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も～ば～も");
+        assert_pattern_range(&patterns, "も～ば～も", 5, 21); // イタリア語も出来ればスペイン語も
+    }
+
+    #[test]
+    fn test_noun_i_adj_ba_noun() {
+        // Testing: Noun (A)も + ［い］Adjective［ば］+ Noun (B)も
+        let sentence = "日本の冬は湿度も低ければ温度も低い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も～ば～も");
+        assert_pattern_range(&patterns, "も～ば～も", 5, 15); // 湿度も低ければ温度も
+    }
+
+    #[test]
+    fn test_noun_na_adj_nara_noun() {
+        // Testing: Noun (A)も + ［な］Adjective + なら + Noun (B)も
+        let sentence = "このギターの音も好きなら柄も好きなので一生手放したくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も～ば～も");
+        assert_pattern_range(&patterns, "も～ば～も", 6, 14); // 音も好きなら柄も
+    }
+
+    // TODO: Complex repetitive pattern - not currently detectable
+    // This pattern uses rhetorical repetition: X も X なら, Y も Y (if X is X, then Y is Y)
+    // The structure has multiple tokens between も and なら (騙す方も騙す方なら)
+    // Current implementation only handles single-token conditional elements
+    //
+    // #[test]
+    // fn test_noun_noun_nara_noun() {
+    //     // Testing: Noun (A)も + Noun + なら + Noun (B)も (with repetition)
+    //     let sentence = "騙す方も騙す方なら騙される方も騙される方だと思う";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "も～ば～も");
+    //     assert_pattern_range(&patterns, "も～ば～も", 2, 15); // 方も騙す方なら騙される方も
+    // }
+}

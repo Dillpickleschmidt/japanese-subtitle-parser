@@ -6147,7 +6147,7 @@ declare_patterns! {
     MoUff5eBaUff5eMo {
         name: "も～ば～も",
         matcher_fn: crate::matchers::n2::mo_uff5e_ba_uff5e_mo,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

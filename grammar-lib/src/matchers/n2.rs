@@ -7059,9 +7059,146 @@ pub fn nisuginai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: も～ば～も
+// Pattern: も～ば～も (both...and...)
+// Structures:
+//   Noun (A)も + Verb［ば］+ Noun (B)も
+//   Noun (A)も + い-Adj［ば］+ Noun (B)も
+//   Noun (A)も + な-Adj + なら + Noun (B)も
+//   Noun (A)も + Noun + なら + Noun (B)も
 pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match も particle (係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ば particle (接続助詞)
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl super::Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match なら (助動詞, base=だ, 仮定形)
+    #[derive(Debug)]
+    struct NaraAuxiliaryMatcher;
+    impl super::Matcher for NaraAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match verb in 仮定形 (conditional form)
+    #[derive(Debug)]
+    struct VerbKateiMatcher;
+    impl super::Matcher for VerbKateiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match i-adjective in 仮定形
+    #[derive(Debug)]
+    struct IAdjKateiMatcher;
+    impl super::Matcher for IAdjKateiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match: Verb/i-Adj in 仮定形 or na-Adj/Noun
+    #[derive(Debug)]
+    struct MiddleElementMatcher;
+    impl super::Matcher for MiddleElementMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Verb in 仮定形
+            (token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形"))
+            ||
+            // i-Adjective in 仮定形
+            (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形"))
+            ||
+            // na-Adjective stem or Noun (followed by なら)
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match: ば particle OR なら auxiliary
+    #[derive(Debug)]
+    struct BaOrNaraMatcher;
+    impl super::Matcher for BaOrNaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ば particle
+            (token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+            ||
+            // なら auxiliary
+            (token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形"))
+        }
+    }
+
+    // Match noun suffix (like 語)
+    #[derive(Debug)]
+    struct NounSuffixMatcher;
+    impl super::Matcher for NounSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Stop condition for ば particle
+    #[derive(Debug)]
+    struct BaStopMatcher;
+    impl super::Matcher for BaStopMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Stop condition for なら auxiliary
+    #[derive(Debug)]
+    struct NaraStopMatcher;
+    impl super::Matcher for NaraStopMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),                                 // Noun (A)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NounSuffixMatcher)))), // optional suffix
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),     // も
+        TokenMatcher::Custom(Arc::new(MiddleElementMatcher)),  // Verb/i-Adj/Noun in conditional form
+        TokenMatcher::Custom(Arc::new(BaOrNaraMatcher)),       // ば or なら
+        super::noun_matcher(),                                 // Noun (B)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NounSuffixMatcher)))), // optional suffix
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),     // も
+    ]
 }
 
 // Pattern: でしかない
