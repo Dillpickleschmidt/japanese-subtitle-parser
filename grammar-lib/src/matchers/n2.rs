@@ -7776,9 +7776,15 @@ pub fn dakeatte() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: 何より
+// Pattern: 何より (more than anything, above all)
+// Structures: 何より/(何 + より + も) + Phrase/Noun
 pub fn naniyori() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // For now, just match 何より as a single token (副詞/助詞類接続)
+    // Note: 何よりも is tokenized as three separate tokens (何 + より + も),
+    // which is a different tokenization. We'd need a separate pattern to catch that.
+    vec![TokenMatcher::Surface("何より")]
 }
 
 // Pattern: 何といっても

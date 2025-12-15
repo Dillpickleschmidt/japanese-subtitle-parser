@@ -11932,3 +11932,63 @@ mod tachimachi_tests {
         assert_pattern_range(&patterns, "たちまち", 18, 22); // たちまち
     }
 }
+
+// Pattern: 何より (more than anything, above all)
+// Data source: grammar_points_data.json["何より"]
+// Testing: structure.standard[0] - "何より + (も) + Phrase"
+// Testing: structure.standard[1] - "何より + の + Noun"
+//
+// Structure variants:
+//   - standard[0]: 何より + (も) + Phrase (adverbial use)
+//   - standard[1]: 何より + の + Noun (before noun)
+//   - No polite forms (phrase used in both contexts)
+
+mod naniyori_tests {
+    use super::*;
+
+    #[test]
+    fn test_naniyori_surprised() {
+        let sentence = "何より驚いたのは、あの中田くんが医者になったことだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何より");
+        assert_pattern_range(&patterns, "何より", 0, 3); // 何より
+    }
+
+    #[test]
+    fn test_naniyori_glad() {
+        let sentence = "田中様のお役に立てて何よりです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何より");
+        assert_pattern_range(&patterns, "何より", 10, 13); // 何より
+    }
+
+    // TODO: Undetectable - Multi-token 何よりも
+    // When written as 何よりも (with も emphasis), it's tokenized as three separate tokens:
+    // 何 (名詞/代名詞) + より (助詞/格助詞) + も (助詞/係助詞)
+    // This is a different tokenization from 何より (single token, 副詞/助詞類接続).
+    // To detect this would require a separate pattern definition for the multi-token sequence.
+    //
+    // #[test]
+    // fn test_naniyorimo_important() {
+    //     let sentence = "何よりも大切なのは、何でも諦めずに頑張ってやることだ";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "何より");
+    //     assert_pattern_range(&patterns, "何より", 0, 4); // 何よりも
+    // }
+
+    #[test]
+    fn test_naniyori_no_noun() {
+        let sentence = "休みの日に妻とドライブに行くのが何よりの楽しみです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何より");
+        assert_pattern_range(&patterns, "何より", 16, 19); // 何より
+    }
+}

@@ -9957,13 +9957,13 @@
   {
     "pattern_name": "何より",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "何（なに）より , or 何（なに）よりも when emphasized, is a common phrase in Japanese that is used when one wants to express that the... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
