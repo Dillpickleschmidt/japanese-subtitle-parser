@@ -1,3 +1,143 @@
+## Session 444 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (未だに, をもとに)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 5 new tests (2 + 3, all passing with range assertions)
+**Total tests**: 2921 passing, 1 ignored (was 2916 before session, net +5 tests)
+
+**Session highlights**:
+- Implemented 未だに (still, even now) - N2 adverb pattern with dual tokenization handling
+- Implemented をもとに (based on) - N2 construction pattern
+- 未だに: Handles both single-token (いまだに) and split tokenization (いまだ + に)
+- をもとに: Core pattern is を + もと + に, with optional following particles
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 5 structure variants tested with realistic sentences (2 + 3)
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented #1: 未だに (still, even now)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: 未だに (いまだに) is a formal adverb meaning "still" or "even now", typically emphasizing that something has continued for a longer period than まだ (still). It appears at the beginning of sentences or clauses to indicate an ongoing state that is expected to have changed. Compared to まだ, 未だに is more formal and implies a much longer continuation, similar to adding ずっと to a sentence. It can be used with both affirmative verbs (still doing) and negative verbs (still not).
+
+**Structures tested**: 2 test variants
+1. 未だに + Verb[る]: 私が子供の頃に巻き込まれた事故のことはいまだに覚えている (chars 19-23) - "still remember"
+2. 未だに + Verb[ない]: 部長は人事に注意されて２ヶ月も経つのに、彼の態度はいまだに変わらない (chars 25-29) - "still hasn't changed"
+
+**Implementation details**:
+- Tokenization: Can be EITHER:
+  - Single token: いまだに (副詞/一般)
+  - Two tokens: いまだ (副詞/助詞類接続) + に (助詞/副詞化)
+- Custom matchers created:
+  - ImadaOrImadaniMatcher: matches いまだ or いまだに as adverb
+  - NiFukushikaMatcher: matches に as adverbializer (助詞/副詞化) - optional
+- Uses Optional wrapper for に to handle both tokenization variants
+- Single flexible matcher handles both cases
+
+**Test count**: 2 tests (all passing)
+- test_imadani_affirmative: いまだに覚えている (split tokenization: いまだ + に)
+- test_imadani_negative: いまだに変わらない (single token: いまだに)
+
+**Tokenization observations**:
+- Split: いまだ (副詞/助詞類接続) + に (助詞/副詞化)
+- Single: いまだに (副詞/一般)
+- Kagome uses DIFFERENT tokenizations depending on context
+- Pattern matcher handles both via Optional(に)
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented imadani() function with 2 custom matchers and Optional
+- grammar-lib/src/tests/n2_patterns.rs: Added imadani_tests module with 2 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- More formal than まだ
+- Implies longer time period of continuation
+- Written with kanji as 未だに but commonly appears in hiragana
+
+---
+
+### ✅ Pattern Implemented #2: をもとに (based on)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: をもとに is an expression meaning "based on (A)", "from (A)", or "according to (A)". It combines を (object marker) + もと (origin/base) + に (direction marker), with a literal meaning of "with (A) as the origin". It's used primarily to reference a source from which something is created or started. The pattern can optionally be followed by する in various forms (して, した) to form をもとにして or をもとにした. Different from に基づいて which emphasizes judgement/conclusion foundation, をもとに focuses on inspiration or enabling source.
+
+**Structures tested**: 3 test variants
+1. Noun + をもとに: このドラマは実際に起こったことをもとに作られたそうだ (chars 15-19) - "based on actual events"
+2. Noun + をもとにして: 研究の結果をもとにしてレポートを書いてください (chars 5-9) - "based on research results" (with して)
+3. Noun + をもとにした: このデータをもとにした分析を提出します (chars 5-9) - "analysis based on this data" (with した)
+
+**Implementation details**:
+- Core pattern: を (格助詞) + もと (名詞) + に (格助詞)
+- Custom matchers created:
+  - WoCaseMatcher: matches を as case particle (助詞/格助詞)
+  - MotoNounMatcher: matches もと as noun (名詞/一般)
+  - NiCaseMatcher: matches に as case particle (助詞/格助詞)
+- Pattern detects core をもとに, with optional following する forms treated separately
+- TokenMatcher sequence: を + もと + に
+
+**Test count**: 3 tests (all passing)
+- test_womotoni_basic: をもとに (basic form)
+- test_womotoni_with_shite: をもとにして (with して)
+- test_womotoni_shita_noun: をもとにした (with した + noun)
+
+**Tokenization observations**:
+- を: Always 助詞/格助詞/一般 (case particle)
+- もと: Always 名詞/一般 (general noun)
+- に: Always 助詞/格助詞/一般 (case particle)
+- Optional following: し (する, 連用形) + て/た
+- Core pattern matches to を...に, excluding optional following particles
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented womotoni() function with 3 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added womotoni_tests module with 3 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Can be written with kanji as を元に or を基に or を下に (different nuances)
+- Most common form: を元に (origin/beginning)
+- Often seen in hiragana: をもとに
+- Different from に基づいて (more about judgement/conclusion)
+
+---
+
+**Current stats** (after both patterns):
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 106 remaining (down from 108 - completed 2 patterns!)
+- N1: 176 remaining
+- Total: ~284 patterns remaining
+
+### Quality Metrics
+✅ All 5 tests have assert_pattern_range (2 + 3)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2921 tests passing, up from 2916)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- 一旦 - once, for a moment
+- はもとより - not only... but also
+- そうにない - doesn't seem likely
+- に反して - contrary to
+- 逆に - conversely
+
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 5 new tests added (2 + 3), all passing, no regressions. One pattern (未だに) handles dual tokenization variants elegantly using Optional wrapper. Clean implementation following test-first workflow.
+
+---
+
 ## Session 443 - 2025-12-15
 
 ### Session Summary - COMPLETE
