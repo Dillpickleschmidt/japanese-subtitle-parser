@@ -1,3 +1,82 @@
+## Session 378 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 得る・得る pattern (N2)
+**Patterns completed**: 1 (得る・得る - N2 newly implemented)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2435 passing, 1 ignored (was 2429 passing, 1 ignored - net +6 tests)
+
+### ✅ Pattern Implemented: 得る・得る (to be possible, can do)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: 得（え）る is a る-Verb that has the meaning of 'to gain', or 'to acquire'. When attached to the conjunctive form (連用形) of verbs, it takes on the nuance of 'for (A) to be possible', or 'to be able to (A)'. This is more formal/bookish than できる and conveys a sense of possibility or potential.
+
+**Key feature**: Can be written as either える or うる. The うる form is more literary and is often preferred when the preceding verb stem ends in え (e.g., 考えうる rather than 考ええる).
+
+**Structures tested**: 6 comprehensive tests covering all major conjugation forms
+1. Verb[stem] + える (dictionary): 死にえるだろう → 死にえるだろう (10-17)
+2. Verb[stem] + える (dictionary): 起こりえるものだ → 起こりえる (17-22)
+3. Verb[stem] + える (dictionary): なりえるので → なりえる (12-16)
+4. Verb[stem] + うる (literary form): 考えうる事は → 考えうる (0-4)
+5. Verb[stem] + えます (polite): ありえますね → ありえます (3-8)
+6. Verb[stem] + えない (negative): ありえない → ありえない (20-25)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n2.rs (eru_u30fb_eru function, lines 5-33)
+  - VerbStemMatcher: Checks pos=動詞 AND conjugation=連用形
+  - EruUruMatcher: Matches える OR うる with pos=動詞/非自立
+  - Pattern: Verb[連用形] + える/うる (動詞/非自立)
+- Tests: grammar-lib/src/tests/n2_patterns.rs (eru_u30fb_eru_tests module, lines 1902-1978)
+- Pattern: grammar-lib/src/patterns.rs (declared with priority 4)
+
+**Tokenization observations**:
+- Split tokenization (productive): Verb stem + える/うる as separate tokens
+  - 起こり (起こる, 連用形) + える (動詞/非自立, 基本形)
+  - 考え (考える, 連用形) + うる (動詞/非自立, 基本形)
+  - え/うる conjugates: 基本形 (える), 連用形 (え + ます), 未然形 (え + ない)
+- Lexicalized compounds (not matched): ありえる as single token (動詞/自立)
+  - Our pattern focuses on the productive construction, not dictionary verbs
+
+**Pattern ranges**: Include verb stem + える/うる + any conjugation auxiliaries
+- Dictionary form: `起こりえる` (17-22) - verb stem + える
+- Polite form: `ありえます` (3-8) - verb stem + え + ます
+- Negative form: `ありえない` (20-25) - verb stem + え + ない
+- Volitional: `死にえるだろう` (10-17) - verb stem + える + だろう
+
+**Linguistic notes**:
+- える vs うる: Both are valid. うる is more literary and preferred when the verb stem ends in え
+- Common phrases: ありえる (possible), ありえない (impossible) are very common in daily speech
+- Formal register: More bookish than できる, used for abstract possibilities
+- Compared to できる: える emphasizes that "the possibility has been gained/acquired"
+
+**Related patterns**:
+- 〜得ない (u301c_enai) - N2, already implemented (negative potential form)
+- できる - N5 (general ability/possibility, more casual)
+
+### Test Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples
+✅ Correct character ranges
+✅ Tests cover dictionary, polite, negative, and literary (うる) forms
+✅ No regressions (all 2435 tests passing)
+
+### Session Stats
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 182 remaining (down from 183!)
+- N1: 186 remaining
+- Total: ~370 patterns remaining (down from ~371!)
+
+**Next priority**: Continue with N2 patterns - ざるを得ない, つもりで, どうせ, せめて, etc.
+
+---
+
 ## Session 375 - 2025-12-14
 
 ### ✅ Session Summary
