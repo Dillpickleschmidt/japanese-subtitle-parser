@@ -1,3 +1,62 @@
+## Session 385 - 2025-12-15
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented ようがない・ようもない pattern (N2)
+**Patterns completed**: 1 (ようがない・ようもない - N2 newly implemented)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2493 passing, 1 ignored (was 2487 passing, 1 ignored - net +6 tests)
+
+### ✅ Pattern Implemented: ようがない・ようもない (there is no way to / impossible to)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: 様（よう）がない or 様（よう）もない is an expression used to highlight that there is no 'method' or 'manner' in which to do (A). It can be interpreted as 'there is no way to (A)', or 'it's impossible to (A)'. This phrase attaches to the conjunctive form (連用形/stem) of verbs.
+
+**Structures tested**: 6 comprehensive tests covering all structure variants
+1. Verb[stem] + よう + が + ない: 行きようがない (17-24) - "there is no way to go"
+2. する Verb + の + しよう + が + ありません (polite): のしようがありません (23-33) - "there is no way to contact"
+3. Verb[stem] + よう + も + ない: 直しようもない (13-20) - "there is no way to fix"
+4. する Verb + の + しよう + も + ない: のしようもない (14-21) - "there is no way to deal with"
+5. Verb[stem] + よう + が + ありません (polite): 調べようがありません (9-19) - "there is no way to investigate"
+6. Verb[stem] + よう + が + なかった (past): 逃げようがなかった (7-16) - "there was no way to escape"
+
+**Implementation**: Matcher in n2.rs (lines 484-536), tests in n2_patterns.rs (lines 2837-2924)
+
+**Key notes**:
+- Pattern can use either が or も particle (both mean the same)
+- よう tokenizes as 名詞/接尾/一般 (noun suffix) for regular verbs
+- しよう tokenizes as 名詞/一般 (general noun) for suru verbs
+- Negative forms: ない (adjective/auxiliary) or ありません (polite negative of ある)
+- Past forms work automatically (なかった matches base_form="ない")
+
+**Tokenization observations**:
+- **Regular verbs**: Verb[連用形] + よう (名詞/接尾/一般)
+- **する verbs**: Noun + の (助詞/連体化) + しよう (名詞/一般)
+- **Particles**: が or も (both 助詞)
+- **Negative**: ない (形容詞/自立 or 助動詞) OR ある (動詞/自立 for ありません)
+
+**Test note**: Initially included a test with volitional form "信用しよう" (しよ + う as verb), but this is different from the noun しよう. Replaced with past tense test to avoid confusion between volitional form and the noun meaning "way/manner".
+
+### Test Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json examples
+✅ No regressions (all 2493 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 165 remaining (down from 166!)
+- N1: 186 remaining
+- Total: ~353 patterns remaining (down from ~354!)
+
+**Next priority**: Continue with N2 patterns - にほかならない, っこない, それなら, ものなら①, etc.
+
+---
+
 ## Session 384 - 2025-12-15
 
 ### ✅ Session Summary
