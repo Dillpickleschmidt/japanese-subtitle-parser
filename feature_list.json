@@ -7758,13 +7758,13 @@
   {
     "pattern_name": "を中心に",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When combined with nouns, the expression を中心（ちゅうしん）に indicates that something is being 'focused on' or 'centered around' [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

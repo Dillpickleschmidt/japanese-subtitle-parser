@@ -1179,9 +1179,58 @@ pub fn nakawo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を中心に
+// Pattern: を中心に (focused on, centered around, mainly)
+// Structures: Noun + を中心に/として/にして/にする/にした/とする/とした
 pub fn wochuushinni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を particle
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl super::Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 中心 (noun)
+    #[derive(Debug)]
+    struct ChuushinMatcher;
+    impl super::Matcher for ChuushinMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "中心"
+                && token.base_form == "中心"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match に or と particle, or として compound particle
+    #[derive(Debug)]
+    struct NiToToshiteMatcher;
+    impl super::Matcher for NiToToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+            || (token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+            || (token.surface == "として"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun
+        TokenMatcher::Custom(Arc::new(WoMatcher)),
+        TokenMatcher::Custom(Arc::new(ChuushinMatcher)),
+        TokenMatcher::Custom(Arc::new(NiToToshiteMatcher)),
+        // Optionally followed by する in various forms (する, した, して)
+        TokenMatcher::Optional(Box::new(TokenMatcher::specific_verb("する"))),
+    ]
 }
 
 // Pattern: その上

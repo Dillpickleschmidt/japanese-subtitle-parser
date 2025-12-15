@@ -3581,3 +3581,87 @@ mod tochuuni_tochuude_tests {
         assert_pattern_range(&patterns, "途中に・途中で", 0, 10); // ミーティングの途中で
     }
 }
+
+// Pattern: を中心に (focused on, centered around, mainly)
+// Data source: grammar_points_data.json["を中心に"]
+// Testing: structure.standard[0] - "Noun + を中心（ちゅうしん） + に"
+// Testing: structure.standard[1] - "Noun + を中心（ちゅうしん） + にした + Noun"
+// Testing: structure.standard[2] - "にして、として" variants
+// Testing: structure.standard[3] - "とした" variant
+//
+// Structure variants:
+//   - standard[0]: Noun + を中心に
+//   - standard[1]: Noun + を中心にした + Noun
+//   - standard[2]: を中心にして, を中心として
+//   - standard[3]: を中心とした + Noun
+//   - Additional: を中心にする (verb form)
+
+mod wochuushinni_tests {
+    use super::*;
+
+    // Testing: Noun + を中心に
+    #[test]
+    fn test_noun_wo_chuushinni() {
+        let sentence = "あのアイドルは若者を中心に人気を集めている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を中心に");
+        assert_pattern_range(&patterns, "を中心に", 7, 13); // 若者を中心に
+    }
+
+    // Testing: Noun + を中心にした + Noun
+    #[test]
+    fn test_noun_wo_chuushinni_shita_noun() {
+        let sentence = "ここはスケートボードを中心にしたポップアップストアです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を中心に");
+        assert_pattern_range(&patterns, "を中心に", 7, 16); // ボードを中心にした
+    }
+
+    // Testing: Noun + を中心にして
+    #[test]
+    fn test_noun_wo_chuushinni_shite() {
+        let sentence = "私は今日本語の文法を中心にして勉強をしています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を中心に");
+        assert_pattern_range(&patterns, "を中心に", 7, 14); // 文法を中心にし (verb part before て)
+    }
+
+    // Testing: Noun + を中心として
+    #[test]
+    fn test_noun_wo_chuushintoshite() {
+        let sentence = "明日からは札幌を中心として大雪が降るところがあるでしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を中心に");
+        assert_pattern_range(&patterns, "を中心に", 5, 13); // 札幌を中心として
+    }
+
+    // Testing: Noun + を中心とした + Noun
+    #[test]
+    fn test_noun_wo_chuushintoshita_noun() {
+        let sentence = "これからはクライアントの提案を中心とした話を進めたいと思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を中心に");
+        assert_pattern_range(&patterns, "を中心に", 12, 20); // 提案を中心とした
+    }
+
+    // Testing: Noun + を中心にする
+    #[test]
+    fn test_noun_wo_chuushinni_suru() {
+        let sentence = "この業界ではお客様を中心にすることが一番重要なことだと言われている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を中心に");
+        assert_pattern_range(&patterns, "を中心に", 6, 15); // お客様を中心にする
+    }
+}
