@@ -1,15 +1,16 @@
 ## Session 395 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented た末・の末 (N2)
-**Patterns completed**: 1 (た末・の末 - N2)
-**Tests added**: 4 new tests (all passing)
-**Total tests**: 2576 passing, 1 ignored (was 2572 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (た末・の末, にしたがって)
+**Patterns completed**: 2 (た末・の末 and にしたがって - both N2)
+**Tests added**: 8 new tests (all passing)
+**Total tests**: 2580 passing, 1 ignored (was 2572 passing, 1 ignored - net +8 tests)
 
 **Session highlights**:
 - Implemented た末・の末 (after, as a result of) - all 2 structure variants
-- Pattern handles both Verb[た] + すえ and Noun + の + すえ forms
-- Flexible matcher using TokenMatcher::Any to match both patterns
+- Implemented にしたがって (in accordance with, as, following) - all 2 structure variants
+- Both patterns handle Verb and Noun forms flexibly
+- Used TokenMatcher::Any and custom matchers to handle multiple grammatical structures
 - Clean implementation with comprehensive test coverage
 - All tests passing, no regressions
 
@@ -59,6 +60,53 @@
 - Created custom matcher that checks for EITHER た OR の (since there's no TokenMatcher::Or)
 - This approach allows a single pattern to handle both grammatical structures
 - Verified all 4 structure variants work correctly: た+すえ, た+すえ+に, の+すえ, の+すえ+に
+
+---
+
+### ✅ Pattern Implemented: にしたがって (in accordance with, as, following)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: By grouping the う-Verb 従（したが）う 'to comply' with に, a common pattern meaning 'to comply with (A)', 'in accordance with (A)', or 'following (A)' is created. This is a fairly strong and formal structure, indicating that (B) is being controlled or heavily influenced by (A). (B) will often express some kind of ongoing or sudden change caused by (A).
+
+**Structures tested**: 4 comprehensive tests covering all variants
+1. Verb[る] + にしたがって: 取るにしたがって (2-10), 進むにしたがって (9-17) - "as verb happens"
+2. Noun + にしたがって: 指示にしたがって (7-15), 書にしたがって (4-11) - "in accordance with noun"
+
+**Implementation**: Matcher in n2.rs (lines 1645-1697), tests in n2_patterns.rs (lines 4019-4075)
+
+**Key notes**:
+- Pattern uses TokenMatcher::Any to match either Verb (dictionary form) or Noun
+- したがう always tokenizes as a verb (動詞/自立, base_form='したがう')
+- Pattern matches: (Verb/Noun) + に + したがう(conjugated) + て/い
+- Formal construction typically used with laws, standards, conventions, traditions
+- Pattern includes full construction from verb/noun through て
+
+**Tokenization observations**:
+- **にしたがって**: に (助詞/格助詞) + したがっ (動詞, base='したがう', 連用タ接続) + て (助詞/接続助詞)
+- **にしたがい**: に (助詞/格助詞) + したが (動詞, base='したがう') + い (verb/auxiliary)
+- Works for both Verb[る] + に and Noun + に patterns
+
+**Pattern ranges**: Full construction from verb/noun through て
+- 取るにしたがって: includes verb + に + したがっ + て
+- 指示にしたがって: includes noun + に + したがっ + て
+- Pattern matcher supports both て and い endings (にしたがって/にしたがい)
+
+### Test Quality Metrics (にしたがって)
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json examples
+✅ No regressions
+✅ Both structure variants (Verb[る] and Noun) tested thoroughly
+
+### Implementation Approach
+- Used TokenMatcher::Any to match either verb (dictionary form) or noun
+- Created ShitagauVerbMatcher to specifically match したがう verb
+- Created TeOrIMatcher to handle both て and い endings
+- Single pattern handles both Verb+に and Noun+に structures
+- Verified all 4 test cases work correctly with proper character ranges
 
 ---
 
