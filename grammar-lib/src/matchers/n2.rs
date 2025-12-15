@@ -4804,9 +4804,52 @@ pub fn souninai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に反して
+// Pattern: に反して (contrary to, in contrast to)
+// Structures: Noun + に + 反して OR Noun + に + 反する
 pub fn nihanshite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as case particle
+    #[derive(Debug)]
+    struct NiCaseMatcher;
+    impl Matcher for NiCaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 反し (連用形 of 反す) or 反する (基本形)
+    #[derive(Debug)]
+    struct HanshiOrHansuruMatcher;
+    impl Matcher for HanshiOrHansuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && ((token.surface == "反し" && token.base_form == "反す")
+                    || (token.surface == "反する" && token.base_form == "反する"))
+        }
+    }
+
+    // Match て (optional, only for に反して)
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.base_form == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NiCaseMatcher)),
+        TokenMatcher::Custom(Arc::new(HanshiOrHansuruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeMatcher)))),
+    ]
 }
 
 // Pattern: 逆に

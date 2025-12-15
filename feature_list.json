@@ -8851,13 +8851,13 @@
   {
     "pattern_name": "に反して",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に反（はん）して , a combination of に and the て-form of 反（はん）する 'to oppose', or 'to go against', is a construction in Japanes... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

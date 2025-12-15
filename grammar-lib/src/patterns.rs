@@ -5443,7 +5443,7 @@ declare_patterns! {
     Nihanshite {
         name: "に反して",
         matcher_fn: crate::matchers::n2::nihanshite,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

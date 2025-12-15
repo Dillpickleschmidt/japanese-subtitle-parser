@@ -8522,3 +8522,57 @@ mod souninai_tests {
     // - "この問題は解決しそうにありませんね"
     // - "彼は来そうにもありませんから待たなくていいですよ"
 }
+
+// Pattern: に反して (contrary to, in contrast to)
+// Data source: grammar_points_data.json["に反して"]
+mod nihanshite_tests {
+    use super::*;
+
+    #[test]
+    fn test_nihanshite_company_rules() {
+        // Structure: Noun + に反して
+        // Example from grammar data: 会社のルールに反して
+        let sentence = "彼らは会社のルールに反して交際をしているらしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に反して");
+        assert_pattern_range(&patterns, "に反して", 6, 13); // ルールに反して
+    }
+
+    #[test]
+    fn test_nihanshite_expectations() {
+        // Structure: Noun + に反して
+        // Example from grammar data: 予想に反して
+        let sentence = "予想に反してクライアントの反応がいまいちだった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に反して");
+        assert_pattern_range(&patterns, "に反して", 0, 6); // 予想に反して
+    }
+
+    #[test]
+    fn test_nihansuru_modify_noun() {
+        // Structure: Noun + に反する + Noun
+        // Example from grammar data: 指示に反すること
+        let sentence = "私は上司の指示に反することはできません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に反して");
+        assert_pattern_range(&patterns, "に反して", 5, 11); // 指示に反する
+    }
+
+    #[test]
+    fn test_nihanshite_finish_early() {
+        // Structure: Noun + に反して
+        // Additional example: 予想に反して早く終える
+        let sentence = "予想に反して早く終えることができた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に反して");
+        assert_pattern_range(&patterns, "に反して", 0, 6); // 予想に反して
+    }
+}
