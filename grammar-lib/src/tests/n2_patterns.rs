@@ -4457,3 +4457,51 @@ mod nao_u2460_tests {
         assert_pattern_range(&patterns, "なお①", 11, 13); // なお
     }
 }
+
+// Pattern: につけ (every time, whenever)
+// Data source: grammar_points_data.json["につけ"]
+// Testing structure variants:
+//   - standard[0]: Verb［る］+ につけ（て）
+//   - standard[1]: Noun + につけ（て）
+//
+// Note: May appear as につけ or につけて (abbreviated form more common)
+
+mod nitsuke_tests {
+    use super::*;
+
+    #[test]
+    fn test_nitsuke_verb_dictionary() {
+        // Testing: structure.standard[0] - "Verb［る］+ につけ"
+        // Example from grammar_points_data.json
+        let sentence = "元カノが写っている写真を見るにつけ、胸が痛くなる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "につけ");
+        assert_pattern_range(&patterns, "につけ", 14, 17); // につけ
+    }
+
+    #[test]
+    fn test_nitsuke_verb_tsukete() {
+        // Testing: structure.standard[0] - "Verb［る］+ につけて" (less common)
+        // Example from grammar_points_data.json showing につけて variant
+        let sentence = "彼と一緒に時間を過ごすにつけて、なんでこんな人と付き合っているんだろうと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "につけて");
+        assert_pattern_range(&patterns, "につけて", 11, 15); // につけて
+    }
+
+    #[test]
+    fn test_nitsuke_noun() {
+        // Testing: structure.standard[1] - "Noun + につけ"
+        // Example from grammar_points_data.json: 何かにつけ
+        let sentence = "彼は何かにつけ文句を言うので、一緒にいるだけで疲れる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "につけ");
+        assert_pattern_range(&patterns, "につけ", 4, 7); // につけ
+    }
+}

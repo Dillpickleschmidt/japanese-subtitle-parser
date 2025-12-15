@@ -4888,6 +4888,14 @@ declare_patterns! {
         jlpt: "n2",
     },
 
+    Nitsukete {
+        name: "につけて",
+        matcher_fn: crate::matchers::n2::nitsukete,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
     Nikakawaru {
         name: "にかかわる",
         matcher_fn: crate::matchers::n2::nikakawaru,

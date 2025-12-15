@@ -1760,9 +1760,53 @@ pub fn nitsuki_compound() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: につけ
+// Pattern: につけ (every time, whenever)
+// Structures: Verb/Noun + につけ
+// Tokenization: につけ as compound particle (助詞/格助詞/連語)
 pub fn nitsuke() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match につけ as compound particle
+    #[derive(Debug)]
+    struct NitsukeMatcher;
+    impl super::Matcher for NitsukeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "につけ"
+                && token.base_form == "につけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NitsukeMatcher))]
+}
+
+// Pattern: につけて (every time, whenever - less common variant)
+// Structures: Verb/Noun + につけて
+// Tokenization: に + つけ(動詞/連用形) + て
+pub fn nitsukete() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match つけ as verb in 連用形
+    #[derive(Debug)]
+    struct TsukeVerbMatcher;
+    impl super::Matcher for TsukeVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "つけ"
+                && token.base_form == "つける"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "連用形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Custom(Arc::new(TsukeVerbMatcher)),
+        TokenMatcher::Surface("て"),
+    ]
 }
 
 // Pattern: にかかわる
