@@ -1,3 +1,88 @@
+## Session 399 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (要するに, たまえ)
+**Patterns completed**: 2 (要するに and たまえ - both N2)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2611 passing, 1 ignored (was 2607 passing, 1 ignored - net +4 tests)
+
+**Session highlights**:
+- Implemented 要するに (yousuruni) - "to sum up, in summary, in short"
+- Implemented たまえ (tamae) - "polite imperative form" (partial - Kagome limitations)
+- Both patterns are simple with single structure variants
+- Clean implementation with comprehensive test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: 要するに (to sum up, in summary, in short)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: 要するに is an expression used to highlight important information, similar to "to sum up", "in summary", or "in short" in English. It's a combination of the する-Verb 要 'to need/require' and に. Always appears at the beginning of a sentence before expressing a condensed version of what was previously said.
+
+**Structures tested**: 1 structure with 3 comprehensive tests
+1. Resume lie example: 要するに at chars 0-4 - "in short"
+2. Wheat allergy example: 要するに at chars 0-4 - "in summary"
+3. Being used example: 要するに at chars 0-4 - "in short"
+
+**Implementation**: Matcher in n2.rs (lines 2137-2150), tests in n2_patterns.rs (lines 4509-4555)
+
+**Key notes**:
+- Simple single-token adverb pattern
+- 要するに tokenizes as 副詞/一般 (adverb)
+- Custom matcher checks surface="要するに", base_form="要するに", pos=副詞
+- Always sentence-initial position
+- Register: standard/formal
+
+**Tokenization observations**:
+- surface='要するに', base='要するに', pos=副詞/一般/\*/\*
+
+**Pattern ranges**: Single token "要するに" (4 characters)
+- All test cases verified correct single-token detection at sentence start (chars 0-4)
+
+---
+
+### ✅ Pattern Implemented: たまえ (polite imperative)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: たまえ is an imperative form coming from the う-Verb 給う 'to give/bestow'. Attached to verb stems to create a polite order ("please do X"). Only used by men to subordinates in obvious hierarchical relationships.
+
+**Structures tested**: 1 structure with 1 passing test (+ 2 undetectable cases documented)
+1. Sit down example: 座りたまえ at chars 10-15 - "please sit" ✓
+
+**Undetectable cases (Kagome tokenization issues)**:
+- 食べたまえ: Tokenized as た(past) + ま(filler) + え(filler) ✗
+- 言いたまえ: Tokenized as proper noun (person's name) ✗
+
+**Implementation**: Matcher in n2.rs (lines 2177-2195), tests in n2_patterns.rs (lines 4557-4607)
+
+**Key notes**:
+- Verb stem + たまえ (imperative form)
+- Kagome inconsistently tokenizes たまえ
+- Can only detect when correctly tokenized as: たまえ(動詞/命令ｅ/base=たまう)
+- Custom matcher checks surface="たまえ", base_form="たまう", pos=動詞, conjugation=命令ｅ
+- Register: formal/polite (but hierarchical)
+- Gender: primarily men only
+
+**Tokenization observations**:
+- Correct: surface='たまえ', base='たまう', pos=動詞/自立, features[5]='命令ｅ'
+- Incorrect (case 1): た(助動詞) + ま(フィラー) + え(フィラー)
+- Incorrect (case 2): たまえ(名詞/固有名詞/人名/名)
+
+**Pattern ranges**: Verb stem + たまえ (full construction)
+- test_tamae_sit: 座りたまえ at chars 10-15 ✓
+- Undetectable cases documented in commented-out tests with TODO explanations
+
+**Limitations**: Due to Kagome's inconsistent tokenization, this pattern has limited detection capability. Most real-world uses may not be detected. Documented thoroughly for future reference.
+
+---
+
 ## Session 398 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
