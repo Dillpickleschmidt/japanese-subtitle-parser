@@ -4605,3 +4605,113 @@ mod tamae_tests {
 //     let patterns = detect_patterns(&tokens);
 //     // Cannot detect - たまえ split into fillers
 // }
+
+// Pattern: に伴って・に伴い (due to, along with, in conjunction with)
+// Data source: grammar_points_data.json["に伴って・に伴い"]
+//
+// Structure variants:
+//   - standard[0]: Verb[る]+(の)+ に伴って (or に伴い)
+//   - standard[1]: Verb[る]+(の)+ に伴う + Noun
+//   - standard[2]: Noun + に伴って (or に伴い)
+//   - standard[3]: Noun + に伴う + Noun
+
+mod nitomonatte_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[る]+(の)+ に伴って"
+    #[test]
+    fn test_verb_ni_tomonatte() {
+        // Example from grammar_points_data.json: 減少するにともなって
+        let sentence = "この町の人口が減少するに伴って空き家が増加して来ました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に伴って・に伴い");
+        assert_pattern_range(&patterns, "に伴って・に伴い", 7, 15); // 減少するに伴って
+    }
+
+    // Testing: structure.standard[0] with の - "Verb[る]+の+ に伴って"
+    #[test]
+    fn test_verb_no_ni_tomonatte() {
+        // Example: 初期化をするのにともなって
+        let sentence = "パソコンの初期化をするのに伴って、すべてのデータが消えます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に伴って・に伴い");
+        assert_pattern_range(&patterns, "に伴って・に伴い", 9, 16); // するのに伴って
+    }
+
+    // Testing: structure.standard[0] with い form - "Verb[る]+ に伴い"
+    // Note: This test uses a Noun (地震) not a verb - testing Noun + に伴い
+    #[test]
+    fn test_verb_ni_tomonai() {
+        // Example from grammar_points_data.json: 地震にともない
+        let sentence = "津波は地震に伴い発生することが多いそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に伴って・に伴い");
+        assert_pattern_range(&patterns, "に伴って・に伴い", 3, 8); // 地震に伴い
+    }
+
+    // Testing: structure.standard[0] - "Verb[る]+ に伴って" with progressive change
+    #[test]
+    fn test_verb_ni_tomonatte_progressive() {
+        // Example from grammar_points_data.json: 歳を取るにともなって
+        let sentence = "歳を取るに伴って物忘れが酷くなってきてる感じがする。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に伴って・に伴い");
+        assert_pattern_range(&patterns, "に伴って・に伴い", 2, 8); // 取るに伴って
+    }
+
+    // Testing: structure.standard[1] - "Verb[る]+(の)+ に伴う + Noun"
+    #[test]
+    fn test_verb_ni_tomonau_noun() {
+        // Example from grammar_points_data.json: するのにともなう手順
+        let sentence = "パソコンの初期化をするのに伴う手順は取扱説明書の５１ページに記載されています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に伴って・に伴い");
+        assert_pattern_range(&patterns, "に伴って・に伴い", 9, 15); // するのに伴う
+    }
+
+    // Testing: structure.standard[2] - "Noun + に伴って"
+    #[test]
+    fn test_noun_ni_tomonatte() {
+        // Example from grammar_points_data.json: 普及にともなって
+        let sentence = "インターネットの普及に伴って、オンラインで買い物を済ませる人が増えた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に伴って・に伴い");
+        assert_pattern_range(&patterns, "に伴って・に伴い", 8, 14); // 普及に伴って
+    }
+
+    // Testing: structure.standard[2] - "Noun + に伴い"
+    #[test]
+    fn test_noun_ni_tomonai() {
+        // Example from grammar_points_data.json: 火山現象に伴い
+        let sentence = "火山現象に伴い津波が発生することも有るそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に伴って・に伴い");
+        assert_pattern_range(&patterns, "に伴って・に伴い", 2, 7); // 現象に伴い
+    }
+
+    // Testing: structure.standard[3] - "Noun + に伴う + Noun"
+    #[test]
+    fn test_noun_ni_tomonau_noun() {
+        // Example from grammar_points_data.json: 工事にともなう車線規制
+        let sentence = "高速道路の情報サイト：リフレッシュ工事に伴う車線規制のお知らせ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に伴って・に伴い");
+        assert_pattern_range(&patterns, "に伴って・に伴い", 17, 22); // 工事に伴う
+    }
+}

@@ -4859,7 +4859,7 @@ declare_patterns! {
     NitomonatteU30fbNitomonai {
         name: "に伴って・に伴い",
         matcher_fn: crate::matchers::n2::nitomonatte_u30fb_nitomonai,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

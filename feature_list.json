@@ -7912,13 +7912,13 @@
   {
     "pattern_name": "に伴って・に伴い",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the う-Verb 伴（ともな）う 'to accompany' in its て-form is used with に and attached to the end of nouns or verbs in thei... [5 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

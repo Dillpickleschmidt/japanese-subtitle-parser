@@ -1696,9 +1696,87 @@ pub fn nishitagatte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に伴って・に伴い
+// Pattern: に伴って・に伴い (along with, in conjunction with, due to)
+// Structures: Verb[る]+(の)+ に伴って/に伴い, Noun + に伴って/に伴い, Verb/Noun + に伴う + Noun
 pub fn nitomonatte_u30fb_nitomonai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for Noun or Verb in dictionary form
+    #[derive(Debug)]
+    struct NounOrVerbMatcher;
+    impl super::Matcher for NounOrVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Accept nouns
+            if token.pos.first().is_some_and(|pos| pos == "名詞") {
+                return true;
+            }
+            // Accept verbs in dictionary form (基本形)
+            if token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return token.features.get(5).is_some_and(|f| f == "基本形");
+            }
+            false
+        }
+    }
+
+    // Matcher for に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for 伴う verb (伴っ in 連用タ接続, 伴い in 連用形, or 伴う in 基本形)
+    #[derive(Debug)]
+    struct TomonauVerbMatcher;
+    impl super::Matcher for TomonauVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "伴う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Matcher for て particle (接続助詞) - only for 伴って form
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for の nominalizer (名詞/非自立)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl super::Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        // Accept: Verb(dictionary form) or Noun
+        TokenMatcher::Custom(Arc::new(NounOrVerbMatcher)),
+        // Optional の nominalizer (for verb + の + に伴って)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoNominalizerMatcher,
+        )))),
+        // に particle
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        // 伴う verb
+        TokenMatcher::Custom(Arc::new(TomonauVerbMatcher)),
+        // Optional て particle (for 伴って, not for 伴い or 伴う)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            TeParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: につき (due to, per) - split tokenization
