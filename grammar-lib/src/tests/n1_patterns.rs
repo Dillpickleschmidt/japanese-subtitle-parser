@@ -482,3 +482,45 @@ mod woyoginakusareru_tests {
         assert_pattern_range(&patterns, "を余儀なくされる", 28, 39); // 生活をよぎなくされます
     }
 }
+
+// ============================================================================
+// に至っては Tests
+// ============================================================================
+
+mod niitatteha_tests {
+    use super::*;
+
+    // Pattern: に至っては (when it comes to, as for)
+    // Data source: grammar_points_data.json["に至っては"]
+    // Testing: structure.standard[0] - "Noun + に至っては"
+
+    #[test]
+    fn test_niitatteha_extreme_example_1() {
+        let sentence = "私の家族は全員機械音痴です。母にいたってはインターネットさえ使えないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至っては");
+        assert_pattern_range(&patterns, "に至っては", 14, 21); // 母にいたっては
+    }
+
+    #[test]
+    fn test_niitatteha_extreme_example_2() {
+        let sentence = "最近ここにいる社員みんなのやる気がない。藤田さんにいたってはパソコンもつけていない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至っては");
+        assert_pattern_range(&patterns, "に至っては", 22, 30); // さんにいたっては
+    }
+
+    #[test]
+    fn test_niitatteha_extreme_example_3() {
+        let sentence = "漢字テストは４９点だった。リスニングにいたっては２０点だった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至っては");
+        assert_pattern_range(&patterns, "に至っては", 13, 24); // リスニングにいたっては
+    }
+}

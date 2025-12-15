@@ -578,9 +578,62 @@ pub fn wokawakirini() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: に至っては
+// Pattern: に至っては (when it comes to, as for)
+// Structure: Noun + に + いたっ + て + は
 pub fn niitatteha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match いたっ (動詞/自立, base=いたる, 連用タ接続)
+    #[derive(Debug)]
+    struct ItattaMatcher;
+    impl Matcher for ItattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いたっ"
+                && token.base_form == "いたる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match て (接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match は (係助詞)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ItattaMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+    ]
 }
 
 // Pattern: なり
