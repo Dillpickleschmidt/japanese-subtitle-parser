@@ -1,15 +1,15 @@
 ## Session 387 - 2025-12-15
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented それなら pattern (N2)
-**Patterns completed**: 1 (それなら - N2 newly implemented)
-**Tests added**: 3 new tests (all passing)
-**Total tests**: 2504 passing, 1 ignored (was 2501 passing, 1 ignored - net +3 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (それなら, ものなら①)
+**Patterns completed**: 2 (それなら and ものなら① - both N2 newly implemented)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2507 passing, 1 ignored (was 2501 passing, 1 ignored - net +6 tests)
 
 **Session highlights**:
 - Implemented それなら (if that's the case, then) - conjunction pattern
-- Simple single-token matcher (接続詞)
-- 3 tests covering different usage contexts
+- Implemented ものなら① (if one could / if it were possible) - hypothetical pattern
+- Clean implementations with proper test coverage
 - All tests passing, no regressions
 
 ---
@@ -44,21 +44,55 @@
 **Pattern ranges**: Full conjunction token
 - Standard: それなら (4 characters)
 
+---
+
+### ✅ Pattern Implemented: ものなら① (if one could / if it were possible)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: ものなら① expresses hypothetical possibility after potential form verbs: "if (A) were possible, (B)". It combines もの (thing) + なら (hypothetical form of だ) to literally mean "if (A) were a thing". This pattern suggests that while (A) is not thought to be possible, if it were, then (B) would follow. Often used with てみる (try to) or てみたい (want to try).
+
+**Structures tested**: 3 tests covering various potential verb forms
+1. Verb[できる] + ものなら: できるものなら、捕まえてみろ (12-19)
+2. Verb[potential られる] + ものなら: 直せるものなら直したい (3-10)
+3. もし + Verb[potential] + ものなら: もし行けるものならケニヤに行ってみたい (2-9)
+
+**Implementation**: Matcher in n2.rs (lines 688-719), tests in n2_patterns.rs (lines 3072-3113)
+
+**Key notes**:
+- Comes after potential form verbs (できる, or られる/れる potential forms)
+- Tokenizes as: もの (名詞/非自立/一般) + なら (助動詞, base='だ', 仮定形)
+- Uses TokenMatcher::Any to match the preceding potential verb
+- Priority 4 makes it rank higher than the general N3 もの・もん pattern (priority 1)
+- Often appears with てみる/てみたい or もし for emphasis
+
+**Tokenization observations**:
+- もの: surface="もの", base="もの", pos=名詞/非自立/一般
+- なら: surface="なら", base="だ", pos=助動詞, features[5]="仮定形"
+- Preceded by potential verbs in 基本形 (dictionary form)
+
+**Pattern ranges**: Include potential verb + ものなら
+- できるものなら: potential verb (できる) + ものなら
+- 直せるものなら: られる potential form (直せる) + ものなら
+- 行けるものなら: れる potential form (行ける) + ものなら
+
 ### Test Quality Metrics (Session 387)
-✅ All 3 tests have assert_pattern_range
+✅ All 6 tests (3+3) have assert_pattern_range
 ✅ No print_debug in committed tests
 ✅ Realistic sentences from grammar_points_data.json examples
-✅ No regressions (all 2504 tests passing)
+✅ No regressions (all 2507 tests passing)
 
 **Current stats**:
 - N5: All complete
 - N4: 2 remaining (meta-patterns)
 - N3: All complete! 🎉
-- N2: 164 remaining (down from 165!)
+- N2: 163 remaining (down from 165!)
 - N1: 186 remaining
-- Total: ~352 patterns remaining (down from ~353!)
+- Total: ~351 patterns remaining (down from ~353!)
 
-**Next priority**: Continue with N2 patterns - ものなら①, 活かす, まい, 上, 上に, etc.
+**Next priority**: Continue with N2 patterns - 活かす, まい, 上, 上に, 以上②, 以上に, etc.
 
 ---
 
