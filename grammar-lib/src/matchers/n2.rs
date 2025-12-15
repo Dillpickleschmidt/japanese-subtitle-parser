@@ -6095,9 +6095,62 @@ pub fn karamiruto() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ところを見ると
+// Pattern: ところを見ると (judging from, seeing that)
+// Structures: Verb + ところを見ると
 pub fn tokorowomiruto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ところ as non-independent noun
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl super::Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match を as case particle
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl super::Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match みる or 見る as verb
+    #[derive(Debug)]
+    struct MiruMatcher;
+    impl super::Matcher for MiruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "みる" || token.surface == "見る")
+                && token.base_form == "みる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match と as connective particle
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl super::Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb (any form)
+        TokenMatcher::Custom(Arc::new(TokoroMatcher)),
+        TokenMatcher::Custom(Arc::new(WoMatcher)),
+        TokenMatcher::Custom(Arc::new(MiruMatcher)),
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+    ]
 }
 
 // Pattern: からすると・からすれば (judging from, considering)

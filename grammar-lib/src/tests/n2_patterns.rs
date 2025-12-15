@@ -10930,3 +10930,47 @@ mod toiumonoda_tests {
         assert_pattern_range(&patterns, "というものだ", 15, 20); // ってものだ
     }
 }
+
+// Pattern: ところを見ると (judging from, seeing that)
+// Data source: grammar_points_data.json["ところを見ると"]
+// Testing: structure.standard[0] - "Verb + ところを見ると"
+//
+// Structure variants:
+//   - standard[0]: Verb + ところを見ると (any verb form)
+
+mod tokorowomiruto_tests {
+    use super::*;
+
+    #[test]
+    fn test_teiru_tokorowomiruto() {
+        // "Seeing that he is smiling, I have no doubt that he passed the test"
+        let sentence = "彼がニコニコしているところをみると、テストに合格したに違いない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところを見ると");
+        assert_pattern_range(&patterns, "ところを見ると", 8, 17); // いるところをみると
+    }
+
+    #[test]
+    fn test_potential_tokorowomiruto() {
+        // "Judging from the fact that he can write kanji very nicely, he probably has been studying"
+        let sentence = "漢字を綺麗に書けるところをみると、長い間勉強しているのかもしれない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところを見ると");
+        assert_pattern_range(&patterns, "ところを見ると", 6, 16); // 書けるところをみると
+    }
+
+    #[test]
+    fn test_teite_tokorowomiruto() {
+        // "Seeing that he is looking at his phone despite being scolded, he probably doesn't feel any remorse"
+        let sentence = "怒られていてもずっと携帯を見ているところをみると、全然反省していないんだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところを見ると");
+        assert_pattern_range(&patterns, "ところを見ると", 15, 24); // いるところをみると
+    }
+}
