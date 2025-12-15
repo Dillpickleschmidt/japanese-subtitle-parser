@@ -5187,7 +5187,7 @@ declare_patterns! {
     NiatariU30fbNiatatte {
         name: "にあたり・にあたって",
         matcher_fn: crate::matchers::n2::niatari_u30fb_niatatte,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

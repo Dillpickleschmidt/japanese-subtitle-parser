@@ -3483,8 +3483,42 @@ pub fn saini() -> Vec<TokenMatcher> {
 }
 
 // Pattern: にあたり・にあたって
+// Pattern: にあたり・にあたって (on the occasion of, at the time of)
+// Structures: Verb[る] + にあたり/にあたって, Noun + にあたり/にあたって
 pub fn niatari_u30fb_niatatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match にあたり or にあたって as single compound particle tokens
+    #[derive(Debug)]
+    struct NiatariNiatatteMatcher;
+    impl Matcher for NiatariNiatatteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "にあたり" || token.surface == "にあたって")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match verbs in dictionary form (基本形) or nouns
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in dictionary form
+            let is_verb_kihonkei = token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+
+            // Match any noun
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+
+            is_verb_kihonkei || is_noun
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiatariNiatatteMatcher)),
+    ]
 }
 
 // Pattern: を契機に

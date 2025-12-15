@@ -6740,3 +6740,48 @@ mod nisaishite_tests {
         assert_pattern_range(&patterns, "に際して", 9, 18); // 申し込むに際しての
     }
 }
+
+// Pattern: にあたり・にあたって (on the occasion of, at the time of)
+// Data source: grammar_points_data.json["にあたり・にあたって"]
+// Testing all structure variants from structure.standard[]
+//
+// Structure variants:
+//   - standard[0]: Verb［る］+ にあたり
+//   - standard[1]: Noun + にあたり
+//   - standard[2]: Same as above but にあたって instead
+mod niatari_niatatte_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_niatari() {
+        // Structure: Verb[る] + にあたり
+        let sentence = "就活を始めるにあたり、新しいスーツを買った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にあたり・にあたって");
+        assert_pattern_range(&patterns, "にあたり・にあたって", 3, 10); // 始めるにあたり
+    }
+
+    #[test]
+    fn test_noun_niatari() {
+        // Structure: Noun + にあたり
+        let sentence = "転職をするにあたり、インターネットで自分に合った会社を探すことにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にあたり・にあたって");
+        assert_pattern_range(&patterns, "にあたり・にあたって", 3, 9); // するにあたり
+    }
+
+    #[test]
+    fn test_noun_niatatte() {
+        // Structure: Noun + にあたって
+        let sentence = "卒業にあたって、みんなで卒業旅行として韓国に行った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にあたり・にあたって");
+        assert_pattern_range(&patterns, "にあたり・にあたって", 0, 7); // 卒業にあたって
+    }
+}
