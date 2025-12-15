@@ -12172,3 +12172,74 @@ Continue with remaining N2 patterns in priority order:
 - feature_list.json: Updated に応えて and それとも to complete status
 
 Total session time: ~60 minutes
+
+---
+
+## Session 461 - 傾向がある Pattern Implementation
+
+**Date**: Current session
+**Goal**: Implement N2 pattern 傾向がある (tendency/trend)
+
+### Pattern Implemented: 傾向がある
+
+**傾向がある** (N2, priority 4) - 5 tests
+- 傾向がある (tendency/trend - formal pattern)
+- Structures tested:
+  - Verb[る/た] + 傾向がある
+  - い-Adjective + 傾向がある
+  - な-Adjective + な + 傾向がある
+  - Noun + の + 傾向がある
+- Implementation: Simple matcher for 傾向 (noun) + が + ある
+- All 5 structure variants from grammar_points_data.json covered
+
+### Implementation Details
+
+**Pattern structure**:
+- Core pattern: 傾向 + が + ある
+- KeikouMatcher: Verifies surface="傾向", base_form="傾向", pos="名詞"
+- Followed by が particle and ある verb
+- The pattern is preceded by various structures (verb/adjective/noun) which we don't explicitly match
+
+**Tokenization observations**:
+- All variants end with: `傾向` (noun) + `が` + `ある` (verb基本形)
+- Preceding tokens vary:
+  - Verb: 上がっていく傾向がある (verb + て + いく)
+  - い-Adj: 激しい傾向がある (基本形)
+  - な-Adj: ユニークな傾向がある (形容動詞語幹 + だ/体言接続)
+  - Noun: 小家族化の傾向がある (noun + の)
+
+**Range handling**:
+- Pattern matches exactly: 傾向がある (3 tokens)
+- Does not include preceding content, which is appropriate since multiple structures can precede it
+
+### Test Coverage
+
+All 5 tests created with:
+1. `test_keikougaaru_verb` - Verb structure: この国では物価が上がっていく傾向がある。
+2. `test_keikougaaru_i_adjective` - い-Adjective: 彼は気分の浮き沈みが激しい傾向がある。
+3. `test_keikougaaru_na_adjective` - な-Adjective: その教科書は使いやすくてユニークな傾向がある。
+4. `test_keikougaaru_noun` - Noun + の: 最近は世界中で小家族化の傾向がある。
+5. `test_keikougaaru_verb_past` - Verb[た]: この地域では雨が降った傾向がある。
+
+All tests use realistic subtitle-quality sentences and verify proper character ranges.
+
+### Stats
+- Tests: 3045 passing (was 3040, net +5 tests)
+- N2 patterns remaining: ~58 (down from ~59)
+- No regressions (all existing tests still passing)
+
+### Files Modified
+- grammar-lib/src/matchers/n2.rs: Implemented keikougaaru() function
+- grammar-lib/src/tests/n2_patterns.rs: Added keikougaaru_tests module with 5 tests
+- feature_list.json: Updated 傾向がある to complete status
+
+### Session Summary
+Completed 1 N2 pattern (priority 4) following test-first workflow. Pattern handles all 5 structure variants cleanly with a simple 3-token matcher. Implementation is straightforward since we only need to match the fixed ending "傾向がある" rather than the variable preceding content. All tests pass with correct character ranges. No regressions.
+
+### Next Priorities
+Continue with remaining N2 patterns in priority order:
+- 恐れがある (similar structure to 傾向がある)
+- 幸い・幸いなことに (fortunately)
+- 何より (above all)
+- 気 (気がする, etc.)
+- Other priority 4 N2 patterns
