@@ -1,3 +1,76 @@
+## Session 362 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern (点)
+**Patterns completed**: 1 (点 - N3 newly implemented)
+**Tests added**: 5 new tests for 点 (all passing)
+**Total tests**: 2315 passing, 1 ignored (was 2310 passing, 1 ignored - net +5 tests)
+
+### ✅ Pattern Implemented: 点 (point / aspect / respect)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low - not highlighted in overlay)
+
+**Pattern**: 点（てん）is a kanji expressing a specific 'point', 'spot', or 'aspect'. When attached to the attributive form of another word, it highlights that word as a point of interest, translated as "from the aspect of (A)", "in respect to (A)", or "in terms of (A)". It draws attention to specific aspects or points within a sentence.
+
+**Structures tested**: 5 comprehensive tests covering all major variants
+1. Verb + 点: 分からない点 (points you don't understand) - chars 5-6
+2. い-Adjective + 点: 難しい点 (difficult aspects) - chars 8-9
+3. な-Adjective + な + 点: 重要な点 (important points) - chars 19-20
+4. Noun + の + 点: いくつかの点 (several aspects) - chars 14-15
+5. Phrase + という + 点: 居るという点 (the point that there are) - chars 14-15
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (ten function, lines 2141-2158)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (ten_tests module, lines 12544-12604)
+- Pattern: grammar-lib/src/patterns.rs (Ten variant, line 2960)
+
+**Tokenization patterns**:
+```
+点 (dependent noun):
+- 点 (名詞/非自立/一般) - dependent noun
+- Surface: 点, Base: 点
+- POS: 名詞/非自立/一般
+```
+
+**Key implementation points**:
+1. Single-token matcher: 点 alone
+2. TenMatcher checks surface == "点", base_form == "点", POS == 名詞/非自立/一般
+3. Pattern matches just 点 (not following particles)
+4. Following particles (で, が, は) are separate grammar elements
+5. Pattern priority: 1 (detected but not highlighted in overlay)
+6. 点 follows the attributive form of preceding words (verbs, adjectives, nouns + の)
+
+**Pattern ranges**: Include only 点 (1 character)
+- After verb: 点 (1 char)
+- After i-adjective: 点 (1 char)
+- After na-adjective + な: 点 (1 char)
+- After noun + の: 点 (1 char)
+- After phrase + という: 点 (1 char)
+- Following particles are NOT included in the pattern range
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover all major structural variants from structure.standard[]
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: 点（てん）is regularly paired with particles like で (at/in), が (subject marker), or は (topic marker). However, these particles are separate grammar points. The pattern matches only 点 itself, highlighting its role as a dependent noun that marks specific aspects or points of interest. The literal meaning is "point" or "spot", but in grammar it functions to draw attention to particular aspects of statements.
+
+**Usage contexts**:
+- Highlighting aspects: Drawing attention to specific points or features
+- Formal/informal: Works in both registers
+- Common particles after 点: で (at/in), が (subject), は (topic), について (regarding), から言うと (speaking from)
+- Always follows attributive form of preceding word
+
+**Related patterns**:
+- について (N4) - "regarding/about" (often follows 点)
+- という (N3) - quotation marker (can precede 点)
+
+---
+
 ## Session 361 - 2025-12-14
 
 ### ✅ Session Summary
