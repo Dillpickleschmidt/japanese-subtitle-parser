@@ -13412,3 +13412,59 @@ mod kanarazushimo_tests {
         assert_pattern_range(&patterns, "必ずしも ", 7, 11); // 必ずしも
     }
 }
+
+// ========== 向け (intended for/aimed at) ==========
+// Pattern: 向け (intended for, aimed at, oriented toward)
+// Data source: grammar_points_data.json["向け"]
+//
+// Structure variants to test:
+//   standard[0]: Noun + 向（む）け（に）
+//   standard[1]: Noun + 向け + の + Noun
+
+mod muke_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + 向け + に
+    #[test]
+    fn test_noun_muke_ni() {
+        let sentence = "この教科書は上級者向けに書いてある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "向け");
+        assert_pattern_range(&patterns, "向け", 8, 11); // 者向け
+    }
+
+    // Testing: standard[0] - Noun + 向け + に (different example)
+    #[test]
+    fn test_noun_muke_ni_children() {
+        let sentence = "子供向けに書かれた本を読んで日本語を勉強したら？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "向け");
+        assert_pattern_range(&patterns, "向け", 0, 4); // 子供向け
+    }
+
+    // Testing: standard[1] - Noun + 向け + の + Noun
+    #[test]
+    fn test_noun_muke_no_noun() {
+        let sentence = "オフィス向けのパソコンを１０台買うとしたらいくらになりますか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "向け");
+        assert_pattern_range(&patterns, "向け", 0, 6); // オフィス向け
+    }
+
+    // Testing: standard[1] - Noun + 向け + の + Noun (different example)
+    #[test]
+    fn test_noun_muke_no_noun_adult() {
+        let sentence = "これは大人向けの映画だから、お前には見せれないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "向け");
+        assert_pattern_range(&patterns, "向け", 3, 7); // 大人向け
+    }
+}

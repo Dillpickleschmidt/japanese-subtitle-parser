@@ -8524,9 +8524,23 @@ pub fn muki() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 向け
+// Pattern: 向け (intended for/aimed at)
+// Structures: Noun + 向け
 pub fn muke() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MukeMatcher;
+    impl Matcher for MukeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "向け"
+                && token.base_form == "向け"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(MukeMatcher)),
+    ]
 }
 
 // Pattern: 上がる・上げる
