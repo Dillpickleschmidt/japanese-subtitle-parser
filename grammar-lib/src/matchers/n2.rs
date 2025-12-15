@@ -1233,9 +1233,39 @@ pub fn wochuushinni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: その上
+// Pattern: その上 (besides, in addition to, furthermore)
+// Structures: その上 + Phrase (conjunction)
 pub fn sonoue() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match その (demonstrative)
+    #[derive(Debug)]
+    struct SonoMatcher;
+    impl super::Matcher for SonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "その"
+                && token.base_form == "その"
+                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        }
+    }
+
+    // Match 上 (noun, non-independent, adverbial)
+    #[derive(Debug)]
+    struct UeMatcher;
+    impl super::Matcher for UeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "上"
+                && token.base_form == "上"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SonoMatcher)),
+        TokenMatcher::Custom(Arc::new(UeMatcher)),
+    ]
 }
 
 // Pattern: 上は

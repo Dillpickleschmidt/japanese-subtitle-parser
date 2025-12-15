@@ -3665,3 +3665,49 @@ mod wochuushinni_tests {
         assert_pattern_range(&patterns, "を中心に", 6, 15); // お客様を中心にする
     }
 }
+
+// Pattern: その上 (besides, in addition to, furthermore)
+// Data source: grammar_points_data.json["その上"]
+// Testing: structure.standard[0] - "その上（うえ） + Phrase"
+//
+// Structure variants:
+//   - standard[0]: その上 + Phrase (conjunction at beginning of sentence)
+//
+// Note: Formal expression, but also used in daily speech
+
+mod sonoue_tests {
+    use super::*;
+
+    // Testing: その上 at sentence beginning
+    #[test]
+    fn test_sonoue_sentence_start() {
+        let sentence = "高橋さんはとても頭がいい。その上、人柄もいいので会社での評判がいいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "その上");
+        assert_pattern_range(&patterns, "その上", 13, 16); // その上
+    }
+
+    // Testing: その上 mid-conversation
+    #[test]
+    fn test_sonoue_addition() {
+        let sentence = "今住んでいる家はものすごく小さい。その上隣に住んでいる住人が一日中うるさいので、来月引っ越そうと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "その上");
+        assert_pattern_range(&patterns, "その上", 17, 20); // その上
+    }
+
+    // Testing: その上 after negative statement
+    #[test]
+    fn test_sonoue_negative_context() {
+        let sentence = "今日は学校で先生に怒られた。その上、家に帰ったら親に怒られたのであまりいい一日ではなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "その上");
+        assert_pattern_range(&patterns, "その上", 14, 17); // その上
+    }
+}
