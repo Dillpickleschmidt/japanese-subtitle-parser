@@ -439,3 +439,46 @@ mod nitaru_tests {
         assert_pattern_range(&patterns, "に足る", 0, 7); // 信頼に足る友達
     }
 }
+
+// ============================================================================
+// を余儀なくされる Tests
+// ============================================================================
+
+mod woyoginakusareru_tests {
+    use super::*;
+
+    // Pattern: を余儀なくされる (to be forced to)
+    // Data source: grammar_points_data.json["を余儀なくされる"]
+    // Testing: structure.standard[0] - "Noun + を余儀なくされる"
+    //          structure.polite[0] - "Noun + を余儀なくされます"
+
+    #[test]
+    fn test_woyoginakusareru_past() {
+        let sentence = "パーク内での迷惑行為が悪化し始めたため、人気撮影スポットの封鎖をよぎなくされた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を余儀なくされる");
+        assert_pattern_range(&patterns, "を余儀なくされる", 29, 39); // 封鎖をよぎなくされた
+    }
+
+    #[test]
+    fn test_woyoginakusareru_past_2() {
+        let sentence = "飲食店はコロナの影響で、営業の自粛をよぎなくされた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を余儀なくされる");
+        assert_pattern_range(&patterns, "を余儀なくされる", 15, 25); // 自粛をよぎなくされた
+    }
+
+    #[test]
+    fn test_woyoginakusareru_polite() {
+        let sentence = "最近大きな地震があったため、この地域の人たちは避難所での生活をよぎなくされます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を余儀なくされる");
+        assert_pattern_range(&patterns, "を余儀なくされる", 28, 39); // 生活をよぎなくされます
+    }
+}

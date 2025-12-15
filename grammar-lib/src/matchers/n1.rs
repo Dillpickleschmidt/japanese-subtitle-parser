@@ -481,9 +481,76 @@ pub fn niatte() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: を余儀なくされる
+// Pattern: を余儀なくされる (to be forced to)
+// Structure: Noun + を + よぎなく + さ + れ + た/ます
 pub fn woyoginakusareru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match よぎなく (形容詞/自立, base=よぎない, 連用テ接続)
+    #[derive(Debug)]
+    struct YoginakuMatcher;
+    impl Matcher for YoginakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よぎなく"
+                && token.base_form == "よぎない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    // Match さ from する (動詞/自立, base=する, サ変・スル/未然レル接続)
+    #[derive(Debug)]
+    struct SasuruMatcher;
+    impl Matcher for SasuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さ"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(4).is_some_and(|f| f.contains("サ変"))
+                && token.features.get(5).is_some_and(|f| f == "未然レル接続")
+        }
+    }
+
+    // Match れ passive auxiliary (動詞/接尾, base=れる, 一段/連用形)
+    #[derive(Debug)]
+    struct RePassiveMatcher;
+    impl Matcher for RePassiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "れ"
+                && token.base_form == "れる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match た or ます (助動詞)
+    #[derive(Debug)]
+    struct TaMasuMatcher;
+    impl Matcher for TaMasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "た" || token.surface == "ます")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match を (格助詞)
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(YoginakuMatcher)),
+        TokenMatcher::Custom(Arc::new(SasuruMatcher)),
+        TokenMatcher::Custom(Arc::new(RePassiveMatcher)),
+        TokenMatcher::Custom(Arc::new(TaMasuMatcher)),
+    ]
 }
 
 // Pattern: とは

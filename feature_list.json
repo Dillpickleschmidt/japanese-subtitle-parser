@@ -10586,13 +10586,13 @@
   {
     "pattern_name": "を余儀なくされる",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を余儀（よぎ）なくされる is a formal grammar pattern in Japanese that is usually translated as 'to be forced to (A)' [1 std, 1 pol]",
     "priority": 5,
     "skip_reason": null
