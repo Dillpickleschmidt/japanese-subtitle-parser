@@ -108,6 +108,27 @@ pub fn mo() -> Vec<TokenMatcher> {
     ]
 }
 
+// Pattern: と (and / with - compilation particle)
+// Structures: Noun + と
+pub fn to() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &KagomeToken) -> bool {
+            token.surface == "と"
+                && token.base_form == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && (token.pos.get(1).is_some_and(|p| p == "並立助詞")
+                    || token.pos.get(1).is_some_and(|p| p == "格助詞"))
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+    ]
+}
+
 // Pattern: これ (this)
 // Structures: これ (demonstrative pronoun for things near speaker)
 pub fn kore() -> Vec<TokenMatcher> {

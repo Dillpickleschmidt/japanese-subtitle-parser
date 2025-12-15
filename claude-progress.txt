@@ -1,3 +1,88 @@
+## Session 358 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented と (N5) pattern
+**Patterns completed**: 1 (と - compilation/and/with particle)
+**Tests added**: 5 new tests for と (all passing)
+**Total tests**: 2291 passing, 1 ignored (was 2286 passing, 1 ignored - net +5 tests)
+
+### ✅ Pattern Implemented: と (and / with - compilation particle)
+
+**JLPT Level**: N5
+**Category**: Construction
+**Priority**: 1 (low - not highlighted in overlay)
+
+**Pattern**: と is a particle that shows a relationship of 'compilation' between (A) and (B). That relationship could be existing together (translated as "and"), or performing an action together (translated as "with"). This is the basic N5 と particle (distinguished from the N4 quotation と and conditional と).
+
+**Structures tested**: 5 comprehensive tests covering all major usage contexts
+1. Noun + と (and): ピーナッツとビール (peanuts and beer) - chars 0-6
+2. Noun + と (with - companion): 彼女と食べる (eat with girlfriend) - chars 0-3
+3. Multiple と in sequence: 消しゴムとペンと鉛筆 (eraser, pen, and pencil) - chars 0-5 (first と)
+4. Pronoun + と: 私と君 (me and you) - chars 0-2
+5. Natural dialogue: 友達と映画 (with friend to movie) - chars 3-6
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n5.rs (to function, lines 111-130)
+- Tests: grammar-lib/src/tests/n5_patterns.rs (to_tests module, lines 6678-6746)
+- Pattern: grammar-lib/src/patterns.rs (ToAnd variant, declared at lines 75-81)
+
+**Tokenization patterns**:
+```
+と as coordinate particle (並立助詞):
+- Used when listing items: Noun + と + Noun
+- Surface: と, Base: と
+- POS: 助詞/並立助詞
+
+と as case particle (格助詞):
+- Used for "with" (companion):  Noun + と + Verb
+- Surface: と, Base: と
+- POS: 助詞/格助詞/一般
+```
+
+**Key implementation points**:
+1. Two-token matcher: Noun + と
+2. ToParticleMatcher matches BOTH 並立助詞 (coordinate) AND 格助詞 (case) variants
+3. Uses `noun_matcher()` to match preceding noun (including pronouns)
+4. Pattern includes the full Noun + と construction
+5. Named "ToAnd" variant to distinguish from existing "To" (N4 conditional と3)
+6. Multiple と in a sentence are all detected separately
+
+**Pattern ranges**: Include noun + と particle
+- ピーナッツと (chars 0-6)
+- 彼女と (chars 0-3)
+- 消しゴムと (chars 0-5), ペンと (chars 5-8)
+- 私と (chars 0-2)
+- 友達と (chars 3-6)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover all major structural variants: and (listing), with (companion), multiple と, pronouns
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: と is one of the fundamental Japanese particles. As a compilation particle, it shows items or people grouped together. The "and" translation is used when listing things (A と B と C), while the "with" translation is used when showing companionship in actions (A と B を食べる = eat A with B, or A と食べる = eat with A). The last と in a sequence is often omitted in casual conversation.
+
+**Usage contexts**:
+- Listing items: Connecting multiple nouns
+- Companionship: Performing actions together with someone
+- Both formal and informal registers
+- Required after each noun except optionally the last
+
+**Related patterns**:
+- と1 (N5) - (not yet implemented)
+- と2 (N4) - quotation particle (not yet implemented)
+- と3 / To (N4) - conditional particle (already implemented)
+- や (N4) - "and/or" (similar but less exhaustive listing)
+
+**Pattern naming note**:
+- This pattern is named "ToAnd" as the enum variant to avoid collision with existing "To" variant
+- The existing "To" variant (line 1053) is for the N4 conditional と3
+- Feature_list.json tracks this as "と" (N5) pattern name
+- Multiple と patterns exist: と (N5 compilation), と1 (N5), と2 (N4 quotation), と3 (N4 conditional)
+
+---
+
 ## Session 357 - 2025-12-14
 
 ### ✅ Session Summary

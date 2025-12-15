@@ -72,6 +72,14 @@ declare_patterns! {
         jlpt: "n5",
     },
 
+    ToAnd {
+        name: "と",
+        matcher_fn: crate::matchers::n5::to,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n5",
+    },
+
     Kore {
         name: "これ",
         matcher_fn: crate::matchers::n5::kore,

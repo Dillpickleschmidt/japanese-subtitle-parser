@@ -6675,3 +6675,73 @@ mod ha_topic_tests {
     }
 }
 
+// Pattern: と (and / with - compilation particle)
+// Data source: grammar_points_data.json["と"]
+// Testing all structure variants from grammar data
+#[cfg(test)]
+mod to_tests {
+    use super::*;
+
+    // Testing: standard[0] - Noun + と (and - basic compilation)
+    // Example: Two items together (peanuts and beer)
+    #[test]
+    fn test_to_and_basic() {
+        let sentence = "ピーナッツとビールを買った";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と");
+        assert_pattern_range(&patterns, "と", 0, 6); // ピーナッツと
+    }
+
+    // Testing: standard[0] - Noun + と (with - companion)
+    // Example: Doing something with someone
+    #[test]
+    fn test_to_with_companion() {
+        let sentence = "彼女と食べる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と");
+        assert_pattern_range(&patterns, "と", 0, 3); // 彼女と
+    }
+
+    // Testing: standard[0] - Multiple と in sequence
+    // Example: Listing multiple items (eraser, pen, and pencil)
+    #[test]
+    fn test_to_multiple_items() {
+        let sentence = "消しゴムとペンと鉛筆もある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と");
+        // Should detect both と instances
+        // First: 消しゴムと (0-5), Second: ペンと (5-8)
+        assert_pattern_range(&patterns, "と", 0, 5); // 消しゴムと
+    }
+
+    // Testing: standard[0] - と with pronoun
+    // Example: "me and you"
+    #[test]
+    fn test_to_pronouns() {
+        let sentence = "私と君でやろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と");
+        assert_pattern_range(&patterns, "と", 0, 2); // 私と
+    }
+
+    // Testing: standard[0] - と in natural dialogue
+    // Example: Realistic subtitle-quality sentence
+    #[test]
+    fn test_to_natural_dialogue() {
+        let sentence = "今日は友達と映画を見に行くんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と");
+        assert_pattern_range(&patterns, "と", 3, 6); // 友達と
+    }
+}
+
