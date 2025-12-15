@@ -9725,3 +9725,90 @@ mod sorenishitemo_tests {
         assert_pattern_range(&patterns, "それにしても", 26, 32); // それにしても
     }
 }
+
+// Pattern: ぬ (classical negative - "not")
+// Data source: grammar_points_data.json["ぬ"]
+// Testing: structure.standard[0] - "Verb［ない］+ ぬ"
+// Testing: structure.standard[1] - "Verb［ない］+ ぬ + Noun"
+// Testing: Exceptions - する → せぬ, くる → こぬ, いる → おらぬ
+//
+// Structure variants:
+//   - standard[0]: Verb[ない] + ぬ (classical negative)
+//   - standard[1]: Verb[ない] + ぬ + Noun (attributive form)
+//   - Exceptions: する→せぬ, くる→こぬ, いる→おらぬ
+
+mod nu_negative_tests {
+    use super::*;
+
+    #[test]
+    fn test_nu_basic_negative() {
+        // Testing: structure.standard[0] - "Verb[ない] + ぬ"
+        // Example from grammar data: 通れぬ (cannot pass)
+        let sentence = "こんなに狭い道は通れぬ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぬ");
+        assert_pattern_range(&patterns, "ぬ", 8, 11); // 通れぬ
+    }
+
+    #[test]
+    fn test_nu_negative_imperative() {
+        // Testing: structure.standard[0] - "Verb[ない] + ぬ"
+        // Example from grammar data: 入れぬ (will not put)
+        let sentence = "こんなまずそうなものは口に入れぬ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぬ");
+        assert_pattern_range(&patterns, "ぬ", 13, 16); // 入れぬ
+    }
+
+    #[test]
+    fn test_nu_attributive_form() {
+        // Testing: structure.standard[1] - "Verb[ない] + ぬ + Noun"
+        // Testing classical negative modifying a noun (attributive form)
+        let sentence = "見たこともなき知らぬ土地へ向かう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぬ");
+        assert_pattern_range(&patterns, "ぬ", 7, 10); // 知らぬ
+    }
+
+    #[test]
+    fn test_nu_exception_suru() {
+        // Testing: Exception - する → せぬ
+        // Example from grammar data: せぬ (would not do)
+        let sentence = "あの方は人を傷つけるようなことはせぬ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぬ");
+        assert_pattern_range(&patterns, "ぬ", 16, 18); // せぬ
+    }
+
+    #[test]
+    fn test_nu_exception_kuru() {
+        // Testing: Exception - くる → こぬ
+        // Example from grammar data: こぬ (won't come)
+        let sentence = "婆さんが川から帰ってこぬ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぬ");
+        assert_pattern_range(&patterns, "ぬ", 10, 12); // こぬ
+    }
+
+    #[test]
+    fn test_nu_exception_iru() {
+        // Testing: Exception - いる → おらぬ
+        // Example from grammar data: おらぬ (is not)
+        let sentence = "鈴木殿はここにはおらぬ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぬ");
+        assert_pattern_range(&patterns, "ぬ", 8, 11); // おらぬ
+    }
+}

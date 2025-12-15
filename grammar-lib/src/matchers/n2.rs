@@ -5344,9 +5344,38 @@ pub fn sorenishitemo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SorenishitemoMatcher))]
 }
 
-// Pattern: ぬ
+// Pattern: ぬ (classical negative - "not")
+// Structures: Verb[未然形] + ぬ
 pub fn nu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verbs in imperfective form (未然形 or 未然ヌ接続)
+    #[derive(Debug)]
+    struct ImperfectiveVerbMatcher;
+    impl Matcher for ImperfectiveVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| {
+                    form == "未然形" || form == "未然ヌ接続"
+                })
+        }
+    }
+
+    // Match ぬ as classical negative auxiliary
+    #[derive(Debug)]
+    struct NuAuxiliaryMatcher;
+    impl Matcher for NuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ぬ"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ImperfectiveVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NuAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: ことなく (without doing)
