@@ -347,9 +347,20 @@ pub fn nisouinai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 万が一
+// Pattern: 万が一 (in the unlikely event, just in case)
+// Structures: 万が一/万一 (both single tokens, different POS)
 pub fn mangaichi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct MangaichiMatcher;
+    impl super::Matcher for MangaichiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match 万が一 as 名詞/一般 or 万一 as 副詞/助詞類接続
+            (token.surface == "万が一" && token.pos.first().is_some_and(|pos| pos == "名詞"))
+                || (token.surface == "万一" && token.pos.first().is_some_and(|pos| pos == "副詞"))
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(MangaichiMatcher))]
 }
 
 // Pattern: ようがない・ようもない

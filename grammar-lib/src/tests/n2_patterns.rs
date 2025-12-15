@@ -2484,3 +2484,54 @@ mod naniyara_tests {
         assert_pattern_range(&patterns, "なにやら", 7, 10); // 何やら
     }
 }
+
+// Pattern: 万が一 (in the unlikely event, just in case)
+// Data source: grammar_points_data.json["万が一"]
+// Testing: structure.standard[0] - "万（まん）（が）一（いち） + Phrase"
+//
+// Structure variants:
+//   - 万が一 (mangaichi) - full form with が particle
+//   - 万一 (man'ichi) - abbreviated form without が
+//
+// Both forms mean "in the unlikely event of" or "just in case"
+// Used adverbially, often at the beginning of sentences
+
+mod mangaichi_tests {
+    use super::*;
+
+    #[test]
+    fn test_mangaichi_full_form() {
+        // Example: 万が一の時のために防災セットを買っておきましょう
+        // (Let's buy a disaster kit just in case)
+        let sentence = "万が一の時のために防災セットを買っておきましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "万が一");
+        assert_pattern_range(&patterns, "万が一", 0, 3); // 万が一
+    }
+
+    #[test]
+    fn test_mangaichi_with_condition() {
+        // Example: 万が一来れなくなった場合は、連絡をください
+        // (In the unlikely event that you are unable to come, please contact us)
+        let sentence = "万が一来れなくなった場合は、連絡をください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "万が一");
+        assert_pattern_range(&patterns, "万が一", 0, 3); // 万が一
+    }
+
+    #[test]
+    fn test_man_ichi_abbreviated() {
+        // Example: 万一分からないことがあれば、何でも私に聞いてください
+        // (If by chance there is something you don't understand, you can ask me anything)
+        let sentence = "万一分からないことがあれば、何でも私に聞いてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "万が一");
+        assert_pattern_range(&patterns, "万が一", 0, 2); // 万一
+    }
+}

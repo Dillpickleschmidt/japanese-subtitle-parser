@@ -7534,13 +7534,13 @@
   {
     "pattern_name": "万が一",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "万（まん）が一（いち） , or sometimes simply 万一（まんいち） is a grammar pattern that literally means '1 in 10000' [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
