@@ -7787,9 +7787,41 @@ pub fn naniyori() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Surface("何より")]
 }
 
-// Pattern: 何といっても
+// Pattern: 何といっても (after all, above all, without a doubt)
+// Structures: 何 + と + いう + て + も
 pub fn nanitoittemo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 何 as pronoun
+    #[derive(Debug)]
+    struct NaniMatcher;
+    impl super::Matcher for NaniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "何"
+                && token.base_form == "何"
+                && token.features.first().is_some_and(|f| f == "名詞")
+                && token.features.get(1).is_some_and(|f| f == "代名詞")
+        }
+    }
+
+    // Match いう verb in 連用タ接続 (いっ form)
+    #[derive(Debug)]
+    struct IuMatcher;
+    impl super::Matcher for IuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "いう"
+                && token.features.first().is_some_and(|f| f == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaniMatcher)),
+        TokenMatcher::Surface("と"),
+        TokenMatcher::Custom(Arc::new(IuMatcher)),
+        TokenMatcher::Surface("て"),
+        TokenMatcher::Surface("も"),
+    ]
 }
 
 // Pattern: か何か (or something, or something like that)

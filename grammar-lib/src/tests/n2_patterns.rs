@@ -11992,3 +11992,54 @@ mod naniyori_tests {
         assert_pattern_range(&patterns, "何より", 16, 19); // 何より
     }
 }
+
+// Pattern: 何といっても (after all, above all, without a doubt)
+// Data source: grammar_points_data.json["何といっても"]
+// Testing: structure.standard[0] - "何（なん）といっても + Phrase"
+//
+// 何といっても is a fixed expression used at the beginning of sentences to emphasize
+// something positive (or occasionally negative) about the following statement.
+
+mod nanitoittemo_tests {
+    use super::*;
+
+    #[test]
+    fn test_nanitoittemo_positive() {
+        let sentence = "あのカフェは何といってもコーヒーとアイスクリームが安いからとても人気がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何といっても");
+        assert_pattern_range(&patterns, "何といっても", 6, 12); // 何といっても
+    }
+
+    #[test]
+    fn test_nanitoittemo_teacher() {
+        let sentence = "私の日本語の先生は厳しいけど、何といっても日本語を教えるのがものすごく上手だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何といっても");
+        assert_pattern_range(&patterns, "何といっても", 15, 21); // 何といっても
+    }
+
+    #[test]
+    fn test_nanitoittemo_negative() {
+        let sentence = "彼の悪いところは、何といってもすぐに嘘をつくことだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何といっても");
+        assert_pattern_range(&patterns, "何といっても", 9, 15); // 何といっても
+    }
+
+    #[test]
+    fn test_nanitoittemo_sentence_beginning() {
+        let sentence = "何といっても一番大切なのは健康だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何といっても");
+        assert_pattern_range(&patterns, "何といっても", 0, 6); // 何といっても
+    }
+}
