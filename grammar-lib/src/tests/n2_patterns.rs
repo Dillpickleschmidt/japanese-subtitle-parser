@@ -11446,3 +11446,83 @@ mod toka_tests {
 // TODO: のではないだろうか pattern tests
 // Pattern is complex and needs further investigation into token.pos vs token.features usage
 // Tests were written but matcher implementation incomplete
+
+// Pattern: て当然だ (natural/a matter of course)
+// Data source: grammar_points_data.json["て当然だ"]
+// Testing: structure.standard[0-2] and polite[0-2]
+//
+// Structure variants:
+//   Standard:
+//   - standard[0]: Verb[て] + 当然 + だ
+//   - standard[1]: い-Adjective[て] + 当然 + だ
+//   - standard[2]: な-Adjective + で + 当然 + だ
+//   Polite:
+//   - polite[0]: Verb[て] + 当然 + です
+//   - polite[1]: い-Adjective[て] + 当然 + です
+//   - polite[2]: な-Adjective + で + 当然 + です
+
+mod tetouzenda_tests {
+    use super::*;
+
+    // Standard forms
+    #[test]
+    fn test_verb_te_touzen_da() {
+        let sentence = "あんな生意気なやつは嫌われて当然だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て当然だ");
+        assert_pattern_range(&patterns, "て当然だ", 12, 17); // れて当然だ
+    }
+
+    #[test]
+    fn test_i_adj_te_touzen_da() {
+        let sentence = "このスープは俺が作ったものだから、美味しくて当然だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て当然だ");
+        assert_pattern_range(&patterns, "て当然だ", 17, 25); // 美味しくて当然だ
+    }
+
+    #[test]
+    fn test_na_adj_de_touzen_da() {
+        let sentence = "このビルは先月建てられたばかりだから、綺麗で当然だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て当然だ");
+        assert_pattern_range(&patterns, "て当然だ", 19, 25); // 綺麗で当然だ
+    }
+
+    // Polite forms
+    #[test]
+    fn test_verb_te_touzen_desu() {
+        let sentence = "そんなに頑張っているんですから、成功して当然です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て当然だ");
+        assert_pattern_range(&patterns, "て当然だ", 16, 24); // 成功して当然です
+    }
+
+    #[test]
+    fn test_i_adj_te_touzen_desu() {
+        let sentence = "これだけ練習したんですから、上手くて当然です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て当然だ");
+        assert_pattern_range(&patterns, "て当然だ", 14, 22); // 上手くて当然です
+    }
+
+    #[test]
+    fn test_na_adj_de_touzen_desu() {
+        let sentence = "駅から近いんだから、便利で当然です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "て当然だ");
+        assert_pattern_range(&patterns, "て当然だ", 10, 17); // 便利で当然です
+    }
+}

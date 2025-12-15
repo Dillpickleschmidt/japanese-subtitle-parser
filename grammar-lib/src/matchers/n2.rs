@@ -6695,9 +6695,76 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
     vec![]
 }
 
-// Pattern: て当然だ
+// Pattern: て当然だ (natural/a matter of course)
+// Structures: Verb[て] + 当然 + だ/です, い-Adj[て] + 当然 + だ/です, な-Adj[で] + 当然 + だ/です
 pub fn tetouzenda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Custom matcher for Verb/Adjective + て/で
+    #[derive(Debug)]
+    struct VerbOrAdjTeFormMatcher;
+    impl Matcher for VerbOrAdjTeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in 連用形 or 連用タ接続 (て form precursor)
+            let is_verb = token.pos.first().is_some_and(|p| p == "動詞")
+                && (token.features.get(5).is_some_and(|f| f == "連用形")
+                    || token.features.get(5).is_some_and(|f| f == "連用タ接続"));
+
+            // Match い-Adjective in 連用テ接続 form (e.g., 美味しく, 上手く)
+            let is_i_adj = token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続");
+
+            // Match な-Adjective (名詞/形容動詞語幹)
+            let is_na_adj = token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹");
+
+            is_verb || is_i_adj || is_na_adj
+        }
+    }
+
+    // Custom matcher for て/で
+    #[derive(Debug)]
+    struct TeDeMatcher;
+    impl Matcher for TeDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // て particle (used with verbs and い-Adjectives)
+            let is_te = token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞");
+
+            // で copula (used with な-Adjectives)
+            let is_de = token.surface == "で"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ";
+
+            is_te || is_de
+        }
+    }
+
+    // Custom matcher for 当然 (adverb)
+    #[derive(Debug)]
+    struct TouzenMatcher;
+    impl Matcher for TouzenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "当然"
+                && token.pos.first().is_some_and(|p| p == "副詞")
+        }
+    }
+
+    // Custom matcher for だ or です
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "助動詞")
+                && (token.surface == "だ" || token.surface == "です")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrAdjTeFormMatcher)),
+        TokenMatcher::Custom(Arc::new(TeDeMatcher)),
+        TokenMatcher::Custom(Arc::new(TouzenMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: のも当然だ
