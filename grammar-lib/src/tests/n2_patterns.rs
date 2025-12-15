@@ -4321,3 +4321,64 @@ mod nao_u2461_tests {
         assert_pattern_range(&patterns, "なお②", 29, 31); // なお
     }
 }
+
+// Pattern: ～てこそ (only if, only by, only when)
+// Data source: grammar_points_data.json["～てこそ"]
+// Testing: structure.standard[0] - "Verb［て］+ こそ"
+//
+// Structure variants:
+//   - standard[0]: Verb［て］+ こそ
+//
+// Note: Indicates that (B) is absolutely reliant on (A). Translations: "only if (A), (B)", "unless (A), (B)", "until (A), (B)"
+
+mod tekoso_tests {
+    use super::*;
+
+    #[test]
+    fn test_tekoso_study_abroad() {
+        // Testing: てこそ meaning "only by"
+        // 海外に留学してこそ、日本食の美味しさが分かる
+        let sentence = "海外に留学してこそ、日本食の美味しさが分かる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～てこそ");
+        assert_pattern_range(&patterns, "～てこそ", 3, 9); // 留学してこそ
+    }
+
+    #[test]
+    fn test_tekoso_become_parent() {
+        // Testing: てこそ meaning "only when"
+        // 親になってこそ、子育ての大変さがわかる
+        let sentence = "親になってこそ、子育ての大変さがわかる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～てこそ");
+        assert_pattern_range(&patterns, "～てこそ", 2, 7); // なってこそ
+    }
+
+    #[test]
+    fn test_tekoso_captain_responsibility() {
+        // Testing: てこそ meaning "only if"
+        // チーム全員の責任を背負ってこそ、キャプテンになれる
+        let sentence = "チーム全員の責任を背負ってこそ、キャプテンになれる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～てこそ");
+        assert_pattern_range(&patterns, "～てこそ", 9, 15); // 背負ってこそ
+    }
+
+    #[test]
+    fn test_tekoso_beat_teams() {
+        // Testing: てこそ meaning "only by"
+        // 他のチームに勝ってこそ、世界一になれる
+        let sentence = "他のチームに勝ってこそ、世界一になれる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～てこそ");
+        assert_pattern_range(&patterns, "～てこそ", 6, 11); // 勝ってこそ
+    }
+}

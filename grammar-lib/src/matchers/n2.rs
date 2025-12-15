@@ -2022,9 +2022,39 @@ pub fn shidaini() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(ShidainiMatcher))]
 }
 
-// Pattern: ～てこそ
+// Pattern: ～てこそ (only if, only by, only when)
+// Structures: Verb[て] + こそ
 pub fn uff5e_tekoso() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て particle (接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match こそ particle (係助詞)
+    #[derive(Debug)]
+    struct KosoParticleMatcher;
+    impl super::Matcher for KosoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こそ"
+                && token.base_form == "こそ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KosoParticleMatcher)),
+    ]
 }
 
 // Pattern: を問わず
