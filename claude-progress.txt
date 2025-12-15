@@ -1,3 +1,81 @@
+## Session 364 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern (合う)
+**Patterns completed**: 1 (合う - N3 newly implemented)
+**Tests added**: 5 new tests for 合う (all passing)
+**Total tests**: 2325 passing, 1 ignored (was 2320 passing, 1 ignored - net +5 tests)
+
+### ✅ Pattern Implemented: 合う (to do mutually/reciprocally)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not highlighted in overlay)
+
+**Pattern**: The う-Verb 合（あ）う when following the conjunctive form (連用形/stem) of another verb means to do that action in concert with another person/group. Translated as "to mutually do (A)", "to do (A) for one another", or "to do (A) reciprocally". The key meaning is that involvement from both sides is required - the action is performed together or toward each other.
+
+**Structures tested**: 5 comprehensive tests covering major conjugations
+1. Verb[stem] + 合う (dictionary): 話しあう → 話しあう (8-12)
+2. Verb[stem] + 合う (present): 見せあう → 見せあう (11-15)
+3. Verb[stem] + 合った (past): 見せあった → 見せあった (11-16)
+4. Verb[stem] + 合う (with nominalizer): 助けあう → 助けあう (8-12)
+5. Verb[stem] + 合わない (negative): 協力しあわない → 協力しあわない (18-25)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (au function, lines 2763-2793)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (au_tests module, lines 12670-12736)
+- Pattern: grammar-lib/src/patterns.rs (Au variant, lines 3112-3118)
+
+**Tokenization patterns**:
+```
+合う suffix (split tokenization):
+- Verb[stem] (動詞/自立, 連用形) + あう (動詞/非自立)
+- Base form: あう OR ある (both appear in Kagome)
+- Surface: あう, あっ, あわ, etc. (various conjugations)
+- POS: 動詞/非自立 (dependent verb)
+
+Common verbs with split tokenization:
+- 話しあう (話し + あう) - talk together
+- 見せあう (見せ + あう) - show each other
+- 助けあう (助け + あう) - help each other
+- 協力しあう (協力し + あう) - cooperate together
+
+Note: Some combinations like 取りあう may be lexicalized as single compounds (取りあう as 動詞/自立).
+Our pattern focuses on the productive construction (split tokenization).
+```
+
+**Key implementation points**:
+1. Two-token matcher: VerbStem + AuDependentVerb
+2. VerbStemMatcher: 動詞 in 連用形 (conjugative form)
+3. AuDependentVerbMatcher: base_form == "あう" OR "ある", POS == 動詞/非自立
+4. Handles base_form ambiguity: Kagome tokenizes あっ as either "あう" or "ある"
+5. Pattern priority: 1 (low - construction pattern, detected but not highlighted)
+6. Matches the productive suffix construction (verb stem + あう), not lexicalized compounds
+
+**Pattern ranges**: Include verb stem + full conjugated form of あう
+- Present: `話しあう` (chars 8-12) - verb stem + あう
+- Past: `見せあった` (chars 11-16) - verb stem + あっ + た (full construction)
+- Negative: `協力しあわない` (chars 18-25) - verb stem + あわ + ない (full construction)
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover major conjugation variants: dictionary, present, past, negative
+- Correct character ranges verified for all variants
+
+**Tokenization Challenge Solved**:
+The surface form あっ (連用タ接続) is ambiguous between:
+- あう (to do together) → あっ
+- ある (to exist) → あっ
+
+Kagome may tokenize this as base_form="ある" even when it's the suffix あう. The matcher handles both base forms ("あう" OR "ある") when POS is 動詞/非自立, which correctly identifies the suffix usage.
+
+**Related patterns**:
+- に合わせて・に合った (N3) - "in accordance with" (different meaning of 合う)
+
+---
+
 ## Session 363 - 2025-12-14
 
 ### ✅ Session Summary
