@@ -1,3 +1,133 @@
+## Session 397 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (に限って, に限らず)
+**Patterns completed**: 2 (に限って and に限らず - both N2)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2592 passing, 1 ignored (was 2586 passing, 1 ignored - net +6 tests)
+
+**Session highlights**:
+- Implemented に限って (particularly when, only when, those who) - 1 structure with 3 different meanings
+- Implemented に限らず (not only, not just) - 1 structure
+- Both patterns follow similar structure: Noun + に + 限る (verb in different conjugation forms)
+- Used custom matchers to differentiate conjugation forms (連用タ接続 for に限って, 未然形 for に限らず)
+- Clean implementation with comprehensive test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: に限って (particularly when, only when, those who)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 6 (high priority - specific grammatical construction)
+
+**Pattern**: に限（かぎ）って is a phrase with three primary uses: 1) shows that (B) is an unbelievable thing about (A), 2) expresses that something is limited to (A), 3) highlights that in most cases for (A), (B). Translations: 'particularly when (A), (B)', 'those who (A), (B)', 'only when (A), (B)'.
+
+**Structures tested**: 3 comprehensive tests covering all three meanings
+1. Unbelievable/unexpected: 子に限って (3-8) - "my child in particular"
+2. Limited to (A): 日に限って (9-14) - "only on days when"
+3. Generally true for (A): 人に限って (13-18) - "those who / people who"
+
+**Implementation**: Matcher in n2.rs (lines 4128-4157), tests in n2_patterns.rs (lines 4187-4225)
+
+**Key notes**:
+- Pattern uses custom KagitteVerbMatcher to match 限る (動詞/五段・ラ行/連用タ接続)
+- TeParticleMatcher ensures て is a particle (助詞/接続助詞)
+- Pattern includes full construction: Noun + に + 限っ + て
+- All three meaning variations use identical grammatical structure
+
+**Tokenization observations**:
+- Noun + に (助詞/格助詞/一般) + 限っ (動詞/自立/五段・ラ行/連用タ接続, base=限る) + て (助詞/接続助詞)
+
+**Pattern ranges**: Full construction from noun through て particle
+- 子に限って: includes noun + に + verb + particle
+- 日に限って: includes noun + に + verb + particle
+- 人に限って: includes noun + に + verb + particle
+
+---
+
+### ✅ Pattern Implemented: に限らず (not only, not just)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 6 (high priority - specific grammatical construction)
+
+**Pattern**: に限（かぎ）らず highlights when something is 'not just (A), but (B) too', or 'not only (A), but also (B)'. Combination of に, the verb 限（かぎ）る 'to limit', and the literary auxiliary verb ず (negative form connecting like ない). Appears after nouns before the (B) part explaining things in the same scope or category as (A).
+
+**Structures tested**: 3 comprehensive tests
+1. Weekends example: 週末に限らず (4-10) - "not only weekends"
+2. Children example: 子供に限らず (6-12) - "not only children"
+3. Grammar example: 文法に限らず (11-17) - "not only grammar"
+
+**Implementation**: Matcher in n2.rs (lines 4159-4188), tests in n2_patterns.rs (lines 4236-4274)
+
+**Key notes**:
+- Pattern uses custom KagirazuVerbMatcher to match 限る (動詞/五段・ラ行/未然形)
+- ZuAuxiliaryMatcher ensures ず is the literary negative auxiliary (助動詞/特殊・ヌ, base=ぬ)
+- Pattern includes full construction: Noun + に + 限ら + ず
+- ず is the literary/formal negative form (vs casual ない)
+
+**Tokenization observations**:
+- Noun + に (助詞/格助詞/一般) + 限ら (動詞/自立/五段・ラ行/未然形, base=限る) + ず (助動詞/特殊・ヌ, base=ぬ)
+
+**Pattern ranges**: Full construction from noun through ず auxiliary
+- 週末に限らず: includes noun + に + verb + auxiliary
+- 子供に限らず: includes noun + に + verb + auxiliary
+- 文法に限らず: includes noun + に + verb + auxiliary
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 138 remaining (down from 140 - completed 2 patterns!)
+- N1: 186 remaining
+- Total: ~326 patterns remaining
+
+### Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ Tests cover all documented structure variants
+✅ No regressions (all 2592 tests passing)
+
+### Technical Notes
+
+**に限って vs に限らず - Conjugation differences**:
+- Both use the verb 限る (to limit) but in different conjugation forms
+- に限って: 限っ (連用タ接続) + て (助詞/接続助詞)
+- に限らず: 限ら (未然形) + ず (助動詞/特殊・ヌ, base=ぬ)
+- ず is the literary negative auxiliary, equivalent to ない in formal writing
+
+**Implementation pattern for similar constructions**:
+- Created separate custom matchers for each conjugation form
+- KagitteVerbMatcher checks for 連用タ接続 (for て-form)
+- KagirazuVerbMatcher checks for 未然形 (for ず-form)
+- Both check base_form == "限る" to ensure same verb root
+
+### Implementation Approach
+- Followed test-first workflow strictly
+- Used print_debug to analyze actual tokenization from Kagome
+- Built matchers based on observed token structure (not assumptions)
+- Removed print_debug and added assertions only after verification
+- Verified no regressions before committing
+
+### Next Steps
+Continue with simple N2 patterns (1 structure variant). Good candidates:
+- なお② - 1 structure (conjunction)
+- ～てこそ - 1 structure
+- 要するに - 1 structure
+- Other simple adverb/conjunction patterns
+
+Target: Keep implementing 2-3 simple patterns per session until all simple N2 patterns are complete.
+
+**Session outcome**: Successfully completed 2 N2 patterns with full test coverage! Total of 6 new tests added, all passing, no regressions.
+
+---
+
 ## Session 395 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
