@@ -3710,4 +3710,28 @@ mod sonoue_tests {
         assert_has_pattern(&patterns, "その上");
         assert_pattern_range(&patterns, "その上", 14, 17); // その上
     }
+
+    // Pattern: 上は (now that, since, as long as)
+    // Data source: grammar_points_data.json["上は"]
+    // Testing: structure.standard[0] - Verb[る] + 上は
+    #[test]
+    fn test_ueha_verb_ru() {
+        let sentence = "この会社の従業員として働く上は、きちんと我が社のルールを守ってもらわないと困ります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上は");
+        assert_pattern_range(&patterns, "上は", 11, 15); // 働く上は
+    }
+
+    // Testing: structure.standard[1] - Verb[た] + 上は
+    #[test]
+    fn test_ueha_verb_ta() {
+        let sentence = "一人暮らしを始めた上は、家事など料理は自分で全部やらなくてはいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上は");
+        assert_pattern_range(&patterns, "上は", 6, 11); // 始めた上は
+    }
 }

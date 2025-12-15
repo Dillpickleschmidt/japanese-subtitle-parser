@@ -1268,9 +1268,36 @@ pub fn sonoue() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 上は
+// Pattern: 上は (now that, since, as long as)
+// Structures: Verb[る/た] + 上は
 pub fn ueha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct UeMatcher;
+    impl Matcher for UeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "上"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb (基本形 or 連用形)
+        TokenMatcher::Optional(Box::new(super::past_auxiliary())), // Optional た/だ
+        TokenMatcher::Custom(Arc::new(UeMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+    ]
 }
 
 // Pattern: の下で
