@@ -10013,13 +10013,13 @@
   {
     "pattern_name": "のみならず",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "のみならず is a structure consisting of のみ, the literary particle equivalent of だけ meaning 'just' or 'only', the negative ... [5 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

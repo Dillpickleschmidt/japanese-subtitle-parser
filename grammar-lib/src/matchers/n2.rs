@@ -7358,9 +7358,63 @@ pub fn tenaranai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: のみならず
+// Pattern: のみならず (not only...but also)
+// Structures: Verb/Adjective/Noun + (である) + のみならず
 pub fn nominarazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for のみ particle
+    #[derive(Debug)]
+    struct NomiMatcher;
+    impl Matcher for NomiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "のみ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Matcher for なら (imperfective form of なる)
+    #[derive(Debug)]
+    struct NaraMatcher;
+    impl Matcher for NaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "なる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Matcher for ず (negative auxiliary verb)
+    #[derive(Debug)]
+    struct ZuMatcher;
+    impl Matcher for ZuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matcher for である (optional before のみならず)
+    #[derive(Debug)]
+    struct DeAruMatcher;
+    impl Matcher for DeAruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で" && token.base_form == "だ" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            || (token.surface == "ある" && token.base_form == "ある" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, Adjective, or Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeAruMatcher)))), // Optional で
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeAruMatcher)))), // Optional ある
+        TokenMatcher::Custom(Arc::new(NomiMatcher)),
+        TokenMatcher::Custom(Arc::new(NaraMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuMatcher)),
+    ]
 }
 
 // Pattern: それなのに (even so, and yet, despite that)
