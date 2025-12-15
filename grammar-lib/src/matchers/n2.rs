@@ -850,9 +850,44 @@ pub fn ooyoso() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(OoyosoMatcher))]
 }
 
-// Pattern: まい
+// Pattern: まい (won't, intend not to, probably not)
+// Structures: Verb + まい, Verb[stem] + まい, Verb(Polite) + まい
 pub fn mai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct MaiMatcher;
+    impl super::Matcher for MaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まい"
+                && token.base_form == "まい"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct VerbMatcher;
+    impl super::Matcher for VerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl super::Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+        TokenMatcher::Custom(Arc::new(MaiMatcher)),
+    ]
 }
 
 // Pattern: 上

@@ -3164,4 +3164,76 @@ mod ikasu_tests {
         assert_has_pattern(&patterns, "活かす");
         assert_pattern_range(&patterns, "活かす", 10, 14); // 活かした
     }
+
+    // ============================================================================
+    // Pattern: まい (won't / intend not to / probably not)
+    // Data source: grammar_points_data.json["まい"]
+    // ============================================================================
+
+    // Testing: structure.standard[0] - "Verb + まい" (basic form)
+    #[test]
+    fn test_mai_basic_form() {
+        let sentence = "あんな接客が雑なレストランにはもう行くまい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まい");
+        assert_pattern_range(&patterns, "まい", 17, 21); // 行くまい
+    }
+
+    // Testing: structure.standard[1] - "Verb[stem] + まい" (conjunctive form)
+    // Note: する→しまい or すまい, 来る→きまい or こまい
+    #[test]
+    fn test_mai_suru_stem() {
+        let sentence = "田中くんはとてもいい人なので、そんなひどい事はしまい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まい");
+        assert_pattern_range(&patterns, "まい", 23, 26); // しまい
+    }
+
+    // Testing: Verb[stem] + まい with する (alternative: すまい)
+    #[test]
+    fn test_mai_suru_sumai() {
+        let sentence = "彼女はそんな嘘はすまい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まい");
+        assert_pattern_range(&patterns, "まい", 8, 11); // すまい
+    }
+
+    // Testing: Verb + まい with 来る (standard form: 来るまい)
+    #[test]
+    fn test_mai_kuru_standard() {
+        let sentence = "台風の警報が出ているので、今日中に届くはずだった荷物は来るまい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まい");
+        assert_pattern_range(&patterns, "まい", 27, 31); // 来るまい
+    }
+
+    // Testing: Verb[stem] + まい with 来る (stem form: こまい)
+    #[test]
+    fn test_mai_kuru_stem() {
+        let sentence = "台風の警報が出ているので、今日中に届くはずだった荷物はこまい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まい");
+        assert_pattern_range(&patterns, "まい", 27, 30); // こまい
+    }
+
+    // Testing: structure.polite[0] - "Verb (Polite) + まい"
+    #[test]
+    fn test_mai_polite_form() {
+        let sentence = "あのアパートの家賃は高いので、あそこには住みますまい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まい");
+        assert_pattern_range(&patterns, "まい", 20, 26); // 住みますまい
+    }
 }
