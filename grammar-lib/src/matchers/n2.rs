@@ -6036,9 +6036,79 @@ pub fn tehanaranai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てはいられない
+// Pattern: てはいられない (cannot afford to, unable to)
+// Structures: Verb[て/で] + は + いられない, い-Adj[て] + は + いられない, な-Adj/Noun + では + いられない
 pub fn tehairarenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for て/で (conjunction particle OR copula)
+    #[derive(Debug)]
+    struct TeDeWaMatcher;
+    impl super::Matcher for TeDeWaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // て/で as conjunction particle (from verb/adjective)
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                ||
+            // で as copula (from な-adjective/noun)
+            (token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ")
+        }
+    }
+
+    // Matcher for は particle
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl super::Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for い (いる in 未然形)
+    #[derive(Debug)]
+    struct IruMizenMatcher;
+    impl super::Matcher for IruMizenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "い"
+                && token.base_form == "いる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Matcher for られ (られる in 未然形)
+    #[derive(Debug)]
+    struct RareMatcher;
+    impl super::Matcher for RareMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "られ"
+                && token.base_form == "られる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Matcher for ない (negative auxiliary)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(TeDeWaMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IruMizenMatcher)),
+        TokenMatcher::Custom(Arc::new(RareMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: 陸に～ない (barely, hardly, not properly)

@@ -10251,13 +10251,13 @@
   {
     "pattern_name": "てはいられない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "てはいられない is a grammar pattern which consists of the conjunction-particle て, は, and the negated-potential form of the る... [5 std, 5 pol]",
     "priority": 4,
     "skip_reason": null

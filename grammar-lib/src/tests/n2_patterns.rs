@@ -7511,3 +7511,90 @@ mod rikuni_nai_tests {
         assert_pattern_range(&patterns, "陸に～ない", 10, 23); // ろくに友達にも会えていない
     }
 }
+
+// Pattern: てはいられない (cannot afford to, unable to)
+// Data source: grammar_points_data.json["てはいられない"]
+// Testing: structure.standard[0-4] - Various forms
+//
+// Structure variants:
+//   - standard[0]: Verb[て] + はいられない
+//   - standard[1]: い-Adjective[て] + はいられない
+//   - standard[2]: な-Adjective + では + いられない (or じゃ)
+//   - standard[3]: Noun + では + いられない (or じゃ)
+//   - polite[0-3]: Same with いられません
+
+mod tehairarenai_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_te_wa_irarenai() {
+        // Structure: Verb[て] + はいられない
+        // Example: 遊んではいられない
+        let sentence = "明日までに提出しないといけないから、遊んではいられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはいられない");
+        assert_pattern_range(&patterns, "てはいられない", 20, 27); // ではいられない
+    }
+
+    #[test]
+    fn test_verb_te_wa_irarenai_2() {
+        // Structure: Verb[て] + はいられない
+        // Example: のんびり食べてはいられない
+        let sentence = "あと３０分で出ないといけないので、のんびり食べてはいられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはいられない");
+        assert_pattern_range(&patterns, "てはいられない", 23, 30); // てはいられない
+    }
+
+    #[test]
+    fn test_verb_de_wa_irarenai() {
+        // Structure: Verb[で] + はいられない (de variant)
+        // Example: 休んではいられない
+        let sentence = "午後までに終わらせるように頼まれたから、休んではいられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはいられない");
+        assert_pattern_range(&patterns, "てはいられない", 22, 29); // ではいられない
+    }
+
+    #[test]
+    fn test_i_adjective_te_wa_irarenai() {
+        // Structure: い-Adjective[て] + はいられない
+        // Example: 遅くてはいられない
+        let sentence = "次の大会で勝つには、こんな遅くてはいられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはいられない");
+        assert_pattern_range(&patterns, "てはいられない", 15, 22); // てはいられない
+    }
+
+    #[test]
+    fn test_na_adjective_de_wa_irarenai() {
+        // Structure: な-Adjective + では + いられない
+        // Example: 元気ではいられない
+        let sentence = "お父さんもいつまでも元気ではいられないんだから、気をつけな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはいられない");
+        assert_pattern_range(&patterns, "てはいられない", 12, 19); // ではいられない
+    }
+
+    #[test]
+    fn test_noun_de_wa_irarenai() {
+        // Structure: Noun + では + いられない
+        // Example: 社員ではいられない
+        let sentence = "もうこんな会社の社員ではいられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはいられない");
+        assert_pattern_range(&patterns, "てはいられない", 10, 17); // ではいられない
+    }
+}
