@@ -6135,9 +6135,53 @@ pub fn dakenokotohaaru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てはならない
+// Pattern: てはならない (must not do)
+// Structures: Verb[て/で] + は + ならない/なりません
 pub fn tehanaranai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for て/で (conjunction particle from verb)
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl super::Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for は particle
+    #[derive(Debug)]
+    struct WaKakariMatcher;
+    impl super::Matcher for WaKakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for なる (in 未然形 or 連用形) - for ならない or なりません
+    #[derive(Debug)]
+    struct NaruFormMatcher;
+    impl super::Matcher for NaruFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "なる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && (token.features.get(5).is_some_and(|f| f == "未然形")
+                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(), // Matches 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(TeDeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(WaKakariMatcher)),
+        TokenMatcher::Custom(Arc::new(NaruFormMatcher)),
+        TokenMatcher::Any, // Matches ない (助動詞) or ませ + ん
+    ]
 }
 
 // Pattern: てはいられない (cannot afford to, unable to)

@@ -7833,3 +7833,47 @@ mod kaigaaru_tests {
         assert_pattern_range(&patterns, "甲斐がある", 14, 20); // たかいがない
     }
 }
+
+// Pattern: てはならない (must not do)
+// Data source: grammar_points_data.json["てはならない"]
+// Testing: structure.standard[0] - "Verb[て] + はならない"
+//          structure.polite[0] - "Verb[て] + はなりません"
+mod tehanaranai_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_te_hanaranaい_standard() {
+        // Structure: Verb[て] + はならない (standard form)
+        // Example from grammar_points_data.json: 泳いではならない
+        let sentence = "この池では泳いではならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはならない");
+        assert_pattern_range(&patterns, "てはならない", 5, 13); // 泳いではならない
+    }
+
+    #[test]
+    fn test_verb_te_hanaranasen_polite() {
+        // Structure: Verb[て] + はなりません (polite form)
+        // Example: 運転してはなりません
+        let sentence = "お酒を飲んで運転してはなりません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはならない");
+        assert_pattern_range(&patterns, "てはならない", 6, 16); // 運転してはなりません
+    }
+
+    #[test]
+    fn test_verb_te_hanaranaい_formal_writing() {
+        // Structure: Verb[て] + はならない (formal writing)
+        // Example from grammar_points_data.json: 関係者以外、入ってはならない
+        let sentence = "ここから先は関係者以外、入ってはならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはならない");
+        assert_pattern_range(&patterns, "てはならない", 12, 20); // 入ってはならない
+    }
+}

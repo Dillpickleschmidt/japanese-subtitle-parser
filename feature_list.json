@@ -10237,13 +10237,13 @@
   {
     "pattern_name": "てはならない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although なくてはならない 'must do' is introduced to many learners early on, てはならない by itself carries the meaning of 'must no... [1 std, 1 pol]",
     "priority": 4,
     "skip_reason": null
