@@ -1,3 +1,71 @@
+## Session 431 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (～ところに・～ところへ)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 4 new tests (all passing with range assertions)
+**Total tests**: 2829 passing, 1 ignored (was 2825 passing, 1 ignored - net +4 tests)
+
+**Session highlights**:
+- Implemented ～ところに・～ところへ (at the time of, while, when) pattern
+- Handles both ている and ていた forms with both に and へ particles
+- Emphasizes precise moment when something unexpected happens
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All structure variants tested with realistic sentences
+- All tests pass with proper range assertions
+- No regressions
+- Priority updated from 1 to 4 in patterns.rs
+
+---
+
+### ✅ Pattern Implemented: ～ところに・～ところへ (at the time of, while, when)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: ところに will be used to highlight the time of (A), and can be interpreted as 'at the time of (A)', 'while (A)', or 'with the timing of (A)'. As it is a structure that makes use of the noun ところ 'place' or 'spot', it puts more emphasis on the scene or situation, rather than the action itself. This pattern follows verbs in their ている or ていた forms. Also, rather than appearing with に, へ is sometimes used instead.
+
+**Structures tested**: 4 test variants covering all standard forms
+1. Verb［ている］+ ところに: 左折しているところに (chars 2-12) - "when making a left turn"
+2. Verb［ていた］+ ところに: 踊っていたところに (chars 4-13) - "when I was dancing"
+3. Verb［ている］+ ところへ: 取り壊しているところへ (chars 3-14) - "when tearing down"
+4. Verb［ていた］+ ところへ: 落ち込んでいたところへ (chars 7-18) - "when I was feeling down"
+
+**Implementation details**:
+- Matcher structure: Verb[連用形/連用タ接続] + て/で + いる[基本形/連用形] + Optional(た) + ところ + に/へ
+- Custom matchers created:
+  - TeDeFormMatcher: matches て or で particle
+  - IruMatcher: matches いる in 基本形 (いる) or 連用形 (い)
+  - TokoroMatcher: matches ところ noun
+  - NiHeParticleMatcher: matches に or へ particle (格助詞)
+- Flexible matcher handles both progressive (ている) and past progressive (ていた)
+- Accepts both に and へ particles
+- Emphasizes the precise moment when something unexpected happens
+
+**Test sentences used**:
+- "車で左折しているところに、急に自転車が飛び出してきた" - realistic driving scenario
+- "休憩室で踊っていたところに後輩たちが入ってきた" - unexpected interruption
+- "倉庫を取り壊しているところへ近所の人が来て手伝ってくれた" - helpful neighbor
+- "上司に怒られて落ち込んでいたところへ、先輩が来て慰めてくれた" - emotional support
+
+**Files modified**:
+1. grammar-lib/src/matchers/n2.rs - Implemented uff5e_tokoroni_u30fb_uff5e_tokorohe()
+2. grammar-lib/src/tests/n2_patterns.rs - Added tokoroni_tests module with 4 tests
+3. grammar-lib/src/patterns.rs - Updated priority from 1 to 4
+4. feature_list.json - Updated to passes: true, category: complete
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- ぶりに
+- ては
+- ては〜ては
+- 結果・の結果
+- 以来
+- に先立ち
+And more...
+
+---
+
 ## Session 430 - 2025-12-15
 
 ### Session Summary - COMPLETE
