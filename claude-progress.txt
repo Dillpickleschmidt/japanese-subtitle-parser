@@ -1,3 +1,80 @@
+## Session 367 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern (当たり)
+**Patterns completed**: 1 (当たり - N3 newly implemented)
+**Tests added**: 4 new tests for 当たり (all passing)
+**Total tests**: 2344 passing, 1 ignored (was 2340 passing, 1 ignored - net +4 tests)
+
+### ✅ Pattern Implemented: 当たり (per / each)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not highlighted in overlay)
+
+**Pattern**: When attached to the end of numbers or counters, the noun 当（あ）たり 'to hit' will be used as a suffix. In these cases, the meaning is usually translated as 'per (A)', or 'each (A)'. The pattern expresses a relationship similar to に対（たい）して 'to be in relation to', where (A) 当たり (B) means "Regarding (A), (B) equates to it."
+
+**Structures tested**: 4 comprehensive tests covering both forms
+1. Counter + あたり (hiragana): 一個あたり → あたり (2-5)
+2. Counter + あたり + の: 一日あたりの → あたり (2-5)
+3. Counter + 当たり (kanji): １台当たり → 当たり (6-9)
+4. Counter + 当たり: 一人当たり → 当たり (2-5)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (atari function, lines 6760-6779)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (atari_tests module, lines 12966-13012)
+- Pattern: grammar-lib/src/patterns.rs (Atari variant, lines 3849-3855)
+
+**Tokenization patterns**:
+```
+当たり/あたり suffix:
+Hiragana form "あたり":
+- surface='あたり', base='あたり'
+- POS: 名詞/接尾/一般 (suffix noun)
+
+Kanji form "当たり":
+- surface='当たり', base='当たり'
+- POS: 名詞/一般 (general noun)
+
+Both follow number + counter constructions:
+- 一個あたり (one item per)
+- １台当たり (per vehicle)
+- 一人当たり (per person)
+- 一日あたり (per day)
+```
+
+**Key implementation points**:
+1. Single-token matcher: AtariMatcher
+2. Matches both surface forms: "あたり" OR "当たり"
+3. Matches both base forms: "あたり" OR "当たり"
+4. Accepts two POS patterns: 名詞/接尾 (suffix) or 名詞/一般 (general noun)
+5. Pattern priority: 1 (low - construction pattern, detected but not highlighted)
+
+**Pattern ranges**: Include only あたり/当たり (3 characters)
+- Hiragana: `あたり` (chars 2-5) - the suffix itself
+- Kanji: `当たり` (chars 6-9 or 2-5) - the suffix itself
+- Pattern captures just the suffix marker after the counter
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic sentences from grammar_points_data.json examples
+- Cover both hiragana and kanji forms, with and without following の
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: While the literal meaning of 当（あ）たり is 'to meet' (as in 'to come into physical contact with'), as a suffix it has a nuance similar to に対（たい）して 'to be in relation to'. The pattern expresses equivalence or ratio: "(A) 当たり (B)" means "Regarding (A), (B) equates to it" or "per (A), there is (B)".
+
+**Usage contexts**:
+- Rates and ratios: Price per item, calories per serving
+- Distributions: Per person, per day, per unit
+- Formal/informal: Works in both registers
+- Always follows number + counter construction
+
+**Related patterns**:
+- に当たる (N3) - "corresponds to / amounts to" (different meaning, already implemented)
+
+---
+
 ## Session 365 - 2025-12-14
 
 ### ✅ Session Summary
