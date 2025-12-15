@@ -3331,3 +3331,96 @@ The pattern range includes the full verb construction: 考えられない/ませ
 - しかも: simple conjunction matching
 - てでも: slightly more complex with て/で variants and でも POS variations
 - Good momentum on N2 level patterns
+
+## Session 381 - Three N2 Adverb Patterns Completed
+
+**Date**: Current session
+**Focus**: Implementing simple N2 adverb patterns
+
+### Patterns Completed
+
+#### 1. どうせ (douse) - "in any case, anyway"
+**Pattern structure**: どうせ (副詞/一般)
+**Tests**: 3 tests covering different usage contexts
+- test_douse_resignation: Expressing inevitability
+- test_douse_with_nara: "Might as well" with なら
+- test_douse_with_dakara: With だから construction
+
+**Tokenization**:
+- Single adverb token: どうせ (副詞/一般)
+- Char range: [0-3] in all test sentences
+
+**Implementation**: Simple custom matcher checking surface == "どうせ" and pos == 副詞/一般
+
+#### 2. せめて (semete) - "at least"
+**Pattern structure**: せめて (副詞/一般)
+**Tests**: 3 tests covering different contexts
+- test_semete_minimum_request: Basic minimum expectation
+- test_semete_with_tai: Used with たい desire form
+- test_semete_with_tehoshii: Used with てほしい construction
+
+**Tokenization**:
+- Single adverb token: せめて (副詞/一般)
+- Char ranges vary by position in sentence
+
+**Implementation**: Simple custom matcher identical to どうせ pattern
+
+#### 3. 確かに (tashikani) - "certainly, surely"
+**Pattern structure**: 
+- たしかに (副詞/一般) - hiragana single token
+- 確か (名詞/形容動詞語幹) + に (助詞/副詞化) - kanji two tokens
+
+**Tests**: 3 tests covering both writing systems
+- test_tashikani_hiragana_agreement: たしかに as single adverb [chars 0-4]
+- test_tashikani_kanji_apology: 確かに as kanji form [chars 0-3]
+- test_tashikani_difficult: Another kanji example [chars 0-3]
+
+**Tokenization observations**:
+- Hiragana (たしかに): Single token 副詞/一般
+- Kanji (確かに): Two tokens - 確か (名詞/形容動詞語幹) + に (助詞/副詞化)
+
+**Implementation**: Combined custom matcher handling both forms:
+- Matches たしかに as 副詞
+- Matches 確か as 名詞/形容動詞語幹
+- Optional に matcher for kanji form
+
+### Test Statistics
+**Patterns completed**: 3
+**Total tests added**: 9 tests (all passing)
+**Total test count**: 2457 (up from 2448)
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 178 remaining (down from 181!)
+- N1: 186 remaining
+- Total: ~366 patterns remaining
+
+### Quality Metrics
+✅ All 9 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges
+✅ Tests cover multiple usage contexts
+✅ No regressions (all 2457 tests passing)
+
+### Technical Notes
+
+**Pattern implementation approach**:
+- どうせ and せめて: Simple adverb patterns with identical implementation structure
+- 確かに: More complex - handles both hiragana (single token) and kanji (two-token) forms
+- Used Optional matcher for the に particle in 確かに pattern
+
+**Key learning**: 
+- Same semantic meaning can tokenize differently based on writing system (hiragana vs kanji)
+- Combined custom matchers can handle multiple tokenization variants
+- Optional matchers allow flexible pattern matching
+
+### Next Priority
+Continue with simple N2 adverb patterns:
+- どうやら (douyara) - 2 structures
+- なにやら (naniyara) - 1 structure
+- 万が一 (mangaichi) - 1 structure
+
+**Session outcome**: Successfully implemented 3 N2 patterns with perfect test coverage!
