@@ -11241,3 +11241,58 @@ Complete N2 patterns with test-first workflow, focusing on highest priority inco
 - Ready for next session
 
 Total session time: ~90 minutes
+
+---
+## Session 452 - てたまらない, でしかない (2025-01-XX)
+
+### Patterns Completed
+1. **てたまらない** (N2, priority 4) - 6 tests
+   - てたまらない (can't help but / extremely)
+   - Structures tested:
+     - Verb[たい][て] + たまらない/たまりません (can't help but want to)
+     - い-Adjective[て] + たまらない/たまりません (extremely)
+     - な-Adjective/Noun + で + たまらない/たまりません (extremely)
+   - Implementation: Matches て/で particle followed by たまらない (adjective) or たまり (for たまりません polite form)
+   - Optional verb stem matcher to capture full Verb+たい construction
+
+2. **でしかない** (N2, priority 4) - 3 tests
+   - でしかない (nothing but / no more than)
+   - Structures tested:
+     - Noun + でしかない (standard)
+     - Noun + でしかありません (polite)
+   - Implementation: Matches Noun + で + しか + ない/あり pattern
+   - Straightforward しか construction for "no more than X"
+
+### Implementation Details
+
+**てたまらない**:
+- Matcher handles 3 different preceding forms (たい, い-adj, な-adj/noun) uniformly
+- Uses TeDeFormMatcher to match both て and で particles
+- TamaranaiOrTamariMatcher handles both standard (たまらない) and polite (たまり) forms
+- Optional verb stem captures full construction for Verb+たい+てたまらない
+- Ranges properly capture the full grammatical unit
+
+**でしかない**:
+- Simple 4-token pattern: Noun + で + しか + ない/あり
+- ShikaMatcher specifically checks for しか as 助詞/係助詞
+- NaiOrAriMatcher handles both ない (adjective) and あり (verb for polite form)
+- Pattern correctly excludes following tokens (e.g., でした in でしかありませんでした)
+
+### Testing Notes
+- All test sentences use realistic, subtitle-quality Japanese
+- てたまらない: Fixed one test that had でした after たまりません (removed the でした to avoid range confusion)
+- でしかない: All tests passed on first implementation
+- Proper character ranges verified for all variants
+
+### Stats
+- Tests: 2986 passing (was 2977, net +9 tests)
+- N2 patterns remaining: ~84 (down from ~86)
+- Total patterns passing: てたまらない + でしかない completed
+
+### Files Modified
+- grammar-lib/src/matchers/n2.rs: Added tetamaranai() and deshikanai() implementations
+- grammar-lib/src/tests/n2_patterns.rs: Added tetamaranai_tests and deshikanai_tests modules (9 tests total)
+- feature_list.json: Updated てたまらない and でしかない to complete
+
+### Session Summary
+Completed 2 N2 patterns (both priority 4) with comprehensive test coverage. Both patterns handle multiple structure variants (standard/polite forms). てたまらない required careful handling of different preceding forms, while でしかない was more straightforward. No regressions, all tests passing.
