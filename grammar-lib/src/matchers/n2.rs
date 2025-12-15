@@ -4902,9 +4902,69 @@ pub fn hanmen() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 抜く
+// Pattern: 抜く (to do completely, to pull through)
+// Structures: Verb[stem] + ぬく
+//
+// Tokenization patterns:
+// 1. Separate: Verb連用形 + ぬく (動詞/非自立)
+//    Example: 守り + ぬく, やり + ぬか + ない
+// 2. Compound: Single verb with base_form ending in ぬく (動詞/自立)
+//    Example: 知りぬく (tokenized as one word)
 pub fn nuku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NukuNonSelfStandingMatcher;
+    impl super::Matcher for NukuNonSelfStandingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ぬく as a non-self-standing verb (動詞/非自立)
+            token.base_form == "ぬく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct CompoundNukuVerbMatcher;
+    impl super::Matcher for CompoundNukuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match compound verbs ending in ぬく (like 知りぬく)
+            // These are tokenized as 動詞/自立 with base_form ending in ぬく
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.base_form.ends_with("ぬく")
+                && token.base_form != "ぬく" // Exclude standalone ぬく
+        }
+    }
+
+    // This pattern can match in two ways:
+    // 1. Verb連用形 + ぬく (separate tokens)
+    // 2. Compound verb ending in ぬく (single token)
+    // We use TokenMatcher::Any for the first token to match verbs in 連用形
+    vec![
+        TokenMatcher::verb_with_form("連用形"),
+        TokenMatcher::Custom(Arc::new(NukuNonSelfStandingMatcher)),
+    ]
+}
+
+// Note: Compound forms like 知りぬく will need a separate pattern
+// Pattern: 抜く (compound)
+pub fn nuku_compound() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct CompoundNukuVerbMatcher;
+    impl super::Matcher for CompoundNukuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match compound verbs ending in ぬく (like 知りぬく)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.base_form.ends_with("ぬく")
+                && token.base_form != "ぬく" // Exclude standalone ぬく
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(CompoundNukuVerbMatcher))]
 }
 
 // Pattern: 抜きで

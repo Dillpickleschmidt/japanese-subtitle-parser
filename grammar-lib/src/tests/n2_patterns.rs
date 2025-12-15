@@ -8690,3 +8690,87 @@ mod hanmen_tests {
         assert_pattern_range(&patterns, "反面", 14, 18); // ある反面
     }
 }
+
+// Pattern: 抜く (to do completely, to pull through, thoroughly)
+// Data source: grammar_points_data.json["抜く"]
+// Testing: structure.standard[0] - "Verb[stem] + ぬく"
+//
+// Structure variants:
+//   - standard[0]: Verb[stem] + ぬく (do completely/thoroughly)
+//   - polite[0]: Verb[stem] + ぬきます
+
+mod nuku_tests {
+    use super::*;
+
+    #[test]
+    fn test_nuku_masu_stem() {
+        // Structure: Verb[stem] + ぬく (standard form)
+        // Example from grammar data: 自分の子供達を守りぬく
+        let sentence = "自分の子供達を守りぬくためならなんでもできる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜く");
+        assert_pattern_range(&patterns, "抜く", 7, 11); // 守りぬく
+    }
+
+    #[test]
+    fn test_nuku_passive() {
+        // Structure: Verb[stem] + ぬく (passive form - ぬかれる)
+        // Example from grammar data: 私の計画は彼に見ぬかれていた
+        let sentence = "私の計画は彼に見ぬかれていた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜く");
+        assert_pattern_range(&patterns, "抜く", 7, 10); // 見ぬか
+    }
+
+    #[test]
+    fn test_nuku_negative() {
+        // Structure: Verb[stem] + ぬく (negative form - ぬかない)
+        // Example from grammar data: 最後までやりぬかないと気が済まない
+        let sentence = "私は何があっても最後までやりぬかないと気が済まないです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜く");
+        assert_pattern_range(&patterns, "抜く", 12, 18); // やりぬかない
+    }
+
+    #[test]
+    fn test_nuku_past() {
+        // Structure: Verb[stem] + ぬく (past form - ぬいた)
+        // Example from grammar data: 考えぬいた結果
+        let sentence = "考えぬいた結果、俺は大学を中退して親父の会社を継ぐことにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜く");
+        assert_pattern_range(&patterns, "抜く", 0, 5); // 考えぬいた
+    }
+
+    #[test]
+    fn test_nuku_te_iru() {
+        // Structure: Verb[stem] + ぬく (ている form - compound verb)
+        // Example from grammar data: 田中師匠は俳句の事なら知りぬいている
+        // Note: 知りぬく is tokenized as a single compound verb (動詞/自立)
+        let sentence = "田中師匠は俳句の事なら知りぬいている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜く_compound");
+        assert_pattern_range(&patterns, "抜く_compound", 11, 15); // 知りぬい
+    }
+
+    #[test]
+    fn test_nukimasu_polite() {
+        // Structure: Verb[stem] + ぬきます (polite form)
+        let sentence = "この困難を乗り越えぬきます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "抜く");
+        assert_pattern_range(&patterns, "抜く", 5, 13); // 乗り越えぬきます
+    }
+}

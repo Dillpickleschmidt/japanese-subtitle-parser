@@ -5472,6 +5472,14 @@ declare_patterns! {
         jlpt: "n2",
     },
 
+    NukuCompound {
+        name: "抜く_compound",
+        matcher_fn: crate::matchers::n2::nuku_compound,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
     Nukide {
         name: "抜きで",
         matcher_fn: crate::matchers::n2::nukide,
