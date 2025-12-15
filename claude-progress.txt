@@ -2536,3 +2536,61 @@ The pattern range includes the full verb construction: 考えられない/ませ
 - Total: ~382 patterns remaining (down from ~383!)
 
 **Next priority**: 切る (kiru) - "to cut (completely)"
+
+---
+
+## Session 372 Update: 切る Pattern Implementation
+
+**Pattern completed**: 切る (kiru)
+- **Meaning**: Do completely / to exhaustion / to the limit
+- **Structure**: Verb[stem] + 切る
+- **JLPT Level**: N3
+- **Tests added**: 5
+
+### Implementation Details
+
+**Matcher type**: Custom matcher for auxiliary きる verb
+- Matches きる with 五段・ラ行 (godan-ra) conjugation
+- Distinguishes from 着る (ichidan conjugation - to wear)
+- Accepts both 自立 and 非自立 forms
+- Pattern: Verb[連用形/連用タ接続] + きる/きっ/きり
+
+**Test coverage**:
+1. test_verb_stem_kiru_use_up: 使いきったら (use up completely if...)
+2. test_verb_stem_kiru_read: 読みきった (finished reading)
+3. test_verb_stem_kiru_drink: 飲みきった (drank all)
+4. test_verb_stem_kiru_full_capacity: 出しきる (give full effort)
+5. test_verb_stem_kirimasu: 使いきります (polite - use up completely)
+
+**Tokenization observations**:
+- きる/きっ/きり all have base_form = "きる"
+- 五段・ラ行 conjugation distinguishes from 一段 verb 着る
+- Can be 非自立 (auxiliary) or 自立 (independent)
+- Pattern ranges include following auxiliaries (た, ます, etc.)
+
+### Session 372 Final Summary
+
+**Patterns completed**: 2
+- 上がる・上げる (agaru_ageru) - 6 tests
+- 切る (kiru) - 5 tests
+
+**Total tests added**: 11 tests (all passing)
+**Total test count**: 2389 (up from 2378)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 10 remaining (down from 12!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~381 patterns remaining (down from ~383!)
+
+**Quality metrics**:
+✅ All 11 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples
+✅ Correct character ranges
+✅ Tests cover standard and polite forms
+✅ No regressions (all 2389 tests passing)
+
+**Next priority**: 切れない (kirenai) - "unable to finish completely"
