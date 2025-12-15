@@ -200,9 +200,37 @@ pub fn niitarumade() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たところで
+// Pattern: たところで (even if, even though)
+// Matches: Verb (連用形/連用タ接続) + た/だ (past auxiliary) + ところ (名詞/非自立) + で (格助詞)
 pub fn tatokorode() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.base_form == "ところ"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "で"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        super::past_auxiliary(),
+        TokenMatcher::Custom(Arc::new(TokoroMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+    ]
 }
 
 // Pattern: 如く・如き・如し

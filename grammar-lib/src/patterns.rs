@@ -6357,7 +6357,7 @@ declare_patterns! {
     Tatokorode {
         name: "たところで",
         matcher_fn: crate::matchers::n1::tatokorode,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

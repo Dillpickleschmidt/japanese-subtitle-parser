@@ -166,3 +166,49 @@ mod womotte_tests {
         assert_pattern_range(&patterns, "を以て_split", 20, 25); // 身をもって
     }
 }
+
+// ============================================================================
+// たところで Tests
+// ============================================================================
+
+mod tatokorode_tests {
+    use super::*;
+
+    // Pattern: たところで (even if, even though)
+    // Data source: grammar_points_data.json["たところで"]
+    // Testing: structure.standard[0] - "Verb[た] + ところで + Phrase[ない]"
+    //
+    // Single structure variant - expresses "even if A, (negative result) B"
+    // Always followed by negative or unfavorable outcome in second clause
+    // Examples: 始めたところで (even if start), 急いだところで (even if hurry), 走ったところで (even if run)
+
+    #[test]
+    fn test_tatokorode_studying() {
+        let sentence = "今更勉強を始めたところで、合格はできないだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たところで");
+        assert_pattern_range(&patterns, "たところで", 5, 12); // 始めたところで
+    }
+
+    #[test]
+    fn test_tatokorode_hurrying() {
+        let sentence = "もう電車は発車してしまったから、急いだところで間に合わないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たところで");
+        assert_pattern_range(&patterns, "たところで", 16, 23); // 急いだところで
+    }
+
+    #[test]
+    fn test_tatokorode_running() {
+        let sentence = "少し走ったところで、すぐには痩せないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たところで");
+        assert_pattern_range(&patterns, "たところで", 2, 9); // 走ったところで
+    }
+}
