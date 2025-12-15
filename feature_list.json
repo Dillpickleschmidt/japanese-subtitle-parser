@@ -7464,13 +7464,13 @@
   {
     "pattern_name": "よりほかない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Used in a similar way to しかない, より他（ほか）ない is a structure that emphasizes that only (A) is possible, when attached to t... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

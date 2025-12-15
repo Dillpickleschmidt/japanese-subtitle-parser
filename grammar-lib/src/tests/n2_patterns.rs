@@ -2611,3 +2611,66 @@ mod ichiou_tests {
         assert_pattern_range(&patterns, "一応 ②", 3, 5); // 一応 (same detection)
     }
 }
+
+// Pattern: よりほかない (have no choice but / nothing but)
+// Data source: grammar_points_data.json["よりほかない"]
+// Testing: structure.standard[0] - "Verb + より + ほか + （は(1)）+ ない"
+// Note: (1) は, に, or には can optionally appear between ほか and ない
+//
+// Structure variants to test:
+//   - Verb + より + ほか + ない
+//   - Verb + より + ほか + は + ない
+//   - Verb + より + ほか + に + ない
+//   - Verb + より + ほか + には + ない
+
+mod yorihokanai_tests {
+    use super::*;
+
+    #[test]
+    fn test_yorihoka_nai_basic() {
+        // Example: 靴に穴が空いたので、新しいのを買うよりほかない
+        // (I have no choice but to buy a new pair of shoes because there's a hole in mine)
+        let sentence = "靴に穴が空いたので、新しいのを買うよりほかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よりほかない");
+        assert_pattern_range(&patterns, "よりほかない", 15, 23); // 買うよりほかない
+    }
+
+    #[test]
+    fn test_yorihoka_wa_nai() {
+        // Example: 誰もお婆さんを助けようとしなかったので、私が助けるよりほかはなかった
+        // (No one was trying to help the old lady, so I had no choice but to help her)
+        let sentence = "誰もお婆さんを助けようとしなかったので、私が助けるよりほかはなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よりほかない");
+        assert_pattern_range(&patterns, "よりほかない", 22, 34); // 助けるよりほかはなかった
+    }
+
+    #[test]
+    fn test_yorihoka_ni_nai() {
+        // Example: 被害者が無事であることを祈るよりほかにない
+        // (There is nothing we can do other than pray that the victims are safe)
+        let sentence = "被害者が無事であることを祈るよりほかにない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よりほかない");
+        assert_pattern_range(&patterns, "よりほかない", 12, 21); // 祈るよりほかにない
+    }
+
+    #[test]
+    fn test_yorihoka_niwa_nai() {
+        // Example: 仕事をクビになったので新しい仕事を探すよりほかにはない
+        // (I got fired from my job, so I have no choice but to look for a new one)
+        let sentence = "仕事をクビになったので新しい仕事を探すよりほかにはない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よりほかない");
+        assert_pattern_range(&patterns, "よりほかない", 17, 27); // 探すよりほかにはない
+    }
+}

@@ -4595,7 +4595,7 @@ declare_patterns! {
     Yorihokanai {
         name: "よりほかない",
         matcher_fn: crate::matchers::n2::yorihokanai,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },
