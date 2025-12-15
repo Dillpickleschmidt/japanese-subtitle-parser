@@ -1,3 +1,67 @@
+## Session 487 - 2025-12-15
+
+### Session Summary - 幸い・幸いなことに Pattern Complete ✓
+**Status**: Successfully implemented 幸い・幸いなことに pattern with all variants
+**Patterns completed**: 1 (N2, priority 4)
+**Total tests**: 3215 passing, 1 ignored (added 4 new tests)
+
+**Session highlights**:
+- Implemented 幸い・幸いなことに (fortunately, luckily) - 4 tests
+- Pattern handles multiple structure variants using Optional matchers
+- All variants tested: 幸い, 幸いに, 幸いにも, 幸いなことに
+- Flexible matcher approach allows detecting all forms in one pattern
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: 幸い・幸いなことに (fortunately, luckily)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- 幸い (simple adverb form)
+- 幸いに (with adverbializer particle に)
+- 幸いにも (with emphasis particle も)
+- 幸いなことに (full formal expression)
+
+**Implementation details**:
+- Uses SaiwaiEitherMatcher to match 幸い in either 副詞 or 名詞/形容動詞語幹 form
+- NaCopulaMatcher for な (助動詞/体言接続)
+- KotoMatcher for こと (名詞/非自立)
+- NiParticleMatcher handles both 副詞化 and 格助詞 variants
+- MoParticleMatcher for も particle (係助詞)
+- All components after 幸い are Optional, allowing pattern to match all variants
+
+**Tokenization patterns**:
+1. **幸い** (simple): 副詞/助詞類接続 (single token)
+2. **幸いに**: 名詞/形容動詞語幹 + 助詞/副詞化
+3. **幸いにも**: 名詞/形容動詞語幹 + 助詞/格助詞 + 助詞/係助詞
+4. **幸いなことに**: 名詞/形容動詞語幹 + 助動詞/体言接続 + 名詞/非自立 + 助詞/格助詞
+
+**Tests created**: 4 tests
+1. `test_saiwai_simple` - 幸い、ライフジャケットを着ていた (simple form, range 0-2)
+2. `test_saiwai_nakotoni` - 幸いなことに、優しい人に道を教えてもらった (full form, range 0-6)
+3. `test_saiwai_ni` - 幸いに、大親友に会う事ができました (に form, range 0-3)
+4. `test_saiwai_nimo` - 幸いにも、おじいちゃんの手術は成功しました (にも form, range 0-4)
+
+**Key implementation notes**:
+- Pattern uses Optional matchers for flexible matching: 幸い + (な + こと)? + (に)? + (も)?
+- This approach matches the longest available form automatically
+- Different tokenizations of 幸い (副詞 vs 名詞/形容動詞語幹) are both handled
+- に particle can be either 副詞化 or 格助詞 depending on context
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented saiwai_u30fb_saiwainakotoni() function (111 lines)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 4 comprehensive tests
+- `feature_list.json` - Updated 幸い・幸いなことに to complete status
+
+---
+
 ## Session 486 - 2025-12-15
 
 ### Session Summary - Three Simple N2 Patterns Complete ✓
