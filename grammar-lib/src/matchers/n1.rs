@@ -502,9 +502,95 @@ pub fn naramadashimo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: までもない
+// Pattern: までもない (no need to, not necessary)
+// Structures: Verb[る] + まで + も + ない/なく/なくて/ありません
 pub fn mademonai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match まで as 助詞/副助詞
+    #[derive(Debug)]
+    struct MadeMatcher;
+    impl Matcher for MadeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match も as 助詞/係助詞
+    #[derive(Debug)]
+    struct MoKakariMatcher;
+    impl Matcher for MoKakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ない (形容詞, 基本形), なく (形容詞, 連用テ接続), OR あり (動詞)
+    #[derive(Debug)]
+    struct NaiNakuAriMatcher;
+    impl Matcher for NaiNakuAriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない or なく
+            if token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && (token.surface == "ない" || token.surface == "なく")
+            {
+                return true;
+            }
+            // Match あり (for polite form)
+            if token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match て (for なくて form)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match ませ (for polite form)
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match ん (for polite form)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("基本形"),
+        TokenMatcher::Custom(Arc::new(MadeMatcher)),
+        TokenMatcher::Custom(Arc::new(MoKakariMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiNakuAriMatcher)),
+        // Optional て, ませ, ん to handle various endings
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeParticleMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MaseMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))),
+    ]
 }
 
 // Pattern: ともなると・にもなると

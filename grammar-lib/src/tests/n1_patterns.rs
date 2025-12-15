@@ -604,3 +604,64 @@ mod kiraigaaru_tests {
         assert_pattern_range(&patterns, "きらいがある", 19, 28); // のきらいがあります
     }
 }
+
+// ============================================================================
+// までもない Tests
+// ============================================================================
+
+mod mademonai_tests {
+    use super::*;
+
+    // Pattern: までもない (no need to, not necessary)
+    // Data source: grammar_points_data.json["までもない"]
+    // Testing: Main structure variants
+    //
+    // Structures:
+    //   - standard[0]: Verb[る] + までもない
+    //   - standard[1]: Verb[る] + までもなく + Phrase
+    //   - standard[2]: Verb[る] + までもなくて + Phrase
+    //   - polite[0]: Verb[る] + までもありません
+
+    #[test]
+    fn test_verb_mademonai_standard() {
+        let sentence = "痛いけど、指は全部ちゃんと動くから病院に行くまでもないと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "までもない");
+        assert_pattern_range(&patterns, "までもない", 20, 27); // 行くまでもない
+    }
+
+    // Note: 言うまでもなく is tokenized as a single compound token
+    // and is handled by the existing "言うまでもない ②" pattern
+    #[test]
+    fn test_verb_mademonaku_conjunctive() {
+        let sentence = "言うまでもなく、不法投棄で近所の人が迷惑しています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // This pattern is handled by "言うまでもない ②" (compound token)
+        assert_has_pattern(&patterns, "言うまでもない ②");
+        assert_pattern_range(&patterns, "言うまでもない ②", 0, 7); // 言うまでもなく
+    }
+
+    #[test]
+    fn test_verb_mademonakute_conjunctive() {
+        let sentence = "調べるまでもなくて、すぐに答えがわかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "までもない");
+        assert_pattern_range(&patterns, "までもない", 0, 9); // 調べるまでもなくて
+    }
+
+    #[test]
+    fn test_verb_mademoarimasen_polite() {
+        let sentence = "心配するまでもありません。すべて順調に進んでいます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "までもない");
+        assert_pattern_range(&patterns, "までもない", 0, 12); // 心配するまでもありません
+    }
+}
