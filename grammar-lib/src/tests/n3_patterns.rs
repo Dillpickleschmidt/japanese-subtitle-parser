@@ -13821,3 +13821,59 @@ mod komu_u2461_tests {
         assert_pattern_range(&patterns, "込む ②", 10, 16); // 考え込みます
     }
 }
+
+// ========== 次第 (as soon as) ==========
+// Pattern: 次第 (as soon as)
+// Data source: grammar_points_data.json["次第"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + 次第
+//   standard[1]: [する]Verb + 次第
+
+mod shidai_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + 次第 (終わり次第 - as soon as it ends)
+    #[test]
+    fn test_verb_stem_shidai_end() {
+        let sentence = "ミュージカルが終わり次第、連絡をください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第");
+        assert_pattern_range(&patterns, "次第", 7, 12); // 終わり次第
+    }
+
+    // Testing: standard[1] - [する]Verb + 次第 (到着し次第 - as soon as arrival)
+    #[test]
+    fn test_suru_verb_shidai_arrival() {
+        let sentence = "待ち合わせ場所に到着し次第、私に連絡してください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第");
+        assert_pattern_range(&patterns, "次第", 8, 13); // 到着し次第
+    }
+
+    // Testing: standard[0] - Verb[stem] + 次第 (決まり次第 - as soon as it's decided)
+    #[test]
+    fn test_verb_stem_shidai_decide() {
+        let sentence = "計画が決まり次第、あなたに報告します。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第");
+        assert_pattern_range(&patterns, "次第", 3, 8); // 決まり次第
+    }
+
+    // Testing: standard[1] - [する]Verb + 次第 (準備し次第 - as soon as ready)
+    #[test]
+    fn test_suru_verb_shidai_ready() {
+        let sentence = "準備し次第、出発しますので少々お待ちください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第");
+        assert_pattern_range(&patterns, "次第", 0, 5); // 準備し次第
+    }
+}

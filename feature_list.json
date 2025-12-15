@@ -6974,13 +6974,13 @@
   {
     "pattern_name": "次第",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "次第（しだい） is a noun that is often translated in different ways, depending on what type of word it follows [2 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
