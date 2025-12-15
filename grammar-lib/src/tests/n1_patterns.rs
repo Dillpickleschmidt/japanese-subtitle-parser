@@ -733,3 +733,76 @@ mod gotoku_gotoki_gotoshi_tests {
         assert_pattern_range(&patterns, "如く・如き・如し", 0, 6); // 天使のごとし
     }
 }
+
+// Pattern: 極まりない・極まる (extremely)
+// Data source: grammar_points_data.json["極まりない・極まる"]
+// Testing all structure variants (6 standard, 0 polite)
+mod kiwamarinai_kiwamaru_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "な-Adjective + (な + こと) + 極まりない"
+    #[test]
+    fn test_na_adj_nakoto_kiwamarinai() {
+        let sentence = "目上の人に向かってその口の聞き方はなんだ。失礼なこと極まりないやつだな、お前は。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "極まりない・極まる");
+        assert_pattern_range(&patterns, "極まりない・極まる", 21, 31); // 失礼なこと極まりない
+    }
+
+    // Testing: structure.standard[1] - "な-Adjective + (な + こと) + 極まりない + Noun"
+    #[test]
+    fn test_na_adj_nakoto_kiwamarinai_noun() {
+        let sentence = "不便なこと極まりない環境で働かされるのは嫌だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "極まりない・極まる");
+        assert_pattern_range(&patterns, "極まりない・極まる", 0, 10); // 不便なこと極まりない
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + 極まる"
+    #[test]
+    fn test_na_adj_kiwamaru() {
+        let sentence = "傘をさしながら自転車を運転することは危険極まる行動なので、もっと厳しく取り締まるべきだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "極まりない・極まる");
+        assert_pattern_range(&patterns, "極まりない・極まる", 18, 23); // 危険極まる
+    }
+
+    // Testing: structure.standard[3] - "な-Adjective + 極まる + Noun"
+    #[test]
+    fn test_na_adj_kiwamaru_noun() {
+        let sentence = "理不尽極まるクレームを言われるたびにノイローゼになりそうになる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "極まりない・極まる");
+        assert_pattern_range(&patterns, "極まりない・極まる", 0, 6); // 理不尽極まる
+    }
+
+    // Testing: structure.standard[4] - "い-Adjective + こと + 極まりない"
+    #[test]
+    fn test_i_adj_koto_kiwamarinai() {
+        let sentence = "この展望台から見る景色は美しいこと極まりない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "極まりない・極まる");
+        assert_pattern_range(&patterns, "極まりない・極まる", 12, 22); // 美しいこと極まりない
+    }
+
+    // Testing: structure.standard[5] - "い-Adjective + こと + 極まりない + Noun"
+    #[test]
+    fn test_i_adj_koto_kiwamarinai_noun() {
+        let sentence = "危ないこと極まりない方法で作業をするのはやめてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "極まりない・極まる");
+        assert_pattern_range(&patterns, "極まりない・極まる", 0, 10); // 危ないこと極まりない
+    }
+}

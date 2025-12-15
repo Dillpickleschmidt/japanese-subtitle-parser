@@ -393,9 +393,108 @@ pub fn nitaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 極まりない・極まる
+// Pattern: 極まりない・極まる (extremely)
+// Structures:
+// - な-Adj + (な) + (こと) + 極まりない
+// - な-Adj + 極まる
+// - い-Adj + こと + 極まりない
 pub fn kiwamarinai_u30fb_kiwamaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match な-Adjective (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct NaAdjectiveMatcher;
+    impl Matcher for NaAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.get(0).is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹")
+        }
+    }
+
+    // Match い-Adjective (形容詞/自立)
+    #[derive(Debug)]
+    struct IAdjectiveMatcher;
+    impl Matcher for IAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.get(0).is_some_and(|p| p == "形容詞")
+                && token.pos.get(1).is_some_and(|p| p == "自立")
+        }
+    }
+
+    // Match な particle from だ (助動詞, 特殊・ダ, 体言接続)
+    #[derive(Debug)]
+    struct NaParticleMatcher;
+    impl Matcher for NaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.pos.get(0).is_some_and(|p| p == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ダ")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match こと (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.get(0).is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Match 極まりない (形容詞/自立)
+    #[derive(Debug)]
+    struct KiwamarinaiMatcher;
+    impl Matcher for KiwamarinaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "極まりない"
+                && token.pos.get(0).is_some_and(|p| p == "形容詞")
+        }
+    }
+
+    // Match 極まる (動詞/自立)
+    #[derive(Debug)]
+    struct KiwamaruMatcher;
+    impl Matcher for KiwamaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "極まる"
+                && token.pos.get(0).is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match either な-Adj or い-Adj
+    #[derive(Debug)]
+    struct AdjectiveMatcher;
+    impl Matcher for AdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // な-Adjective
+            (token.pos.get(0).is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹"))
+            ||
+            // い-Adjective
+            (token.pos.get(0).is_some_and(|p| p == "形容詞")
+                && token.pos.get(1).is_some_and(|p| p == "自立"))
+        }
+    }
+
+    // Match 極まりない or 極まる
+    #[derive(Debug)]
+    struct KiwamaMatcher;
+    impl Matcher for KiwamaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "極まりない" && token.pos.get(0).is_some_and(|p| p == "形容詞"))
+                || (token.base_form == "極まる" && token.pos.get(0).is_some_and(|p| p == "動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AdjectiveMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaParticleMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KotoMatcher)))),
+        TokenMatcher::Custom(Arc::new(KiwamaMatcher)),
+    ]
 }
 
 // Pattern: といえども

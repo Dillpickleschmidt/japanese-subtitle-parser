@@ -10433,13 +10433,13 @@
   {
     "pattern_name": "極まりない・極まる",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Seen as either 極（きわ）まりない or 極（きわ）まる , this grammar structure makes use of the core meaning of the う-Verb 極（きわ）まる 'to ... [6 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
