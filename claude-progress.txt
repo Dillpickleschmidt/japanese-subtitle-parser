@@ -13225,3 +13225,53 @@ Files modified: 3
 - feature_list.json
 
 Next priorities: Other N2 priority 4 patterns (たちまち, たった(の), だけあって, だけに, etc.)
+
+## Session 474 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented だけに pattern (N2)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 4 new tests (all passing with range assertions)
+**Total tests**: 3113 passing, 1 ignored (was 3109 before session, net +4 tests)
+
+**Session highlights**:
+- Implemented だけに (as might be expected of, because) - N2 pattern
+- Multi-variant pattern matching verb/adjective/noun + だけに construction
+- Pattern: [Verb/Adj/Aux] + だけ + に
+- All 4 structure variants tested (verb, i-adj, na-adj, noun)
+- All tests passing with proper range assertions
+- No regressions
+
+**Pattern details**:
+- Pattern name: だけに
+- Structures tested:
+  1. Verb + だけに (いるだけに)
+  2. い-Adjective + だけに (近いだけに)
+  3. な-Adjective + な + だけに (便利なだけに)
+  4. Noun + である + だけに (夏休みであるだけに)
+- Priority: 4 (construction)
+- Category: Construction
+- JLPT level: N2
+
+**Tests implemented**:
+- test_verb_dakeni: トムさんは日本語を８年勉強しているだけに、日本語がペラペラだ
+- test_i_adj_dakeni: このアパートは東京駅に近いだけに、家賃が高い
+- test_na_adj_dakeni: このアプリは便利なだけに、どんどんとユーザーが増えてきています
+- test_noun_dakeni: 夏休みであるだけに、海水浴場には人がたくさんいる
+
+**Implementation approach**:
+1. Added tests with print_debug to analyze tokenization
+2. Observed tokenization patterns across all 4 variants
+3. Created custom matchers for だけ (副助詞) and に (格助詞)
+4. Used PreDakeniMatcher to match verbs/adjectives/auxiliaries
+5. Pattern matches immediate preceding token + だけに (consistent with だけあって)
+6. Verified detection across all test sentences
+7. Removed print_debug and added proper assertions
+8. Updated feature_list.json
+
+Files modified: 3
+- grammar-lib/src/matchers/n2.rs
+- grammar-lib/src/tests/n2_patterns.rs
+- feature_list.json
+
+Next priorities: Other N2 priority 4 patterns (だけは, だけましだ, たちまち, たった(の), etc.)
