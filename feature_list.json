@@ -534,14 +534,14 @@
   {
     "pattern_name": "の1",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "",
+    "passes": true,
+    "description": "Nominalization particle - converts verb clauses into nouns (that which/the one who)",
     "priority": 1,
     "skip_reason": null
   },
