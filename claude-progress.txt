@@ -1,18 +1,19 @@
 ## Session 437 - 2025-12-15
 
 ### Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented 1 N1 pattern (ともなると・にもなると)
-**Patterns completed**: 1 (N1, priority 5)
-**Tests added**: 6 new tests (all passing with range assertions)
-**Total tests**: 2867 passing, 1 ignored (was 2861 before session, net +6 tests)
+**Status**: COMPLETE - Successfully implemented 2 N1 patterns (ともなると・にもなると, をいいことに)
+**Patterns completed**: 2 (both N1, both priority 5)
+**Tests added**: 11 new tests (6 + 5, all passing with range assertions)
+**Total tests**: 2872 passing, 1 ignored (was 2861 before session, net +11 tests)
 
 **Session highlights**:
 - Implemented ともなると・にもなると (when it comes to, once) - N1 pattern
-- Handles both と and に particles as first particle
-- Handles optional も for emphasis
-- Handles both なると and なれば forms
+- Implemented をいいことに (take advantage of) - N1 pattern
+- Both patterns handle multiple structure types
+- ともなると・にもなると: Handles と/に particles, optional も, なると/なれば forms
+- をいいことに: Handles の/なの nominalization, optional して
 - Clean test-first workflow following REFERENCE_EXAMPLES.md
-- All 6 structure variants tested with realistic sentences
+- All 11 structure variants tested with realistic sentences (6 + 5)
 - All tests pass with proper range assertions
 - No regressions
 
@@ -93,14 +94,93 @@ The other forms are ともなると (with も for emphasis), となれば (using
 ✅ All main structure variants tested
 ✅ No regressions (all 2867 tests passing, up from 2861)
 
+---
+
+### ✅ Pattern Implemented #2: をいいことに (take advantage of)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: をいいことに (を良いことに) is an expression that translates as 'to take advantage of (A)' and generally refers to someone using (A) as a good opportunity to do something immoral or irresponsible. The structure combines を + いい (good) + こと (thing) + に, with a literal translation of 'making good of (A)'. The nuance is exactly the same as 'to take advantage of (A)' in English.
+
+The pattern follows verbs, nouns, い-Adjectives, and な-Adjectives, but is preceded by either の or なの based on standard nominalization rules. An optional して can be added at the end without changing the meaning.
+
+**Structures tested**: All 5 test variants covering main forms
+1. Verb + の + をいいことに: ないのをいいことに (chars 4-13)
+2. Verb + の + をいいことにして (with して): 遠いのをいいことにして (chars 5-16)
+3. い-Adjective + の + をいいことに: 優しいのをいいことに (chars 2-12)
+4. Noun + なの + をいいことに: 休みなのをいいことに (chars 0-10)
+5. である + の + をいいことに: あるのをいいことに (chars 6-15)
+
+**Implementation details**:
+- Matcher structure: Any + (な) + の + を + いい + こと + に + (し + て)
+- Custom matchers created:
+  - NoNominalizerMatcher: matches の as nominalizer (名詞/非自立/一般)
+  - NaFromDaMatcher: matches な from だ (助動詞, 特殊・ダ, 体言接続)
+  - WoMatcher: matches を (助詞/格助詞)
+  - IiMatcher: matches いい (形容詞, 基本形)
+  - KotoMatcher: matches こと (名詞/非自立/一般)
+  - NiMatcher: matches に (助詞/格助詞)
+  - ShiMatcher: matches し from する (動詞, 連用形)
+  - TeMatcher: matches て (助詞/接続助詞)
+- TokenMatcher::Any handles verbs, nouns, adjectives before nominalization
+- Optional な handles nominal nouns (なの pattern)
+- Optional し + て handles して variant
+
+**Test count**: 5 tests (all passing)
+- test_verb_no_woiikotoni (Verb + の + をいいことに)
+- test_verb_no_woiikotoni_shite (with して)
+- test_i_adj_no_woiikotoni (い-Adjective + の)
+- test_noun_nano_woiikotoni (Noun + なの)
+- test_dearu_no_woiikotoni (である + の)
+
+**Tokenization observations**:
+- の (nominalizer): 名詞/非自立/一般
+- な (from だ): 助動詞, 特殊・ダ, 体言接続
+- を: 助詞/格助詞/一般
+- いい: 形容詞/自立, features[5]=基本形
+- こと: 名詞/非自立/一般
+- に: 助詞/格助詞/一般
+- し (from する): 動詞/自立, features[5]=連用形
+- て: 助詞/接続助詞
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n1.rs: Implemented woiikotoni() function with 8 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs: Added woiikotoni_tests module with 5 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Pattern emphasizes taking advantage in an immoral or irresponsible way
+- Can be written with kanji as を良いことに but commonly in hiragana
+- The して at the end is optional and doesn't change meaning significantly
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 112 remaining
+- N1: 174 remaining (down from 176 - completed 2 patterns!)
+- Total: ~288 patterns remaining
+
+### Quality Metrics
+✅ All 11 tests have assert_pattern_range (6 + 5)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2872 tests passing, up from 2861)
+
 **Next priorities**: Continue with remaining N1 priority 5 patterns:
-- をいいことに - take advantage of
 - 如何 - how (classical)
 - ～るまでだ - nothing left but to
 - にあって - in/at (formal)
 - とは - what is called, the fact that
+- じゃあるまいし - it's not like
 
-**Session outcome**: Successfully completed 1 N1 pattern with full coverage! Total of 6 new tests added, all passing, no regressions. The pattern uses comprehensive custom matchers to handle multiple particle and conjugation variations cleanly.
+**Session outcome**: Successfully completed 2 N1 patterns with full coverage! Total of 11 new tests added (6 + 5), all passing, no regressions. Both patterns use comprehensive custom matchers to handle multiple structural variations cleanly.
 
 ---
 
