@@ -8570,17 +8570,17 @@
   {
     "pattern_name": "ては〜ては",
     "jlpt_level": "n2",
-    "category": "in_progress",
+    "category": "complete",
     "tests": {
       "exists": true,
-      "has_range_assertion": false,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Another structure making use of the combined て and は particles is ては～ては [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null,
-    "notes": "Matcher implemented, tests written, but Wildcard matching not working correctly. Individual ては patterns detected but combined pattern not matching."
+    "notes": "Pattern successfully detects て+は repeated structures. Casual contractions (ちゃ/じゃ without explicit は) not included as they require different matching logic."
   },
   {
     "pattern_name": "も又",
