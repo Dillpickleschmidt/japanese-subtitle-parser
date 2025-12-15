@@ -195,9 +195,67 @@ pub fn mama_ni_noun() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に至るまで
+// Pattern: に至るまで (everything from A to B, up to and including)
+// Structures: Noun B + に + 至る + まで (+ の + Noun C)
+// Note: Often preceded by "Noun A + から/より" but we match the core pattern only
 pub fn niitarumade() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as case particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 至る verb in 基本形
+    #[derive(Debug)]
+    struct ItaruMatcher;
+    impl super::Matcher for ItaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "至る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match まで as adverbial particle
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl super::Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match の as relativizing particle (連体化)
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl super::Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        // Required: Noun B + に
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        // Required: 至る + まで
+        TokenMatcher::Custom(Arc::new(ItaruMatcher)),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+        // Optional: の + Noun C
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoRentaikaMatcher)))),
+        TokenMatcher::Optional(Box::new(super::noun_matcher())),
+    ]
 }
 
 // Pattern: たところで (even if, even though)

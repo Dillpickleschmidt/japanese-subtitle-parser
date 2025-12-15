@@ -358,3 +358,49 @@ mod sura_tests {
         assert_pattern_range(&patterns, "すら", 0, 7); // ガラケーすらも
     }
 }
+
+// ============================================================================
+// に至るまで Tests
+// ============================================================================
+
+mod niitarumade_tests {
+    use super::*;
+
+    // Pattern: に至るまで (everything from A to B, up to and including)
+    // Data source: grammar_points_data.json["に至るまで"]
+    // Testing: structure.standard[0] - "(Noun A + から) + Noun B + に至るまで"
+    //
+    // Other structures to test:
+    //   - standard[1]: (Noun A + から) + Noun B + に至るまで + の + Noun C
+    //   - standard[2]: より can replace から
+
+    #[test]
+    fn test_niitarumade_kara_basic() {
+        let sentence = "このライトノベルは子供から大人に至るまで、幅広い層で人気がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至るまで");
+        assert_pattern_range(&patterns, "に至るまで", 13, 20); // 大人に至るまで
+    }
+
+    #[test]
+    fn test_niitarumade_no_noun() {
+        let sentence = "成人してから退職に至るまでの期間、ずっと同じ会社で働いてきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至るまで");
+        assert_pattern_range(&patterns, "に至るまで", 6, 16); // 退職に至るまでの期間
+    }
+
+    #[test]
+    fn test_niitarumade_yori() {
+        let sentence = "明日は大阪より福岡に至るまで、一日中雨が降るようです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至るまで");
+        assert_pattern_range(&patterns, "に至るまで", 7, 14); // 福岡に至るまで
+    }
+}

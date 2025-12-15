@@ -6349,7 +6349,7 @@ declare_patterns! {
     Niitarumade {
         name: "に至るまで",
         matcher_fn: crate::matchers::n1::niitarumade,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

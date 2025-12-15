@@ -10376,13 +10376,13 @@
   {
     "pattern_name": "に至るまで",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "至（いた）る is an う-Verb which can be roughly translated as 'to attain (A)', or 'to reach the climax of (A)' [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
