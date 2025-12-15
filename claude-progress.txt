@@ -1,3 +1,61 @@
+## Session 482 - 2025-12-15
+
+### Session Summary - たった(の) Pattern Complete ✓
+**Status**: Successfully implemented たった(の) pattern
+**Patterns completed**: 1 (N2, priority 4)
+**Total tests**: 3159 passing, 1 ignored (added 4 new tests)
+
+**Session highlights**:
+- Implemented たった(の) (only/just - emphasizing small amount) - 4 tests
+- Pattern handles both たった + Number and たった + の + Number forms
+- Handles multi-digit numbers (１０ tokenized as １ + ０) and counters (人, 分, メートル)
+- All tests passing with proper range assertions
+- No regressions in test suite
+- Key debugging insight: Using `token.features` instead of `token.pos` for matching
+
+---
+
+### ✓ Completed: たった(の) (only/just - emphasizing small amount)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- たった + Number (+ Counter)
+- たった + の + Number (+ Counter)
+
+**Implementation details**:
+- Surface matcher for "たった" (副詞/助詞類接続) - excludes "たった今" which is a single token
+- Optional Surface matcher for "の" (助詞/連体化)
+- Custom `NumberMatcher` for 名詞/数
+- Custom `NumberOrCounterMatcher` for additional numbers or counters (名詞/接尾/助数詞)
+- Two optional NumberOrCounterMatchers to handle multi-digit numbers like １０ (= １ + ０) and counters
+
+**Tests created**: 4 tests
+1. `test_tatta_without_no_minutes` - たった３分 (without の, with counter)
+2. `test_tatta_without_no_person` - たった一人 (without の, with counter)
+3. `test_tatta_with_no_people` - たったの３人 (with の, with counter)
+4. `test_tatta_with_no_meters` - たったの１０メートル (with の, multi-digit + counter)
+
+**Key implementation note**:
+たった今 (just now / right at this moment) is tokenized as a SINGLE token (副詞/助詞類接続), not as たった + 今. This is a separate expression with a different meaning ("just now" vs "only X"), so it's not detected by this pattern.
+
+**Debugging insights**:
+- Initially the pattern wasn't detecting due to using `token.pos` instead of `token.features`
+- Switched all custom matchers to use `token.features.first()` and `token.features.get(N)`
+- Used simplified Surface matchers where possible to avoid complexity
+- Tested incrementally: TokenMatcher::Any → NumberMatcher → full pattern
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented tatta_no() function (36 lines)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 4 comprehensive tests with explanatory comment about たった今
+- `feature_list.json` - Updated たった(の) to complete status
+
+---
+
 ## Session 481 - 2025-12-15
 
 ### Session Summary - Two N2 Patterns Complete ✓
