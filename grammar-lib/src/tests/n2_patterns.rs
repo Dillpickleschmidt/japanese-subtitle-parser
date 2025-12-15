@@ -11664,3 +11664,79 @@ mod tatta_no_tests {
     // Example: その電車はたった今出発したので次の電車が来るまで待ってください
     // Token: たった今 (副詞/助詞類接続) - single token, different pattern
 }
+
+// Pattern: ものか (absolutely not, as if, do you really think)
+// Data source: grammar_points_data.json["ものか"]
+// Testing: structure.standard[0-4] and polite[0-4]
+//
+// Structure variants:
+//   - standard[0]: Verb[る] + もの/もん + か
+//   - standard[1]: い-Adj + もの/もん + か
+//   - standard[2]: な-Adj + な + もの/もん + か
+//   - standard[3]: Noun + な + もの/もん + か
+//   - polite[0-3]: Same + です before か
+
+mod monoka_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_monoka() {
+        let sentence = "バカ言うな。俺がそんな派手な服を着るものか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものか");
+        assert_pattern_range(&patterns, "ものか", 16, 21); // 着るものか
+    }
+
+    #[test]
+    fn test_i_adj_monka() {
+        let sentence = "仕事？毎日怒られてばかりだから楽しいもんか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものか");
+        assert_pattern_range(&patterns, "ものか", 15, 21); // 楽しいもんか
+    }
+
+    #[test]
+    fn test_na_adj_na_monoka() {
+        let sentence = "私は毎日残業しているし、家に帰ったら家事を全部やっている。元気なものか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものか");
+        assert_pattern_range(&patterns, "ものか", 29, 35); // 元気なものか
+    }
+
+    #[test]
+    fn test_noun_na_monoka() {
+        let sentence = "お前みたいな奴は友達なものか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものか");
+        assert_pattern_range(&patterns, "ものか", 8, 14); // 友達なものか
+    }
+
+    #[test]
+    fn test_verb_ta_monka() {
+        // Past tense variant - implies cannot bear for it to happen
+        let sentence = "一人でこの量の仕事を明日までにできたもんか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものか");
+        assert_pattern_range(&patterns, "ものか", 15, 21); // できたもんか
+    }
+
+    #[test]
+    fn test_verb_mono_desuka_polite() {
+        let sentence = "こんなに難しい問題が解けるものですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものか");
+        assert_pattern_range(&patterns, "ものか", 10, 18); // 解けるものですか
+    }
+}

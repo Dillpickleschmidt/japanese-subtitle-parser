@@ -6981,9 +6981,63 @@ pub fn osoraku() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(OsorakuMatcher))]
 }
 
-// Pattern: ものか
+// Pattern: ものか (absolutely not, as if, do you really think)
+// Structures: [Verb/Adj/Noun] + (な/た) + もの/もん + (です) + か
 pub fn monoka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct VerbOrAdjOrNounMatcher;
+    impl Matcher for VerbOrAdjOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match Verb, い-Adj, な-Adj (形容動詞語幹), or Noun
+            token.features.first().is_some_and(|f| f == "動詞" || f == "形容詞" || f == "名詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaOrTaCopulaMatcher;
+    impl Matcher for NaOrTaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match な (体言接続) or た (past auxiliary)
+            (token.surface == "な"
+                && token.base_form == "だ"
+                && token.features.first().is_some_and(|f| f == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ダ")
+                && token.features.get(5).is_some_and(|f| f == "体言接続"))
+            || (token.surface == "た"
+                && token.base_form == "た"
+                && token.features.first().is_some_and(|f| f == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・タ"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "もの" || token.surface == "もん")
+                && token.features.first().is_some_and(|f| f == "名詞")
+                && token.features.get(1).is_some_and(|f| f == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.features.first().is_some_and(|f| f == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrAdjOrNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaOrTaCopulaMatcher)))),
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Surface("です"))),
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+    ]
 }
 
 // Pattern: おまけに (besides, in addition, to make matters worse)
