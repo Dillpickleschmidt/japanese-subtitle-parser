@@ -6132,9 +6132,26 @@ pub fn tatta_no() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 恐れがある
+// Pattern: 恐れがある (fear/risk of - negative possibility)
+// Structures: Verb/Adj/Noun + 恐れ + が + ある
 pub fn osoregaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct OsoreMatcher;
+    impl Matcher for OsoreMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "恐れ"
+                && token.base_form == "恐れ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(OsoreMatcher)),
+        TokenMatcher::Surface("が"),
+        TokenMatcher::specific_verb("ある"),
+    ]
 }
 
 // Pattern: おそらく (probably, perhaps)

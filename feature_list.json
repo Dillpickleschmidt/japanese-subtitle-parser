@@ -9481,13 +9481,13 @@
   {
     "pattern_name": "恐れがある",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "恐（おそ）れがある is a set phrase in Japanese that is used in a fairly literal sense to convey that 'there is a chance of (A)... [6 std, 6 pol]",
     "priority": 4,
     "skip_reason": null

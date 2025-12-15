@@ -10000,3 +10000,62 @@ mod keikougaaru_tests {
         assert_pattern_range(&patterns, "傾向がある", 11, 16); // 傾向がある
     }
 }
+
+// Pattern: 恐れがある (fear/risk of - negative possibility)
+// Data source: grammar_points_data.json["恐れがある"]
+// Structures to test:
+//   - standard[0]: Verb[る/ない] + 恐れがある
+//   - standard[1]: い-Adj + 恐れがある
+//   - standard[2]: な-Adj + な/である + 恐れがある
+//   - standard[3]: Noun + の/である + 恐れがある
+mod osoregaaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_osoregaaru_verb() {
+        // Testing: Verb[る] + 恐れがある
+        // Realistic context: warning about explosion risk
+        let sentence = "高温にすると爆発する恐れがあるので注意してください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "恐れがある");
+        assert_pattern_range(&patterns, "恐れがある", 10, 15); // 恐れがある
+    }
+
+    #[test]
+    fn test_osoregaaru_noun() {
+        // Testing: Noun + の + 恐れがある
+        // Realistic context: tsunami warning
+        let sentence = "津波の恐れがある場合は速やかに避難してください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "恐れがある");
+        assert_pattern_range(&patterns, "恐れがある", 3, 8); // 恐れがある
+    }
+
+    #[test]
+    fn test_osoregaaru_verb_negative() {
+        // Testing: Verb[ない] + 恐れがある
+        // Realistic context: failure risk
+        let sentence = "このままでは成功しない恐れがあると思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "恐れがある");
+        assert_pattern_range(&patterns, "恐れがある", 11, 16); // 恐れがある
+    }
+
+    #[test]
+    fn test_osoregaaru_i_adjective() {
+        // Testing: い-Adj + 恐れがある
+        // Realistic context: describing a dangerous situation
+        let sentence = "この地域は地震の影響で危ない恐れがあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "恐れがある");
+        assert_pattern_range(&patterns, "恐れがある", 14, 21); // 恐れがあります
+    }
+}
