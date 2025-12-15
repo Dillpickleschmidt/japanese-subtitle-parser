@@ -1,3 +1,106 @@
+## Session 468 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented という風に pattern (N2)
+**Patterns completed**: 1 (N2, priority 5)
+**Tests added**: 4 new tests (all passing with range assertions)
+**Total tests**: 3088 passing, 1 ignored (was 3084 before session, net +4 tests)
+
+**Session highlights**:
+- Implemented という風に (as if to say, as if to suggest) - N2 pattern
+- Pattern structure: Wildcard (1-10 tokens) + という + ふう + に
+- Distinguished from general ふうに pattern: という風に emphasizes quotation/reported speech/uncertainty
+- Higher priority (5) than ふうに (4) to match more specific quoted clause usage
+- Wildcard captures preceding clause/context being quoted
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 4 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: という風に (as if to say, as if to suggest)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 5 (higher than general ふうに at priority 4)
+
+**Pattern**: Like ふうに, the grammar point indicating that something is being done 'in the way of (A)', というふうに uses the same suffix 風（ふう） to express that something is being done 'as if to say (A)', 'as if to suggest (A)', or 'in such a way that (A)'. The combination with という adds the meaning of reported speech or quotation, suggesting uncertainty about whether something is truly as described - the speaker is only commenting on appearances.
+
+**Structures tested**: 4 test variants (3 with という風に detection, 1 demonstrating ふうに pattern)
+1. Verb + というふうに: chars 0-15 (彼女は昼休憩に帰るというふうに) - "as if to suggest she's going home"
+2. Verb clause + というふうに: chars 2-24 (さんはこの試験に命がかかっているというふうに) - "as if his life depended on it"
+3. Copula clause + というふうに: chars 2-24 (今まで自分が一番仕事ができる人だというふうに) - "as if I was the most capable"
+4. Enumeration + というふうに: Matches ふうに (not という風に) - when という follows list/enumeration, it's conjunction meaning "as follows"
+
+**Implementation details**:
+- Matcher structure: Wildcard (min: 1, max: 10) + という matcher + ふう matcher + に matcher
+- Custom matchers created:
+  - ToiuMatcher: matches という as 助詞/格助詞/連語 (compound case particle)
+  - FuuMatcher: matches ふう as 名詞/非自立/形容動詞語幹 (dependent noun)
+  - NiParticleMatcher: matches に as 助詞/副詞化 or 助詞/格助詞 (adverbializing particle)
+- Wildcard with min: 1 ensures at least one token of context (the content being quoted/suggested)
+- Priority 5 (vs ふうに's 4) ensures this more specific pattern wins when both could match
+- Pattern emphasizes uncertainty/appearance through quotation marker という
+
+**Tokenization notes**:
+- という: 助詞/格助詞/連語 (compound case particle, single token)
+- ふう: 名詞/非自立/形容動詞語幹 (dependent noun, na-adjective stem)
+- に: 助詞/副詞化 (adverbializing particle)
+- Wildcard captures variable-length preceding clause (verb phrase, copula clause, topic+context)
+
+**Test count**: 4 tests (all passing with assertions)
+- test_verb_toiuhuuni: Simple verb + というふうに pattern
+- test_verb_clause_toiuhuuni: Complex verb clause + というふうに pattern
+- test_copula_toiuhuuni: Copula clause + というふうに pattern
+- test_method_enumeration_fuuni: Demonstrates distinction - enumeration uses ふうに, not という風に
+
+**Semantic distinction from ふうに**:
+- **ふうに**: Describes manner/way (like "in this way", "in that manner")
+- **という風に**: Emphasizes quotation/uncertainty ("as if to say", "as if to suggest")
+- When という follows enumeration/list (not quotable clause), general ふうに pattern matches
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented toiukazeni() with 3 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added toiukazeni_tests module with 4 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 5
+- feature_list.json: Updated status to "complete"
+
+**Pattern ranges**: Wildcard-based pattern captures full context from meaningful starting point through というふうに. Confidence scoring favors longer matches (more context). Accepted ranges include the full clause/context being quoted or suggested.
+
+**Notes**:
+- Pattern successfully distinguishes quotation/reported speech usage from general manner description
+- Test coverage includes both uses where という風に matches (quoting clauses) and where ふうに matches (enumerations)
+- No regressions in existing tests
+
+---
+
+**Current stats** (after pattern):
+- N5: ✅ All complete
+- N4: 1 remaining (meta-pattern)
+- N3: ✅ All complete
+- N2: ~101 remaining (down from ~102 - completed 1 pattern!)
+- N1: ~176 remaining
+- Total: ~278 patterns remaining
+
+### Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified (accepting longest matches with context)
+✅ All documented structure variants tested (2/2 standard forms)
+✅ No regressions (all 3088 tests passing, up from 3084)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- ものの - although
+- というものだ - is something that
+- ところを見ると - judging from
+- そういえば - now that you mention it
+- て頂戴 - please do (casual imperative)
+
+**Session outcome**: Successfully completed 1 N2 pattern with full coverage! Total of 4 new tests added, all passing, no regressions. Pattern uses wildcard matching to capture variable-length quoted clauses before というふうに, distinguishes from general ふうに pattern through priority and semantic context. Clean implementation following test-first workflow.
+
+---
+
 ## Session 466 - 2025-12-15
 
 ### Session Summary - COMPLETE
