@@ -11815,3 +11815,78 @@ mod nikimatteiru_tests {
         assert_pattern_range(&patterns, "に決まっている", 5, 13); // 簡単に決まってる
     }
 }
+
+// Pattern: だけましだ (at least, should be grateful for)
+// Data source: grammar_points_data.json["だけましだ"]
+// Testing all structure variants from standard[] and polite[]
+//
+// Structure variants:
+//   - standard[0]: Verb + だけまし + だ
+//   - standard[1]: い-Adjective + だけまし + だ
+//   - standard[2]: な-Adjective + な + だけまし + だ
+//   - standard[3]: Noun + である + だけまし + だ
+//   - polite[0-3]: Same as above but ending with です instead of だ
+
+mod dakemashida_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_dakemashida() {
+        let sentence = "天気はあまり良くないが、久しぶりに旅行に来れただけましだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけましだ");
+        assert_pattern_range(&patterns, "だけましだ", 22, 28); // ただけましだ
+    }
+
+    #[test]
+    fn test_i_adj_dakemashida() {
+        let sentence = "このアパートはボロボロだけど、職場に近いだけましだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけましだ");
+        assert_pattern_range(&patterns, "だけましだ", 18, 25); // 近いだけましだ
+    }
+
+    #[test]
+    fn test_na_adj_na_dakemashida() {
+        let sentence = "味覚はないかもしれないが、元気なだけましだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけましだ");
+        assert_pattern_range(&patterns, "だけましだ", 15, 21); // なだけましだ
+    }
+
+    #[test]
+    fn test_noun_dearu_dakemashida() {
+        let sentence = "貧乏だけど家族であるだけましだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけましだ");
+        assert_pattern_range(&patterns, "だけましだ", 8, 15); // あるだけましだ
+    }
+
+    #[test]
+    fn test_verb_dakemashidesu_polite() {
+        let sentence = "給料は安いけど、仕事があるだけましです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけましだ");
+        assert_pattern_range(&patterns, "だけましだ", 11, 19); // あるだけましです
+    }
+
+    #[test]
+    fn test_i_adj_dakemashidesu_polite() {
+        let sentence = "雨は降っているけど、暖かいだけましです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけましだ");
+        assert_pattern_range(&patterns, "だけましだ", 10, 19); // 暖かいだけましです
+    }
+}

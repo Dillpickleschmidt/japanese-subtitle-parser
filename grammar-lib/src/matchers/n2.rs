@@ -7377,9 +7377,52 @@ pub fn teshouganai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: だけましだ
+// Pattern: だけましだ (at least, should be grateful for)
+// Structures: Verb/い-Adj/な-Adj/Noun + だけまし + だ/です
 pub fn dakemashida() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match だけ particle (副助詞)
+    #[derive(Debug)]
+    struct DakeParticleMatcher;
+    impl Matcher for DakeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "副助詞")
+        }
+    }
+
+    // Match まし (助動詞, base=ます, 連用形)
+    #[derive(Debug)]
+    struct MashiAuxMatcher;
+    impl Matcher for MashiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まし"
+                && token.features.first().is_some_and(|f| f == "助動詞")
+                && token.base_form == "ます"
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match だ or です ending
+    #[derive(Debug)]
+    struct DaDesuEndingMatcher;
+    impl Matcher for DaDesuEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.features.first().is_some_and(|f| f == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+                && ((token.surface == "だ" && token.base_form == "だ")
+                    || (token.surface == "です" && token.base_form == "です"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Match preceding verb/adjective/noun
+        TokenMatcher::Custom(Arc::new(DakeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MashiAuxMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuEndingMatcher)),
+    ]
 }
 
 // Pattern: 幸い・幸いなことに
