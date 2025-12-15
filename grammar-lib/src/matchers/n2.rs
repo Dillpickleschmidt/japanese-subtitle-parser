@@ -7525,9 +7525,10 @@ pub fn sarani() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Surface("さらに")]
 }
 
-// Pattern: 精々
+// Pattern: 精々 (at most, at best)
+// Structures: せいぜい + Phrase
 pub fn kiyoshi_u3005() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![TokenMatcher::Surface("せいぜい")]
 }
 
 // Pattern: 僅かに

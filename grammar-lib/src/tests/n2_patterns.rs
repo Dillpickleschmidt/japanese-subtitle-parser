@@ -12264,3 +12264,43 @@ mod sarani_tests {
         assert_pattern_range(&patterns, "更に", 25, 28); // さらに
     }
 }
+
+// Pattern: 精々 (at most, at best)
+// Data source: grammar_points_data.json["精々"]
+// Testing: structure.standard[0] - "せいぜい + Phrase"
+//
+// Structure variants:
+//   - standard[0]: せいぜい + Phrase (only one structure)
+mod seizeiseizei_tests {
+    use super::*;
+
+    #[test]
+    fn test_seizeiseizei_at_most_price() {
+        let sentence = "このバッグはせいぜい千円くらいだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "精々");
+        assert_pattern_range(&patterns, "精々", 6, 10); // せいぜい
+    }
+
+    #[test]
+    fn test_seizeiseizei_at_most_months() {
+        let sentence = "せいぜい３ヶ月は働いてもらわないと困ります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "精々");
+        assert_pattern_range(&patterns, "精々", 0, 4); // せいぜい
+    }
+
+    #[test]
+    fn test_seizeiseizei_at_best_cooking() {
+        let sentence = "私が作れる料理はせいぜいこんなもんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "精々");
+        assert_pattern_range(&patterns, "精々", 8, 12); // せいぜい
+    }
+}
