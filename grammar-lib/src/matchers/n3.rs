@@ -7032,9 +7032,36 @@ pub fn mettani_u301c_nai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 割に
+// Pattern: 割に (although/despite/comparatively)
+// Structures: Verb/Adjective/Noun + わりに
 pub fn warini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Match わり (noun)
+    #[derive(Debug)]
+    struct WariniNounMatcher;
+    impl Matcher for WariniNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わり"
+                && token.base_form == "わり"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Matches the predicate (verb, adjective, noun+particle, etc.)
+        TokenMatcher::Custom(Arc::new(WariniNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: Verb[volitional]とする (try to / be about to)

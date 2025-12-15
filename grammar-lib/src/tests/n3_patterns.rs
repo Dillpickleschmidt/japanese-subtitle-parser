@@ -12891,3 +12891,61 @@ mod betsuni_nai_tests {
         assert_pattern_range(&patterns, "別に〜ない", 0, 8); // べつに嘘じゃない
     }
 }
+
+// ========== 割に (although/despite/comparatively) ==========
+// Pattern: 割に (although/despite/comparatively)
+// Data source: grammar_points_data.json["割に"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + わりに
+//   standard[1]: い-Adjective + わりに
+//   standard[2]: な-Adjective + な + わりに
+//   standard[3]: Noun + の + わりに
+
+mod warini_tests {
+    use super::*;
+
+    // Testing: い-Adjective + わりに
+    #[test]
+    fn test_warini_i_adjective() {
+        let sentence = "この肉、高いわりには味がないね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "割に");
+        assert_pattern_range(&patterns, "割に", 4, 9); // 高いわりに
+    }
+
+    // Testing: Verb (ている) + わりに
+    #[test]
+    fn test_warini_verb() {
+        let sentence = "太っているわりには運動神経がいいんだね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "割に");
+        assert_pattern_range(&patterns, "割に", 3, 8); // いるわりに
+    }
+
+    // Testing: な-Adjective + な + わりに
+    #[test]
+    fn test_warini_na_adjective() {
+        let sentence = "この部屋は綺麗なわりには臭いね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "割に");
+        assert_pattern_range(&patterns, "割に", 7, 11); // なわりに
+    }
+
+    // Testing: Noun + の + わりに
+    #[test]
+    fn test_warini_noun() {
+        let sentence = "ラッシュアワーのわりには空いていますね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "割に");
+        assert_pattern_range(&patterns, "割に", 7, 11); // のわりに
+    }
+}

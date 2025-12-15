@@ -3897,7 +3897,7 @@ declare_patterns! {
     Warini {
         name: "割に",
         matcher_fn: crate::matchers::n3::warini,
-        priority: 1,
+        priority: 3,
         category: PatternCategory::Construction,
         jlpt: "n3",
     },
