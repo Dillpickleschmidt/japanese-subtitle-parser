@@ -8206,13 +8206,13 @@
   {
     "pattern_name": "を問わず",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を問（と）わず is a pattern which makes use of the special-class う-Verb 問（と）う 'to inquire' and the literary auxiliary verb ず... [11 std, 11 pol]",
     "priority": 4,
     "skip_reason": null

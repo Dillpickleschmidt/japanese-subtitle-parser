@@ -2656,9 +2656,74 @@ pub fn uff5e_tekoso() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を問わず
+// Pattern: を問わず (regardless of, irrespective of, whether or not)
+// Structures:
+//   - [Content] + を/は + 問わ(未然形) + ず
+//   - Noun/か/かどうか + を/は + 問わず
 pub fn wotowazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match を or は particle
+    #[derive(Debug)]
+    struct WoHaParticleMatcher;
+    impl Matcher for WoHaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "を" || token.surface == "は")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match とわ/問わ verb (base=とう, 未然形)
+    #[derive(Debug)]
+    struct TowaVerbMatcher;
+    impl Matcher for TowaVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "とわ" || token.surface == "問わ")
+                && token.base_form == "とう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "未然形")
+        }
+    }
+
+    // Match ず auxiliary verb (base=ぬ)
+    #[derive(Debug)]
+    struct ZuAuxiliaryMatcher;
+    impl Matcher for ZuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Stop condition matcher for は/が particles
+    #[derive(Debug)]
+    struct HaGaStopMatcher;
+    impl Matcher for HaGaStopMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "は" || token.surface == "が")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && (token.pos.get(1).is_some_and(|p| p == "係助詞")
+                    || token.pos.get(1).is_some_and(|p| p == "格助詞"))
+        }
+    }
+
+    // Pattern: [Content] + を/は + とわ/問わ + ず
+    // Use wildcard to capture preceding content with stop conditions
+    vec![
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 10,
+            stop_conditions: vec![TokenMatcher::Custom(Arc::new(HaGaStopMatcher))],
+        },
+        TokenMatcher::Custom(Arc::new(WoHaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TowaVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: よりしかたがない (there is no choice but, cannot be helped)

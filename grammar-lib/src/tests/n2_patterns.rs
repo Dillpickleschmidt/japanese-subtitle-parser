@@ -6099,3 +6099,97 @@ mod kagiri_tests {
         assert_pattern_range(&patterns, "限り", 3, 8); // 住むかぎり
     }
 }
+
+// ============================================================================
+// Pattern: を問わず (regardless of, irrespective of, whether or not)
+// Data source: grammar_points_data.json["を問わず"]
+// ============================================================================
+//
+// Structure variants to test:
+//   - standard[0]: Noun + を問わず
+//   - standard[1]: Noun (A) + 、 + Noun (B) + を問わず
+//   - standard[2]: A + か + B + か + を問わず
+//   - standard[3]: A (Antonym) A + を問わず
+//   - standard[4]: A + かどうか + を問わず
+//   - standard[5]: A + A[ない] + を問わず
+//
+// Notes:
+//   - を can be replaced by は for emphasis (はとわず)
+//   - Formal register pattern
+//   - Similar to にかかわらず but slightly different nuance
+
+mod wotowazu_tests {
+    use super::*;
+
+    #[test]
+    fn test_wotowazu_simple_noun() {
+        // Structure: Noun + を問わず
+        // Example from data: 宗教や国籍を問わず
+        let sentence = "宗教や国籍をとわず、このイベントには誰でも参加できます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を問わず");
+        assert_pattern_range(&patterns, "を問わず", 0, 9); // 宗教や国籍をとわず
+    }
+
+    #[test]
+    fn test_wotowazu_ka_ka_pattern() {
+        // Structure: A + か + B + か + を問わず
+        // Example: 上級者か初心者かを問わず
+        let sentence = "パソコンの上級者か初心者かをとわず、初めての方は初心者コースから始めてもらいます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を問わず");
+        assert_pattern_range(&patterns, "を問わず", 0, 17); // パソコンの上級者か初心者かをとわず
+    }
+
+    #[test]
+    fn test_wotowazu_kadouka_pattern() {
+        // Structure: A + かどうか + を問わず
+        // Example: 買うかどうかを問わず
+        let sentence = "このマンションを買うかどうかをとわず、この物件を押さえたい場合は手付金を払ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を問わず");
+        assert_pattern_range(&patterns, "を問わず", 0, 18); // このマンションを買うかどうかをとわず
+    }
+
+    #[test]
+    fn test_wotowazu_day_night() {
+        // Structure: Noun + Noun + を問わず (complementary pair)
+        // Example: 昼夜を問わず
+        let sentence = "彼は昼夜をとわず、ずっと働いている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を問わず");
+        assert_pattern_range(&patterns, "を問わず", 2, 8); // 昼夜をとわず
+    }
+
+    #[test]
+    fn test_wotowazu_with_ha_particle() {
+        // Structure: Noun + かはとわず (は instead of を for emphasis)
+        // Example: どのブランドかはとわず
+        let sentence = "どのブランドかはとわず、とにかく新しい靴が欲しいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を問わず");
+        assert_pattern_range(&patterns, "を問わず", 0, 11); // どのブランドかはとわず
+    }
+
+    #[test]
+    fn test_wotowazu_affirmative_negative() {
+        // Structure: A + A[ない] + を問わず
+        // Example: 経験がある経験がないを問わず
+        let sentence = "経験がある経験がないをとわず、やる気のある方を募集しています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を問わず");
+        assert_pattern_range(&patterns, "を問わず", 8, 14); // ないをとわず
+    }
+}
