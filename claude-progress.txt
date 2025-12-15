@@ -12267,3 +12267,45 @@ Continue with remaining N2 patterns in priority order:
 - feature_list.json: Updated 傾向がある and 恐れがある to complete status
 
 Session time so far: ~90 minutes
+
+### Update: 思うように Pattern Added
+
+**思うように** (N2, priority 4) - 4 tests
+- 思うように (as hoped/as desired)
+- Structures tested:
+  - 思うように + outcome (positive/negative)
+  - 思うような + Noun
+- Implementation: Matches 思う (verb) + よう (名詞/非自立) + に/な
+- Higher priority (3.7) than generic ように pattern (3.0)
+- Tests cover both ように and ような variants with realistic contexts
+
+### Final Session Stats
+- Tests: 3053 passing (was 3040, net +13 tests for session)
+- Patterns completed: 3 (傾向がある + 恐れがある + 思うように)
+- N2 patterns remaining: ~56 (down from ~59)
+- No regressions (all existing tests still passing)
+
+### Files Modified (Final Session Total)
+- grammar-lib/src/matchers/n2.rs: Implemented keikougaaru(), osoregaaru(), and omouyouni() functions
+- grammar-lib/src/tests/n2_patterns.rs: Added keikougaaru_tests (5 tests), osoregaaru_tests (4 tests), and omouyouni_tests (4 tests) modules
+- feature_list.json: Updated 傾向がある, 恐れがある, and 思うように to complete status
+
+### Session Summary
+Completed 3 N2 patterns (all priority 4) following test-first workflow:
+1. **傾向がある** - Simple 3-token matcher for tendency/trend pattern
+2. **恐れがある** - Same structure as 傾向がある for fear/risk pattern
+3. **思うように** - Specific verb + auxiliary pattern for "as hoped/desired"
+
+All patterns implement clean matchers with proper custom token matching. All tests use realistic subtitle-quality Japanese sentences with correct character ranges. No regressions introduced.
+
+Total session time: ~120 minutes
+
+### Next Priorities for Future Sessions
+Continue with remaining N2 priority 4 patterns:
+- というものでもない
+- と考えられる
+- という点から考えると
+- ということは
+- ふうに
+- という風に
+- Other N2 patterns
