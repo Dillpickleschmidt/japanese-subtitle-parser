@@ -1,10 +1,10 @@
 ## Session 375 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 次第 pattern (N3)
-**Patterns completed**: 1 (次第 - N3 newly implemented)
-**Tests added**: 4 new tests (all passing)
-**Total tests**: 2409 passing, 1 ignored (was 2405 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully implemented 次第 and 代わりに patterns (N3)
+**Patterns completed**: 2 (次第 and 代わりに - N3 newly implemented)
+**Tests added**: 8 new tests (all passing)
+**Total tests**: 2413 passing, 1 ignored (was 2405 passing, 1 ignored - net +8 tests)
 
 ### ✅ Pattern Implemented: 次第 (as soon as)
 
@@ -36,30 +36,65 @@
 
 **Initial challenge**: First test used "用意が出来し次第" where "し" was tokenized as classical auxiliary verb "き" (文語・キ) rather than the suru verb. Replaced with proper suru-verb construction "準備し次第".
 
+---
+
+### ✅ Pattern Implemented: 代わりに (in exchange for / instead of)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (low priority - detected but not highlighted in overlay)
+
+**Pattern**: 代（か）わり "a substitute" is a noun that is used to convey when (B) is acting as a replacement or substitute for (A). The case marking particle に comes after 代わり.
+
+**Structures tested**: 4 comprehensive tests covering all structure variants
+1. Verb + 代わりに (電話する代わりに - in exchange for calling): 俺が社長に電話する代わりに、お前はお客さんに電話をしておいて。 → 電話する代わりに (5-13)
+2. [い]Adjective + 代わりに (古い代わりに - to substitute for being old): あのプールは古い代わりに安い。 → 古い代わりに (6-12)
+3. [な]Adjective + な + 代わりに (大変な代わりに - in exchange for being difficult): 仕事は大変な代わりに楽しい。 → な代わりに (5-10)
+4. Noun + の + 代わりに (私の代わりに - in my place): 私の代わりにやってください。 → の代わりに (1-6)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (kawarini function, lines 9551-9584)
+  - Custom matcher for 代わり/替わり as noun (名詞/一般)
+  - Custom matcher for に as case particle (助詞/格助詞)
+  - Pattern: Optional(Any) + 代わり + に
+  - Allows optional preceding element (verb, adjective, noun + の, or nothing)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (kawarini_tests module, lines 13881-13937)
+- Pattern: grammar-lib/src/patterns.rs (declared as Kawarini variant)
+
+**Tokenization observations**:
+- 代わり always tokenizes as 名詞/一般
+- に always tokenizes as 助詞/格助詞/一般
+- Preceding element varies: verb (基本形), い-Adj (基本形), な-Adj (名詞/形容動詞語幹 + な), or noun + の
+- Pattern ranges include preceding word + 代わりに for full grammatical context
+- Both 代わり and 替わり kanji variants are supported
+
+**Note**: Standalone 代わりに usage at sentence start (meaning "instead" or "rather than that") is an idiomatic expression not covered by the structural pattern tests.
+
 ### Test Quality Metrics
-✅ All 4 tests have assert_pattern_range
+✅ All 8 tests have assert_pattern_range
 ✅ No print_debug in committed tests
 ✅ Realistic sentence examples
 ✅ Correct character ranges
-✅ Tests cover both standard verbs and suru verbs
-✅ No regressions (all 2409 tests passing)
+✅ Tests cover all structure variants for both patterns
+✅ No regressions (all 2413 tests passing)
 
 ### Session Summary
-**Patterns completed**: 1
+**Patterns completed**: 2
 - 次第 (shidai) - 4 tests
+- 代わりに (kawarini) - 4 tests
 
-**Total tests added**: 4 tests (all passing)
-**Total test count**: 2409 (up from 2405)
+**Total tests added**: 8 tests (all passing)
+**Total test count**: 2413 (up from 2405)
 
 **Current stats**:
 - N5: All complete
 - N4: 2 remaining (meta-patterns)
-- N3: 9 remaining (down from 10!)
+- N3: 8 remaining (down from 10!)
 - N2: 183 remaining
 - N1: 186 remaining
-- Total: ~380 patterns remaining (down from ~381!)
+- Total: ~379 patterns remaining (down from ~381!)
 
-**Next priority**: 代わりに (kawarini), 前者は・後者は, or 連用形 (N3 patterns)
+**Next priority**: 前者は・後者は, 連用形, or other N3 patterns
 
 ---
 
