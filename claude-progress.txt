@@ -2058,3 +2058,81 @@ The matcher uses a single initial custom matcher that accepts either form, follo
 - Total: ~386 patterns remaining
 
 **Session efficiency**: Completed 1 pattern with 5 comprehensive tests covering all major structural variants and both tokenization forms.
+
+---
+
+## Session 369 - 2025-12-14
+
+**Status**: ✅ Complete - Implemented 又〜も pattern (N3)
+
+**Pattern**: 又〜も (moreover/additionally/furthermore)
+
+**Priority**: 3
+
+**Pattern Description**: Combination of the adverb また, a noun/phrase, and the particle も (or emphasis variants でも/ても). Expresses "moreover", "additionally", or "furthermore" when adding new information to a previous statement.
+
+**Structures tested**: 4 tests covering all major variants
+1. また、Noun phrase + も (with comma): また、ギターの音も (18-27)
+2. また + Noun phrase + も (without comma): またトースターとしても (19-30)
+3. また + Noun + でも (emphasis variant): また、地理の先生でも (14-24)
+4. また + Adjective + ても (emphasis variant): また、古くても (11-18)
+
+**Implementation**: Pattern matcher with wildcard for flexible noun/adjective phrases:
+```rust
+vec![
+    Custom(MataMatcher),              // また as 接続詞
+    Optional(CommaMatcher),            // Optional comma
+    Wildcard { min: 0, max: 10 },     // Any tokens (noun phrases, adjectives, particles)
+    Custom(MoParticleMatcher),         // も as 係助詞
+]
+```
+
+The matcher captures the full range from また through the final も, handling both:
+- Basic form: また + Noun + も
+- Emphasis variants: また + Noun + でも / また + Adjective + ても
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic sentences from grammar_points_data.json examples
+- Covers both comma and no-comma variants
+- Tests both basic も and emphasis variants (でも, ても)
+
+**Tokenization Notes**:
+- また tokenizes as 接続詞 (conjunction)
+- Comma (、) is optional and tokenizes as 記号/読点
+- も tokenizes as 助詞/係助詞
+- でも = で (助詞/格助詞) + も (助詞/係助詞)
+- ても = て (助詞/接続助詞) + も (助詞/係助詞)
+
+The wildcard with max: 10 allows for complex noun phrases like "地理の先生" or "トースターとして" between また and も.
+
+**Technical Notes**: The でも and ても variants are naturally captured because they end with the も particle (係助詞). The wildcard allows any intervening tokens, making the pattern flexible enough to handle various sentence structures while maintaining accuracy.
+
+---
+
+### Next Session Priorities
+
+**N3 patterns remaining** (14 left):
+- 第一 (daiichi) - first of all, primarily
+- 考えられない (kangaerarenai) - unthinkable, inconceivable
+- 必ずしも (kanarazushimo) - not necessarily
+- 連用形 (renyoukei) - conjunctive form
+- 向け (muke) - aimed at, for
+- 上がる・上げる (agaru/ageru) - completion verbs
+- 切る (kiru) - to do completely
+- 切れない (kirenai) - unable to finish completely
+- 込む ① (komu) - into/deeply
+
+**Strategy**: Continue with N3 patterns in order of appearance
+- Next: 第一 (daiichi) - adverb meaning "first of all" or "primarily"
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 14 remaining (down from 15!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~385 patterns remaining
+
+**Session efficiency**: Completed 1 pattern with 4 comprehensive tests covering all structure variants (comma/no-comma, も/でも/ても).
