@@ -1,3 +1,67 @@
+## Session 387 - 2025-12-15
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented それなら pattern (N2)
+**Patterns completed**: 1 (それなら - N2 newly implemented)
+**Tests added**: 3 new tests (all passing)
+**Total tests**: 2504 passing, 1 ignored (was 2501 passing, 1 ignored - net +3 tests)
+
+**Session highlights**:
+- Implemented それなら (if that's the case, then) - conjunction pattern
+- Simple single-token matcher (接続詞)
+- 3 tests covering different usage contexts
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: それなら (if that's the case, then)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: それなら is a conjunction used when replying to a statement to express "if that's the case, then (B)". It strengthens conditional responses and often precedes suggestions, considerations, or guesses based on what the speaker has just heard.
+
+**Structures tested**: 3 tests covering all usage contexts
+1. それなら + Phrase (mid-sentence): それなら私を駅まで送ってくれない？ (16-20)
+2. それなら at sentence start: それなら彼でもできるようだ (0-4)
+3. それなら with suggestion: それなら先生に聞いたほうがいいと思います (0-4)
+
+**Implementation**: Matcher in n2.rs (lines 672-686), tests in n2_patterns.rs (lines 3028-3070)
+
+**Key notes**:
+- Tokenizes as single conjunction token: surface="それなら", base="それなら", pos=接続詞
+- Simple single-token matcher checking surface, base_form, and POS
+- Pattern range: just それなら (4 characters)
+- **Important**: The variants だったら and それだったら mentioned in grammar_points_data.json are already detected by the existing たら conditional pattern, as they have different structure (copula だ + conditional auxiliary たら)
+
+**Tokenization observations**:
+- それなら: surface="それなら", base="それなら", pos=接続詞
+- だったら: だっ (base='だ', 助動詞, 連用タ接続) + たら (base='た', 助動詞, 仮定形)
+- それだったら: それ (名詞/代名詞) + だっ + たら
+- Only それなら is detected by this pattern; the だったら variants are structurally different conditionals
+
+**Pattern ranges**: Full conjunction token
+- Standard: それなら (4 characters)
+
+### Test Quality Metrics (Session 387)
+✅ All 3 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json examples
+✅ No regressions (all 2504 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 164 remaining (down from 165!)
+- N1: 186 remaining
+- Total: ~352 patterns remaining (down from ~353!)
+
+**Next priority**: Continue with N2 patterns - ものなら①, 活かす, まい, 上, 上に, etc.
+
+---
+
 ## Session 386 - 2025-12-15
 
 ### ✅ Session Summary
