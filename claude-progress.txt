@@ -1,3 +1,95 @@
+## Session 460 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented にて pattern (N2)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 3 new tests (all passing with range assertions)
+**Total tests**: 3036 passing, 1 ignored (was 3033 before session, net +3 tests)
+
+**Session highlights**:
+- Implemented にて (formal particle for で) - N2 pattern
+- Pattern structure: Noun + にて (formal case particle)
+- にて is tokenized as single particle (助詞/格助詞/一般)
+- Tests cover all major usage contexts: location, time, means
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 3 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: にて (formal particle for で)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: にて is often considered as its own stand-alone particle, despite originally being a mix of に and the conjunction particle て. When combined, にて becomes a formal case-marking particle that is used in the same way as で. This means it can convey the meaning of "with (A)", "by (A)", "at (A)", or "using (A)".
+
+**Structures tested**: 3 test variants (all from grammar_points_data.json)
+1. Noun (location) + にて: 時計にて (chars 4-8) - "at the Golden Clock"
+2. Noun (time) + にて: 時にて (chars 6-9) - "at 9:00 a.m."
+3. Noun (means) + にて: 電話にて (chars 9-13) - "by phone"
+
+**Implementation details**:
+- Matcher structure: Any (noun) + にて (助詞/格助詞/一般)
+- Custom matcher created:
+  - NiteMatcher: matches にて as case particle with exact surface and base_form
+- TokenMatcher::Any handles preceding noun (location/time/means/method)
+- Pattern includes noun + particle construction
+- Priority set to 4 (matches feature_list.json)
+
+**Test count**: 3 tests (all passing)
+- test_nite_location: Location noun + にて (時計にて)
+- test_nite_time: Time noun + にて (時にて)
+- test_nite_means: Means noun + にて (電話にて)
+
+**Tokenization observations**:
+- にて: 助詞/格助詞/一般/* (case particle), single token
+- NOT split into に + て
+- Appears after nouns indicating location, time, means, method, reason, or origin
+- Formal/written register - で is more natural in casual conversation
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented nite() function with custom matcher
+- grammar-lib/src/tests/n2_patterns.rs: Added nite_tests module with 3 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Formal particle primarily seen in writing or heard in announcements
+- Used to mark location, time, means, method, reason, or origin
+- Functional equivalent of で in formal contexts
+- Simple single-particle pattern with no conjugation variations
+
+---
+
+**Current stats** (after pattern):
+- N5: ✅ All complete
+- N4: 1 remaining (meta-pattern)
+- N3: ✅ All complete
+- N2: ~103 remaining (down from ~104)
+- N1: ~176 remaining
+- Total: ~280 patterns remaining
+
+### Quality Metrics
+✅ All 3 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 3036 tests passing, up from 3033)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- には - emphatic には
+- 思うように - as one wishes/thinks
+- というものでもない - it's not necessarily the case that
+- とすると・とすれば - assuming that, if we assume
+- とは - speaking of, when it comes to
+
+**Session outcome**: Successfully completed 1 N2 pattern with full coverage! Total of 3 new tests added, all passing, no regressions. Very simple pattern - just a formal case particle. Clean implementation following test-first workflow.
+
+---
+
 ## Session 459 - 2025-12-15
 
 ### Session Summary - COMPLETE
