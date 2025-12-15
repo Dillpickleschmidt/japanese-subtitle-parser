@@ -7764,3 +7764,72 @@ mod nisakidachi_tests {
         assert_pattern_range(&patterns, "に先立ち", 0, 7); // 引越しに先立つ
     }
 }
+
+// Pattern: 甲斐がある (worth doing, pays off)
+// Data source: grammar_points_data.json["甲斐がある"]
+// Testing all structure variants with print_debug to analyze tokenization
+//
+// Structure variants:
+//   - standard[0]: Verb[た] + かい + がある
+//   - standard[1]: Verb[stem] + がい + がある
+//   - standard[2]: Noun + の + かい + がある
+//   - Negative forms: かい/がい + がない
+
+mod kaigaaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_ta_kai_ga_aru() {
+        // Verb[た] + かい + がある
+        let sentence = "この食パンを買えて、朝の４時から並んだかいがあった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "甲斐がある");
+        assert_pattern_range(&patterns, "甲斐がある", 18, 25); // だかいがあった
+    }
+
+    #[test]
+    fn test_verb_stem_gai_ga_aru() {
+        // Verb[stem] + がい + がある (using ている form)
+        let sentence = "こういう景色を見ると生きているかいがあると思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "甲斐がある");
+        assert_pattern_range(&patterns, "甲斐がある", 13, 20); // いるかいがある
+    }
+
+    #[test]
+    fn test_verb_stem_gai_ga_nai() {
+        // Verb[stem] + がい + がない (negative)
+        let sentence = "彼女は何回注意しても上達しないから教えがいがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "甲斐がある");
+        assert_pattern_range(&patterns, "甲斐がある", 17, 24); // 教えがいがない
+    }
+
+    #[test]
+    fn test_noun_no_kai_ga_aru() {
+        // Noun + の + かい + がある
+        let sentence = "みんなの努力のかいがあり、この大会で優勝する事ができました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "甲斐がある");
+        assert_pattern_range(&patterns, "甲斐がある", 6, 12); // のかいがあり
+    }
+
+    #[test]
+    fn test_verb_ta_kai_ga_nai() {
+        // Verb[た] + かい + がない (negative)
+        let sentence = "こんなもんのために東京からきたかいがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "甲斐がある");
+        assert_pattern_range(&patterns, "甲斐がある", 14, 20); // たかいがない
+    }
+}

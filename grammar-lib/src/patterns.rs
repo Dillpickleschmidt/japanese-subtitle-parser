@@ -5331,7 +5331,7 @@ declare_patterns! {
     Kaigaaru {
         name: "甲斐がある",
         matcher_fn: crate::matchers::n2::kaigaaru,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

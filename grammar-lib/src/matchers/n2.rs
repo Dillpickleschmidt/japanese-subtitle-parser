@@ -4320,9 +4320,54 @@ pub fn hatashite() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(HatashiteMatcher))]
 }
 
-// Pattern: 甲斐がある
+// Pattern: 甲斐がある (worth doing, pays off)
+// Structures: Verb/Noun + かい/がい + がある/がない
 pub fn kaigaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct KaiGaiMatcher;
+    impl Matcher for KaiGaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // かい: 名詞/非自立/一般
+            // がい: 名詞/接尾/一般
+            (token.surface == "かい" || token.surface == "がい")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                    || token.pos.get(1).is_some_and(|pos| pos == "接尾"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct GaMatcher;
+    impl Matcher for GaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct AruNaiMatcher;
+    impl Matcher for AruNaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ある (動詞) or ない (形容詞)
+            (token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立"))
+                || (token.surface == "ない"
+                    && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "自立"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb (past/stem) or Noun
+        TokenMatcher::Custom(Arc::new(KaiGaiMatcher)),
+        TokenMatcher::Custom(Arc::new(GaMatcher)),
+        TokenMatcher::Custom(Arc::new(AruNaiMatcher)),
+    ]
 }
 
 // Pattern: やがて
