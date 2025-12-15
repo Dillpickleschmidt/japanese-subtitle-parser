@@ -5854,13 +5854,13 @@
   {
     "pattern_name": "却って",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to revoke, or take a step back from a statement that has already been made, 却（かえ）って will often be used [1 std, 0 pol]",
     "priority": 3,
     "skip_reason": null

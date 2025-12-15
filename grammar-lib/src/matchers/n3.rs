@@ -5133,9 +5133,18 @@ pub fn sunawachi() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SunawachiMatcher))]
 }
 
-// Pattern: 却って
+// Pattern: Rather, on the contrary (かえって邪魔になってる)
+// Structure: かえって
 pub fn kaette() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KaetteMatcher;
+    impl Matcher for KaetteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かえって"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(KaetteMatcher))]
 }
 
 // Pattern: まるで…ようだ (it is as if / it is as though)

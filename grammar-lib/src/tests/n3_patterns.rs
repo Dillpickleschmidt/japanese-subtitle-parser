@@ -12778,3 +12778,47 @@ mod sunawachi_tests {
         assert_pattern_range(&patterns, "即ち", 13, 17); // すなわち
     }
 }
+
+// ========== 却って (rather, on the contrary) ==========
+// Pattern: 却って (rather, all the more, putting aside)
+// Data source: grammar_points_data.json["却って"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase (A) + かえって + Phrase (B)
+
+mod kaette_tests {
+    use super::*;
+
+    // Testing: Phrase + かえって + Phrase (contrary result)
+    #[test]
+    fn test_kaette_contrary() {
+        let sentence = "手伝ってくれてるのはありがたいけど、かえって邪魔になってるからあっちに行ってくれる？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "却って");
+        assert_pattern_range(&patterns, "却って", 18, 22); // かえって
+    }
+
+    // Testing: かえって showing unexpected result
+    #[test]
+    fn test_kaette_unexpected_result() {
+        let sentence = "お母さんを元気にするつもりだったけど、かえって怒らせてしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "却って");
+        assert_pattern_range(&patterns, "却って", 19, 23); // かえって
+    }
+
+    // Testing: かえって with negative consequence
+    #[test]
+    fn test_kaette_negative_consequence() {
+        let sentence = "「宿題やれ！」って言われると、かえってやりたくなくなる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "却って");
+        assert_pattern_range(&patterns, "却って", 15, 19); // かえって
+    }
+}

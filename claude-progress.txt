@@ -1683,3 +1683,72 @@ Initially tried Optional matchers for ような, but discovered that match_remai
 - ものだ (N3) - different meaning ("should" / "naturally is")
 
 ---
+
+## Session 365 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern (即ち)
+**Patterns completed**: 1 (即ち - N3 newly implemented)
+**Tests added**: 3 new tests for 即ち (all passing)
+**Total tests**: 2328 passing, 1 ignored (was 2325 passing, 1 ignored - net +3 tests)
+
+### ✅ Pattern Implemented: 即ち (in other words, namely)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: すなわち (即ち) is a conjunction similar to つまり, meaning "in other words", "namely", or "that is to say". It links two sentences via reasoning or clarification. The nuance is "agreeance" or "correspondence" rather than pure summarization (like つまり).
+
+**Structures tested**: 3 tests covering different contexts
+1. すなわち + Phrase (sentence start): この人は私の妻のお母さんです。すなわち、義理の母です。 → すなわち (15-19)
+2. すなわち + Phrase (mid-sentence): 私はゲームしてお金を稼いでいます。すなわち、プロゲーマーです。 → すなわち (17-21)
+3. すなわち in casual context: この車はもう動かないです。すなわち廃車です。 → すなわち (13-17)
+
+**Implementation**: Simple conjunction matcher
+- Matcher: Custom matcher checking surface == "すなわち" AND pos == "接続詞" (conjunction)
+- Location: grammar-lib/src/matchers/n3.rs (sunawachi function)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (sunawachi_tests module)
+
+**Test Quality**:
+- All 3 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic sentences from grammar_points_data.json examples
+- Covers different sentence positions and contexts
+
+**Pattern Range**: Just the conjunction すなわち itself (chars 13-17, 15-19, 17-21 depending on position)
+
+**Tokenization Notes**:
+- すなわち is tokenized as 接続詞 (conjunction)
+- Simple single-token pattern
+- No conjugations or variants
+
+**Related patterns**:
+- つまり (N4) - similar "in other words" meaning but more casual/summarizing
+
+---
+
+### Next Session Priorities
+
+**N3 patterns remaining** (19 left):
+- 却って (kaette) - to revoke/take back a statement
+- 別に〜ない (betsu ni ~nai) - not particularly
+- 当たり (atari) - per, each (with numbers/counters)
+- 割に (wari ni) - although, despite, comparatively
+- 言うまでもない② - needless to say (sentence-initial)
+- 又〜も (mata ~mo) - also, again
+- 第一 (daiichi) - first of all, primarily
+- 考えられない (kangaerarenai) - unthinkable, inconceivable
+- 必ずしも (kanarazushimo) - not necessarily
+
+**Strategy**: Continue with N3 patterns in order of appearance in feature_list.json
+- Next: 却って (kaette) - adverb for revoking/contradicting a statement
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 19 remaining
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~390 patterns remaining
+
