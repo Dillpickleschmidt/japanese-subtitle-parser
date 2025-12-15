@@ -10167,13 +10167,13 @@
   {
     "pattern_name": "ならともかく",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When なら, the hypothetical form of the auxiliary verb だ is paired with the adverb ともかく 'to set aside', it will often b... [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

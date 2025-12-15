@@ -6195,7 +6195,7 @@ declare_patterns! {
     Naratomokaku {
         name: "ならともかく",
         matcher_fn: crate::matchers::n2::naratomokaku,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

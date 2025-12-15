@@ -6223,9 +6223,39 @@ pub fn hatomokaku() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ならともかく
+// Pattern: ならともかく (if it's A, sure, but...)
+// Structures: Any + なら (助動詞, 仮定形) + ともかく (副詞)
 pub fn naratomokaku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for なら (助動詞, 仮定形, base=だ)
+    #[derive(Debug)]
+    struct NaraMatcher;
+    impl super::Matcher for NaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|form| form == "仮定形")
+        }
+    }
+
+    // Matcher for ともかく (副詞/一般)
+    #[derive(Debug)]
+    struct TomokakuMatcher;
+    impl super::Matcher for TomokakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ともかく"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NaraMatcher)),
+        TokenMatcher::Custom(Arc::new(TomokakuMatcher)),
+    ]
 }
 
 // Pattern: やら～やら (A and B, and so on)

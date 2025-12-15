@@ -8352,3 +8352,63 @@ mod hamotoyori_tests {
         assert_pattern_range(&patterns, "はもとより", 10, 16); // のはもとより
     }
 }
+
+// Pattern: ならともかく (if it's A, sure, but...)
+// Data source: grammar_points_data.json["ならともかく"]
+// Testing all structure variants:
+//   - standard[0]: Verb + ならともかく
+//   - standard[1]: い-Adjective + ならともかく
+//   - standard[2]: な-Adjective + ならともかく
+//   - standard[3]: Noun + ならともかく
+
+mod naratomokaku_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_naratomokaku() {
+        // Structure: Verb + ならともかく
+        // Example from grammar data: 丈夫で何回も使えるものならともかく
+        let sentence = "丈夫で何回も使えるものならともかく、なんでわざわざ高くて使い捨てみたいなもんを買うんですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならともかく");
+        assert_pattern_range(&patterns, "ならともかく", 9, 17); // ものならともかく
+    }
+
+    #[test]
+    fn test_i_adj_naratomokaku() {
+        // Structure: い-Adjective + ならともかく
+        // Example: 高いならともかく、安くても買わない
+        let sentence = "値段が高いならともかく、品質が悪いのは論外だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならともかく");
+        assert_pattern_range(&patterns, "ならともかく", 3, 11); // 高いならともかく
+    }
+
+    #[test]
+    fn test_na_adj_naratomokaku() {
+        // Structure: な-Adjective + ならともかく
+        // Example: 丁寧ならともかく
+        let sentence = "仕事が丁寧ならともかく、雑な仕事では困る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならともかく");
+        assert_pattern_range(&patterns, "ならともかく", 3, 11); // 丁寧ならともかく
+    }
+
+    #[test]
+    fn test_noun_naratomokaku() {
+        // Structure: Noun + ならともかく
+        // Example from grammar data: 俺の妹ならともかく
+        let sentence = "俺の妹ならともかく、俺はそんなことしねぇよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならともかく");
+        assert_pattern_range(&patterns, "ならともかく", 2, 9); // 妹ならともかく
+    }
+}
