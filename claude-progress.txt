@@ -1,3 +1,80 @@
+## Session 371 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern (必ずしも)
+**Patterns completed**: 1 (必ずしも - N3 newly implemented)
+**Tests added**: 8 new tests for 必ずしも (all passing)
+**Total tests**: 2374 passing, 1 ignored (was 2366 passing, 1 ignored - net +8 tests)
+
+### ✅ Pattern Implemented: 必ずしも (not necessarily/not always)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not highlighted in overlay)
+
+**Pattern**: Although it is often considered a stand-alone adverb, 必（かなら）ずしも is a combination of the adverb 必（かなら）ず 'invariably' or 'certainly', and the adverbial particles し and も. The particles し and も are combined to strengthen the meaning of the word before it. Due to this, 必ずしも may be translated as "absolutely certainly". However, 必ずしも is an expression that is only used in negative sentences, so is commonly translated as 'not always (A)', 'not entirely (A)', or 'not necessarily (A)'. The literal meaning is close to 'not absolutely certainly (A)'. This pattern is often used at the beginning of a phrase, before expressing something that is not 100% certain.
+
+**Structures tested**: 8 comprehensive tests covering all structure variants
+1. 必ずしも + Phrase + わけではない: 男の人は必ずしも強いわけではない → 必ずしも (4-8)
+2. 必ずしも + Phrase + わけじゃない: お金持ちが必ずしも幸せなわけじゃないよ → 必ずしも (5-9)
+3. 必ずしも + Phrase + とは限らない: 刑務所にいる人たちは必ずしも犯罪を犯したとは限らない → 必ずしも (10-14)
+4. 必ずしも + Phrase + とは言えない: 女の人は必ずしも買い物が好きだとは言えない → 必ずしも (4-8)
+5. 必ずしも + Phrase + わけではありません: 高価な物が必ずしも良いわけではありません → 必ずしも (5-9)
+6. 必ずしも + Phrase + わけじゃありません: 新しいものが必ずしも正しいわけじゃありません → 必ずしも (6-10)
+7. 必ずしも + Phrase + とは限りません: 有名な医者が必ずしも腕が良いとは限りません → 必ずしも (6-10)
+8. 必ずしも + Phrase + とは言えません: 学歴が高い人が必ずしも成功するとは言えません → 必ずしも (7-11)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (kanarazushimo function, lines 8487-8500)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (kanarazushimo_tests module, lines 13324-13414)
+- Pattern: grammar-lib/src/patterns.rs (Kanarazushimo variant, lines 4153-4159)
+
+**Tokenization pattern**:
+```
+必ずしも adverb:
+- surface='必ずしも', base='必ずしも'
+- POS: 副詞/一般 (general adverb)
+- Always a single token
+- Appears at the beginning of phrases
+- Always used with negative constructions (わけではない, とは限らない, とは言えない)
+```
+
+**Key implementation points**:
+1. Single-token matcher: KanarazushimoMatcher
+2. Matches exact surface form: "必ずしも"
+3. Matches exact base form: "必ずしも"
+4. POS must be 副詞 (adverb)
+5. Pattern priority: 1 (low - construction pattern, detected but not highlighted)
+
+**Pattern ranges**: Include only 必ずしも (4 characters)
+- The pattern captures just the adverb itself
+- Does NOT include the preceding context or following negative constructions
+- Pattern range is the 4-character adverb: 必ずしも
+
+**Test Quality**:
+- All 8 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- Cover both standard forms (わけではない, とは限らない, とは言えない)
+- Cover both polite forms (わけではありません, とは限りません, とは言えません)
+- Include variations (わけじゃない, わけじゃありません)
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: 必ずしも is unique in that it's only used in negative sentences. The combination of し and も particles strengthens the base adverb 必ず (invariably/certainly), but the pattern's use in negative contexts creates the meaning "not absolutely/not necessarily". This is a grammaticalized construction where the individual components (必ず + しも) have fused into a single adverbial unit that collocates specifically with negative predicates.
+
+**Usage contexts**:
+- Expressing exceptions to general rules: "Men aren't necessarily strong"
+- Challenging assumptions: "Expensive things aren't always good"
+- Nuanced negation: Softens absolute negatives into partial negatives
+- Formal and informal registers (polite and casual forms tested)
+- Always precedes a negative predicate (わけではない, とは限らない, とは言えない)
+
+**Related patterns**:
+- わけではない (N3) - "it doesn't mean that / it's not that" (already implemented, used in 必ずしも constructions)
+- とは限らない (N3) - "not necessarily / doesn't mean" (already implemented, used in 必ずしも constructions)
+
+---
+
 ## Session 367 - 2025-12-14
 
 ### ✅ Session Summary
