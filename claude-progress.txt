@@ -1,10 +1,10 @@
 ## Session 360 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented の1 (N4) pattern
-**Patterns completed**: 1 (の1 - nominalization)
-**Tests added**: 5 new tests for の1 (all passing)
-**Total tests**: 2300 passing, 1 ignored (was 2295 passing, 1 ignored - net +5 tests)
+**Status**: COMPLETE - Successfully implemented 2 N4 patterns (の1, と2)
+**Patterns completed**: 2 (の1 - nominalization, と2 - quotation particle)
+**Tests added**: 10 new tests (5 for の1, 5 for と2 - all passing)
+**Total tests**: 2305 passing, 1 ignored (was 2295 passing, 1 ignored - net +10 tests)
 
 ### ✅ Pattern Implemented: の1 (nominalization - that which / the one who)
 
@@ -83,6 +83,79 @@ The nominalization allows entire verb clauses to function as noun phrases in the
 - のです・んです (N4) - explanatory pattern (not yet implemented)
 - こと (N4) - alternative nominalizer (not yet implemented)
 - ことができる (N5) - "can do" (uses こと, not の)
+
+---
+
+### ✅ Pattern Implemented: と2 (quotation particle)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1 (low - not highlighted in overlay)
+
+**Pattern**: と2 is the quotation particle (引用/いんよう - citation/reference) used to mark quoted speech, thoughts, or reported information. It can follow almost any type of word or phrase, and is followed by quotation verbs like 言う (say), 思う (think), 聞く (hear), 考える (think/consider), etc. The verb is often omitted at sentence end.
+
+**Structures tested**: 5 comprehensive tests covering all major variants
+1. Quoted phrase + と + 言う: 「３キロ歩いた」と言った (said "I walked 3km") - chars 13-14
+2. Noun + だ + と + 思う: 猫だと思う (think it's a cat) - chars 5-6
+3. な-Adjective + だ + と + 思う: 綺麗だと思う (think it's beautiful) - chars 7-8
+4. Quoted phrase + と + 叫ぶ: 「危ない！」と叫んだ (yelled "Watch out!") - chars 9-10
+5. Quoted phrase + と (verb omitted): 「何で？」と (asked "Why?") - chars 11-12
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (to2 function, lines 8163-8185)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (to2_tests module, lines 11790-11863)
+- Pattern: grammar-lib/src/patterns.rs (To2 variant, lines 1069-1075)
+
+**Tokenization patterns**:
+```
+と as quotation particle:
+- と (助詞/格助詞/引用) - quotation/citation particle
+- Surface: と, Base: と
+- POS: 助詞/格助詞/引用 (particle/case particle/quotation)
+```
+
+**Key implementation points**:
+1. Single-token matcher: と (quotation particle only)
+2. ToQuotationMatcher checks surface == "と", POS == 助詞/格助詞/引用
+3. Pattern matches ONLY the quotation と (not the quoted content or following verb)
+4. Pattern priority: 1 (detected but not highlighted in overlay)
+5. The と must be specifically 助詞/格助詞/引用 (not other uses of と like conditional)
+6. Quotation verbs (言う, 思う, 聞く, 考える, etc.) often follow but can be omitted
+
+**Pattern ranges**: Include only と (1 token)
+- After quoted phrase: と
+- After noun + だ: と
+- After adjective + だ: と
+- Pattern captures just the quotation marker
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover all major structural variants: quoted phrases, nouns, adjectives, verb omitted
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: と as a quotation particle expresses the relationship between (A) "what was communicated" and (B) "how it was communicated". It's one of the fundamental uses of と in Japanese (alongside the conditional と3 and compilation particle と). The quotation can be:
+- Direct speech: 「危ない！」と叫んだ ("Watch out!" [he] yelled)
+- Indirect thought: 猫だと思う (I think it's a cat)
+- Reported information: 彼が来ると言った (He said that he'll come)
+
+**Usage contexts**:
+- Quotation/citation: Marks what was said, thought, or heard
+- All registers: Works in both formal and informal contexts
+- Verb omission: The quotation verb can be omitted at sentence end (conversational)
+- Requires だ: After nouns and な-adjectives, だ is needed before と
+
+**Caution from grammar data**:
+- と requires だ when used after nouns or な-Adjectives
+- The quotation verb will often be omitted at the end of a sentence
+- と can appear after almost any type of word or phrase
+
+**Related patterns**:
+- と (N4) - conditional particle と3 (already implemented)
+- と (N5) - compilation particle "and/with" (already implemented)
+- とおもう (N4) - specific と思う pattern (already implemented)
+- って (N3) - casual quotation marker (already implemented)
 
 ---
 
