@@ -9005,3 +9005,80 @@ Continue with N2 priority 4 patterns (96 remaining):
 ては, ては〜ては, 結果・の結果, 以来, に先立ち, はたして, 甲斐がある, やがて, したがって, etc.
 
 Total tests: 2835 passing, 1 ignored
+
+## Session 433 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (ては)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 6 new tests (all passing with range assertions)
+**Total tests**: 2841 passing, 1 ignored (was 2835 passing, 1 ignored - net +6 tests)
+
+**Session highlights**:
+- Implemented ては (if/when - conditional with negative expectation) pattern
+- Handles all structure variants: Verb+て+は, い-Adj+て+は, な-Adj+で+は, Noun+で+は, ちゃ, じゃ
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All structure variants tested with realistic sentences
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: ては (if/when - conditional with negative expectation)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: When the particles て and は are combined, they form a regular composite structure that is used primarily to highlight repeating actions, or to make assessments or judgments about potential situations. This pattern expresses "if (A), (B)", "when (A), (B)", or "because of (A), (B)" with a negative expectation or comment.
+
+**Structures tested**: 6 test variants covering all standard forms
+1. Verb[て] + は: 回しては (chars 10-14) - "if you turn (with force)"
+2. い-Adjective[て] + は: 長くては (chars 4-8) - "if it's long"
+3. な-Adjective + では: 几帳面では (chars 14-19) - "if (you are) meticulous"
+4. Noun + では: 格好では (chars 8-12) - "with that outfit"
+5. Verb[て] + ちゃ: なくちゃ (chars 7-11) - "if you don't" (casual contraction)
+6. Noun + じゃ: 人じゃ (chars 7-10) - "if that person" (casual contraction)
+
+**Implementation details**:
+- Matcher structure: PrecedingElement + て/で/ちゃ/じゃ + Optional(は)
+- Custom matchers created:
+  - PrecedingElementMatcher: matches verb, adjective, noun, or auxiliary
+  - TeDeJaChaMatcher: matches て/で (particles or copula), ちゃ, or じゃ
+  - HaParticleMatcher: matches は (topic/contrast particle)
+- Handles both formal (て+は, で+は) and casual (ちゃ, じゃ) contractions
+- Distinguishes between で as particle vs copula based on POS tags
+- は is optional to allow for casual contractions ちゃ/じゃ
+
+**Test sentences used**:
+- "そのように力を入れて回してはネジがだめになってしまいますよ" - verb form
+- "そんなに長くては鞄に入らないので、半分に折ってください" - i-adjective form
+- "私は掃除が苦手なので、そんな几帳面では私と住むことはできないでしょう" - na-adjective form
+- "そんな貧乏くさい格好ではあのレストランには入れないよ" - noun form
+- "ご飯を全部食べなくちゃ大きくなれないよ" - ちゃ contraction
+- "リーダーがあの人じゃ嫌です" - じゃ contraction
+
+**Tokenization insights**:
+- Verb/i-adj use: て/で (助詞/接続助詞) + は (助詞/係助詞)
+- Na-adj/Noun use: で (助動詞 base=だ OR 助詞/格助詞) + は (助詞/係助詞)
+- ちゃ: standalone particle (助詞/接続助詞)
+- じゃ: standalone particle (助詞/副助詞)
+
+### Testing Results
+
+**Test Count**: 2841 total (added 6 new tests)
+**Status**: ✓ All tests passing, 1 ignored
+**No regressions**
+
+### Files Modified
+
+1. grammar-lib/src/matchers/n2.rs - Implemented teha()
+2. grammar-lib/src/tests/n2_patterns.rs - Added teha_tests module with 6 tests
+3. feature_list.json - Updated to passes: true, category: complete
+
+### Next Steps
+
+Continue with N2 priority 4 patterns (95 remaining):
+ては〜ては, 結果・の結果, 以来, に先立ち, はたして, 甲斐がある, やがて, したがって, にかけては, etc.
+
+Total tests: 2841 passing, 1 ignored
