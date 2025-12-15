@@ -12343,4 +12343,52 @@ mod wazukani_tests {
         assert_has_pattern(&patterns, "僅かに");
         assert_pattern_range(&patterns, "僅かに", 13, 17); // わずかに
     }
+
+    // Pattern: 幸い・幸いなことに (fortunately, luckily)
+    // Data source: grammar_points_data.json["幸い・幸いなことに"]
+    // Testing: structure.standard[0] - "幸い + Phrase"
+    //
+    // Structure variants to test:
+    //   - standard[0]: 幸い + Phrase (simple adverb)
+    //   - standard[1]: 幸いなことに + Phrase (full form)
+    //   - Variants noted: 幸いに、幸いにも
+    #[test]
+    fn test_saiwai_simple() {
+        let sentence = "幸い、ライフジャケットを着ていたので溺れずに済んだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "幸い・幸いなことに");
+        assert_pattern_range(&patterns, "幸い・幸いなことに", 0, 2); // 幸い
+    }
+
+    #[test]
+    fn test_saiwai_nakotoni() {
+        let sentence = "幸いなことに、優しい人に道を教えてもらった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "幸い・幸いなことに");
+        assert_pattern_range(&patterns, "幸い・幸いなことに", 0, 6); // 幸いなことに
+    }
+
+    #[test]
+    fn test_saiwai_ni() {
+        let sentence = "幸いに、大親友に会う事ができました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "幸い・幸いなことに");
+        assert_pattern_range(&patterns, "幸い・幸いなことに", 0, 3); // 幸いに
+    }
+
+    #[test]
+    fn test_saiwai_nimo() {
+        let sentence = "幸いにも、おじいちゃんの手術は成功しました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "幸い・幸いなことに");
+        assert_pattern_range(&patterns, "幸い・幸いなことに", 0, 4); // 幸いにも
+    }
 }

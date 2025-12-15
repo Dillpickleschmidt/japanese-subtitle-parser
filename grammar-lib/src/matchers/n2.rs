@@ -7425,9 +7425,116 @@ pub fn dakemashida() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 幸い・幸いなことに
+// Pattern: 幸い・幸いなことに (fortunately, luckily)
+// Structures: 幸い, 幸いに, 幸いにも, 幸いなことに
 pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 幸い as adverb (副詞/助詞類接続)
+    #[derive(Debug)]
+    struct SaiwaiAdvMatcher;
+    impl Matcher for SaiwaiAdvMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "幸い"
+                && token.features.first().is_some_and(|f| f == "副詞")
+                && token.features.get(1).is_some_and(|f| f == "助詞類接続")
+        }
+    }
+
+    // Match 幸い as na-adjective stem (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct SaiwaiNounMatcher;
+    impl Matcher for SaiwaiNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "幸い"
+                && token.features.first().is_some_and(|f| f == "名詞")
+                && token.features.get(1).is_some_and(|f| f == "形容動詞語幹")
+        }
+    }
+
+    // Match な (助動詞/体言接続)
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.features.first().is_some_and(|f| f == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match こと (名詞/非自立)
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.features.first().is_some_and(|f| f == "名詞")
+                && token.features.get(1).is_some_and(|f| f == "非自立")
+        }
+    }
+
+    // Match に particle (副詞化 or 格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && (token.features.get(1).is_some_and(|f| f == "副詞化")
+                    || token.features.get(1).is_some_and(|f| f == "格助詞"))
+        }
+    }
+
+    // Match も particle (係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "係助詞")
+        }
+    }
+
+    // Match 幸い in either form (副詞 or 名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct SaiwaiEitherMatcher;
+    impl Matcher for SaiwaiEitherMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface != "幸い" {
+                return false;
+            }
+            // Match as adverb (副詞/助詞類接続) OR as na-adj stem (名詞/形容動詞語幹)
+            (token.features.first().is_some_and(|f| f == "副詞")
+                && token.features.get(1).is_some_and(|f| f == "助詞類接続"))
+                || (token.features.first().is_some_and(|f| f == "名詞")
+                    && token.features.get(1).is_some_and(|f| f == "形容動詞語幹"))
+        }
+    }
+
+    // Match: 幸い + (な + こと)? + (に)? + (も)?
+    // This matches all variants:
+    // - 幸い (simple)
+    // - 幸いに
+    // - 幸いにも
+    // - 幸いなことに
+    vec![
+        TokenMatcher::Custom(Arc::new(SaiwaiEitherMatcher)),
+        // Optional: な + こと
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NaCopulaMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KotoMatcher)))),
+        // Optional: に
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiParticleMatcher,
+        )))),
+        // Optional: も
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MoParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: ようでは・ようじゃ

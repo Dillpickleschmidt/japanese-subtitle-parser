@@ -9705,13 +9705,13 @@
   {
     "pattern_name": "幸い・幸いなことに",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "幸（さいわ）いなことに , or simply 幸（さいわ）い is a set phrase in Japanese for indicating that 'luckily (A)', or 'fortunately (A)' [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
