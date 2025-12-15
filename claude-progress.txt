@@ -1,17 +1,19 @@
 ## Session 435 - 2025-12-15
 
 ### Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented 1 N1 pattern (極まりない・極まる)
-**Patterns completed**: 1 (N1, priority 5)
-**Tests added**: 6 new tests (all passing with range assertions)
-**Total tests**: 2853 passing, 1 ignored (was 2847 before session, net +6 tests)
+**Status**: COMPLETE - Successfully implemented 2 N1 patterns (極まりない・極まる, といえども)
+**Patterns completed**: 2 (both N1, both priority 5)
+**Tests added**: 10 new tests (6 + 4, all passing with range assertions)
+**Total tests**: 2857 passing, 1 ignored (was 2847 before session, net +10 tests)
 
 **Session highlights**:
 - Implemented 極まりない・極まる (extremely) - N1 classical pattern
-- Handles both 極まりない (i-adjective form) and 極まる (verb form)
-- Supports な-Adjectives, い-Adjectives with optional こと and な particles
+- Implemented といえども (even if, although) - N1 formal pattern
+- Both patterns handle multiple structure types (adjectives, verbs, nouns)
+- 極まりない・極まる: Handles both forms with optional な and こと particles
+- といえども: Simple pattern using hypothetical form of 言う + ども
 - Clean test-first workflow following REFERENCE_EXAMPLES.md
-- All 6 structure variants tested with realistic sentences
+- All 10 structure variants tested with realistic sentences (6 + 4)
 - All tests pass with proper range assertions
 - No regressions
 
@@ -88,7 +90,77 @@
 - をいいことに - take advantage of
 - 如何 - how (classical)
 
-**Session outcome**: Successfully completed 1 N1 classical pattern with full coverage! Total of 6 new tests added, all passing, no regressions. The pattern handles multiple adjective types and conjugation forms cleanly with a single flexible matcher.
+---
+
+### ✅ Pattern Implemented #2: といえども (even if, although)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: といえども is a combination of the case-marking particle と, the hypothetical form of 言う (いえ), and the conjunction particle ども. It is used in much the same way as けれども or ても. The pattern translates as 'even if (A)', 'although (A)', or 'even though (A)'. This is an old-fashioned, formal pattern often used for emphasis and frequently paired with expressions like いくら, いかに, どんなに, etc.
+
+**Structures tested**: All 4 structure variants from grammar_points_data.json
+1. Verb + といえども: いるといえども (chars 9-16)
+2. Noun + といえども: 者といえども (chars 5-11)
+3. な-Adjective + だ + といえども: だといえども (chars 5-11)
+4. い-Adjective + といえども: 優しいといえども (chars 7-15)
+
+**Implementation details**:
+- Matcher structure: Any + と(助詞/格助詞/引用) + いえ(動詞, 仮定形) + ども(助詞/接続助詞)
+- Custom matchers created:
+  - ToQuoteMatcher: matches と as quotation particle (助詞/格助詞/引用)
+  - IeMatcher: matches いえ as hypothetical form of いう (動詞, base=いう, 仮定形)
+  - DomoMatcher: matches ども as conjunction particle (助詞/接続助詞)
+- TokenMatcher::Any handles verbs, nouns, adjectives (both な and い)
+- Very clean implementation with only 3 custom matchers
+
+**Test count**: 4 tests (all passing)
+- test_verb_toiedomo (Verb + といえども)
+- test_noun_toiedomo (Noun + といえども)
+- test_na_adj_toiedomo (な-Adj + だ + といえども)
+- test_i_adj_toiedomo (い-Adj + といえども)
+
+**Tokenization observations**:
+- と: Always 助詞/格助詞/引用 (quotation/citation particle)
+- いえ: Always 動詞/自立, base=いう, features[5]=仮定形 (hypothetical form)
+- ども: Always 助詞/接続助詞 (conjunction particle)
+- TokenMatcher::Any successfully matches all preceding types
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n1.rs: Implemented toiedomo() function with 3 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs: Added toiedomo_tests module with 4 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- This is an old-fashioned, formal pattern (more formal than けれども)
+- Sometimes written with kanji as 雖（いえど）も ("however even (A)")
+- Can be thought of as a formal version of といっても
+
+---
+
+**Current stats** (after both patterns):
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 112 remaining
+- N1: 176 remaining (down from 178 - completed 2 patterns!)
+- Total: ~290 patterns remaining
+
+### Quality Metrics
+✅ All 10 tests have assert_pattern_range (6 + 4)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar examples
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2857 tests passing, up from 2847)
+
+**Next priorities**: Continue with remaining N1 priority 5 patterns:
+- ともなると・にもなると - when it comes to
+- をいいことに - take advantage of
+- 如何 - how (classical)
+
+**Session outcome**: Successfully completed 2 N1 patterns with full coverage! Total of 10 new tests added (6 + 4), all passing, no regressions. Both patterns use comprehensive custom matchers and handle multiple structure variants cleanly.
 
 ---
 
