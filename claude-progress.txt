@@ -1,7 +1,55 @@
-## Session 414 - 2025-12-15
+## Session 415 - 2025-12-15
 
 ### Session Summary - IN PROGRESS
-**Status**: IN PROGRESS - Successfully implemented 2 N1 patterns (を機に, すら)
+**Status**: IN PROGRESS - Successfully implemented 1 N2 pattern (際に)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 3 new tests (all passing)
+**Total tests**: 2711 passing, 1 ignored (was 2708 passing, 1 ignored - net +3 tests)
+
+**Session highlights**:
+- Implemented 際に (on the occasion of, when) - formal pattern with 3 structure variants
+- Pattern handles: Verb[る] + 際に, Verb[た] + 際に, Noun + の + 際に
+- Used TokenMatcher::Any with optional matchers to handle all variants in one pattern
+- Clean test-first implementation
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: 際に (on the occasion of, when)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: 際に combines the noun 際 (sai - "verge, occasion") with the particle に to express "on the occasion of (A)", "when (A)", or "at the time of (A)". It's a formal/polite way to indicate timing, often used in instructions or formal announcements.
+
+**Structures tested**: All 3 structure variants from grammar_points_data.json
+1. Verb[る] + 際に: 入る際に (chars 5-9) - "when entering"
+2. Verb[た] + 際に: 飛び散った際に (chars 10-17) - "when it scattered"
+3. Noun + の + 際に: 面接の際に (chars 3-8) - "on the occasion of the interview"
+
+**Implementation details**:
+- Pattern structure: (Verb or Noun) + (optional た) + (optional の) + 際(名詞/非自立) + に(格助詞)
+- Custom matchers: SaiMatcher (際 as dependent noun), NiParticleMatcher, NoParticleMatcher (の as relativizer)
+- Uses TokenMatcher::Any to flexibly match verb or noun
+- Two optional matchers handle た (past auxiliary) and の (nominalizer)
+- This single pattern matches all three structure variants
+- Register: polite
+
+**Test count**: 3 tests (all passing)
+
+**Tokenization observations**:
+- 際 is always 名詞/非自立/副詞可能 (dependent noun)
+- の when present is 助詞/連体化 (relativizing particle)
+- Pattern successfully captures full construction from verb/noun through に
+
+---
+
+## Session 414 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N1 patterns (を機に, すら)
 **Patterns completed**: 2 (both N1, both priority 5)
 **Tests added**: 7 new tests (3 for を機に, 4 for すら, all passing)
 **Total tests**: 2708 passing, 1 ignored (was 2701 passing, 1 ignored - net +7 tests)
