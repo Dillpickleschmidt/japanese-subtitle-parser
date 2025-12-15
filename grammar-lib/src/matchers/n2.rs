@@ -5993,9 +5993,48 @@ pub fn monono() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: というものだ
+// Pattern: というものだ (that is just the way it is, that's what something is)
+// Structures: Phrase + というものだ/というものです/ってものだ
 pub fn toiumonoda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match という or って as case particle
+    #[derive(Debug)]
+    struct ToiuTteMatcher;
+    impl super::Matcher for ToiuTteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "という" || token.surface == "って")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match もの as non-independent noun
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl super::Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ or です as auxiliary verb
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl super::Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToiuTteMatcher)),
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: から見ると (from the perspective of, judging from)

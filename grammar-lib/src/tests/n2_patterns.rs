@@ -10872,3 +10872,61 @@ mod monono_tests {
         assert_pattern_range(&patterns, "ものの", 12, 17); // あるものの
     }
 }
+
+// Pattern: というものだ (that is just the way it is, that's what something is)
+// Data source: grammar_points_data.json["というものだ"]
+// Testing: structure.standard[0] - "Phrase + というものだ"
+// Testing: structure.polite[0] - "Phrase + というものです"
+//
+// Structure variants:
+//   - standard[0]: Phrase + というものだ
+//   - polite[0]: Phrase + というものです
+//   - casual: Phrase + ってものだ (という shortened to って)
+
+mod toiumonoda_tests {
+    use super::*;
+
+    #[test]
+    fn test_phrase_toiumonoda() {
+        // "Helping each other no matter what is just what friends do"
+        let sentence = "何があってもお互い助け合うのが友達というものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものだ");
+        assert_pattern_range(&patterns, "というものだ", 17, 23); // というものだ
+    }
+
+    #[test]
+    fn test_noun_toiumonoda() {
+        // "Arriving 10 minutes before your senpai arrives. That is just manners."
+        let sentence = "先輩が着く１０分前に着く。それがマナーというものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものだ");
+        assert_pattern_range(&patterns, "というものだ", 19, 25); // というものだ
+    }
+
+    #[test]
+    fn test_phrase_toiumonodesu() {
+        // "Not giving up no matter how tired you are. That is an athlete."
+        let sentence = "どんなに疲れていても諦めない。それがアスリートというものです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものだ");
+        assert_pattern_range(&patterns, "というものだ", 23, 30); // というものです
+    }
+
+    #[test]
+    fn test_casual_ttemono() {
+        // "Not crying no matter what. That is a man!"
+        let sentence = "何があっても泣かない。それが男ってものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものだ");
+        assert_pattern_range(&patterns, "というものだ", 15, 20); // ってものだ
+    }
+}
