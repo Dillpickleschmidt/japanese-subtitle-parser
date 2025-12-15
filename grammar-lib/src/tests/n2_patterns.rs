@@ -4553,3 +4553,55 @@ mod yousuruni_tests {
         assert_pattern_range(&patterns, "要するに", 0, 4); // 要するに
     }
 }
+
+// Pattern: たまえ (imperative form - polite order)
+// Data source: grammar_points_data.json["たまえ"]
+// Testing: structure.standard[0] - "Verb[stem] + たまえ"
+//
+// Structure variants:
+//   - standard[0]: Verb[stem] + たまえ (polite imperative, men only, to subordinates)
+//   - polite: (none)
+
+mod tamae_tests {
+    use super::*;
+
+    #[test]
+    fn test_tamae_sit() {
+        // Testing: structure.standard[0] - "Verb[stem] + たまえ"
+        // Example from grammar_points_data.json: 座りたまえ
+        // Kagome correctly tokenizes this as: 座り(動詞/連用形) + たまえ(動詞/命令ｅ/base=たまう)
+        let sentence = "まあまあ、とりあえず座りたまえ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たまえ");
+        assert_pattern_range(&patterns, "たまえ", 10, 15); // 座りたまえ
+    }
+}
+
+// TODO: Undetectable - Verb stem + たまえ (inconsistent Kagome tokenization)
+// Kagome inconsistently tokenizes たまえ:
+// - 座りたまえ: Correctly tokenized as verb stem + たまえ(動詞/命令ｅ/base=たまう) ✓
+// - 食べたまえ: Incorrectly tokenized as た(助動詞) + ま(フィラー) + え(フィラー) ✗
+// - 言いたまえ: Incorrectly tokenized as proper noun (person's name) ✗
+//
+// The pattern can only be detected when Kagome correctly recognizes たまえ as
+// the imperative form of たまう. Unfortunately, this is inconsistent.
+//
+// #[test]
+// fn test_tamae_say() {
+//     // Example: 言いたまえ - Kagome tokenizes as proper noun (名詞/固有名詞/人名/名)
+//     let sentence = "何か言いたそうな顔をしている君！考えてる事を言いたまえ！";
+//     let tokens = tokenize_sentence(sentence);
+//     let patterns = detect_patterns(&tokens);
+//     // Cannot detect - tokenized as proper noun
+// }
+//
+// #[test]
+// fn test_tamae_eat() {
+//     // Example: 食べたまえ - Kagome tokenizes as た(past) + ま(filler) + え(filler)
+//     let sentence = "遠慮せずどんどん食べたまえ。";
+//     let tokens = tokenize_sentence(sentence);
+//     let patterns = detect_patterns(&tokens);
+//     // Cannot detect - たまえ split into fillers
+// }

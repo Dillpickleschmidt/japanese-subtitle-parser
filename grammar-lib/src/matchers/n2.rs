@@ -2174,9 +2174,24 @@ pub fn nebanaranai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たまえ
+// Pattern: たまえ (polite imperative)
+// Structure: Verb[stem] + たまえ
 pub fn tamae() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct TamaeMatcher;
+    impl Matcher for TamaeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Correctly tokenized: たまえ as verb with base たまう in imperative form
+            token.surface == "たまえ"
+                && token.base_form == "たまう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "命令ｅ")
+        }
+    }
+    vec![
+        TokenMatcher::verb_with_form("連用形"),
+        TokenMatcher::Custom(Arc::new(TamaeMatcher)),
+    ]
 }
 
 // Pattern: ～のうち(で)
