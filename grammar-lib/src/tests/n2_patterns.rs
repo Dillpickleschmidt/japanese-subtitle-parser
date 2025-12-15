@@ -7365,3 +7365,77 @@ mod kekka_u30fb_nokekka_tests {
         assert_pattern_range(&patterns, "結果・の結果", 0, 5); // 調査の結果
     }
 }
+
+// Pattern: とも (even if, no matter if)
+// Data source: grammar_points_data.json["とも"]
+// Testing structures:
+//   - standard[0]: Verb[おう] + とも (volitional + とも)
+//   - standard[1]: Verb[なくて] + とも (negative form + とも) - NOTE: This seems incorrect
+//   - standard[2]: な-Adjective + であろう + とも
+//   - standard[3]: い-Adjective[く] + とも (conjunctive form)
+//   - standard[4]: い-Adjective[かろう] + とも (alternate for standard[3])
+//
+// Note: standard[1] appears to be an error - the examples show volitional forms, not なくて forms
+mod tomo_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_volitional_ou() {
+        // Structure: Verb[おう] + とも
+        // Example from grammar_points_data.json: 親が何と言おうとも
+        let sentence = "親が何と言おうとも、私は彼と結婚するつもりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とも");
+        assert_pattern_range(&patterns, "とも", 4, 9); // 言おうとも
+    }
+
+    #[test]
+    fn test_verb_volitional_you() {
+        // Structure: Verb[よう] + とも
+        // Example from grammar_points_data.json: どんなに暴れようとも
+        let sentence = "魚がどんなに暴れようとも、この糸は絶対に切れません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とも");
+        assert_pattern_range(&patterns, "とも", 6, 12); // 暴れようとも
+    }
+
+    #[test]
+    fn test_i_adjective_conjunctive() {
+        // Structure: い-Adjective[く] + とも
+        // Example from grammar_points_data.json: いくら辛くとも
+        let sentence = "人生がいくら辛くとも、諦めてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とも");
+        assert_pattern_range(&patterns, "とも", 6, 10); // 辛くとも
+    }
+
+    #[test]
+    fn test_na_adjective_dearou() {
+        // Structure: な-Adjective + であろう + とも
+        // Example from grammar_points_data.json: いくら下手であろうとも
+        let sentence = "いくら下手であろうとも、毎日練習をしていればそのうち上手になれる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とも");
+        assert_pattern_range(&patterns, "とも", 3, 11); // 下手であろうとも
+    }
+
+    #[test]
+    fn test_i_adjective_karou() {
+        // Structure: い-Adjective[かろう] + とも (less common alternate form)
+        // Using a realistic example
+        let sentence = "どんなに苦しかろうとも、最後まで諦めずに頑張ろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とも");
+        assert_pattern_range(&patterns, "とも", 4, 11); // 苦しかろうとも
+    }
+}

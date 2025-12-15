@@ -6094,9 +6094,106 @@ pub fn tedemo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とも
+// Pattern: とも (even if, no matter if)
+// Structures:
+//   - Verb[未然ウ接続] + う + とも (volitional form + とも)
+//   - い-Adj[連用テ接続/く] + とも (conjunctive form + とも)
+//   - い-Adj[未然ウ接続/かろう] + う + とも (alternate volitional-like form)
+//   - な-Adj + で + あろ + う + とも (であろう + とも)
 pub fn tomo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match とも particle (conjunction particle)
+    #[derive(Debug)]
+    struct TomoParticle;
+    impl super::Matcher for TomoParticle {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "とも"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // This pattern needs to match multiple different structures, so we use TokenMatcher::Any
+    // with a custom post-validation in the first token that checks the entire sequence.
+    // We'll create a matcher that looks ahead to validate the full とも pattern.
+
+    #[derive(Debug)]
+    struct TomoPatternMatcher;
+    impl super::Matcher for TomoPatternMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Check if this token could be the start of any とも pattern:
+            // 1. Verb in 未然ウ接続 (for おう/よう + とも)
+            // 2. い-Adjective in 連用テ接続 (for く + とも)
+            // 3. い-Adjective in 未然ウ接続 (for かろう + とも)
+            // 4. な-Adjective (for で + あろ + う + とも)
+
+            let is_verb_mizen = token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然ウ接続");
+
+            let is_i_adj_conjunctive = token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続");
+
+            let is_i_adj_mizen = token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "未然ウ接続");
+
+            let is_na_adj = token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹");
+
+            is_verb_mizen || is_i_adj_conjunctive || is_i_adj_mizen || is_na_adj
+        }
+    }
+
+    // Match volitional auxiliary う (for verb/adjective volitional + とも)
+    #[derive(Debug)]
+    struct VolitionalU;
+    impl super::Matcher for VolitionalU {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "う"
+        }
+    }
+
+    // Match で from だ (for な-adjective + であろう)
+    #[derive(Debug)]
+    struct DeCopula;
+    impl super::Matcher for DeCopula {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    // Match あろ (from ある, for であろう)
+    #[derive(Debug)]
+    struct Aro;
+    impl super::Matcher for Aro {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あろ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "ある"
+        }
+    }
+
+    // We need to use a flexible pattern that can match different sequences.
+    // The pattern engine will try to match: First token + optional tokens + final とも
+    // We'll use wildcards with specific matchers for the components.
+
+    // Actually, let's use multiple pattern variants - this is cleaner.
+    // We'll match the shortest common pattern and let the wildcards handle variations.
+    // Pattern: (Verb/Adj) + (optional う) + (optional で + あろ + う) + とも
+
+    vec![
+        TokenMatcher::Custom(Arc::new(TomoPatternMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 4,  // Max: で + あろ + う + とも = 4 tokens before とも
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(TomoParticle)),
+    ]
 }
 
 // Pattern: ないわけにはいかない (can't not do, must do)
