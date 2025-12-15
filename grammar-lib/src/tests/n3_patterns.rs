@@ -13877,3 +13877,61 @@ mod shidai_tests {
         assert_pattern_range(&patterns, "次第", 0, 5); // 準備し次第
     }
 }
+
+// ========== 代わりに (in exchange for / instead of) ==========
+// Pattern: 代わりに (in exchange for / instead of)
+// Data source: grammar_points_data.json["代わりに"]
+//
+// Structure variants to test:
+//   standard[0]: Verb + 代わりに
+//   standard[1]: [い]Adjective + 代わりに
+//   standard[2]: [な]Adjective + な + 代わりに
+//   standard[3]: Noun + の + 代わりに
+
+mod kawarini_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + 代わりに (電話する代わりに - in exchange for calling)
+    #[test]
+    fn test_verb_kawarini() {
+        let sentence = "俺が社長に電話する代わりに、お前はお客さんに電話をしておいて。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "代わりに");
+        assert_pattern_range(&patterns, "代わりに", 5, 13); // 電話する代わりに
+    }
+
+    // Testing: standard[1] - [い]Adjective + 代わりに (古い代わりに - to substitute for being old)
+    #[test]
+    fn test_i_adjective_kawarini() {
+        let sentence = "あのプールは古い代わりに安い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "代わりに");
+        assert_pattern_range(&patterns, "代わりに", 6, 12); // 古い代わりに
+    }
+
+    // Testing: standard[2] - [な]Adjective + な + 代わりに (大変な代わりに - in exchange for being difficult)
+    #[test]
+    fn test_na_adjective_kawarini() {
+        let sentence = "仕事は大変な代わりに楽しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "代わりに");
+        assert_pattern_range(&patterns, "代わりに", 5, 10); // な代わりに
+    }
+
+    // Testing: standard[3] - Noun + の + 代わりに (私の代わりに - in my place)
+    #[test]
+    fn test_noun_no_kawarini() {
+        let sentence = "私の代わりにやってください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "代わりに");
+        assert_pattern_range(&patterns, "代わりに", 1, 6); // の代わりに
+    }
+}

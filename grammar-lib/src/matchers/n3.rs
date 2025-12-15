@@ -9548,8 +9548,39 @@ pub fn kke() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 代わりに
+// 代わりに: in exchange for / instead of (電話する代わりに - in exchange for calling)
+// Structures: Verb + 代わりに / [い]Adj + 代わりに / [な]Adj + な + 代わりに / Noun + の + 代わりに
 pub fn kawarini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 代わり as a noun
+    #[derive(Debug)]
+    struct KawariMatcher;
+    impl Matcher for KawariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "代わり" || token.surface == "替わり")
+                && (token.base_form == "代わり" || token.base_form == "替わり")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match に as case particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Any)), // Can be preceded by verb, adjective, noun + の, or nothing
+        TokenMatcher::Custom(Arc::new(KawariMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: に代わって (in place of / on behalf of)
