@@ -535,9 +535,74 @@ pub fn youganai_u30fb_youmonai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にほかならない
+// Pattern: にほかならない (nothing but, simply)
+// Structures: Noun + に + ほかなら + ない/ぬ/なりません
 pub fn nihokanaranai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for に particle (格助詞 or 副詞化)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && (token.pos.get(1).is_some_and(|p| p == "格助詞")
+                    || token.pos.get(1).is_some_and(|p| p == "副詞化"))
+        }
+    }
+
+    // Matcher for ほかなら (compound verb) or ほか (noun)
+    #[derive(Debug)]
+    struct HokaMatcher;
+    impl Matcher for HokaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Compound verb: ほかなら (base='ほかなる', 未然形)
+            (token.surface == "ほかなら"
+                && token.base_form == "ほかなる"
+                && token.pos.first().is_some_and(|p| p == "動詞"))
+            ||
+            // Noun: ほか (for polite form with なり)
+            (token.surface == "ほか"
+                && token.base_form == "ほか"
+                && token.pos.first().is_some_and(|p| p == "名詞"))
+        }
+    }
+
+    // Matcher for negative auxiliaries: ない (助動詞), ぬ (助動詞), or なる verb (for polite form)
+    #[derive(Debug)]
+    struct NegativeOrNaruMatcher;
+    impl Matcher for NegativeOrNaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ない auxiliary (特殊・ナイ)
+            (token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|p| p == "助動詞"))
+            ||
+            // ぬ auxiliary (特殊・ヌ, formal negative)
+            (token.surface == "ぬ"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|p| p == "助動詞"))
+            ||
+            // なり (verb, for polite forms like なりません)
+            (token.base_form == "なる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(HokaMatcher)),
+        TokenMatcher::Custom(Arc::new(NegativeOrNaruMatcher)),
+        // Optional polite auxiliaries: ませ + ん
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 2,
+            stop_conditions: vec![],
+        },
+    ]
 }
 
 // Pattern: っこない

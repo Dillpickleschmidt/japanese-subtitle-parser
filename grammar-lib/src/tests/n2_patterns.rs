@@ -2922,3 +2922,54 @@ mod youganai_u30fb_youmonai_tests {
         assert_pattern_range(&patterns, "ようがない・ようもない", 7, 16); // 逃げようがなかった
     }
 }
+
+// Pattern: にほかならない (nothing but, simply)
+// Data source: grammar_points_data.json["にほかならない"]
+// Testing all structure variants
+mod nihokanaranai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + にほかならない"
+    #[test]
+    fn test_nihokanaranai_standard() {
+        let sentence = "かすみさんがみんなに好かれるのはお人よしだからにほかならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にほかならない");
+        assert_pattern_range(&patterns, "にほかならない", 23, 30); // にほかならない
+    }
+
+    // Testing: structure.standard[1] - "にほかならぬ" (formal written variant)
+    #[test]
+    fn test_nihokanaranai_naranu() {
+        let sentence = "Aチームがこの大会で優勝できたのは岡村コーチのおかげにほかならぬ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にほかならない");
+        assert_pattern_range(&patterns, "にほかならない", 26, 32); // にほかならぬ
+    }
+
+    // Testing: structure.polite[0] - "Noun + にほかなりません"
+    #[test]
+    fn test_nihokanaranai_polite() {
+        let sentence = "こんな夜遅くに訪問してくるなんて迷惑にほかなりません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にほかならない");
+        assert_pattern_range(&patterns, "にほかならない", 18, 26); // にほかなりません
+    }
+
+    // Testing: Noun emphasis variant
+    #[test]
+    fn test_nihokanaranai_reason() {
+        let sentence = "我が社の商品が人気なのは広告が印象的だからにほかならぬ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にほかならない");
+        assert_pattern_range(&patterns, "にほかならない", 21, 27); // にほかならぬ
+    }
+}
