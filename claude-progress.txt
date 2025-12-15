@@ -1,16 +1,16 @@
 ## Session 411 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented 1 N2 pattern (てからでないと)
-**Patterns completed**: 1 (てからでないと - N2)
-**Tests added**: 4 new tests (all passing)
-**Total tests**: 2679 passing, 1 ignored (was 2675 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (てからでないと, 次第だ・次第で)
+**Patterns completed**: 2 (てからでないと, 次第だ・次第で - both N2)
+**Tests added**: 8 new tests (all passing)
+**Total tests**: 2683 passing, 1 ignored (was 2675 passing, 1 ignored - net +8 tests)
 
 **Session highlights**:
-- Implemented てからでないと (unless you do, until you do)
-- Simple pattern with 2 structure variants (でないと and でなければ)
-- Extension of てから pattern with conditional negative
-- Clean test-first implementation
+- Implemented てからでないと (unless you do, until you do) - 2 structure variants
+- Implemented 次第だ・次第で (depending on, depends on) - 4 structure variants
+- Both patterns simple and straightforward
+- Clean test-first implementation for both
 - All tests pass with proper range assertions
 - No regressions
 
@@ -51,25 +51,64 @@
 
 ---
 
+### ✅ Pattern Implemented: 次第だ・次第で (depending on, depends on)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: 次第だ・次第で uses しだい (noun suffix meaning "directly following" or "depending on") attached to a noun, followed by だ/です (copula) or で (particle). Translates as "depending on (A), (B)" or "(B) depends on (A)". The noun (A) represents a person or situation that controls what happens next.
+
+**Structures tested**: All 4 structure variants from grammar_points_data.json
+1. Noun + しだい + だ: 努力しだいだ (chars 15-21) - "depends on effort"
+2. Noun + しだい + です: 結果しだいです (chars 17-24) - "depends on results" (polite)
+3. Noun + しだい + で: 日しだいで (chars 7-12), 値段しだいで (chars 0-6) - "depending on (date/price)"
+
+**Implementation**: Matcher in n2.rs (lines 2471-2513), tests in n2_patterns.rs (lines 5654-5711)
+
+**Key notes**:
+- Pattern structure: Noun + しだい(名詞/接尾/一般) + だ/です(助動詞) OR で(助詞/格助詞)
+- Custom matchers: ShidaiMatcher (しだい as noun suffix), DaDesuDeMatcher (handles だ, です, or で)
+- Simple three-token pattern with flexible ending (だ/です/で)
+- The noun (A) indicates what the outcome depends on
+- Register: standard
+
+**Tokenization observations**:
+- **だ form**: Noun + しだい(名詞/接尾/一般) + だ(助動詞/特殊・ダ/基本形)
+- **です form**: Noun + しだい(名詞/接尾/一般) + です(助動詞/特殊・デス/基本形)
+- **で form**: Noun + しだい(名詞/接尾/一般) + で(助詞/格助詞)
+
+**Pattern ranges**: Full construction from noun through ending particle/auxiliary
+- All 4 test cases verified with correct character ranges
+- Pattern successfully matches all three ending variants (だ, です, で)
+
+**Related patterns**:
+- 次第に (N2): "Gradually, bit by bit" (adverb usage)
+- 次第です (N2): "Due to that, as a result of that"
+
+---
+
 **Current stats**:
 - N5: ✅ All complete
 - N4: 2 remaining (meta-patterns)
 - N3: ✅ All complete
-- N2: 135 remaining (down from 136 - completed 1 pattern!)
+- N2: 134 remaining (down from 136 - completed 2 patterns!)
 - N1: 186 remaining
-- Total: ~323 patterns remaining
+- Total: ~322 patterns remaining
 
 ### Quality Metrics
-✅ All 4 tests have assert_pattern_range
+✅ All 8 tests have assert_pattern_range (4 per pattern)
 ✅ No print_debug in committed tests
 ✅ Realistic sentence examples from grammar_points_data.json
 ✅ Correct character ranges verified
-✅ All 2 documented structure variants tested (both と and ば forms)
-✅ No regressions (all 2679 tests passing)
+✅ All documented structure variants tested:
+  - てからでないと: 2 variants (と and ば forms)
+  - 次第だ・次第で: 4 variants (だ, です, で x2)
+✅ No regressions (all 2683 tests passing)
 
 ### Technical Notes
 
-**Pattern composition**:
+**てからでないと - Pattern composition**:
 - Built on existing てから pattern logic
 - Reused helper matchers from N5 (flexible_verb_form)
 - Five custom matchers for precise token matching:
@@ -79,11 +118,19 @@
   - NaiNakerebaMatcher: ない (基本形) or なけれ (仮定形)
   - ToOrBaMatcher: と or ば conditional particles
 
+**次第だ・次第で - Simple suffix pattern**:
+- Three-token pattern: Noun + しだい (suffix) + ending
+- Two custom matchers:
+  - ShidaiMatcher: しだい as 名詞/接尾
+  - DaDesuDeMatcher: Flexible ending matcher (handles だ, です, or で)
+- Reused noun_matcher() from mod.rs
+- Clean implementation for common dependency expression
+
 **Implementation Approach**:
-- Followed test-first workflow strictly
-- Wrote all 4 tests with print_debug first
-- Analyzed actual tokenization from Kagome (observed both conditional forms)
-- Built matcher based on observed token structure (not assumptions)
+- Followed test-first workflow strictly for both patterns
+- Wrote all tests with print_debug first (4 + 4 = 8 tests)
+- Analyzed actual tokenization from Kagome
+- Built matchers based on observed token structure (not assumptions)
 - Removed print_debug and added assertions after verification
 - Verified no regressions before committing
 
@@ -99,7 +146,7 @@ Continue with simple N2 patterns (2-4 structure variants). Good candidates from 
 
 Target: Continue implementing 1-2 patterns per session, prioritizing patterns with fewer structures for steady progress.
 
-**Session outcome**: Successfully completed 1 N2 pattern with full coverage of both structure variants! Total of 4 new tests added, all passing, no regressions.
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage of all structure variants! Total of 8 new tests added (4 per pattern), all passing, no regressions. Steady progress on N2 level.
 
 ---
 
