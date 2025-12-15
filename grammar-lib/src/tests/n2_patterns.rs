@@ -5863,3 +5863,62 @@ mod shikashi_nagara_tests {
         assert_pattern_range(&patterns, "しかしながら", 15, 21); // しかしながら
     }
 }
+
+// Pattern: も又 (also, in addition)
+// Data source: grammar_points_data.json["も又"]
+// Testing: 4 structure variants - Noun, な-Adj + なの, い-Adj + の, Verb + の + もまた
+//
+// Pattern emphasizes that in addition to something, something else is also true.
+// More formal/emphatic than simple も.
+
+mod momata_tests {
+    use super::*;
+
+    #[test]
+    fn test_momata_noun() {
+        // Structure: Noun + もまた
+        // Example from grammar_points_data.json: 明日もまた
+        let sentence = "明日もまた同じ時間にここにきてね！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も又");
+        assert_pattern_range(&patterns, "も又", 0, 5); // 明日もまた
+    }
+
+    #[test]
+    fn test_momata_na_adjective() {
+        // Structure: な-Adjective + なの + もまた
+        // Example from grammar_points_data.json: 必要なのもまた
+        let sentence = "経験が必要なのもまた確かだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も又");
+        assert_pattern_range(&patterns, "も又", 6, 10); // のもまた
+    }
+
+    #[test]
+    fn test_momata_i_adjective() {
+        // Structure: い-Adjective + の + もまた
+        // Example from grammar_points_data.json: 辛いのもまた
+        let sentence = "カレーは甘くても美味しいけど、辛いのもまた美味しいんだよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も又");
+        assert_pattern_range(&patterns, "も又", 17, 21); // のもまた
+    }
+
+    #[test]
+    fn test_momata_verb() {
+        // Structure: Verb + の + もまた
+        // Example from grammar_points_data.json: 実行するのもまた
+        let sentence = "田中さんが提案したことを実行するのもまた、いい考えだと思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "も又");
+        assert_pattern_range(&patterns, "も又", 16, 20); // のもまた
+    }
+}
