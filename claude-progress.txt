@@ -4163,3 +4163,92 @@ Continue with simple N2 patterns:
 - それなら (sorenara) - 1 structure (conjunction)
 
 **Session outcome**: Successfully implemented 3 N2 patterns with perfect test coverage! Total of 7 new tests added.
+
+---
+
+## Session 389 - 2025-12-15
+
+### Patterns Implemented
+1. **上** (ue) - "From the standpoint of" ✅
+   - N2 pattern, 1 structure variant
+   - 3 tests added (all passing)
+   - Structure: Noun + 上(じょう)
+   - Range: Full construction (Noun + suffix)
+
+2. **上に** (ueni) - "In addition to / as well as" ✅
+   - N2 pattern, 5 structure variants (4 standard + である variations)
+   - 6 tests added (all passing)
+   - Structures: 
+     * Verb + 上(うえ)に
+     * い-Adj + 上に
+     * な-Adj + な + 上に
+     * Noun + の + 上に
+     * X + である + 上に (na-adj/noun + である)
+   - Implementation uses custom matcher to validate preceding tokens
+   - Range: Varies by structure (verb/adj/particle + うえ + に)
+
+### Implementation Details
+
+**Pattern: 上**
+- Matcher checks for 上 with pos=名詞/接尾/副詞可能
+- Follows noun (any type)
+- Simple two-token pattern
+
+**Pattern: 上に**  
+- More complex with multiple structure variants
+- Custom matcher `UePreMatcher` validates preceding token can be:
+  * 動詞 (verb in basic form)
+  * 形容詞 (い-adjective in basic form)
+  * 助動詞 "な" or "ある" (for な-adj or である constructions)
+  * 助詞 "の" with pos 連体化 (for noun constructions)
+- Core pattern: [valid_pre_token] + うえ + (に)
+- The に particle is optional
+- Range includes the grammatical connector (verb/adj/particle) + うえ + に
+
+### Test Statistics
+**Patterns completed**: 2 patterns (上, 上に)
+**Total tests added**: 9 tests (3 for 上, 6 for 上に)
+**Total test count**: 2526 (up from 2517)
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete  
+- N2: 173 remaining (down from 175!)
+- N1: 186 remaining
+- Total: ~361 patterns remaining
+
+### Quality Metrics
+✅ All 9 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ Tests cover all documented structure variants
+✅ No regressions (all 2526 tests passing)
+
+### Technical Notes
+
+**上 vs 上に distinction**:
+- 上(じょう): Formal suffix for "standpoint/perspective", follows nouns directly
+- 上(うえ)に: Conjunction meaning "in addition to", has multiple attachment patterns
+
+**Tokenization observations**:
+- 上 as じょう: pos=名詞/接尾/副詞可能
+- 上 as うえ: pos=名詞/非自立/副詞可能
+- Different readings and POS tags distinguish these homographs
+
+**Pattern matching approach for 上に**:
+- Initially tried `TokenMatcher::Any` but was too broad
+- Created specific `UePreMatcher` to validate only appropriate preceding tokens
+- This ensures fewer false positives while covering all legitimate structures
+- である variations work because "ある" is matched as auxiliary
+
+### Next Priority
+Continue with simple N2 patterns. Remaining patterns from initial query:
+- 以上 ② (ijou u2461) - multiple structures
+- 途中に・途中で (tochuu ni/de) - 2 structures  
+- Other 上/下 related patterns in the list
+
+These location/position-based patterns may have similar complexity to what was just implemented.
+
+**Session outcome**: Successfully implemented 2 related N2 patterns with comprehensive test coverage! Total of 9 new tests added, all passing.
