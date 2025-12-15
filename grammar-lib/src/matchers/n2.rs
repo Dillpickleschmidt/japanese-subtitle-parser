@@ -234,9 +234,20 @@ pub fn douse() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(DouseMatcher))]
 }
 
-// Pattern: せめて
+// Pattern: せめて (at least)
+// Structure: せめて (adverb)
 pub fn semete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct SemeteMatcher;
+    impl super::Matcher for SemeteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "せめて"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(SemeteMatcher))]
 }
 
 // Pattern: どうやら

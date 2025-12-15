@@ -2249,3 +2249,54 @@ mod douse_tests {
         assert_pattern_range(&patterns, "どうせ", 0, 3); // どうせ
     }
 }
+
+// Pattern: せめて (at least)
+// Data source: grammar_points_data.json["せめて"]
+// Testing: structure.standard[0] - "せめて + Phrase"
+//
+// Structure variants:
+//   - standard[0]: せめて + Phrase (only one structure)
+//
+// Usage contexts:
+//   - Expressing minimum expectation with sense of responsibility
+//   - Often used with たい, ほしい, べき, etc.
+
+mod semete_tests {
+    use super::*;
+
+    #[test]
+    fn test_semete_minimum_request() {
+        // Example: せめて国語の宿題はやっておきなさい
+        // (At least finish your Japanese homework in advance)
+        let sentence = "せめて国語の宿題はやっておきなさい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "せめて");
+        assert_pattern_range(&patterns, "せめて", 0, 3); // せめて
+    }
+
+    #[test]
+    fn test_semete_with_tai() {
+        // Example: せめてこの曲だけでも弾けるようになりたい
+        // (I want to be able to play this song, at least)
+        let sentence = "せめてこの曲だけでも弾けるようになりたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "せめて");
+        assert_pattern_range(&patterns, "せめて", 0, 3); // せめて
+    }
+
+    #[test]
+    fn test_semete_with_tehoshii() {
+        // Example: せめて晩御飯だけは毎日作ってほしい
+        // (I want you to at least make dinner every night)
+        let sentence = "別に毎日洗濯をしろっては言わないけど、せめて晩御飯だけは毎日作ってほしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "せめて");
+        assert_pattern_range(&patterns, "せめて", 19, 22); // せめて
+    }
+}
