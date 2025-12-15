@@ -6511,9 +6511,48 @@ pub fn deshikanai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てたまらない
+// Pattern: てたまらない (can't help but / extremely)
+// Structures:
+// - (Verb[stem]) + たい[て] + たまらない/たまりません (can't help but want to)
+// - い-Adjective[て] + たまらない/たまりません (extremely)
+// - な-Adjective/Noun + で + たまらない/たまりません (extremely)
 pub fn tetamaranai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て or で (connecting particle)
+    #[derive(Debug)]
+    struct TeDeFormMatcher;
+    impl super::Matcher for TeDeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match たまらない (i-adjective) or たまり (for たまりません)
+    #[derive(Debug)]
+    struct TamaranaiOrTamariMatcher;
+    impl super::Matcher for TamaranaiOrTamariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match たまらない as adjective
+            (token.base_form == "たまらない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞"))
+            ||
+            // Match たまり (verb stem for たまりません)
+            (token.surface == "たまり"
+                && token.base_form == "たまる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    vec![
+        // Optional: verb stem (for たい construction)
+        TokenMatcher::Optional(Box::new(TokenMatcher::verb_with_form("連用形"))),
+        // Word before て/で: たい auxiliary, い-Adj in て-form, or Noun
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(TeDeFormMatcher)),
+        TokenMatcher::Custom(Arc::new(TamaranaiOrTamariMatcher)),
+    ]
 }
 
 // Pattern: にせよ・にしろ

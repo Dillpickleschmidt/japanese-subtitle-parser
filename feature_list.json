@@ -10097,13 +10097,13 @@
   {
     "pattern_name": "てたまらない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "てたまらない is made up of the conjunction particle て, and the negated form of the う-Verb 堪（たま）る meaning 'to bear', 'to end... [5 std, 5 pol]",
     "priority": 4,
     "skip_reason": null

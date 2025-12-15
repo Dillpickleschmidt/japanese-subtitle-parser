@@ -8976,3 +8976,78 @@ mod wotsuujite_wotooshite_tests {
         assert_pattern_range(&patterns, "を通じて・を通して", 2, 9); // アニメを通じて
     }
 }
+
+// Pattern: てたまらない (can't help but / extremely)
+// Data source: grammar_points_data.json["てたまらない"]
+mod tetamaranai_tests {
+    use super::*;
+
+    // Testing: structure.standard[1] - "Verb[たい][て] + たまらない"
+    #[test]
+    fn test_tetamaranai_tai_form() {
+        // Example from grammar data: 来月公開される映画が見たくてたまらない
+        let sentence = "来月公開される映画が見たくてたまらないんだけど。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てたまらない");
+        assert_pattern_range(&patterns, "てたまらない", 10, 19); // 見たくてたまらない
+    }
+
+    // Testing: structure.standard[3] - "[い]Adjective[て]+ たまらない"
+    #[test]
+    fn test_tetamaranai_i_adjective() {
+        // Example from grammar data: 昨日は３時間しか寝てないから、眠たくてたまらない
+        let sentence = "昨日は３時間しか寝てないから、眠たくてたまらない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てたまらない");
+        assert_pattern_range(&patterns, "てたまらない", 15, 24); // 眠たくてたまらない
+    }
+
+    // Testing: structure.standard[4] - "[な]Adjective + で + たまらない"
+    #[test]
+    fn test_tetamaranai_na_adjective() {
+        // Example from grammar data: 娘をお使いに行かせたが、ちゃんと一人で行って帰ってこれるかが心配でたまらない
+        let sentence = "娘をお使いに行かせたが、心配でたまらないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てたまらない");
+        assert_pattern_range(&patterns, "てたまらない", 12, 20); // 心配でたまらない
+    }
+
+    // Testing: structure.polite[1] - "Verb[たい][て]+ たまりません"
+    #[test]
+    fn test_tetamaranai_tai_polite() {
+        let sentence = "新しいゲームが早くやりたくてたまりません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てたまらない");
+        assert_pattern_range(&patterns, "てたまらない", 9, 20); // やりたくてたまりません
+    }
+
+    // Testing: structure.polite[3] - "[い]Adjective[て]+ たまりません"
+    #[test]
+    fn test_tetamaranai_i_adjective_polite() {
+        let sentence = "この部屋は暑くてたまりません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てたまらない");
+        assert_pattern_range(&patterns, "てたまらない", 5, 14); // 暑くてたまりません
+    }
+
+    // Testing: structure.polite[4] - "[な]Adjective + で + たまりません"
+    #[test]
+    fn test_tetamaranai_na_adjective_polite() {
+        let sentence = "この映画は退屈でたまりません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てたまらない");
+        assert_pattern_range(&patterns, "てたまらない", 5, 14); // 退屈でたまりません
+    }
+}
