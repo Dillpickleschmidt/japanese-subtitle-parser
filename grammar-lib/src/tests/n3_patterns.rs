@@ -13010,3 +13010,72 @@ mod atari_tests {
         assert_pattern_range(&patterns, "当たり", 2, 5); // 当たり
     }
 }
+
+// Pattern: 言うまでもない ② (sentence-initial form)
+// Data source: grammar_points_data.json["言うまでもない ②"]
+// Unlike は言うまでもない which comes after phrases, this tends to come at the beginning
+// Structures:
+//   - standard[0]: 言うまでもないことだが + Phrase
+//   - standard[1]: (Phrase A) 言うまでもなく + Phrase B
+//   - standard[2]: (Phrase A) 言うまでもないが + Phrase B
+//   - standard[3]: の (referring to ことだが variant)
+//   - standard[4]: けれども、けれど、けども、けど (variants of が)
+
+mod iumademonai_sentence_initial_tests {
+    use super::*;
+
+    // Testing: 言うまでもないことだが at sentence start
+    #[test]
+    fn test_iumademonai_koto_daga() {
+        let sentence = "いうまでもないことだが、毎日漢字の勉強をすれば、どんどん漢字を覚えることができる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "言うまでもない ②");
+        assert_pattern_range(&patterns, "言うまでもない ②", 0, 11); // いうまでもないことだが
+    }
+
+    // Testing: 言うまでもないが (standalone)
+    #[test]
+    fn test_iumademonai_ga() {
+        let sentence = "電化製品を使っている間、いうまでもないが、濡れた手や水の周りで使うのは危険だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "言うまでもない ②");
+        assert_pattern_range(&patterns, "言うまでもない ②", 12, 20); // いうまでもないが
+    }
+
+    // Testing: 言うまでもないけど (variant with けど)
+    #[test]
+    fn test_iumademonai_kedo() {
+        let sentence = "いうまでもないけど、君に会えて良かった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "言うまでもない ②");
+        assert_pattern_range(&patterns, "言うまでもない ②", 0, 9); // いうまでもないけど
+    }
+
+    // Testing: 言うまでもなく (adverbial form - single token)
+    #[test]
+    fn test_iumademonai_ku() {
+        let sentence = "彼は言うまでもなく優秀な学生だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "言うまでもない ②");
+        assert_pattern_range(&patterns, "言うまでもない ②", 2, 9); // 言うまでもなく
+    }
+
+    // Testing: 言うまでもないけれども (variant)
+    #[test]
+    fn test_iumademonai_keredomo() {
+        let sentence = "いうまでもないけれども、お酒を飲んで運転をしてはいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "言うまでもない ②");
+        assert_pattern_range(&patterns, "言うまでもない ②", 0, 11); // いうまでもないけれども
+    }
+}

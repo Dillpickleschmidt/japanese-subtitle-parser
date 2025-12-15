@@ -7363,9 +7363,113 @@ pub fn verb_volitional_toshitaga() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 言うまでもない ②
+// Pattern: 言うまでもない ② (sentence-initial "it goes without saying")
+// Structures:
+//   - いう + まで + も + ない + (optional: こと + だ) + (optional: が/けど/けれども)
+//   - 言うまでもなく (single token adjective with base form 言うまでもない)
+// Note: This differs from は言うまでもない which comes after phrases
 pub fn iumademonai_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Custom matcher that handles BOTH split and single-token forms
+    #[derive(Debug)]
+    struct IumademonaiSentenceInitialMatcher;
+    impl super::Matcher for IumademonaiSentenceInitialMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Form 1: Single token (言うまでもなく with base 言うまでもない)
+            if token.base_form == "言うまでもない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+            {
+                return true;
+            }
+
+            // Form 2: Split tokenization - match いう (verb)
+            if token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // After いう, expect まで
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl super::Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // After まで, expect も
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // After も, expect ない (形容詞)
+    #[derive(Debug)]
+    struct NaiAdjectiveMatcher;
+    impl super::Matcher for NaiAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    // Optional: こと
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl super::Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Optional: だ
+    #[derive(Debug)]
+    struct DaAuxiliaryMatcher;
+    impl super::Matcher for DaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Optional: が/けど/けれども
+    #[derive(Debug)]
+    struct GaKedoMatcher;
+    impl super::Matcher for GaKedoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "が" || token.surface == "けど" || token.surface == "けれども" || token.surface == "けれど" || token.surface == "けども")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Pattern structure:
+    // - First token: either 言うまでもなく (single) OR いう (verb, start of split form)
+    // - If split form (いう): followed by まで + も + ない
+    // - Optionally followed by こと, だ, が/けど/etc
+    vec![
+        TokenMatcher::Custom(Arc::new(IumademonaiSentenceInitialMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MadeParticleMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaiAdjectiveMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KotoMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaAuxiliaryMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaKedoMatcher)))),
+    ]
 }
 
 // そうもない: very unlikely / doesn't even appear likely
