@@ -1,3 +1,83 @@
+## Session 401 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (つつ, つつ(も))
+**Patterns completed**: 2 (つつ and つつ(も) - both N2)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2625 passing, 1 ignored (was 2619 passing, 1 ignored - net +6 tests)
+
+**Session highlights**:
+- Implemented つつ (while doing, in the course of) - simple particle pattern
+- Implemented つつ(も) (even while doing, although doing) - extends つつ with も
+- Both patterns are formal constructions used with verb stems (連用形)
+- Clean implementation with comprehensive test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: つつ (while doing, in the course of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 1 (low priority - still detected but not highlighted prominently)
+
+**Pattern**: つつ is a formal particle that appears after the ます-stem (連用形) of verbs to indicate that (B) is happening at the same time as (A). Translates as "while (A), (B)". More formal than ながら and typically used with ongoing states rather than physical actions.
+
+**Structures tested**: 1 structure with 3 comprehensive tests
+1. while knowing: 知りつつ (chars 6-10)
+2. while looking: 見つつ (chars 12-15)
+3. while thinking: 考えつつ (chars 10-14)
+
+**Implementation**: Matcher in n2.rs (lines 2280-2300), tests in n2_patterns.rs (lines 4719-4761)
+
+**Key notes**:
+- Pattern structure: Verb (連用形) + つつ (助詞/接続助詞)
+- Custom TsutsuParticleMatcher checks surface="つつ", base="つつ", pos=助詞/接続助詞
+- More formal than ながら, used primarily in writing
+- Best used with non-physical actions (knowing, looking, thinking) rather than physical movements
+- Register: formal
+
+**Tokenization observations**:
+- Verb: 連用形 (stem form)
+- つつ: surface="つつ", base="つつ", pos=助詞/接続助詞
+
+**Pattern ranges**: Full construction from verb stem through つつ particle
+- All test cases verified with correct character ranges
+
+---
+
+### ✅ Pattern Implemented: つつ(も) (even while doing, although doing)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: Extension of つつ with the addition of も particle, adding the nuance of "even" or "although". Translates as "even while doing (A), (B)" or "although doing (A), (B)". (B) is almost always contradictory to (A).
+
+**Structures tested**: 1 structure with 3 comprehensive tests
+1. despite knowing: 知りつつも (chars 14-19)
+2. despite being nervous: 緊張しつつも (chars 8-14)
+3. despite thinking: 思いつつも (chars 12-17)
+
+**Implementation**: Matcher in n2.rs (lines 2302-2334), tests in n2_patterns.rs (lines 4763-4805)
+
+**Key notes**:
+- Pattern structure: Verb (連用形) + つつ (助詞/接続助詞) + も (助詞/係助詞)
+- Custom matchers: TsutsuParticleMatcher and MoParticleMatcher
+- Similar to ながらも but more formal
+- (A) typically a non-physical state, (B) often contradictory
+- Register: formal
+
+**Tokenization observations**:
+- Verb: 連用形 (stem form)
+- つつ: surface="つつ", base="つつ", pos=助詞/接続助詞
+- も: surface="も", base="も", pos=助詞/係助詞
+
+**Pattern ranges**: Full construction from verb stem through も particle
+- All test cases verified with correct character ranges
+
+---
+
 ## Session 400 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
