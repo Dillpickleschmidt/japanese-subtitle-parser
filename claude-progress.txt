@@ -1,3 +1,137 @@
+## Session 451 - 2025-12-15
+
+### Session Summary - IN PROGRESS
+**Status**: IN PROGRESS - Successfully implemented 2 N2 patterns (に応じて, を通じて・を通して)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 7 new tests (3 + 4, all passing with range assertions)
+**Total tests**: 2977 passing, 1 ignored (was 2970 before session, net +7 tests)
+
+**Session highlights**:
+- Implemented に応じて (in accordance with, depending on) - N2 pattern
+- Implemented を通じて・を通して (through, via) - N2 pattern
+- に応じて: Handles both て-form (に応じて) and た-form (に応じた)
+- を通じて・を通して: Both forms tokenize as single compound particles (連語)
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 7 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented #1: に応じて (in accordance with, depending on)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: に応じて is a combination of に, and the て-form of the る-Verb 応じる 'to apply to'. This grammar structure is often translated as 'depending on (A), (B)', or 'in response to (A), (B)'. In almost all cases, it indicates that (B) is something done in a way that is 'applicable' to what is necessary of (A).
+
+**Structures tested**: 3 test variants
+1. Noun + に応じて: レベルに応じて (chars 15-22) - adverbial form
+2. Noun + に応じて: 面積に応じて (chars 9-15) - adverbial form
+3. Noun + に応じた + Noun: 要望に応じた (chars 11-17) - noun-modifying form
+
+**Implementation details**:
+- Matcher structure: Noun + に (格助詞) + 応じ (動詞, 連用形, base=応じる) + て/た
+- Custom matchers created:
+  - NiCaseMatcher: matches に as case particle (助詞/格助詞)
+  - OujiMatcher: matches 応じ verb in 連用形 (base=応じる)
+  - TeTaMatcher: matches て (助詞) or た (助動詞)
+- Handles both て-form (に応じて) and た-form (に応じた)
+- Pattern includes full construction from noun through て/た
+
+**Test count**: 3 tests (all passing)
+- test_nioujite_adverbial: レベルに応じてクラスを分ける
+- test_nioujite_price: 面積に応じて値段が高くなります
+- test_nioujita_noun: 要望に応じたデザインを提供
+
+**Tokenization observations**:
+- に: 助詞/格助詞/一般
+- 応じ: 動詞/自立, 一段, 連用形, base=応じる
+- て: 助詞/接続助詞
+- た: 助動詞, 特殊・タ, 基本形
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented nioujite() function with 3 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added nioujite_tests module with 3 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- 応じる usually indicates the way something 'responds to' or 'answers' an issue on a case-by-case basis
+- What happens in (B) frequently indicates something that changes depending on intensity/severity of (A)
+
+---
+
+### ✅ Pattern Implemented #2: を通じて・を通して (through, via)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: を通じて and を通して are two grammar patterns with similar meanings, primarily translating as 'through (A), (B)', or 'via (A), (B)'. 通じる 'to flow/go through' (intransitive) vs 通す 'to make a path' (transitive). を通じて is more often used for information/communication, while を通して refers more to direct locations or intentional actions.
+
+**Structures tested**: 4 test variants
+1. Noun + を通して: 留学を通して (chars 2-8) - language study
+2. Noun + を通して: 仕事を通して (chars 0-6) - work
+3. Noun + を通じて: ニュースを通じて (chars 8-16) - news
+4. Noun + を通じて: アニメを通じて (chars 2-9) - anime
+
+**Implementation details**:
+- Tokenization: Both を通して and を通じて tokenize as SINGLE compound particles (助詞/格助詞/連語)
+- Matcher structure: Noun + を通じて|を通して (compound case particle)
+- Custom matcher created:
+  - WotsuujiteWotooshiteMatcher: matches both を通じて and を通して as compound case particles (助詞/格助詞/連語)
+- Simple two-token pattern: Any + compound particle
+
+**Test count**: 4 tests (all passing)
+- test_wotooshite_language_study: 語学留学を通して日本の文化などを学びました
+- test_wotooshite_work: 仕事を通して今の妻と出会いました
+- test_wotsuujite_news: ネットニュースを通じて知りました
+- test_wotsuujite_anime: アニメを通じて日本語を学んだ
+
+**Tokenization observations**:
+- を通じて: 助詞/格助詞/連語, surface=を通じて, base=を通じて
+- を通して: 助詞/格助詞/連語, surface=を通して, base=を通して
+- Both tokenize as single compound particles (not split into を + 通じて/通して)
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented wotsuujite_u30fb_wotooshite() function with 1 custom matcher
+- grammar-lib/src/tests/n2_patterns.rs: Added wotsuujite_wotooshite_tests module with 4 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- を通じて: More common for "throughout (A)" (intransitive, continuous)
+- を通して: More common for intentional use "by use of (A)" (transitive, one-time action)
+- Both forms tokenize as single compound particles, making implementation straightforward
+
+---
+
+**Current stats** (after both patterns):
+- N5: ✅ All complete
+- N4: 1 remaining (meta-pattern)
+- N3: ✅ All complete
+- N2: 104 remaining (down from 106 - completed 2 patterns!)
+- N1: 176 remaining
+- Total: ~281 patterns remaining
+
+### Quality Metrics
+✅ All 7 tests have assert_pattern_range (3 + 4)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2977 tests passing, up from 2970)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- に応えて - in response to
+- それとも - or
+- にしたら - from the perspective of
+- にしても～にしても - whether... or...
+- としては - as for
+
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 7 new tests added (3 + 4), all passing, no regressions. One pattern handles verb conjugation (に応じて), the other handles compound particles (を通じて・を通して). Clean implementation following test-first workflow.
+
 ## Session 449 - 2025-12-15
 
 ### Session Summary - COMPLETE
