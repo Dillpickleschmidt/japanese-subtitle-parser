@@ -477,8 +477,67 @@ pub fn naradeha() -> Vec<TokenMatcher> {
 }
 
 // Pattern: すら
+// Pattern: すら (even - extreme example)
+// Structures: Noun + (Particle) + すら(も)
 pub fn sura() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match すら as 係助詞
+    #[derive(Debug)]
+    struct SuraParticleMatcher;
+    impl Matcher for SuraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "すら"
+                && token.base_form == "すら"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match optional も after すら
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match optional particle (に, で from だ, etc.)
+    #[derive(Debug)]
+    struct OptionalParticleMatcher;
+    impl Matcher for OptionalParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match に as 格助詞
+            if token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            {
+                return true;
+            }
+            // Match で from だ as 助動詞
+            if token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            OptionalParticleMatcher,
+        )))), // Optional particle
+        TokenMatcher::Custom(Arc::new(SuraParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MoParticleMatcher,
+        )))), // Optional も
+    ]
 }
 
 // Pattern: あっての

@@ -303,3 +303,58 @@ mod wokini_tests {
         assert_pattern_range(&patterns, "を機に", 0, 5); // 車検を機に
     }
 }
+
+// ============================================================================
+// すら Tests
+// ============================================================================
+
+mod sura_tests {
+    use super::*;
+
+    // Pattern: すら (even - extreme example)
+    // Data source: grammar_points_data.json["すら"]
+    // Testing: structure.standard[0] - "Noun + （Particle）+ すら（も）"
+    //
+    // Note: すら is more formal than さえ and emphasizes the most extreme
+    // example from a large group (usually with negative nuance)
+
+    #[test]
+    fn test_sura_noun_direct() {
+        let sentence = "鉛筆すら持ってきてないの？本当にやる気あるの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すら");
+        assert_pattern_range(&patterns, "すら", 0, 4); // 鉛筆すら
+    }
+
+    #[test]
+    fn test_sura_with_particle_de() {
+        let sentence = "子供ですらできることをできないのか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すら");
+        assert_pattern_range(&patterns, "すら", 0, 5); // 子供ですら
+    }
+
+    #[test]
+    fn test_sura_with_particle_ni() {
+        let sentence = "彼にすら話してないのに、親と話すわけがない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すら");
+        assert_pattern_range(&patterns, "すら", 0, 4); // 彼にすら
+    }
+
+    #[test]
+    fn test_sura_with_mo() {
+        let sentence = "ガラケーすらも使えないのに、パソコンが使えるわけないじゃん。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "すら");
+        assert_pattern_range(&patterns, "すら", 0, 7); // ガラケーすらも
+    }
+}
