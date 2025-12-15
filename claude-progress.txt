@@ -8679,3 +8679,70 @@ Continue with remaining N2 priority 4 patterns:
 
 Total N2 patterns remaining: Many at priority 4
 Total tests: 2783 passing
+
+---
+
+## Session 429 - 2025-12-15
+
+### Pattern Completed: ないわけにはいかない
+
+**Pattern:** ないわけにはいかない (cannot afford not to, must do)
+**JLPT Level:** N2
+**Priority:** 4
+**Category:** Construction
+
+### Implementation Details
+
+**Pattern Structure:**
+- Double negative construction extending わけにはいかない
+- Creates "can't not do" meaning, emphasizing unavoidable circumstances
+- Standard: Verb[未然形] + ない + わけにはいかない
+- Polite: Verb[未然形] + ない + わけにはいきません
+
+**Key Challenge:**
+The verb いく appears in different conjugation forms:
+- 未然形 (いか) before ない in standard form
+- 連用形 (いき) before ませ in polite form
+
+Solution: Created flexible IkuVerb matcher accepting both forms.
+
+**Matcher Components:**
+- NaiAuxiliary: matches ない auxiliary
+- WakeMatcher: matches わけ noun
+- IkuVerb: matches いく in 未然形 or 連用形
+- EndingMatcher: matches ない/ませ/ん
+- Optional second EndingMatcher for ん after ませ
+
+### Tests Implemented (3)
+
+1. test_nai_wakenihaikanai_standard - 行かないわけにはいかない (chars 30-42)
+2. test_nai_wakenihaikanai_diet - 食べないわけにはいかない (chars 16-28)
+3. test_nai_wakenihaikimasen_polite - 挨拶しないわけにはいきません (chars 10-24)
+
+All tests include assert_has_pattern() and assert_pattern_range().
+No print_debug() in final version.
+
+### Testing Results
+
+**Test Count:** 2820 total (added 3 new tests)
+**Status:** ✓ All tests passing
+**No regressions**
+
+### Pattern Detection Quality
+
+Correctly distinguishes from simpler わけにはいかない:
+- Base pattern confidence: 3.0
+- Full double negative pattern: 3.1-3.4 (higher = more specific)
+
+### Files Modified
+
+1. grammar-lib/src/matchers/n2.rs - Implemented naiwakenihaikanai()
+2. grammar-lib/src/tests/n2_patterns.rs - Added naiwakenihaikanai_tests module
+3. feature_list.json - Updated to passes: true, category: complete
+
+### Next Steps
+
+Continue with N2 priority 4 patterns (97 remaining):
+とも, 陸に～ない, てはいられない, てはならない, だけのことはある, やら～やら, etc.
+
+Total tests: 2820 passing
