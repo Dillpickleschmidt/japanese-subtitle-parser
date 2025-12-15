@@ -1090,9 +1090,51 @@ pub fn ijouni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 途中に・途中で
+// Pattern: 途中に・途中で (on the way, partway through, in the middle of)
+// Structures: Verb[る] + 途中 + に/で, Noun + の + 途中 + に/で
 pub fn tochuuni_u30fb_tochuude() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 途中 (noun, adverbial)
+    #[derive(Debug)]
+    struct TochuuMatcher;
+    impl super::Matcher for TochuuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "途中"
+                && token.base_form == "途中"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Match に or で particle
+    #[derive(Debug)]
+    struct NiDeMatcher;
+    impl super::Matcher for NiDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match の particle (for Noun + の structure)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoParticleMatcher)))), // Optional の
+        TokenMatcher::Custom(Arc::new(TochuuMatcher)),
+        TokenMatcher::Custom(Arc::new(NiDeMatcher)),
+    ]
 }
 
 // Pattern: Doing B in/on/inside A (Noun + の + 中を)

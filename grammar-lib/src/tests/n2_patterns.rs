@@ -3520,3 +3520,64 @@ mod ijouni_tests {
         assert_pattern_range(&patterns, "以上に", 14, 18); // た以上の
     }
 }
+
+// Pattern: 途中に・途中で (on the way, partway through, in the middle of)
+// Data source: grammar_points_data.json["途中に・途中で"]
+// Testing: structure.standard[0] - "Verb［る］+ 途中（とちゅう） + で"
+// Testing: structure.standard[1] - "Noun + の + 途中（とちゅう） + で"
+// Testing: structure.standard[2] - "(1) に" variant
+//
+// Structure variants:
+//   - standard[0]: Verb［る］+ 途中（とちゅう） + で
+//   - standard[1]: Noun + の + 途中（とちゅう） + で
+//   - standard[2]: Both can use に instead of で
+//
+// Note: に emphasizes time/duration, で emphasizes process/opportunity
+
+mod tochuuni_tochuude_tests {
+    use super::*;
+
+    // Testing: Verb[る] + 途中 + に
+    #[test]
+    fn test_verb_tochuuni() {
+        let sentence = "待ち合わせ場所に向かっている途中に、「ごめん、やっぱり今日行けないかも」と友達からメールが来た。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "途中に・途中で");
+        assert_pattern_range(&patterns, "途中に・途中で", 12, 17); // いる途中に
+    }
+
+    // Testing: Verb[る] + 途中 + で
+    #[test]
+    fn test_verb_tochuude() {
+        let sentence = "会社から帰る途中で変なおじさんに話しかけられた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "途中に・途中で");
+        assert_pattern_range(&patterns, "途中に・途中で", 4, 9); // 帰る途中で
+    }
+
+    // Testing: Noun + の + 途中 + に
+    #[test]
+    fn test_noun_tochuuni() {
+        let sentence = "授業の途中に校長先生から呼び出された時はビクッとした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "途中に・途中で");
+        assert_pattern_range(&patterns, "途中に・途中で", 0, 6); // 授業の途中に
+    }
+
+    // Testing: Noun + の + 途中 + で
+    #[test]
+    fn test_noun_tochuude() {
+        let sentence = "ミーティングの途中で社長が倒れて、会社中がパニックになった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "途中に・途中で");
+        assert_pattern_range(&patterns, "途中に・途中で", 0, 10); // ミーティングの途中で
+    }
+}

@@ -7730,13 +7730,13 @@
   {
     "pattern_name": "途中に・途中で",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "With 途中（とちゅう） meaning 'on the way', the addition of either the case marking particle に or で will indicate that someth... [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
