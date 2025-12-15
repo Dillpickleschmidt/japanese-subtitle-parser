@@ -121,3 +121,48 @@ mod mama_ni_tests {
         assert_pattern_range(&patterns, "まま(に)_noun", 0, 4); // 今のまま
     }
 }
+
+// ============================================================================
+// を以て Tests
+// ============================================================================
+
+mod womotte_tests {
+    use super::*;
+
+    // Pattern: を以て (by means of, with)
+    // Data source: grammar_points_data.json["を以て"]
+    // Testing: structure.standard[0] - "Noun + をもって"
+    //
+    // Single structure variant - formal pattern indicating means/method
+    // Examples: 電話をもって (by telephone), アプリをもって (via the app), 身をもって (firsthand)
+
+    #[test]
+    fn test_womotte_telephone() {
+        let sentence = "検査の結果は電話をもって連絡させていただきます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を以て");
+        assert_pattern_range(&patterns, "を以て", 6, 12); // 電話をもって
+    }
+
+    #[test]
+    fn test_womotte_app() {
+        let sentence = "お客様の順番になりましたら、アプリをもって通知いたします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を以て_split");
+        assert_pattern_range(&patterns, "を以て_split", 14, 21); // アプリをもって
+    }
+
+    #[test]
+    fn test_womotte_firsthand() {
+        let sentence = "自分の家族を持ってから、親である大変さを身をもって感じた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を以て_split");
+        assert_pattern_range(&patterns, "を以て_split", 20, 25); // 身をもって
+    }
+}

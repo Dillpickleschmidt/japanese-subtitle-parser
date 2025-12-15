@@ -6397,7 +6397,15 @@ declare_patterns! {
     Womotte {
         name: "を以て",
         matcher_fn: crate::matchers::n1::womotte,
-        priority: 1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    WomotteSplit {
+        name: "を以て_split",
+        matcher_fn: crate::matchers::n1::womotte_split,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

@@ -225,9 +225,66 @@ pub fn toiedomo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: を以て
+// Pattern: を以て (by means of, with) - compound particle
+// Matches: をもって as a single compound particle (助詞/格助詞/連語)
 pub fn womotte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct WomotteMatcher;
+    impl Matcher for WomotteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "をもって"
+                && token.base_form == "をもって"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "連語")
+        }
+    }
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(WomotteMatcher)),
+    ]
+}
+
+// Pattern: を以て (by means of, with) - split tokenization
+// Matches: Noun + を + もつ (verb) + て
+pub fn womotte_split() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.base_form == "を"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MotsuVerbMatcher;
+    impl Matcher for MotsuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "もつ"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.base_form == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MotsuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: きらいがある
