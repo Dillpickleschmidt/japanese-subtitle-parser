@@ -12949,3 +12949,64 @@ mod warini_tests {
         assert_pattern_range(&patterns, "割に", 7, 11); // のわりに
     }
 }
+
+// ========== 当たり (per / each) ==========
+// Pattern: 当たり (per / each)
+// Data source: grammar_points_data.json["当たり"]
+//
+// Structure variants to test:
+//   standard[0]: Number + Counter + 当（あ）たり
+//
+// Examples from grammar data:
+// - 一個（いっこ）あたり五（ご）円（えん）で作（つく）ることができます。
+// - 一食（いっしょく）あたりのカロリーは５００（ごひゃっ）ｋＣａｌ（キロカロリー）です。
+// - この車（くるま）は１台（いちだい）当（あ）たり１（いっ）トンあります。
+// - 一人（ひとり）当（あ）たり５０００（ごせん）円（えん）で入場（にゅうじょう）できます。
+
+mod atari_tests {
+    use super::*;
+
+    // Testing: Counter + あたり (hiragana form)
+    #[test]
+    fn test_atari_counter_hiragana() {
+        let sentence = "一個あたり五円で作ることができます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "当たり");
+        assert_pattern_range(&patterns, "当たり", 2, 5); // あたり
+    }
+
+    // Testing: Counter + あたり with の following
+    #[test]
+    fn test_atari_counter_no() {
+        let sentence = "一日あたりの予算は２０００円です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "当たり");
+        assert_pattern_range(&patterns, "当たり", 2, 5); // あたり
+    }
+
+    // Testing: Counter + 当たり (kanji form)
+    #[test]
+    fn test_atari_counter_kanji() {
+        let sentence = "この車は１台当たり１トンあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "当たり");
+        assert_pattern_range(&patterns, "当たり", 6, 9); // 当たり
+    }
+
+    // Testing: Counter + 当たり (entrance fee example)
+    #[test]
+    fn test_atari_counter_person() {
+        let sentence = "一人当たり５０００円で入場できます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "当たり");
+        assert_pattern_range(&patterns, "当たり", 2, 5); // 当たり
+    }
+}

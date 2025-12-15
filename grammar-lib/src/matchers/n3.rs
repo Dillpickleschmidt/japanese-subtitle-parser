@@ -6757,9 +6757,25 @@ pub fn nichigainai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 当たり
+// Pattern: 当たり (per / each)
+// Structures: Number + Counter + 当（あ）たり
 pub fn atari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match あたり or 当たり as suffix noun
+    #[derive(Debug)]
+    struct AtariMatcher;
+    impl Matcher for AtariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "あたり" || token.surface == "当たり")
+                && (token.base_form == "あたり" || token.base_form == "当たり")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                    || token.pos.get(1).is_some_and(|pos| pos == "一般"))
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(AtariMatcher))]
 }
 
 // Pattern: に当たる (corresponds to / amounts to / is in regard to)
