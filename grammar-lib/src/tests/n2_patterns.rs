@@ -7969,3 +7969,53 @@ mod nikaketeha_tests {
         assert_pattern_range(&patterns, "にかけては", 6, 13); // 機能にかけては
     }
 }
+
+// Pattern: とっくに (long ago, already, ages ago)
+// Data source: grammar_points_data.json["とっくに"]
+// Testing: structure.standard[0] - "とっくに + Phrase"
+//
+// Pattern description:
+// とっくに is an adverb meaning "long ago" or "already" (with emphasis).
+// It's an emphasized version of とうに (literary form).
+// Appears at beginning of sentences or before verbs to indicate something
+// happened much earlier than expected or for exaggeration.
+//
+// Structure: Only one form
+//   - standard[0]: とっくに + Phrase
+
+mod tokkuni_tests {
+    use super::*;
+
+    #[test]
+    fn test_tokkuni_past_action() {
+        // Example from grammar_points_data.json: とっくに食べちゃったよ
+        let sentence = "とっくに食べちゃったよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とっくに");
+        assert_pattern_range(&patterns, "とっくに", 0, 4); // とっくに
+    }
+
+    #[test]
+    fn test_tokkuni_time_passed() {
+        // Example from grammar_points_data.json: 提出期限はとっくに過ぎている
+        let sentence = "提出期限はとっくに過ぎているのでやってもやらなくても関係がない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とっくに");
+        assert_pattern_range(&patterns, "とっくに", 5, 9); // とっくに
+    }
+
+    #[test]
+    fn test_tokkuni_already_gone() {
+        // Example from grammar_points_data.json: みんなはもうとっくに帰ってるぞ
+        let sentence = "遅いぞ！みんなはもうとっくに帰ってるぞ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とっくに");
+        assert_pattern_range(&patterns, "とっくに", 10, 14); // とっくに
+    }
+}

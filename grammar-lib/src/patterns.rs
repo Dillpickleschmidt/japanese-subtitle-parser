@@ -5379,7 +5379,7 @@ declare_patterns! {
     Tokkuni {
         name: "とっくに",
         matcher_fn: crate::matchers::n2::tokkuni,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

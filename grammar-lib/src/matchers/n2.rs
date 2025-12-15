@@ -4521,9 +4521,23 @@ pub fn nikaketeha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とっくに
+// Pattern: とっくに (long ago, already, ages ago)
+// Structures: とっくに + Phrase
 pub fn tokkuni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TokkuniMatcher;
+    impl Matcher for TokkuniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "とっくに"
+                && token.base_form == "とっくに"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(TokkuniMatcher))]
 }
 
 // Pattern: 未だに
