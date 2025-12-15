@@ -2136,3 +2136,70 @@ The wildcard with max: 10 allows for complex noun phrases like "地理の先生"
 - Total: ~385 patterns remaining
 
 **Session efficiency**: Completed 1 pattern with 4 comprehensive tests covering all structure variants (comma/no-comma, も/でも/ても).
+
+---
+
+## Session 369 (continued) - 2025-12-14
+
+**Status**: ✅ Complete - Implemented 第一 pattern (N3)
+
+**Pattern**: 第一 (first of all/foremost/most important)
+
+**Priority**: 3
+
+**Pattern Description**: Expression that can be used as an adverb meaning "first of all" or as a noun meaning "foremost"/"most important". When used adverbially, it's often paired with に. As a noun, it's followed by の (connecting nouns) or copula だ/です (end of sentence).
+
+**Structures tested**: 5 tests covering all major variants
+1. だいいち + Phrase (adverbial, sentence-initial): だいいち (0-4)
+2. だいいち + の + Noun (noun, "number one"): だいいち (6-10)
+3. Phrase + だいいち + だ (noun, "most important"): だいいち (13-17)
+4. まず + だいいち + に (emphatic adverbial): だいいち (2-6)
+5. Phrase + 第一 + です (polite, kanji form): 第一 (7-9)
+
+**Implementation**: Pattern matcher handling both hiragana and kanji tokenization:
+```rust
+vec![
+    Custom(DaiichiMatcher),       // Matches だいいち (副詞) OR 第 (接頭詞)
+    Optional(IchiMatcher),         // Matches 一 (名詞/数) - only for kanji form
+]
+```
+
+**Tokenization Notes**:
+- **Hiragana** (だいいち): Single token, 副詞/一般 (adverb)
+- **Kanji** (第一): Two tokens - 第 (接頭詞/数接続, prefix) + 一 (名詞/数, number)
+- The matcher checks for both forms: single token だいいち OR two-token sequence 第+一
+- The 一 matcher is Optional because it's only present in the kanji form
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic sentences from grammar_points_data.json examples
+- Covers both hiragana (だいいち) and kanji (第一) forms
+- Tests adverbial, noun, and copula usages
+
+**Technical Challenge**: The pattern has two different tokenizations depending on whether it's written in hiragana or kanji. The solution uses a custom matcher that accepts either the single hiragana token OR the first kanji token (第), followed by an Optional matcher for the second kanji token (一).
+
+---
+
+### Session 369 Summary
+
+**Patterns completed**: 2
+1. 又〜も (mata ~mo) - 4 tests
+2. 第一 (daiichi) - 5 tests
+
+**Total tests added**: 9 tests (all passing)
+
+**Key learnings**:
+- Multiple tokenization forms (hiragana vs kanji) require flexible matchers
+- Optional matchers are useful for handling tokenization variants
+- Wildcard matchers enable flexible pattern matching for varied sentence structures
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)  
+- N3: 13 remaining (down from 15!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~384 patterns remaining (down from ~386!)
+
+**Next priority**: 考えられない (kangaerarenai) - "unthinkable/inconceivable"
