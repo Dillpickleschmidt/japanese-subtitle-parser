@@ -5819,3 +5819,47 @@ mod naikotoniha_tests {
         assert_pattern_range(&patterns, "ないことには～ない", 4, 10); // ないことには
     }
 }
+
+// Pattern: しかしながら (however, nevertheless)
+// Data source: grammar_points_data.json["しかしながら"]
+// Testing: Single structure - Phrase。 しかしながら + Phrase
+//
+// Pattern is a formal conjunction that appears at the beginning of a sentence,
+// connecting to a previous statement. It's an emphatic form of しかし.
+
+mod shikashi_nagara_tests {
+    use super::*;
+
+    #[test]
+    fn test_shikashi_nagara_example1() {
+        // Example from grammar_points_data.json
+        let sentence = "日本は安全な国だと言われている。しかしながら１００％安全というわけでもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかしながら");
+        assert_pattern_range(&patterns, "しかしながら", 16, 22); // しかしながら
+    }
+
+    #[test]
+    fn test_shikashi_nagara_example2() {
+        // Example from grammar_points_data.json
+        let sentence = "精一杯頑張れば夢が叶うと言われている。しかしながら、人生はそう甘くない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかしながら");
+        assert_pattern_range(&patterns, "しかしながら", 19, 25); // しかしながら
+    }
+
+    #[test]
+    fn test_shikashi_nagara_example3() {
+        // Example from grammar_points_data.json
+        let sentence = "そのアイデアはいいと思います。しかしながら、我々の予算だとそのプランを実行することはできないでしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかしながら");
+        assert_pattern_range(&patterns, "しかしながら", 15, 21); // しかしながら
+    }
+}

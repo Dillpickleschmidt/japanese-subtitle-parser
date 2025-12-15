@@ -5048,9 +5048,18 @@ pub fn yara_uff5e_yara() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: しかしながら
+// Pattern: しかしながら (however, nevertheless)
+// Structures: Phrase。 しかしながら + Phrase
 pub fn shikashinagara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ShikashiNagaraMatcher;
+    impl super::Matcher for ShikashiNagaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しかしながら"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(ShikashiNagaraMatcher))]
 }
 
 // Pattern: ことにはならない - "just because (A), it doesn't mean that (B)"
