@@ -1887,9 +1887,60 @@ pub fn monoda_janai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 最中に
+// Pattern: 最中に (right in the middle of / in the midst of)
+// Structures: Verb[ている] + 最中に/最中だ/最中です OR Noun + の + 最中に/最中だ/最中です
 pub fn saichuuni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 最中 (saichuu) as noun/adverbial
+    #[derive(Debug)]
+    struct SaichuuMatcher;
+    impl Matcher for SaichuuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "最中"
+                && token.base_form == "最中"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Match に (case particle), だ (copula), or です (polite copula) after 最中
+    #[derive(Debug)]
+    struct NiDaDesuMatcher;
+    impl Matcher for NiDaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // に as case particle
+            if token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            {
+                return true;
+            }
+
+            // だ as auxiliary verb
+            if token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+
+            // です as auxiliary verb
+            if token.surface == "です"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SaichuuMatcher)),
+        TokenMatcher::Custom(Arc::new(NiDaDesuMatcher)),
+    ]
 }
 
 // Pattern: 上で

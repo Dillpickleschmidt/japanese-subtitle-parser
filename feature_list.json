@@ -4818,14 +4818,14 @@
   {
     "pattern_name": "最中に",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "While 中（ちゅう）に highlights that something is in the process of happening (when used in relation to events/actions), 最中（... [4 std, 4 pol]",
+    "passes": true,
+    "description": "最中に/だ/です emphasizes being 'right in the middle of' or 'in the midst of' something. Follows Verb[ている] or Noun+の. [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null
   },

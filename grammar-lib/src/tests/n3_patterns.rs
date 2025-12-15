@@ -12401,3 +12401,78 @@ mod uede_tests {
         assert_pattern_range(&patterns, "上で", 13, 15); // 上で
     }
 }
+
+// ========== 最中に (right in the middle of / in the midst of) ==========
+// Pattern: 最中に - "right in the middle of", "in the midst of"
+// Data source: grammar_points_data.json["最中に"]
+//
+// Structures to test:
+//   standard[0]: Verb[ている] + 最中に + Phrase
+//   standard[1]: Noun + の + 最中に + Phrase
+//   standard[2]: Verb[ている] + 最中だ
+//   polite[2]: Verb[ている] + 最中です
+//
+// Note: 最中に emphasizes something is at the "utmost middle" of happening
+// Usually followed by (B) that interrupts or disturbs (A)
+
+mod saichuuni_tests {
+    use super::*;
+
+    // Test: Verb[ている] + 最中に (standard[0])
+    // Example from grammar data: eating mochi
+    #[test]
+    fn verb_teiru_saichuuni() {
+        let sentence = "お餅を食べている最中にポロっと取れた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "最中に");
+        assert_pattern_range(&patterns, "最中に", 8, 11); // 最中に
+    }
+
+    // Test: Noun + の + 最中に (standard[1])
+    // Example from grammar data: during work
+    #[test]
+    fn noun_no_saichuuni() {
+        let sentence = "仕事の最中に怪我をしたら責任者に電話してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "最中に");
+        assert_pattern_range(&patterns, "最中に", 3, 6); // 最中に
+    }
+
+    // Test: Verb[ている] + 最中だ (standard[2])
+    // Example from grammar data: chasing criminal
+    #[test]
+    fn verb_teiru_saichuu_da() {
+        let sentence = "今、犯人を追いかけている最中だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "最中に");
+        assert_pattern_range(&patterns, "最中に", 12, 15); // 最中だ
+    }
+
+    // Test: Verb[ている] + 最中です (polite[2])
+    #[test]
+    fn verb_teiru_saichuu_desu() {
+        let sentence = "ただいま会議をしている最中です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "最中に");
+        assert_pattern_range(&patterns, "最中に", 11, 15); // 最中です
+    }
+
+    // Test: More natural subtitle example with ている
+    #[test]
+    fn natural_subtitle_eating() {
+        let sentence = "映画を見ている最中に友達から電話がかかってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "最中に");
+        assert_pattern_range(&patterns, "最中に", 7, 10); // 最中に
+    }
+}
