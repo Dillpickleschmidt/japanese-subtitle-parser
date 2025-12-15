@@ -1,3 +1,91 @@
+## Session 423 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (ねばならない)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2775 passing, 1 ignored (was 2771 passing, 1 ignored - net +4 tests)
+
+**Session highlights**:
+- Implemented ねばならない (must, have to) - 4 structure variants
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All structure variants tested (standard verb, する exception, polite verb, polite する exception)
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: ねばならない (must, have to)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: ねばならない is a formal, literary grammar pattern expressing obligation ("must" or "have to"). It combines the classical auxiliary verb ず in its ね form (仮定形 of ぬ) with ば (conditional particle) and ならない (negative potential form of なる). Literally means "if not (A), it won't be (B)" - a double negative expressing necessity. The pattern is formal and mostly found in literature or formal writing.
+
+**Structures tested**: All 4 structure variants from grammar_points_data.json
+1. Verb[未然形] + ねばならない: 払わねばならない (chars 13-21)
+2. する → せねばならない (exception): せねばならない (chars 12-19)
+3. Verb[未然形] + ねばなりません (polite): 従わねばなりません (chars 18-27)
+4. する → せねばなりません (polite exception): せねばなりません (chars 24-32)
+
+**Implementation details**:
+- Matcher structure: Verb[未然形] + ね(助動詞/ぬ/仮定形) + ば(助詞/接続助詞) + なら/なり(動詞/なる/未然形 or 連用形) + ない/ませ(助動詞) + optional(ん)
+- Custom matchers: VerbMizenMatcher, NeAuxiliaryMatcher, BaParticleMatcher, NariNaruMatcher, NaiOrMasenMatcher, NParticleMatcher
+- Single matcher handles both standard (ならない) and polite (なりません) forms
+- VerbMizenMatcher accepts both 未然形 and 未然ヌ接続 (for せ from する)
+- NariNaruMatcher accepts both 未然形 (なら) and 連用形 (なり) from なる
+- NaiOrMasenMatcher branches to either ない or ませ, with optional ん for polite negative
+
+**Test count**: 4 tests (all passing)
+- test_verb_standard
+- test_suru_exception_standard
+- test_verb_polite
+- test_suru_exception_polite
+
+**Tokenization observations**:
+- Standard: Verb[未然形] + ね(助動詞/ぬ/仮定形) + ば(接続助詞) + なら(動詞/なる/未然形) + ない(助動詞)
+- Polite: Verb[未然形] + ね(助動詞/ぬ/仮定形) + ば(接続助詞) + なり(動詞/なる/連用形) + ませ(助動詞/ます/未然形) + ん(助動詞/不変化型)
+- する exception: せ(動詞/する/未然ヌ接続) + same pattern as above
+- ね is always 助動詞 with base_form=ぬ and 仮定形 conjugation
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs (implemented nebanaranaי())
+- grammar-lib/src/patterns.rs (registered pattern with priority 4)
+- grammar-lib/src/tests/n2_patterns.rs (added 4 tests in nebanaranaי_tests module)
+- feature_list.json (marked ねばならない as complete)
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 114 remaining (down from 115 - completed 1 pattern!)
+- N1: 179 remaining
+- Total: ~295 patterns remaining
+
+### Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested (standard, する exception, polite, polite exception)
+✅ No regressions (all 2775 tests passing)
+
+### Next Steps
+Continue with N2 priority 4 patterns. Good candidates (simple structures):
+- ～のうち(で) - 2-4 structures
+- に際して - 3 structures
+- にあたり・にあたって - 2 structures
+- を契機に - 2 structures
+
+Target: Continue implementing 1-2 patterns per session for steady progress.
+
+**Session outcome**: Successfully completed 1 N2 pattern with full coverage of all structure variants! Total of 4 new tests added, all passing, no regressions.
+
+---
+
 ## Session 422 - 2025-12-15
 
 ### Session Summary - COMPLETE
