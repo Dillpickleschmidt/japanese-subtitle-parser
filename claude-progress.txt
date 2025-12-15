@@ -1,3 +1,137 @@
+## Session 443 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (にかけては, とっくに)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 6 new tests (3 + 3, all passing with range assertions)
+**Total tests**: 2916 passing, 1 ignored (was 2910 before session, net +6 tests)
+
+**Session highlights**:
+- Implemented にかけては (when it comes to, regarding) - N2 pattern
+- Implemented とっくに (long ago, already) - N2 adverb pattern
+- にかけては: Combines に + かけて (te-form of 掛ける) + は
+- とっくに: Simple single-token adverb pattern
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 6 structure variants tested with realistic sentences (3 + 3)
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented #1: にかけては (when it comes to, regarding)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: にかけては is used following nouns to express "when it comes to (A), (B)" where (B) is the best or has a distinct advantage in field (A). It combines に + かけて (te-form of 掛ける "to hang/suspend") + は. This pattern always expresses a positive aspect - it's unnatural to use when highlighting negative aspects.
+
+**Structures tested**: 3 test variants
+1. Noun + にかけては: 技術にかけては彼が一番だ (chars 3-10) - "when it comes to skills"
+2. Noun + にかけては: スポーツにかけては誰にも負けない (chars 12-21) - "when it comes to sports"
+3. Noun + にかけては: 機能にかけては他のスマホとは比べ物にならない (chars 6-13) - "when it comes to features"
+
+**Implementation details**:
+- Tokenization: にかけて (助詞/格助詞/連語) + は (助詞/係助詞)
+- Custom matchers created:
+  - NikaketeMatcher: matches にかけて as compound case particle (助詞/格助詞/連語)
+  - WaKakariMatcher: matches は as binding particle (助詞/係助詞)
+- TokenMatcher::Any handles preceding nouns
+- Pattern includes: Noun + にかけては (full construction)
+
+**Test count**: 3 tests (all passing)
+- test_nikaketeha_skill: 大工の技術にかけては彼が一番だ
+- test_nikaketeha_sports: スポーツにかけては誰にも負けない
+- test_nikaketeha_features: 機能にかけては他のスマホとは比べ物にならない
+
+**Tokenization observations**:
+- にかけて: Always 助詞/格助詞/連語 (compound case particle)
+- は: Always 助詞/係助詞 (binding particle)
+- Kagome tokenizes にかけては as TWO tokens (not three)
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented nikaketeha() function with 2 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added nikaketeha_tests module with 3 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Always expresses positive aspects - using for negatives is unnatural
+- Different from にかけて (time range: "from X to Y")
+- Formal register, commonly used in writing and speeches
+
+---
+
+### ✅ Pattern Implemented #2: とっくに (long ago, already, ages ago)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: とっくに is an adverb meaning "long ago" or "already" with emphasis. It's an emphasized version of とうに (a literary form not commonly used in modern Japanese). The pattern appears at the beginning of sentences or before verbs to indicate something happened much earlier than expected, or used for exaggeration. Compared to すでに and もう, とっくに indicates something happened much further in the past or adds exaggeration.
+
+**Structures tested**: 3 test variants
+1. とっくに + Phrase (past): とっくに食べちゃったよ (chars 0-4) - "already ate"
+2. とっくに + Phrase (deadline): 提出期限はとっくに過ぎている (chars 5-9) - "long since passed"
+3. とっくに + Phrase (with もう): もうとっくに帰ってる (chars 10-14) - "already gone ages ago"
+
+**Implementation details**:
+- Tokenization: とっくに (副詞/一般) - single token adverb
+- Custom matcher created:
+  - TokkuniMatcher: matches とっくに as general adverb (副詞/一般)
+- Very simple pattern - single token match with POS check
+- Checks surface, base_form, and POS for accuracy
+
+**Test count**: 3 tests (all passing)
+- test_tokkuni_past_action: とっくに食べちゃったよ
+- test_tokkuni_time_passed: 提出期限はとっくに過ぎている
+- test_tokkuni_already_gone: もうとっくに帰ってる
+
+**Tokenization observations**:
+- とっくに: Always 副詞/一般 (general adverb)
+- surface=とっくに, base_form=とっくに
+- Single token, very straightforward detection
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented tokkuni() function with 1 custom matcher
+- grammar-lib/src/tests/n2_patterns.rs: Added tokkuni_tests module with 3 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Can be written with kanji as 疾っくに but primarily seen in hiragana
+- Uncommon to list with exact times (the stem word 疾し already means "far earlier")
+- More emphatic than すでに or もう
+
+---
+
+**Current stats** (after both patterns):
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 108 remaining (down from 110 - completed 2 patterns!)
+- N1: 176 remaining
+- Total: ~286 patterns remaining
+
+### Quality Metrics
+✅ All 6 tests have assert_pattern_range (3 + 3)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2916 tests passing, up from 2910)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- 未だに - still (even now)
+- をもとに - based on
+- 一旦 - once, for a moment
+- はもとより - not only... but also
+- そうにない - doesn't seem likely
+
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 6 new tests added (3 + 3), all passing, no regressions. One pattern handles compound particles (にかけては), the other is a simple adverb (とっくに). Clean implementation following test-first workflow.
+
+---
+
 ## Session 442 - 2025-12-15
 
 ### Session Summary - COMPLETE
