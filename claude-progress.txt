@@ -4252,3 +4252,53 @@ Continue with simple N2 patterns. Remaining patterns from initial query:
 These location/position-based patterns may have similar complexity to what was just implemented.
 
 **Session outcome**: Successfully implemented 2 related N2 patterns with comprehensive test coverage! Total of 9 new tests added, all passing.
+
+3. **中を** (nakawo) - "Doing B in/on/inside A" ✅
+   - N2 pattern, 1 structure variant
+   - 3 tests added (all passing)
+   - Structure: Noun + の + 中（なか）を
+   - Range: の + 中 + を (particle + noun + particle)
+
+### Total Session Statistics
+**Patterns completed**: 3 patterns (上, 上に, 中を)
+**Total tests added**: 12 tests (all passing)
+**Total test count**: 2529 (up from 2517 - added 12 tests)
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 172 remaining (down from 175 - completed 3 patterns!)
+- N1: 186 remaining
+- Total: ~360 patterns remaining
+
+### Session Summary
+
+Successfully completed 3 N2 patterns, all related to positional/relational constructions:
+
+1. **上 (jou)** - "standpoint" - Simple suffix pattern
+2. **上に (ueni)** - "in addition to" - Complex multi-variant conjunction
+3. **中を (nakawo)** - "inside/in" - Locational particle pattern
+
+All patterns follow the test-first workflow:
+- Created tests with print_debug first
+- Analyzed actual tokenization from Kagome
+- Implemented matchers based on token structure (not assumptions)
+- Removed print_debug and added assertions
+- Verified no regressions
+
+Quality metrics: 100% ✅
+- All tests have assert_pattern_range
+- No print_debug in committed code
+- Realistic sentence examples
+- Correct character ranges
+- All existing tests still passing
+
+### Next Steps
+
+Continue with simple N2 patterns. Good candidates:
+- その上 (sonoue) - 1 structure
+- につき (nitsuki) - 1 structure  
+- Other simple positional/relational patterns
+
+Target: Keep implementing 2-3 simple patterns per session until all simple N2 patterns are complete.
