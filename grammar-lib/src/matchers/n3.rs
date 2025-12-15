@@ -9259,9 +9259,34 @@ pub fn masaka() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(MasakaMatcher))]
 }
 
-// Pattern: 前者は・後者は
+// Pattern: 前者は・後者は (The Former / The Latter)
+// Structures: 前者は + (Comment) | 後者は + (Comment)
 pub fn zenshaha_u30fb_koushaha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Matcher for 前者 OR 後者 as nouns
+    #[derive(Debug)]
+    struct ZenshaKoushaMatcher;
+    impl Matcher for ZenshaKoushaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.base_form == "前者" || token.base_form == "後者")
+        }
+    }
+
+    // Matcher for は particle (topic marker)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ZenshaKoushaMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+    ]
 }
 
 // Pattern: つい (accidentally/unconsciously/against one's better judgment)

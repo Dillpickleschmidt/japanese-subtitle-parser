@@ -14021,3 +14021,70 @@ mod renyoukei_tests {
         assert_pattern_range(&patterns, "連用形", 5, 8); // 広く、
     }
 }
+
+// ========== 前者は・後者は (The Former / The Latter) ==========
+// Pattern: 前者は・後者は (zensha wa / kousha wa - the former/the latter)
+// Data source: grammar_points_data.json["前者は・後者は"]
+//
+// Structure variants to test:
+//   standard[0]: 前者は + (Comment)
+//   standard[1]: 後者は + (Comment)
+//
+// Note: These are nouns used to refer to "the former" and "the latter" in comparisons,
+// similar to English usage. Usually appear in pairs contrasting two previously mentioned items.
+
+mod zenshaha_koushaha_tests {
+    use super::*;
+
+    // Testing: standard[0] - 前者は + (Comment) (the former)
+    // Example from grammar data: 前者は家に近いが学費が高い (the former is close to home but expensive)
+    #[test]
+    fn test_zensha_wa() {
+        let sentence = "どの大学に行くか迷っています。前者は家に近いが学費が高い、後者は家から遠いが学費が安い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "前者は・後者は");
+        // Should detect both 前者は and 後者は
+        assert_pattern_range(&patterns, "前者は・後者は", 15, 18); // 前者は
+    }
+
+    // Testing: standard[1] - 後者は + (Comment) (the latter)
+    // Same example continues with 後者は
+    #[test]
+    fn test_kousha_wa() {
+        let sentence = "地下鉄と新幹線、前者は地下をゆっくりと走り、後者は速いスピードで地上を走る。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "前者は・後者は");
+        // Should detect both instances
+        assert_pattern_range(&patterns, "前者は・後者は", 8, 11); // 前者は
+    }
+
+    // Testing: Both 前者 and 後者 in same sentence (common usage pattern)
+    #[test]
+    fn test_zensha_kousha_together() {
+        let sentence = "前者は安くて古くて、後者は高くて新しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "前者は・後者は");
+        assert_pattern_range(&patterns, "前者は・後者は", 0, 3); // 前者は
+    }
+
+    // Testing: 後者は specifically
+    #[test]
+    fn test_kousha_wa_alone() {
+        let sentence = "後者はより良い選択だと思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "前者は・後者は");
+        assert_pattern_range(&patterns, "前者は・後者は", 0, 3); // 後者は
+    }
+
+    // Note: Pattern specifically matches 前者は and 後者は (with は particle)
+    // While 前者 and 後者 can be used with other particles (に, を, etc.),
+    // this pattern targets the common contrastive usage with は
+}
