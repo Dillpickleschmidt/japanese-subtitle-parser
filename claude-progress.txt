@@ -1,19 +1,61 @@
 ## Session 473 - 2025-12-15
 
 ### Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented というものだ pattern (N2)
-**Patterns completed**: 1 (N2, priority 4)
-**Tests added**: 4 new tests (all passing with range assertions)
-**Total tests**: 3106 passing, 1 ignored (was 3102 before session, net +4 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns
+**Patterns completed**: 2 (N2, priority 4)
+**Tests added**: 7 new tests (all passing with range assertions)
+**Total tests**: 3109 passing, 1 ignored (was 3102 before session, net +7 tests)
 
 **Session highlights**:
-- Implemented というものだ (that is just the way it is, that's what something is) - N2 expression
-- Pattern structure: という/って + もの + だ/です
-- Handles all 3 forms: standard (というものだ), polite (というものです), casual (ってものだ)
-- Strong expression indicating speaker's impression based on objective judgment
+- Implemented というものだ and ところを見ると - both N2 expressions
+- Both patterns use careful POS and surface matching for accuracy
 - Clean test-first workflow following REFERENCE_EXAMPLES.md
-- All 4 tests pass with proper range assertions
+- All 7 tests pass with proper range assertions
 - No regressions
+
+**Patterns implemented**:
+1. というものだ (that is just the way it is) - 4 tests
+2. ところを見ると (judging from, seeing that) - 3 tests
+
+---
+
+### ✅ Pattern Implemented: ところを見ると (judging from, seeing that)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: ところを見ると is a set phrase that highlights the situation or place of (A), before examining it subjectively. Translates as "judging from (A)" or "seeing that (A)". Literally "if looking at the aspect of (A)", before the speaker states their judgment.
+
+**Structures tested**: 3 test variants (from grammar_points_data.json)
+1. Verb (ている) + ところを見ると: いるところをみると (chars 8-17) - progressive verb
+2. Verb (potential) + ところを見ると: 書けるところをみると (chars 6-16) - potential form
+3. Verb (ている) + ところを見ると: いるところをみると (chars 15-24) - progressive in complex sentence
+
+**Implementation details**:
+- Matcher structure: TokenMatcher::Any + ところ + を + みる/見る + と
+- Five custom matchers: TokoroMatcher, WoMatcher, MiruMatcher, ToMatcher
+- TokoroMatcher: checks surface=="ところ", pos=名詞/非自立
+- WoMatcher: checks surface=="を", pos=助詞/格助詞
+- MiruMatcher: checks surface=="みる" OR "見る", base_form=="みる", pos=動詞
+- ToMatcher: checks surface=="と", pos=助詞/接続助詞
+- TokenMatcher::Any matches preceding verb (any form)
+
+**Tokenization observations**:
+- Pattern: Verb (any form) + ところ (名詞/非自立/副詞可能) + を (助詞/格助詞) + みる (動詞/一段/基本形) + と (助詞/接続助詞)
+- Accepts both hiragana みる and kanji 見る
+- TokenMatcher::Any captures the last token before ところ (verb in any form)
+- Works with ている, potential form, plain verbs, etc.
+
+**Test count**: 3 tests (all passing)
+- test_teiru_tokorowomiruto: ている verb (している) + ところをみると
+- test_potential_tokorowomiruto: Potential verb (書ける) + ところをみると
+- test_teite_tokorowomiruto: Complex ている in longer phrase (見ている) + ところをみると
+
+**Range assertions**: All tests use assert_pattern_range() with correct character positions
+- Ranges include: Verb (last token) + ところ + を + みる + と
+
+**Commit**: 28a5d48
 
 ---
 
