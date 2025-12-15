@@ -524,3 +524,83 @@ mod niitatteha_tests {
         assert_pattern_range(&patterns, "に至っては", 13, 24); // リスニングにいたっては
     }
 }
+
+// ============================================================================
+// きらいがある Tests
+// ============================================================================
+
+mod kiraigaaru_tests {
+    use super::*;
+
+    // Pattern: きらいがある (tends to, has a tendency to)
+    // Data source: grammar_points_data.json["きらいがある"]
+    // Testing: All structure variants (3 standard + 3 polite)
+    //
+    // Structures:
+    //   - standard[0]: Verb[る] + きらいがある
+    //   - standard[1]: Verb[ない] + きらいがある
+    //   - standard[2]: Noun + の + きらいがある
+    //   - polite[0]: Verb[る] + きらいがあります
+    //   - polite[1]: Verb[ない] + きらいがあります
+    //   - polite[2]: Noun + の + きらいがあります
+
+    #[test]
+    fn test_verb_dictionary_form() {
+        let sentence = "彼女は三日坊主だから、何かを始めてもすぐに辞めるきらいがある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きらいがある");
+        assert_pattern_range(&patterns, "きらいがある", 21, 30); // 辞めるきらいがある
+    }
+
+    #[test]
+    fn test_verb_negative_form() {
+        let sentence = "彼は自分の意見を言わないきらいがある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きらいがある");
+        assert_pattern_range(&patterns, "きらいがある", 10, 18); // ないきらいがある
+    }
+
+    #[test]
+    fn test_noun_no_form() {
+        let sentence = "お盆休みの間は浅草に行く観光客の数が上昇するきらいがある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きらいがある");
+        assert_pattern_range(&patterns, "きらいがある", 18, 28); // 上昇するきらいがある
+    }
+
+    #[test]
+    fn test_verb_dictionary_polite() {
+        let sentence = "この地域は冬になると積雪量が増加するきらいがあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きらいがある");
+        assert_pattern_range(&patterns, "きらいがある", 14, 26); // 増加するきらいがあります
+    }
+
+    #[test]
+    fn test_verb_negative_polite() {
+        let sentence = "お父さんは少し強い言い方をするきらいがありますけど、あまり気にしないでね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きらいがある");
+        assert_pattern_range(&patterns, "きらいがある", 13, 23); // するきらいがあります
+    }
+
+    #[test]
+    fn test_noun_no_polite() {
+        let sentence = "この方法には効率性の面でいくつかの欠点のきらいがあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "きらいがある");
+        assert_pattern_range(&patterns, "きらいがある", 19, 28); // のきらいがあります
+    }
+}

@@ -6445,7 +6445,7 @@ declare_patterns! {
     Kiraigaaru {
         name: "きらいがある",
         matcher_fn: crate::matchers::n1::kiraigaaru,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

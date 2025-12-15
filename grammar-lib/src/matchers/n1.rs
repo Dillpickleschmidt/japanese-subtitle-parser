@@ -415,9 +415,60 @@ pub fn womotte_split() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: きらいがある
+// Pattern: きらいがある (tends to, has a tendency to)
+// Structures: Verb/Noun + きらい + が + ある/あります
 pub fn kiraigaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match きらい as 名詞/非自立
+    #[derive(Debug)]
+    struct KiraiMatcher;
+    impl Matcher for KiraiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "きらい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match が as 助詞/格助詞
+    #[derive(Debug)]
+    struct GaKakuMatcher;
+    impl Matcher for GaKakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ある (基本形) or あり (連用形)
+    #[derive(Debug)]
+    struct AruAriMatcher;
+    impl Matcher for AruAriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.surface == "ある" || token.surface == "あり")
+        }
+    }
+
+    // Match ます
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(KiraiMatcher)),
+        TokenMatcher::Custom(Arc::new(GaKakuMatcher)),
+        TokenMatcher::Custom(Arc::new(AruAriMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: ならまだしも (if A, that's fine, but B)

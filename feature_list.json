@@ -10474,13 +10474,13 @@
   {
     "pattern_name": "きらいがある",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "嫌（きら）いがある is a combination of the noun きらい 'a dislike', the case-marking particle が, and the う-Verb ある 'to be' [3 std, 3 pol]",
     "priority": 5,
     "skip_reason": null
