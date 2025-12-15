@@ -6695,3 +6695,48 @@ mod nouchi_de_tests {
         assert_pattern_range(&patterns, "～のうち(で)", 0, 4); // このうち
     }
 }
+
+// Pattern: に際して (on the occasion of, at the time of)
+// Data source: grammar_points_data.json["に際して"]
+// Testing all structure variants from structure.standard[]
+//
+// Structure variants:
+//   - standard[0]: Noun + に際（さい）し（て）
+//   - standard[1]: Verb［る］+ に際（さい）し（て）
+//   - standard[2]: Noun + に際（さい）しての + Noun
+mod nisaishite_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_nisaishite() {
+        // Structure: Noun + に際して
+        let sentence = "引越しに際して、いらなくなった家具を全部捨てた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に際して");
+        assert_pattern_range(&patterns, "に際して", 0, 7); // 引越しに際して
+    }
+
+    #[test]
+    fn test_verb_nisaishite() {
+        // Structure: Verb[る] + に際して
+        let sentence = "新しいプロジェクトを始めるに際して、新しいグループリーダーを決めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に際して");
+        assert_pattern_range(&patterns, "に際して", 10, 17); // 始めるに際して
+    }
+
+    #[test]
+    fn test_noun_nisaishite_no_noun() {
+        // Structure: Noun + に際しての + Noun
+        let sentence = "クレジットカードを申し込むに際しての注意事項を確認してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に際して");
+        assert_pattern_range(&patterns, "に際して", 9, 18); // 申し込むに際しての
+    }
+}

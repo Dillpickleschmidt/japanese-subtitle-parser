@@ -5171,7 +5171,7 @@ declare_patterns! {
     Nisaishite {
         name: "に際して",
         matcher_fn: crate::matchers::n2::nisaishite,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

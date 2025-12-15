@@ -3372,9 +3372,56 @@ pub fn tsutsu_mo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に際して
+// Pattern: に際して (on the occasion of, at the time of)
+// Structures: Verb[る] + に際して, Noun + に際して, Noun + に際しての + Noun
 pub fn nisaishite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に際して as a single compound particle token
+    #[derive(Debug)]
+    struct NisaishiteMatcher;
+    impl Matcher for NisaishiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に際して"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match verbs in dictionary form (基本形) or nouns
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in dictionary form
+            let is_verb_kihonkei = token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+
+            // Match any noun
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+
+            is_verb_kihonkei || is_noun
+        }
+    }
+
+    // Match の as a nominalizer/relativizer particle
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NisaishiteMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoRentaikaMatcher,
+        )))),
+    ]
 }
 
 // Pattern: 際に

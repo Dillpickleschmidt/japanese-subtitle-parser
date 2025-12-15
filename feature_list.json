@@ -8388,13 +8388,13 @@
   {
     "pattern_name": "に際して",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like 際（さい）に 'on the occasion of (A)', に際（さい）して will be used to show some particular occasion, and is used most freque... [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
