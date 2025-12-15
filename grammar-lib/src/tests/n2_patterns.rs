@@ -6192,4 +6192,101 @@ mod wotowazu_tests {
         assert_has_pattern(&patterns, "を問わず");
         assert_pattern_range(&patterns, "を問わず", 8, 14); // ないをとわず
     }
+
+    // Pattern: たって (even if, even though, no matter how)
+    // Data source: grammar_points_data.json["たって"]
+    // Testing all 8 structure variants (casual register)
+    mod tatte_tests {
+        use super::*;
+
+        #[test]
+        fn test_tatte_verb_ta() {
+            // Structure: Verb[た] + って
+            let sentence = "彼女に謝ったってどうせ許してくれないだろう";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "たって");
+            assert_pattern_range(&patterns, "たって", 3, 8); // 謝ったって
+        }
+
+        #[test]
+        fn test_tatte_verb_nakute() {
+            // Structure: Verb/Adj[なくて] + たって
+            let sentence = "稽古がどんなに楽しくなくたって、稽古中には欠伸をしてはならない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "たって_naku");
+            assert_pattern_range(&patterns, "たって_naku", 7, 15); // 楽しくなくたって
+        }
+
+        #[test]
+        fn test_tatte_i_adj_ku() {
+            // Structure: い-Adjective[く] + たって
+            let sentence = "どんなに欲しくたって、万引きをしてはいけない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "たって_i_adj_ku");
+            assert_pattern_range(&patterns, "たって_i_adj_ku", 4, 10); // 欲しくたって
+        }
+
+        #[test]
+        fn test_tatte_i_adj_nakute() {
+            // Structure: い-Adjective[なくて] + たって
+            let sentence = "どんなに難しくなくたって、時間がかかるよ";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "たって_naku");
+            assert_pattern_range(&patterns, "たって_naku", 4, 12); // 難しくなくたって
+        }
+
+        #[test]
+        fn test_tatte_na_adj() {
+            // Structure: な-Adjective + だって (handled by existing だって pattern)
+            let sentence = "こんな簡単な問題馬鹿だってわかるよ";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            // This is detected by the existing "だって" pattern, not "たって"
+            assert_has_pattern(&patterns, "だって");
+            assert_pattern_range(&patterns, "だって", 8, 13); // 馬鹿だって
+        }
+
+        #[test]
+        fn test_tatte_na_adj_negative() {
+            // Structure: な-Adjective + じゃなくたって
+            let sentence = "有名じゃなくたって、良い歌手はたくさんいる";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "たって_naku");
+            assert_pattern_range(&patterns, "たって_naku", 0, 9); // 有名じゃなくたって
+        }
+
+        #[test]
+        fn test_tatte_noun() {
+            // Structure: Noun + だって (handled by existing だって pattern)
+            let sentence = "友達だって喧嘩をすることがある";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            // This is detected by the existing "だって" pattern, not "たって"
+            assert_has_pattern(&patterns, "だって");
+            assert_pattern_range(&patterns, "だって", 0, 5); // 友達だって
+        }
+
+        #[test]
+        fn test_tatte_noun_negative() {
+            // Structure: Noun + じゃなくたって
+            let sentence = "専門家じゃなくたって意見を言う権利がある";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "たって_naku");
+            assert_pattern_range(&patterns, "たって_naku", 2, 10); // 家じゃなくたって
+        }
+    }
 }

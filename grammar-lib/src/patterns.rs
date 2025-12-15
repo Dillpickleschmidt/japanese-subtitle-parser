@@ -6283,7 +6283,23 @@ declare_patterns! {
     Tatte {
         name: "たって",
         matcher_fn: crate::matchers::n2::tatte,
-        priority: 1,
+        priority: 4,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    TatteNaku {
+        name: "たって_naku",
+        matcher_fn: crate::matchers::n2::tatte_naku,
+        priority: 4,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
+    TatteIAdjKu {
+        name: "たって_i_adj_ku",
+        matcher_fn: crate::matchers::n2::tatte_i_adj_ku,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

@@ -5391,9 +5391,112 @@ pub fn nomomottomoda() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: たって
+// Pattern: たって (even if, even though, no matter how)
+// Structure: Verb[連用タ接続] + たって
 pub fn tatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for たって as 助詞/接続助詞
+    #[derive(Debug)]
+    struct TatteParticleMatcher;
+    impl super::Matcher for TatteParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たって"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matches verb in 連用タ接続 + たって (e.g., 謝ったって)
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TatteParticleMatcher)),
+    ]
+}
+
+// Pattern: たって (negative forms with なく)
+// Structures: Verb/Adj + なく + たって, Noun/な-Adj + じゃ + なく + たって
+pub fn tatte_naku() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for たって as 助詞/接続助詞
+    #[derive(Debug)]
+    struct TatteParticleMatcher;
+    impl super::Matcher for TatteParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たって"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for なく (negative auxiliary) in 連用テ接続
+    #[derive(Debug)]
+    struct NakuMatcher;
+    impl super::Matcher for NakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matcher for じゃ (助詞/副助詞)
+    #[derive(Debug)]
+    struct JyaParticleMatcher;
+    impl super::Matcher for JyaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "じゃ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Matches:
+    // - Adj/Verb + なく + たって (楽しくなくたって, 難しくなくたって)
+    // - Noun/な-Adj + じゃ + なく + たって (有名じゃなくたって, 専門家じゃなくたって)
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(JyaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        TokenMatcher::Custom(Arc::new(TatteParticleMatcher)),
+    ]
+}
+
+// Pattern: たって (i-adjective く form - special tokenization)
+// Structure: い-Adjective[く] + たって
+// Note: This gets tokenized as Adj[く] + たっ(verb) + て(particle)
+pub fn tatte_i_adj_ku() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for たっ as verb たつ
+    #[derive(Debug)]
+    struct TatsuVerbMatcher;
+    impl super::Matcher for TatsuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たっ"
+                && token.base_form == "たつ"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Matcher for て particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // い-Adjective in 連用テ接続 + たっ + て
+    vec![
+        TokenMatcher::Adjective { base_form: None }, // Any i-adjective in 連用テ接続
+        TokenMatcher::Custom(Arc::new(TatsuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: に限って (particularly when, only when, those who)

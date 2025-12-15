@@ -10362,13 +10362,13 @@
   {
     "pattern_name": "たって",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "たって is a casual structure that carries the same meaning as 'ても' or 'でも', and can be used with a wide variety of words [8 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
