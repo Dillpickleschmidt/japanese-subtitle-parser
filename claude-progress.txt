@@ -11393,3 +11393,66 @@ Total session time: ~90 minutes
 
 ### Session Summary
 Completed 2 N2 patterns (both priority 4) with comprehensive test coverage. Both patterns handle multiple structure variants (standard/polite forms). てたまらない required careful handling of different preceding forms, while でしかない was more straightforward. No regressions, all tests passing.
+
+---
+## Session 454 - に応えて (2025-01-XX)
+
+### Pattern Completed
+**に応えて** (N2, priority 4) - 5 tests
+- に応えて (in response to, to meet)
+- Structures tested:
+  - Noun + にこたえて (standard with て-form)
+  - Noun + にこたえる + Noun (modifying noun)
+  - にこたえた (past form)
+- Implementation: Matches Noun + に + こたえる (verb) with optional て/た following
+- All 3 structure variants from grammar_points_data.json covered
+
+### Implementation Details
+
+**Pattern structure**:
+- Core pattern: Noun + に + こたえる (verb with base_form="こたえる")
+- Optional following particle (て or た) to handle different forms
+- KotaeruMatcher: Checks base_form == "こたえる" and pos == "動詞"
+- TeOrTaMatcher: Matches て (助詞) or た (助動詞) when they follow the verb
+
+**Tokenization observations**:
+- にこたえて: `要望` + `に` + `こたえ` (連用形) + `て`
+- にこたえる: `要望` + `に` + `こたえる` (基本形) - used when modifying nouns
+- にこたえた: `声` + `に` + `こたえ` (連用形) + `た`
+
+**Range handling**:
+- When followed by て/た: Includes the particle (e.g., 要望にこたえて)
+- When in 基本形: Just the verb (e.g., ニーズにこたえる)
+- Pattern correctly captures the full grammatical construction in all cases
+
+### Test Coverage
+All 5 tests created with:
+1. `test_noun_nikotaete` - Standard て-form: 生徒達の要望にこたえて
+2. `test_noun_nikotaete_hiragana` - Katakana noun variant: クライアントのリクエストにこたえて
+3. `test_noun_nikotaeru_noun` - Modifying noun: お客様のニーズにこたえるサービス
+4. `test_noun_nikotaeru_noun_variant` - Another noun modifier: あなたの要望にこたえる自信
+5. `test_nikotaeta_past` - Past form: 市民の声にこたえた政策
+
+All tests use realistic subtitle-quality sentences and verify proper character ranges.
+
+### Stats
+- Tests: 2996 passing (was 2991, net +5 tests)
+- N2 patterns remaining: ~60 (down from ~61)
+- No regressions (all existing tests still passing)
+
+### Files Modified
+- grammar-lib/src/matchers/n2.rs: Implemented nikotaete() function
+- grammar-lib/src/tests/n2_patterns.rs: Added nikotaete_tests module with 5 tests
+- feature_list.json: Updated に応えて to complete status
+
+### Session Summary
+Completed 1 N2 pattern (priority 4) following test-first workflow. Pattern handles all 3 structure variants including て-form, dictionary form (modifying nouns), and past form. Clean implementation with proper optional particle handling. All tests pass with correct character ranges. No regressions.
+
+Total session time: ~45 minutes
+
+### Next Priorities
+Continue with remaining N2 patterns in priority order:
+- それとも (conjunction - simple)
+- にしたら (conditional variant)
+- にしても～にしても (paired structure)
+- としては, としても (conditional structures)
