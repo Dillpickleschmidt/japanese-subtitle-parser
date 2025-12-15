@@ -1,3 +1,84 @@
+## Session 374 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 込む ① and 込む ② patterns (N3)
+**Patterns completed**: 2 (込む ① and 込む ② - N3 newly implemented)
+**Tests added**: 10 new tests (all passing)
+**Total tests**: 2405 passing, 1 ignored (was 2395 passing, 1 ignored - net +10 tests)
+
+### ✅ Patterns Implemented: 込む ① and 込む ② (to put into / to do deeply)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not highlighted in overlay)
+
+**Pattern**: 込む is a verb suffix that attaches to the conjunctive form of other verbs. It has two primary meanings that tokenize identically:
+- 込む ①: To enter completely into doing (A), to put into (A), to go into (A)
+- 込む ②: To remain in (A), to thoroughly do (A), to do (A) deeply/intensely
+
+**Key Discovery**: Initially tried matching hiragana "こむ" but compound verbs use kanji "込む" in their base_form (e.g., 押し込む, 飲み込む, 座り込む). The matcher checks `token.base_form.ends_with("込む")` NOT `ends_with("こむ")`.
+
+**Structures tested**: 10 comprehensive tests covering both patterns and both structure variants
+
+**込む ① tests** (5 tests):
+1. Verb[stem] + 込む (押し込む - push into): ピンを壁に押し込むのは難しい。 → 押し込む (5-9)
+2. Verb[stem] + 込む (飲み込む - swallow): 薬を飲み込むのが苦手です。 → 飲み込む (2-6)
+3. Verb[stem] + 込んだ (走り込んだ - ran into): ドアが閉まる前に電車に走り込んだ。 → 走り込んだ (11-16)
+4. Verb[stem] + 込む (飛び込む - leap into): サウナから出て水風呂に飛び込んだ。 → 飛び込んだ (11-16)
+5. Verb[stem] + 込みます (polite): 毎朝このジュースを飲み込みます。 → 飲み込みます (9-15)
+
+**込む ② tests** (5 tests):
+1. Verb[stem] + 込む (座り込む - remain seated): 道の真ん中で座り込んでいる人がいた。 → 座り込ん (6-10)
+2. Verb[stem] + 込む (話し込む - get lost in talking): もうこんな時間か、話し込んじゃったな。 → 話し込ん (9-13)
+3. Verb[stem] + 込む negative (考え込まない - don't think deeply): そんなに考え込まなくてもいいよ。 → 考え込まなく (4-10)
+4. Verb[stem] + 込む (思い込む - jump to conclusions): 彼女は自分が天才だと思い込んでいる。 → 思い込ん (10-14)
+5. Verb[stem] + 込みます (polite): この問題について深く考え込みます。 → 考え込みます (10-16)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (komu_u2460 and komu_u2461 functions, lines 8825-8867)
+  - Custom matcher for compound verbs ending in 込む (kanji, NOT hiragana)
+  - Checks: pos="動詞" AND base_form.ends_with("込む") AND base_form != "込む"
+  - Both patterns use identical matchers (semantically different but structurally identical)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (komu_u2460_tests and komu_u2461_tests modules, lines 13691-13823)
+- Patterns: grammar-lib/src/patterns.rs (KomuU2460 and KomuU2461 variants, lines 4273-4289)
+
+**Tokenization observations**:
+- Compound verbs tokenize as single tokens: 押し込む, 飲み込む, 座り込む, etc.
+- Base form always uses kanji 込 not hiragana こ: base_form="押し込む" (not "押しこむ")
+- All conjugations work: 込む (dictionary), 込み (stem), 込ん (past), 込ま (negative)
+- Pattern ranges extend with auxiliary verbs: 飲み込みます includes ます
+
+**Note on ambiguity**: Like らしい① vs らしい②, both 込む patterns tokenize identically. When detected, the application should show both grammar explanations and let the user determine meaning from context.
+
+### Test Quality Metrics
+✅ All 10 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples
+✅ Correct character ranges
+✅ Tests cover standard and polite forms
+✅ Tests cover both 込む ① and 込む ② meanings
+✅ No regressions (all 2405 tests passing)
+
+### Session Summary
+**Patterns completed**: 2
+- 込む ① (komu_u2460) - 5 tests
+- 込む ② (komu_u2461) - 5 tests
+
+**Total tests added**: 10 tests (all passing)
+**Total test count**: 2405 (up from 2395)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 8 remaining (down from 10!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~379 patterns remaining (down from ~381!)
+
+**Next priority**: 次第 (shidai), 前者は・後者は, 代わりに, or 連用形 (N3 patterns)
+
+---
+
 ## Session 373 - 2025-12-14
 
 ### ✅ Session Summary
