@@ -11890,3 +11890,45 @@ mod dakemashida_tests {
         assert_pattern_range(&patterns, "だけましだ", 10, 19); // 暖かいだけましです
     }
 }
+
+// Pattern: たちまち (immediately, in no time, suddenly)
+// Data source: grammar_points_data.json["たちまち"]
+// Testing: structure.standard[0] - "たちまち + Phrase"
+//
+// Structure variants:
+//   - standard[0]: たちまち + Verb phrase (only one variant)
+//   - No polite forms (adverb used in both contexts)
+
+mod tachimachi_tests {
+    use super::*;
+
+    #[test]
+    fn test_tachimachi_become_famous() {
+        let sentence = "あのレコード会社に所属するとアーティストたちはたちまち有名になる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たちまち");
+        assert_pattern_range(&patterns, "たちまち", 23, 27); // たちまち
+    }
+
+    #[test]
+    fn test_tachimachi_became_friends() {
+        let sentence = "私と田中さんはたちまち仲良くなった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たちまち");
+        assert_pattern_range(&patterns, "たちまち", 7, 11); // たちまち
+    }
+
+    #[test]
+    fn test_tachimachi_disappeared() {
+        let sentence = "冷蔵庫に入れておいたシナモンロールはたちまち妻の胃袋へと消えた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たちまち");
+        assert_pattern_range(&patterns, "たちまち", 18, 22); // たちまち
+    }
+}

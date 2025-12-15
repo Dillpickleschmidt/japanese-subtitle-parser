@@ -7576,9 +7576,10 @@ pub fn oyobi() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: たちまち
+// Pattern: たちまち (immediately, in no time, suddenly)
+// Structures: たちまち + Verb phrase
 pub fn tachimachi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![TokenMatcher::Surface("たちまち")]
 }
 
 // Pattern: いきなり (suddenly, all of a sudden)
