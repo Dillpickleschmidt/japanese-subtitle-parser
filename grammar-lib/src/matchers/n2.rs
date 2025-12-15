@@ -890,9 +890,26 @@ pub fn mai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 上
+// Pattern: From the standpoint of (Noun + 上じょう)
+// Structures: Noun + 上（じょう）
 pub fn ue() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct UeSuffixMatcher;
+    impl super::Matcher for UeSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "上"
+                && token.base_form == "上"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(UeSuffixMatcher)),
+    ]
 }
 
 // Pattern: 上に

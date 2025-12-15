@@ -3237,3 +3237,42 @@ mod ikasu_tests {
         assert_pattern_range(&patterns, "まい", 20, 26); // 住みますまい
     }
 }
+
+// Pattern: 上 (standpoint/from the perspective of)
+// Data source: grammar_points_data.json["上"]
+mod ue_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + 上（じょう）"
+    #[test]
+    fn test_ue_legal_standpoint() {
+        let sentence = "法律上、伊勢海老を許可なく釣り上げて持って帰ることが禁止されている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上");
+        assert_pattern_range(&patterns, "上", 0, 3); // 法律上
+    }
+
+    // Testing: structure.standard[0] - "Noun + 上（じょう）" (rules context)
+    #[test]
+    fn test_ue_rules_standpoint() {
+        let sentence = "規則上、生徒は髪を染めてはいけないのに、髪を染めている生徒が複数います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上");
+        assert_pattern_range(&patterns, "上", 0, 3); // 規則上
+    }
+
+    // Testing: structure.standard[0] - "Noun + 上（じょう）" (work context)
+    #[test]
+    fn test_ue_work_standpoint() {
+        let sentence = "仕事上、夜遅くまで残業することが多くてたまらないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上");
+        assert_pattern_range(&patterns, "上", 0, 3); // 仕事上
+    }
+}
