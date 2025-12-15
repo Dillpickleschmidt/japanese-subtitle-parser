@@ -1,17 +1,60 @@
 ## Session 482 - 2025-12-15
 
-### Session Summary - たった(の) Pattern Complete ✓
-**Status**: Successfully implemented たった(の) pattern
-**Patterns completed**: 1 (N2, priority 4)
-**Total tests**: 3159 passing, 1 ignored (added 4 new tests)
+### Session Summary - Two N2 Patterns Complete ✓
+**Status**: Successfully implemented たった(の) and ものか patterns
+**Patterns completed**: 2 (both N2, priority 4)
+**Total tests**: 3165 passing, 1 ignored (added 10 new tests)
 
 **Session highlights**:
 - Implemented たった(の) (only/just - emphasizing small amount) - 4 tests
-- Pattern handles both たった + Number and たった + の + Number forms
-- Handles multi-digit numbers (１０ tokenized as １ + ０) and counters (人, 分, メートル)
+- Implemented ものか (absolutely not / as if / do you really think) - 6 tests
+- Both patterns handle multiple structure variants (verb, adjective, noun forms)
 - All tests passing with proper range assertions
 - No regressions in test suite
 - Key debugging insight: Using `token.features` instead of `token.pos` for matching
+
+---
+
+### ✓ Completed: ものか (absolutely not, as if, do you really think)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb + もの/もん + (です) + か
+- い-Adjective + もの/もん + (です) + か
+- な-Adjective + な + もの/もん + (です) + か
+- Noun + な + もの/もん + (です) + か
+- Verb[た] + もの/もん + (です) + か (past tense - "as if it's possible")
+
+**Implementation details**:
+- Custom `VerbOrAdjOrNounMatcher` matches Verb (動詞), い-Adj (形容詞), or Noun (名詞)
+- Optional `NaOrTaCopulaMatcher` handles な (体言接続) for な-adj/noun OR た (past auxiliary)
+- Custom `MonoMatcher` for もの/もん (名詞/非自立)
+- Optional Surface matcher for です (polite forms)
+- Custom `KaParticleMatcher` for final か particle
+
+**Tests created**: 6 tests
+1. `test_verb_monoka` - 着るものか (verb + もの + か)
+2. `test_i_adj_monka` - 楽しいもんか (い-adj + もん + か)
+3. `test_na_adj_na_monoka` - 元気なものか (な-adj + な + もの + か)
+4. `test_noun_na_monoka` - 友達なものか (noun + な + もの + か)
+5. `test_verb_ta_monka` - できたもんか (verb + た + もん + か, past tense)
+6. `test_verb_mono_desuka_polite` - 解けるものですか (verb + もの + です + か, polite)
+
+**Key implementation notes**:
+- ものか is a strong rhetorical question implying "absolutely not" or "as if (A) would happen"
+- The past tense variant (Verb[た] + ものか) specifically implies the speaker cannot bear for the action to happen
+- Pattern can use both もの (standard) and もん (casual contraction)
+- Polite forms insert です before the final か particle
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented monoka() function (54 lines)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 6 comprehensive tests
+- `feature_list.json` - Updated ものか to complete status
 
 ---
 
