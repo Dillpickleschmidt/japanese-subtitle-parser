@@ -2046,3 +2046,74 @@ mod zaruwoenai_tests {
         assert_pattern_range(&patterns, "ざるを得ない", 9, 20); // 従わざるを得ないだろう
     }
 }
+
+// ～ざる Tests - "attributive form of classical auxiliary ず (negative)"
+// Data source: grammar_points_data.json["～ざる"]
+
+#[cfg(test)]
+mod uff5e_zaru_tests {
+    use super::*;
+
+    // Pattern: ～ざる (attributive form of classical negative auxiliary ず)
+    // Data source: grammar_points_data.json["～ざる"]
+    // Testing: structure.standard[0] - "Verb[ない] + ざる + Noun"
+    //
+    // Grammar: ざる is the attributive form of the classical auxiliary verb ず
+    // - Attaches to the 未然形 (irrealis/negative form) of verbs
+    // - Translates as "not" or "un~" (like "unstoppable", "unknown")
+    // - Primarily used in set expressions and before nouns (attributive position)
+    //
+    // Special note: する conjugates with せ stem (せざる), not し stem
+    //
+    // Structures to test:
+    //   - standard[0]: Verb[ない] + ざる + Noun (e.g., 言わざる人, 知られざる過去)
+
+    #[test]
+    fn test_uff5e_zaru_iwazaru() {
+        // Example from data: 弱音を言わざる人
+        // Testing: 言う → 言わ (未然形) + ざる
+        let sentence = "彼はどんな辛い時でも弱音を言わざる人だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ざる");
+        assert_pattern_range(&patterns, "～ざる", 13, 17); // 言わざる
+    }
+
+    #[test]
+    fn test_uff5e_zaru_shirareru() {
+        // Example from data: 知られざる過去
+        // Testing: 知られる → れ (未然形) + ざる
+        // Note: ざる attaches to the auxiliary れる, not the main verb 知る
+        let sentence = "記事のタイトル：「演歌歌手鈴木太朗の知られざる過去。」";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ざる");
+        assert_pattern_range(&patterns, "～ざる", 20, 23); // れざる (part of 知られざる)
+    }
+
+    #[test]
+    fn test_uff5e_zaru_ataezaru() {
+        // Testing: 与える → 与え (未然形) + ざる
+        // Meaning: influence that cannot be given / ungiven influence
+        let sentence = "そのニュースは我々に与えざる影響を及ぼした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ざる");
+        assert_pattern_range(&patterns, "～ざる", 10, 14); // 与えざる
+    }
+
+    #[test]
+    fn test_uff5e_zaru_osorezaru() {
+        // Testing: 恐れる → 恐れ (未然形) + ざる
+        // Meaning: fearless / not afraid
+        let sentence = "彼女は何事も恐れざる勇気を持っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ざる");
+        assert_pattern_range(&patterns, "～ざる", 6, 10); // 恐れざる
+    }
+}

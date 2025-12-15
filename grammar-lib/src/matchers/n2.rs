@@ -160,9 +160,27 @@ pub fn zaruwoenai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～ざる
+// Pattern: ～ざる (attributive form of classical negative auxiliary ず)
+// Structures: Verb[未然形] + ざる
 pub fn uff5e_zaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ざる (classical negative auxiliary, attributive form)
+    #[derive(Debug)]
+    struct ZaruMatcher;
+    impl super::Matcher for ZaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ざる"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("未然形"),
+        TokenMatcher::Custom(Arc::new(ZaruMatcher)),
+    ]
 }
 
 // Pattern: つもりで
