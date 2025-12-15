@@ -1,3 +1,125 @@
+## Session 420 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N1 patterns (を余儀なくされる, に至っては)
+**Patterns completed**: 2 (both N1, both priority 5)
+**Tests added**: 6 new tests (3 for を余儀なくされる, 3 for に至っては, all passing)
+**Total tests**: 2751 passing, 1 ignored (was 2745 passing, 1 ignored - net +6 tests)
+
+**Session highlights**:
+- Implemented を余儀なくされる (to be forced to) - 2 structure variants (standard + polite)
+- Implemented に至っては (when it comes to, as for) - 1 structure variant
+- Both patterns simple and straightforward
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: を余儀なくされる (to be forced to)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: を余儀なくされる is a formal grammar pattern combining を (adverbial particle), 余儀 (another method), なく (conjunctive form of ない), and される (passive form of する). Literally means "to not be given another way than to (A)" - i.e., "to be forced to (A)". Used when something is unavoidable.
+
+**Structures tested**: 2 structure variants from grammar_points_data.json
+1. Noun + を余儀なくされる (standard/past): 封鎖をよぎなくされた (chars 29-39), 自粛をよぎなくされた (chars 15-25)
+2. Noun + を余儀なくされます (polite): 生活をよぎなくされます (chars 28-39)
+
+**Implementation details**:
+- Matcher: Noun + を(格助詞) + よぎなく(形容詞/自立) + さ(動詞/する) + れ(動詞/接尾/passive) + た/ます(助動詞)
+- Custom matchers: YoginakuMatcher, SasuruMatcher, RePassiveMatcher, TaMasuMatcher, WoParticleMatcher
+- Pattern is a passive construction (される)
+- Always formal register
+
+**Test count**: 3 tests (all passing)
+- test_woyoginakusareru_past (封鎖をよぎなくされた)
+- test_woyoginakusareru_past_2 (自粛をよぎなくされた)
+- test_woyoginakusareru_polite (生活をよぎなくされます)
+
+**Tokenization observations**:
+- よぎなく: 形容詞/自立, base=よぎない, 連用テ接続
+- さ: 動詞/自立, base=する, サ変・スル/未然レル接続
+- れ: 動詞/接尾, base=れる, 一段/連用形 (passive auxiliary)
+- た/ます: 助動詞 (past or polite ending)
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n1.rs (implemented woyoginakusareru())
+- grammar-lib/src/tests/n1_patterns.rs (added 3 tests)
+- feature_list.json (marked を余儀なくされる as complete)
+
+---
+
+### ✅ Pattern Implemented: に至っては (when it comes to, as for)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: に至っては combines に (case-marking particle), いたる (る-Verb "to climax/culminate"), て-form (いたって), and は (adverbial particle). Literally means "culminating within (A) is (B)". Presents the most extreme example from within a specific category, often with negative/unfavorable nuance. Translates as "when it comes to (A)", "in particular to (A)", "what's worse".
+
+**Structures tested**: 1 structure variant from grammar_points_data.json
+1. Noun + に至っては:
+   - 母にいたっては (chars 14-21) - "when it comes to mother"
+   - さんにいたっては (chars 22-30) - "as for [Fujita]-san"
+   - リスニングにいたっては (chars 13-24) - "what's worse, listening"
+
+**Implementation details**:
+- Matcher: Noun + に(格助詞) + いたっ(動詞/自立, base=いたる) + て(接続助詞) + は(係助詞)
+- Custom matchers: NiParticleMatcher, ItattaMatcher, TeParticleMatcher, WaParticleMatcher
+- Five-token pattern matching the full construction
+- Register: formal
+
+**Test count**: 3 tests (all passing)
+- test_niitatteha_extreme_example_1
+- test_niitatteha_extreme_example_2
+- test_niitatteha_extreme_example_3
+
+**Tokenization observations**:
+- に: 助詞/格助詞/一般
+- いたっ: 動詞/自立, base=いたる, 五段・ラ行/連用タ接続
+- て: 助詞/接続助詞
+- は: 助詞/係助詞
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n1.rs (implemented niitatteha())
+- grammar-lib/src/tests/n1_patterns.rs (added 3 tests)
+- feature_list.json (marked に至っては as complete)
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 117 remaining
+- N1: 177 remaining (down from 179 - completed 2 patterns!)
+- Total: ~296 patterns remaining
+
+### Quality Metrics
+✅ All 6 tests have assert_pattern_range (3 + 3)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2751 tests passing)
+
+### Next Steps
+Continue with simple N1 priority 5 patterns (1-2 structure variants). Good candidates:
+- あっての - 1 structure
+- を経て - 1 structure
+- の極み - 1 structure
+- たなり・なり - 1 structure
+- なり - 1 structure
+
+Target: Continue implementing 2-3 patterns per session for steady progress.
+
+**Session outcome**: Successfully completed 2 N1 patterns with full coverage of all structure variants! Total of 6 new tests added (3 + 3), all passing, no regressions.
+
+---
+
 ## Session 417 - 2025-12-15
 
 ### Session Summary - COMPLETE
