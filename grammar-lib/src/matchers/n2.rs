@@ -5423,9 +5423,26 @@ pub fn kotonaku() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にて
+// Pattern: にて (formal particle for で)
+// Structures: Noun + にて
 pub fn nite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NiteMatcher;
+    impl Matcher for NiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "にて"
+                && token.base_form == "にて"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Noun (location/time/means)
+        TokenMatcher::Custom(Arc::new(NiteMatcher)),
+    ]
 }
 
 // Pattern: には

@@ -9812,3 +9812,55 @@ mod nu_negative_tests {
         assert_pattern_range(&patterns, "ぬ", 8, 11); // おらぬ
     }
 }
+
+// Pattern: にて (formal particle for で)
+// Data source: grammar_points_data.json["にて"]
+// Testing: structure.standard[0] - "Noun + にて"
+//
+// Structure variants:
+//   - standard[0]: Noun + にて (formal particle meaning with/by/at/using)
+//
+// Usage contexts to test:
+//   - Location (at)
+//   - Time (at)
+//   - Means/Method (by/using)
+
+mod nite_tests {
+    use super::*;
+
+    #[test]
+    fn test_nite_location() {
+        // Testing: Noun (location) + にて
+        // Example from grammar data: 金時計にて集合しましょう
+        let sentence = "明日は金時計にて集合しましょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にて");
+        assert_pattern_range(&patterns, "にて", 4, 8); // 時計にて
+    }
+
+    #[test]
+    fn test_nite_time() {
+        // Testing: Noun (time) + にて
+        // Example from grammar data: 午前９時にて開店いたします
+        let sentence = "当店は午前９時にて開店いたします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にて");
+        assert_pattern_range(&patterns, "にて", 6, 9); // 時にて
+    }
+
+    #[test]
+    fn test_nite_means() {
+        // Testing: Noun (means) + にて
+        // Example from grammar data: 電話にてご連絡ください
+        let sentence = "予約をされる場合は電話にてご連絡ください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にて");
+        assert_pattern_range(&patterns, "にて", 9, 13); // 電話にて
+    }
+}

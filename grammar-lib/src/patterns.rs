@@ -5595,7 +5595,7 @@ declare_patterns! {
     Nite {
         name: "にて",
         matcher_fn: crate::matchers::n2::nite,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },
