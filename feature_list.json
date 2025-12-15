@@ -7632,13 +7632,13 @@
   {
     "pattern_name": "活かす",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When を活（い）かす is partnered with a noun, it shows that (A) is something that is being made good use of, or leveraged [4 std, 4 pol]",
     "priority": 4,
     "skip_reason": null

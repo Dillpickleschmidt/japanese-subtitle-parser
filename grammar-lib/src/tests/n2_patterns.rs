@@ -3111,3 +3111,57 @@ mod mononara_u2460_tests {
         assert_pattern_range(&patterns, "ものなら①", 2, 9); // 行けるものなら
     }
 }
+
+// Pattern: 活かす (to make good use of, to leverage)
+// Data source: grammar_points_data.json["活かす"]
+// Structures: Noun + を + 活かす/生かす
+//
+// Matches the verb 活かす or 生かす (to make good use of) in any conjugation.
+// Often used with adverbs like 十分に (adequately), 有効に (effectively), etc.
+mod ikasu_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + を + 活かす"
+    #[test]
+    fn test_ikasu_basic() {
+        let sentence = "このパソコンの機能を十分に活かすのにはたくさんの知識が必要だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "活かす");
+        assert_pattern_range(&patterns, "活かす", 13, 16); // 活かす
+    }
+
+    // Testing: structure.standard[1] - "Noun + を + 活かした + Noun" (attributive)
+    #[test]
+    fn test_ikasu_attributive() {
+        let sentence = "私のくせ毛を活かした髪型にカットしてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "活かす");
+        assert_pattern_range(&patterns, "活かす", 6, 10); // 活かした (includes た)
+    }
+
+    // Testing: structure.standard[2] - "Noun + を + 生かす" (variant kanji)
+    #[test]
+    fn test_ikasu_variant_kanji() {
+        let sentence = "この失敗を次に生かしてみてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "活かす");
+        assert_pattern_range(&patterns, "活かす", 7, 10); // 生かし (連用形)
+    }
+
+    // Testing: Noun + を + 活かす with adverb
+    #[test]
+    fn test_ikasu_with_adverb() {
+        let sentence = "この料理は鯖の旨味を活かした料理なので調味料はあまり使っていません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "活かす");
+        assert_pattern_range(&patterns, "活かす", 10, 14); // 活かした
+    }
+}

@@ -815,9 +815,19 @@ pub fn uff5e_wo_uff5e_nimakaseru_reverse() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 活かす
+// Pattern: 活かす (to make good use of, to leverage)
+// Structure: (Noun + を) + 活かす/生かす
+// Matches the verb 活かす or 生かす in any conjugation
 pub fn ikasu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct IkasuMatcher;
+    impl Matcher for IkasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form == "活かす" || token.base_form == "生かす")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(IkasuMatcher))]
 }
 
 // Pattern: おおよそ (approximately, roughly)
