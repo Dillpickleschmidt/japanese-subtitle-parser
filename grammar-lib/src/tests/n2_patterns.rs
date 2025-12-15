@@ -10707,3 +10707,50 @@ mod souieba_tests {
         assert_pattern_range(&patterns, "そういえば", 0, 5); // そういえば
     }
 }
+
+// Pattern: それなのに (even so, and yet, despite that)
+// Data source: grammar_points_data.json["それなのに"]
+// Testing: structure.standard[0] - "Phrase。それなのに + Phrase"
+//
+// Structure variants:
+//   - standard[0]: Phrase。それなのに + Phrase (only variant)
+//
+// Notes: Conjunction combining それ (substitute noun) + な + のに (despite)
+// Used at beginning of sentences to express contradiction/unexpected outcome
+
+mod sorenanoni_tests {
+    use super::*;
+
+    #[test]
+    fn test_contradiction() {
+        // "My wife is in bed with a cold. And yet, she suddenly said she wants to go to the zoo"
+        let sentence = "妻は風邪をひいて寝込んでいる。それなのに、動物園に行きたいと言ってきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それなのに");
+        assert_pattern_range(&patterns, "それなのに", 15, 20); // それなのに
+    }
+
+    #[test]
+    fn test_unexpected_outcome() {
+        // "I study Japanese for 3 hours every day. And yet I don't feel like I'm improving"
+        let sentence = "毎日３時間日本語の勉強をしている。それなのに全然上達している感じがしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それなのに");
+        assert_pattern_range(&patterns, "それなのに", 17, 22); // それなのに
+    }
+
+    #[test]
+    fn test_despite_effort() {
+        // "I explained it clearly. And yet he still doesn't understand"
+        let sentence = "はっきり説明したのに。それなのに、まだ理解してくれない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それなのに");
+        assert_pattern_range(&patterns, "それなのに", 11, 16); // それなのに
+    }
+}

@@ -7119,9 +7119,22 @@ pub fn nominarazu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: それなのに
+// Pattern: それなのに (even so, and yet, despite that)
+// Structures: Phrase。それなのに + Phrase
 pub fn sorenanoni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for それなのに as conjunction
+    #[derive(Debug)]
+    struct SorenaNoniMatcher;
+    impl Matcher for SorenaNoniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "それなのに"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SorenaNoniMatcher))]
 }
 
 // Pattern: いわゆる (so-called, what is called)
