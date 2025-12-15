@@ -1,4 +1,106 @@
-## Session 371 - 2025-12-14
+## Session 371 - 2025-12-14 (Updated)
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 2 N3 patterns (必ずしも, 向け)
+**Patterns completed**: 2 (必ずしも, 向け - both N3 newly implemented)
+**Tests added**: 12 new tests total (8 for 必ずしも + 4 for 向け, all passing)
+**Total tests**: 2378 passing, 1 ignored (was 2366 passing, 1 ignored - net +12 tests)
+
+### ✅ Pattern 1 Implemented: 必ずしも (not necessarily/not always)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not highlighted in overlay)
+
+**Pattern**: Although it is often considered a stand-alone adverb, 必（かなら）ずしも is a combination of the adverb 必（かなら）ず 'invariably' or 'certainly', and the adverbial particles し and も. The particles し and も are combined to strengthen the meaning of the word before it. Due to this, 必ずしも may be translated as "absolutely certainly". However, 必ずしも is an expression that is only used in negative sentences, so is commonly translated as 'not always (A)', 'not entirely (A)', or 'not necessarily (A)'. The literal meaning is close to 'not absolutely certainly (A)'. This pattern is often used at the beginning of a phrase, before expressing something that is not 100% certain.
+
+**Structures tested**: 8 comprehensive tests covering all structure variants
+1. 必ずしも + Phrase + わけではない: 男の人は必ずしも強いわけではない → 必ずしも (4-8)
+2. 必ずしも + Phrase + わけじゃない: お金持ちが必ずしも幸せなわけじゃないよ → 必ずしも (5-9)
+3. 必ずしも + Phrase + とは限らない: 刑務所にいる人たちは必ずしも犯罪を犯したとは限らない → 必ずしも (10-14)
+4. 必ずしも + Phrase + とは言えない: 女の人は必ずしも買い物が好きだとは言えない → 必ずしも (4-8)
+5. 必ずしも + Phrase + わけではありません: 高価な物が必ずしも良いわけではありません → 必ずしも (5-9)
+6. 必ずしも + Phrase + わけじゃありません: 新しいものが必ずしも正しいわけじゃありません → 必ずしも (6-10)
+7. 必ずしも + Phrase + とは限りません: 有名な医者が必ずしも腕が良いとは限りません → 必ずしも (6-10)
+8. 必ずしも + Phrase + とは言えません: 学歴が高い人が必ずしも成功するとは言えません → 必ずしも (7-11)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (kanarazushimo function, lines 8487-8500)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (kanarazushimo_tests module, lines 13324-13414)
+- Pattern: grammar-lib/src/patterns.rs (Kanarazushimo variant, lines 4153-4159)
+
+### ✅ Pattern 2 Implemented: 向け (intended for/aimed at)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority - detected but not highlighted in overlay)
+
+**Pattern**: 向（む）け is a shortened form of the transitive verb 向（む）ける 'to aim at', and is considered to be a 造語（ぞうご） (neologism). This means a word that was created for a specific purpose, and may not necessarily be used for anything outside of that purpose. The purpose of 向（む）け is to attach to other nouns, in order to express that something is 'intended for (A)', 'aimed at (A)', or 'oriented toward (A)'. 向け may be seen followed by the case marking particle に (when followed by a phrase), or the case marking particle の, when linked with another noun.
+
+**Structures tested**: 4 comprehensive tests covering both structure variants
+1. Noun + 向け + に: この教科書は上級者向けに書いてある → 者向け (8-11)
+2. Noun + 向け + に: 子供向けに書かれた本を読んで日本語を勉強したら？ → 子供向け (0-4)
+3. Noun + 向け + の + Noun: オフィス向けのパソコンを１０台買うとしたらいくらになりますか → オフィス向け (0-6)
+4. Noun + 向け + の + Noun: これは大人向けの映画だから、お前には見せれないよ → 大人向け (3-7)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (muke function, lines 8527-8544)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (muke_tests module, lines 13424-13470)
+- Pattern: grammar-lib/src/patterns.rs (Muke variant, lines 4177-4183)
+
+**Tokenization pattern**:
+```
+向け suffix:
+- surface='向け', base='向け'
+- POS: 名詞/接尾/一般 (suffix noun)
+- Always follows a noun
+- Can be followed by に (purpose/direction) or の (modifier)
+
+Examples:
+- 上級者向けに (for advanced learners)
+- 子供向けに (for children)
+- オフィス向けの (intended for office use)
+- 大人向けの (for adults)
+```
+
+**Key implementation points**:
+1. Two-token matcher: Noun + MukeMatcher
+2. MukeMatcher checks surface='向け', base='向け', POS=名詞/接尾
+3. Pattern priority: 1 (low - construction pattern, detected but not highlighted)
+
+**Pattern ranges**: Include Noun + 向け
+- Captures the full construction: preceding noun + 向け
+- Does NOT include following particles (に, の)
+- Examples: 子供向け (0-4), 大人向け (3-7), オフィス向け (0-6)
+
+**Linguistic Note**: 向け comes from the transitive verb 向ける 'to aim at' and is used to express that something has been specifically designed or intended for a particular purpose or audience. This differs from the related suffix 向き (from intransitive 向く) which expresses something that faces toward (A), but perhaps not intentionally. 向け implies intentional design, while 向き implies suitability.
+
+**Related patterns**:
+- 向き (N3) - "suitable for / facing toward" (not yet implemented - similar but distinct pattern)
+
+---
+
+### Session Stats
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 10 remaining (down from 12!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~381 patterns remaining (down from ~383!)
+
+**Quality metrics**:
+✅ All 12 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples
+✅ Correct character ranges
+✅ No regressions (all 2378 tests passing)
+
+**Next priority**: 上がる・上げる (agaru/ageru) - "to rise / to raise" (verb suffix patterns)
+
+---
+
 
 ### ✅ Session Summary
 **Status**: COMPLETE - Successfully implemented 1 N3 pattern (必ずしも)
