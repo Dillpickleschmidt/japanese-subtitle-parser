@@ -1,3 +1,63 @@
+## Session 478 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented てならない pattern (N2)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 5 new tests (all passing with range assertions)
+**Total tests**: 3139 passing, 1 ignored (was 3134 before session, net +5 tests)
+
+**Session highlights**:
+- Implemented てならない (can't help but feel, extremely) - N2 pattern
+- Pattern structure: Verb[て]/い-Adj[くて]/な-Adj[で] + ならない/なりません
+- Handles complex tokenization: 3 different forms of なら/なり depending on context
+- Test-first workflow with print_debug to understand tokenization
+- All 5 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: てならない (can't help but feel, extremely)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: てならない is a formal construction expressing "extremely (A)" or "can't help but feel (A)". Used when (A) is something that occurs spontaneously and uncontrollably, typically ongoing feelings like worry, sleepiness, or nostalgia. More literal translation: "to not be able to move on from (A)".
+
+**Structures tested**: 5 test variants (from grammar_points_data.json)
+1. Verb[て] + ならない: 思い出してならない (chars 6-15) - "can't help but remember"
+2. い-Adjective[くて] + ならない: 暑くてならない (chars 6-13) - "extremely hot"
+3. な-Adjective[で] + ならない: 心配でならない (chars 15-22) - "can't help but worry"
+4. い-Adjective[くて] + なりません: むかついてなりません (chars 14-24) - "extremely irritated" (polite)
+5. な-Adjective[で] + なりません: 不安でなりません (chars 8-16) - "extremely anxious" (polite)
+
+**Implementation details**:
+- Matcher structure: TokenMatcher::Any + て/で (particle/auxiliary) + なら/なり + ない/ませ + Optional(ん)
+- Four custom matchers:
+  1. TeDeParticleMatcher: matches て or で as conjunction (助詞 or 助動詞)
+  2. NaraNariMatcher: matches なら (verb 未然形) OR なり (auxiliary OR verb 連用形)
+  3. NaiMaseMatcher: matches ない OR ませ (auxiliary)
+  4. NMatcher: matches ん (polite negative auxiliary)
+- TokenMatcher::Any captures preceding word (verb/adjective/noun)
+
+**Tokenization observations**:
+- Standard form: て/で + なら(動詞, base=なる, 未然形) + ない(助動詞)
+- Polite form (after verb/i-adj): て + なり(動詞, base=なる, 連用形) + ませ(助動詞) + ん(助動詞)
+- Polite form (after な-adj): で + なり(助動詞, base=なり) + ませ(助動詞) + ん(助動詞)
+- Critical finding: なり has THREE different tokenizations depending on preceding word type!
+
+**Test count**: 5 tests (all passing)
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs (implementation)
+- grammar-lib/src/tests/n2_patterns.rs (5 tests)
+- feature_list.json (status update)
+
+**Pattern implemented**: てならない
+**Commit**: 51b128c
+**Next priorities**: Other N2 priority 4 patterns (てしょうがない, だけましだ, たちまち, etc.)
+
+---
+
 ## Session 477 - 2025-12-15
 
 ### Session Summary - COMPLETE
