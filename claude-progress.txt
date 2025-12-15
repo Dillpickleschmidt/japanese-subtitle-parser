@@ -1,3 +1,71 @@
+## Session 393 - 2025-12-15
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (後(の) Noun)
+**Patterns completed**: 1 (後(の) Noun - N2 newly implemented)
+**Tests added**: 3 new tests total (all passing)
+**Total tests**: 2563 passing, 1 ignored (was 2560 passing, 1 ignored - net +3 tests)
+
+**Session highlights**:
+- Implemented 後(の) Noun (the rest of, what's remaining)
+- Comprehensive coverage of all 3 structure variants
+- Clean implementation with proper test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: 後(の) Noun (the rest of, what's remaining)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: One of the common uses for the noun 後（あと） 'behind' is to express a remainder, or everything after a certain point. This can be translated as 'what's left of (A)', 'the rest of (A)', 'what's remaining of (A)', or even 'other than (A)'.
+
+**Structures tested**: 3 comprehensive tests covering all variants
+1. あと + の + Noun: 後の段ボール箱 (33-39) - "the rest of the cardboard boxes"
+2. あと + Phrase: 後ちょっと (0-5) - "a little bit more"
+3. あと + Number + (Counter): 後三日 (6-9) - "3 days left"
+
+**Implementation**: Matcher in n2.rs (lines 1346-1399), tests in n2_patterns.rs (lines 3799-3834)
+
+**Key notes**:
+- Pattern structure: 後 + Optional(の) + Any + Optional(Counter)
+- 後 tokenizes in two different ways:
+  * 名詞/接尾/副詞可能 (for structures 1 & 2)
+  * 接頭詞/名詞接続 (for structure 3 with numbers)
+- Optional の particle for structure 1
+- Optional counter (助数詞) for structure 3
+
+**Tokenization observations**:
+- **Structure 1 & 2**: surface="後", base="後", pos=名詞/接尾/副詞可能
+- **Structure 3**: surface="後", base="後", pos=接頭詞/名詞接続
+- **の**: surface="の", pos=助詞/連体化
+- **Counter**: pos=名詞/接尾/助数詞 (e.g., 日, 人, etc.)
+
+**Pattern ranges**: Full construction from 後 through noun/phrase/number+counter
+- あと + の + Noun: 後の段ボール箱 (includes 後 + の + noun)
+- あと + Phrase: 後ちょっと (includes 後 + phrase element)
+- あと + Number + Counter: 後三日 (includes 後 + number + counter)
+
+### Test Quality Metrics (後(の) Noun)
+✅ All 3 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 147 remaining (down from 148!)
+- N1: 186 remaining
+- Total: ~348 patterns remaining (down from ~349!)
+
+**Next priority**: Continue with N2 patterns - を巡って, にわたって, に沿って, た末・の末, etc.
+
+---
+
 ## Session 392 - 2025-12-15
 
 ### ✅ Session Summary
