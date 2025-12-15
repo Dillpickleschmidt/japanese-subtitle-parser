@@ -2769,8 +2769,82 @@ pub fn nakuhanai() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ないことには～ない
+// Pattern: ないことには～ない (unless, without)
+// Structures:
+//   1. Verb[ない] + ことには
+//   2. い-Adjective[ない] + ことには
+//   3. な-Adjective + でない + ことには
+//   4. Noun + でない + ことには
 pub fn naikotoniha_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Custom matcher for で auxiliary (from だ copula)
+    #[derive(Debug)]
+    struct DeAuxiliaryMatcher;
+    impl Matcher for DeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Custom matcher for ない (auxiliary or adjective)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Custom matcher for こと (dependent noun)
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Custom matcher for に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Custom matcher for は particle
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Pattern matches (で)ないことには
+    // で is optional - present for な-adjectives/nouns (でない), absent for verbs/い-adjectives (ない)
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DeAuxiliaryMatcher,
+        )))), // Optional で
+        TokenMatcher::Custom(Arc::new(NaiMatcher)), // ない
+        TokenMatcher::Custom(Arc::new(KotoMatcher)), // こと
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)), // に
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)), // は
+    ]
 }
 
 // Pattern: ないではいられない

@@ -5757,3 +5757,65 @@ mod saini_tests {
         assert_pattern_range(&patterns, "際に", 3, 8); // 面接の際に
     }
 }
+
+// Pattern: ないことには～ない (unless, without)
+// Data source: grammar_points_data.json["ないことには～ない"]
+// Testing standard structures (no polite forms listed)
+//
+// Structure variants:
+//   - standard[0]: Verb[ない] + ことには + Verb[ない]
+//   - standard[1]: い-Adjective[ない] + ことには + Verb[ない]
+//   - standard[2]: な-Adjective + でない + ことには + Verb[ない]
+//   - standard[3]: Noun + でない + ことには + Verb[ない]
+
+mod naikotoniha_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_nai_kotoniha() {
+        // Structure: Verb[ない] + ことには + Verb[ない]
+        // Example from grammar_points_data.json: ヘルメットを被らないことには、この工事現場には入れない
+        let sentence = "ヘルメットを被らないことには、この工事現場には入れない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないことには～ない");
+        assert_pattern_range(&patterns, "ないことには～ない", 8, 14); // ないことには
+    }
+
+    #[test]
+    fn test_i_adj_nai_kotoniha() {
+        // Structure: い-Adjective[ない] + ことには + Verb[ない]
+        // Example from grammar_points_data.json: スリルがないことには楽しくない
+        let sentence = "ジェットコースターは、スリルがないことには楽しくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないことには～ない");
+        assert_pattern_range(&patterns, "ないことには～ない", 15, 21); // ないことには
+    }
+
+    #[test]
+    fn test_na_adj_denai_kotoniha() {
+        // Structure: な-Adjective + でない + ことには + Verb[ない]
+        // Example from grammar_points_data.json: 何事も一生懸命でないことには、何も上手くなれない
+        let sentence = "何事も一生懸命でないことには、何も上手くなれない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないことには～ない");
+        assert_pattern_range(&patterns, "ないことには～ない", 7, 14); // でないことには
+    }
+
+    #[test]
+    fn test_noun_denai_kotoniha() {
+        // Structure: Noun + でない + ことには + Verb[ない]
+        // Example from grammar_points_data.json: 許可書がないことには、ここへは入れません
+        let sentence = "許可書がないことには、ここへは入れません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないことには～ない");
+        assert_pattern_range(&patterns, "ないことには～ない", 4, 10); // ないことには
+    }
+}

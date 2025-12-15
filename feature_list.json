@@ -8290,13 +8290,13 @@
   {
     "pattern_name": "ないことには～ない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ないことには～ない is a 2-part structure in Japanese that is used to express that 'unless you do (A), (B) will not happen or e... [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
