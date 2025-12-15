@@ -1,3 +1,141 @@
+## Session 455 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (にしたら, にしても～にしても)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 9 new tests (4 + 5, all passing with range assertions)
+**Total tests**: 3008 passing, 1 ignored (was 2999 before session, net +9 tests)
+
+**Session highlights**:
+- Implemented にしたら (from the point of view of, from the perspective of) - N2 pattern
+- Implemented にしても～にしても (regardless of whether A or B) - N2 pattern
+- にしたら: Handles both にしたら (casual) and にすれば (formal) forms
+- にしても～にしても: Uses existing にしても pattern from N3, tests verify both instances detected
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 9 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented #1: にしたら (from the point of view of, from the perspective of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: When に is combined with the hypothetical forms of する (すれば, or したら), it forms a structure used in Japanese for conveying that the speaker is making an opinion about (A), from its point of view. This is frequently translated as 'from the point of view of (A)', or 'from the standpoint of (A)'.
+
+**Structures tested**: 4 test variants
+1. Noun + にしたら: お客様にしたら (chars 0-7) - from customer's perspective
+2. Noun + にしたら: 人にしたら (chars 6-11) - from person's perspective
+3. Noun + にすれば: 親にすれば (chars 12-17) - from parent's perspective (formal)
+4. Noun + にすれば: 日本人にすれば (chars 0-7) - from Japanese perspective (formal)
+
+**Implementation details**:
+- Matcher structure: Any (Noun) + に (格助詞) + する verb (連用形 or 仮定形) + たら/ば
+- Custom matchers created:
+  - NiCaseMatcher: matches に as case particle (助詞/格助詞)
+  - SuruMatcher: matches する verb in 連用形 (し) or 仮定形 (すれ)
+  - TaraBaMatcher: matches たら (助動詞, 仮定形) or ば (接続助詞)
+- TokenMatcher::Any handles preceding noun
+- Pattern includes full construction from noun through conditional form
+
+**Test count**: 4 tests (all passing)
+- test_nishitara_customer: お客様にしたら pattern
+- test_nishitara_person: 人にしたら pattern
+- test_nisureba_parent: 親にすれば pattern
+- test_nisureba_japanese: 日本人にすれば pattern
+
+**Tokenization observations**:
+- にしたら: Noun + に (格助詞) + し (動詞, 連用形, base=する) + たら (助動詞, 仮定形, base=た)
+- にすれば: Noun + に (格助詞) + すれ (動詞, 仮定形, base=する) + ば (接続助詞)
+- Both forms follow same structure with different conjugations
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented nishitara() function with 3 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added nishitara_tests module with 4 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Will not be used in regard to oneself (私にしたら is unnatural)
+- にすれば is more formal than にしたら
+- Usually used after nouns identifying people or organizations
+
+---
+
+### ✅ Pattern Implemented #2: にしても～にしても (regardless of whether A or B)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: にしても, a grammar point consisting of に, the て-form of する, and も, is used to convey that 'regardless of (A) or (B), the result will still be (C)'. When repeated as (A) にしても (B) にしても, it expresses that the result is true regardless of either option.
+
+**Structures tested**: 5 test variants
+1. Verb + にしても: するにしても + しないにしても (chars 8-12, 16-20)
+2. Verb + にしても: 直すにしても + するにしても (chars 6-10, 18-22)
+3. い-Adjective + にしても: 深いにしても + 浅いにしても (chars 5-9, 12-16)
+4. な-Adjective + にしても: 上手にしても + 下手にしても (chars 6-10, 13-17)
+5. Noun + にしても: 平日にしても + 祝日にしても (chars 2-6, 8-12)
+
+**Implementation details**:
+- Uses existing にしても pattern from N3 (already implemented)
+- Pattern detects each "X にしても" instance separately
+- Tests verify that both instances are detected in each sentence
+- No new matcher needed - existing implementation handles all forms
+
+**Test count**: 5 tests (all passing)
+- test_verb_nishitemo_verb_nishitemo: Verb pattern (affirmative and negative)
+- test_verb_nishitemo_rebuild_remodel: Different verbs pattern
+- test_i_adj_nishitemo_deep_shallow: い-Adjective pattern
+- test_na_adj_nishitemo_good_bad: な-Adjective pattern
+- test_noun_nishitemo_weekday_holiday: Noun pattern
+
+**Tokenization observations**:
+- Each にしても is detected as a separate pattern instance
+- Pattern name is "にしても" (not "にしても～にしても")
+- Tests verify exactly 2 instances are detected per sentence
+- Works with verbs, い-adjectives, な-adjectives, and nouns
+
+**Files modified**: 2
+- grammar-lib/src/tests/n2_patterns.rs: Added nishitemo_uff5e_nishitemo_tests module with 5 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Pattern already implemented in N3, tests added for N2 repeated form
+- Each instance detected separately, not as a single "A にしても B にしても" unit
+- Completely interchangeable with にしろ～にしろ and にせよ～にせよ
+- にしろ and にせよ are more direct, less formal
+
+---
+
+**Current stats** (after both patterns):
+- N5: ✅ All complete
+- N4: 1 remaining (meta-pattern)
+- N3: ✅ All complete
+- N2: 104 remaining (down from 106 - completed 2 patterns!)
+- N1: 176 remaining
+- Total: ~281 patterns remaining
+
+### Quality Metrics
+✅ All 9 tests have assert_pattern_range (4 + 5)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 3008 tests passing, up from 2999)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- としては - as for
+- としても - even if
+- それにしても - even so
+- ぬ - classical negative
+- にて - formal location/means marker
+
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 9 new tests added (4 + 5), all passing, no regressions. One pattern required new implementation (にしたら), the other leveraged existing N3 pattern (にしても). Clean implementation following test-first workflow.
+
+---
+
 ## Session 453 - 2025-12-15
 
 ### Session Summary - COMPLETE
