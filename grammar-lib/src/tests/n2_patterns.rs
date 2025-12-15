@@ -6511,3 +6511,107 @@ mod wotowazu_tests {
         }
     }
 }
+
+// Pattern: のももっともだ (it's only natural that, it's reasonable that)
+// Data source: grammar_points_data.json["のももっともだ"]
+//
+// Structure variants:
+//   - standard[0]: Verb + のも + もっとも + だ
+//   - standard[1]: い-Adjective + のも + もっとも + だ
+//   - standard[2]: な-Adjective + なのも + もっとも + だ
+//   - standard[3]: Noun + も + もっともだ (no の)
+//   - Note: のは can be used instead of のも
+//   - Note: は can be used instead of も (for nouns)
+//   - polite[0-3]: Same with です instead of だ
+
+mod nomomottomoda_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_standard() {
+        // Structure: Verb + のももっともだ
+        let sentence = "そんなことを彼女に言ったのか？彼女が怒るのももっともだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のももっともだ");
+        assert_pattern_range(&patterns, "のももっともだ", 18, 27); // 怒るのももっともだ
+    }
+
+    #[test]
+    fn test_i_adjective_standard() {
+        // Structure: い-Adjective + のももっともだ
+        let sentence = "彼はいつも夜遅くまで残業をしているから、いつも眠いのももっともだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のももっともだ");
+        assert_pattern_range(&patterns, "のももっともだ", 23, 32); // 眠いのももっともだ
+    }
+
+    #[test]
+    fn test_na_adjective_standard() {
+        // Structure: な-Adjective + なのももっともだ
+        let sentence = "彼は高校生の頃から毎日日本語を勉強をしてきた。上手なのももっともだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のももっともだ");
+        assert_pattern_range(&patterns, "のももっともだ", 23, 33); // 上手なのももっともだ
+    }
+
+    #[test]
+    fn test_noun_standard() {
+        // Structure: Noun + ももっともだ (no の)
+        let sentence = "親の反対ももっともだが、俺はもう俺のやり方でやると決めたから親の意見に合わすつもりはない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のももっともだ");
+        assert_pattern_range(&patterns, "のももっともだ", 2, 10); // 反対ももっともだ
+    }
+
+    #[test]
+    fn test_verb_with_noha() {
+        // Structure: Verb + のは + もっともだ (variant with は instead of も)
+        let sentence = "彼がそんな風に考えるのはもっともだと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のももっともだ");
+        assert_pattern_range(&patterns, "のももっともだ", 7, 17); // 考えるのはもっともだ
+    }
+
+    #[test]
+    fn test_noun_with_ha() {
+        // Structure: Noun + はもっともだ (variant with は instead of も)
+        let sentence = "君の心配はもっともだけど、大丈夫だよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のももっともだ");
+        assert_pattern_range(&patterns, "のももっともだ", 2, 10); // 心配はもっともだ
+    }
+
+    #[test]
+    fn test_verb_polite() {
+        // Structure: Verb + のももっともです (polite)
+        let sentence = "長時間働いているから疲れるのももっともです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のももっともだ");
+        assert_pattern_range(&patterns, "のももっともだ", 10, 21); // 疲れるのももっともです
+    }
+
+    #[test]
+    fn test_na_adjective_polite() {
+        // Structure: な-Adjective + なのももっともです (polite)
+        let sentence = "この料理は特別な材料を使っているから高価なのももっともです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のももっともだ");
+        assert_pattern_range(&patterns, "のももっともだ", 18, 29); // 高価なのももっともです
+    }
+}

@@ -5577,9 +5577,91 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: のももっともだ
+// Pattern: のももっともだ (it's only natural that, it's reasonable that)
+// Structures:
+//   - Verb/い-Adj + の + も/は + もっとも + だ/です
+//   - な-Adj + な + の + も/は + もっとも + だ/です
+//   - Noun + も/は + もっとも + だ/です
 pub fn nomomottomoda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の as nominalizer (名詞/非自立)
+    #[derive(Debug)]
+    struct NoNominalizer;
+    impl Matcher for NoNominalizer {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Match も or は particle (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoHaParticle;
+    impl Matcher for MoHaParticle {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "も" || token.surface == "は")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match もっとも (副詞/一般 or 名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct Mottomo;
+    impl Matcher for Mottomo {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もっとも"
+                && ((token.pos.first().is_some_and(|p| p == "副詞")
+                    && token.pos.get(1).is_some_and(|p| p == "一般"))
+                    || (token.pos.first().is_some_and(|p| p == "名詞")
+                        && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹")))
+        }
+    }
+
+    // Match だ or です (助動詞)
+    #[derive(Debug)]
+    struct DaDes;
+    impl Matcher for DaDes {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match な (助動詞, 特殊・ダ, 体言接続) - for な-adjectives
+    #[derive(Debug)]
+    struct NaAuxiliary;
+    impl Matcher for NaAuxiliary {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // We need to match:
+    // 1. Any token (verb/adjective/noun) - using Any
+    // 2. Optional な (for な-adjectives)
+    // 3. Optional の (for non-noun cases)
+    // 4. も/は particle
+    // 5. もっとも + だ/です
+
+    vec![
+        TokenMatcher::Any,  // The word before の/も/は
+        // Optional な for な-adjectives
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaAuxiliary)))),
+        // Optional の nominalizer (not present for bare nouns)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoNominalizer)))),
+        // も or は particle
+        TokenMatcher::Custom(Arc::new(MoHaParticle)),
+        // もっとも (adverb or na-adjective)
+        TokenMatcher::Custom(Arc::new(Mottomo)),
+        // だ or です
+        TokenMatcher::Custom(Arc::new(DaDes)),
+    ]
 }
 
 // Pattern: たって (even if, even though, no matter how)
