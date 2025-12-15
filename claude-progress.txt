@@ -1,3 +1,54 @@
+## Session 481 - 2025-12-15
+
+### Session Summary - て当然だ Pattern Complete ✓
+**Status**: Successfully implemented て当然だ pattern
+**Patterns completed**: 1 (て当然だ - N2, priority 4)
+**Total tests**: 3149 passing, 1 ignored (added 6 new tests)
+
+**Session highlights**:
+- Implemented て当然だ (natural/a matter of course) pattern
+- Created 6 comprehensive tests covering all structure variants
+- All tests passing with proper range assertions
+- Pattern handles Verb[て], い-Adj[て], and な-Adj[で] forms
+- Both standard (だ) and polite (です) forms tested
+- No regressions in test suite
+
+---
+
+### ✓ Completed: て当然だ (natural/a matter of course)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb[て] + 当然 + だ/です
+- い-Adjective[て] + 当然 + だ/です
+- な-Adjective[で] + 当然 + だ/です
+
+**Implementation details**:
+- Custom matcher `VerbOrAdjTeFormMatcher` handles verbs (連用形/連用タ接続), い-adjectives (連用テ接続), and な-adjectives (形容動詞語幹)
+- Custom matcher `TeDeMatcher` distinguishes て particle (助詞/接続助詞) from で copula (助動詞, base=だ)
+- Custom matcher `TouzenMatcher` for 当然 (副詞)
+- Custom matcher `DaDesuMatcher` for だ or です endings
+
+**Tests created**: 6 tests
+1. `test_verb_te_touzen_da` - 嫌われて当然だ (passive verb + て)
+2. `test_i_adj_te_touzen_da` - 美味しくて当然だ (い-adj + て)
+3. `test_na_adj_de_touzen_da` - 綺麗で当然だ (な-adj + で)
+4. `test_verb_te_touzen_desu` - 成功して当然です (verb + て, polite)
+5. `test_i_adj_te_touzen_desu` - 上手くて当然です (い-adj + て, polite)
+6. `test_na_adj_de_touzen_desu` - 便利で当然です (な-adj + で, polite)
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented tetouzenda() function (71 lines)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 6 comprehensive tests
+- `feature_list.json` - Updated て当然だ to complete status
+
+---
+
 ## Session 480 - 2025-12-15
 
 ### Session Summary - WIP Investigation
