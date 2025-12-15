@@ -6202,9 +6202,49 @@ pub fn karatoitte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: そういえば
+// Pattern: そういえば (speaking of which, come to think of it)
+// Structures: そう + いえば (adverb + conditional form of 言う)
 pub fn souieba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for そう as adverb
+    #[derive(Debug)]
+    struct SouAdverbMatcher;
+    impl Matcher for SouAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Matcher for いえ (conditional form of 言う)
+    #[derive(Debug)]
+    struct IebaVerbMatcher;
+    impl Matcher for IebaVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いえ"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Matcher for ば (conditional particle)
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SouAdverbMatcher)),
+        TokenMatcher::Custom(Arc::new(IebaVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
+    ]
 }
 
 // Pattern: お～願う (humble request: please do)

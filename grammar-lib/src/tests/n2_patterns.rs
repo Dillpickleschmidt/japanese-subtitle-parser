@@ -10660,3 +10660,50 @@ mod toiukazeni_tests {
         assert_pattern_range(&patterns, "ふうに", 17, 23); // というふうに (caught by general ふうに pattern)
     }
 }
+
+// Pattern: そういえば (speaking of which, come to think of it)
+// Data source: grammar_points_data.json["そういえば"]
+// Testing: structure.standard[0] - "そういえば + Phrase"
+//
+// Structure variants:
+//   - standard[0]: そういえば + Phrase (only variant)
+//
+// Notes: Set phrase consisting of そう + 言えば (conditional of 言う)
+// Used at beginning of sentences to bring up related topics
+
+mod souieba_tests {
+    use super::*;
+
+    #[test]
+    fn test_basic_usage() {
+        // "Speaking of which, I finished reading the book I borrowed the other day"
+        let sentence = "そういえば、この前借りた本読み終わったよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そういえば");
+        assert_pattern_range(&patterns, "そういえば", 0, 5); // そういえば
+    }
+
+    #[test]
+    fn test_reminder() {
+        // "Come to think of it, did you transfer the rent to the landlord?"
+        let sentence = "そういえば、大家さんに家賃振り込んでくれた？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そういえば");
+        assert_pattern_range(&patterns, "そういえば", 0, 5); // そういえば
+    }
+
+    #[test]
+    fn test_mid_conversation() {
+        // "Speaking of which, I met your mother's friend at the station"
+        let sentence = "そういえば、さっき駅でお母さんの友達に会ったよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そういえば");
+        assert_pattern_range(&patterns, "そういえば", 0, 5); // そういえば
+    }
+}
