@@ -6272,9 +6272,74 @@ pub fn kotonihanaranai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: だけのことはある
+// Pattern: だけのことはある (no wonder, as expected)
+// Structures: [Verb/い-Adj/Noun/な-Adj] + だけのことはある/ありま��
 pub fn dakenokotohaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for だけ (副助詞)
+    #[derive(Debug)]
+    struct DakeMatcher;
+    impl super::Matcher for DakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だけ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Matcher for の (連体化)
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl super::Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Matcher for こと (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl super::Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for は (係助詞)
+    #[derive(Debug)]
+    struct WaKakariMatcher;
+    impl super::Matcher for WaKakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for ある (動詞/自立) - matches both 基本形 and 連用形 (for ありません, あります)
+    #[derive(Debug)]
+    struct AruVerbMatcher;
+    impl super::Matcher for AruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Matches preceding word (verb, adjective, noun, etc.)
+        TokenMatcher::Custom(Arc::new(DakeMatcher)),
+        TokenMatcher::Custom(Arc::new(NoRentaikaMatcher)),
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(WaKakariMatcher)),
+        TokenMatcher::Custom(Arc::new(AruVerbMatcher)),
+    ]
 }
 
 // Pattern: てはならない (must not do)

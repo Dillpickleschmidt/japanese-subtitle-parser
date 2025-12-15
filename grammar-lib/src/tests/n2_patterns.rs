@@ -8104,3 +8104,89 @@ mod womotoni_tests {
         assert_pattern_range(&patterns, "をもとに", 5, 9); // をもとに (した is separate)
     }
 }
+
+// Pattern: だけのことはある (no wonder, as expected)
+// Data source: grammar_points_data.json["だけのことはある"]
+// Testing structure variants from grammar data
+//
+// Structure variants:
+//   - standard[0]: Verb + だけのことはある
+//   - standard[1]: い-Adjective + だけのことはある
+//   - standard[2]: Noun + (だった) + だけのことはある
+//   - standard[3]: な-Adjective + な/だった + だけのことはある
+//   - polite[0]: Verb + だけのことはあります
+mod dakenokotohaaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_dakeno() {
+        // Structure: Verb + だけのことはある
+        // Example from grammar data: 毎日稽古に行っていただけのことはある
+        let sentence = "娘が空手の大会で優勝した。さすがに一年間毎日稽古に行っていただけのことはある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけのことはある");
+        assert_pattern_range(&patterns, "だけのことはある", 29, 38); // ただけのことはある
+    }
+
+    #[test]
+    fn test_i_adjective_dakeno() {
+        // Structure: い-Adjective + だけのことはある
+        // Example from grammar data: 若いだけのことはある
+        let sentence = "田中くんは体力もあるし動きもテキパキしている。やっぱり若いだけのことはある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけのことはある");
+        assert_pattern_range(&patterns, "だけのことはある", 27, 37); // 若いだけのことはある
+    }
+
+    #[test]
+    fn test_noun_dakeno() {
+        // Structure: Noun + な + だけのことはある (な-adjective treated as noun)
+        // Example from grammar data: 有名なだけのことはある
+        let sentence = "あのホテルのサービスはとても良かった。やっぱり有名なだけのことはある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけのことはある");
+        assert_pattern_range(&patterns, "だけのことはある", 25, 34); // なだけのことはある
+    }
+
+    #[test]
+    fn test_na_adjective_dakeno() {
+        // Structure: Noun + だけのことはある
+        // Example from grammar data: 習字の先生だけのことはある
+        let sentence = "高橋先生が書く漢字はものすごく綺麗だ。さすが習字の先生だけのことはある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけのことはある");
+        assert_pattern_range(&patterns, "だけのことはある", 25, 35); // 先生だけのことはある
+    }
+
+    #[test]
+    fn test_noun_datta_dakeno() {
+        // Structure: Noun + だった + だけのことはある
+        // Example from grammar data: 昔ボクサーだっただけのことはある
+        let sentence = "鈴木さんは６０歳なのにムキムキだ。昔ボクサーだっただけのことはある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけのことはある");
+        assert_pattern_range(&patterns, "だけのことはある", 24, 33); // ただけのことはある
+    }
+
+    #[test]
+    fn test_na_adjective_datta_dakeno() {
+        // Structure: な-Adjective + だった + だけのことはある
+        // Example from grammar data: 昔から正直だっただけのことはある
+        let sentence = "あの政治家はとても信頼されている。さすが昔から正直だっただけのことはある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だけのことはある");
+        assert_pattern_range(&patterns, "だけのことはある", 27, 36); // ただけのことはある
+    }
+}
