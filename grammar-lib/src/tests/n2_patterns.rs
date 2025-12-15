@@ -9448,3 +9448,60 @@ mod nishitemo_uff5e_nishitemo_tests {
         assert_eq!(nishitemo_patterns[1].end_char, 12); // 祝日にしても (second instance)
     }
 }
+
+// Pattern: 何しろ (at any rate, after all)
+// Data source: grammar_points_data.json["何しろ"]
+// Testing: structure.standard[0] - "何（なに）しろ + Phrase"
+//
+// Structure variants:
+//   - standard[0]: 何しろ + Phrase (only one structure variant)
+//
+// Note: 何しろ is typically an adverb appearing at the beginning of sentences or clauses
+
+mod nanishiro_tests {
+    use super::*;
+
+    #[test]
+    fn test_nanishiro_sentence_start() {
+        // Example from grammar data: なにしろ彼はまだ始めたばかりなので
+        let sentence = "なにしろ彼はまだ始めたばかりなので大目に見てやってください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何しろ");
+        assert_pattern_range(&patterns, "何しろ", 0, 4); // なにしろ
+    }
+
+    #[test]
+    fn test_nanishiro_clause_start() {
+        // Example from grammar data: なにしろ彼はプロなんだから
+        let sentence = "彼はできて当たり前だよ。なにしろ彼はプロなんだから。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何しろ");
+        assert_pattern_range(&patterns, "何しろ", 12, 16); // なにしろ
+    }
+
+    #[test]
+    fn test_nanishiro_with_kara() {
+        // Example from grammar data: なにしろ今日は普段より暑かったから
+        let sentence = "なにしろ今日は普段より暑かったからクタクタだよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何しろ");
+        assert_pattern_range(&patterns, "何しろ", 0, 4); // なにしろ
+    }
+
+    #[test]
+    fn test_nanishiro_with_node() {
+        // Example from grammar data: なにしろこの商品は不便すぎるので
+        let sentence = "なにしろこの商品は不便すぎるので、どれだけ値下げをしても売れないでしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何しろ");
+        assert_pattern_range(&patterns, "何しろ", 0, 4); // なにしろ
+    }
+}

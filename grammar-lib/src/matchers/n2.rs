@@ -6676,9 +6676,24 @@ pub fn niseyo_u30fb_nishiro() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 何しろ
+// Pattern: 何しろ (at any rate, after all)
+// Structures: なにしろ (single adverb token)
 pub fn nanishiro() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for なにしろ as a general adverb
+    #[derive(Debug)]
+    struct NanishiroMatcher;
+    impl Matcher for NanishiroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なにしろ"
+                && token.base_form == "なにしろ"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NanishiroMatcher))]
 }
 
 // Pattern: にしろ～にしろ (whether... or...)
