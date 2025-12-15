@@ -665,3 +665,71 @@ mod mademonai_tests {
         assert_pattern_range(&patterns, "までもない", 0, 12); // 心配するまでもありません
     }
 }
+
+// ============================================================================
+// 如く・如き・如し Tests
+// ============================================================================
+
+mod gotoku_gotoki_gotoshi_tests {
+    use super::*;
+
+    // Pattern: 如く・如き・如し (like, as if, similar to)
+    // Data source: grammar_points_data.json["如く・如き・如し"]
+    // Testing: Classical auxiliary verb ごとし and its forms (ごとく, ごとき)
+    //
+    // Structures:
+    //   - Noun + の + ごとし/ごとく (basic form with の)
+    //   - Noun + の + ごとき + Noun (attributive form before noun)
+    //   - Noun + ごとき (direct, without の - 体言接続 form)
+    //   - (Auxiliary/Verb) + が + ごとし/ごとく (classical, rare)
+
+    #[test]
+    fn test_noun_no_gotoku() {
+        let sentence = "高橋先生は鬼のごとく怖いと言う噂を聞いた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如く・如き・如し");
+        assert_pattern_range(&patterns, "如く・如き・如し", 5, 10); // 鬼のごとく
+    }
+
+    #[test]
+    fn test_noun_no_gotoki_noun() {
+        let sentence = "彼女のごとき頭がいい人でも失敗することはある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如く・如き・如し");
+        assert_pattern_range(&patterns, "如く・如き・如し", 0, 6); // 彼女のごとき
+    }
+
+    #[test]
+    fn test_noun_gotoki_direct() {
+        let sentence = "風邪ごときで休んでいる余裕など私にはない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如く・如き・如し");
+        assert_pattern_range(&patterns, "如く・如き・如し", 0, 5); // 風邪ごとき
+    }
+
+    #[test]
+    fn test_auxiliary_ga_gotoshi() {
+        let sentence = "主婦の私には休みなんかはあってなきがごとし。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如く・如き・如し");
+        assert_pattern_range(&patterns, "如く・如き・如し", 15, 21); // なきがごとし
+    }
+
+    #[test]
+    fn test_noun_no_gotoshi() {
+        let sentence = "天使のごとし美しさに心を奪われた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如く・如き・如し");
+        assert_pattern_range(&patterns, "如く・如き・如し", 0, 6); // 天使のごとし
+    }
+}

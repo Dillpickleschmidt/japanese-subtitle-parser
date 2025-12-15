@@ -10404,13 +10404,13 @@
   {
     "pattern_name": "如く・如き・如し",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "如（ごと）し is an classical auxiliary verb in Japanese which has a very similar meaning to its modern equivalent, よう 'mann... [8 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

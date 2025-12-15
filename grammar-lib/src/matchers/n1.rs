@@ -291,9 +291,59 @@ pub fn tatokorode() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 如く・如き・如し
+// Pattern: 如く・如き・如し (like, as if, similar to)
+// Structures:
+//   - (Noun/Verb/Adj) + の + ごとし/ごとく/ごとき
+//   - Noun + ごとき (direct, without の)
+//   - (Verb/Auxiliary) + が + ごとし/ごとく/ごとき (classical)
 pub fn gotoku_u30fb_shiki_u30fb_gotoshi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for の (連体化 particle)
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "連体化")
+        }
+    }
+
+    // Matcher for が (接続助詞 - conjunctive particle for classical usage)
+    #[derive(Debug)]
+    struct GaSetsuzokuMatcher;
+    impl Matcher for GaSetsuzokuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Matcher for ごとし/ごとく/ごとき (all forms of classical auxiliary)
+    #[derive(Debug)]
+    struct GotoshiMatcher;
+    impl Matcher for GotoshiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ごとし"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && (token.surface == "ごとし"
+                    || token.surface == "ごとく"
+                    || token.surface == "ごとき")
+        }
+    }
+
+    // Pattern: (Any) + (の or が or nothing) + ごとし/ごとく/ごとき
+    // - の(連体化) for most cases
+    // - が(接続助詞) for classical verb/auxiliary usage
+    // - nothing (direct) for ごとき after nouns (体言接続)
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoRentaikaMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaSetsuzokuMatcher)))),
+        TokenMatcher::Custom(Arc::new(GotoshiMatcher)),
+    ]
 }
 
 // Pattern: に足る (worthy of, enough for)
