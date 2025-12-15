@@ -9061,13 +9061,13 @@
   {
     "pattern_name": "それにしても",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "それにしても is an expression used in Japanese as an extension of にしても 'even though', or 'even if' [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

@@ -5329,9 +5329,19 @@ pub fn toshitemo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: それにしても
+// Pattern: それにしても (even so, nevertheless)
+// Structure: それにしても as a conjunction (接続詞)
 pub fn sorenishitemo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SorenishitemoMatcher;
+    impl Matcher for SorenishitemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "それにしても"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(SorenishitemoMatcher))]
 }
 
 // Pattern: ぬ

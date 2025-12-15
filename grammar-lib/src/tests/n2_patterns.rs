@@ -9682,3 +9682,46 @@ mod toshitemo_tests {
         assert_pattern_range(&patterns, "としても", 2, 7); // だとしても
     }
 }
+
+// Pattern: それにしても (even so, nevertheless)
+// Data source: grammar_points_data.json["それにしても"]
+// Testing: structure.standard[0] - Phrase (A) + それにしても + Phrase (B)
+mod sorenishitemo_tests {
+    use super::*;
+
+    #[test]
+    fn test_after_comma() {
+        // Testing: それにしても appearing after comma
+        // Example adapted from grammar data
+        let sentence = "彼女は新人だから仕方がないが、それにしても仕事ができなさすぎる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それにしても");
+        assert_pattern_range(&patterns, "それにしても", 15, 21); // それにしても
+    }
+
+    #[test]
+    fn test_sentence_beginning() {
+        // Testing: それにしても at the beginning of a sentence
+        // Example adapted from grammar data
+        let sentence = "漢字を勉強し始めてから１年になる。それにしても、まだ全然漢字が読めない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それにしても");
+        assert_pattern_range(&patterns, "それにしても", 17, 23); // それにしても
+    }
+
+    #[test]
+    fn test_comparison_context() {
+        // Testing: それにしても with comparison/expectation exceeded
+        // Example adapted from grammar data
+        let sentence = "家に来たばかりのときなんかお手もできなかったのにね。それにしても、大きくなったね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それにしても");
+        assert_pattern_range(&patterns, "それにしても", 26, 32); // それにしても
+    }
+}
