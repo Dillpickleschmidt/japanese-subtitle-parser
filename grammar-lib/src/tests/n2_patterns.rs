@@ -8412,3 +8412,48 @@ mod naratomokaku_tests {
         assert_pattern_range(&patterns, "ならともかく", 2, 9); // 妹ならともかく
     }
 }
+
+// Pattern: はともかく (setting aside, apart from)
+// Data source: grammar_points_data.json["はともかく"]
+// Testing structure variant:
+//   - standard[0]: Noun + は + ともかく（として）
+
+mod hatomokaku_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_hatomokaku() {
+        // Structure: Noun + は + ともかく
+        // Example from grammar data: 給料はともかく
+        let sentence = "給料はともかく、やりがいのある仕事がしたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はともかく");
+        assert_pattern_range(&patterns, "はともかく", 0, 7); // 給料はともかく
+    }
+
+    #[test]
+    fn test_phrase_hatomokaku() {
+        // Structure: Phrase + か + は + ともかく
+        // Example from grammar data: 家賃が高いか安いかはともかく
+        let sentence = "家賃が高いか安いかはともかく、東京駅の近くに住みたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はともかく");
+        assert_pattern_range(&patterns, "はともかく", 8, 14); // かはともかく
+    }
+
+    #[test]
+    fn test_appearance_hatomokaku() {
+        // Structure: Noun + の + Noun + は + ともかく
+        // Example from grammar data: この料理の見た目はともかく
+        let sentence = "この料理の見た目はともかく、味はとてもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はともかく");
+        assert_pattern_range(&patterns, "はともかく", 5, 13); // 見た目はともかく
+    }
+}

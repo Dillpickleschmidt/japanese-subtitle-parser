@@ -6187,7 +6187,7 @@ declare_patterns! {
     Hatomokaku {
         name: "はともかく",
         matcher_fn: crate::matchers::n2::hatomokaku,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

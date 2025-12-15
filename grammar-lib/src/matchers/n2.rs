@@ -6218,9 +6218,38 @@ pub fn nishiro_uff5e_nishiro() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: はともかく
+// Pattern: はともかく (setting aside, apart from)
+// Structures: Any + は (係助詞) + ともかく (副詞)
 pub fn hatomokaku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for は (助詞/係助詞) - reusable binding particle matcher
+    #[derive(Debug)]
+    struct WaKakariMatcher;
+    impl super::Matcher for WaKakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for ともかく (副詞/一般)
+    #[derive(Debug)]
+    struct TomokakuMatcher;
+    impl super::Matcher for TomokakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ともかく"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(WaKakariMatcher)),
+        TokenMatcher::Custom(Arc::new(TomokakuMatcher)),
+    ]
 }
 
 // Pattern: ならともかく (if it's A, sure, but...)
