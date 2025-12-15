@@ -1,3 +1,71 @@
+## Session 365 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern (割に)
+**Patterns completed**: 1 (割に - N3 newly implemented)
+**Tests added**: 4 new tests for 割に (all passing)
+**Total tests**: 2340 passing, 1 ignored (was 2336 passing, 1 ignored - net +4 tests)
+
+### ✅ Pattern Implemented: 割に (although/despite/comparatively)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (moderate priority - detected and highlighted in overlay)
+
+**Pattern**: 割（わり）に is an adverb usually used similarly to 'although', 'despite', or 'comparatively' in English. It highlights something that is disproportionate or unexpected given the circumstances. The word 割（わり） itself is a noun meaning 'proportionate', and 割に may be thought of as 'proportionately' in its literal meaning.
+
+**Structures tested**: 4 comprehensive tests covering all structure variants
+1. い-Adjective + わりに: 高いわりに → 高いわりに (4-9)
+2. Verb (ている) + わりに: いるわりに → いるわりに (3-8)
+3. な-Adjective + な + わりに: 綺麗なわりに → なわりに (7-11)
+4. Noun + の + わりに: ラッシュアワーのわりに → のわりに (7-11)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (warini function, lines 7035-7065)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (warini_tests module, lines 12905-12951)
+- Pattern: grammar-lib/src/patterns.rs (Warini variant, lines 3897-3903)
+
+**Tokenization patterns**:
+```
+割に construction:
+- [Predicate word] + わり (名詞/一般) + に (助詞/格助詞/一般)
+
+Predicate word can be:
+1. い-Adjective: 高い (形容詞/自立) + わりに
+2. Verb: いる (動詞) + わりに
+3. な-Adjective + な: 綺麗 (名詞/形容動詞語幹) + な (助動詞, 特殊・ダ) + わりに
+4. Noun + の: ラッシュアワー (名詞) + の (助詞/連体化) + わりに
+
+Key tokens:
+- わり: surface="わり", base_form="わり", POS=名詞/一般
+- に: surface="に", POS=助詞/格助詞/一般
+```
+
+**Key implementation points**:
+1. Three-token matcher: Any + WariniNoun + NiParticle
+2. WariniNounMatcher: surface == "わり", base_form == "わり", POS == 名詞
+3. NiParticleMatcher: surface == "に", POS == 助詞/格助詞
+4. TokenMatcher::Any matches the preceding predicate (verb, adjective, noun+particle, etc.)
+5. Pattern priority: 3 (moderate - highlighted in overlay)
+
+**Pattern ranges**: Include predicate word + わりに
+- い-Adjective: `高いわりに` (chars 4-9) - adjective + わりに
+- Verb: `いるわりに` (chars 3-8) - verb + わりに
+- な-Adjective: `なわりに` (chars 7-11) - な + わりに
+- Noun: `のわりに` (chars 7-11) - の + わりに
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major structure variants: い-Adj, Verb, な-Adj+な, Noun+の
+- Correct character ranges verified for all variants
+
+**Related patterns**:
+- 割と (わりと) - "unexpectedly/quite" (more casual, often standalone before adjectives)
+
+---
+
 ## Session 364 - 2025-12-14
 
 ### ✅ Session Summary
