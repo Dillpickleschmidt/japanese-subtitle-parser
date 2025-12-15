@@ -4729,9 +4729,79 @@ pub fn hamotoyori() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: そうにない
+// Pattern: そうにない (unlikely to, showing no signs of)
+// Structures: Verb[stem] + そう + に + ない/ありません
 pub fn souninai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match そう as auxiliary verb stem (名詞/接尾/助動詞語幹)
+    #[derive(Debug)]
+    struct SouAuxiliaryMatcher;
+    impl Matcher for SouAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そう"
+                && token.base_form == "そう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+        }
+    }
+
+    // Match に as either 副詞化 or 格助詞
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    // Match も (optional emphatic particle)
+    #[derive(Debug)]
+    struct MoMatcher;
+    impl Matcher for MoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.base_form == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ない as auxiliary verb or adjective
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Match ありません (polite negative of ある)
+    #[derive(Debug)]
+    struct ArimasenMatcher;
+    impl Matcher for ArimasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(SouAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoMatcher)))),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: に反して

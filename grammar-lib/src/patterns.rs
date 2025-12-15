@@ -5435,7 +5435,7 @@ declare_patterns! {
     Souninai {
         name: "そうにない",
         matcher_fn: crate::matchers::n2::souninai,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

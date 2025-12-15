@@ -8457,3 +8457,68 @@ mod hatomokaku_tests {
         assert_pattern_range(&patterns, "はともかく", 5, 13); // 見た目はともかく
     }
 }
+
+// Pattern: そうにない (unlikely to, showing no signs of)
+// Data source: grammar_points_data.json["そうにない"]
+mod souninai_tests {
+    use super::*;
+
+    #[test]
+    fn test_souninai_basic() {
+        // Structure: Verb[stem] + そうにない
+        // Example from grammar data: 定時で上がれそうにない
+        let sentence = "ごめん、定時で上がれそうにないから先に食べてて";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうにない");
+        assert_pattern_range(&patterns, "そうにない", 7, 15); // 上がれそうにない
+    }
+
+    #[test]
+    fn test_souninai_make_it() {
+        // Structure: Verb[stem] + そうにない
+        // Example from grammar data: 行けそうにない
+        let sentence = "今日は行けそうにないのでキャンセルでお願いします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうにない");
+        assert_pattern_range(&patterns, "そうにない", 3, 10); // 行けそうにない
+    }
+
+    #[test]
+    fn test_sounimonai_emphatic() {
+        // Structure: Verb[stem] + そうにもない (emphatic)
+        // Example from grammar data: 降りそうにもない
+        let sentence = "今日は雨が降りそうにもないから釣りに行こう！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうにない");
+        assert_pattern_range(&patterns, "そうにない", 5, 13); // 降りそうにもない
+    }
+
+    #[test]
+    fn test_sounimonai_no_signs() {
+        // Structure: Verb[stem] + そうにもない (emphatic - no signs)
+        // Example from grammar data: 進みそうにもない
+        let sentence = "列が進みそうにもないのでまた今度来ましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そうにない");
+        assert_pattern_range(&patterns, "そうにない", 2, 10); // 進みそうにもない
+    }
+
+    // TODO: Polite forms (そうにありません, そうにもありません)
+    // These use the verb ある in polite negative form rather than ない.
+    // Tokenization: Verb[stem] + そう + に + (も) + あり + ませ + ん
+    // This is semantically equivalent but syntactically different from そうにない.
+    // The pattern そうにない specifically matches constructions ending with ない/もない.
+    // The polite forms would need a separate matcher or broader pattern definition.
+    //
+    // Example sentences:
+    // - "この問題は解決しそうにありませんね"
+    // - "彼は来そうにもありませんから待たなくていいですよ"
+}
