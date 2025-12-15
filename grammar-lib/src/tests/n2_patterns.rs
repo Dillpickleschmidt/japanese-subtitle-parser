@@ -12104,3 +12104,63 @@ mod habetsutoshite_tests {
         assert_pattern_range(&patterns, "は別として", 10, 15); // は別として
     }
 }
+
+// Pattern: 何から何まで (everything from A to Z, everything and anything)
+// Data source: grammar_points_data.json["何から何まで"]
+// Testing: structure.standard[0] - "何（なに）から何（なに）まで + Phrase"
+//
+// Fixed expression meaning "absolutely everything" or "from whatever to whatever"
+
+mod nanikarananimade_tests {
+    use super::*;
+
+    #[test]
+    fn test_nanikarananimade_knowledge() {
+        let sentence = "浜崎さんは釣りのことなら何から何まで知っているから、何か分からない事があったら浜崎さんに聞きな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何から何まで");
+        assert_pattern_range(&patterns, "何から何まで", 12, 18); // 何から何まで
+    }
+
+    #[test]
+    fn test_nanikarananimade_apology() {
+        let sentence = "何から何まですみません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何から何まで");
+        assert_pattern_range(&patterns, "何から何まで", 0, 6); // 何から何まで
+    }
+
+    #[test]
+    fn test_nanikarananimade_gratitude() {
+        let sentence = "何から何までありがとうございました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何から何まで");
+        assert_pattern_range(&patterns, "何から何まで", 0, 6); // 何から何まで
+    }
+
+    #[test]
+    fn test_nanikarananimade_halfhearted() {
+        let sentence = "うちの子は勉強にしろ家事にしろ、何から何までいい加減だから困っちゃうわ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何から何まで");
+        assert_pattern_range(&patterns, "何から何まで", 16, 22); // 何から何まで
+    }
+
+    #[test]
+    fn test_nanikarananimade_one_year() {
+        let sentence = "この１年間何から何までお世話になり本当にありがとうございました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "何から何まで");
+        assert_pattern_range(&patterns, "何から何まで", 5, 11); // 何から何まで
+    }
+}

@@ -7616,9 +7616,53 @@ pub fn nikuwaete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 何から何まで
+// Pattern: 何から何まで (everything from A to Z, everything and anything)
+// Structures: 何 + から + 何 + まで
 pub fn nanikarananimade() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 何 as pronoun
+    #[derive(Debug)]
+    struct NaniMatcher;
+    impl super::Matcher for NaniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "何"
+                && token.base_form == "何"
+                && token.features.first().is_some_and(|f| f == "名詞")
+                && token.features.get(1).is_some_and(|f| f == "代名詞")
+        }
+    }
+
+    // Match から as case particle
+    #[derive(Debug)]
+    struct KaraParticleMatcher;
+    impl super::Matcher for KaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.base_form == "から"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "格助詞")
+        }
+    }
+
+    // Match まで as auxiliary particle
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl super::Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.base_form == "まで"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "副助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaniMatcher)),
+        TokenMatcher::Custom(Arc::new(KaraParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaniMatcher)),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+    ]
 }
 
 // Pattern: は別として (setting aside, except for, save for)
