@@ -9565,3 +9565,61 @@ mod niseyo_nishiro_tests {
         assert_pattern_range(&patterns, "にせよ・にしろ", 7, 12); // 子供にしろ
     }
 }
+
+// Pattern: としては (as for, as, from the standpoint of)
+// Data source: grammar_points_data.json["としては"]
+// Testing: structure.standard[0] - "Noun + としては"
+//
+// Structure variants:
+//   - standard[0]: Noun + としては
+//
+// としては is used to make judgments from the standpoint of (A), emphasizing
+// the subject as a stand-alone entity being compared or considered.
+
+mod toshiteha_tests {
+    use super::*;
+
+    #[test]
+    fn test_person_toshiteha() {
+        // Example adapted from grammar data: 先輩としては
+        let sentence = "あの人は先輩としてはいいけど、友達になろうとは思えない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としては");
+        assert_pattern_range(&patterns, "としては", 4, 10); // 先輩としては
+    }
+
+    #[test]
+    fn test_organization_toshiteha() {
+        // Example adapted from grammar data: 建築会社としては
+        let sentence = "あの会社は建築会社としてはホワイトな方だと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としては");
+        assert_pattern_range(&patterns, "としては", 7, 13); // 会社としては
+    }
+
+    #[test]
+    fn test_concept_toshiteha() {
+        // Example adapted from grammar data: アイデアとしては
+        let sentence = "アイデアとしてはいいんですが、実際にやるとなるとものすごい費用がかかると思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としては");
+        assert_pattern_range(&patterns, "としては", 0, 8); // アイデアとしては
+    }
+
+    #[test]
+    fn test_hobby_toshiteha() {
+        // Example adapted from grammar data: 趣味としては
+        let sentence = "ピアノは趣味としては好きだけど、ピアノで食べていこうとは思わない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としては");
+        assert_pattern_range(&patterns, "としては", 4, 10); // 趣味としては
+    }
+}

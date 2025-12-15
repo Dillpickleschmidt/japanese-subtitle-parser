@@ -5555,7 +5555,7 @@ declare_patterns! {
     Toshiteha {
         name: "としては",
         matcher_fn: crate::matchers::n2::toshiteha,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

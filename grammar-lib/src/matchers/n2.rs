@@ -5269,9 +5269,34 @@ pub fn nishitemo_uff5e_nishitemo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: としては
+// Pattern: としては (as for, as, from the standpoint of)
+// Structures: Noun + として + は
 pub fn toshiteha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ToshiteMatcher;
+    impl Matcher for ToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "として"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun before として
+        TokenMatcher::Custom(Arc::new(ToshiteMatcher)),
+        TokenMatcher::Custom(Arc::new(HaParticleMatcher)),
+    ]
 }
 
 // Pattern: としても
