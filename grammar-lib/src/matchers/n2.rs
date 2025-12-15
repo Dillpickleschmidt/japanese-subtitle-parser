@@ -984,9 +984,46 @@ pub fn tochuuni_u30fb_tochuude() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 中を
+// Pattern: Doing B in/on/inside A (Noun + の + 中を)
+// Structures: Noun + の + 中（なか）を
 pub fn nakawo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NakaNounMatcher;
+    impl super::Matcher for NakaNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "中"
+                && token.base_form == "中"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl super::Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NakaNounMatcher)),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+    ]
 }
 
 // Pattern: を中心に

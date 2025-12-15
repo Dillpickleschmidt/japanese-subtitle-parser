@@ -3348,3 +3348,42 @@ mod ueni_tests {
         assert_pattern_range(&patterns, "上に", 11, 16); // あるうえに
     }
 }
+
+// Pattern: 中を (doing B in/on/inside A)
+// Data source: grammar_points_data.json["中を"]
+mod nakawo_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + の + 中（なか）を"
+    #[test]
+    fn test_nakawo_empty_lunchbox() {
+        let sentence = "家に帰ってきたら、まずは弁当箱の中を空にしてっていつも言ってるじゃん！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "中を");
+        assert_pattern_range(&patterns, "中を", 15, 18); // の中を
+    }
+
+    // Testing: structure.standard[0] - "Noun + の + 中（なか）を" (wandering in supermarket)
+    #[test]
+    fn test_nakawo_supermarket() {
+        let sentence = "スーパーの中を何も買わずにウロウロしていたら、警備員のおじさんに怪しまれて声をかけられた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "中を");
+        assert_pattern_range(&patterns, "中を", 4, 7); // の中を
+    }
+
+    // Testing: structure.standard[0] - "Noun + の + 中（なか）を" (peek into room)
+    #[test]
+    fn test_nakawo_peek_into_room() {
+        let sentence = "子供が妙に静かだな〜と思い、子供部屋の中を覗いてみたらただ寝ていただけだった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "中を");
+        assert_pattern_range(&patterns, "中を", 18, 21); // の中を
+    }
+}
