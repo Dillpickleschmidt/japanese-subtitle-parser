@@ -1,10 +1,10 @@
 ## Session 380 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented ～ざる pattern (N2)
-**Patterns completed**: 1 (～ざる - N2 newly implemented)
-**Tests added**: 4 new tests (all passing)
-**Total tests**: 2443 passing, 1 ignored (was 2439 passing, 1 ignored - net +4 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (～ざる, つもりで)
+**Patterns completed**: 2 (～ざる and つもりで - N2 newly implemented)
+**Tests added**: 9 new tests total (4 for ～ざる + 5 for つもりで, all passing)
+**Total tests**: 2448 passing, 1 ignored (was 2439 passing, 1 ignored - net +9 tests)
 
 ### ✅ Pattern Implemented: ～ざる (attributive form of classical negative auxiliary ず)
 
@@ -48,7 +48,56 @@
 - N1: 186 remaining
 - Total: ~367 patterns remaining (down from ~368!)
 
-**Next priority**: Continue with N2 patterns - つもりで, どうせ, せめて, どうやら, etc.
+**Next priority**: Continue with N2 patterns - どうせ, せめて, どうやら, etc.
+
+---
+
+### ✅ Pattern Implemented: つもりで (with the intention of / as if / pretend)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: つもりで is a combination of the noun つもり 'intention' and the case marking particle で 'with'. This structure conveys different meanings depending on what comes before it:
+- With verbs/adjectives/nouns: "with the intention of (A)", "believing that (A)"
+- With past-tense verbs: "as if (A)", "pretending that (A)", "acting like (A)"
+
+**Structures tested**: 5 comprehensive tests covering all major structure variants
+1. Verb + つもりで: 買わないつもりで (4-10) - "without any intention of buying"
+2. Verb[た] + つもりで: なったつもりで (10-15) - "as if you were" (past = pretend/act as if)
+3. Noun + の + つもりで: 冗談のつもりで (2-7) - "with the intention of making a joke"
+4. な-Adjective + な + つもりで: 真剣なつもりで (2-7) - "with serious intention"
+5. Verb[た] + つもりで: 選んだつもりで (7-12) - "believing that I chose"
+
+**Implementation**: Matcher in n2.rs (lines 186-219), tests in n2_patterns.rs (lines 2121-2200)
+
+**Key notes**:
+- つもり always tokenizes as 名詞/非自立/一般 (non-independent noun)
+- で is a 助詞/格助詞 (case-marking particle)
+- Pattern uses Optional(Any) + つもり + で to capture preceding element
+- Past-tense verbs give a different meaning: "as if" rather than "with the intention of"
+- Range includes the preceding element (verb/particle/auxiliary) + つもりで
+
+**Tokenization observations**:
+- surface="つもり", base_form="つもり", pos=名詞/非自立/一般
+- surface="で", base_form="で", pos=助詞/格助詞/一般
+- Preceded by verbs (any form), の (particle), な (auxiliary), た/だ (auxiliary)
+
+### Test Quality Metrics
+✅ All 9 tests (4 + 5) have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions (all 2448 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 178 remaining (down from 180!)
+- N1: 186 remaining
+- Total: ~366 patterns remaining (down from ~368!)
+
+**Next priority**: Continue with N2 patterns - どうせ, せめて, どうやら, etc.
 
 ---
 
