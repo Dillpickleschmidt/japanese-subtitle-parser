@@ -5651,7 +5651,7 @@ declare_patterns! {
     Toiukotoha {
         name: "ということは",
         matcher_fn: crate::matchers::n2::toiukotoha,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

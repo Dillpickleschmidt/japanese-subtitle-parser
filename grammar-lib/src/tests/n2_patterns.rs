@@ -10365,3 +10365,81 @@ mod toiutenkarakangaeruto_tests {
         assert_pattern_range(&patterns, "という点から考えると", 11, 20); // その点から考えると
     }
 }
+
+// Pattern: ということは (that means, in other words)
+// Data source: grammar_points_data.json["ということは"]
+// Testing: structure.standard[0] - "Phrase + ということは + Phrase"
+//
+// Structure variants:
+//   - standard[0]: Phrase + ということは + Phrase (mid-sentence clarification)
+//   - Beginning of sentence: ということは + Phrase (confirming understanding)
+//
+// Notes:
+//   - Mid-sentence usage: previous statement requires clarification
+//   - Beginning usage: confirming understanding of what was just said
+//   - Often finishes with ということだ but not limited to this
+//   - Literally: "that which is said to be (A), (B)"
+
+mod toiukotoha_tests {
+    use super::*;
+
+    #[test]
+    fn test_mid_sentence_working() {
+        // Testing: Phrase + ということは + Phrase (mid-sentence)
+        // Clarifying what it means to work at a famous company
+        let sentence = "あの有名なIT企業で働いているということは、結構いい大学を出たってこと？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということは");
+        assert_pattern_range(&patterns, "ということは", 7, 21); // 企業で働いているということは
+    }
+
+    #[test]
+    fn test_mid_sentence_no_reply() {
+        // Testing: Phrase + ということは + Phrase (mid-sentence)
+        // Clarifying what it means when she hasn't responded
+        let sentence = "彼女から返事が来ないということは、今は忙しいということだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということは");
+        assert_pattern_range(&patterns, "ということは", 2, 16); // から返事が来ないということは
+    }
+
+    #[test]
+    fn test_mid_sentence_japanese_skill() {
+        // Testing: Phrase + ということは + Phrase (mid-sentence)
+        // Clarifying what it means to speak Japanese well
+        let sentence = "日本語を上手に話せるということは、日本に長い間住んでいたということですか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということは");
+        assert_pattern_range(&patterns, "ということは", 0, 16); // 日本語を上手に話せるということは
+    }
+
+    #[test]
+    fn test_beginning_work_done() {
+        // Testing: ということは at beginning of sentence (confirming understanding)
+        // Confirming that finished work means can eat together
+        let sentence = "もう仕事終わったの？ということは、今日こそは一緒に晩御飯が食べれるということだね！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということは");
+        assert_pattern_range(&patterns, "ということは", 10, 16); // ということは (standalone)
+    }
+
+    #[test]
+    fn test_beginning_pregnancy() {
+        // Testing: ということは at beginning of sentence (confirming understanding)
+        // Confirming what pregnancy means for the speaker
+        let sentence = "妊娠したの！？ということは、私はおばあちゃんになるってこと？！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ということは");
+        assert_pattern_range(&patterns, "ということは", 7, 13); // ということは (standalone)
+    }
+}
