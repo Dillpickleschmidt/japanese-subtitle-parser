@@ -3459,3 +3459,64 @@ mod ijou_u2461_tests {
         assert_pattern_range(&patterns, "以上 ②", 16, 20); // ある以上 (from 人間である以上)
     }
 }
+
+// Pattern: 以上に (more than, even more than)
+// Data source: grammar_points_data.json["以上に"]
+mod ijouni_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + 以上（いじょう）に"
+    #[test]
+    fn test_ijouni_verb() {
+        let sentence = "新しく発売した商品の評判が思っていた以上に良かったのでびっくりした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上に");
+        assert_pattern_range(&patterns, "以上に", 17, 21); // た以上に
+    }
+
+    // Testing: structure.standard[1] - "［い］Adjective + 以上（いじょう）に"
+    #[test]
+    fn test_ijouni_i_adjective() {
+        let sentence = "今日の風は冷たい以上に痛い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上に");
+        assert_pattern_range(&patterns, "以上に", 5, 11); // 冷たい以上に
+    }
+
+    // Testing: structure.standard[2] - "［な］Adjective + 以上（いじょう）に"
+    #[test]
+    fn test_ijouni_na_adjective() {
+        let sentence = "今節約中だから必要以上にお金を使わないようにしてる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上に");
+        assert_pattern_range(&patterns, "以上に", 7, 12); // 必要以上に
+    }
+
+    // Testing: structure.standard[3] - "Noun + 以上（いじょう）に"
+    #[test]
+    fn test_ijouni_noun() {
+        let sentence = "私はスキー以上にスノーボードが好きだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上に");
+        assert_pattern_range(&patterns, "以上に", 2, 8); // スキー以上に
+    }
+
+    // Testing: structure.standard[4] - "以上（いじょう） + の + Noun"
+    #[test]
+    fn test_ijouni_no_noun() {
+        let sentence = "僕の最初のライブに想像していた以上の人が集まったので、すごく嬉しかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以上に");
+        assert_pattern_range(&patterns, "以上に", 14, 18); // た以上の
+    }
+}

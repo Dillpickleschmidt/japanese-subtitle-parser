@@ -1025,9 +1025,69 @@ pub fn ijou_u2461() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 以上に
+// Pattern: 以上に (more than, even more than)
+// Structures: Verb/Adj/Noun + 以上に, 以上 + の + Noun
 pub fn ijouni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches any token that can precede 以上に (Verb, い-Adj, な-Adj, Noun, た auxiliary)
+    #[derive(Debug)]
+    struct IjouNiPreMatcher;
+    impl super::Matcher for IjouNiPreMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if let Some(first_pos) = token.pos.first() {
+                match first_pos.as_str() {
+                    "動詞" => true, // Any verb form
+                    "形容詞" => true, // い-Adjectives
+                    "名詞" => true, // Nouns and な-Adjective stems (形容動詞語幹)
+                    "助動詞" => {
+                        // た (past tense auxiliary)
+                        token.base_form == "た"
+                    }
+                    _ => false,
+                }
+            } else {
+                false
+            }
+        }
+    }
+
+    // Matches 以上 (名詞/非自立/副詞可能)
+    #[derive(Debug)]
+    struct IjouMatcher;
+    impl super::Matcher for IjouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "以上"
+                && token.base_form == "以上"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Matches に (格助詞) or の (連体化)
+    #[derive(Debug)]
+    struct NiNoMatcher;
+    impl super::Matcher for NiNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.pos.first().is_some_and(|p| p == "助詞") {
+                if token.surface == "に" {
+                    token.pos.get(1).is_some_and(|p| p == "格助詞")
+                } else if token.surface == "の" {
+                    token.pos.get(1).is_some_and(|p| p == "連体化")
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IjouNiPreMatcher)),
+        TokenMatcher::Custom(Arc::new(IjouMatcher)),
+        TokenMatcher::Custom(Arc::new(NiNoMatcher)),
+    ]
 }
 
 // Pattern: 途中に・途中で
