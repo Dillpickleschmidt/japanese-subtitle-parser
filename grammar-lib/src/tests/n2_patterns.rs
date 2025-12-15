@@ -2117,3 +2117,84 @@ mod uff5e_zaru_tests {
         assert_pattern_range(&patterns, "～ざる", 6, 10); // 恐れざる
     }
 }
+
+// つもりで Tests - "with the intention of / as if"
+// Data source: grammar_points_data.json["つもりで"]
+
+#[cfg(test)]
+mod tsumoride_tests {
+    use super::*;
+
+    // Pattern: つもりで (with the intention of / as if / pretend)
+    // Data source: grammar_points_data.json["つもりで"]
+    //
+    // Grammar: つもり (noun: intention) + で (particle: with/by)
+    // - With verbs/adjectives/nouns: "with the intention of (A)"
+    // - With past-tense verbs: "as if (A)" / "pretending that (A)"
+    //
+    // Structures to test:
+    //   - standard[0]: Verb + つもりで
+    //   - standard[1]: な-Adjective + な + つもりで
+    //   - standard[2]: Noun + の + つもりで
+    //   - standard[4]: Verb[た] + つもりで (different meaning: "as if")
+
+    #[test]
+    fn test_tsumoride_verb() {
+        // Example from data: 何も買わないつもりで
+        // Testing: structure.standard[0] - Verb + つもりで
+        let sentence = "何も買わないつもりで新しく出来たショッピングモールへ行ったが、色々買ってしまった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つもりで");
+        assert_pattern_range(&patterns, "つもりで", 4, 10); // ないつもりで
+    }
+
+    #[test]
+    fn test_tsumoride_verb_past() {
+        // Example from data: 主人公になったつもりで
+        // Testing: structure.standard[4] - Verb[た] + つもりで (meaning: "as if")
+        let sentence = "今度は、主人公になったつもりで読んでみてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つもりで");
+        assert_pattern_range(&patterns, "つもりで", 10, 15); // たつもりで
+    }
+
+    #[test]
+    fn test_tsumoride_noun() {
+        // Example from data: 冗談のつもりで
+        // Testing: structure.standard[2] - Noun + の + つもりで
+        let sentence = "冗談のつもりで言っただけなのに、相手を傷付けてしまった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つもりで");
+        assert_pattern_range(&patterns, "つもりで", 2, 7); // のつもりで
+    }
+
+    #[test]
+    fn test_tsumoride_na_adjective() {
+        // Testing: structure.standard[1] - な-Adjective + な + つもりで
+        // Example: 真剣なつもりで (with serious intention)
+        let sentence = "真剣なつもりで提案したのに、誰も聞いてくれなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つもりで");
+        assert_pattern_range(&patterns, "つもりで", 2, 7); // なつもりで
+    }
+
+    #[test]
+    fn test_tsumoride_verb_selected() {
+        // Testing: 新鮮な魚を選んだつもりで
+        // Another example of Verb[た] + つもりで
+        let sentence = "新鮮な魚を選んだつもりで買ったのに、パックから出したらものすごいにおいがした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つもりで");
+        assert_pattern_range(&patterns, "つもりで", 7, 12); // だつもりで
+    }
+}

@@ -183,9 +183,39 @@ pub fn uff5e_zaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: つもりで
+// Pattern: つもりで (with the intention of / as if)
+// Structures: [Verb/Adjective/Noun] + つもりで
 pub fn tsumoride() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match つもり (noun: intention)
+    #[derive(Debug)]
+    struct TsumoriMatcher;
+    impl super::Matcher for TsumoriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "つもり"
+                && token.base_form == "つもり"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match で (particle)
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl super::Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Any)),
+        TokenMatcher::Custom(Arc::new(TsumoriMatcher)),
+        TokenMatcher::Custom(Arc::new(DeMatcher)),
+    ]
 }
 
 // Pattern: どうせ

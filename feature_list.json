@@ -7394,13 +7394,13 @@
   {
     "pattern_name": "つもりで",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "つもりで , being a combination of the noun つもり 'intention', and the case marking particle で 'with', this structure is use... [5 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
