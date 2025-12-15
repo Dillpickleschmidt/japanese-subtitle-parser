@@ -1854,3 +1854,47 @@ mod shikamo_tests {
         assert_pattern_range(&patterns, "しかも", 10, 13); // しかも
     }
 }
+
+// Pattern: てでも (even if I have to)
+// Data source: grammar_points_data.json["てでも"]
+// Testing: structure.standard[0] - "Verb［て］+ でも"
+//
+// Structure variants:
+//   - standard[0]: Verb［て］+ でも (strong determination/willingness)
+
+mod tedemo_tests {
+    use super::*;
+
+    #[test]
+    fn test_tedemo_strong_will() {
+        // Example from data: 高いお金を払ってでも手に入れたい
+        let sentence = "あの最新のノートパソコンは高いお金を払ってでも手に入れたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てでも");
+        assert_pattern_range(&patterns, "てでも", 18, 23); // 払ってでも
+    }
+
+    #[test]
+    fn test_dedemo_variant() {
+        // Example from data: 寒い中並んででもあそこのラーメンを食べてみたい
+        let sentence = "寒い中並んででもあそこのラーメンを食べてみたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てでも");
+        assert_pattern_range(&patterns, "てでも", 3, 8); // 並んででも
+    }
+
+    #[test]
+    fn test_tedemo_must_finish() {
+        // Example from data: 徹夜してでも終わらせなければいけない
+        let sentence = "このレポートは徹夜してでも終わらせなければいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てでも");
+        assert_pattern_range(&patterns, "てでも", 7, 13); // 徹夜してでも
+    }
+}

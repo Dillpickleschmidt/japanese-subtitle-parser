@@ -2592,9 +2592,38 @@ pub fn shikamo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(ShikamoMatcher))]
 }
 
-// Pattern: てでも
+// Pattern: てでも (even if I have to)
+// Structures: Verb[て] + でも
 pub fn tedemo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for て/で conjunction particle
+    #[derive(Debug)]
+    struct TeDeConjunctionMatcher;
+    impl super::Matcher for TeDeConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for でも (can be either 助詞/副助詞 or 接続詞)
+    #[derive(Debug)]
+    struct DemoParticleMatcher;
+    impl super::Matcher for DemoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "でも"
+                && (token.pos.first().is_some_and(|pos| pos == "助詞")
+                    || token.pos.first().is_some_and(|pos| pos == "接続詞"))
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeConjunctionMatcher)),
+        TokenMatcher::Custom(Arc::new(DemoParticleMatcher)),
+    ]
 }
 
 // Pattern: とも
