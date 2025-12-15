@@ -3770,4 +3770,29 @@ mod sonoue_tests {
         assert_has_pattern(&patterns, "の下で");
         assert_pattern_range(&patterns, "の下で", 4, 9); // 協力のもと
     }
+
+    // Pattern: 手前 (in front of, given the circumstances)
+    // Data source: grammar_points_data.json["手前"]
+
+    // Testing: structure.standard[0] - Verb + 手前
+    #[test]
+    fn test_temae_verb() {
+        let sentence = "勢いで手を上げてしまった手前、答えずに手を下げるわけにはいかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "手前");
+        assert_pattern_range(&patterns, "手前", 8, 14); // しまった手前
+    }
+
+    // Testing: structure.standard[1] - Noun + の + 手前
+    #[test]
+    fn test_temae_noun() {
+        let sentence = "娘の手前、運動音痴な姿を見せるわけにはいかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "手前");
+        assert_pattern_range(&patterns, "手前", 0, 4); // 娘の手前
+    }
 }

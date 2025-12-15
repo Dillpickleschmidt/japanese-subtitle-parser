@@ -1348,9 +1348,35 @@ pub fn kou_no_noun() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 手前
+// Pattern: 手前 (in front of, given the circumstances)
+// Structures: Verb + 手前 | Noun + の + 手前
 pub fn temae() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TemaeMatcher;
+    impl Matcher for TemaeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "手前"
+                && token.base_form == "手前"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Optional(Box::new(super::past_auxiliary())), // Optional た/だ for verbs
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoParticleMatcher)))), // Optional の for nouns
+        TokenMatcher::Custom(Arc::new(TemaeMatcher)),
+    ]
 }
 
 // Pattern: を巡って
