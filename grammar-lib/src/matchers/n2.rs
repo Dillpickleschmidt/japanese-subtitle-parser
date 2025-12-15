@@ -5205,9 +5205,10 @@ pub fn nikotaete() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: それとも
+// Pattern: それとも (or, or rather)
+// Structure: Option (A) + それとも + Option (B)
 pub fn soretomo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![TokenMatcher::Surface("それとも")]
 }
 
 // Pattern: にしたら

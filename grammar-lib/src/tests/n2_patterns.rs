@@ -9243,3 +9243,46 @@ mod nikotaete_tests {
         assert_pattern_range(&patterns, "に応えて", 3, 9); // 声にこたえた
     }
 }
+
+// Pattern: それとも (or, or rather)
+// Data source: grammar_points_data.json["それとも"]
+// Testing structure variant:
+//   - standard[0]: "Option (A) + それとも + Option (B)"
+// Note: Single structure variant - a simple conjunction
+
+mod soretomo_tests {
+    use super::*;
+
+    #[test]
+    fn test_soretomo_between_questions() {
+        // Example from grammar data: 文法の勉強をしますか。それとも漢字の勉強をしますか。
+        let sentence = "今日は文法の勉強をしますか。それとも漢字の勉強をしますか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それとも");
+        assert_pattern_range(&patterns, "それとも", 14, 18); // それとも
+    }
+
+    #[test]
+    fn test_soretomo_mid_sentence() {
+        // Example from grammar data: 動物園に行く？それとも家でゆっくりする？
+        let sentence = "来週はどこに行きたい？動物園に行く？それとも家でゆっくりする？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それとも");
+        assert_pattern_range(&patterns, "それとも", 18, 22); // それとも
+    }
+
+    #[test]
+    fn test_soretomo_with_comma() {
+        // Example from grammar data: 海に行こうか、それとも川に行こうか
+        let sentence = "今日は海に行こうか、それとも川に行こうか、迷うな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それとも");
+        assert_pattern_range(&patterns, "それとも", 10, 14); // それとも
+    }
+}
