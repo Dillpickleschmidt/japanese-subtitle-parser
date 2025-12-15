@@ -1,16 +1,16 @@
 ## Session 415 - 2025-12-15
 
 ### Session Summary - IN PROGRESS
-**Status**: IN PROGRESS - Successfully implemented 1 N2 pattern (際に)
-**Patterns completed**: 1 (N2, priority 4)
-**Tests added**: 3 new tests (all passing)
-**Total tests**: 2711 passing, 1 ignored (was 2708 passing, 1 ignored - net +3 tests)
+**Status**: IN PROGRESS - Successfully implemented 2 N2 patterns (際に, ないことには～ない)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 7 new tests (3 for 際に, 4 for ないことには～ない, all passing)
+**Total tests**: 2715 passing, 1 ignored (was 2708 passing, 1 ignored - net +7 tests)
 
 **Session highlights**:
 - Implemented 際に (on the occasion of, when) - formal pattern with 3 structure variants
-- Pattern handles: Verb[る] + 際に, Verb[た] + 際に, Noun + の + 際に
-- Used TokenMatcher::Any with optional matchers to handle all variants in one pattern
-- Clean test-first implementation
+- Implemented ないことには～ない (unless, without) - 4 structure variants
+- Both patterns use optional matchers to handle multiple structures efficiently
+- Clean test-first implementation for both
 - All tests pass with proper range assertions
 - No regressions
 
@@ -43,6 +43,38 @@
 - 際 is always 名詞/非自立/副詞可能 (dependent noun)
 - の when present is 助詞/連体化 (relativizing particle)
 - Pattern successfully captures full construction from verb/noun through に
+
+---
+
+### ✅ Pattern Implemented: ないことには～ない (unless, without)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: ないことには～ない is a 2-part structure expressing "unless (A), (B) will not happen". The first part uses ない (negative) + こと (nominalizer) + には (particle combination), and the second part (not explicitly matched) typically ends with ない or negative form. Literally means "within the situation of (A) not being a thing, neither will (B)".
+
+**Structures tested**: All 4 structure variants from grammar_points_data.json
+1. Verb[ない] + ことには: 被らないことには (chars 8-14) - "unless you wear"
+2. い-Adjective[ない] + ことには: ないことには (chars 15-21) - "unless it is (thrilling)"
+3. な-Adjective + でない + ことには: でないことには (chars 7-14) - "unless (it is earnest)"
+4. Noun + でない + ことには: ないことには (chars 4-10) - "unless (there is a permit)"
+
+**Implementation details**:
+- Pattern structure: (optional で) + ない + こと(名詞/非自立) + に(格助詞) + は(係助詞)
+- Custom matchers: DeAuxiliaryMatcher (で from だ), NaiMatcher (ない as auxiliary or adjective), KotoMatcher, NiParticleMatcher, WaParticleMatcher
+- Optional で handles な-adjectives/nouns (でない) vs verbs/い-adjectives (ない)
+- NaiMatcher accepts both 助動詞 (auxiliary) and 形容詞 (adjective) POS tags
+- Register: standard
+
+**Test count**: 4 tests (all passing)
+
+**Tokenization observations**:
+- Verb + ない: ない is 助動詞/特殊・ナイ (negative auxiliary)
+- い-Adj (standalone ない): ない is 形容詞/自立 (independent adjective)
+- な-Adj/Noun + でない: で(助動詞/だ) + ない(助動詞)
+- こと is always 名詞/非自立/一般 (dependent noun)
+- Pattern successfully matches all four structural variants
 
 ---
 
