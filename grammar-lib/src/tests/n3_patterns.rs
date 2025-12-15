@@ -13308,3 +13308,107 @@ mod kangaerarenai_tests {
         assert_pattern_range(&patterns, "考えられない", 13, 19); // 考えられない
     }
 }
+
+// ========== 必ずしも (not necessarily/not always) ==========
+// Pattern: 必ずしも (not necessarily, not always, not entirely)
+// Data source: grammar_points_data.json["必ずしも "]
+//
+// Structure variants to test:
+//   standard[0]: 必（かなら）ずしも + Phrase + わけではない(1) (わけじゃない)
+//   standard[1]: 必（かなら）ずしも + Phrase + とは限（かぎ）らない
+//   standard[2]: 必（かなら）ずしも + Phrase + とは言（い）えない
+//   polite[0]: 必（かなら）ずしも + Phrase + わけではありません(1) (わけじゃありません)
+//   polite[1]: 必（かなら）ずしも + Phrase + とは限（かぎ）りません
+//   polite[2]: 必（かなら）ずしも + Phrase + とは言（い）えません
+
+mod kanarazushimo_tests {
+    use super::*;
+
+    // Testing: standard[0] - 必ずしも + Phrase + わけではない
+    #[test]
+    fn test_wakede_wanai() {
+        let sentence = "男の人は必ずしも強いわけではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "必ずしも ");
+        assert_pattern_range(&patterns, "必ずしも ", 4, 8); // 必ずしも
+    }
+
+    // Testing: standard[0] variation - わけじゃない
+    #[test]
+    fn test_wakejanai() {
+        let sentence = "お金持ちが必ずしも幸せなわけじゃないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "必ずしも ");
+        assert_pattern_range(&patterns, "必ずしも ", 5, 9); // 必ずしも
+    }
+
+    // Testing: standard[1] - 必ずしも + Phrase + とは限らない
+    #[test]
+    fn test_toha_kagiranai() {
+        let sentence = "刑務所にいる人たちは必ずしも犯罪を犯したとは限らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "必ずしも ");
+        assert_pattern_range(&patterns, "必ずしも ", 10, 14); // 必ずしも
+    }
+
+    // Testing: standard[2] - 必ずしも + Phrase + とは言えない
+    #[test]
+    fn test_toha_ienai() {
+        let sentence = "女の人は必ずしも買い物が好きだとは言えない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "必ずしも ");
+        assert_pattern_range(&patterns, "必ずしも ", 4, 8); // 必ずしも
+    }
+
+    // Testing: polite[0] - 必ずしも + Phrase + わけではありません
+    #[test]
+    fn test_wakede_wa_arimasen() {
+        let sentence = "高価な物が必ずしも良いわけではありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "必ずしも ");
+        assert_pattern_range(&patterns, "必ずしも ", 5, 9); // 必ずしも
+    }
+
+    // Testing: polite[0] variation - わけじゃありません
+    #[test]
+    fn test_wakeja_arimasen() {
+        let sentence = "新しいものが必ずしも正しいわけじゃありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "必ずしも ");
+        assert_pattern_range(&patterns, "必ずしも ", 6, 10); // 必ずしも
+    }
+
+    // Testing: polite[1] - 必ずしも + Phrase + とは限りません
+    #[test]
+    fn test_toha_kagirimasen() {
+        let sentence = "有名な医者が必ずしも腕が良いとは限りません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "必ずしも ");
+        assert_pattern_range(&patterns, "必ずしも ", 6, 10); // 必ずしも
+    }
+
+    // Testing: polite[2] - 必ずしも + Phrase + とは言えません
+    #[test]
+    fn test_toha_iemasen() {
+        let sentence = "学歴が高い人が必ずしも成功するとは言えません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "必ずしも ");
+        assert_pattern_range(&patterns, "必ずしも ", 7, 11); // 必ずしも
+    }
+}

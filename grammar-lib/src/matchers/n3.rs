@@ -8484,9 +8484,19 @@ pub fn kangaerarenai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 必ずしも 
+// Pattern: 必ずしも (not necessarily/not always)
+// Structures: 必ずしも (single adverb token)
 pub fn kanarazushimo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct KanarazushimoMatcher;
+    impl Matcher for KanarazushimoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "必ずしも"
+                && token.base_form == "必ずしも"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(KanarazushimoMatcher))]
 }
 
 // Pattern: 連用形

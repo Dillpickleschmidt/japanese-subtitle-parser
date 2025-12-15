@@ -6750,13 +6750,13 @@
   {
     "pattern_name": "必ずしも ",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although it is often considered a stand-alone adverb , 必（かなら）ずしも is a combination of the adverb 必（かなら）ず 'invariably',... [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null
