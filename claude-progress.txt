@@ -1,14 +1,16 @@
 ## Session 485 - 2025-12-15
 
-### Session Summary - Two N2 Patterns Complete ✓
-**Status**: Successfully implemented 何といっても and は別として patterns
-**Patterns completed**: 2 (both N2, priority 4)
-**Total tests**: 3192 passing, 1 ignored (added 9 new tests)
+### Session Summary - Four N2 Patterns Complete ✓
+**Status**: Successfully implemented 何といっても, は別として, 何から何まで, and に加えて patterns
+**Patterns completed**: 4 (all N2, priority 4)
+**Total tests**: 3202 passing, 1 ignored (added 19 new tests)
 
 **Session highlights**:
 - Implemented 何といっても (after all, above all, without a doubt) - 4 tests
 - Implemented は別として (setting aside, except for, save for) - 5 tests
-- Both patterns use custom matchers to ensure accurate detection
+- Implemented 何から何まで (everything from A to Z) - 5 tests
+- Implemented に加えて (in addition to, besides) - 5 tests
+- All patterns use custom matchers to ensure accurate detection
 - All structure variants tested appropriately
 - All tests passing with proper range assertions
 - No regressions in test suite
@@ -86,6 +88,80 @@ All tests use realistic, subtitle-quality sentences and include proper range ass
 - `grammar-lib/src/matchers/n2.rs` - Implemented habetsutoshite() function (44 lines with custom matchers)
 - `grammar-lib/src/tests/n2_patterns.rs` - Added 5 comprehensive tests
 - `feature_list.json` - Updated は別として to complete status
+
+---
+
+### ✓ Completed: 何から何まで (everything from A to Z, everything and anything)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- 何（なに）から何（なに）まで + Phrase (fixed expression)
+
+**Implementation details**:
+- Fixed four-token sequence: 何 (代名詞) + から (格助詞) + 何 (代名詞) + まで (副助詞)
+- Custom matchers for each component to ensure accurate detection
+- Means "from whatever to whatever" - indicates no limit to what is included
+- Often used at beginning of sentences as an adverb-like expression
+
+**Tests created**: 5 tests
+1. `test_nanikarananimade_knowledge` - Knowing everything (fishing example)
+2. `test_nanikarananimade_apology` - Apologizing for everything
+3. `test_nanikarananimade_gratitude` - Thanking for everything
+4. `test_nanikarananimade_halfhearted` - Everything done halfheartedly
+5. `test_nanikarananimade_one_year` - Grateful for everything over one year
+
+**Key implementation notes**:
+- Used in expressions of thanks or gratitude
+- Can also express frustration when everything is problematic
+- Straightforward four-token pattern with specific POS requirements
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented nanikarananimade() function (47 lines with custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 5 comprehensive tests
+- `feature_list.json` - Updated 何から何まで to complete status
+
+---
+
+### ✓ Completed: に加えて (in addition to, besides, not only A but also B)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Noun + に加えて (standard form with て)
+- Noun + に加え (formal-conjunctive form without て)
+
+**Implementation details**:
+- Three-token pattern: に (格助詞) + 加え (動詞, 連用形) + て (接続助詞, optional)
+- Optional て particle allows matching both forms (に加えて and に加え)
+- Formal pattern used when (B) magnifies or adds to what's true of (A)
+- Increase may be positive or negative
+
+**Tests created**: 5 tests
+1. `test_nikuwaete_heat_humidity` - Heat and humidity (weather warning)
+2. `test_nikuwaete_grammar_kanji` - Grammar and kanji teaching
+3. `test_nikuwaete_karate_kendo` - Karate and kendo (martial arts)
+4. `test_nikuwae_formal_conjunctive` - Flowers and letter (formal に加え without て)
+5. `test_nikuwaete_bills` - Electricity and gas bills
+
+**Key implementation notes**:
+- Pattern appears in formal contexts
+- Both kanji (加える) and hiragana (くわえる) readings are common
+- Highlights something being added that wouldn't be possible with just the base alone
+- Optional て matcher enables detection of both standard and formal-conjunctive forms
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented nikuwaete() function (46 lines with custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 5 comprehensive tests
+- `feature_list.json` - Updated に加えて to complete status
 
 ---
 
