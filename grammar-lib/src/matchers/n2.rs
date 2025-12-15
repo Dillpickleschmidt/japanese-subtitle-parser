@@ -4582,9 +4582,56 @@ pub fn imadani() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: をもとに
+// Pattern: をもとに (based on)
+// Structures: Noun + をもとに（して）, Noun + をもとにした + Noun
 pub fn womotoni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // をもとに = を (case particle) + もと (noun) + に (case particle)
+    // Can optionally be followed by する in various forms:
+    // - して (te-form)
+    // - した (past/pre-noun)
+
+    // Match を as case particle
+    #[derive(Debug)]
+    struct WoCaseMatcher;
+    impl Matcher for WoCaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match もと as noun
+    #[derive(Debug)]
+    struct MotoNounMatcher;
+    impl Matcher for MotoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もと"
+                && token.base_form == "もと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match に as case particle
+    #[derive(Debug)]
+    struct NiCaseMatcher;
+    impl Matcher for NiCaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(WoCaseMatcher)),
+        TokenMatcher::Custom(Arc::new(MotoNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiCaseMatcher)),
+        // The following particles/verbs (して, した, する, etc.) are optional
+        // and will be captured by wildcard if present, but the core pattern is を + もと + に
+    ]
 }
 
 // Pattern: からには (as long as, since, given that)

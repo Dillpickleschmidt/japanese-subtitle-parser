@@ -8767,13 +8767,13 @@
   {
     "pattern_name": "をもとに",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When linked to a noun, を元（もと）に is an expression that indicates that something is 'based on (A)', 'from (A)', or 'acco... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

@@ -5395,7 +5395,7 @@ declare_patterns! {
     Womotoni {
         name: "をもとに",
         matcher_fn: crate::matchers::n2::womotoni,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

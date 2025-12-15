@@ -8056,3 +8056,51 @@ mod imadani_tests {
         assert_pattern_range(&patterns, "未だに", 25, 29); // いまだに (single token)
     }
 }
+
+// Pattern: をもとに (based on)
+// Data source: grammar_points_data.json["をもとに"]
+// Testing: structure.standard[0] - "Noun + をもとに（して）"
+// Testing: structure.standard[1] - "Noun + をもとにした + Noun"
+//
+// Structure variants:
+//   - standard[0]: Noun + をもとに (without して)
+//   - standard[0]: Noun + をもとにして (with して)
+//   - standard[1]: Noun + をもとにした + Noun
+
+mod womotoni_tests {
+    use super::*;
+
+    #[test]
+    fn test_womotoni_basic() {
+        // Example from grammar_points_data.json: このドラマは実際に起こったことをもとに作られたそうだ
+        // Structure: Noun + をもとに (basic form without して)
+        let sentence = "このドラマは実際に起こったことをもとに作られたそうだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をもとに");
+        assert_pattern_range(&patterns, "をもとに", 15, 19); // をもとに
+    }
+
+    #[test]
+    fn test_womotoni_with_shite() {
+        // Structure: Noun + をもとにして (with して)
+        let sentence = "研究の結果をもとにしてレポートを書いてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をもとに");
+        assert_pattern_range(&patterns, "をもとに", 5, 9); // をもとに (して is separate)
+    }
+
+    #[test]
+    fn test_womotoni_shita_noun() {
+        // Structure: Noun + をもとにした + Noun
+        let sentence = "このデータをもとにした分析を提出します";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をもとに");
+        assert_pattern_range(&patterns, "をもとに", 5, 9); // をもとに (した is separate)
+    }
+}
