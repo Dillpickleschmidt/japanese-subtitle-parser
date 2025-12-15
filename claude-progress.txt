@@ -1,18 +1,75 @@
 ## Session 441 - 2025-12-15
 
 ### Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented 1 N2 pattern (に先立ち)
-**Patterns completed**: 1 (N2, priority 4)
-**Tests added**: 4 new tests (all passing with range assertions)
-**Total tests**: 2899 passing, 1 ignored (was 2895 before session, net +4 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (に先立ち, 甲斐がある)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 9 new tests (4 + 5, all passing with range assertions)
+**Total tests**: 2904 passing, 1 ignored (was 2895 before session, net +9 tests)
 
 **Session highlights**:
 - Implemented に先立ち (prior to, before) - N2 formal pattern
-- Handles multiple structure variants: Verb/Noun + に + 先立って/先立ち/先立つ
+- Implemented 甲斐がある (worth doing, pays off) - N2 pattern
+- Both patterns handle multiple structure variants
+- に先立ち: Verb/Noun + に + 先立って/先立ち/先立つ (3 verb forms)
+- 甲斐がある: Verb/Noun + かい/がい + がある/がない (affirmative and negative)
 - Clean test-first workflow following REFERENCE_EXAMPLES.md
-- All 4 structure variants tested with realistic sentences
+- All 9 structure variants tested with realistic sentences (4 + 5)
 - All tests pass with proper range assertions
 - No regressions
+
+---
+
+### ✅ Pattern Implemented #2: 甲斐がある (worth doing, pays off)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: 甲斐がある is used following verbs or nouns to show that (A) was or will be worth doing. The pattern translates as "it is worth doing (A)" or "(A) will pay off". The noun 甲斐 (かい, worth/effect) appears in hiragana and can be either かい or がい depending on what precedes it. After verbs, がい follows the verb stem (ます-stem), while かい can follow various verb forms (past た, て+いる). With nouns, の precedes かい. The pattern can be negative (かいがない/がいがない) to indicate something is "not worth" doing.
+
+**Structures tested**: 5 test variants covering all main forms
+1. Verb[た] + かい + がある: 並んだかいがあった (chars 18-25) - "was worth standing in line"
+2. Verb[ている] + かい + がある: いるかいがある (chars 13-20) - "worth living"
+3. Verb[stem] + がい + がない: 教えがいがない (chars 17-24) - "not worth teaching"
+4. Noun + の + かい + がある: のかいがあり (chars 6-12) - "paid off"
+5. Verb[た] + かい + がない: たかいがない (chars 14-20) - "not worth coming"
+
+**Implementation details**:
+- Matcher structure: Any + かい/がい(名詞) + が(格助詞) + ある/ない
+- Custom matchers created:
+  - KaiGaiMatcher: matches both かい (名詞/非自立) and がい (名詞/接尾)
+  - GaMatcher: matches が as case particle (助詞/格助詞)
+  - AruNaiMatcher: matches ある (動詞/自立) or ない (形容詞/自立)
+- TokenMatcher::Any handles verbs (past/stem/て-form) and nouns before かい/がい
+- Single flexible matcher handles both affirmative and negative forms
+- Handles both かい and がい variants seamlessly
+
+**Tokenization observations**:
+- かい: Always 名詞/非自立/一般 (non-independent noun)
+- がい: Always 名詞/接尾/一般 (suffix noun) - follows verb stems
+- が: Always 助詞/格助詞/一般 (case particle)
+- ある: 動詞/自立/五段・ラ行 (verb)
+- ない: 形容詞/自立 (adjective, not auxiliary verb)
+- TokenMatcher::Any successfully matches various verb forms and nouns
+
+**Test sentences used**:
+- "この食パンを買えて、朝の４時から並んだかいがあった" - past tense, affirmative
+- "こういう景色を見ると生きているかいがあると思う" - て-form + いる, affirmative
+- "彼女は何回注意しても上達しないから教えがいがない" - verb stem + がい, negative
+- "みんなの努力のかいがあり、この大会で優勝する事ができました" - noun + の + かい
+- "こんなもんのために東京からきたかいがない" - past tense, negative
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented kaigaaru() function with 3 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added kaigaaru_tests module with 5 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- かい is used primarily after past tense (た) or て-form verbs
+- がい is used after verb stems (ます-stem) - emphasizes "always being worth (A)"
+- The pattern conveys that a positive result will come from something difficult or unpleasant
+- Can be written with kanji as 甲斐 but commonly appears in hiragana
 
 ---
 
@@ -68,30 +125,30 @@
 
 ---
 
-**Current stats**:
+**Current stats** (after both patterns):
 - N5: ✅ All complete
 - N4: 2 remaining (meta-patterns)
 - N3: ✅ All complete
-- N2: 109 remaining (down from 110 - completed 1 pattern!)
+- N2: 108 remaining (down from 110 - completed 2 patterns!)
 - N1: 176 remaining
-- Total: ~287 patterns remaining
+- Total: ~286 patterns remaining
 
 ### Quality Metrics
-✅ All 4 tests have assert_pattern_range
+✅ All 9 tests have assert_pattern_range (4 + 5)
 ✅ No print_debug in committed tests
 ✅ Realistic sentence examples from grammar_points_data.json
 ✅ Correct character ranges verified
 ✅ All documented structure variants tested
-✅ No regressions (all 2899 tests passing, up from 2895)
+✅ No regressions (all 2904 tests passing, up from 2895)
 
 **Next priorities**: Continue with remaining N2 priority 4 patterns:
-- 甲斐がある - worth doing
 - やがて - before long
 - にかけては - when it comes to
 - とっくに - long ago
 - 未だに - still (even now)
+- をもとに - based on
 
-**Session outcome**: Successfully completed 1 N2 pattern with full coverage! Total of 4 new tests added, all passing, no regressions. Pattern uses flexible matcher to handle multiple conjugation forms (て-form, conjunctive form, dictionary form).
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 9 new tests added (4 + 5), all passing, no regressions. Both patterns use flexible matchers to handle multiple structural variations (3 verb forms for に先立ち, かい/がい variants for 甲斐がある).
 
 ---
 
