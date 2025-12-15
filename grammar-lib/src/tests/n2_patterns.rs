@@ -11257,3 +11257,55 @@ mod nominarazu_tests {
         assert_pattern_range(&patterns, "のみならず", 10, 16); // 。のみならず (sentence-initial usage)
     }
 }
+
+// Pattern: ～て頂戴 (please do - casual/feminine request)
+// Data source: grammar_points_data.json["～て頂戴"]
+// Testing: structure.polite[0] - "Verb［て］ + 頂戴（ちょうだい）"
+//
+// Note: This is an informal/casual request form, often used by women or children,
+// despite being in the "polite" array. More feminine/casual than てください.
+// Can be written in kanji (頂戴) or hiragana (ちょうだい).
+
+mod techoudai_tests {
+    use super::*;
+
+    #[test]
+    fn test_te_choudai_kanji() {
+        let sentence = "お兄ちゃん、ちょっとこれあけて頂戴";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～て頂戴");
+        assert_pattern_range(&patterns, "～て頂戴", 12, 17); // あけて頂戴
+    }
+
+    #[test]
+    fn test_te_choudai_hiragana() {
+        let sentence = "お父さん、コンビニ行くなら砂糖買ってきてちょうだい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～て頂戴");
+        assert_pattern_range(&patterns, "～て頂戴", 18, 25); // きてちょうだい
+    }
+
+    #[test]
+    fn test_te_choudai_simple() {
+        let sentence = "これお姉ちゃんに渡してきてちょうだい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～て頂戴");
+        assert_pattern_range(&patterns, "～て頂戴", 11, 18); // きてちょうだい
+    }
+
+    #[test]
+    fn test_de_choudai() {
+        let sentence = "もうちょっと静かにしてちょうだい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～て頂戴");
+        assert_pattern_range(&patterns, "～て頂戴", 9, 16); // してちょうだい
+    }
+}

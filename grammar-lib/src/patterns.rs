@@ -5747,7 +5747,7 @@ declare_patterns! {
     Uff5eTechoudai {
         name: "～て頂戴",
         matcher_fn: crate::matchers::n2::uff5e_techoudai,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

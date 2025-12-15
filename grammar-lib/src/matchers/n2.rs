@@ -6423,9 +6423,39 @@ pub fn o_uff5e_negau() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～て頂戴
+// Pattern: ～て頂戴 (please do - casual/feminine request)
+// Structures: Verb[て/で] + 頂戴/ちょうだい
 pub fn uff5e_techoudai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match て or で (conjunction particle after verb)
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match ちょうだい or 頂戴 (dependent noun used as request)
+    #[derive(Debug)]
+    struct ChoudaiMatcher;
+    impl Matcher for ChoudaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ちょうだい" || token.surface == "頂戴")
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "動詞非自立的")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ChoudaiMatcher)),
+    ]
 }
 
 // Pattern: とか
