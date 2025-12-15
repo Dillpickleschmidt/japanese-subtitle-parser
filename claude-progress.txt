@@ -11009,3 +11009,101 @@ Total session time: ~45 minutes
 - Ready for next session
 
 Total session time: ~60 minutes
+
+---
+
+## Session 450 - 2025-01-XX
+
+### Session Goal
+Complete N2 patterns with test-first workflow, focusing on highest priority incomplete patterns.
+
+### Patterns Implemented
+
+#### Pattern 1/2: 抜く (to do completely, to pull through)
+
+**JLPT Level**: N2, **Category**: Construction, **Priority**: 4
+
+**Pattern**: 抜く expresses doing something completely or thoroughly, pulling through to the end despite difficulties. Literally "to extract", conveying completion or seeing something through to the bitter end.
+
+**Structures tested**: 6 variants
+1. Verb[stem] + ぬく (standard): 守りぬく (chars 7-11)
+2. Verb[stem] + ぬきます (polite): 乗り越えぬきます (chars 5-13)
+3. Verb[stem] + ぬかない (negative): やりぬかない (chars 12-18)
+4. Verb[stem] + ぬいた (past): 考えぬいた (chars 0-5)
+5. Verb[stem] + ぬかれる (passive): 見ぬか (chars 7-10)
+6. Compound verb + ぬく (知りぬく): 知りぬい (chars 11-15)
+
+**Implementation**:
+- nuku(): Matches Verb連用形 + ぬく (動詞/非自立)
+- nuku_compound(): Matches compound verbs ending in ぬく (like 知りぬく tokenized as single word)
+- Two separate patterns registered: "抜く" and "抜く_compound"
+- Handles both separate tokenization and compound verb forms
+
+**Files modified**: 3 (n2.rs matchers, patterns.rs, n2_patterns.rs tests, feature_list.json)
+
+#### Pattern 2/2: 抜きで (without, leaving out)
+
+**JLPT Level**: N2, **Category**: Construction, **Priority**: 4
+
+**Pattern**: 抜きで indicates doing something "without (A)" or "with the removal of (A)", leaving out or setting aside something that is regularly included.
+
+**Structures tested**: 5 variants (4 detectable, 1 undetectable)
+1. Noun + 抜きで: 冗談抜きで (chars 4-9)
+2. Noun + 抜きで (compound noun): ら抜きで (chars 14-18)
+3. Noun + 抜きに: 彼女抜きに (chars 0-5)
+4. Noun + 抜きに (within 抜きにして): 者抜きに (chars 4-8)
+5. Noun + 抜きの: ワサビ抜きの (chars 0-6)
+
+**Undetectable variant**: Noun + は + 抜きとして
+- Structure: 前置き + は + 抜き + として
+- Particle は appears between noun and 抜き, breaking the pattern
+- Would require more complex matcher allowing optional particles before 抜き
+
+**Implementation**:
+- nukide(): Matches Noun + 抜き(名詞) + (で/に/の/として)
+- NukiNounMatcher: Matches 抜き as 名詞/一般
+- NukideParticleMatcher: Matches で, に, の, or として particles
+- Handles multiple particle variations after 抜き
+
+**Files modified**: 3 (n2.rs matchers, n2_patterns.rs tests, feature_list.json)
+
+### Session Summary
+
+**Patterns completed**: 2 (both N2, priority 4)
+- 抜く - 6 tests (including compound form variant)
+- 抜きで - 5 tests (4 detectable variants)
+
+**Stats**:
+- Tests: 2970 passing (was 2959, net +11 tests)
+- N2 patterns remaining: ~86 (down from ~88)
+- Total patterns remaining: ~268
+
+**Key achievements**:
+- Implemented compound verb handling for 抜く (separate pattern for single-token compounds)
+- Handled multiple particle variations for 抜きで (で/に/の/として)
+- Documented undetectable variant with clear TODO explaining structural limitation
+- Both patterns implemented with comprehensive test coverage
+- No regressions (all tests passing)
+
+### Technical Notes
+
+**Compound verb tokenization**:
+- Some verbs ending in ぬく tokenize as Verb連用形 + ぬく(動詞/非自立)
+  Example: 守り + ぬく, やり + ぬか + ない
+- Others tokenize as single compound verb (動詞/自立) with base_form ending in ぬく
+  Example: 知りぬく (single token)
+- Solution: Two separate patterns registered in patterns.rs
+
+**Particle between noun and pattern marker**:
+- Pattern: Noun + は + 抜きとして cannot be detected with current matcher design
+- Current matcher expects: Noun directly before 抜き
+- Would need Optional(particle_matcher()) before 抜き to handle this case
+- Left as TODO for future enhancement if needed
+
+### Session End Notes
+- All tests passing (2970 passing, 1 ignored)
+- Codebase clean, feature_list.json updated
+- Two N2 patterns completed with proper test coverage
+- Ready for next session
+
+Total session time: ~90 minutes
