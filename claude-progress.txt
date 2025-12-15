@@ -1,3 +1,57 @@
+## Session 382 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented どうやら pattern (N2)
+**Patterns completed**: 1 (どうやら - N2 newly implemented)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2461 passing, 1 ignored (was 2457 passing, 1 ignored - net +4 tests)
+
+### ✅ Pattern Implemented: どうやら (apparently, it seems like)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: どうやら is an adverb that can be translated as 'apparently' or 'it seems like'. It is often grouped together with other phrases of speculation such as ようだ, そうだ, and らしい. どうやら strengthens the uncertainty of things the speaker is already unsure about, similar to "in some way it seems like (A)".
+
+**Structures tested**: 4 comprehensive tests covering different usage contexts
+1. どうやら + みたいだ: 鈴木くんはいるか？どうやら今日も休んでいるみたいだね (9-13) - "It seems like he's taking today off as well"
+2. どうやら + ようだ: どうやら私は彼女には必要がないようだ (0-4) - "It seems like I am not needed by her"
+3. どうやら + らしい: どうやら彼は結婚しているらしいよ (0-4) - "He is apparently married"
+4. Mid-sentence usage: お隣の鈴木さんがどうやら来月からイギリスに行くらしいですよ (8-12) - "Our neighbor is apparently going to England"
+
+**Implementation**: Matcher in n2.rs (lines 253-270), tests in n2_patterns.rs (lines 2355-2421)
+
+**Key notes**:
+- どうやら tokenizes as 副詞/一般 (general adverb)
+- Simple single-token pattern matching surface='どうやら' and base_form='どうやら'
+- Can appear at the beginning of sentences or mid-sentence
+- Often used with speculation markers: みたいだ, ようだ, そうだ, らしい
+- Etymology: Combination of どう 'how' and やら (particle denoting uncertainty)
+
+**Tokenization observations**:
+- surface="どうやら", base_form="どうやら", pos=副詞/一般
+- Consistent tokenization as a single adverb token
+- No conjugation forms (static adverb)
+
+### Test Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json examples
+✅ No regressions (all 2461 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 177 remaining (down from 178!)
+- N1: 186 remaining
+- Total: ~365 patterns remaining (down from ~366!)
+
+**Next priority**: Continue with N2 patterns - なにやら, よりほかない, 一応, etc.
+
+---
+
 ## Session 380 - 2025-12-14
 
 ### ✅ Session Summary
