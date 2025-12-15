@@ -5709,3 +5709,51 @@ mod shidaida_shidaide_tests {
         assert_pattern_range(&patterns, "次第だ・次第で", 0, 6); // 値段しだいで
     }
 }
+
+// Pattern: 際に (on the occasion of, when)
+// Data source: grammar_points_data.json["際に"]
+// Testing polite structures (no standard forms listed)
+//
+// Structure variants:
+//   - polite[0]: Verb[る/た] + 際に (note (1) says "Verb[る]" is also possible)
+//   - polite[1]: Noun + の + 際に
+
+mod saini_tests {
+    use super::*;
+
+    #[test]
+    fn test_saini_verb_ru_form() {
+        // Structure: Verb[る] + 際に
+        // Example from grammar_points_data.json: この建物に入る際には
+        let sentence = "この建物に入る際には、必ずヘルメットを被ってください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "際に");
+        assert_pattern_range(&patterns, "際に", 5, 9); // 入る際に
+    }
+
+    #[test]
+    fn test_saini_verb_ta_form() {
+        // Structure: Verb[た] + 際に
+        // Example from grammar_points_data.json: 肌に飛び散った際には
+        let sentence = "この薬品が誤って肌に飛び散った際には、直ぐに医者に相談してください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "際に");
+        assert_pattern_range(&patterns, "際に", 10, 17); // 飛び散った際に
+    }
+
+    #[test]
+    fn test_saini_noun_no() {
+        // Structure: Noun + の + 際に
+        // Example from grammar_points_data.json: 明日の面接の際には
+        let sentence = "明日の面接の際には、印鑑を持ってきてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "際に");
+        assert_pattern_range(&patterns, "際に", 3, 8); // 面接の際に
+    }
+}

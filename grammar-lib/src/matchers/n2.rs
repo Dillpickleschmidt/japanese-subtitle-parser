@@ -2870,8 +2870,61 @@ pub fn nisaishite() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 際に
+// Pattern: 際に (on the occasion of, when)
+// Structures:
+//   1. Verb[る] + 際に
+//   2. Verb[た] + 際に (Verb連用形 + た + 際に)
+//   3. Noun + の + 際に
 pub fn saini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Custom matcher for 際 (sai) as a dependent noun
+    #[derive(Debug)]
+    struct SaiMatcher;
+    impl Matcher for SaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "際"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Custom matcher for に particle after 際
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Custom matcher for の nominalizer/relativizer particle
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Pattern matches:
+    // - (Verb or Noun) + (optional た) + (optional の) + 際 + に
+    //
+    // This handles all three cases:
+    // 1. Verb[る] + 際に (e.g., 入る際に)
+    // 2. Verb連用形 + た + 際に (e.g., 飛び散った際に)
+    // 3. Noun + の + 際に (e.g., 面接の際に)
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Optional(Box::new(super::past_auxiliary())), // Optional た
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoParticleMatcher,
+        )))), // Optional の
+        TokenMatcher::Custom(Arc::new(SaiMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: にあたり・にあたって
