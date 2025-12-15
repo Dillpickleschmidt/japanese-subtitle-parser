@@ -12243,3 +12243,27 @@ Continue with remaining N2 patterns in priority order:
 - 何より (above all)
 - 気 (気がする, etc.)
 - Other priority 4 N2 patterns
+
+### Update: 恐れがある Pattern Added
+
+**恐れがある** (N2, priority 4) - 4 tests
+- 恐れがある (fear/risk of - negative possibility)
+- Structures tested:
+  - Verb[る/ない] + 恐れがある
+  - い-Adjective + 恐れがある
+  - Noun + の + 恐れがある
+- Implementation: Simple matcher for 恐れ (noun) + が + ある (identical structure to 傾向がある)
+- Tests cover 4 structure variants with realistic warning/risk contexts
+
+### Combined Session Stats
+- Tests: 3049 passing (was 3040, net +9 tests for session)
+- Patterns completed: 2 (傾向がある + 恐れがある)
+- N2 patterns remaining: ~57 (down from ~59)
+- No regressions (all existing tests still passing)
+
+### Files Modified (Session Total)
+- grammar-lib/src/matchers/n2.rs: Implemented keikougaaru() and osoregaaru() functions
+- grammar-lib/src/tests/n2_patterns.rs: Added keikougaaru_tests (5 tests) and osoregaaru_tests (4 tests) modules
+- feature_list.json: Updated 傾向がある and 恐れがある to complete status
+
+Session time so far: ~90 minutes
