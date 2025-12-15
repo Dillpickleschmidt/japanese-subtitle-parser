@@ -1,3 +1,84 @@
+## Session 428 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N1 pattern (きらいがある)
+**Patterns completed**: 1 (N1, priority 5)
+**Tests added**: 6 new tests (all passing with range assertions)
+**Total tests**: 2813 passing, 1 ignored (was 2807 passing, 1 ignored - net +6 tests)
+
+**Session highlights**:
+- Implemented きらいがある (tends to, has a tendency to) - 6 structure variants (3 standard + 3 polite)
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All structure variants tested with realistic sentences
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: きらいがある (tends to, has a tendency to)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: きらいがある is a combination of the noun きらい 'a dislike', the case-marking particle が, and the う-Verb ある 'to be'. It is used to indicate the presence of negative tendencies or habits, and may be translated as 'to have a tendency to (A)', or 'to be prone to (A)'. Due to きらいがある being quite strong, it is frequently used together with softening words such as 少し 'a little bit', or どうも 'try as one might'. It will usually not be used in relation to oneself, as it describes things that are 'displeasurable'.
+
+**Structures tested**: All 6 structure variants from grammar_points_data.json
+1. Verb[る] + きらいがある: 辞めるきらいがある (chars 21-30)
+2. Verb[ない] + きらいがある: 言わないきらいがある (chars 10-18)
+3. Noun + (の) + きらいがある: 上昇するきらいがある (chars 18-28)
+4. Verb[る] + きらいがあります (polite): 増加するきらいがあります (chars 14-26)
+5. Verb[ない] + きらいがあります (polite): するきらいがあります (chars 13-23)
+6. Noun + の + きらいがあります (polite): のきらいがあります (chars 19-28)
+
+**Implementation details**:
+- Matcher structure: Any + きらい(名詞/非自立) + が(助詞/格助詞) + ある/あり(動詞) + optional(ます)
+- Custom matchers created:
+  - KiraiMatcher: matches きらい as 名詞/非自立/一般
+  - GaKakuMatcher: matches が as 助詞/格助詞/一般
+  - AruAriMatcher: matches ある (基本形) or あり (連用形) with base_form=ある
+  - MasuMatcher: matches ます (助動詞) for polite form
+- Single matcher handles both standard (ある) and polite (あります) forms
+- TokenMatcher::Any successfully matches verbs (dictionary form and negative), nouns, and の before きらい
+
+**Test count**: 6 tests (all passing)
+- test_verb_dictionary_form (Verb[る] + きらいがある)
+- test_verb_negative_form (Verb[ない] + きらいがある)
+- test_noun_no_form (Verb/Noun + きらいがある)
+- test_verb_dictionary_polite (Verb[る] + きらいがあります)
+- test_verb_negative_polite (Verb[ない] + きらいがあります)
+- test_noun_no_polite (Noun + の + きらいがあります)
+
+**Tokenization observations**:
+- きらい: always 名詞/非自立/一般
+- が: always 助詞/格助詞/一般
+- Standard form: ある (動詞/自立, 基本形)
+- Polite form: あり (動詞/自立, 連用形) + ます (助動詞, 基本形)
+- TokenMatcher::Any matches verb dictionary forms, verb negative forms (ない), nouns, and の
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n1.rs: Implemented kiraigaaru() function with 4 custom matchers
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs: Added kiraigaaru_tests module with 6 tests
+- feature_list.json: Updated status to "complete"
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 114 remaining
+- N1: 178 remaining (down from 179 - completed 1 pattern!)
+- Total: ~294 patterns remaining
+
+**Next priorities**: Continue with remaining N1 priority 5 patterns:
+- 如く・如き・如し - classical patterns
+- 極まりない・極まる - extreme degree
+- といえども - even though
+- までもない - no need to
+- ともなると・にもなると - when it comes to
+
+---
+
 ## Session 427 - 2025-12-15
 
 ### Session Summary - COMPLETE
