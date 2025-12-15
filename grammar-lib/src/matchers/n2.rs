@@ -6384,9 +6384,26 @@ pub fn monogaaru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 傾向がある
+// Pattern: 傾向がある (tendency/trend)
+// Structures: Verb/Adj/Noun + 傾向 + が + ある
 pub fn keikougaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct KeikouMatcher;
+    impl Matcher for KeikouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "傾向"
+                && token.base_form == "傾向"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KeikouMatcher)),
+        TokenMatcher::Surface("が"),
+        TokenMatcher::specific_verb("ある"),
+    ]
 }
 
 // Pattern: ～に値する

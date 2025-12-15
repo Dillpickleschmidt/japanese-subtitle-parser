@@ -9928,3 +9928,75 @@ mod niha_tests {
         assert_pattern_range(&patterns, "には", 0, 4); // 通勤には
     }
 }
+
+// Pattern: 傾向がある (tendency/trend)
+// Data source: grammar_points_data.json["傾向がある"]
+// Structures to test:
+//   - standard[0]: Verb[る] + 傾向
+//   - standard[1]: い-Adj + 傾向
+//   - standard[2]: な-Adj + な + 傾向
+//   - standard[3]: Noun + の + 傾向
+//   - Note: standard[4] is just a variant note about た-form verbs
+mod keikougaaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_keikougaaru_verb() {
+        // Testing: Verb[る] + 傾向がある
+        // Realistic context: discussing a statistical trend
+        let sentence = "この国では物価が上がっていく傾向がある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "傾向がある");
+        assert_pattern_range(&patterns, "傾向がある", 14, 19); // 傾向がある
+    }
+
+    #[test]
+    fn test_keikougaaru_i_adjective() {
+        // Testing: い-Adj + 傾向がある
+        // Realistic context: describing a characteristic tendency
+        let sentence = "彼は気分の浮き沈みが激しい傾向がある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "傾向がある");
+        assert_pattern_range(&patterns, "傾向がある", 13, 18); // 傾向がある
+    }
+
+    #[test]
+    fn test_keikougaaru_na_adjective() {
+        // Testing: な-Adj + な + 傾向がある
+        // Realistic context: textbook characteristic
+        let sentence = "その教科書は使いやすくてユニークな傾向がある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "傾向がある");
+        assert_pattern_range(&patterns, "傾向がある", 17, 22); // 傾向がある
+    }
+
+    #[test]
+    fn test_keikougaaru_noun() {
+        // Testing: Noun + の + 傾向がある
+        // Realistic context: social trend
+        let sentence = "最近は世界中で小家族化の傾向がある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "傾向がある");
+        assert_pattern_range(&patterns, "傾向がある", 12, 17); // 傾向がある
+    }
+
+    #[test]
+    fn test_keikougaaru_verb_past() {
+        // Testing: Verb[た] + 傾向がある (variant from standard[4])
+        // Realistic context: describing past trend
+        let sentence = "この地域では雨が降った傾向がある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "傾向がある");
+        assert_pattern_range(&patterns, "傾向がある", 11, 16); // 傾向がある
+    }
+}

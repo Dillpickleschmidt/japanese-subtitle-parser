@@ -9649,13 +9649,13 @@
   {
     "pattern_name": "傾向がある",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "傾向（けいこう）がある is a slightly formal grammar pattern used when indicating that there is some sort of 'trend' or 'tendency... [5 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
