@@ -1,15 +1,16 @@
 ## Session 393 - 2025-12-15
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 1 N2 pattern (後(の) Noun)
-**Patterns completed**: 1 (後(の) Noun - N2 newly implemented)
-**Tests added**: 3 new tests total (all passing)
-**Total tests**: 2563 passing, 1 ignored (was 2560 passing, 1 ignored - net +3 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (後(の) Noun, を巡って)
+**Patterns completed**: 2 (後(の) Noun and を巡って - both N2 newly implemented)
+**Tests added**: 6 new tests total (3 for 後(の) Noun + 3 for を巡って, all passing)
+**Total tests**: 2566 passing, 1 ignored (was 2560 passing, 1 ignored - net +6 tests)
 
 **Session highlights**:
 - Implemented 後(の) Noun (the rest of, what's remaining)
-- Comprehensive coverage of all 3 structure variants
-- Clean implementation with proper test coverage
+- Implemented を巡って (concerning, in regard to, about)
+- Comprehensive coverage of all structure variants for both patterns
+- Clean implementations with proper test coverage
 - All tests passing, no regressions
 
 ---
@@ -54,15 +55,54 @@
 ✅ Realistic sentences from grammar_points_data.json
 ✅ No regressions
 
+---
+
+### ✅ Pattern Implemented: を巡って (concerning, in regard to, about)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: One of the more indirect ways that 'to be concerning (A)' is conveyed in Japanese is through the pairing of a noun with を and the verb 巡（めぐ）る 'to go around'. This pattern can be translated as 'concerning (A)', 'in regard to (A)', or 'about (A)'. Following the natural translation: 'to go around the topic of (A)', or 'encompassing (A)'. This pattern keeps the 'around the topic of (A)' nuance and takes into consideration many different viewpoints. Frequently used when there is a disagreement or dispute about (A).
+
+**Structures tested**: 3 comprehensive tests covering all variants
+1. Noun + をめぐって: 境界線をめぐって (8-14) - "concerning the property line"
+2. Noun + をめぐる + Noun: 島をめぐる争い (2-7) - "conflict concerning the island"
+3. Noun + をめぐって + の + Noun: ルールをめぐってのトラブル (4-12) - "trouble concerning rules"
+
+**Implementation**: Matcher in n2.rs (lines 1432-1474), tests in n2_patterns.rs (lines 3835-3870)
+
+**Key notes**:
+- Pattern structure: Noun + (をめぐって | を + めぐる)
+- Handles two tokenization variants:
+  * Single token: をめぐって (助詞/格助詞/連語)
+  * Two tokens: を (助詞/格助詞) + めぐる (動詞/自立)
+- Flexible matching using Optional(めぐる) to handle both cases
+
+**Tokenization observations**:
+- **Single token**: surface="をめぐって", base="をめぐって", pos=助詞/格助詞/連語
+- **Two tokens**: を (助詞/格助詞/一般) + めぐる (動詞/自立/五段・ラ行)
+- めぐる verb appears in various forms: めぐる, めぐって, めぐり
+
+**Pattern ranges**: Full construction from noun through をめぐって/をめぐる
+- をめぐって: 境界線をめぐって, ルールをめぐって
+- をめぐる: 島をめぐる (includes noun + を + めぐる)
+
+### Test Quality Metrics (を巡って)
+✅ All 3 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
+
 **Current stats**:
 - N5: All complete
 - N4: 2 remaining (meta-patterns)
 - N3: All complete! 🎉
-- N2: 147 remaining (down from 148!)
+- N2: 146 remaining (down from 148!)
 - N1: 186 remaining
-- Total: ~348 patterns remaining (down from ~349!)
+- Total: ~347 patterns remaining (down from ~349!)
 
-**Next priority**: Continue with N2 patterns - を巡って, にわたって, に沿って, た末・の末, etc.
+**Next priority**: Continue with N2 patterns - にわたって, に沿って, た末・の末, にしたがって, etc.
 
 ---
 
