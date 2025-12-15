@@ -2203,3 +2203,99 @@ vec![
 - Total: ~384 patterns remaining (down from ~386!)
 
 **Next priority**: 考えられない (kangaerarenai) - "unthinkable/inconceivable"
+
+---
+
+## Session 370: Implemented 考えられない (kangaerarenai) - N3 Pattern
+
+**Date**: Continuation of Japanese Grammar Pattern Library development
+
+### Pattern Completed: 考えられない (kangaerarenai)
+
+**JLPT Level**: N3  
+**Pattern**: 考えられない (unthinkable/unimaginable)  
+**Meaning**: Expresses that something is unthinkable, unimaginable, or inconceivable
+
+**Structure Variants Tested**:
+1. Noun + など + 考えられない (standard negative): 妻と離婚することなど考えられない
+2. Noun + なんて + 考えられない (emphatic): 人に手を出すなんて私には考えられない
+3. Phrase + とは + 考えられない (quotative): あんなに小さな人が相撲をやろうと思ったとは考えられない
+4. Phrase + ことは + 考えられない (nominalized): 人違いだったことは考えられないか？
+5. Noun + など + 考えられません (polite): 今の私にそんなことなど考えられません
+6. Phrase + ことは + 考えられませんでした (polite past): 携帯で映画を見ることは考えられませんでした
+7. 考えられなかった (past): 考えられなかったでしょう
+8. Noun + は + 考えられない (without など): インターネットなしの生活は考えられない
+
+**Implementation Details**:
+
+The pattern matches the negative potential form of 考える (to consider):
+- 考え (base_form=考える, 動詞, 未然形)
+- られ (base_form=られる, 動詞/接尾, 未然形) - potential form suffix
+- ない/ません (助動詞) - negative auxiliary
+- Optional: た/でした (助動詞) - past auxiliary
+
+**Matcher Structure**:
+```rust
+vec![
+    Custom(KangaeMatcher),      // 考え (未然形 of 考える)
+    Custom(RareMatcher),         // られ (potential suffix)
+    Custom(NegAuxMatcher),       // ない or ます
+    Optional(PastAuxMatcher),    // た or です (past forms)
+]
+```
+
+**Key Implementation Challenges**:
+1. **Multiple conjugations**: Had to handle ない, ません, なかった, ませんでした, なかったでしょう
+2. **Precise range matching**: Initial implementation used `TokenMatcher::Any` which incorrectly matched trailing particles like か
+3. **Solution**: Created specific matchers for negative auxiliary (ない/ます) and past auxiliary (た/です) to ensure precise boundaries
+
+**Test Coverage**:
+- 8 tests covering all standard and polite forms
+- Tests include both assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences
+- All tests passing
+
+**Pattern Ranges**:
+The pattern range includes the full verb construction: 考えられない/ません/なかった/ませんでした
+- Does NOT include preceding particles/context (など, なんて, ことは, とは)
+- Does include optional past markers (た, でした, でしょう)
+
+**Technical Notes**:
+- This is a specific verb pattern, not a general conjugation pattern
+- The pattern specifically detects 考える + potential + negative, not other verbs
+- Could potentially be generalized to other verbs, but grammar data treats this as a specific construction
+
+**Tokenization Observations**:
+- 考えられない: 3 tokens (考え + られ + ない)
+- 考えられません: 3 tokens (考え + られ + ません)
+- 考えられなかった: 4 tokens (考え + られ + なかっ + た)
+- 考えられませんでした: 4 tokens (考え + られ + ません + でした)
+
+---
+
+### Session 370 Summary
+
+**Patterns completed**: 1
+- 考えられない (kangaerarenai) - 8 tests
+
+**Total tests added**: 8 tests (all passing)
+**Total test count**: 2366 (up from 2358)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 12 remaining (down from 13!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~383 patterns remaining (down from ~384!)
+
+**Quality metrics**:
+✅ All 8 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples
+✅ Correct character ranges
+✅ No regressions (all 2366 tests passing)
+
+**Next priority**: 必ずしも (kanarazushimo) - "not necessarily/not always"
+
