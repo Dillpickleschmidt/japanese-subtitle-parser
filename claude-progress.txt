@@ -1,3 +1,102 @@
+## Session 361 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern and marked 1 N4 pattern as complete
+**Patterns completed**: 2 (なくて - N4 already implemented, 全く～ない - N3 newly implemented)
+**Tests added**: 5 new tests for 全く～ない (all passing)
+**Total tests**: 2310 passing, 1 ignored (was 2305 passing, 1 ignored - net +5 tests)
+
+### ✅ Pattern Marked Complete: なくて (N4 - negative て-form)
+
+**JLPT Level**: N4
+**Category**: Construction
+**Priority**: 1 (low - not highlighted in overlay)
+
+**Status**: This pattern was already fully implemented with 7 tests, but was incorrectly marked as "needs_implementation" in feature_list.json. Updated status to "complete".
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n4.rs (nakute function, lines 443-474)
+- Tests: grammar-lib/src/tests/n4_patterns.rs (nakute_tests module, 7 tests passing)
+- Pattern: grammar-lib/src/patterns.rs (Nakute variant, lines 1173-1179)
+
+**Pattern**: なくて combines ない (in its conjugation form, なく) with the conjunction particle て to mean "to not (A), and..." or "not (A), and...". It's the negative version of the standard て-form and is used primarily for expressing reasons/causes.
+
+**Tests cover**:
+1. Verb + なくて
+2. い-Adjective + くなくて
+3. な-Adjective + ではなくて
+4. Noun + ではなくて
+5. Casual form (じゃなくて)
+6. Verb potential negative
+7. Noun が + なくて
+
+---
+
+### ✅ Pattern Implemented: 全く～ない (not at all / completely not)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low - not highlighted in overlay)
+
+**Pattern**: 全く～ない combines the adverb 全く (completely/entirely) with a phrase using ない to express "not at all (A)" or "completely not (A)". The pattern emphasizes the total absence or complete negation of something. Can be written in kanji (全く) or hiragana (まったく).
+
+**Structures tested**: 5 comprehensive tests covering all major variants
+1. 全く + Verb[ない]: 全く吠えないですよ (doesn't bark at all) - chars 4-12
+2. まったく + い-Adjective[くない]: まったく嬉しくない (not happy at all) - chars 10-19
+3. 全く + な-Adjective[じゃない]: 全く静かじゃない (not quiet at all) - chars 23-31
+4. まったく + Noun[がない]: まったく筋肉がない (no muscles at all) - chars 0-9
+5. 全く + Verb[ない]: 全く分からない (don't understand at all) - chars 0-7
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (mattaku_uff5e_nai function, lines 687-725)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (mattaku_nai_tests module, lines 12480-12542)
+- Pattern: grammar-lib/src/patterns.rs (MattakuUff5eNai variant, lines 2704-2710)
+
+**Tokenization patterns**:
+```
+まったく or 全く:
+- まったく (副詞/助詞類接続) - adverb, base=まったく
+- 全く (副詞/助詞類接続) - adverb, base=全く
+
+ない:
+- ない (助動詞/特殊・ナイ/基本形) - auxiliary verb after verbs
+- ない (形容詞/自立/基本形) - adjective after nouns/が
+```
+
+**Key implementation points**:
+1. Three-token matcher: まったく/全く + Wildcard(0-10) + ない
+2. MattakuMatcher handles BOTH kanji (全く, base=全く) AND hiragana (まったく, base=まったく)
+3. NaiMatcher accepts ない as BOTH auxiliary verb (助動詞) AND adjective (形容詞)
+4. Wildcard allows flexible word order between adverb and negation
+5. Pattern priority: 1 (detected but not highlighted in overlay)
+
+**Pattern ranges**: Include full construction from まったく/全く to ない
+- Verb: 全く + Verb[stem] + ない + です
+- Adjective: まったく + Adjective[く] + ない
+- Noun: まったく + Noun + が + ない
+- Pattern captures the complete phrase showing total negation
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover all major structural variants: verb, i-adjective, na-adjective, noun, both kanji and hiragana
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: まったく is more formal and serious than 全然（ぜんぜん）, which has similar meaning but is more casual. まったく tends to appear in formal writing and serious situations, while 全然 is common in everyday casual speech. Both emphasize complete absence or total negation.
+
+**Usage contexts**:
+- Emphasis: Stressing the complete absence of something
+- Formal contexts: More common in formal writing/speech than 全然
+- Both forms: 全く (kanji) and まったく (hiragana) are equally acceptable
+- Followed by negative: Always requires a negative form (ない)
+
+**Related patterns**:
+- 全然～ない (N3) - "not at all" (more casual than 全く～ない, not yet implemented)
+- あまり～ない (N4) - "not very" (weaker negation, already implemented)
+
+---
+
 ## Session 360 - 2025-12-14
 
 ### ✅ Session Summary
