@@ -11375,3 +11375,57 @@ mod tenaranai_tests {
         assert_pattern_range(&patterns, "てならない", 8, 16); // 不安でなりません
     }
 }
+
+// Pattern: とか (I heard that, or something like that)
+// Data source: grammar_points_data.json["とか"]
+// Testing: structure.standard[0-3] - Verb/い-Adj/な-Adj/Noun + とか
+//
+// Structure variants:
+//   - standard[0]: Verb + とか
+//   - standard[1]: い-Adjective + とか
+//   - standard[2]: な-Adjective + とか
+//   - standard[3]: Noun + とか
+
+mod toka_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_toka() {
+        let sentence = "遠藤さんと近藤さんが結婚するとか。意外じゃない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とか");
+        assert_pattern_range(&patterns, "とか", 10, 16); // 結婚するとか
+    }
+
+    #[test]
+    fn test_i_adj_toka() {
+        let sentence = "あの大手家電メーカーが開発した最新のスマホは動作がものすごく重いとか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とか");
+        assert_pattern_range(&patterns, "とか", 30, 34); // 重いとか
+    }
+
+    #[test]
+    fn test_na_adj_toka() {
+        let sentence = "高橋くんの彼女が美人だとか。あんなやつに美人な彼女ができたとは信じられないけどな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とか");
+        assert_pattern_range(&patterns, "とか", 10, 13); // だとか
+    }
+
+    #[test]
+    fn test_noun_toka() {
+        let sentence = "あの人は実はお金持ちだとか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とか");
+        assert_pattern_range(&patterns, "とか", 10, 13); // だとか
+    }
+}

@@ -6458,9 +6458,42 @@ pub fn uff5e_techoudai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とか
+// Pattern: とか (I heard that, or something like that)
+// Structures: Verb/Adjective/Noun + と(引用) + か
 pub fn toka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と as quotation particle (助詞/格助詞/引用)
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "引用")
+        }
+    }
+
+    // Match か as adverbial/parallel/final particle
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token
+                    .pos
+                    .get(1)
+                    .is_some_and(|p| p == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, Adjective, or Noun (with だ for な-Adj/Noun)
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+    ]
 }
 
 // Pattern: 〜ようではないか (why don't we, let's)

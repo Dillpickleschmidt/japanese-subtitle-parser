@@ -9383,13 +9383,13 @@
   {
     "pattern_name": "とか",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Being a combination of the particles と and か, とか 'quotes' the previous statement as being something that has been hea... [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
