@@ -6421,7 +6421,7 @@ declare_patterns! {
     Naramadashimo {
         name: "ならまだしも",
         matcher_fn: crate::matchers::n1::naramadashimo,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

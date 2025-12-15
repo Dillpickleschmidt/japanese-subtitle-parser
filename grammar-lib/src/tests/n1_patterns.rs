@@ -212,3 +212,49 @@ mod tatokorode_tests {
         assert_pattern_range(&patterns, "たところで", 2, 9); // 走ったところで
     }
 }
+
+// ============================================================================
+// ならまだしも Tests
+// ============================================================================
+
+mod naramadashimo_tests {
+    use super::*;
+
+    // Pattern: ならまだしも (if A, that's fine, but B)
+    // Data source: grammar_points_data.json["ならまだしも"]
+    // Testing: structure.standard[0] - "Phrase (A) + ならまだしも + Phrase (B)"
+    //
+    // Single structure variant - separates acceptable (A) from unacceptable (B)
+    // "ならまだしも" is a fixed phrase: なら + まだ + しも
+    // Examples: 暑いだけならまだしも (if it's just hot, that's fine, but...)
+
+    #[test]
+    fn test_naramadashimo_hot() {
+        let sentence = "暑いだけならまだしも、湿度も高いからどこにも行きたくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならまだしも");
+        assert_pattern_range(&patterns, "ならまだしも", 4, 10); // ならまだしも
+    }
+
+    #[test]
+    fn test_naramadashimo_days() {
+        let sentence = "二、三日ならまだしも、二週間なんて待てませんよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならまだしも");
+        assert_pattern_range(&patterns, "ならまだしも", 4, 10); // ならまだしも
+    }
+
+    #[test]
+    fn test_naramadashimo_once() {
+        let sentence = "一回だけならまだしも、毎日同じことで怒られて何にも思わないの。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならまだしも");
+        assert_pattern_range(&patterns, "ならまだしも", 4, 10); // ならまだしも
+    }
+}

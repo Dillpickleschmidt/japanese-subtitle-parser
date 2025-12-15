@@ -320,9 +320,35 @@ pub fn kiraigaaru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ならまだしも
+// Pattern: ならまだしも (if A, that's fine, but B)
+// Matches: なら (助動詞/仮定形) + まだしも (副詞)
+// Note: Pattern range will include preceding token automatically
 pub fn naramadashimo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct NaraMatcher;
+    impl Matcher for NaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MadashimoMatcher;
+    impl Matcher for MadashimoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まだしも"
+                && token.base_form == "まだしも"
+                && token.pos.first().is_some_and(|p| p == "副詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaraMatcher)),
+        TokenMatcher::Custom(Arc::new(MadashimoMatcher)),
+    ]
 }
 
 // Pattern: までもない
