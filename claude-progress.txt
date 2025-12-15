@@ -1,3 +1,102 @@
+## Session 359 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented から (N5) pattern and marked 3 existing patterns as complete
+**Patterns completed**: 4 (で, と1, から implemented; から1 marked complete)
+**Tests added**: 4 new tests for から (because usage) - all passing
+**Total tests**: 2295 passing, 1 ignored (was 2291 passing, 1 ignored - net +4 tests)
+
+### ✅ Patterns Marked Complete (already implemented, just needed feature_list.json updates)
+
+1. **で (N5)** - Case particle marking location/means/method. Tests exist (4 tests passing), implementation complete.
+2. **と1 (N5)** - "with" usage of と particle (companion/mutual action). Tests exist as part of と pattern (5 tests passing), implementation complete.
+
+### ✅ Pattern Implemented: から (from / because - dual usage particle)
+
+**JLPT Level**: N5
+**Category**: Construction
+**Priority**: 1 (low - not highlighted in overlay)
+
+**Pattern**: から is a versatile particle with two main meanings:
+1. **から1 (from)** - Marks starting point for location, time, or source (格助詞)
+2. **から (because)** - Marks reason or cause, more subjective than ので (接続助詞)
+
+The meaning is determined by the POS tag and context. The base nuance is always "from" - either "from a location" or "from a reason".
+
+**Structures tested**: 7 comprehensive tests covering both usages
+
+**から1 (from) - 3 tests (pre-existing)**:
+1. Noun + から (location): モロッコから来ました (from Morocco) - chars 3-9
+2. Noun + から (place): 空港から車で (from the airport) - chars 0-4
+3. Noun + から (time): 今日から新しい仕事 (from today) - chars 0-4
+
+**から (because) - 4 tests (newly added)**:
+1. Verb + から: 食べたから (because I ate) - chars 15-18 (た + から)
+2. い-Adjective + から: 優しいから (because she's kind) - chars 3-8
+3. な-Adjective + だ + から: 便利だから (because it's convenient) - chars 4-9
+4. Noun + だ + から: 会社だから (because it's a company) - chars 3-8
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n5.rs (kara function, lines 1657-1705)
+- Tests: grammar-lib/src/tests/n5_patterns.rs
+  - kara_from_tests module (lines 346-378) - existing tests for から1
+  - kara_because_tests module (lines 393-443) - new tests for から
+- Pattern: grammar-lib/src/patterns.rs (Kara variant, line 476)
+
+**Tokenization patterns**:
+```
+から as case particle (格助詞) - "from":
+- Noun + から (starting point)
+- Surface: から, Base: から
+- POS: 助詞/格助詞
+
+から as conjunction particle (接続助詞) - "because":
+- Verb/Adjective/Auxiliary + から
+- Surface: から, Base: から
+- POS: 助詞/接続助詞
+```
+
+**Key implementation points**:
+1. Three-token matcher: (Verb/Adj/Noun/Aux) + Optional(だ) + から
+2. VerbAdjNounAuxMatcher matches 動詞, 形容詞, 名詞, or 助動詞 (to catch た, etc.)
+3. Optional(DaCopulaMatcher) handles だ after nouns/な-adjectives
+4. KaraParticleMatcher accepts BOTH 格助詞 (from) AND 接続助詞 (because)
+5. Pattern includes full construction (e.g., 便利だから not just だから)
+6. Single pattern handles both usages based on POS tag context
+
+**Pattern ranges**: Include full grammatical construction
+- Verb + auxiliary + から: たから (after 食べた)
+- Adjective + から: 優しいから
+- Noun/な-adj + だ + から: 便利だから, 会社だから
+- Location + から: モロッコから, 空港から
+- Time + から: 今日から
+
+**Test Quality**:
+- All 7 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover all major structural variants for both usages
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The "because" usage (接続助詞) is more subjective and personal than ので, expressing the speaker's personal reasoning. The "from" usage (格助詞) marks literal starting points in space or time. Both share the base nuance of "originating from" - either from a location or from a reason/cause.
+
+**Important distinction**:
+- から (because) with nouns/な-adj REQUIRES だ: 学生だから
+- から (from) with nouns does NOT use だ: 駅から (not 駅だから)
+
+**Usage contexts**:
+- Caution: から for "because" requires だ after nouns/な-adjectives
+- The だ creates the explanatory/reasoning tone
+- Without だ, から after a noun means "from that location"
+
+**Related patterns**:
+- ので (N5) - "because/since" (more objective/formal than から)
+- てから (N5) - "after doing" (different usage of から)
+- から1 (N5) - "from" (same pattern, just the location/time meaning)
+- だから (N5) - "therefore/so" (standalone usage at sentence start)
+
+---
+
 ## Session 358 - 2025-12-14
 
 ### ✅ Session Summary
