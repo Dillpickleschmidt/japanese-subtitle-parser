@@ -1,3 +1,68 @@
+## Session 373 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 切れない pattern (N3)
+**Patterns completed**: 1 (切れない - N3 newly implemented)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2395 passing, 1 ignored (was 2389 passing, 1 ignored - net +6 tests)
+
+### ✅ Pattern Implemented: 切れない (unable to finish completely / can't possibly)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (low priority - detected but not highlighted in overlay)
+
+**Pattern**: In the negative-potential form, 切（き）れない will attach to the conjunctive form of other verbs, to express that a particular action is 'unable to be completed'. Unlike 切る (which shows something was done to the point of running out), 切れない often implies that the verb cannot be completed specifically because there is too much/many of something in order to finish it. It may also imply that something cannot be done 'to the point of satisfaction'.
+
+**Structures tested**: 6 comprehensive tests covering both structure variants
+1. Verb[stem] + 切れない (can't finish eating): 大盛頼むの？いくらあなたでもここの大盛は食べきれないと思うよ。 → 食べきれない (20-26)
+2. Verb[stem] + 切れない (can't finish climbing): あの山は一日では登りきれない。 → 登りきれない (8-14)
+3. Verb[stem] + 切れない (can't finish counting): 宇宙には数えきれないほどの星がある。 → 数えきれない (4-10)
+4. Verb[stem] + 切れない (can't wait): 楽しみ過ぎて待ちきれない。 → 待ちきれない (6-12)
+5. Verb[stem] + 切れない (can't express): 私のこの気持ちは言葉では表しきれない。 → 表しきれない (12-18)
+6. Verb[stem] + 切れません (polite): この料理は多すぎて全部食べきれません。 → 食べきれません (11-18)
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (kirenai function, lines 8591-8613)
+  - Custom matcher for きれる as auxiliary verb (negative potential form)
+  - Must be 一段 (ichidan) conjugation, pos=動詞/非自立
+  - Distinguishes from きる (五段・ラ行 godan-ra conjugation)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (kirenai_tests module, lines 13615-13689)
+- Pattern: grammar-lib/src/patterns.rs (Kirenai variant, lines 4201-4207)
+
+**Tokenization observations**:
+- Standard form: Verb[連用形] + きれ[未然形] + ない
+- Polite form: Verb[連用形] + きれ[連用形] + ませ + ん
+- きれる has base_form="きれる", pos=動詞/非自立, features[4]="一段"
+- Pattern ranges include the full construction (verb stem + きれない/きれません)
+
+### Test Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges
+✅ Tests cover standard and polite forms
+✅ No regressions (all 2395 tests passing)
+
+### Session Summary
+**Patterns completed**: 1
+- 切れない (kirenai) - 6 tests
+
+**Total tests added**: 6 tests (all passing)
+**Total test count**: 2395 (up from 2389)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 9 remaining (down from 10!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~380 patterns remaining (down from ~381!)
+
+**Next priority**: 込む ① (komu - "into/thoroughly") or 込む ② (komu - crowded)
+
+---
+
 ## Session 371 - 2025-12-14 (Updated)
 
 ### ✅ Session Summary
