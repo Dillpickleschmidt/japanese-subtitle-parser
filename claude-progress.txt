@@ -1,3 +1,57 @@
+## Session 400 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (に伴って・に伴い)
+**Patterns completed**: 1 (に伴って・に伴い - N2)
+**Tests added**: 8 new tests (all passing)
+**Total tests**: 2619 passing, 1 ignored (was 2611 passing, 1 ignored - net +8 tests)
+
+**Session highlights**:
+- Implemented に伴って・に伴い (nitomonatte/nitomonai) - "along with, in conjunction with, due to"
+- High-priority pattern (priority 4) with comprehensive structure variants
+- Test-first workflow: wrote all tests with print_debug, analyzed tokenization, implemented matcher
+- All 8 tests passing with proper range assertions
+- No regressions in existing tests
+
+---
+
+### ✅ Pattern Implemented: に伴って・に伴い (along with, in conjunction with, due to)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: に伴って・に伴い comes from the verb 伴う (to accompany) and is used to show that something happens in conjunction with or as a result of something else. Translates to "along with", "in conjunction with", "due to", or "accompanying". Can be used with both verbs and nouns, with optional の nominalizer after verbs.
+
+**Structures tested**: 4 main structure variants with 8 comprehensive tests:
+1. Verb[る] + に伴って: 減少するに伴って (chars 7-15)
+2. Verb[る] + の + に伴って: するのに伴って (chars 9-16)
+3. Verb[る] + に伴い: 取るに伴って (chars 2-8)
+4. Verb[る] + の + に伴う + Noun: するのに伴う手順 (chars 9-15)
+5. Noun + に伴って: 普及に伴って (chars 8-14)
+6. Noun + に伴い: 現象に伴い (chars 2-7), 地震に伴い (chars 3-8)
+7. Noun + に伴う + Noun: 工事に伴う車線規制 (chars 17-22)
+
+**Implementation**: Matcher in n2.rs (lines 1699-1780), tests in n2_patterns.rs (lines 4609-4718)
+
+**Key notes**:
+- Matches Verb(基本形) or Noun + (optional の) + に + 伴う verb + (optional て)
+- Custom matchers for: NounOrVerbMatcher, NiParticleMatcher, TomonauVerbMatcher, TeParticleMatcher, NoNominalizerMatcher
+- The verb 伴う appears in three forms: 伴って (連用タ接続 + て), 伴い (連用形), 伴う (基本形)
+- Optional の nominalizer allows "Verb + の" nominalization before に
+- Register: standard/formal
+
+**Tokenization observations**:
+- Noun + に伴って: 普及(名詞) + に(助詞/格助詞) + 伴っ(動詞/連用タ接続) + て(助詞/接続助詞)
+- Verb + に伴い: 取る(動詞/基本形) + に(助詞/格助詞) + 伴い(動詞/連用形)
+- Verb + の + に伴う: する(動詞/基本形) + の(名詞/非自立) + に(助詞/格助詞) + 伴う(動詞/基本形)
+
+**Pattern ranges**: Full construction from Noun/Verb to end of 伴って/伴い/伴う
+- All 8 test cases verified with correct character ranges
+- Covers progressive change contexts (歳を取るに伴って) and momentary events (地震に伴い)
+
+---
+
 ## Session 399 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
