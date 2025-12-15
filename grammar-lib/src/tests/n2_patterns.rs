@@ -3068,3 +3068,46 @@ mod sorenara_tests {
         assert_pattern_range(&patterns, "それなら", 0, 4); // それなら
     }
 }
+
+// Pattern: ものなら① (if one could / if it were possible)
+// Data source: grammar_points_data.json["ものなら①"]
+// Structures: Verb[potential] + ものなら + Phrase
+//
+// This pattern expresses hypothetical possibility: "if (A) were possible, (B)"
+// Comes after potential form verbs (できる or られる/れる forms)
+mod mononara_u2460_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[できる] + ものなら + Phrase"
+    #[test]
+    fn test_mononara_potential_verb() {
+        let sentence = "俺のことを捕まえることができるものなら、捕まえてみろ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものなら①");
+        assert_pattern_range(&patterns, "ものなら①", 12, 19); // できるものなら
+    }
+
+    // Testing: potential verb (られる form)
+    #[test]
+    fn test_mononara_rareru_form() {
+        let sentence = "すぐに直せるものなら直したいけど、今はちょっとお金がないから。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものなら①");
+        assert_pattern_range(&patterns, "ものなら①", 3, 10); // 直せるものなら
+    }
+
+    // Testing: with もし (if) at sentence start
+    #[test]
+    fn test_mononara_with_moshi() {
+        let sentence = "もし行けるものならケニヤに行ってみたいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものなら①");
+        assert_pattern_range(&patterns, "ものなら①", 2, 9); // 行けるものなら
+    }
+}

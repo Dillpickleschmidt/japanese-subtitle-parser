@@ -685,9 +685,37 @@ pub fn sorenara() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SorenaraMatcher))]
 }
 
-// Pattern: ものなら①
+// Pattern: ものなら① (if one could / if it were possible)
+// Structure: Verb[potential] + もの + なら
+// Used after potential form verbs to express hypothetical possibility
 pub fn mononara_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.base_form == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaraMatcher;
+    impl Matcher for NaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Potential form verb (できる or られる/れる form)
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(NaraMatcher)),
+    ]
 }
 
 // Pattern: ～を～に任せる (entrust X to Y)
