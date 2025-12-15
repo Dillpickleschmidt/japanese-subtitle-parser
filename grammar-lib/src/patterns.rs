@@ -5507,7 +5507,7 @@ declare_patterns! {
     Nioujite {
         name: "に応じて",
         matcher_fn: crate::matchers::n2::nioujite,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

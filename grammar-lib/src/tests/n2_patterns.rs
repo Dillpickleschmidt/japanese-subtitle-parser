@@ -8866,3 +8866,52 @@ mod nukide_tests {
         assert_pattern_range(&patterns, "抜きで", 0, 6); // ワサビ抜きの
     }
 }
+
+// Pattern: に応じて (in accordance with, depending on)
+// Data source: grammar_points_data.json["に応じて"]
+// Testing: structure.standard[0] - "Noun + に応じて"
+// Testing: structure.standard[1] - "Noun + に応じた + Noun"
+//
+// Structure variants:
+//   - standard[0]: Noun + に応じて (adverbial form)
+//   - standard[1]: Noun + に応じた + Noun (noun-modifying form)
+
+mod nioujite_tests {
+    use super::*;
+
+    #[test]
+    fn test_nioujite_adverbial() {
+        // Structure: Noun + に応じて
+        // Example from grammar data: 生徒達のレベルに応じてクラスを分ける
+        let sentence = "日本語を教える際には、生徒達のレベルに応じてクラスを分ける必要があります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に応じて");
+        assert_pattern_range(&patterns, "に応じて", 15, 22); // レベルに応じて
+    }
+
+    #[test]
+    fn test_nioujite_price() {
+        // Structure: Noun + に応じて
+        // Example from grammar data: 面積に応じて値段が高くなります
+        let sentence = "この地域の土地は、面積に応じて値段が高くなります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に応じて");
+        assert_pattern_range(&patterns, "に応じて", 9, 15); // 面積に応じて
+    }
+
+    #[test]
+    fn test_nioujita_noun() {
+        // Structure: Noun + に応じた + Noun
+        // Example from grammar data: クライアントの要望に応じたデザインを提供
+        let sentence = "私たちはクライアントの要望に応じたデザインを提供しています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に応じて");
+        assert_pattern_range(&patterns, "に応じて", 11, 17); // 要望に応じた
+    }
+}

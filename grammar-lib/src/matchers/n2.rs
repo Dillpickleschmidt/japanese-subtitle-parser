@@ -5102,9 +5102,49 @@ pub fn zunisumu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に応じて
+// Pattern: に応じて (in accordance with, depending on)
+// Structures: Noun + に応じて, Noun + に応じた + Noun
 pub fn nioujite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as case particle
+    #[derive(Debug)]
+    struct NiCaseMatcher;
+    impl Matcher for NiCaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 応じ verb (連用形 of 応じる)
+    #[derive(Debug)]
+    struct OujiMatcher;
+    impl Matcher for OujiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "応じる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match て or た (て-form or た-form)
+    #[derive(Debug)]
+    struct TeTaMatcher;
+    impl Matcher for TeTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+                || (token.surface == "た" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Noun
+        TokenMatcher::Custom(Arc::new(NiCaseMatcher)),
+        TokenMatcher::Custom(Arc::new(OujiMatcher)),
+        TokenMatcher::Custom(Arc::new(TeTaMatcher)),
+    ]
 }
 
 // Pattern: を通じて・を通して
