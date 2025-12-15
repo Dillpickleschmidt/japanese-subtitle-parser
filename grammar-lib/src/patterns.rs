@@ -6306,6 +6306,46 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    MamaNiWithNi {
+        name: "まま(に)_with_ni",
+        matcher_fn: crate::matchers::n1::mama_ni_with_ni,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    MamaNiNai {
+        name: "まま(に)_nai",
+        matcher_fn: crate::matchers::n1::mama_ni_nai,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    MamaNiIAdj {
+        name: "まま(に)_i_adj",
+        matcher_fn: crate::matchers::n1::mama_ni_i_adj,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    MamaNiNaAdj {
+        name: "まま(に)_na_adj",
+        matcher_fn: crate::matchers::n1::mama_ni_na_adj,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    MamaNiNoun {
+        name: "まま(に)_noun",
+        matcher_fn: crate::matchers::n1::mama_ni_noun,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     Niitarumade {
         name: "に至るまで",
         matcher_fn: crate::matchers::n1::niitarumade,

@@ -23,9 +23,176 @@ pub fn toiu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: まま(に)
+// Match まま (unchanged state noun)
+fn mama_matcher() -> TokenMatcher {
+    #[derive(Debug)]
+    struct MamaMatcher;
+    impl Matcher for MamaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まま"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(MamaMatcher))
+}
+
+// Match に particle (optional after まま)
+fn ni_particle_matcher() -> TokenMatcher {
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(NiParticleMatcher))
+}
+
+// Match any verb form that can precede た
+fn verb_before_ta_matcher() -> TokenMatcher {
+    #[derive(Debug)]
+    struct VerbBeforeTaMatcher;
+    impl Matcher for VerbBeforeTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(VerbBeforeTaMatcher))
+}
+
+// Match た (past auxiliary) - strict surface match only
+fn ta_auxiliary_matcher() -> TokenMatcher {
+    #[derive(Debug)]
+    struct TaAuxiliaryMatcher;
+    impl Matcher for TaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(TaAuxiliaryMatcher))
+}
+
+// Pattern: まま(に) - Verb[た] + まま
+// Structure: Verb stem + た + まま (WITHOUT に)
 pub fn mama_ni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![
+        verb_before_ta_matcher(),
+        ta_auxiliary_matcher(),
+        mama_matcher(),
+    ]
+}
+
+// Pattern: まま(に) - Verb[た] + まま + に
+// Structure: Verb stem + た + まま + に (WITH required に)
+pub fn mama_ni_with_ni() -> Vec<TokenMatcher> {
+    vec![
+        verb_before_ta_matcher(),
+        ta_auxiliary_matcher(),
+        mama_matcher(),
+        ni_particle_matcher(),
+    ]
+}
+
+// Pattern: まま(に) - Verb[ない] + まま (+ に)
+// Structure: Verb negative + ない + まま (+ に)
+pub fn mama_ni_nai() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct VerbNegativeFormMatcher;
+    impl Matcher for VerbNegativeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbNegativeFormMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+        mama_matcher(),
+        TokenMatcher::Optional(Box::new(ni_particle_matcher())),
+    ]
+}
+
+// Pattern: まま(に) - い-Adjective + まま (+ に)
+// Structure: い-Adjective + まま (+ に)
+pub fn mama_ni_i_adj() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct IAdjMatcher;
+    impl Matcher for IAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjMatcher)),
+        mama_matcher(),
+        TokenMatcher::Optional(Box::new(ni_particle_matcher())),
+    ]
+}
+
+// Pattern: まま(に) - な-Adjective + な + まま (+ に)
+// Structure: な-Adjective stem + な (だ auxiliary) + まま (+ に)
+pub fn mama_ni_na_adj() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct NaAdjStemMatcher;
+    impl Matcher for NaAdjStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaAdjStemMatcher)),
+        TokenMatcher::Custom(Arc::new(NaCopulaMatcher)),
+        mama_matcher(),
+        TokenMatcher::Optional(Box::new(ni_particle_matcher())),
+    ]
+}
+
+// Pattern: まま(に) - Noun + の + まま (+ に)
+// Structure: Noun + の (connective particle) + まま (+ に)
+pub fn mama_ni_noun() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        mama_matcher(),
+        TokenMatcher::Optional(Box::new(ni_particle_matcher())),
+    ]
 }
 
 // Pattern: に至るまで

@@ -1,3 +1,64 @@
+## Session 412 - 2025-12-15
+
+### ✅ Session Summary - IN PROGRESS
+**Status**: IN PROGRESS - Successfully implemented 1 N1 pattern (という)
+**Patterns completed**: 1 (という - N1)
+**Tests added**: 3 new tests (all passing)
+**Total tests**: 2686 passing, 1 ignored (was 2683 passing, 1 ignored - net +3 tests)
+
+**Session highlights**:
+- Created n1_patterns.rs test file (first N1 pattern implemented)
+- Implemented という (called/named) - simple but foundational N1 pattern
+- Clean test-first implementation following REFERENCE_EXAMPLES.md
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: という (called/named)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 1
+
+**Pattern**: という is a compound particle (格助詞/連語) combining と (quotative particle) and いう (to say). Used to introduce or define nouns, meaning "called", "named", or "known as". Pattern: Noun (A) + という + Noun (B) = "the (B) called/named (A)".
+
+**Structures tested**: Single structure variant from grammar_points_data.json
+1. Noun (A) + という + Noun (B):
+   - ローラというモデル (chars 0-9) - "the model called Rola"
+   - 本山という駅 (chars 0-6) - "the station named Motoyama"
+   - タナカタロウという少年 (chars 0-11) - "the child named Tanaka Tarou"
+
+**Implementation details**:
+- Matcher: Noun + という (助詞/格助詞/連語) + Noun
+- Custom matcher checks surface == "という" AND pos == "助詞/格助詞"
+- Uses shared noun_matcher() helper from mod.rs
+- Pattern range includes full construction: Noun (A) + という + Noun (B)
+
+**Test count**: 3 tests (all passing)
+- test_toiu_person_name
+- test_toiu_place_name
+- test_toiu_child_name
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n1.rs (implemented toiu())
+- grammar-lib/src/tests/n1_patterns.rs (new file - first N1 tests)
+- grammar-lib/src/tests/mod.rs (registered n1_patterns module)
+- feature_list.json (marked という as complete)
+
+---
+
+### Next Priorities
+
+**Remaining Priority 1 patterns (highest priority first)**:
+1. まま(に) - N1 (multiple structures: verb/adjective/noun + まま)
+2. Verb[て] + B - N4 (general te-form connection pattern)
+3. 他動詞・自動詞 - N4 (transitive/intransitive verbs - may require skip analysis)
+
+**Next session should focus on**: まま(に) (N1) - has existing stub, multiple structure variants
+
+---
+
 ## Session 411 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
