@@ -4018,9 +4018,71 @@ pub fn burini() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ては
+// Pattern: ては (if/when - conditional with negative expectation)
+// Structures: Verb[て] + は, い-Adj[て] + は, な-Adj/Noun + では, Verb[て] + ちゃ, Noun + じゃ
 pub fn teha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match は as topic/contrast particle
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl super::Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match any verb, adjective, noun, or auxiliary that can precede ては/では
+    #[derive(Debug)]
+    struct PrecedingElementMatcher;
+    impl super::Matcher for PrecedingElementMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| {
+                pos == "動詞" || pos == "形容詞" || pos == "名詞" || pos == "助動詞"
+            })
+        }
+    }
+
+    // Match て/で/ちゃ/じゃ followed by は (or standalone ちゃ/じゃ)
+    #[derive(Debug)]
+    struct TeDeJaChaMatcher;
+    impl super::Matcher for TeDeJaChaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match て or で as particles (after verb/adjective)
+            if (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+            {
+                return true;
+            }
+            // Match で as auxiliary/copula (after na-adj/noun)
+            if token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // Match ちゃ (contraction of ては)
+            if token.surface == "ちゃ" && token.pos.first().is_some_and(|pos| pos == "助詞") {
+                return true;
+            }
+            // Match じゃ (contraction of では)
+            if token.surface == "じゃ" && token.pos.first().is_some_and(|pos| pos == "助詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(PrecedingElementMatcher)),
+        TokenMatcher::Custom(Arc::new(TeDeJaChaMatcher)),
+        // は is only required for て/で forms, not for ちゃ/じゃ contractions
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            HaParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: ては〜ては

@@ -7128,3 +7128,85 @@ mod burini_tests {
         assert_pattern_range(&patterns, "ぶりに", 5, 10); // 十年ぶりの
     }
 }
+
+// Pattern: ては (if, when - conditional with negative expectation)
+// Data source: grammar_points_data.json["ては"]
+// Testing: structure.standard[0-5] - "Verb[て] + は", "い-Adj[て] + は", "な-Adj + では", "Noun + では", "Verb[て] + ちゃ", "じゃ"
+//
+// Structure variants:
+//   - standard[0]: Verb[て] + は (if/when doing)
+//   - standard[1]: い-Adjective[て] + は (if/when being adj)
+//   - standard[2]: な-Adjective + では (if/when being na-adj)
+//   - standard[3]: Noun + では (if/when being noun)
+//   - standard[4]: Verb[て] + ちゃ (casual contraction of ては)
+//   - standard[5]: じゃ (casual contraction of では)
+
+mod teha_tests {
+    use super::*;
+
+    #[test]
+    fn test_teha_verb() {
+        // Structure: Verb[て] + は (negative consequence)
+        let sentence = "そのように力を入れて回してはネジがだめになってしまいますよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ては");
+        assert_pattern_range(&patterns, "ては", 10, 14); // 回しては
+    }
+
+    #[test]
+    fn test_teha_i_adjective() {
+        // Structure: い-Adjective[て] + は (too long to fit)
+        let sentence = "そんなに長くては鞄に入らないので、半分に折ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ては");
+        assert_pattern_range(&patterns, "ては", 4, 8); // 長くては
+    }
+
+    #[test]
+    fn test_teha_na_adjective() {
+        // Structure: な-Adjective + では (if being that meticulous)
+        let sentence = "私は掃除が苦手なので、そんな几帳面では私と住むことはできないでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ては");
+        assert_pattern_range(&patterns, "ては", 14, 19); // 几帳面では
+    }
+
+    #[test]
+    fn test_teha_noun() {
+        // Structure: Noun + では (if wearing that outfit)
+        let sentence = "そんな貧乏くさい格好ではあのレストランには入れないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ては");
+        assert_pattern_range(&patterns, "ては", 8, 12); // 格好では
+    }
+
+    #[test]
+    fn test_teha_casual_cha() {
+        // Structure: Verb[て] + ちゃ (casual contraction - if not eating)
+        let sentence = "ご飯を全部食べなくちゃ大きくなれないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ては");
+        assert_pattern_range(&patterns, "ては", 7, 11); // なくちゃ
+    }
+
+    #[test]
+    fn test_teha_casual_ja() {
+        // Structure: じゃ (casual contraction of では - if that person)
+        let sentence = "リーダーがあの人じゃ嫌です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ては");
+        assert_pattern_range(&patterns, "ては", 7, 10); // 人じゃ
+    }
+}
