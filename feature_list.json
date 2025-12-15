@@ -6806,13 +6806,13 @@
   {
     "pattern_name": "上がる・上げる",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used after the conjunctive form of a verb, either of the verbs 上（あ）げる 'to raise', or 上（あ）がる 'to rise' may be used [2 std, 2 pol]",
     "priority": 3,
     "skip_reason": null

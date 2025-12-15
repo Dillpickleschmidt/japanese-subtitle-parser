@@ -8543,9 +8543,26 @@ pub fn muke() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 上がる・上げる
+// Pattern: 上がる・上げる (finish up / complete)
+// Structures: Verb[stem] + 上がる/上げる
 pub fn agaru_u30fb_ageru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for compound verbs ending in あがる or あげる
+    #[derive(Debug)]
+    struct AgaruAgeruMatcher;
+    impl Matcher for AgaruAgeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form.ends_with("あがる") || token.base_form.ends_with("あげる"))
+                && token.base_form != "あがる"
+                && token.base_form != "あげる"
+                && token.base_form != "上がる"
+                && token.base_form != "上げる"
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(AgaruAgeruMatcher))]
 }
 
 // Pattern: 切る

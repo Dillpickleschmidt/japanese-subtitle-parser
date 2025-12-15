@@ -13468,3 +13468,81 @@ mod muke_tests {
         assert_pattern_range(&patterns, "向け", 3, 7); // 大人向け
     }
 }
+
+// Pattern: 上がる・上げる (finish up / complete)
+// Data source: grammar_points_data.json["上がる・上げる"]
+// Structures:
+//   standard[0]: Verb[stem] + 上がる
+//   standard[1]: Verb[stem] + 上げる
+//   polite[0]: Verb[stem] + 上がります
+//   polite[1]: Verb[stem] + 上げます
+
+mod agaru_u30fb_ageru_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + 上がる
+    #[test]
+    fn test_verb_stem_agaru() {
+        let sentence = "この炊飯器を使えば２０分でご飯が炊きあがるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上がる・上げる");
+        assert_pattern_range(&patterns, "上がる・上げる", 16, 21); // 炊きあがる
+    }
+
+    // Testing: standard[0] - Verb[stem] + 上がる (different verb)
+    #[test]
+    fn test_verb_stem_agaru_boot() {
+        let sentence = "古いコンピューターは立ちあがるのに１０分かかる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上がる・上げる");
+        assert_pattern_range(&patterns, "上がる・上げる", 10, 15); // 立ちあがる
+    }
+
+    // Testing: standard[1] - Verb[stem] + 上げる
+    #[test]
+    fn test_verb_stem_ageru() {
+        let sentence = "レポートは書きあげた？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上がる・上げる");
+        assert_pattern_range(&patterns, "上がる・上げる", 5, 10); // 書きあげた
+    }
+
+    // Testing: standard[1] - Verb[stem] + 上げる (different verb)
+    #[test]
+    fn test_verb_stem_ageru_build() {
+        let sentence = "彼は砂を使って小さな街を作りあげた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上がる・上げる");
+        assert_pattern_range(&patterns, "上がる・上げる", 12, 17); // 作りあげた
+    }
+
+    // Testing: polite[0] - Verb[stem] + 上がります
+    #[test]
+    fn test_verb_stem_agarimasu() {
+        let sentence = "明日の朝までには炊きあがりますから安心してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上がる・上げる");
+        assert_pattern_range(&patterns, "上がる・上げる", 8, 15); // 炊きあがります
+    }
+
+    // Testing: polite[1] - Verb[stem] + 上げます
+    #[test]
+    fn test_verb_stem_agemasu() {
+        let sentence = "明日の朝までに書きあげますので少々お待ちください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上がる・上げる");
+        assert_pattern_range(&patterns, "上がる・上げる", 7, 13); // 書きあげます
+    }
+}
