@@ -10227,3 +10227,79 @@ mod toiumonodemonai_tests {
         assert_pattern_range(&patterns, "というものでもない", 20, 34); // いいというものじゃありません
     }
 }
+
+// Pattern: と考えられる (can be considered, is thought to be)
+// Data source: grammar_points_data.json["と考えられる"]
+// Testing: structure.standard[0] - "Phrase + と考えられる"
+// Testing: structure.polite[0] - "Phrase + と考えられます"
+//
+// Structure variants:
+//   - standard[0]: Phrase + と考えられる (considered/thought to be)
+//   - polite[0]: Phrase + と考えられます (polite form)
+//
+// Note: This expresses an objective opinion based on observable facts.
+// Compare with と思われる (subjective opinion) and と考えられている (widely accepted opinion).
+
+mod tokangaerareru_tests {
+    use super::*;
+
+    #[test]
+    fn test_standard_form() {
+        // Testing: と考えられる (standard form)
+        // Realistic context: accident analysis
+        let sentence = "あの事故は煽り運転のせいだと考えられる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と考えられる");
+        assert_pattern_range(&patterns, "と考えられる", 13, 19); // と考えられる
+    }
+
+    #[test]
+    fn test_standard_complex() {
+        // Testing: と考えられる with complex clause
+        // Realistic context: language difficulty
+        let sentence = "日本語は文字種が多いことから、第二言語として習うのが難しいと考えられる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と考えられる");
+        assert_pattern_range(&patterns, "と考えられる", 29, 35); // と考えられる
+    }
+
+    #[test]
+    fn test_polite_form() {
+        // Testing: と考えられます (polite form)
+        // Realistic context: scientific analysis
+        let sentence = "この結果から、気候変動が原因だと考えられます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と考えられる");
+        assert_pattern_range(&patterns, "と考えられる", 15, 22); // と考えられます
+    }
+
+    #[test]
+    fn test_negative_form() {
+        // Testing: と考えられない (negative)
+        // Realistic context: disagreement with analysis
+        let sentence = "その仮説は正しいと考えられない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と考えられる");
+        assert_pattern_range(&patterns, "と考えられる", 8, 15); // と考えられない
+    }
+
+    #[test]
+    fn test_past_form() {
+        // Testing: と考えられた (past tense)
+        // Realistic context: historical perspective
+        let sentence = "当時はそれが最善の策だと考えられた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と考えられる");
+        assert_pattern_range(&patterns, "と考えられる", 11, 17); // と考えられた
+    }
+}

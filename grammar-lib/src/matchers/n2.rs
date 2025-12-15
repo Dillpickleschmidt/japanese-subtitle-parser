@@ -5719,9 +5719,50 @@ pub fn toiumonodemonai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: と考えられる
+// Pattern: と考えられる (can be considered, is thought to be)
+// Structures: Phrase + と + 考えられる/られます/られない/られた
 pub fn tokangaerareru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と (quotation particle)
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 考え (base form: 考える, 未然形)
+    #[derive(Debug)]
+    struct KangaeMatcher;
+    impl Matcher for KangaeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "考え"
+                && token.base_form == "考える"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match られる/られ (passive suffix)
+    #[derive(Debug)]
+    struct RareruMatcher;
+    impl Matcher for RareruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "られる" || token.surface == "られ")
+                && token.base_form == "られる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(KangaeMatcher)),
+        TokenMatcher::Custom(Arc::new(RareruMatcher)),
+    ]
 }
 
 // Pattern: という点から考えると

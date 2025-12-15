@@ -5635,7 +5635,7 @@ declare_patterns! {
     Tokangaerareru {
         name: "と考えられる",
         matcher_fn: crate::matchers::n2::tokangaerareru,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },
