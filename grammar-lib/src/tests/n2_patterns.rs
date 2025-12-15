@@ -5363,3 +5363,67 @@ mod teiteha_tests {
         assert_pattern_range(&patterns, "ていては", 10, 15); // していては
     }
 }
+
+// ========== ところだった ② (was just about to) ==========
+// Pattern: ところだった ② (was just about to, was in the middle of)
+// Data source: grammar_points_data.json["ところだった ②"]
+//
+// Structure variants:
+//   standard[0]: Verb[る] + ところだった
+//   polite[0]: Verb[る] + ところでした
+//
+// Note: This is different from ところだった ① (N3) which includes Verb[ない] forms.
+// ところだった ② specifically emphasizes what came about from NOT doing (A),
+// often showing a narrowly avoided positive or negative result.
+
+mod tokorodatta_u2461_tests {
+    use super::*;
+
+    #[test]
+    fn test_tokoro_datta_narrowly_avoided() {
+        // Structure: Verb[る] + ところだった
+        // Example from grammar_points_data.json: ひくところだった (was about to run over)
+        let sentence = "危なかった。危うくあの人をひくところだった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところだった ②");
+        assert_pattern_range(&patterns, "ところだった ②", 13, 21); // ひくところだった
+    }
+
+    #[test]
+    fn test_tokoro_datta_late() {
+        // Structure: Verb[る] + ところだった
+        // Example from grammar_points_data.json: 遅刻するところだった (was about to be late)
+        let sentence = "起きるのが３分遅かったら、遅刻するところだった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところだった ②");
+        assert_pattern_range(&patterns, "ところだった ②", 13, 23); // 遅刻するところだった
+    }
+
+    #[test]
+    fn test_tokoro_datta_with_noni() {
+        // Structure: Verb[る] + ところだった + のに
+        // Example from grammar_points_data.json: 出るところだったのに (was just about to leave)
+        let sentence = "今から家を出るところだったのに、いきなり雨が降ってきたから雨が止むまで待つ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところだった ②");
+        assert_pattern_range(&patterns, "ところだった ②", 5, 13); // 出るところだった
+    }
+
+    #[test]
+    fn test_tokoro_deshita_polite() {
+        // Structure: Verb[る] + ところでした
+        // Polite form of the pattern
+        let sentence = "電車が来る直前まで待っていて、乗り遅れるところでした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところだった ②");
+        assert_pattern_range(&patterns, "ところだった ②", 15, 26); // 乗り遅れるところでした
+    }
+}

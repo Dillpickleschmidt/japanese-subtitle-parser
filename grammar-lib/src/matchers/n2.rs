@@ -2830,9 +2830,42 @@ pub fn teiteha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ところだった ②
+// Pattern: ところだった ② (was just about to, was in the middle of)
+// Structures: Verb[る] + ところ + だった/でした
 pub fn tokorodatta_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for ところ as 名詞/非自立
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for だった (だ + た) or でした (です + た)
+    // This matches the だっ/でし part
+    #[derive(Debug)]
+    struct DaDattaMatcher;
+    impl Matcher for DaDattaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            ((token.surface == "だっ" && token.base_form == "だ")
+                || (token.surface == "でし" && token.base_form == "です"))
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: Verb[基本形] + ところ + だった/でした
+    // Note: ところだった ② (N2) uses only Verb[る] form, unlike ところだった ① (N3) which includes ない
+    vec![
+        TokenMatcher::Any,  // Verb in 基本形
+        TokenMatcher::Custom(Arc::new(TokoroMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDattaMatcher)),
+        super::past_auxiliary(),  // た
+    ]
 }
 
 // Pattern: どころではない
