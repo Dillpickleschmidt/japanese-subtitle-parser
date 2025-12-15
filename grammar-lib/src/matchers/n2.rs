@@ -912,9 +912,61 @@ pub fn ue() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 上に
+// Pattern: In addition to / as well as (X + 上に)
+// Structures: Verb/い-Adj + 上（うえ）(に), な-Adj + な + 上, Noun + の + 上, X + である + 上
 pub fn ueni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches verbs, adjectives, or particles/auxiliaries that can precede うえ
+    #[derive(Debug)]
+    struct UePreMatcher;
+    impl super::Matcher for UePreMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if let Some(first_pos) = token.pos.first() {
+                match first_pos.as_str() {
+                    "動詞" => true, // Verbs in basic form
+                    "形容詞" => true, // い-Adjectives in basic form
+                    "助動詞" => {
+                        // な (for な-adjectives) or ある (for である)
+                        token.surface == "な" || token.surface == "ある"
+                    }
+                    "助詞" => {
+                        // の (for nouns)
+                        token.surface == "の" && token.pos.get(1).is_some_and(|p| p == "連体化")
+                    }
+                    _ => false,
+                }
+            } else {
+                false
+            }
+        }
+    }
+
+    #[derive(Debug)]
+    struct UeNounMatcher;
+    impl super::Matcher for UeNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "うえ"
+                && token.base_form == "うえ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(UePreMatcher)),
+        TokenMatcher::Custom(Arc::new(UeNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiParticleMatcher)))),
+    ]
 }
 
 // Pattern: 以上 ②

@@ -7688,13 +7688,13 @@
   {
     "pattern_name": "上に",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "上（うえ）に is a grammar pattern that functions as a slightly formal way of saying 'and' in Japanese [5 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

@@ -3276,3 +3276,75 @@ mod ue_tests {
         assert_pattern_range(&patterns, "上", 0, 3); // 仕事上
     }
 }
+
+// Pattern: 上に (in addition to / as well as)
+// Data source: grammar_points_data.json["上に"]
+mod ueni_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + 上（うえ）(に)"
+    #[test]
+    fn test_ueni_verb() {
+        let sentence = "私の犬は子供を見ると吠えるうえに噛みつこうとするので子供には近づけさせないようにしています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上に");
+        assert_pattern_range(&patterns, "上に", 10, 16); // 吠えるうえに
+    }
+
+    // Testing: structure.standard[1] - "［い］Adjective + 上（うえ）(に)"
+    #[test]
+    fn test_ueni_i_adjective() {
+        let sentence = "家の近所にあるレストランはまずいうえに、高いからいつも空いている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上に");
+        assert_pattern_range(&patterns, "上に", 13, 19); // まずいうえに
+    }
+
+    // Testing: structure.standard[2] - "［な］Adjective + な + 上（うえ）(に)"
+    #[test]
+    fn test_ueni_na_adjective() {
+        let sentence = "高橋くんは無礼なうえに清潔感がないため、周りの人たちには避けられている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上に");
+        assert_pattern_range(&patterns, "上に", 7, 11); // なうえに
+    }
+
+    // Testing: structure.standard[3] - "Noun + の + 上（うえ）(に)"
+    #[test]
+    fn test_ueni_noun() {
+        let sentence = "彼女は調理師免許のうえに健康食アドバイザーの資格も持っているので、彼女が作る料理は健康的で美味しいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上に");
+        assert_pattern_range(&patterns, "上に", 8, 12); // のうえに
+    }
+
+    // Testing: structure.standard[4] - "な-Adj + である + 上（うえ）(に)"
+    #[test]
+    fn test_ueni_na_adjective_dearu() {
+        let sentence = "あそこの駅は不便であるうえに利用者が減っている為、来月の中旬に取り壊されるそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上に");
+        assert_pattern_range(&patterns, "上に", 9, 14); // あるうえに
+    }
+
+    // Testing: structure.standard[4] - "Noun + である + 上（うえ）(に)"
+    #[test]
+    fn test_ueni_noun_dearu() {
+        let sentence = "ケントさんは新聞記者であるうえにスーパーヒーローでもあった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上に");
+        assert_pattern_range(&patterns, "上に", 11, 16); // あるうえに
+    }
+}
