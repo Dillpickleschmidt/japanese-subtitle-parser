@@ -4923,7 +4923,7 @@ declare_patterns! {
     Nikiwotsukeru {
         name: "に気をつける",
         matcher_fn: crate::matchers::n2::nikiwotsukeru,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

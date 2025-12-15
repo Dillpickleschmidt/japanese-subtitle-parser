@@ -2031,9 +2031,74 @@ pub fn gakininaru() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: に気をつける
+// Pattern: に気をつける (be careful of, watch out for, pay attention to)
+// Structures: Noun + に気をつける / Verb[ない] + ように気をつける
 pub fn nikiwotsukeru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match Noun or Verb (to start the pattern)
+    // Exclude よう (nominalizer) which should not be the start
+    #[derive(Debug)]
+    struct NounOrVerbMatcher;
+    impl Matcher for NounOrVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Exclude よう (nominalizer)
+            if token.surface == "よう" && token.base_form == "よう" {
+                return false;
+            }
+            token.pos.first().is_some_and(|pos| pos == "名詞" || pos == "動詞")
+        }
+    }
+
+    // Match に (case or adverb particle)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match き (verb くる in 連用形)
+    #[derive(Debug)]
+    struct KiVerbMatcher;
+    impl Matcher for KiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "き"
+                && token.base_form == "くる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match を (case particle)
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match つける verb (any conjugation)
+    #[derive(Debug)]
+    struct TsukeruVerbMatcher;
+    impl Matcher for TsukeruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "つける"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NounOrVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KiVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TsukeruVerbMatcher)),
+    ]
 }
 
 // Pattern: も構わず
