@@ -7968,13 +7968,13 @@
   {
     "pattern_name": "に向かって・に向けて",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Coming from a link between に and the う-Verb 向（む）かう 'to face', or 'to go towards' in its て-form, に向（む）かって indicates th... [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

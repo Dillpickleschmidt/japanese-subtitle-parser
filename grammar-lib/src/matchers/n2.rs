@@ -1920,9 +1920,49 @@ pub fn nikakawaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に向かって・に向けて
+// Pattern: に向かって・に向けて (towards, facing, aimed at)
+// Structures: Noun + に向（む）かって, Noun + に向（む）けて, Noun + に向（む）けて + の + Noun
 pub fn nimukatte_u30fb_nimukete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::noun_matcher;
+
+    // Custom matcher for に particle (case particle)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Custom matcher for むかう or むける verb (both mean "to face/direct towards")
+    #[derive(Debug)]
+    struct MukauMukeruVerbMatcher;
+    impl Matcher for MukauMukeruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "むかう" || token.base_form == "むける")
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Custom matcher for て particle (connecting particle)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MukauMukeruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: が気になる (be concerned about, be interested in)

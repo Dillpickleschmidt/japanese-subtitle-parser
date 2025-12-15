@@ -4847,3 +4847,59 @@ mod nikakawaru_tests {
         assert_pattern_range(&patterns, "にかかわる", 7, 14); // 人生にかかわる
     }
 }
+
+// Pattern: に向かって・に向けて (towards, facing, aimed at)
+// Data source: grammar_points_data.json["に向かって・に向けて"]
+// Testing: structure.standard[0-2]
+//
+// Structures:
+//   - standard[0]: Noun + に向（む）かって
+//   - standard[1]: Noun + に向（む）けて
+//   - standard[2]: Noun + に向（む）けて + の + Noun
+mod nimukatte_nimukete_tests {
+    use super::*;
+
+    #[test]
+    fn test_nimukatte_mic() {
+        // Example from grammar_points_data.json: マイクにむかって
+        let sentence = "マイクにむかって何か一言お願いします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に向かって・に向けて");
+        assert_pattern_range(&patterns, "に向かって・に向けて", 0, 8); // マイクにむかって
+    }
+
+    #[test]
+    fn test_nimukatte_sky() {
+        // Example from grammar_points_data.json: 空にむかって
+        let sentence = "空にむかって大声を出した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に向かって・に向けて");
+        assert_pattern_range(&patterns, "に向かって・に向けて", 0, 6); // 空にむかって
+    }
+
+    #[test]
+    fn test_nimukete_new_employees() {
+        // Example from grammar_points_data.json: 新入社員にむけて
+        let sentence = "新入社員にむけて何かアドバイスを一言お願いします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に向かって・に向けて");
+        assert_pattern_range(&patterns, "に向かって・に向けて", 2, 8); // 社員にむけて
+    }
+
+    #[test]
+    fn test_nimukete_training() {
+        // Example from grammar_points_data.json: 全国大会にむけて
+        let sentence = "彼らは全国大会にむけて毎日朝から夜までトレーニングをしている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に向かって・に向けて");
+        assert_pattern_range(&patterns, "に向かって・に向けて", 5, 11); // 大会にむけて
+    }
+}
