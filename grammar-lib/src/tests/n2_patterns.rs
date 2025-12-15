@@ -9286,3 +9286,60 @@ mod soretomo_tests {
         assert_pattern_range(&patterns, "それとも", 10, 14); // それとも
     }
 }
+
+// Pattern: にしたら (from the point of view of, from the perspective of)
+// Data source: grammar_points_data.json["にしたら"]
+// Testing: structure.standard[0] - "Noun + にしたら"
+// Testing: structure.standard[1] - "Noun + にすれば"
+//
+// Structure variants:
+//   - standard[0]: Noun + にしたら (from the perspective of)
+//   - standard[1]: Noun + にすれば (from the perspective of, more formal)
+
+mod nishitara_tests {
+    use super::*;
+
+    #[test]
+    fn test_nishitara_customer() {
+        // Example from grammar data: お客様にしたら、値段が安い方がいいだろう
+        let sentence = "お客様にしたら、値段が安い方がいいだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたら");
+        assert_pattern_range(&patterns, "にしたら", 0, 7); // お客様にしたら
+    }
+
+    #[test]
+    fn test_nishitara_person() {
+        // Example from grammar data: 納豆が嫌いな人にしたら、納豆はただ臭いだけに違いない
+        let sentence = "納豆が嫌いな人にしたら、納豆はただ臭いだけに違いない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたら");
+        assert_pattern_range(&patterns, "にしたら", 6, 11); // 人にしたら
+    }
+
+    #[test]
+    fn test_nisureba_parent() {
+        // Example from grammar data: 親にすれば、いつまでも子供に見える
+        let sentence = "子供が何歳になろうとも、親にすれば、いつまでも子供に見える。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたら");
+        assert_pattern_range(&patterns, "にしたら", 12, 17); // 親にすれば
+    }
+
+    #[test]
+    fn test_nisureba_japanese() {
+        // Example from grammar data: 日本人にすれば普通なことでも
+        let sentence = "日本人にすれば普通なことでも、海外の方が見たら驚く事がたくさんあるらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたら");
+        assert_pattern_range(&patterns, "にしたら", 0, 7); // 日本人にすれば
+    }
+}

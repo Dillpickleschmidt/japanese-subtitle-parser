@@ -9005,13 +9005,13 @@
   {
     "pattern_name": "にしたら",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When に is combined with the hypothetical forms of する (すれば, or したら), it forms a structure used in Japanese for conveyi... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

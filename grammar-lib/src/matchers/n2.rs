@@ -5211,9 +5211,57 @@ pub fn soretomo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Surface("それとも")]
 }
 
-// Pattern: にしたら
+// Pattern: にしたら (from the point of view of, from the perspective of)
+// Structures: Noun + に + したら/すれば
 pub fn nishitara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as case particle
+    #[derive(Debug)]
+    struct NiCaseMatcher;
+    impl Matcher for NiCaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match する verb in 連用形 (し) or 仮定形 (すれ)
+    #[derive(Debug)]
+    struct SuruMatcher;
+    impl Matcher for SuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.features.get(5).is_some_and(|form| form == "連用形")
+                    || token.features.get(5).is_some_and(|form| form == "仮定形"))
+        }
+    }
+
+    // Match たら (助動詞, 仮定形) or ば (接続助詞)
+    #[derive(Debug)]
+    struct TaraBaMatcher;
+    impl Matcher for TaraBaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match たら (助動詞, 仮定形, base=た)
+            (token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|form| form == "仮定形"))
+            // OR match ば (接続助詞)
+            || (token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun
+        TokenMatcher::Custom(Arc::new(NiCaseMatcher)),
+        TokenMatcher::Custom(Arc::new(SuruMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraBaMatcher)),
+    ]
 }
 
 // Pattern: にしても～にしても
