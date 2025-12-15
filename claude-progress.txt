@@ -1,3 +1,118 @@
+## Session 391 - 2025-12-15
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (途中に・途中で, を中心に)
+**Patterns completed**: 2 (途中に・途中で and を中心に - both N2 newly implemented)
+**Tests added**: 10 new tests total (4 for 途中に・途中で + 6 for を中心に, all passing)
+**Total tests**: 2550 passing, 1 ignored (was 2540 passing, 1 ignored - net +10 tests)
+
+**Session highlights**:
+- Implemented 途中に・途中で (on the way, partway through, in the middle of)
+- Implemented を中心に (focused on, centered around, mainly)
+- Comprehensive coverage of all structure variants for both patterns
+- Clean implementations with proper test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: 途中に・途中で (on the way, partway through, in the middle of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 1 (low priority - still detected and functional, just not highlighted prominently)
+
+**Pattern**: With 途中（とちゅう） meaning 'on the way', the addition of either the case marking particle に or で will indicate that something is either being done 'on the way to (A)', 'partway through (A)' or 'in the middle of (A)'. に emphasizes time/duration, while で emphasizes process/opportunity.
+
+**Structures tested**: 4 comprehensive tests covering all variants
+1. Verb[る] + 途中に: いる途中に (12-17 from 向かっている途中に) - "on the way"
+2. Verb[る] + 途中で: 帰る途中で (4-9) - "on the way home"
+3. Noun + の + 途中に: 授業の途中に (0-6) - "in the middle of class"
+4. Noun + の + 途中で: ミーティングの途中で (0-10) - "in the middle of the meeting"
+
+**Implementation**: Matcher in n2.rs (lines 1093-1138), tests in n2_patterns.rs (lines 3524-3583)
+
+**Key notes**:
+- Pattern structure: (Verb|Noun) + Optional(の) + 途中 + (に|で)
+- 途中 tokenizes as 名詞/副詞可能
+- の (when present) tokenizes as 助詞/連体化
+- に/で tokenize as 助詞/格助詞/一般
+- Uses TokenMatcher::Any to match preceding verb or noun
+
+**Tokenization observations**:
+- **途中**: surface="途中", base="途中", pos=名詞/副詞可能
+- **に**: surface="に", pos=助詞/格助詞/一般
+- **で**: surface="で", pos=助詞/格助詞/一般
+- **の**: surface="の", pos=助詞/連体化 (for Noun + の structure)
+
+**Pattern ranges**: Full construction from verb/noun through particle
+- Verb + 途中に/で: いる途中に, 帰る途中で
+- Noun + の + 途中に/で: 授業の途中に, ミーティングの途中で
+
+### Test Quality Metrics (途中に・途中で)
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
+
+---
+
+### ✅ Pattern Implemented: を中心に (focused on, centered around, mainly)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: When combined with nouns, the expression を中心（ちゅうしん）に indicates that something is being 'focused on' or 'centered around'. Can also mean 'mainly (A)' or 'most notably (A)'. The pattern can be extended with する verbs (にする, にした, にして) or the と particle (として, とした, とする) for attributive forms.
+
+**Structures tested**: 6 comprehensive tests covering all variants
+1. Noun + を中心に: 若者を中心に (7-13) - "mainly among young people"
+2. Noun + を中心にした + Noun: ボードを中心にした (7-16) - "focusing on skateboards"
+3. Noun + を中心にして: 文法を中心にし (7-14) - "focusing on grammar"
+4. Noun + を中心として: 札幌を中心として (5-13) - "centered on Sapporo"
+5. Noun + を中心とした + Noun: 提案を中心とした (12-20) - "focusing on the proposal"
+6. Noun + を中心にする: お客様を中心にする (6-15) - "to focus on customers"
+
+**Implementation**: Matcher in n2.rs (lines 1182-1234), tests in n2_patterns.rs (lines 3585-3667)
+
+**Key notes**:
+- Pattern structure: Noun + を + 中心 + (に|と|として) + Optional(する)
+- 中心 tokenizes as 名詞/一般
+- として is a compound particle tokenized as 助詞/格助詞/連語
+- Optional する matches various forms (する, した, して, etc.)
+- Matcher uses TokenMatcher::Any for the preceding noun
+
+**Tokenization observations**:
+- **中心**: surface="中心", base="中心", pos=名詞/一般
+- **を**: surface="を", pos=助詞/格助詞/一般
+- **に**: surface="に", pos=助詞/格助詞/一般
+- **と**: surface="と", pos=助詞/格助詞/一般
+- **として**: surface="として", pos=助詞/格助詞/連語 (compound)
+- **する**: base="する", pos=動詞/自立 (in various forms)
+
+**Pattern ranges**: Full construction from noun through particle and optional verb
+- Basic: 若者を中心に
+- With に+verb: ボードを中心にした, 文法を中心にし, お客様を中心にする
+- With として: 札幌を中心として
+- With と+verb: 提案を中心とした
+
+### Test Quality Metrics (を中心に)
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 151 remaining (down from 153!)
+- N1: 186 remaining
+- Total: ~339 patterns remaining (down from ~341!)
+
+**Next priority**: Continue with N2 patterns - その上, 上は, の下で, 後(の) Noun, etc.
+
+---
+
 ## Session 390 - 2025-12-15
 
 ### ✅ Session Summary
