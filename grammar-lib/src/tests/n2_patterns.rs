@@ -2833,3 +2833,92 @@ mod zunisumu_tests {
         assert_pattern_range(&patterns, "ずに済む", 12, 22); // 並ばなくて済みました
     }
 }
+
+// Pattern: ようがない・ようもない (there is no way to / impossible to)
+// Data source: grammar_points_data.json["ようがない・ようもない"]
+// Testing structure variants:
+//   - standard[0]: Verb[stem] + よう + が + ない
+//   - standard[1]: する Verb + (の) + しよう + が + ない
+//   - standard[2]: Both can use も instead of が
+//   - polite[0-2]: Same but with ありません instead of ない
+mod youganai_u30fb_youmonai_tests {
+    use super::*;
+
+    // Test 1: Regular verb + ようがない
+    // Structure: Verb[stem] + よう + が + ない
+    // Example: 行きようがない (there is no way to go)
+    #[test]
+    fn verb_stem_youganai() {
+        let sentence = "車も自転車も壊れているので買い物に行きようがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようがない・ようもない");
+        assert_pattern_range(&patterns, "ようがない・ようもない", 17, 24); // 行きようがない
+    }
+
+    // Test 2: する Verb + の + しようがありません (polite)
+    // Structure: Noun + の + しよう + が + ありません
+    // Example: 連絡のしようがありません (there is no way to contact)
+    #[test]
+    fn suru_verb_shiyouganai() {
+        let sentence = "電話番号もメールアドレスも分からないので、連絡のしようがありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようがない・ようもない");
+        assert_pattern_range(&patterns, "ようがない・ようもない", 23, 33); // のしようがありません
+    }
+
+    // Test 3: Regular verb + ようもない (も variant)
+    // Structure: Verb[stem] + よう + も + ない
+    // Example: 直しようもない (there is no way to fix)
+    #[test]
+    fn verb_stem_youmonai() {
+        let sentence = "パソコンが粉々になったため直しようもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようがない・ようもない");
+        assert_pattern_range(&patterns, "ようがない・ようもない", 13, 20); // 直しようもない
+    }
+
+    // Test 4: する Verb + の + しようもない (も variant)
+    // Structure: Noun + の + しよう + も + ない
+    // Example: 対処のしようもない (there is no way to deal with)
+    #[test]
+    fn suru_verb_shiyoumonai() {
+        let sentence = "どうしたらいいかわからず対処のしようもない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようがない・ようもない");
+        assert_pattern_range(&patterns, "ようがない・ようもない", 14, 21); // のしようもない
+    }
+
+    // Test 5: Polite form with ありません
+    // Structure: Verb[stem] + よう + が + ありません
+    // Example: 調べようがありません (there is no way to investigate)
+    #[test]
+    fn youga_arimasen_polite() {
+        let sentence = "資料が一切ないので調べようがありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようがない・ようもない");
+        assert_pattern_range(&patterns, "ようがない・ようもない", 9, 19); // 調べようがありません
+    }
+
+    // Test 6: Negative past form - ようがなかった
+    // Structure: Verb[stem] + よう + が + なかった
+    // Example: 逃げようがなかった (there was no way to escape)
+    #[test]
+    fn youganakatta_past() {
+        let sentence = "当時の状況では逃げようがなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようがない・ようもない");
+        assert_pattern_range(&patterns, "ようがない・ようもない", 7, 16); // 逃げようがなかった
+    }
+}

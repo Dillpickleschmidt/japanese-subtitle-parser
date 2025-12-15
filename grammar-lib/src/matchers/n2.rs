@@ -481,9 +481,58 @@ pub fn mangaichi() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(MangaichiMatcher))]
 }
 
-// Pattern: ようがない・ようもない
+// Pattern: ようがない・ようもない (there is no way to / impossible to)
+// Structures: Verb[stem] + よう + が/も + ない/ありません
+//            する Verb + (の) + しよう + が/も + ない/ありません
 pub fn youganai_u30fb_youmonai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for よう (noun suffix) or しよう (noun)
+    #[derive(Debug)]
+    struct YouShiyouMatcher;
+    impl Matcher for YouShiyouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+                && ((token.surface == "よう"
+                    && token.base_form == "よう"
+                    && token.pos.get(1).is_some_and(|p| p == "接尾"))
+                    || (token.surface == "しよう"
+                        && token.base_form == "しよう"
+                        && token.pos.get(1).is_some_and(|p| p == "一般")))
+        }
+    }
+
+    // Matcher for が or も particle
+    #[derive(Debug)]
+    struct GaMoParticleMatcher;
+    impl Matcher for GaMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "が" || token.surface == "も")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+        }
+    }
+
+    // Matcher for ない (adjective or auxiliary) or ありません
+    #[derive(Debug)]
+    struct NaiArimasenMatcher;
+    impl Matcher for NaiArimasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ない as adjective or auxiliary
+            (token.base_form == "ない"
+                && (token.pos.first().is_some_and(|p| p == "形容詞")
+                    || token.pos.first().is_some_and(|p| p == "助動詞")))
+            // or ある verb (for ありません)
+            || (token.base_form == "ある"
+                && token.pos.first().is_some_and(|p| p == "動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb stem (連用形) or noun before しよう, or の particle
+        TokenMatcher::Custom(Arc::new(YouShiyouMatcher)),
+        TokenMatcher::Custom(Arc::new(GaMoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiArimasenMatcher)),
+    ]
 }
 
 // Pattern: にほかならない
