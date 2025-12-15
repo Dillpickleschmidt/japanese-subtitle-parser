@@ -8318,13 +8318,13 @@
   {
     "pattern_name": "ねばならない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Unlike the standard ば form of hypothetical phrases, ねば makes use of the classical auxiliary verb ず in its ね form [3 std, 3 pol]",
     "priority": 4,
     "skip_reason": null

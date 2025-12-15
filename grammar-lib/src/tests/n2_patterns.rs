@@ -6455,4 +6455,59 @@ mod wotowazu_tests {
             assert_pattern_range(&patterns, "ないではいられない", 16, 28); // 助けないではいられません
         }
     }
+
+    // Pattern: ねばならない (must, have to)
+    // Data source: grammar_points_data.json["ねばならない"]
+    // Testing all structure variants:
+    //   - standard[0]: Verb[ない] + ねばならない
+    //   - standard exception: する → せねばならない
+    //   - polite[0]: Verb[ない] + ねばなりません
+    //   - polite exception: する → せねばなりません
+    mod nebanaranaי_tests {
+        use super::*;
+
+        #[test]
+        fn test_verb_standard() {
+            // Structure: Verb[ない] + ねばならない
+            let sentence = "今月の１３日までに電気代を払わねばならない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "ねばならない");
+            assert_pattern_range(&patterns, "ねばならない", 13, 21); // 払わねばならない
+        }
+
+        #[test]
+        fn test_suru_exception_standard() {
+            // Structure: する → せねばならない (exception)
+            let sentence = "お客さんが来る前に掃除をせねばならない";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "ねばならない");
+            assert_pattern_range(&patterns, "ねばならない", 12, 19); // せねばならない
+        }
+
+        #[test]
+        fn test_verb_polite() {
+            // Structure: Verb[ない] + ねばなりません
+            let sentence = "あの人は私の先輩なので何を言われても従わねばなりません";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "ねばならない");
+            assert_pattern_range(&patterns, "ねばならない", 18, 27); // 従わねばなりません
+        }
+
+        #[test]
+        fn test_suru_exception_polite() {
+            // Structure: する → せねばなりません (exception)
+            let sentence = "日本語を今より話せる様になりたいならもっと努力をせねばなりません";
+            let tokens = tokenize_sentence(sentence);
+            let patterns = detect_patterns(&tokens);
+
+            assert_has_pattern(&patterns, "ねばならない");
+            assert_pattern_range(&patterns, "ねばならない", 24, 32); // せねばなりません
+        }
+    }
 }

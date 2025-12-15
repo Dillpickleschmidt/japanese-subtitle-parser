@@ -5751,3 +5751,100 @@ pub fn ni_kagirazu() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
     ]
 }
+
+// Pattern: ねばならない (must, have to)
+// Structures: Verb[未然形] + ねばならない / ねばなりません
+//             する → せねばならない / せねばなりません
+pub fn nebanaranaי() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct VerbMizenMatcher;
+    impl super::Matcher for VerbMizenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in 未然形 (including せ from する with 未然ヌ接続)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| {
+                    f == "未然形" || f == "未然ヌ接続"
+                })
+        }
+    }
+
+    #[derive(Debug)]
+    struct NeAuxiliaryMatcher;
+    impl super::Matcher for NeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ね (助動詞, ぬ, 仮定形)
+            token.surface == "ね"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl super::Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NariNaruMatcher;
+    impl super::Matcher for NariNaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match なら (未然形) or なり (連用形)
+            token.base_form == "なる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.features.get(5).is_some_and(|f| {
+                    f == "未然形" || f == "連用形"
+                })
+        }
+    }
+
+    #[derive(Debug)]
+    struct NaiOrMasenMatcher;
+    impl super::Matcher for NaiOrMasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (助動詞) OR ませ (助動詞, ます, 未然形)
+            if token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+
+            if token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    #[derive(Debug)]
+    struct NParticleMatcher;
+    impl super::Matcher for NParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ん (助動詞, 不変化型) - negative marker
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbMizenMatcher)),
+        TokenMatcher::Custom(Arc::new(NeAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NariNaruMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiOrMasenMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NParticleMatcher)))),
+    ]
+}
