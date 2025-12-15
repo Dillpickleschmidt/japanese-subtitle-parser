@@ -11526,3 +11526,82 @@ mod tetouzenda_tests {
         assert_pattern_range(&patterns, "て当然だ", 10, 17); // 便利で当然です
     }
 }
+
+// Pattern: のも当然だ (it's natural that/no wonder that)
+// Data source: grammar_points_data.json["のも当然だ"]
+// Testing: structure.standard[0-3] and polite[0-3]
+//
+// Structure variants:
+//   Standard:
+//   - standard[0]: Verb + のは/のも + 当然だ
+//   - standard[1]: い-Adjective + のは/のも + 当然だ
+//   - standard[2]: な-Adjective + なのは/なのも + 当然だ
+//   - standard[3]: Noun + は/も + 当然だ
+//   Polite:
+//   - polite[0-3]: Same structures with です ending
+
+mod nomotouzenda_tests {
+    use super::*;
+
+    // Standard forms with のは
+    #[test]
+    fn test_verb_noha_touzen_da() {
+        let sentence = "会社のお金を勝手に使ったなら、クビになるのは当然だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のも当然だ");
+        assert_pattern_range(&patterns, "のも当然だ", 18, 25); // なるのは当然だ
+    }
+
+    #[test]
+    fn test_i_adj_noha_touzen_da() {
+        let sentence = "このタワーマンションは六本木にあるので、家賃が高いのは当然です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のも当然だ");
+        assert_pattern_range(&patterns, "のも当然だ", 23, 31); // 高いのは当然です
+    }
+
+    #[test]
+    fn test_na_adj_nanoha_touzen_da() {
+        let sentence = "おばあちゃんは毎朝10キロも散歩しているから元気なのは当然だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のも当然だ");
+        assert_pattern_range(&patterns, "のも当然だ", 22, 30); // 元気なのは当然だ
+    }
+
+    // Forms with のも (emphasis)
+    #[test]
+    fn test_na_adj_nanomo_touzen_da() {
+        let sentence = "毎日練習しているんだから、上手なのも当然だよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のも当然だ");
+        assert_pattern_range(&patterns, "のも当然だ", 13, 21); // 上手なのも当然だ
+    }
+
+    #[test]
+    fn test_noun_mo_touzen_da() {
+        let sentence = "この1年間全然勉強をしてこなかったから落第も当然だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のも当然だ");
+        assert_pattern_range(&patterns, "のも当然だ", 19, 25); // 落第も当然だ
+    }
+
+    #[test]
+    fn test_verb_nomo_touzen_desu() {
+        let sentence = "こんなに努力したんだから、成功するのも当然です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のも当然だ");
+        assert_pattern_range(&patterns, "のも当然だ", 13, 23); // 成功するのも当然です
+    }
+}

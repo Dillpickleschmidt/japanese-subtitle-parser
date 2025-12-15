@@ -6767,9 +6767,143 @@ pub fn tetouzenda() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: のも当然だ
+// Pattern: のも当然だ (it's natural that/no wonder that)
+// Structures: Verb/Adj + (な) + の + は/も + 当然 + だ/です, Noun + は/も + 当然 + だ/です
 pub fn nomotouzenda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Custom matcher for Verb (dictionary form) / い-Adjective (basic form)
+    #[derive(Debug)]
+    struct VerbOrIAdjMatcher;
+    impl Matcher for VerbOrIAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in 基本形 (dictionary form)
+            let is_verb = token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+
+            // Match い-Adjective in 基本形
+            let is_i_adj = token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+
+            is_verb || is_i_adj
+        }
+    }
+
+    // Custom matcher for な-Adjective (形容動詞語幹) or Noun
+    #[derive(Debug)]
+    struct NaAdjOrNounMatcher;
+    impl Matcher for NaAdjOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match な-Adjective (名詞/形容動詞語幹)
+            let is_na_adj = token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹");
+
+            // Match regular Noun (for Noun + は/も + 当然だ pattern)
+            let is_noun = token.pos.first().is_some_and(|p| p == "名詞")
+                && !token.pos.get(1).is_some_and(|p| p == "非自立"); // Exclude non-independent nouns
+
+            is_na_adj || is_noun
+        }
+    }
+
+    // Custom matcher for な (auxiliary, 体言接続)
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Custom matcher for の (nominalizer, 名詞/非自立)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Custom matcher for は or も (topic/contrast particle)
+    #[derive(Debug)]
+    struct HaMoParticleMatcher;
+    impl Matcher for HaMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "は" || token.surface == "も")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Custom matcher for 当然 (adverb)
+    #[derive(Debug)]
+    struct TouzenMatcher;
+    impl Matcher for TouzenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "当然"
+                && token.pos.first().is_some_and(|p| p == "副詞")
+        }
+    }
+
+    // Custom matcher for だ or です
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "助動詞")
+                && (token.surface == "だ" || token.surface == "です")
+        }
+    }
+
+    // Custom matcher for the first token: Verb/い-Adj/な-Adj/Noun
+    #[derive(Debug)]
+    struct FirstTokenMatcher;
+    impl Matcher for FirstTokenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in 基本形 (dictionary form)
+            let is_verb = token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+
+            // Match い-Adjective in 基本形
+            let is_i_adj = token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+
+            // Match な-Adjective (名詞/形容動詞語幹)
+            let is_na_adj = token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹");
+
+            // Match regular Noun (excluding non-independent nouns and pronouns)
+            let is_noun = token.pos.first().is_some_and(|p| p == "名詞")
+                && !token.pos.get(1).is_some_and(|p| p == "非自立")
+                && !token.pos.get(1).is_some_and(|p| p == "代名詞");
+
+            is_verb || is_i_adj || is_na_adj || is_noun
+        }
+    }
+
+    // This pattern has multiple structures that we handle with optionals:
+    // 1. Verb/い-Adj + の + は/も + 当然だ/です
+    // 2. な-Adj + な + の + は/も + 当然だ/です
+    // 3. Noun + は/も + 当然だ/です (without の)
+    // 4. Noun + の + は/も + 当然だ/です (with の, for certain nouns)
+    //
+    // The な is only present after な-Adjectives
+    // The の is present after Verbs, Adjectives, and some Nouns
+
+    vec![
+        TokenMatcher::Custom(Arc::new(FirstTokenMatcher)), // Verb/Adj/Noun
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NaCopulaMatcher,
+        )))), // Optional な (only for な-Adj)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoNominalizerMatcher,
+        )))), // Optional の (nominalizer)
+        TokenMatcher::Custom(Arc::new(HaMoParticleMatcher)), // は or も
+        TokenMatcher::Custom(Arc::new(TouzenMatcher)),       // 当然
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),       // だ or です
+    ]
 }
 
 // Pattern: たった(の)

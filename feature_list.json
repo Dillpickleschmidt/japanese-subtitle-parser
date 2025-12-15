@@ -9453,13 +9453,13 @@
   {
     "pattern_name": "のも当然だ",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like て当然（とうぜん）だ , the grammar point indicating that (A) is 'natural' or 'obvious', のは当然（とうぜん）だ works in a similar way... [6 std, 6 pol]",
     "priority": 4,
     "skip_reason": null
