@@ -4223,3 +4223,52 @@ mod ni_kagitte_tests {
         assert_pattern_range(&patterns, "に限って", 13, 18); // 人に限って
     }
 }
+
+// Pattern: に限らず (not only, not just)
+// Data source: grammar_points_data.json["に限らず"]
+// Testing: structure.standard[0] - "Noun + に限（かぎ）らず"
+//
+// Structure variants:
+//   - standard[0]: Noun + に限（かぎ）らず
+//
+// Note: This pattern means "not only (A), but also (B)"
+
+mod ni_kagirazu_tests {
+    use super::*;
+
+    #[test]
+    fn test_ni_kagirazu_weekends() {
+        // Testing: not only weekends, but also weekdays
+        // ＵＳＪは週末に限らず、平日でも多くの人で賑わっています
+        let sentence = "ＵＳＪは週末に限らず、平日でも多くの人で賑わっています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限らず");
+        assert_pattern_range(&patterns, "に限らず", 4, 10); // 週末に限らず
+    }
+
+    #[test]
+    fn test_ni_kagirazu_children() {
+        // Testing: not only children, but also adults
+        // この遊園地は子供に限らず、大人でも楽しめます
+        let sentence = "この遊園地は子供に限らず、大人でも楽しめます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限らず");
+        assert_pattern_range(&patterns, "に限らず", 6, 12); // 子供に限らず
+    }
+
+    #[test]
+    fn test_ni_kagirazu_grammar() {
+        // Testing: not only grammar, but also culture
+        // 新しい言語を習う場合、文法に限らず、その国の文化も勉強したほうがいい
+        let sentence = "新しい言語を習う場合、文法に限らず、その国の文化も勉強したほうがいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限らず");
+        assert_pattern_range(&patterns, "に限らず", 11, 17); // 文法に限らず
+    }
+}

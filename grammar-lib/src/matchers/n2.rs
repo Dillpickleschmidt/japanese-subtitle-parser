@@ -4155,3 +4155,34 @@ pub fn ni_kagitte() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
     ]
 }
+
+// Pattern: に限らず (not only, not just)
+// Structures: Noun + に + 限らず
+pub fn ni_kagirazu() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct KagirazuVerbMatcher;
+    impl super::Matcher for KagirazuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "限る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct ZuAuxiliaryMatcher;
+    impl super::Matcher for ZuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Custom(Arc::new(KagirazuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
+    ]
+}
