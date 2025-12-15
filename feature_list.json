@@ -7898,13 +7898,13 @@
   {
     "pattern_name": "にしたがって",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "By grouping the う-Verb 従（したが）う 'to comply' with に, a common pattern meaning 'to comply with (A)', 'in accordance with... [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

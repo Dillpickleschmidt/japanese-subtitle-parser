@@ -4015,3 +4015,61 @@ mod tasue_nosue_tests {
         assert_pattern_range(&patterns, "た末・の末", 5, 11); // 議論のすえに
     }
 }
+
+// Pattern: にしたがって (in accordance with, as, following)
+// Data source: grammar_points_data.json["にしたがって"]
+// Testing: structure.standard[0] - "Verb[る] + にしたがって"
+// Testing: structure.standard[1] - "Noun + にしたがって"
+// Testing: structure.standard[2] - "にしたがい" variant
+//
+// Structure variants:
+//   - standard[0]: Verb[る] + にしたがって/にしたがい - as verb happens
+//   - standard[1]: Noun + にしたがって/にしたがい - in accordance with noun
+
+mod nishitagatte_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_nishitagatte() {
+        // Testing: structure.standard[0] - "Verb[る] + にしたがって"
+        let sentence = "年を取るにしたがって、目がどんどん悪くなっていってる気がする";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたがって");
+        assert_pattern_range(&patterns, "にしたがって", 2, 10); // 取るにしたがって
+    }
+
+    #[test]
+    fn test_verb_nishitagatte_progress() {
+        // Testing: structure.standard[0] - "Verb[る] + にしたがって"
+        let sentence = "テレワークの普及が進むにしたがって、通勤するサラリーマンが減っていっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたがって");
+        assert_pattern_range(&patterns, "にしたがって", 9, 17); // 進むにしたがって
+    }
+
+    #[test]
+    fn test_noun_nishitagatte() {
+        // Testing: structure.standard[1] - "Noun + にしたがって"
+        let sentence = "僕はただ上司の指示にしたがって仕事を進めていただけです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたがって");
+        assert_pattern_range(&patterns, "にしたがって", 7, 15); // 指示にしたがって
+    }
+
+    #[test]
+    fn test_noun_nishitagatte_instructions() {
+        // Testing: structure.standard[1] - "Noun + にしたがって"
+        let sentence = "この説明書にしたがって、パソコンの初期設定を行ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたがって");
+        assert_pattern_range(&patterns, "にしたがって", 4, 11); // 書にしたがって
+    }
+}

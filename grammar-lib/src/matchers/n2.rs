@@ -1642,9 +1642,58 @@ pub fn tasue_u30fb_nosue() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にしたがって
+// Pattern: にしたがって (in accordance with, as, following)
+// Structures: Verb[る] + にしたがって/にしたがい / Noun + にしたがって/にしたがい
 pub fn nishitagatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match したがう verb (base_form = したがう)
+    #[derive(Debug)]
+    struct ShitagauVerbMatcher;
+    impl super::Matcher for ShitagauVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "したがう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match て or い (connecting particles/forms)
+    #[derive(Debug)]
+    struct TeOrIMatcher;
+    impl super::Matcher for TeOrIMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match て (助詞/接続助詞)
+            if token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") {
+                return true;
+            }
+            // Match い as auxiliary (for にしたがい form)
+            if token.surface == "い"
+                && token.pos.first().is_some_and(|pos| pos == "動詞" || pos == "助動詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb (dictionary form) or Noun
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)), // に
+        TokenMatcher::Custom(Arc::new(ShitagauVerbMatcher)), // したがう (conjugated)
+        TokenMatcher::Custom(Arc::new(TeOrIMatcher)), // て or い
+    ]
 }
 
 // Pattern: に伴って・に伴い
