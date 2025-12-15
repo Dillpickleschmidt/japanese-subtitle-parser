@@ -8444,13 +8444,13 @@
   {
     "pattern_name": "つつある",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the particle つつ 'while doing' is combined with ある 'to be', it indicates that someone or something is in the ongo... [1 std, 1 pol]",
     "priority": 4,
     "skip_reason": null

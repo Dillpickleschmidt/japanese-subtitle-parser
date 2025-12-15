@@ -5267,3 +5267,52 @@ mod mokamawazu_tests {
         assert_pattern_range(&patterns, "も構わず", 14, 21); // たにもかまわず
     }
 }
+
+// Pattern: つつある (to be -ing, in the process of)
+// Data source: grammar_points_data.json["つつある"]
+// Testing: structure.standard[0] - "Verb[stem] + つつある"
+// Testing: structure.polite[0] - "Verb[stem] + つつあります"
+//
+// Structure variants:
+//   - standard[0]: Verb［stem］+ つつある (formal, indicates ongoing/gradual change)
+//   - polite[0]: Verb［stem］+ つつあります (formal polite)
+
+mod tsutsuaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_tsutsuaru_standard() {
+        // Standard form: Verb[stem] + つつある
+        // Example from grammar_points_data.json: 減りつつある (are decreasing)
+        let sentence = "毎年、年金の受給額が減りつつあるので、生活に困っている高齢者が増えてきている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つつある");
+        assert_pattern_range(&patterns, "つつある", 10, 16); // 減りつつある
+    }
+
+    #[test]
+    fn test_tsutsuaru_rising_prices() {
+        // Standard form: Verb[stem] + つつある
+        // Example from grammar_points_data.json: 上がりつつある (are rising)
+        let sentence = "日本では物価が上がりつつある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つつある");
+        assert_pattern_range(&patterns, "つつある", 7, 14); // 上がりつつある
+    }
+
+    #[test]
+    fn test_tsutsuaru_polite() {
+        // Polite form: Verb[stem] + つつあります
+        // Using grammar_points_data.json example adapted to polite form
+        let sentence = "最近はインターネットで買い物ができるので、わざわざお店に行く人が減りつつあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つつある");
+        assert_pattern_range(&patterns, "つつある", 32, 40); // 減りつつあります
+    }
+}
