@@ -13659,3 +13659,97 @@ Files modified: 3
 - grammar-lib/src/tests/n2_patterns.rs (tests)
 - feature_list.json (status update)
 
+
+---
+
+## Session 480: のではないだろうか Pattern (N2) - WIP/Debugging
+
+**Started**: 2025-12-15
+**Pattern**: のではないだろうか (rhetorical question expressing modest opinion)
+**Status**: Implementation complete, but pattern not detecting - needs debugging
+
+### Work Completed
+
+1. **Pattern Implementation**: Full matcher function in `grammar-lib/src/matchers/n2.rs`
+   - NoNMatcher: Matches の or ん (名詞/非自立)
+   - JaDeMatcher: Matches じゃ (助詞/副助詞) or で (助動詞/特殊・ダ/連用形)
+   - HaParticleMatcher: Matches は (助詞/係助詞) for では variant
+   - NaiAuxMatcher: Matches ない (助動詞/特殊・ナイ) **FIXED: changed pos.get(1) → pos.get(4)**
+   - DaroDeshoMatcher: Matches だろ or でしょ
+   - UMatcher: Matches う (助動詞/不変化型)
+   - KaFinalMatcher: Matches か (助詞/副助詞／並立助詞／終助詞)
+   - NaCopulaMatcher: Matches な (助動詞/特殊・ダ/体言接続) for na-adj/noun
+
+2. **Pattern Structure**:
+   ```rust
+   vec![
+       TokenMatcher::Optional(NaCopulaMatcher),  // な (optional, for na-adj/noun)
+       TokenMatcher::Custom(NoNMatcher),         // の or ん
+       TokenMatcher::Custom(JaDeMatcher),        // じゃ or で
+       TokenMatcher::Optional(HaParticleMatcher), // は (optional, for では form)
+       TokenMatcher::Custom(NaiAuxMatcher),      // ない
+       TokenMatcher::Custom(DaroDeshoMatcher),   // だろ or でしょ
+       TokenMatcher::Custom(UMatcher),           // う
+       TokenMatcher::Custom(KaFinalMatcher),     // か
+   ]
+   ```
+
+3. **Tests Created** (in `grammar-lib/src/tests/n2_patterns.rs`):
+   - test_verb_no_dehanai_darouka: `疲れているのじゃないだろうか` (verb + のじゃないだろうか)
+   - test_i_adj_no_dehanai_darouka: `欲しいのじゃないだろうか` (i-adjective + のじゃないだろうか)
+   - test_na_adj_nano_dehanai_deshouka: `好きなのではないでしょうか` (na-adjective + なのではないでしょうか)
+   - All tests have `print_debug()` calls (need to be removed when working)
+
+### Key Bug Fix
+
+**NaiAuxMatcher** was checking `pos.get(1)` for "特殊・ナイ", but it should be `pos.get(4)`:
+- Token features: `[助動詞, *, *, *, 特殊・ナイ, 基本形, ない, ナイ, ナイ]`
+- Index 0: 助動詞
+- Index 1: *
+- Index 4: 特殊・ナイ ← Correct position
+
+This fix was critical - without it, the ない token wouldn't match.
+
+### Debugging Process
+
+Tested pattern incrementally by adding matchers one at a time:
+1. の + じゃ → **WORKED** (detected as `[chars 8-11]`)
+2. の + じゃ + ない → **FAILED** (due to pos.get(1) bug, fixed)
+3. の + じゃ + ない + だろ → After fix, needs verification
+4. の + じゃ + ない + だろ + う → After fix, needs verification
+5. の + じゃ + ない + だろ + う + か → After fix, needs verification
+6. Full pattern with optionals → Currently not detecting
+
+### Current Issue
+
+**Pattern NOT detecting** despite:
+- ✅ All matchers defined correctly (verified tokenization for each)
+- ✅ Pattern registered in patterns.rs with priority 6
+- ✅ No compile errors
+- ✅ Individual matchers should match based on tokenization
+- ✅ Simplified version (の + じゃ) worked at one point
+
+**Symptoms**:
+- Pattern doesn't appear in detected patterns list
+- Both じゃ and では variants fail to detect
+- Even after cargo clean + rebuild
+
+### Next Steps for Debugging
+
+1. **Verify each matcher individually**: Create mini test patterns with just one or two matchers
+2. **Check for hidden issues**:
+   - Duplicate struct names in scope?
+   - Pattern matcher filtering logic?
+   - Maximum pattern length limits?
+3. **Try alternative approach**: Instead of Optional matchers, create separate patterns for each variant
+4. **Add debug logging**: Modify pattern_matcher.rs temporarily to see why pattern isn't matching
+
+### Files Modified
+
+- `grammar-lib/src/matchers/n2.rs`: Full nodehanaidarouka() implementation
+- `grammar-lib/src/patterns.rs`: Priority changed from 1 → 6
+- Tests exist but pattern not detecting yet
+
+**Commit status**: Uncommitted - needs more debugging before committing
+**Next session should**: Debug why pattern isn't detecting despite correct implementation
+

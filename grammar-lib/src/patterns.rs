@@ -5779,7 +5779,7 @@ declare_patterns! {
     Nodehanaidarouka {
         name: "のではないだろうか",
         matcher_fn: crate::matchers::n2::nodehanaidarouka,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

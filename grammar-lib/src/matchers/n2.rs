@@ -6734,7 +6734,7 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
         fn matches(&self, token: &crate::KagomeToken) -> bool {
             token.surface == "ない"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
-                && token.pos.get(1).is_some_and(|p| p == "特殊・ナイ")
+                && token.pos.get(4).is_some_and(|p| p == "特殊・ナイ")
         }
     }
 
@@ -6781,25 +6781,23 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
         }
     }
 
-    // Match じゃ specifically (助詞/副助詞)
+    // Match な as copula (for na-adjectives and nouns)
     #[derive(Debug)]
-    struct JaMatcher;
-    impl Matcher for JaMatcher {
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
         fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "じゃ"
-                && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+            token.surface == "な"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.pos.get(1).is_some_and(|p| p == "特殊・ダ")
+                && token.pos.get(4).is_some_and(|p| p == "体言接続")
         }
     }
 
     vec![
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 10,
-            stop_conditions: vec![],
-        }, // Preceding clause (verb/adj/noun phrase)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaCopulaMatcher)))), // な (for na-adj/noun)
         TokenMatcher::Custom(Arc::new(NoNMatcher)),       // の or ん
-        TokenMatcher::Custom(Arc::new(JaMatcher)),        // じゃ
+        TokenMatcher::Custom(Arc::new(JaDeMatcher)),      // じゃ or で
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(HaParticleMatcher)))), // は (only for では form)
         TokenMatcher::Custom(Arc::new(NaiAuxMatcher)),    // ない
         TokenMatcher::Custom(Arc::new(DaroDeshoMatcher)), // だろ or でしょ
         TokenMatcher::Custom(Arc::new(UMatcher)),         // う
