@@ -9091,3 +9091,86 @@ mod deshikanai_tests {
         assert_pattern_range(&patterns, "でしかない", 6, 17); // 言い訳でしかありません
     }
 }
+
+// Pattern: にしろ～にしろ (whether... or...)
+// Data source: grammar_points_data.json["にしろ～にしろ"]
+// Testing all structure variants with print_debug to understand tokenization
+//
+// Structure variants to test:
+//   - standard[0]: Verb + にしろ + Verb + にしろ
+//   - standard[1]: い-Adjective + にしろ + い-Adjective + にしろ
+//   - standard[2]: な-Adjective + (である) + にしろ + な-Adjective + (である) + にしろ
+//   - standard[3]: Noun + (である) + にしろ + Noun + (である) + にしろ
+//   - Note: Can also use にせよ instead of にしろ
+mod nishiro_uff5e_nishiro_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb + にしろ + Verb + にしろ"
+    #[test]
+    fn test_verb_nishiro_verb_nishiro() {
+        // Example from grammar data: 参加するにせよしないにせよ
+        let sentence = "このイベントに参加するにせよしないにせよ、私に連絡をください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしろ～にしろ");
+        // Note: Pattern matches each instance separately
+        // First: 参加するにせよ (参加 is token before に)
+        assert_pattern_range(&patterns, "にしろ～にしろ", 7, 14); // 参加するにせよ
+        // Second: ないにせよ (ない is the token before に, し is separate)
+        // The full phrase "しないにせよ" contains the pattern "ないにせよ"
+    }
+
+    // Testing: structure.standard[1] - "い-Adjective + にしろ + い-Adjective + にしろ"
+    #[test]
+    fn test_i_adj_nishiro_i_adj_nishiro() {
+        // Example from grammar data: 多いにしろ少ないにしろ
+        let sentence = "給料が多いにしろ少ないにしろ、給料をもらっている以上ちゃんと働かないといけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしろ～にしろ");
+        // Pattern matches each instance separately - testing first occurrence found
+        assert_pattern_range(&patterns, "にしろ～にしろ", 8, 14); // 少ないにしろ
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + にせよ + な-Adjective + にせよ"
+    #[test]
+    fn test_na_adj_niseyo_na_adj_niseyo() {
+        // Example from grammar data: 好きにせよ嫌いにせよ
+        let sentence = "勉強が好きにせよ嫌いにせよ、子供である以上、勉強はしなくてはいけません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしろ～にしろ");
+        // Pattern matches each instance separately
+        assert_pattern_range(&patterns, "にしろ～にしろ", 3, 8); // 好きにせよ
+    }
+
+    // Testing: structure.standard[3] - "Noun + にしろ + Noun + にしろ"
+    #[test]
+    fn test_noun_nishiro_noun_nishiro() {
+        // Example from grammar data: 社長にしろアルバイトにしろ
+        let sentence = "社長にしろアルバイトにしろ、工場内での喫煙は禁止されている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしろ～にしろ");
+        // Pattern matches each instance separately - testing first occurrence found
+        assert_pattern_range(&patterns, "にしろ～にしろ", 5, 13); // アルバイトにしろ
+    }
+
+    // Testing: Fun-fact example with antonyms - "い-Adj + Noun + にしろ + い-Adj + Noun + にしろ"
+    #[test]
+    fn test_antonym_pair_nishiro() {
+        // Example from grammar data: 浅い川にしろ深い川にしろ
+        let sentence = "浅い川にしろ深い川にしろ、子供にはライフジャケット着させないといけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしろ～にしろ");
+        // Pattern matches each instance separately
+        // Note: Pattern matches Noun + に + しろ, not the full い-Adj + Noun phrase
+        assert_pattern_range(&patterns, "にしろ～にしろ", 2, 6); // 川にしろ
+    }
+}

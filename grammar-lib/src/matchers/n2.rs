@@ -6602,9 +6602,41 @@ pub fn nanishiro() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: にしろ～にしろ
+// Pattern: にしろ～にしろ (whether... or...)
+// Structures: Any + に (格助詞) + しろ/せよ (動詞, サ変・スル, 命令形)
 pub fn nishiro_uff5e_nishiro() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for に (助詞/格助詞) - case particle
+    #[derive(Debug)]
+    struct NiCaseMatcher;
+    impl super::Matcher for NiCaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Matcher for しろ/せよ (動詞, サ変・スル, 命令形)
+    #[derive(Debug)]
+    struct ShiroSeyoMatcher;
+    impl super::Matcher for ShiroSeyoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "しろ" || token.surface == "せよ")
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(4).is_some_and(|f| f == "サ変・スル")
+                && (token.features.get(5).is_some_and(|f| f == "命令ｒｏ")
+                    || token.features.get(5).is_some_and(|f| f == "命令ｙｏ"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NiCaseMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiroSeyoMatcher)),
+    ]
 }
 
 // Pattern: はともかく (setting aside, apart from)
