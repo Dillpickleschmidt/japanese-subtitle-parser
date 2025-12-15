@@ -7070,9 +7070,88 @@ pub fn omakeni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に決まっている
+// Pattern: に決まっている (surely, bound to be, certainly)
+// Structures: Verb/Adj/Noun + に + 決まっている/決まってる/決まっています
 pub fn nikimatteiru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "格助詞")
+        }
+    }
+
+    // Match 決まっ (決まる verb in 連用タ接続 form)
+    #[derive(Debug)]
+    struct KimatsuMatcher;
+    impl Matcher for KimatsuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "決まっ"
+                && token.base_form == "決まる"
+                && token.features.first().is_some_and(|f| f == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match て particle (接続助詞) or てる (casual contraction)
+    #[derive(Debug)]
+    struct TeOrTeruMatcher;
+    impl Matcher for TeOrTeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // て particle
+            (token.surface == "て"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "接続助詞"))
+            // OR てる casual form
+            || (token.surface == "てる"
+                && token.base_form == "てる"
+                && token.features.first().is_some_and(|f| f == "動詞")
+                && token.features.get(1).is_some_and(|f| f == "非自立"))
+        }
+    }
+
+    // Match いる or い (non-independent verb) - only needed when previous token is て, not てる
+    #[derive(Debug)]
+    struct IruMatcher;
+    impl Matcher for IruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "いる" || token.surface == "い")
+                && token.base_form == "いる"
+                && token.features.first().is_some_and(|f| f == "動詞")
+                && token.features.get(1).is_some_and(|f| f == "非自立")
+        }
+    }
+
+    // Match ます (polite auxiliary)
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.base_form == "ます"
+                && token.features.first().is_some_and(|f| f == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・マス")
+        }
+    }
+
+    // Pattern: Any + に + 決まっ + (て/てる) + [Optional: いる/い] + [Optional: ます]
+    // This handles:
+    // - に決まっている (て + いる)
+    // - に決まってる (てる alone)
+    // - に決まっています (て + い + ます)
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KimatsuMatcher)),
+        TokenMatcher::Custom(Arc::new(TeOrTeruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(IruMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: ことになっている (it is expected / scheduled to)

@@ -11740,3 +11740,78 @@ mod monoka_tests {
         assert_pattern_range(&patterns, "ものか", 10, 18); // 解けるものですか
     }
 }
+
+// Pattern: に決まっている (surely, bound to be, certainly)
+// Data source: grammar_points_data.json["に決まっている"]
+// Testing: All structure variants
+//
+// Structure variants:
+//   - standard[0]: Verb + に決まっている
+//   - standard[1]: い-Adjective + に決まっている
+//   - standard[2]: な-Adjective + に決まっている
+//   - standard[3]: Noun + に決まっている
+//   - polite[0-3]: Same forms + に決まっています
+
+mod nikimatteiru_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_nikimatteru() {
+        let sentence = "あの選手は足が速いから勝つに決まっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に決まっている");
+        assert_pattern_range(&patterns, "に決まっている", 11, 20); // 勝つに決まっている
+    }
+
+    #[test]
+    fn test_i_adj_nikimatteru() {
+        let sentence = "いくらプロでも、あの高さからダイブするのは怖いに決まってる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に決まっている");
+        assert_pattern_range(&patterns, "に決まっている", 21, 29); // 怖いに決まってる
+    }
+
+    #[test]
+    fn test_na_adj_nikimatteru() {
+        let sentence = "あの有名な会社が建てた家だから丈夫に決まってる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に決まっている");
+        assert_pattern_range(&patterns, "に決まっている", 15, 23); // 丈夫に決まってる
+    }
+
+    #[test]
+    fn test_noun_nikimatteru() {
+        let sentence = "みんなに好かれているからいい人に決まっている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に決まっている");
+        assert_pattern_range(&patterns, "に決まっている", 14, 22); // 人に決まっている
+    }
+
+    #[test]
+    fn test_verb_nikimatteimasu_polite() {
+        let sentence = "あれだけ頑張ったんだから成功するに決まっています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に決まっている");
+        assert_pattern_range(&patterns, "に決まっている", 12, 24); // 成功するに決まっています
+    }
+
+    #[test]
+    fn test_na_adj_nikimatteru_casual() {
+        let sentence = "この問題は簡単に決まってるよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に決まっている");
+        assert_pattern_range(&patterns, "に決まっている", 5, 13); // 簡単に決まってる
+    }
+}
