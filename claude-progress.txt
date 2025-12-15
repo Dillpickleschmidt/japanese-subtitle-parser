@@ -1,3 +1,142 @@
+## Session 392 - 2025-12-15
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 3 N2 patterns (上は, の下で, 手前)
+**Patterns completed**: 3 (上は, の下で, and 手前 - all N2 newly implemented)
+**Tests added**: 7 new tests total (2 for 上は + 3 for の下で + 2 for 手前, all passing)
+**Total tests**: 2560 passing, 1 ignored (was 2553 passing, 1 ignored - net +7 tests)
+
+**Session highlights**:
+- Implemented 上は (now that, since, as long as)
+- Implemented の下で (under, on the basis of)
+- Implemented 手前 (in front of, given the circumstances)
+- Comprehensive coverage of all structure variants for all patterns
+- Clean implementations with proper test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: 上は (now that, since, as long as)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 1 (low priority - still detected and functional, just not highlighted prominently)
+
+**Pattern**: A fairly old-fashioned phrase, 上（うえ）は highlights that something is being done or considered as a result of (A). It may be interpreted as 'once (A), (B)', 'since (A), (B)', 'now that (A), (B)', or 'as long as (A), (B)'. In these meanings, (B) will always be something that is deemed as either obvious or necessary.
+
+**Structures tested**: 2 comprehensive tests covering all variants
+1. Verb[る] + 上は: 働く上は (11-15) - "as long as you work"
+2. Verb[た] + 上は: 始めた上は (6-11) - "now that I've started"
+
+**Implementation**: Matcher in n2.rs (lines 1271-1301), tests in n2_patterns.rs (lines 3714-3736)
+
+**Key notes**:
+- Pattern structure: Verb + Optional(た/だ) + 上 + は
+- 上 tokenizes as 名詞/非自立/副詞可能
+- は tokenizes as 助詞/係助詞
+- Uses TokenMatcher::Any to match preceding verb
+
+**Tokenization observations**:
+- **上**: surface="上", base="上", pos=名詞/非自立/副詞可能
+- **は**: surface="は", pos=助詞/係助詞
+- Verb forms: 基本形 (働く) or 連用形+た (始めた)
+
+**Pattern ranges**: Full construction from verb through は
+- Verb[る]: 働く上は (includes verb + 上 + は)
+- Verb[た]: 始めた上は (includes verb + た + 上 + は)
+
+### Test Quality Metrics (上は)
+✅ All 2 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
+
+---
+
+### ✅ Pattern Implemented: の下で (under, on the basis of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: When the noun 下（もと） 'underneath' is combined with either of the case marking particles で or に, it will indicate that something is happening either under the influence, guidance, or basis of (A). (A) will be a noun that is connected to 下（もと）で or に through the case-marking particle の.
+
+**Structures tested**: 3 comprehensive tests covering all variants
+1. Noun + のもとで: 環境のもとで (6-12) - "under the conditions"
+2. Noun + のもとで: 先輩のもとで (0-6) - "under the senpai"
+3. Noun + のもと (without particle): 協力のもと (4-9) - "under cooperation"
+
+**Implementation**: Matcher in n2.rs (lines 1303-1344), tests in n2_patterns.rs (lines 3738-3772)
+
+**Key notes**:
+- Pattern structure: Noun + の + もと + Optional(で|に)
+- もと tokenizes as 名詞/非自立/一般 or 名詞/一般 (both variants supported)
+- の tokenizes as 助詞/連体化
+- で/に tokenize as 助詞/格助詞 (optional)
+
+**Tokenization observations**:
+- **もと**: surface="もと", pos=名詞/非自立/一般 OR 名詞/一般
+- **の**: surface="の", pos=助詞/連体化
+- **で/に**: surface="で/に", pos=助詞/格助詞/一般
+
+**Pattern ranges**: Full construction from noun through optional particle
+- のもとで: 環境のもとで, 先輩のもとで
+- のもと: 協力のもと (without particle)
+
+### Test Quality Metrics (の下で)
+✅ All 3 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
+
+---
+
+### ✅ Pattern Implemented: 手前 (in front of, given the circumstances)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: The noun 手前（てまえ） 'in front of' has several different meanings in Japanese. With verbs, it expresses 'going forward from (A), (B)' or 'now that (A), (B)'. With nouns + の, it often expresses that what is 'in front' of (A) is the reason for (B), or simply is 'in front of (A)'.
+
+**Structures tested**: 2 comprehensive tests covering all variants
+1. Verb + 手前: しまった手前 (8-14) - "given that I did"
+2. Noun + の + 手前: 娘の手前 (0-4) - "in front of my daughter"
+
+**Implementation**: Matcher in n2.rs (lines 1351-1380), tests in n2_patterns.rs (lines 3774-3797)
+
+**Key notes**:
+- Pattern structure: (Verb|Noun) + Optional(た/だ) + Optional(の) + 手前
+- 手前 tokenizes as 名詞/一般
+- Both verb and noun forms supported with optional た and の
+
+**Tokenization observations**:
+- **手前**: surface="手前", base="手前", pos=名詞/一般
+- Verb form: Verb + Optional(た) + 手前
+- Noun form: Noun + の + 手前
+
+**Pattern ranges**: Full construction from verb/noun through 手前
+- Verb: しまった手前 (verb + た + 手前)
+- Noun: 娘の手前 (noun + の + 手前)
+
+### Test Quality Metrics (手前)
+✅ All 2 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 160 remaining (down from 163!)
+- N1: 186 remaining
+- Total: ~348 patterns remaining (down from ~351!)
+
+**Next priority**: Continue with N2 patterns - 後(の) Noun, を巡って, にわたって, に沿って, た末・の末, etc.
+
+---
+
 ## Session 391 - 2025-12-15
 
 ### ✅ Session Summary
