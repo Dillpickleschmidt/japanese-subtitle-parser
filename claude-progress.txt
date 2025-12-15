@@ -1,6 +1,118 @@
 ## Session 427 - 2025-12-15
 
 ### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (というわけではない, を契機に)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 12 new tests (7 + 5, all passing with range assertions)
+**Total tests**: 2807 passing, 1 ignored (was 2795 passing, 1 ignored - net +12 tests)
+
+**Session highlights**:
+- Implemented というわけではない (doesn't mean that, it's not that) - 7 tests
+- Implemented を契機に (as a trigger/opportunity, led to) - 5 tests
+- Both patterns use comprehensive custom matchers
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented #1: というわけではない (doesn't mean that, it's not that)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: というわけではない is an emphasized version of わけではない. It states that something 'doesn't mean that (A)', '(A) is not always the case', or 'it's not that (A)'. The という presents (A) as a matter for discussion or an important quotation, often referring to something another person has said to clarify it may not be 100% accurate.
+
+**Structures tested**: All 7 structure variants from grammar_points_data.json
+1. Verb + という + わけではない: 話せるというわけではない (chars 22-34)
+2. い-Adjective + という + わけではない: 嫌いというわけではない (chars 3-14)
+3. な-Adjective + だ + という + わけではない: だというわけではない (chars 18-28)
+4. Noun + という + わけではない: 離婚というわけではない (chars 0-11)
+5. Polite form: いるというわけではありません (chars 4-18)
+6. Casual じゃ variation: だというわけじゃない (chars 2-12)
+7. Noun + だ + という + わけではない: だというわけではない (chars 4-14)
+
+**Implementation details**:
+- Custom matchers created:
+  - ToiuMatcher: matches という as 助詞/格助詞/連語
+  - WakeMatcher: matches わけ as 名詞/非自立
+  - DeJaMatcher: matches both で (from だ, 助動詞) and じゃ (助詞/副助詞)
+  - HaParticleMatcher: matches は (係助詞) - optional for じゃ form
+  - NegativeEndingMatcher: matches both ない (形容詞 or 助動詞) and あり (start of ありません)
+  - MaseMatcher, NMatcher: matches ませ and ん for polite ending
+- Pattern structure: Any + という + わけ + で/じゃ + [optional は] + ない/あり + [optional ませ + ん]
+- Handles three variations:
+  1. わけではない (standard negative)
+  2. わけじゃない (casual negative)
+  3. わけではありません (polite negative)
+
+**Test count**: 7 tests (all passing)
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Added toiuwakedehanai() function with 8 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added toiuwakedehanai_tests module with 7 tests
+- feature_list.json: Updated status to "complete"
+
+---
+
+### ✅ Pattern Implemented #2: を契機に (as a trigger/opportunity, led to)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: を契機に is a formal grammar construction meaning '(A) led to (B)', 'as an opportunity to (A), (B)', or 'as a result of (A), (B)'. Made up of を + 契機 (chance/trigger) + に. Used to indicate a trigger for a significant event - usually something extremely big in terms of life or current/historical events in the world.
+
+**Structures tested**: All 5 structure variants from grammar_points_data.json
+1. Noun + を契機に: 出産を契機に (chars 0-6)
+2. Verb + の + を契機に: のを契機に (chars 7-12)
+3. Verb + こと + を契機に: ことを契機に (chars 10-16)
+4. Noun + を契機にして: 入院を契機にして (chars 0-8)
+5. Noun + を契機として: 暗殺を契機として (chars 4-12)
+
+**Implementation details**:
+- Custom matchers created:
+  - WoMatcher: matches を as 助詞/格助詞/一般
+  - KeikiMatcher: matches 契機 as 名詞
+  - NiToshiteMatcher: matches both に (助詞/格助詞) and として (助詞/格助詞/連語)
+  - ShiMatcher: matches し (from する) for にして variation
+  - TeMatcher: matches て for にして variation
+- Pattern structure: Any + を + 契機 + に/として + [optional し + て]
+- Handles three ending variations:
+  1. を契機に (standard)
+  2. を契機として (formal variation)
+  3. を契機にして (extended form)
+- Accepts Noun, の, or こと before を
+
+**Test count**: 5 tests (all passing)
+
+**Tokenization observations**:
+- を: 助詞/格助詞/一般
+- 契機: 名詞/一般
+- に: 助詞/格助詞/一般
+- として: 助詞/格助詞/連語 (single compound token)
+- にして: tokenizes as に + し (from する) + て
+- TokenMatcher::Any successfully matches nouns, の, and こと before を
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Added wokeikini() function with 5 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added wokeikini_tests module with 5 tests
+- feature_list.json: Updated status to "complete"
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- ～ところに・～ところへ
+- ぶりに
+- ては
+- ては〜ては
+- てはいられない
+- てはならない
+
+---
+
+## Session 427 - 2025-12-15
+
+### Session Summary - COMPLETE
 **Status**: COMPLETE - Successfully implemented というわけではない pattern (N2)
 **Patterns completed**: 1 (N2, priority 4)
 **Tests added**: 7 new tests (all passing with range assertions)
