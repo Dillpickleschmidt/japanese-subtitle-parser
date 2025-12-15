@@ -1,3 +1,76 @@
+## Session 390 - 2025-12-15
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 以上② pattern (N2)
+**Patterns completed**: 1 (以上② - since/now that/as long as)
+**Tests added**: 6 new tests (all passing)
+**Total tests**: 2535 passing, 1 ignored (was 2529 passing, 1 ignored - net +6 tests)
+
+**Session highlights**:
+- Implemented 以上② (since, now that, as long as) - conditional/causal pattern
+- Comprehensive coverage of all structure variants (Verb, い-Adj, な-Adj+である, Noun+である)
+- Handles optional は particle
+- Clean implementation with proper test coverage
+- All tests passing, no regressions
+
+---
+
+### ✅ Pattern Implemented: 以上② (since, now that, as long as)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 1 (low priority - still detected and functional, just not highlighted prominently)
+
+**Pattern**: When combined with the adverbial particle は, 以上（いじょう） is frequently translated as 'since (A), (B)', 'now that (A), (B)', or 'as long as (A), (B)'. This is a formal structure rarely found in daily speech. The literal meaning is 'above and beyond (A), (B)' - highlighting that anything past, beyond, or above (A) is what needs to be considered.
+
+**Structures tested**: 6 comprehensive tests covering all variants
+1. Verb + 以上は: 決めた以上は (7-11) - "now that I've decided"
+2. Verb + 以上 (without は): 選ばれた以上 (9-12) - "since I was chosen"
+3. い-Adjective + 以上は: 悪い以上は (3-8) - "as long as you're sick"
+4. な-Adjective + である + 以上は: ある以上は (3-8 from 有名である以上は) - "as long as you're famous"
+5. Noun + である + 以上は: ある以上は (8-13 from 住民である以上は) - "as long as you're a resident"
+6. Noun + である + 以上 (without は): ある以上 (16-20 from 人間である以上) - "as long as you're human"
+
+**Implementation**: Matcher in n2.rs (lines 972-1026), tests in n2_patterns.rs (lines 3391-3461)
+
+**Key notes**:
+- Pattern matches: (Verb|い-Adj|である's ある) + 以上 + Optional(は)
+- 以上 tokenizes as 名詞/非自立/副詞可能
+- は (when present) tokenizes as 助詞/係助詞
+- である structure: で (助動詞/特殊・ダ/連用形) + ある (助動詞/五段・ラ行アル/基本形)
+- Pattern includes full grammatical construction from verb/adjective through は (if present)
+
+**Tokenization observations**:
+- **以上**: surface="以上", base="以上", pos=名詞/非自立/副詞可能
+- **Verb form**: Any verb (決めた, 選ばれた) + 以上
+- **い-Adj form**: 形容詞/自立/基本形 (悪い) + 以上
+- **である form**: で (助動詞/連用形) + ある (助動詞/基本形) + 以上
+- **Optional は**: surface="は", pos=助詞/係助詞
+
+**Pattern ranges**: Full construction from preceding element through 以上 and optional は
+- Verb+は: た以上は (includes past auxiliary + 以上 + は)
+- Verb only: た以上 (includes past auxiliary + 以上)
+- Adj+は: 悪い以上は (adjective + 以上 + は)
+- である+は: ある以上は (ある from である + 以上 + は)
+
+### Test Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions (all 2535 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: All complete! 🎉
+- N2: 164 remaining (down from 165!)
+- N1: 186 remaining
+- Total: ~352 patterns remaining (down from ~353!)
+
+**Next priority**: Continue with N2 patterns - 以上に, 途中に・途中で, を中心に, その上, 上は, の下で, etc.
+
+---
+
 ## Session 388 - 2025-12-15
 
 ### ✅ Session Summary
