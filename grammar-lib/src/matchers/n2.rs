@@ -2578,9 +2578,18 @@ pub fn rikuni_uff5e_nai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: しかも
+// Pattern: しかも (moreover, furthermore)
+// Structure: しかも (conjunction)
 pub fn shikamo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct ShikamoMatcher;
+    impl super::Matcher for ShikamoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しかも" && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(ShikamoMatcher))]
 }
 
 // Pattern: てでも

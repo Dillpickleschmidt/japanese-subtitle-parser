@@ -1810,3 +1810,47 @@ mod sasuga_tests {
         assert_pattern_range(&patterns, "さすが", 0, 3); // さすが
     }
 }
+
+// Pattern: しかも (moreover, furthermore)
+// Data source: grammar_points_data.json["しかも"]
+// Testing: structure.standard[0] - "Phrase (A) + しかも + Phrase (B)"
+//
+// Structure variants:
+//   - standard[0]: Phrase (A) + しかも + Phrase (B) (conjunction)
+
+mod shikamo_tests {
+    use super::*;
+
+    #[test]
+    fn test_shikamo_between_phrases() {
+        // Example from data: このテレビは画質がめちゃくちゃいい。しかも、受信機がついていない
+        let sentence = "このテレビは画質がめちゃくちゃいい。しかも、受信機がついていないから";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかも");
+        assert_pattern_range(&patterns, "しかも", 18, 21); // しかも
+    }
+
+    #[test]
+    fn test_shikamo_sentence_beginning() {
+        // Example: 彼女はとても頭がいいし性格もいい。しかも、美人だから
+        let sentence = "彼女はとても頭がいいし性格もいい。しかも、美人だからもてないわけがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかも");
+        assert_pattern_range(&patterns, "しかも", 17, 20); // しかも
+    }
+
+    #[test]
+    fn test_shikamo_within_sentence() {
+        // Example: あの店は古いし汚い。しかも品揃えもよくない
+        let sentence = "あの店は古いし汚い。しかも品揃えもよくないから潰れるだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "しかも");
+        assert_pattern_range(&patterns, "しかも", 10, 13); // しかも
+    }
+}
