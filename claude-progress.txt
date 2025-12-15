@@ -1,18 +1,20 @@
 ## Session 460 - 2025-12-15
 
 ### Session Summary - COMPLETE
-**Status**: COMPLETE - Successfully implemented にて pattern (N2)
-**Patterns completed**: 1 (N2, priority 4)
-**Tests added**: 3 new tests (all passing with range assertions)
-**Total tests**: 3036 passing, 1 ignored (was 3033 before session, net +3 tests)
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (にて, には)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 7 new tests (3 + 4, all passing with range assertions)
+**Total tests**: 3040 passing, 1 ignored (was 3033 before session, net +7 tests)
 
 **Session highlights**:
 - Implemented にて (formal particle for で) - N2 pattern
-- Pattern structure: Noun + にて (formal case particle)
-- にて is tokenized as single particle (助詞/格助詞/一般)
-- Tests cover all major usage contexts: location, time, means
+- Implemented には (emphatic に + は) - N2 pattern
+- にて: Single particle (助詞/格助詞/一般), formal equivalent of で
+- には: Two-particle combination (に + は), expresses contrast/emphasis
+- Both patterns use TokenMatcher::Any for preceding word
+- Tests cover all structure variants and usage contexts
 - Clean test-first workflow following REFERENCE_EXAMPLES.md
-- All 3 tests pass with proper range assertions
+- All 7 tests pass (3 + 4) with proper range assertions
 - No regressions
 
 ---
@@ -63,30 +65,81 @@
 
 ---
 
-**Current stats** (after pattern):
+### ✅ Pattern Implemented #2: には (emphatic に + は)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: には is a common particle combination in Japanese that is used to express contrast in regard to the topic. As a function of the particles that combine to make には, に highlights that something is "for (A)", while は emphasizes that a generalization or contrast is being made about (A). Common translations include "in order to", "in regard to", or "for".
+
+**Structures tested**: 4 test variants (all from grammar_points_data.json)
+1. Verb + には: するには (chars 21-25) - "in order to shop"
+2. Verb + には: 行くには (chars 3-7) - "in order to go abroad"
+3. Noun + には: 子供には (chars 4-8) - "for children"
+4. Noun + には: 通勤には (chars 0-4) - "for commuting"
+
+**Implementation details**:
+- Matcher structure: Any (verb/noun) + に (助詞/格助詞) + は (助詞/係助詞)
+- Custom matchers created:
+  - NiCaseMatcher: matches に as case particle (格助詞)
+  - HaParticleMatcher: matches は as topic marker (係助詞)
+- TokenMatcher::Any handles preceding verb (dictionary form) or noun
+- Pattern includes full construction from word through は
+- Priority set to 4 (matches feature_list.json)
+
+**Test count**: 4 tests (all passing)
+- test_niha_verb: Verb する + には (するには)
+- test_niha_verb_passport: Verb 行く + には (行くには)
+- test_niha_noun: Noun 子供 + には (子供には)
+- test_niha_noun_commute: Noun 通勤 + には (通勤には)
+
+**Tokenization observations**:
+- には is NOT a single particle - it's two separate tokens:
+  - に: 助詞/格助詞/一般/* (case particle)
+  - は: 助詞/係助詞/*/* (topic marker)
+- Follows verbs in dictionary form (基本形)
+- Follows nouns directly
+- Used to express purpose or make contrasts/comparisons
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented niha() function with 2 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added niha_tests module with 4 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Despite having several translations, には can almost always be thought of as "for"
+- に highlights that (A) is the target
+- は shows that whatever happens in (B) is specific to (A)
+- Often contrasts with other possible targets or emphasizes uniqueness to (A)
+
+---
+
+**Current stats** (after both patterns):
 - N5: ✅ All complete
 - N4: 1 remaining (meta-pattern)
 - N3: ✅ All complete
-- N2: ~103 remaining (down from ~104)
+- N2: ~102 remaining (down from ~104 - completed 2 patterns!)
 - N1: ~176 remaining
-- Total: ~280 patterns remaining
+- Total: ~278 patterns remaining
 
 ### Quality Metrics
-✅ All 3 tests have assert_pattern_range
+✅ All 7 tests have assert_pattern_range (3 + 4)
 ✅ No print_debug in committed tests
 ✅ Realistic sentence examples from grammar_points_data.json
 ✅ Correct character ranges verified
 ✅ All documented structure variants tested
-✅ No regressions (all 3036 tests passing, up from 3033)
+✅ No regressions (all 3040 tests passing, up from 3033)
 
 **Next priorities**: Continue with remaining N2 priority 4 patterns:
-- には - emphatic には
 - 思うように - as one wishes/thinks
 - というものでもない - it's not necessarily the case that
 - とすると・とすれば - assuming that, if we assume
 - とは - speaking of, when it comes to
+- からある・からする - at least (amount/degree)
 
-**Session outcome**: Successfully completed 1 N2 pattern with full coverage! Total of 3 new tests added, all passing, no regressions. Very simple pattern - just a formal case particle. Clean implementation following test-first workflow.
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 7 new tests added (3 + 4), all passing, no regressions. Both patterns are particle-based: にて (single formal particle) and には (emphatic particle combination). Clean implementation following test-first workflow.
 
 ---
 
