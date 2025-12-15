@@ -2616,9 +2616,74 @@ pub fn yousuruni() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(YousuruniMatcher))]
 }
 
-// Pattern: てからでないと
+// Pattern: てからでないと (unless you do, until you do)
+// Structures: Verb[て] + から + で + ない + と/なければ
 pub fn tekaradenaito() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て or で particle (conjunction particle)
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match から as case particle (after)
+    #[derive(Debug)]
+    struct KaraAfterMatcher;
+    impl Matcher for KaraAfterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match で (copula auxiliary だ in 連用形)
+    #[derive(Debug)]
+    struct DeAuxiliaryMatcher;
+    impl Matcher for DeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    // Match ない or なけれ (negative auxiliary)
+    #[derive(Debug)]
+    struct NaiNakerebaMatcher;
+    impl Matcher for NaiNakerebaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ない" || token.surface == "なけれ")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ない"
+        }
+    }
+
+    // Match と or ば (conditional particles)
+    #[derive(Debug)]
+    struct ToOrBaMatcher;
+    impl Matcher for ToOrBaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "と" || token.surface == "ば")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KaraAfterMatcher)),
+        TokenMatcher::Custom(Arc::new(DeAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiNakerebaMatcher)),
+        TokenMatcher::Custom(Arc::new(ToOrBaMatcher)),
+    ]
 }
 
 // Pattern: なくはない (it's not that it isn't, somewhat)

@@ -5593,3 +5593,60 @@ mod nimokakawarazu_tests {
         assert_pattern_range(&patterns, "よりしかたがない", 15, 24); // 働くよりしかたない
     }
 }
+
+// Pattern: てからでないと (unless you do, until you do)
+// Data source: grammar_points_data.json["てからでないと"]
+// Testing structures:
+//   - standard[0]: Verb[て] + からでないと + (Negative)
+//   - standard[1]: Verb[て] + からでなければ + (Negative)
+mod tekaradenaito_tests {
+    use super::*;
+
+    #[test]
+    fn test_tekara_denaito_standard() {
+        // Structure: Verb[て] + からでないと
+        // Example from grammar_points_data.json: 揃ってからでないと
+        let sentence = "全ての書類が揃ってからでないと、本申し込みができません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てからでないと");
+        assert_pattern_range(&patterns, "てからでないと", 6, 15); // 揃ってからでないと
+    }
+
+    #[test]
+    fn test_tekara_denaito_polite() {
+        // Structure: Verb[て] + からでないと
+        // Example from grammar_points_data.json: インストールしてからでないと
+        let sentence = "このアプリをインストールしてからでないと、携帯に入れた音楽は聴けません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てからでないと");
+        assert_pattern_range(&patterns, "てからでないと", 12, 20); // してからでないと
+    }
+
+    #[test]
+    fn test_tekara_denakereba_standard() {
+        // Structure: Verb[て] + からでなければ
+        // Example from grammar_points_data.json: とってからでなければ
+        let sentence = "資格をとってからでなければ、面接が受けられません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てからでないと");
+        assert_pattern_range(&patterns, "てからでないと", 3, 13); // とってからでなければ
+    }
+
+    #[test]
+    fn test_tekara_denakereba_polite() {
+        // Structure: Verb[て] + からでなければ
+        // Example from grammar_points_data.json: 相談してからでなければ
+        let sentence = "その件については上司と相談してからでなければ、ご回答できません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てからでないと");
+        assert_pattern_range(&patterns, "てからでないと", 11, 22); // 相談してからでなければ
+    }
+}
