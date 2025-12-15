@@ -13079,3 +13079,59 @@ mod iumademonai_sentence_initial_tests {
         assert_pattern_range(&patterns, "言うまでもない ②", 0, 11); // いうまでもないけれども
     }
 }
+
+// ========== 又〜も (moreover/additionally) ==========
+// Pattern: 又〜も (moreover, additionally, furthermore)
+// Data source: grammar_points_data.json["又〜も"]
+//
+// Structure variants to test:
+//   standard[0]: Phrase、また + Noun +（も）
+//   standard[1]: Phrase。また + Noun +（も）
+
+mod mata_mo_tests {
+    use super::*;
+
+    // Test: Phrase、また + Noun + も (basic)
+    #[test]
+    fn test_mata_noun_mo_comma() {
+        let sentence = "このキーボードはピアノの音が出せる。また、ギターの音も出せる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "又〜も");
+        assert_pattern_range(&patterns, "又〜も", 18, 27); // また、ギターの音も
+    }
+
+    // Test: Phrase + また + Noun + も (no comma)
+    #[test]
+    fn test_mata_noun_mo_no_comma() {
+        let sentence = "この電子レンジはオーブンとして使えて、またトースターとしても使える。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "又〜も");
+        assert_pattern_range(&patterns, "又〜も", 19, 30); // またトースターとしても
+    }
+
+    // Test: また + Noun + でも (emphasis variant)
+    #[test]
+    fn test_mata_noun_demo() {
+        let sentence = "ササキ先生は理科の先生です。また、地理の先生でもある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "又〜も");
+        assert_pattern_range(&patterns, "又〜も", 14, 24); // また、地理の先生でも
+    }
+
+    // Test: また + Adjective + ても (emphasis variant)
+    #[test]
+    fn test_mata_adjective_temo() {
+        let sentence = "私達は何でも買います。また、古くても買い取ります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "又〜も");
+        assert_pattern_range(&patterns, "又〜も", 11, 18); // また、古くても
+    }
+}

@@ -7633,9 +7633,49 @@ pub fn nanka_u30fb_nante() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 又〜も
+// Pattern: 又〜も (moreover/additionally)
+// Structures: また + (comma) + ... + も/でも/ても
 pub fn mata_u301c_mo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match また as conjunction
+    #[derive(Debug)]
+    struct MataMatcher;
+    impl Matcher for MataMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "また" && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    // Match comma (optional)
+    #[derive(Debug)]
+    struct CommaMatcher;
+    impl Matcher for CommaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "、" && token.pos.first().is_some_and(|pos| pos == "記号")
+        }
+    }
+
+    // Match も as 係助詞
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も" && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MataMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(CommaMatcher)))),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ]
 }
 
 // ついでに: While you're at it / on the occasion of
