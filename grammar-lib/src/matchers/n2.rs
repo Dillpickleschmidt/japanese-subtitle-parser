@@ -1576,9 +1576,70 @@ pub fn nisotte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: た末・の末
+// Pattern: た末・の末 (after, as a result of)
+// Structures: Verb[た] + すえ (に) / Noun + の + すえ (に)
 pub fn tasue_u30fb_nosue() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match すえ (末) as 名詞/非自立
+    #[derive(Debug)]
+    struct SueMatcher;
+    impl super::Matcher for SueMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "すえ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match の particle (連体化)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match either Verb[た] or Noun + の before すえ
+    // This matches: (Verb + た) OR (Noun + の)
+    #[derive(Debug)]
+    struct VerbTaOrNounNoMatcher;
+    impl super::Matcher for VerbTaOrNounNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match た (past auxiliary)
+            if token.surface == "た" && token.pos.first().is_some_and(|pos| pos == "助動詞") {
+                return true;
+            }
+            // Match の (particle/連体化)
+            if token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb (連用形/連用タ接続) or Noun
+        TokenMatcher::Custom(Arc::new(VerbTaOrNounNoMatcher)), // た or の
+        TokenMatcher::Custom(Arc::new(SueMatcher)), // すえ
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiParticleMatcher)))), // optional に
+    ]
 }
 
 // Pattern: にしたがって

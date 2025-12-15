@@ -3958,3 +3958,60 @@ fn test_nisotte_ta_form() {
 //     let patterns = detect_patterns(&tokens);
 //     assert_has_pattern(&patterns, "に沿って");
 // }
+
+// Pattern: た末・の末 (after, as a result of)
+// Data source: grammar_points_data.json["た末・の末"]
+// Testing: structure.standard[0] - "Verb[た] + すえ (に)"
+// Testing: structure.standard[1] - "Noun + の + すえ (に)"
+//
+// Structure variants:
+//   - standard[0]: Verb[た] + すえ (に) - after verb (past tense), implies long effort/struggle
+//   - standard[1]: Noun + の + すえ (に) - after noun (process/struggle)
+
+mod tasue_nosue_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_ta_sue() {
+        // Testing: structure.standard[0] - "Verb[た] + すえ (に)"
+        let sentence = "色々と考えたすえに、お父さんの会社を継ぐことに決めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "た末・の末");
+        assert_pattern_range(&patterns, "た末・の末", 3, 9); // 考えたすえに
+    }
+
+    #[test]
+    fn test_verb_ta_sue_simple() {
+        // Testing: structure.standard[0] - "Verb[た] + すえ" (without に)
+        let sentence = "迷いに迷ったすえ、彼女と別れることにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "た末・の末");
+        assert_pattern_range(&patterns, "た末・の末", 3, 8); // 迷ったすえ
+    }
+
+    #[test]
+    fn test_noun_no_sue_ni() {
+        // Testing: structure.standard[1] - "Noun + の + すえ"
+        let sentence = "５年間にわたる争いのすえ、アメリカ軍が撤退を開始した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "た末・の末");
+        assert_pattern_range(&patterns, "た末・の末", 7, 12); // 争いのすえ
+    }
+
+    #[test]
+    fn test_noun_no_sue_ni_long() {
+        // Testing: structure.standard[1] - "Noun + の + すえに"
+        let sentence = "社長と長い議論のすえに、人事の伊藤さんをクビにすることに決めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "た末・の末");
+        assert_pattern_range(&patterns, "た末・の末", 5, 11); // 議論のすえに
+    }
+}
