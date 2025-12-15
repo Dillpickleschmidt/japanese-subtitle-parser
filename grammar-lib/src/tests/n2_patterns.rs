@@ -7439,3 +7439,75 @@ mod tomo_tests {
         assert_pattern_range(&patterns, "とも", 4, 11); // 苦しかろうとも
     }
 }
+
+// Pattern: 陸に～ない (ろくに～ない - barely, hardly, not properly)
+// Data source: grammar_points_data.json["陸に～ない"]
+// Testing: structure.standard[0] - "ろくに + (Negative) Phrase"
+//
+// Structure variants:
+//   - standard[0]: ろくに + (Negative) Phrase (can be written as ろくに, 陸に, or 碌に)
+//   - The negative phrase typically contains ない (often potential form + ない)
+
+mod rikuni_nai_tests {
+    use super::*;
+
+    #[test]
+    fn test_roku_ni_potential_negative() {
+        // Structure: ろくに + Verb[potential] + ない
+        // Example: 息子は英語をろくに話せないのに、アメリカにひとりで行くそうだ
+        let sentence = "息子は英語をろくに話せないのに、アメリカに一人で行くそうだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "陸に～ない");
+        assert_pattern_range(&patterns, "陸に～ない", 6, 13); // ろくに話せない
+    }
+
+    #[test]
+    fn test_roku_ni_nai_past() {
+        // Structure: ろくに + Verb[potential] + なかった
+        // Example: 近所のワンちゃんが朝までずっと吠えていたから、昨晩はろくに寝れなかった
+        let sentence = "昨晩はろくに寝れなかったから、今日は眠い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "陸に～ない");
+        assert_pattern_range(&patterns, "陸に～ない", 3, 12); // ろくに寝れなかった
+    }
+
+    #[test]
+    fn test_roku_ni_with_mo_particle() {
+        // Structure: ろくに + Noun + も + Verb + ない
+        // Example: ろくに仕事も出来ないのに、偉そうな態度をとる
+        let sentence = "あの人はろくに仕事も出来ないのに、偉そうな態度をとる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "陸に～ない");
+        assert_pattern_range(&patterns, "陸に～ない", 4, 14); // ろくに仕事も出来ない
+    }
+
+    #[test]
+    fn test_roku_ni_plain_negative() {
+        // Structure: ろくに + Verb + ない
+        // Example: 豆なんてろくに食べないのに、うちには豆の缶詰がいっぱいある
+        let sentence = "豆なんてろくに食べないのに、缶詰がいっぱいある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "陸に～ない");
+        assert_pattern_range(&patterns, "陸に～ない", 4, 11); // ろくに食べない
+    }
+
+    #[test]
+    fn test_roku_ni_te_iru_negative() {
+        // Structure: ろくに + Verb[て] + いない
+        // Example: 仕事が忙しすぎて、ここ最近、ろくに友達にも会えていない
+        let sentence = "最近仕事が忙しくて、ろくに友達にも会えていない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "陸に～ない");
+        assert_pattern_range(&patterns, "陸に～ない", 10, 23); // ろくに友達にも会えていない
+    }
+}

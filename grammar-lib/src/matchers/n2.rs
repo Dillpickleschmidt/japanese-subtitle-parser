@@ -6041,9 +6041,40 @@ pub fn tehairarenai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 陸に～ない
+// Pattern: 陸に～ない (barely, hardly, not properly)
+// Structure: ろくに + (Negative) Phrase
 pub fn rikuni_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for ろくに adverb (can be written as ろくに, 陸に, or 碌に)
+    #[derive(Debug)]
+    struct RokuNiMatcher;
+    impl super::Matcher for RokuNiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ろくに" || token.surface == "陸に" || token.surface == "碌に")
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Matcher for negative auxiliary ない/なかった
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "ない" || token.surface == "ない" || token.surface == "なかった")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(RokuNiMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: しかも (moreover, furthermore)
