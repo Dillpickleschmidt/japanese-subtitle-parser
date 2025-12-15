@@ -2299,9 +2299,38 @@ pub fn tsutsu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: つつ(も)
+// Pattern: つつ(も) (even while doing, although doing)
+// Structures: Verb[stem] + つつ + も
 pub fn tsutsu_mo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct TsutsuParticleMatcher;
+    impl super::Matcher for TsutsuParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "つつ"
+                && token.base_form == "つつ"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.base_form == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("連用形"),
+        TokenMatcher::Custom(Arc::new(TsutsuParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ]
 }
 
 // Pattern: に際して

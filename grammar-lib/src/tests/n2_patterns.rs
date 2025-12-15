@@ -4759,3 +4759,47 @@ mod tsutsu_tests {
         assert_pattern_range(&patterns, "つつ", 10, 14); // 考えつつ
     }
 }
+
+// Pattern: つつ(も) (even while doing, although doing)
+// Data source: grammar_points_data.json["つつ(も)"]
+// Testing: structure.standard[0] - "Verb[stem] + つつ（も）"
+//
+// Note: つつも adds the nuance of 'even' or 'although' to つつ.
+// (B) is almost always contradictory to (A).
+mod tsutsumo_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb[stem] + つつ（も）"
+    #[test]
+    fn test_tsutsumo_despite_knowing() {
+        // Example from grammar_points_data.json: 知りつつも
+        let sentence = "一人で洞窟に入るのは危ないと知りつつも、入ってしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つつ(も)");
+        assert_pattern_range(&patterns, "つつ(も)", 14, 19); // 知りつつも
+    }
+
+    #[test]
+    fn test_tsutsumo_despite_being_nervous() {
+        // Example from grammar_points_data.json: 緊張しつつも
+        let sentence = "初めてのライブで緊張しつつもものすごく楽しめました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つつ(も)");
+        assert_pattern_range(&patterns, "つつ(も)", 8, 14); // 緊張しつつも
+    }
+
+    #[test]
+    fn test_tsutsumo_despite_thinking() {
+        // Example from grammar_points_data.json: 思いつつも
+        let sentence = "なんかこの話は怪しいなと思いつつも、彼のことを信じてみた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つつ(も)");
+        assert_pattern_range(&patterns, "つつ(も)", 12, 17); // 思いつつも
+    }
+}
