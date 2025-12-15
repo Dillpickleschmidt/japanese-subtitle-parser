@@ -8122,13 +8122,13 @@
   {
     "pattern_name": "なお①",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used at the beginning of a statement, the adverb 尚（なお） 'furthermore' will often carry the meaning of 'still', 'e... [5 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

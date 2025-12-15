@@ -1970,9 +1970,27 @@ pub fn nikagirazu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: なお①
+// Pattern: なお① (still, even, yet)
+// Structures: なお (conjunction)
 pub fn nao_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match なお as conjunction
+    // Note: Tokenizes identically to なお② but has different meaning
+    // なお① = "still, even, yet" (emphasizing continuation despite circumstances)
+    // なお② = "furthermore, moreover" (adding new information)
+    // Both patterns will be detected; context determines which meaning applies
+    #[derive(Debug)]
+    struct NaoConjunctionMatcher;
+    impl super::Matcher for NaoConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なお"
+                && token.base_form == "なお"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NaoConjunctionMatcher))]
 }
 
 // Pattern: なお② (furthermore, moreover, in addition)

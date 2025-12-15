@@ -4382,3 +4382,78 @@ mod tekoso_tests {
         assert_pattern_range(&patterns, "～てこそ", 6, 11); // 勝ってこそ
     }
 }
+
+// Pattern: なお① (still, even, yet - adverb emphasizing continuation despite circumstances)
+// Data source: grammar_points_data.json["なお①"]
+// Testing structure variants:
+//   - standard[0]: なお + Verb［ている］
+//   - standard[1]: なお + Nounもいる
+//   - standard[2]: なお + Nounもある
+//   - standard[3]: なお + Noun + だ
+//   - standard[4]: なお + Noun + である (formal)
+//
+// Note: This pattern detects なお as an adverb (not conjunction like なお②)
+
+mod nao_u2460_tests {
+    use super::*;
+
+    #[test]
+    fn test_nao_verb_teiru() {
+        // Testing: structure.standard[0] - "なお + Verb［ている］"
+        // Example from grammar_points_data.json
+        let sentence = "豊橋市では今もなお、チンチン電車が走っている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なお①");
+        assert_pattern_range(&patterns, "なお①", 7, 9); // なお
+    }
+
+    #[test]
+    fn test_nao_noun_mo_iru() {
+        // Testing: structure.standard[1] - "なお + Nounもいる"
+        // Realistic example showing "still" with noun + も + いる
+        let sentence = "卒業後もなお、彼女のことを覚えている人もいる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なお①");
+        assert_pattern_range(&patterns, "なお①", 4, 6); // なお
+    }
+
+    #[test]
+    fn test_nao_noun_mo_aru() {
+        // Testing: structure.standard[2] - "なお + Nounもある"
+        // Realistic example showing "still" with noun + も + ある
+        let sentence = "この問題を解決できていない企業もなお、多くある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なお①");
+        assert_pattern_range(&patterns, "なお①", 16, 18); // なお
+    }
+
+    #[test]
+    fn test_nao_noun_da() {
+        // Testing: structure.standard[3] - "なお + Noun + だ"
+        // Realistic example showing "still" with noun + だ
+        let sentence = "あれから10年経った今もなお、彼は独身だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なお①");
+        assert_pattern_range(&patterns, "なお①", 12, 14); // なお
+    }
+
+    #[test]
+    fn test_nao_noun_dearu() {
+        // Testing: structure.standard[4] - "なお + Noun + である" (formal)
+        // Formal example showing "still" with noun + である
+        let sentence = "研究は進展しているが、なお課題は山積みである";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なお①");
+        assert_pattern_range(&patterns, "なお①", 11, 13); // なお
+    }
+}
