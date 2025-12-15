@@ -1,15 +1,16 @@
 ## Session 391 - 2025-12-15
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 2 N2 patterns (途中に・途中で, を中心に)
-**Patterns completed**: 2 (途中に・途中で and を中心に - both N2 newly implemented)
-**Tests added**: 10 new tests total (4 for 途中に・途中で + 6 for を中心に, all passing)
-**Total tests**: 2550 passing, 1 ignored (was 2540 passing, 1 ignored - net +10 tests)
+**Status**: COMPLETE - Successfully implemented 3 N2 patterns (途中に・途中で, を中心に, その上)
+**Patterns completed**: 3 (途中に・途中で, を中心に, and その上 - all N2 newly implemented)
+**Tests added**: 13 new tests total (4 for 途中に・途中で + 6 for を中心に + 3 for その上, all passing)
+**Total tests**: 2553 passing, 1 ignored (was 2540 passing, 1 ignored - net +13 tests)
 
 **Session highlights**:
 - Implemented 途中に・途中で (on the way, partway through, in the middle of)
 - Implemented を中心に (focused on, centered around, mainly)
-- Comprehensive coverage of all structure variants for both patterns
+- Implemented その上 (besides, in addition to, furthermore)
+- Comprehensive coverage of all structure variants for all patterns
 - Clean implementations with proper test coverage
 - All tests passing, no regressions
 
@@ -101,15 +102,54 @@
 ✅ Realistic sentences from grammar_points_data.json
 ✅ No regressions
 
+---
+
+### ✅ Pattern Implemented: その上 (besides, in addition to, furthermore)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: その上（うえ） is a formal expression used in Japanese to indicate that something is 'besides', 'in addition to', or 'furthermore' in relation to the previous statement. It primarily comes at the beginning of sentences before reflecting back on and adding new information in regard to what has already been said. The literal meaning can be thought of as 'on top of that (B)'.
+
+**Structures tested**: 3 comprehensive tests covering usage contexts
+1. その上 at sentence beginning with comma: その上、 (13-16) - "Furthermore, ..."
+2. その上 mid-conversation: その上 (17-20) - "In addition, ..."
+3. その上 after negative statement: その上、 (14-17) - "Besides that, ..."
+
+**Implementation**: Matcher in n2.rs (lines 1236-1269), tests in n2_patterns.rs (lines 3669-3713)
+
+**Key notes**:
+- Pattern structure: その (連体詞) + 上 (名詞/非自立/副詞可能)
+- Simple two-token conjunction pattern
+- Despite being formal, also used in daily speech due to simplicity
+- Always tokenizes as two separate tokens: その + 上
+
+**Tokenization observations**:
+- **その**: surface="その", base="その", pos=連体詞 (demonstrative)
+- **上**: surface="上", base="上", pos=名詞/非自立/副詞可能 (non-independent noun, adverbial)
+- Pattern is always 3 characters long (その上)
+
+**Pattern ranges**: Always just その上 (3 characters)
+- Standard: その上 (regardless of following punctuation)
+
+**Edge case note**: Without proper punctuation (e.g., "その上家" without comma), Kagome may merge "上家" as a single noun token (うわや), preventing detection. All tests use proper punctuation with commas for clarity.
+
+### Test Quality Metrics (その上)
+✅ All 3 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions
+
 **Current stats**:
 - N5: All complete
 - N4: 2 remaining (meta-patterns)
 - N3: All complete! 🎉
-- N2: 151 remaining (down from 153!)
+- N2: 150 remaining (down from 153!)
 - N1: 186 remaining
-- Total: ~339 patterns remaining (down from ~341!)
+- Total: ~338 patterns remaining (down from ~341!)
 
-**Next priority**: Continue with N2 patterns - その上, 上は, の下で, 後(の) Noun, etc.
+**Next priority**: Continue with N2 patterns - 上は, の下で, 後(の) Noun, 手前, を巡って, etc.
 
 ---
 
