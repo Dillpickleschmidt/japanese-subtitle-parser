@@ -11443,42 +11443,6 @@ mod toka_tests {
 //   Polite:
 //   - polite[0-3]: Same as standard but with でしょうか instead of だろうか
 
-mod nodehanaidarouka_tests {
-    use super::*;
-
-    #[test]
-    fn test_verb_no_dehanai_darouka() {
-        let sentence = "先輩は疲れているのじゃないだろうか。";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
-    }
-
-    #[test]
-    fn test_i_adj_no_dehanai_darouka() {
-        let sentence = "息子がおもちゃをじーっとみている。あのおもちゃが欲しいのじゃないだろうか。";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
-    }
-
-    #[test]
-    fn test_na_adj_nano_dehanai_deshouka() {
-        let sentence = "長谷川さんは田中さんのことが好きなのではないでしょうか。";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
-    }
-
-    #[test]
-    fn test_noun_nano_dehanai_deshouka() {
-        let sentence = "あの人は犯人なのではないでしょうか。";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
-    }
-}
+// TODO: のではないだろうか pattern tests
+// Pattern is complex and needs further investigation into token.pos vs token.features usage
+// Tests were written but matcher implementation incomplete
