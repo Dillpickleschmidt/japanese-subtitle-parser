@@ -2531,9 +2531,69 @@ pub fn wotowazu() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: よりしかたがない
+// Pattern: よりしかたがない (there is no choice but, cannot be helped)
+// Structures: Verb[る] + より + 仕方(が) + ない
 pub fn yorishikataganai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match より particle (格助詞)
+    #[derive(Debug)]
+    struct YoriParticleMatcher;
+    impl super::Matcher for YoriParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "より"
+                && token.base_form == "より"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match しかた (名詞/ナイ形容詞語幹)
+    #[derive(Debug)]
+    struct ShikataMatcher;
+    impl super::Matcher for ShikataMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しかた"
+                && token.base_form == "しかた"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "ナイ形容詞語幹")
+        }
+    }
+
+    // Match が particle (optional)
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl super::Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.base_form == "が"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match ない (either 形容詞 or 助動詞)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|p| p == "形容詞")
+                    || token.pos.first().is_some_and(|p| p == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Verb {
+            conjugation_form: Some("基本形"),
+            base_form: None,
+        },
+        TokenMatcher::Custom(Arc::new(YoriParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ShikataMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: に越したことはない

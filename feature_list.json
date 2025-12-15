@@ -8220,13 +8220,13 @@
   {
     "pattern_name": "よりしかたがない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Often seen as a set phrase, よりしかたがない consists of より, the noun 仕方（しかた） 'way' or 'method', が and ない [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

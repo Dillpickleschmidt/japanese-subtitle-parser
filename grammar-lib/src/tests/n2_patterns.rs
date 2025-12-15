@@ -5562,4 +5562,34 @@ mod nimokakawarazu_tests {
         assert_has_pattern(&patterns, "にもかかわらず");
         assert_pattern_range(&patterns, "にもかかわらず", 0, 9); // 深夜にもかかわらず
     }
+
+    // Pattern: よりしかたがない (there is no choice but, cannot be helped)
+    // Data source: grammar_points_data.json["よりしかたがない"]
+    // Testing structures:
+    //   - standard[0]: Verb + より + 仕方がない
+    //   - standard[1]: Verb + より + ほかに + 仕方ない (が dropped)
+
+    #[test]
+    fn test_yori_shikata_ga_nai_standard() {
+        // Structure: Verb + より + 仕方がない
+        // Example from grammar_points_data.json: 立て直すよりしかたがない
+        let sentence = "この建物はボロボロでいつ倒れてもおかしくないから、倉庫として使いたいなら立て直すよりしかたがない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よりしかたがない");
+        assert_pattern_range(&patterns, "よりしかたがない", 36, 48); // 立て直すよりしかたがない
+    }
+
+    #[test]
+    fn test_yori_shikata_ga_nai_with_ga_dropped() {
+        // Structure: Verb + より + 仕方ない (が dropped)
+        // Example from grammar_points_data.json: 働くよりしかたない
+        let sentence = "生活をするにはお金が必要だから働くよりしかたない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "よりしかたがない");
+        assert_pattern_range(&patterns, "よりしかたがない", 15, 24); // 働くよりしかたない
+    }
 }
