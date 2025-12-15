@@ -12043,3 +12043,64 @@ mod nanitoittemo_tests {
         assert_pattern_range(&patterns, "何といっても", 0, 6); // 何といっても
     }
 }
+
+// Pattern: は別として (setting aside, except for, save for)
+// Data source: grammar_points_data.json["は別として"]
+// Testing multiple structure variants:
+//   - standard[0]: Noun + は別として + Phrase
+//   - standard[3]: A + かどうか + は別として + Phrase
+//   - standard[4]: A + A[ない] + は別として + Phrase (whether or not)
+
+mod habetsutoshite_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_habetsutoshite_simple() {
+        let sentence = "この家の外観は別として、中は完全にリフォームされているからとても綺麗だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は別として");
+        assert_pattern_range(&patterns, "は別として", 6, 11); // は別として (just the particle structure)
+    }
+
+    #[test]
+    fn test_noun_habetsutoshite_horror() {
+        let sentence = "ホラーは別として映画なら基本的になんでも好きです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は別として");
+        assert_pattern_range(&patterns, "は別として", 3, 8); // は別として
+    }
+
+    #[test]
+    fn test_kadouka_habetsutoshite() {
+        let sentence = "給料がいいかどうかは別として、自分が楽しいと思える仕事がしたい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は別として");
+        assert_pattern_range(&patterns, "は別として", 9, 14); // は別として
+    }
+
+    #[test]
+    fn test_whether_or_not_habetsutoshite() {
+        let sentence = "このお茶は美味しい美味しくないは別として、健康にいいらしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は別として");
+        assert_pattern_range(&patterns, "は別として", 15, 20); // は別として
+    }
+
+    #[test]
+    fn test_verb_whether_or_not_habetsutoshite() {
+        let sentence = "試合で優勝するしないは別として、精一杯頑張る事が大切だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "は別として");
+        assert_pattern_range(&patterns, "は別として", 10, 15); // は別として
+    }
+}

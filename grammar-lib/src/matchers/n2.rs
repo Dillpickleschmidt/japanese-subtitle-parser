@@ -7621,9 +7621,50 @@ pub fn nanikarananimade() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: は別として
+// Pattern: は別として (setting aside, except for, save for)
+// Structures: [Noun/Phrase] + は + 別 + として
 pub fn habetsutoshite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match は as topic marker
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl super::Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "係助詞")
+        }
+    }
+
+    // Match 別 as noun
+    #[derive(Debug)]
+    struct BetsuMatcher;
+    impl super::Matcher for BetsuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "別"
+                && token.base_form == "別"
+                && token.features.first().is_some_and(|f| f == "名詞")
+        }
+    }
+
+    // Match として as particle
+    #[derive(Debug)]
+    struct ToshiteMatcher;
+    impl super::Matcher for ToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "として"
+                && token.base_form == "として"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(HaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(BetsuMatcher)),
+        TokenMatcher::Custom(Arc::new(ToshiteMatcher)),
+    ]
 }
 
 // Pattern: だけに (as might be expected of, because)

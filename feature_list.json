@@ -9901,13 +9901,13 @@
   {
     "pattern_name": "は別として",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "は別（べつ）として is a set phrase with the meaning of 'setting aside (A)', 'except for (A)', or 'save for (A)' [7 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
