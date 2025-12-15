@@ -5371,7 +5371,7 @@ declare_patterns! {
     Nikaketeha {
         name: "にかけては",
         matcher_fn: crate::matchers::n2::nikaketeha,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

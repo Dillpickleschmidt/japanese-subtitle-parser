@@ -4487,9 +4487,38 @@ pub fn kikkake() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にかけては
+// Pattern: にかけては (when it comes to, regarding)
+// Structures: Noun + にかけては
 pub fn nikaketeha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NikaketeMatcher;
+    impl Matcher for NikaketeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "にかけて"
+                && token.base_form == "にかけて"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    #[derive(Debug)]
+    struct WaKakariMatcher;
+    impl Matcher for WaKakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NikaketeMatcher)),
+        TokenMatcher::Custom(Arc::new(WaKakariMatcher)),
+    ]
 }
 
 // Pattern: とっくに

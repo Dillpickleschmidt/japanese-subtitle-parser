@@ -7920,3 +7920,52 @@ mod yagate_tests {
         assert_pattern_range(&patterns, "やがて", 8, 11); // やがて
     }
 }
+
+// Pattern: にかけては (when it comes to, regarding)
+// Data source: grammar_points_data.json["にかけては"]
+// Testing: structure.standard[0] - "Noun + にかけては"
+//
+// Pattern description:
+// にかけては expresses "when it comes to (A), (B)" where (B) is the best or has
+// a distinct advantage in field (A). Always expresses a positive aspect.
+// Combines に + かけて (te-form of 掛ける) + は.
+//
+// Structure: Only one main form
+//   - standard[0]: Noun + にかけては
+
+mod nikaketeha_tests {
+    use super::*;
+
+    #[test]
+    fn test_nikaketeha_skill() {
+        // Example from grammar_points_data.json: 大工の技術にかけては彼が一番だ
+        let sentence = "大工の技術にかけては彼が一番だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかけては");
+        assert_pattern_range(&patterns, "にかけては", 3, 10); // 技術にかけては
+    }
+
+    #[test]
+    fn test_nikaketeha_sports() {
+        // Example from grammar_points_data.json: スポーツにかけては誰にも負けない
+        let sentence = "私はゲームは下手だけど、スポーツにかけては誰にも負けない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかけては");
+        assert_pattern_range(&patterns, "にかけては", 12, 21); // スポーツにかけては
+    }
+
+    #[test]
+    fn test_nikaketeha_features() {
+        // Example from grammar_points_data.json: 機能にかけては他のスマホとは比べ物にならない
+        let sentence = "あのスマホは機能にかけては、他のスマホとは比べ物にはならないほどいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかけては");
+        assert_pattern_range(&patterns, "にかけては", 6, 13); // 機能にかけては
+    }
+}
