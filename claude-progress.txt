@@ -1,13 +1,15 @@
 ## Session 486 - 2025-12-15
 
-### Session Summary - 更に Pattern Complete ✓
-**Status**: Successfully implemented 更に (さらに) pattern
-**Patterns completed**: 1 (N2, priority 4)
-**Total tests**: 3205 passing, 1 ignored (added 3 new tests)
+### Session Summary - Three Simple N2 Patterns Complete ✓
+**Status**: Successfully implemented 更に, 精々, and 僅かに patterns
+**Patterns completed**: 3 (all N2, priority 4)
+**Total tests**: 3211 passing, 1 ignored (added 9 new tests)
 
 **Session highlights**:
 - Implemented 更に (furthermore, moreover, even more) - 3 tests
-- Very simple pattern - single Surface matcher
+- Implemented 精々 (at most, at best) - 3 tests
+- Implemented 僅かに (slightly, barely, merely) - 3 tests
+- All patterns are simple adverbs with straightforward implementations
 - All tests passing with proper range assertions
 - No regressions in test suite
 
@@ -44,6 +46,76 @@ All tests use realistic, subtitle-quality sentences and include proper range ass
 - `grammar-lib/src/matchers/n2.rs` - Implemented sarani() function (3 lines)
 - `grammar-lib/src/tests/n2_patterns.rs` - Added 3 comprehensive tests
 - `feature_list.json` - Updated 更に to complete status
+
+---
+
+### ✓ Completed: 精々 (at most, at best)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- せいぜい + Phrase (simple adverb)
+
+**Implementation details**:
+- Simple single-token pattern using TokenMatcher::Surface("せいぜい")
+- Tokenized as 副詞/助詞類接続
+- Indicates "at the most (A)" or "at best (A)"
+- Shows that something has reached a physical or metaphorical barrier
+- Often used to indicate modesty or minimal amounts
+
+**Tests created**: 3 tests
+1. `test_seizeiseizei_at_most_price` - せいぜい千円くらい (at most 1000 yen)
+2. `test_seizeiseizei_at_most_months` - せいぜい３ヶ月 (at most 3 months)
+3. `test_seizeiseizei_at_best_cooking` - せいぜいこんなもんです (at best this much)
+
+**Key implementation notes**:
+- Simplest possible pattern - just a single adverb token
+- Priority set to 4 (not too high since it's a common adverb)
+- From old word 精誠（せいせい）meaning "completely exhaust one's good faith"
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented kiyoshi_u3005() function (3 lines)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 3 comprehensive tests
+- `feature_list.json` - Updated 精々 to complete status
+
+---
+
+### ✓ Completed: 僅かに (slightly, barely, merely)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- わずかに + Phrase (adverb + particle)
+
+**Implementation details**:
+- Two-token pattern: わずか (副詞/助詞類接続) + に (助詞/副詞化)
+- Custom matcher for に particle to ensure it's specifically 副詞化 type
+- Indicates an excessively small amount: "merely", "barely", "slightly"
+- Used to be modest about small differences or amounts
+
+**Tests created**: 3 tests
+1. `test_wazukani_slightly_tilted` - わずかに傾いている (slightly tilted)
+2. `test_wazukani_slightly_heard` - わずかに聞こえる (slightly audible)
+3. `test_wazukani_slightly_visible` - わずかに見えた (slightly visible)
+
+**Key implementation notes**:
+- Unlike 更に and 精々, this pattern has TWO tokens
+- Custom NiAdverbializerMatcher ensures the に is specifically the 副詞化 type
+- This prevents false matches with other uses of に particle
+- わずか itself is a な-Adjective used adverbially here
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented wazukani() function (20 lines with custom matcher)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 3 comprehensive tests
+- `feature_list.json` - Updated 僅かに to complete status
 
 ---
 
