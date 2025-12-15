@@ -8429,9 +8429,59 @@ pub fn ari() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 考えられない
+// Pattern: 考えられない (unthinkable/unimaginable)
+// Structures: 考えられない/ません/なかった/ませんでした
 pub fn kangaerarenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 考え (未然形 of 考える)
+    #[derive(Debug)]
+    struct KangaeMatcher;
+    impl Matcher for KangaeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "考える"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match られ (potential form suffix)
+    #[derive(Debug)]
+    struct RareMatcher;
+    impl Matcher for RareMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "られる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match negative auxiliary (ない or ます)
+    #[derive(Debug)]
+    struct NegAuxMatcher;
+    impl Matcher for NegAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "ない" || token.base_form == "ます")
+        }
+    }
+
+    // Match past auxiliary (た or です) - only appears after ない/ます
+    #[derive(Debug)]
+    struct PastAuxMatcher;
+    impl Matcher for PastAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "た" || token.base_form == "です")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KangaeMatcher)),
+        TokenMatcher::Custom(Arc::new(RareMatcher)),
+        TokenMatcher::Custom(Arc::new(NegAuxMatcher)), // ない, なかっ, ません
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(PastAuxMatcher)))), // た, でした
+    ]
 }
 
 // Pattern: 必ずしも 

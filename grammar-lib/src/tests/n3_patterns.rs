@@ -13204,3 +13204,107 @@ mod daiichi_tests {
         assert_pattern_range(&patterns, "第一", 7, 9); // 第一
     }
 }
+
+// Pattern: 考えられない (unthinkable/unimaginable)
+// Data source: grammar_points_data.json["考えられない"]
+// Testing all structure variants
+#[cfg(test)]
+mod kangaerarenai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - Noun + など + 考えられない
+    // Example from grammar data: 人に手を出すなんて私には考えられない
+    #[test]
+    fn test_noun_nante_kangaerarenai() {
+        let sentence = "人に手を出すなんて私には考えられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "考えられない");
+        assert_pattern_range(&patterns, "考えられない", 12, 18); // 考えられない
+    }
+
+    // Testing: structure.standard[0] variant - Noun + など + 考えられない
+    // More natural subtitle example
+    #[test]
+    fn test_noun_nado_kangaerarenai() {
+        let sentence = "妻と離婚することなど考えられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "考えられない");
+        assert_pattern_range(&patterns, "考えられない", 10, 16); // 考えられない
+    }
+
+    // Testing: structure.standard[1] - Phrase + ということは + 考えられない
+    // Example from grammar data
+    #[test]
+    fn test_phrase_toiukotoha_kangaerarenai() {
+        let sentence = "あんなに小さな人が相撲をやろうと思ったとは考えられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "考えられない");
+        assert_pattern_range(&patterns, "考えられない", 21, 27); // 考えられない
+    }
+
+    // Testing: structure.standard[1] variant - Phrase + ことは + 考えられない
+    // Example from grammar data
+    #[test]
+    fn test_phrase_kotoha_kangaerarenai() {
+        let sentence = "人違いだったことは考えられないか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "考えられない");
+        assert_pattern_range(&patterns, "考えられない", 9, 15); // 考えられない
+    }
+
+    // Testing: structure.polite[0] - Noun + など + 考えられません
+    // Polite form test
+    #[test]
+    fn test_noun_nado_kangaeraremasen() {
+        let sentence = "今の私にそんなことなど考えられません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "考えられない");
+        assert_pattern_range(&patterns, "考えられない", 11, 18); // 考えられません
+    }
+
+    // Testing: structure.polite[1] - Phrase + ということは + 考えられません
+    // Polite form with fuller structure
+    #[test]
+    fn test_phrase_toiukotoha_kangaeraremasen() {
+        let sentence = "20年前は、携帯で映画を見たりゲームをしたりすることは考えられませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "考えられない");
+        assert_pattern_range(&patterns, "考えられない", 27, 37); // 考えられませんでした
+    }
+
+    // Testing: past tense form - 考えられなかった
+    // Example from grammar data
+    #[test]
+    fn test_kangaerarenakatta() {
+        let sentence = "20年前は、携帯で映画を見ることは考えられなかったでしょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "考えられない");
+        assert_pattern_range(&patterns, "考えられない", 17, 29); // 考えられなかったでしょう
+    }
+
+    // Testing: abbreviated form - Noun + は + 考えられない (without など)
+    // More natural subtitle conversation
+    #[test]
+    fn test_noun_ha_kangaerarenai() {
+        let sentence = "インターネットなしの生活は考えられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "考えられない");
+        assert_pattern_range(&patterns, "考えられない", 13, 19); // 考えられない
+    }
+}

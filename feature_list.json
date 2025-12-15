@@ -6736,13 +6736,13 @@
   {
     "pattern_name": "考えられない",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "考（かんが）えられない is the negative potential form of the る - Verb 考（かんが）える 'to consider' [4 std, 4 pol]",
     "priority": 3,
     "skip_reason": null
