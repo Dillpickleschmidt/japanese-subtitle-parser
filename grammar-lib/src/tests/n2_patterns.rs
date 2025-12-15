@@ -6006,3 +6006,96 @@ mod nikakawarazu_tests {
         assert_pattern_range(&patterns, "にかかわらず", 6, 14); // 年齢にかかわらず
     }
 }
+
+// ============================================================================
+// Pattern: 限り (as long as, as far as, while, assuming)
+// Data source: grammar_points_data.json["限り"]
+// ============================================================================
+//
+// Structure variants to test:
+//   - standard[0]: Verb[る] + 限り + Phrase
+//   - standard[1]: Verb[ない] + 限り + Phrase
+//   - standard[2]: Verb[ている] + 限り + Phrase
+//   - standard[3]: Noun + である + 限り
+//   - standard[4]: Verb[た] + 限り (note in data)
+//
+// Meanings:
+//   1. Limited to scope of A: "limited to (A), (B)"
+//   2. Within scope of knowledge/senses: "as far as (A), (B)", "as long as (A), (B)"
+//   3. Assuming A is true: "while (A) is the case, (B)", "assuming (A), (B)"
+
+mod kagiri_tests {
+    use super::*;
+
+    #[test]
+    fn test_kagiri_verb_ru_form() {
+        // Structure: Verb[る] + 限り
+        // Meaning: "as long as he keeps saying"
+        let sentence = "彼が真剣に芸人になりたいと言っているかぎり、彼の夢は叶うだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "限り");
+        assert_pattern_range(&patterns, "限り", 16, 21); // いるかぎり
+    }
+
+    #[test]
+    fn test_kagiri_verb_nai_form() {
+        // Structure: Verb[ない] + 限り
+        // Meaning: "as long as (something) doesn't happen"
+        let sentence = "君が諦めないかぎり、必ず成功する日が来る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "限り");
+        assert_pattern_range(&patterns, "限り", 4, 9); // ないかぎり
+    }
+
+    #[test]
+    fn test_kagiri_verb_teiru_form() {
+        // Structure: Verb[ている] + 限り
+        // Meaning: "as long as (continuous state)"
+        let sentence = "あなたが元気でいるかぎり、私も頑張れます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "限り");
+        assert_pattern_range(&patterns, "限り", 7, 12); // いるかぎり
+    }
+
+    #[test]
+    fn test_kagiri_noun_dearu_form() {
+        // Structure: Noun + である + 限り
+        // Meaning: "as long as (identity/status)"
+        let sentence = "このアパートの住人であるかぎりは、ルールを守ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "限り");
+        assert_pattern_range(&patterns, "限り", 10, 15); // あるかぎり
+    }
+
+    #[test]
+    fn test_kagiri_verb_ta_form() {
+        // Structure: Verb[た] + 限り
+        // Meaning: "as far as (past perception/knowledge)"
+        let sentence = "彼から聞いたかぎり、田中君は退学になるらしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "限り");
+        assert_pattern_range(&patterns, "限り", 5, 9); // たかぎり
+    }
+
+    #[test]
+    fn test_kagiri_living_in_japan() {
+        // Structure: Verb[る] + 限り
+        // Meaning: "assuming that you live in Japan"
+        let sentence = "日本に住むかぎり、日本の法律を守らなければいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "限り");
+        assert_pattern_range(&patterns, "限り", 3, 8); // 住むかぎり
+    }
+}

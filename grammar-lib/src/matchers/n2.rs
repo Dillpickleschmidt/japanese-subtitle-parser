@@ -2534,9 +2534,29 @@ pub fn nao_u2461() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(NaoConjunctionMatcher))]
 }
 
-// Pattern: 限り
+// Pattern: 限り (as long as, as far as, while, assuming)
+// Structures:
+//   - Verb[る/ない/た/ている] + 限り
+//   - Noun + である + 限り
 pub fn kagiri() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match かぎり as noun (非自立/副詞可能)
+    #[derive(Debug)]
+    struct KagiriMatcher;
+    impl Matcher for KagiriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "かぎり" || token.surface == "限り")
+                && token.base_form == "かぎり"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Use TokenMatcher::Any to match any preceding word/phrase
+    // This allows verb (any form), noun, adjective, etc. before かぎり
+    vec![TokenMatcher::Any, TokenMatcher::Custom(Arc::new(KagiriMatcher))]
 }
 
 // Pattern: 次第だ・次第で (depending on, depends on)
