@@ -3831,4 +3831,40 @@ mod sonoue_tests {
         assert_has_pattern(&patterns, "後(の) Noun");
         assert_pattern_range(&patterns, "後(の) Noun", 6, 9); // 後三日
     }
+
+    // Pattern: を巡って (concerning, in regard to, about)
+    // Data source: grammar_points_data.json["を巡って"]
+
+    // Testing: structure.standard[0] - Noun + をめぐって
+    #[test]
+    fn test_womegutte_basic() {
+        let sentence = "隣人と土地の境界線をめぐってトラブルが起きた時は誰に連絡するべきですか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を巡って");
+        assert_pattern_range(&patterns, "を巡って", 8, 14); // 線をめぐって
+    }
+
+    // Testing: structure.standard[1] - Noun + をめぐる + Noun
+    #[test]
+    fn test_womegutte_meguru() {
+        let sentence = "この島をめぐる争いは私が生まれる前から続いています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を巡って");
+        assert_pattern_range(&patterns, "を巡って", 2, 7); // 島をめぐる
+    }
+
+    // Testing: structure.standard[2] - をめぐり (same as structure 0, but used before の)
+    #[test]
+    fn test_womegutte_meguri() {
+        let sentence = "ゴミ出しルールをめぐってのトラブルはどの地域でも珍しいことではありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を巡って");
+        assert_pattern_range(&patterns, "を巡って", 4, 12); // ルールをめぐって
+    }
 }

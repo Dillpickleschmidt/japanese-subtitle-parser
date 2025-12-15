@@ -7842,13 +7842,13 @@
   {
     "pattern_name": "を巡って",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the more indirect ways that 'to be concerning (A)' is conveyed in Japanese is through the pairing of a noun wi... [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

@@ -1429,9 +1429,48 @@ pub fn temae() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を巡って
+// Pattern: を巡って (concerning, in regard to, about)
+// Structures: Noun + をめぐって | Noun + を + めぐる + Noun
 pub fn womegutte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match either:
+    // 1. をめぐって as single token (助詞/格助詞/連語)
+    // 2. を particle (when followed by めぐる verb)
+    #[derive(Debug)]
+    struct WomegutteMatcher;
+    impl Matcher for WomegutteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Case 1: Single token をめぐって
+            (token.surface == "をめぐって"
+                && token.base_form == "をめぐって"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語"))
+            ||
+            // Case 2: を particle (will be followed by めぐる)
+            (token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    // Match めぐる verb (in various forms: めぐる, めぐって, めぐり)
+    // This is optional because sometimes it's a single token をめぐって
+    #[derive(Debug)]
+    struct MeguruVerbMatcher;
+    impl Matcher for MeguruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "めぐる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun
+        TokenMatcher::Custom(Arc::new(WomegutteMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MeguruVerbMatcher)))),
+    ]
 }
 
 // Pattern: にわたって
