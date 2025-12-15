@@ -1,3 +1,97 @@
+## Session 413 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 3 N1 patterns (を以て, たところで, ならまだしも)
+**Patterns completed**: 3 (all N1, all priority 5)
+**Tests added**: 9 new tests (3 per pattern, all passing)
+**Total tests**: 2701 passing, 1 ignored (was 2692 passing, 1 ignored - net +9 tests)
+
+**Session highlights**:
+- Implemented three simple N1 priority 5 patterns with single structure variants
+- を以て: Discovered dual tokenization (compound particle vs split tokens) - implemented both variants
+- たところで: Simple conditional pattern "even if/even though"
+- ならまだしも: Fixed phrase pattern, learned importance of correct features array indexing
+- Clean test-first workflow for all patterns
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### Pattern Implemented: を以て (by means of, with)
+
+**JLPT Level**: N1
+**Priority**: 5
+**Category**: Construction
+
+**Pattern**: をもって is a formal grammar pattern meaning "by means of", "with", or "via". Used with abstract concepts rather than concrete items (e.g., "with sincerity" not "with a hammer").
+
+**Structures tested**: Single structure from grammar_points_data.json, but two tokenization variants:
+1. **Compound particle** (を以て): をもって as single token (助詞/格助詞/連語)
+   - 電話をもって (chars 6-12) - "by telephone"
+2. **Split tokenization** (を以て_split): を + もつ(verb) + て
+   - アプリをもって (chars 14-21) - "via the app"
+   - 身をもって (chars 20-25) - "firsthand"
+
+**Implementation details**:
+- Two pattern variants registered to handle both tokenizations
+- Compound: Noun + をもって (single token)
+- Split: Noun + を(格助詞) + もつ(動詞) + て(接続助詞)
+- Different tokenizations depend on context (compound particle vs verb "to hold")
+
+**Test count**: 3 tests (all passing)
+
+---
+
+### Pattern Implemented: たところで (even if, even though)
+
+**JLPT Level**: N1
+**Priority**: 5
+**Category**: Construction
+
+**Pattern**: たところで combines Verb[た] + ところ + で to express "even if (A), not (B)" or "even if (A), it won't be (B)". Always followed by negative or unfavorable outcome in second clause.
+
+**Structures tested**: Single structure from grammar_points_data.json
+1. Verb[た] + ところで:
+   - 始めたところで (chars 5-12) - "even if start"
+   - 急いだところで (chars 16-23) - "even if hurry"
+   - 走ったところで (chars 2-9) - "even if run"
+
+**Implementation details**:
+- Matcher: flexible_verb_form() + past_auxiliary() + ところ(名詞/非自立) + で(格助詞)
+- Past auxiliary can be た or だ depending on verb conjugation
+- Reused existing helper functions (flexible_verb_form, past_auxiliary)
+- Always indicates frustration about inevitable negative result
+
+**Test count**: 3 tests (all passing)
+
+---
+
+### Pattern Implemented: ならまだしも (if A, that's fine, but B)
+
+**JLPT Level**: N1
+**Priority**: 5
+**Category**: Construction
+
+**Pattern**: ならまだしも is a fixed phrase combining なら (conditional) + まだ (still) + しも (classical adverbial particle). Separates acceptable scenario (A) from unacceptable scenario (B). Translates as "(A) is fine, but not (B)".
+
+**Structures tested**: Single structure from grammar_points_data.json
+1. Phrase + ならまだしも:
+   - ならまだしも (chars 4-10) - all three test sentences
+   - Pattern detects just the fixed phrase ならまだしも
+
+**Implementation details**:
+- Matcher: なら(助動詞/仮定形) + まだしも(副詞)
+- なら: base_form="だ", features[5]="仮定形" (not features[4]!)
+- まだしも: tokenized as single adverb token
+- Classical particle しも strengthens まだ
+- **Important learning**: features[5] is conjugation form, not features[4]
+
+**Test count**: 3 tests (all passing)
+
+**Technical note**: Initially tried starting with TokenMatcher::Any but it didn't work. Pattern matching engine needs concrete matchers to anchor the search. Fixed by matching just the fixed phrase ならまだしも.
+
+---
+
 ## Session 412 - 2025-12-15
 
 ### Session Summary - COMPLETE
