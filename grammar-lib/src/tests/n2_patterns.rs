@@ -10116,3 +10116,114 @@ mod omouyouni_tests {
         assert_pattern_range(&patterns, "思うように", 0, 5); // 思うような
     }
 }
+
+// Pattern: というものでもない (not necessarily, there's no guarantee)
+// Data source: grammar_points_data.json["というものでもない"]
+// Testing structure variants: Verb/Adj/Noun + というものでもない/じゃない
+//
+// Structure variants:
+//   - standard[0]: Verb + というものではない
+//   - standard[1]: な-Adj + というものではない
+//   - standard[2]: い-Adj + というものではない
+//   - standard[3]: Noun + というものではない
+//   - standard[4]: (variants with でもない/じゃない)
+//   - polite[0-3]: Same with でもありません/じゃありません
+mod toiumonodemonai_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_demonai() {
+        // Testing: Verb + というものでもない
+        // Realistic context: clothes don't need to be expensive
+        let sentence = "洋服は高ければいいというものでもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものでもない");
+        assert_pattern_range(&patterns, "というものでもない", 7, 18); // いいというものでもない
+    }
+
+    #[test]
+    fn test_verb_dehanai() {
+        // Testing: Verb + というものではない
+        // Realistic context: good university doesn't guarantee good job
+        let sentence = "いい大学を出たからといって、いい会社に入社できるというものではない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものでもない");
+        assert_pattern_range(&patterns, "というものでもない", 21, 33); // できるというものではない
+    }
+
+    #[test]
+    fn test_na_adj_demonai() {
+        // Testing: な-Adj + というものでもない
+        // Realistic context: app features
+        let sentence = "アプリの機能は多ければ多いほど便利だというものでもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものでもない");
+        assert_pattern_range(&patterns, "というものでもない", 17, 27); // だというものでもない
+    }
+
+    #[test]
+    fn test_i_adj_demonai() {
+        // Testing: い-Adj + というものでもない
+        // Realistic context: expensive gifts
+        let sentence = "プレゼントは高額であればいいというものではない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものでもない");
+        assert_pattern_range(&patterns, "というものでもない", 12, 23); // いいというものではない
+    }
+
+    #[test]
+    fn test_noun_demonai() {
+        // Testing: Noun + というものでもない
+        // Realistic context: brand popularity
+        let sentence = "あのブランドが人気だからといって、あのブランドの商品がいいものだというものでもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものでもない");
+        assert_pattern_range(&patterns, "というものでもない", 31, 41); // だというものでもない
+    }
+
+    #[test]
+    fn test_polite_demoarimasen() {
+        // Testing: でもありません (polite form)
+        // Realistic context: work situation
+        let sentence = "経験があれば必ず成功できるというものでもありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものでもない");
+        assert_pattern_range(&patterns, "というものでもない", 10, 25); // できるというものでもありません
+    }
+
+    #[test]
+    fn test_janai_casual() {
+        // Testing: じゃない (casual contraction)
+        // Realistic context: study effectiveness
+        let sentence = "勉強時間が長ければいいというものじゃないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものでもない");
+        assert_pattern_range(&patterns, "というものでもない", 9, 20); // いいというものじゃない
+    }
+
+    #[test]
+    fn test_jaarimasen_polite() {
+        // Testing: じゃありません (polite casual contraction)
+        // Realistic context: language learning
+        let sentence = "日本語が上手であれば勉強をし続けなくてもいいというものじゃありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というものでもない");
+        assert_pattern_range(&patterns, "というものでもない", 20, 34); // いいというものじゃありません
+    }
+}

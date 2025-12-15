@@ -9159,13 +9159,13 @@
   {
     "pattern_name": "というものでもない",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "というものではない is an expression in Japanese that indicates that 'there is no guarantee that (A)', or that it is 'not neces... [5 std, 5 pol]",
     "priority": 4,
     "skip_reason": null
