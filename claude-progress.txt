@@ -1,10 +1,80 @@
 ## Session 356 - 2025-12-14
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully completed 1 N3 pattern
-**Patterns completed**: 1 (一方で)
-**Tests added**: 5 (all passing)
-**Total tests**: 2277 passing, 1 ignored (was 2272 passing, 1 ignored - net +5 tests)
+**Status**: COMPLETE - Successfully completed 2 N3 patterns
+**Patterns completed**: 2 (一方で, 上で)
+**Tests added**: 9 (all passing)
+**Total tests**: 2281 passing, 1 ignored (was 2272 passing, 1 ignored - net +9 tests)
+
+### ✅ Pattern Completed: 上で (upon / after - formal progression)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: 上（うえ）で is a formal expression that shows logical progression from action (A) to action (B). It combines the noun 上 ("above/upon") with the case marking particle で. The pattern translates to "upon (A)" or "after (A)", strongly implying that (A) is a requirement or expected step before (B). It's primarily used in formal settings such as business, legal documents, and instructions.
+
+**Structures tested**: 4 comprehensive tests covering both major variants
+1. Verb[た] + 上で: 相談した上で (upon consulting with the CEO) - chars 12-14
+2. Verb[た] + 上で: 運転した上で (upon driving various cars) - chars 9-11
+3. Noun + の + 上で: 確認の上で (upon confirming the details) - chars 9-11
+4. Noun + の + 上で: ログインの上で (upon logging in) - chars 13-15
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (uede function, lines 1896-1928)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (uede_tests module, lines 12356-12403)
+- Pattern: grammar-lib/src/patterns.rs (Uede pattern)
+
+**Tokenization patterns**:
+```
+Verb[た] + 上で:
+- た (助動詞, base=た, 特殊・タ, 基本形) - past tense auxiliary
+- 上 (名詞/非自立/副詞可能) - dependent noun "above/upon"
+- で (助詞/格助詞/一般) - case particle
+
+Noun + の + 上で:
+- の (助詞/連体化) - nominalizing particle
+- 上 (名詞/非自立/副詞可能) - dependent noun "above/upon"
+- で (助詞/格助詞/一般) - case particle
+```
+
+**Key implementation points**:
+1. Two-token matcher: 上 + で
+2. UeMatcher checks surface == "上", base_form == "上", POS == 名詞/非自立
+3. DeParticleMatcher matches で as particle (助詞/格助詞), NOT auxiliary verb で from だ
+4. Pattern matches just 上で (doesn't include preceding verb or noun)
+5. Pattern priority: 3 (moderate - detected and highlighted in overlay)
+
+**Pattern ranges**: Include only 上で (2 tokens)
+- After verb[た]: 上で
+- After noun + の: 上で
+- Pattern captures just the formal progression marker, not the prerequisite action
+
+**Test Quality**:
+- All 4 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover both major structural variants: verb[た] form, noun + の form
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data emphasizes that 上で strongly hints at (A) being a requirement for (B), or (A) being something logically expected before (B). This is different from simple temporal succession - it implies necessary steps in a process. For example, "upon consulting with a doctor" (before using medication) or "upon confirming the details" (before signing).
+
+**Important Caution**: Due to 上で showing logical progressions, (A) cannot be a passive verb. Passivity in Japanese implies lack of control, which would make (B) sound unplanned. For example:
+- ❌ 医者に教えられた上で、使用してください (unnatural - "upon being told by a doctor")
+- ✅ 医者に相談した上で、使用してください (natural - "upon consulting with a doctor")
+
+**Usage contexts**:
+- Formal instructions: Procedural steps in documentation
+- Business communication: Professional emails and memos
+- Legal/official documents: Terms and conditions, agreements
+- Requirements: Actions that must be completed before others
+
+**Related patterns**:
+- た後で (N4) - "after doing" (less formal, simple temporal succession)
+- てから (N4) - "after doing" (casual temporal succession)
+- 上 (N3) - standalone "above/on top of" (spatial/abstract)
+
+---
 
 ### ✅ Pattern Completed: 一方で (on the other hand / while / at the same time)
 
