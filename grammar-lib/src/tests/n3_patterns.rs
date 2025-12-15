@@ -12476,3 +12476,67 @@ mod saichuuni_tests {
         assert_pattern_range(&patterns, "最中に", 7, 10); // 最中に
     }
 }
+
+// ========== 全く～ない (not at all) ==========
+// Pattern: 全く～ない (not at all / completely not)
+// Data source: grammar_points_data.json["全く～ない"]
+// Structure: まったく + Phrase[ない]
+// Testing: standard[0] - "まったく + Phrase［ない］"
+mod mattaku_nai_tests {
+    use super::*;
+
+    // Structure: 全く + Verb[ない]
+    #[test]
+    fn verb_negative() {
+        let sentence = "この子は全く吠えないですよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "全く～ない");
+        assert_pattern_range(&patterns, "全く～ない", 4, 12); // 全く吠えないです
+    }
+
+    // Structure: まったく + い-Adjective[くない]
+    #[test]
+    fn i_adjective_negative() {
+        let sentence = "あんたに褒められてもまったく嬉しくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "全く～ない");
+        assert_pattern_range(&patterns, "全く～ない", 10, 19); // まったく嬉しくない
+    }
+
+    // Structure: 全く + な-Adjective[じゃない]
+    #[test]
+    fn na_adjective_negative() {
+        let sentence = "店員さんが静かですよって言ったから買ったのに、全く静かじゃない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "全く～ない");
+        assert_pattern_range(&patterns, "全く～ない", 23, 31); // 全く静かじゃない
+    }
+
+    // Structure: まったく + Noun[がない]
+    #[test]
+    fn noun_ga_nai() {
+        let sentence = "まったく筋肉がないので私だけでは持てません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "全く～ない");
+        assert_pattern_range(&patterns, "全く～ない", 0, 9); // まったく筋肉がない
+    }
+
+    // Structure: Kanji form 全く + Verb[ない]
+    #[test]
+    fn kanji_form() {
+        let sentence = "全く分からないので、手伝ってください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "全く～ない");
+        assert_pattern_range(&patterns, "全く～ない", 0, 7); // 全く分からない
+    }
+}

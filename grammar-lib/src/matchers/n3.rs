@@ -684,9 +684,44 @@ pub fn niyotte_u30fb_niyoru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 全く～ない
+// Pattern: 全く～ない (not at all / completely not)
+// Structures: まったく/全く + Phrase[ない]
 pub fn mattaku_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match まったく or 全く as adverb
+    #[derive(Debug)]
+    struct MattakuMatcher;
+    impl Matcher for MattakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "まったく" || token.surface == "全く")
+                && (token.base_form == "まったく" || token.base_form == "全く")
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "助詞類接続")
+        }
+    }
+
+    // Match ない as auxiliary verb or adjective
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MattakuMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: ことだ (should/ought to - advice/weak command)
