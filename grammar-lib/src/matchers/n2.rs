@@ -4540,9 +4540,46 @@ pub fn tokkuni() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(TokkuniMatcher))]
 }
 
-// Pattern: 未だに
+// Pattern: 未だに (still, even now)
+// Structures: 未（いま）だに + Verb［る/ない］
 pub fn imadani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Tokenization: Can be either:
+    // 1. Single token: いまだに (副詞/一般)
+    // 2. Two tokens: いまだ (副詞/助詞類接続) + に (助詞/副詞化)
+
+    // Since we need to match EITHER case, we use a custom matcher on the first token
+    // and make the second token optional
+
+    // Match いまだ or いまだに
+    #[derive(Debug)]
+    struct ImadaOrImadaniMatcher;
+    impl Matcher for ImadaOrImadaniMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "副詞")
+                && ((token.surface == "いまだに" && token.base_form == "いまだに")
+                    || (token.surface == "いまだ" && token.base_form == "いまだ"))
+        }
+    }
+
+    // Match に as adverbializer (optional - only present in split tokenization)
+    #[derive(Debug)]
+    struct NiFukushikaMatcher;
+    impl Matcher for NiFukushikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ImadaOrImadaniMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiFukushikaMatcher,
+        )))),
+    ]
 }
 
 // Pattern: をもとに

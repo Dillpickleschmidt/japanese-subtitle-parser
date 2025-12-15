@@ -8753,13 +8753,13 @@
   {
     "pattern_name": "未だに",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although stemming from the same kanji, まだ 'still' will almost always be read as 未（いま）だ 'still' when appearing in its ... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

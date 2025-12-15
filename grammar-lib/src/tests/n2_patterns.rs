@@ -8019,3 +8019,40 @@ mod tokkuni_tests {
         assert_pattern_range(&patterns, "とっくに", 10, 14); // とっくに
     }
 }
+
+// Pattern: 未だに (still, even now)
+// Data source: grammar_points_data.json["未だに"]
+// Testing: structure.standard[0] - "未（いま）だに + … + Verb［る］"
+// Testing: structure.standard[1] - "未（いま）だに + … + Verb［ない］"
+//
+// Structure variants:
+//   - standard[0]: 未（いま）だに + Verb［る］ (affirmative - still doing)
+//   - standard[1]: 未（いま）だに + Verb［ない］ (negative - still not)
+
+mod imadani_tests {
+    use super::*;
+
+    #[test]
+    fn test_imadani_affirmative() {
+        // Example from grammar_points_data.json: 私が子供の頃に巻き込まれた事故のことはいまだに覚えている
+        // Structure: 未（いま）だに + Verb［る］ (affirmative - still remembering)
+        let sentence = "私が子供の頃に巻き込まれた事故のことはいまだに覚えている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "未だに");
+        assert_pattern_range(&patterns, "未だに", 19, 23); // いまだに (split: いまだ + に)
+    }
+
+    #[test]
+    fn test_imadani_negative() {
+        // Example from grammar_points_data.json: 部長は人事に注意されて２ヶ月も経つのに、彼の態度はいまだに変わらない
+        // Structure: 未（いま）だに + Verb［ない］ (negative - still hasn't changed)
+        let sentence = "部長は人事に注意されて２ヶ月も経つのに、彼の態度はいまだに変わらない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "未だに");
+        assert_pattern_range(&patterns, "未だに", 25, 29); // いまだに (single token)
+    }
+}

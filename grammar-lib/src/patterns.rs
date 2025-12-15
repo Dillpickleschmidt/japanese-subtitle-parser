@@ -5387,7 +5387,7 @@ declare_patterns! {
     Imadani {
         name: "未だに",
         matcher_fn: crate::matchers::n2::imadani,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },
