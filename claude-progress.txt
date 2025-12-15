@@ -1,15 +1,17 @@
 ## Session 417 - 2025-12-15
 
-### Session Summary - IN PROGRESS
-**Status**: IN PROGRESS - Successfully implemented 1 N1 pattern (に至るまで)
-**Patterns completed**: 1 (N1, priority 5)
-**Tests added**: 3 new tests (all passing)
-**Total tests**: 2725 passing, 1 ignored (was 2722 passing, 1 ignored - net +3 tests)
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N1 patterns (に至るまで, に足る)
+**Patterns completed**: 2 (both N1, both priority 5)
+**Tests added**: 5 new tests (3 for に至るまで, 2 for に足る, all passing)
+**Total tests**: 2727 passing, 1 ignored (was 2722 passing, 1 ignored - net +5 tests)
 
 **Session highlights**:
-- Implemented に至るまで (everything from A to B, up to and including) - N1 priority 5
+- Implemented に至るまで (everything from A to B, up to and including) - 3 structure variants
+- Implemented に足る (worthy of, enough for) - 2 structure variants
+- Both patterns simple and straightforward
 - Clean test-first workflow following REFERENCE_EXAMPLES.md
-- Simplified matcher to avoid false matches with てから constructions
+- Simplified に至るまで matcher to avoid false matches with てから constructions
 - All tests pass with proper range assertions
 - No regressions
 
@@ -57,6 +59,48 @@
 - grammar-lib/src/patterns.rs (updated priority from 1 to 5)
 - grammar-lib/src/tests/n1_patterns.rs (added 3 tests)
 - feature_list.json (marked に至るまで as complete)
+
+---
+
+### ✅ Pattern Implemented: に足る (worthy of, enough for)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: 足る is an う-Verb meaning "to be sufficient". When paired with に and either verbs or nouns, に足る indicates that something is "worthy of (A)" or "enough for (A)". This is a formal grammar structure primarily seen in books or speeches.
+
+**Structures tested**: 2 structure variants from grammar_points_data.json
+1. Verb[る] + に足る + Noun: 勝つに足る能力 (chars 7-14) - "ability worthy of winning"
+2. Noun A + に足る + Noun B: 信頼に足る友達 (chars 0-7) - "trustworthy friend"
+
+**Implementation details**:
+- Matcher: (Verb[基本形] or Noun) + に(格助詞) + 足る(動詞/基本形) + Noun
+- Custom matchers: VerbOrNounMatcher, NiParticleMatcher, TaruMatcher
+- VerbOrNounMatcher flexibly accepts either verb in 基本形 or any noun
+- TaruMatcher specifically matches 足る verb in dictionary form
+- Simple 4-token pattern structure
+- Register: formal
+
+**Test count**: 2 tests (all passing)
+- test_nitaru_verb
+- test_nitaru_noun
+
+**Tokenization observations**:
+- 足る is always 動詞/自立 with 五段・ラ行/基本形 conjugation
+- に is 助詞/格助詞/一般 (case particle)
+- First element can be verb (基本形) or noun
+- Always followed by a noun that it modifies (the thing that is or is not worthy)
+
+**Usage notes**:
+- Always appears in dictionary form (足る, never 足りる or 足れ)
+- For negation, negate the following verb, not 足る itself
+- May appear as "Noun + に足る" or "Noun + する + に足る" (latter emphasizes action)
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n1.rs (implemented nitaru())
+- grammar-lib/src/tests/n1_patterns.rs (added 2 tests)
+- feature_list.json (marked に足る as complete)
 
 ---
 
