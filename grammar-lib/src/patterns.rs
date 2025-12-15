@@ -5144,6 +5144,14 @@ declare_patterns! {
         jlpt: "n2",
     },
 
+    Uff5eNouchiDeKono {
+        name: "～のうち(で)",
+        matcher_fn: crate::matchers::n2::uff5e_nouchi_de_kono,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n2",
+    },
+
     Tsutsu {
         name: "つつ",
         matcher_fn: crate::matchers::n2::tsutsu,

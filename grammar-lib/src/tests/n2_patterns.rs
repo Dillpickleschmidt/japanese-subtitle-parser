@@ -6615,3 +6615,83 @@ mod nomomottomoda_tests {
         assert_pattern_range(&patterns, "のももっともだ", 18, 29); // 高価なのももっともです
     }
 }
+
+// Pattern: ～のうち(で) (among, out of)
+// Data source: grammar_points_data.json["～のうち(で)"]
+// Testing all structure variants:
+//   - standard[0]: Noun + のうち（で）
+//   - standard[1]: Noun + のうち + （の）+ Number
+//   - standard[2]: Number + （Counter）+ のうち（で）
+//   - standard[3]: その + うち（で）
+//   - standard[4]: この + うち
+//
+// Note: pattern means "among (A)" or "out of (A)", specifying a subset from within a group
+mod nouchi_de_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_nouchi_de() {
+        // Structure: Noun + のうちで
+        let sentence = "この会社のうちでもっとも偉い人は田中さんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のうち(で)");
+        assert_pattern_range(&patterns, "～のうち(で)", 2, 8); // 会社のうちで
+    }
+
+    #[test]
+    fn test_noun_nouchi_de_number() {
+        // Structure: Noun + のうちで + Number
+        let sentence = "ここにいる５人のうちで一番給料が高いのは鈴木さんです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のうち(で)");
+        assert_pattern_range(&patterns, "～のうち(で)", 6, 11); // 人のうちで
+    }
+
+    #[test]
+    fn test_noun_nouchi_no_number() {
+        // Structure: Noun + のうちの + Number (connects to number with の)
+        let sentence = "ここにある釣竿、１０本のうちの４本は海釣り用だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のうち(で)");
+        assert_pattern_range(&patterns, "～のうち(で)", 10, 15); // 本のうちの
+    }
+
+    #[test]
+    fn test_number_counter_nouchi() {
+        // Structure: Number + Counter + のうち (without で)
+        let sentence = "学校の科目全てのうちから、一番好きな科目を教えてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のうち(で)");
+        assert_pattern_range(&patterns, "～のうち(で)", 5, 12); // 全てのうちから
+    }
+
+    #[test]
+    fn test_sono_uchi_de() {
+        // Structure: その + うちで (among those, among them)
+        let sentence = "いろんな方法を試したが、そのうちで一番効果的だったのは朝のランニングだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のうち(で)");
+        assert_pattern_range(&patterns, "～のうち(で)", 12, 17); // そのうちで
+    }
+
+    #[test]
+    fn test_kono_uchi() {
+        // Structure: この + うち (among these, among this group)
+        let sentence = "このうちどれが一番気に入りましたか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～のうち(で)");
+        assert_pattern_range(&patterns, "～のうち(で)", 0, 4); // このうち
+    }
+}

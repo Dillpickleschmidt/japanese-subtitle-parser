@@ -3225,8 +3225,95 @@ pub fn tamae() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ～のうち(で)
+// Pattern: ～のうち(で) (among, out of)
+// Structures: この/その + うち + (で/の/から) OR Any + の + うち + (で/の/から)
+// Note: Using two matcher patterns due to different prefix structures
 pub fn uff5e_nouchi_de() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match うち as dependent noun
+    #[derive(Debug)]
+    struct UchiMatcher;
+    impl Matcher for UchiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "うち"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match の as 助詞/連体化
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match で/の/から as particles after うち
+    #[derive(Debug)]
+    struct DeNoKaraMatcher;
+    impl Matcher for DeNoKaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で" || token.surface == "の" || token.surface == "から")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Pattern: Any + の + うち + optional(で/の/から)
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NoRentaikaMatcher)),
+        TokenMatcher::Custom(Arc::new(UchiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeNoKaraMatcher)))),
+    ]
+}
+
+// Pattern: ～のうち(で) variant for この/その + うち
+// Structures: この/その/あの + うち + (で/の/から)
+pub fn uff5e_nouchi_de_kono() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match うち as dependent noun
+    #[derive(Debug)]
+    struct UchiMatcher;
+    impl Matcher for UchiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "うち"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match この/その/あの as 連体詞
+    #[derive(Debug)]
+    struct KonoSonoMatcher;
+    impl Matcher for KonoSonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "この" || token.surface == "その" || token.surface == "あの")
+                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        }
+    }
+
+    // Match で/の/から as particles after うち
+    #[derive(Debug)]
+    struct DeNoKaraMatcher;
+    impl Matcher for DeNoKaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で" || token.surface == "の" || token.surface == "から")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Pattern: この/その/あの + うち + optional(で/の/から)
+    vec![
+        TokenMatcher::Custom(Arc::new(KonoSonoMatcher)),
+        TokenMatcher::Custom(Arc::new(UchiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeNoKaraMatcher)))),
+    ]
 }
 
 // Pattern: つつ (while doing, in the course of)
