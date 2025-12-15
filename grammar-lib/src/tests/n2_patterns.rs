@@ -4123,3 +4123,50 @@ mod nitsuki_tests {
         assert_pattern_range(&patterns, "につき_compound", 13, 17); // 人につき
     }
 }
+
+// Pattern: 次第に (gradually, bit by bit)
+// Data source: grammar_points_data.json["次第に"]
+// Testing: structure.standard[0] - "次第（しだい）に + Phrase"
+//
+// Structure variants:
+//   - standard[0]: 次第に + Phrase (adverb meaning "gradually")
+
+mod shidaini_tests {
+    use super::*;
+
+    #[test]
+    fn test_shidaini_drift_apart() {
+        // Testing: structure.standard[0] - "次第に + Phrase"
+        // Example: わずか数ヶ月のうちに二人は次第に疎遠になった
+        let sentence = "わずか数ヶ月のうちに二人は次第に疎遠になった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第に");
+        assert_pattern_range(&patterns, "次第に", 13, 16); // 次第に
+    }
+
+    #[test]
+    fn test_shidaini_prices_cheaper() {
+        // Testing: structure.standard[0] - "次第に + Phrase"
+        // Example: ガソリンの価格は次第に安くなると予測されている
+        let sentence = "ガソリンの価格は次第に安くなると予測されている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第に");
+        assert_pattern_range(&patterns, "次第に", 8, 11); // 次第に
+    }
+
+    #[test]
+    fn test_shidaini_deteriorating() {
+        // Testing: structure.standard[0] - "次第に + Phrase"
+        // Example: 友人の祖父の健康状態が次第に悪化していることも知らずに
+        let sentence = "友人の祖父の健康状態が次第に悪化していることも知らずに、変なことを聞いてしまった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第に");
+        assert_pattern_range(&patterns, "次第に", 11, 14); // 次第に
+    }
+}

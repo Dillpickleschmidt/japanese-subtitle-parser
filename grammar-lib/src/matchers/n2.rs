@@ -1990,9 +1990,22 @@ pub fn shidaida_u30fb_shidaide() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 次第に
+// Pattern: 次第に (gradually, bit by bit)
+// Structures: 次第に (adverb)
 pub fn shidaini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct ShidainiMatcher;
+    impl super::Matcher for ShidainiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "次第に"
+                && token.base_form == "次第に"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(ShidainiMatcher))]
 }
 
 // Pattern: ～てこそ
