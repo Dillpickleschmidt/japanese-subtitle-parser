@@ -669,9 +669,20 @@ pub fn kkonai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: それなら
+// Pattern: それなら (if that's the case, then)
+// Structure: それなら + Phrase
+// Note: だったら and それだったら variants are already matched by the たら pattern
 pub fn sorenara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct SorenaraMatcher;
+    impl Matcher for SorenaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "それなら"
+                && token.base_form == "それなら"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(SorenaraMatcher))]
 }
 
 // Pattern: ものなら①

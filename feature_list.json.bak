@@ -7576,13 +7576,13 @@
   {
     "pattern_name": "っこない",
     "jlpt_level": "n2",
-    "category": "complete",
+    "category": "needs_implementation",
     "tests": {
-      "exists": true,
-      "has_range_assertion": true,
+      "exists": false,
+      "has_range_assertion": false,
       "has_print_debug": false
     },
-    "passes": true,
+    "passes": false,
     "description": "っこない is a combination of the suffix っこ, and the い-Adjective ない [1 std, 2 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7590,13 +7590,13 @@
   {
     "pattern_name": "それなら",
     "jlpt_level": "n2",
-    "category": "complete",
+    "category": "needs_implementation",
     "tests": {
-      "exists": true,
-      "has_range_assertion": true,
+      "exists": false,
+      "has_range_assertion": false,
       "has_print_debug": false
     },
-    "passes": true,
+    "passes": false,
     "description": "Acting as a conjunction , それなら is a structure used for highlighting that if the previous statement is the case, then ... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

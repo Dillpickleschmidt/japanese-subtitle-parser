@@ -3024,3 +3024,47 @@ mod kkonai_tests {
         assert_pattern_range(&patterns, "っこない", 14, 22); // 読めっこなかった
     }
 }
+
+// Pattern: それなら (if that's the case, then)
+// Data source: grammar_points_data.json["それなら"]
+// Structures: それなら + Phrase
+//
+// Note: The variants だったら and それだったら mentioned in grammar_points_data.json
+// are already detected by the existing たら conditional pattern, as they tokenize as
+// the copula だ + conditional auxiliary たら (different structure from conjunction それなら).
+mod sorenara_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "それなら + Phrase"
+    #[test]
+    fn test_sorenara_basic() {
+        let sentence = "駅の近くにあるスーパーに行くの？それなら私を駅まで送ってくれない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それなら");
+        assert_pattern_range(&patterns, "それなら", 16, 20); // それなら
+    }
+
+    // Testing: それなら at beginning of sentence
+    #[test]
+    fn test_sorenara_sentence_start() {
+        let sentence = "それなら彼でもできるようだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それなら");
+        assert_pattern_range(&patterns, "それなら", 0, 4); // それなら
+    }
+
+    // Testing: それなら with suggestion
+    #[test]
+    fn test_sorenara_with_suggestion() {
+        let sentence = "それなら先生に聞いたほうがいいと思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それなら");
+        assert_pattern_range(&patterns, "それなら", 0, 4); // それなら
+    }
+}

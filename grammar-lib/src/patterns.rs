@@ -4667,7 +4667,7 @@ declare_patterns! {
     Sorenara {
         name: "それなら",
         matcher_fn: crate::matchers::n2::sorenara,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },
