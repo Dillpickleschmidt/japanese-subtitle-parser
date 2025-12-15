@@ -1752,3 +1752,96 @@ Initially tried Optional matchers for ような, but discovered that match_remai
 - N1: 186 remaining
 - Total: ~390 patterns remaining
 
+
+## Session 366 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 3 N3 patterns
+**Patterns completed**: 3 (即ち, 却って, 別に〜ない - all N3 newly implemented)
+**Tests added**: 11 new tests (3 + 3 + 5) all passing
+**Total tests**: 2336 passing, 1 ignored (was 2325 passing, 1 ignored - net +11 tests)
+
+### ✅ Pattern 1 Implemented: 即ち (in other words, namely)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: すなわち (即ち) is a conjunction similar to つまり, meaning "in other words", "namely", or "that is to say". It links two sentences via reasoning or clarification. The nuance is "agreeance" or "correspondence" rather than pure summarization (like つまり).
+
+**Structures tested**: 3 tests covering different contexts
+1. すなわち + Phrase (sentence start): すなわち (15-19)
+2. すなわち + Phrase (mid-sentence): すなわち (17-21)
+3. すなわち in casual context: すなわち (13-17)
+
+**Implementation**: Simple conjunction matcher checking surface == "すなわち" AND pos == "接続詞"
+
+### ✅ Pattern 2 Implemented: 却って (rather, on the contrary)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: かえって is an adverb used to revoke or take a step back from a statement. Translates as "rather", "all the more", or "putting aside (A), (B)". Shows that (A) was the intention but (B) was the actual result instead.
+
+**Structures tested**: 3 tests covering different contexts
+1. Phrase + かえって + Phrase (contrary result): かえって (18-22)
+2. かえって showing unexpected result: かえって (19-23)
+3. かえって with negative consequence: かえって (15-19)
+
+**Implementation**: Simple adverb matcher checking surface == "かえって" AND pos == "副詞"
+
+### ✅ Pattern 3 Implemented: 別に〜ない (not particularly, not really)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3
+
+**Pattern**: べつに + negative form expresses "not particularly" or "not really". The adverb 別（べつ）に "separately" paired with ない creates an uncertainty nuance meaning "maybe it is a little (A), maybe a lot (A), but in any case, it cannot be said that it IS (A)".
+
+**Structures tested**: 5 tests covering all structure variants
+1. 別に + Verb[ない]: べつに構わない (2-9)
+2. 別に + い-Adjective[ない]: べつに痛くない (0-7)
+3. 別に + な-Adjective + ではない: べつに嫌いではない (6-15)
+4. 別に + Noun + ではない: べつにそんなに大したものではない (14-30)
+5. 別に + Noun + じゃない: べつに嘘じゃない (0-8)
+
+**Implementation**: Wildcard matcher with べつに (adverb) followed by ない (auxiliary or adjective) within 0-10 tokens
+
+**Test Quality (all 3 patterns)**:
+- All tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic sentences from grammar_points_data.json examples
+- Covers all major structural variants where applicable
+
+**Tokenization Notes**:
+- 即ち: Simple conjunction (接続詞)
+- 却って: Simple adverb (副詞)
+- 別に〜ない: Adverb + wildcard + negative form (助動詞 or 形容詞)
+
+---
+
+### Next Session Priorities
+
+**N3 patterns remaining** (16 left):
+- 当たり (atari) - per, each (with numbers/counters)
+- 割に (wari ni) - although, despite, comparatively
+- 言うまでもない② - needless to say (sentence-initial)
+- 又〜も (mata ~mo) - also, again
+- 第一 (daiichi) - first of all, primarily
+- 考えられない (kangaerarenai) - unthinkable, inconceivable
+- 必ずしも (kanarazushimo) - not necessarily
+
+**Strategy**: Continue with N3 patterns in order of appearance
+- Next: 当たり (atari) - suffix for numbers/counters meaning "per"
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 16 remaining (down from 20!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~387 patterns remaining
+
+**Session efficiency**: Completed 3 patterns in one session, demonstrating good progress with simple adverb/conjunction patterns.
+
