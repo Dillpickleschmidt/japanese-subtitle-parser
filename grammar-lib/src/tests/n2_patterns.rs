@@ -3795,4 +3795,40 @@ mod sonoue_tests {
         assert_has_pattern(&patterns, "手前");
         assert_pattern_range(&patterns, "手前", 0, 4); // 娘の手前
     }
+
+    // Pattern: 後(の) Noun (the rest of, what's remaining)
+    // Data source: grammar_points_data.json["後(の) Noun"]
+
+    // Testing: structure.standard[0] - あと + の + Noun
+    #[test]
+    fn test_ato_no_noun() {
+        let sentence = "今あなたが持っている段ボール箱はキッチンまで運んでおいてください。後の段ボール箱は全部寝室までお願いします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "後(の) Noun");
+        assert_pattern_range(&patterns, "後(の) Noun", 33, 39); // 後の段ボール
+    }
+
+    // Testing: structure.standard[1] - あと + Phrase
+    #[test]
+    fn test_ato_phrase() {
+        let sentence = "後ちょっとで着くからもうちょっと我慢して。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "後(の) Noun");
+        assert_pattern_range(&patterns, "後(の) Noun", 0, 5); // 後ちょっと
+    }
+
+    // Testing: structure.standard[2] - あと + Number + (Counter)
+    #[test]
+    fn test_ato_number() {
+        let sentence = "映画公開まで後三日！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "後(の) Noun");
+        assert_pattern_range(&patterns, "後(の) Noun", 6, 9); // 後三日
+    }
 }

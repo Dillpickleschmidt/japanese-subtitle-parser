@@ -1343,9 +1343,59 @@ pub fn noshitade() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 後(の) Noun
+// Pattern: 後(の) Noun (the rest of, what's remaining)
+// Structures: あと + の + Noun | あと + Phrase | あと + Number + (Counter)
 pub fn kou_no_noun() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 後/あと as either 名詞/接尾/副詞可能 or 接頭詞/名詞接続
+    #[derive(Debug)]
+    struct AtoMatcher;
+    impl Matcher for AtoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "後"
+                && token.base_form == "後"
+                && (
+                    // Structure 1 & 2: 名詞/接尾/副詞可能
+                    (token.pos.first().is_some_and(|pos| pos == "名詞")
+                        && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                        && token.pos.get(2).is_some_and(|pos| pos == "副詞可能"))
+                    ||
+                    // Structure 3: 接頭詞/名詞接続
+                    (token.pos.first().is_some_and(|pos| pos == "接頭詞")
+                        && token.pos.get(1).is_some_and(|pos| pos == "名詞接続"))
+                )
+        }
+    }
+
+    // Match の particle
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match counter suffix (助数詞)
+    #[derive(Debug)]
+    struct CounterMatcher;
+    impl Matcher for CounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助数詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AtoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoParticleMatcher)))),
+        TokenMatcher::Any, // Noun, Phrase element, or Number
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(CounterMatcher)))), // Optional counter for numbers
+    ]
 }
 
 // Pattern: 手前 (in front of, given the circumstances)

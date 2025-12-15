@@ -7702,13 +7702,13 @@
   {
     "pattern_name": "以上 ②",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When combined with the adverbial particle は, 以上（いじょう） is frequently translated as 'since (A), (B)', 'now that (A), (B... [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7716,13 +7716,13 @@
   {
     "pattern_name": "以上に",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like other structures that include 以上（いじょう） 'beyond', 以上（いじょう）に highlights that (A) is beyond some specific extent [5 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7730,13 +7730,13 @@
   {
     "pattern_name": "途中に・途中で",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "With 途中（とちゅう） meaning 'on the way', the addition of either the case marking particle に or で will indicate that someth... [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7758,13 +7758,13 @@
   {
     "pattern_name": "を中心に",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When combined with nouns, the expression を中心（ちゅうしん）に indicates that something is being 'focused on' or 'centered around' [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7772,13 +7772,13 @@
   {
     "pattern_name": "その上",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "その上（うえ） is a formal expression used in Japanese to indicate that something is 'besides', 'in addition to', or 'furthe... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7786,13 +7786,13 @@
   {
     "pattern_name": "上は",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "A fairly old-fashioned phrase, 上（うえ）は highlights that something is being done or considered as a result of (A) [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7800,13 +7800,13 @@
   {
     "pattern_name": "の下で",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the noun 下（もと） 'underneath' is combined with either of the case marking particles で or に, it will indicate that ... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7814,13 +7814,13 @@
   {
     "pattern_name": "後(の) Noun",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the common uses for the noun 後（あと） 'behind' is to express a remainder, or everything after a certain point [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7828,13 +7828,13 @@
   {
     "pattern_name": "手前",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "The noun 手前（てまえ） 'in front of' has several different meanings in Japanese depending on whether it is being used with ... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

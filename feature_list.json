@@ -7814,13 +7814,13 @@
   {
     "pattern_name": "後(の) Noun",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "One of the common uses for the noun 後（あと） 'behind' is to express a remainder, or everything after a certain point [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
