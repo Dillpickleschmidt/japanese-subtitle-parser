@@ -9733,9 +9733,49 @@ Total session time: ~45 minutes
 11. ✅ Commit changes
 12. ✅ Update claude-progress.txt
 
+### Pattern Implemented (2/2): てはいられない (cannot afford to, unable to)
+
+**JLPT Level**: N2, **Category**: Construction, **Priority**: 4
+
+**Pattern**: てはいられない expresses inability to continue an action or state due to time-based or feeling-based limitations. Literally "cannot be with (A)", conveying the meaning "cannot afford to (A)" or "unable to (A)".
+
+**Structures tested**: 6 variants
+1. Verb[て] + はいられない: 遊んではいられない (chars 20-27)
+2. Verb[て] + はいられない: 食べてはいられない (chars 23-30)
+3. Verb[で] + はいられない: 休んではいられない (chars 22-29)
+4. い-Adjective[て] + はいられない: 遅くてはいられない (chars 15-22)
+5. な-Adjective + では + いられない: 元気ではいられない (chars 12-19)
+6. Noun + では + いられない: 社員ではいられない (chars 10-17)
+
+**Implementation**:
+- TeDeWaMatcher: matches て/で (conjunction particle) or で (copula from だ)
+- WaParticleMatcher: matches は (係助詞)
+- IruMizenMatcher: matches い (いる in 未然形)
+- RareMatcher: matches られ (られる in 未然形)
+- NaiMatcher: matches ない (negative auxiliary)
+
+**Files modified**: 3 (n2.rs matchers, n2_patterns.rs tests, feature_list.json)
+
+### Session Summary
+
+**Patterns completed**: 2 (both N2)
+- 陸に～ない (priority 1) - 5 tests
+- てはいられない (priority 4) - 6 tests
+
+**Stats**:
+- Tests: 2888 passing (was 2877, net +11 tests)
+- N2 patterns remaining: 88 (down from 90)
+- Total patterns remaining: ~270
+
+**Key achievements**:
+- Both patterns implemented with test-first workflow
+- All structure variants tested with realistic sentences
+- Complex matchers handling multiple grammatical forms (verb/adjective/noun)
+- No regressions (all tests passing)
+
 ### Session End Notes
-- All tests passing (2882 passing, 1 ignored)
+- All tests passing (2888 passing, 1 ignored)
 - Codebase clean, feature_list.json updated
 - Ready for next session
 
-Total session time: ~30 minutes
+Total session time: ~60 minutes
