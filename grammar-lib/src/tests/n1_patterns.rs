@@ -258,3 +258,48 @@ mod naramadashimo_tests {
         assert_pattern_range(&patterns, "ならまだしも", 4, 10); // ならまだしも
     }
 }
+
+// ============================================================================
+// を機に Tests
+// ============================================================================
+
+mod wokini_tests {
+    use super::*;
+
+    // Pattern: を機に (taking advantage of, on the occasion of)
+    // Data source: grammar_points_data.json["を機に"]
+    // Testing: structure.standard[0] - "Verb + の + を機に（して）"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun + を機に（して）
+
+    #[test]
+    fn test_wokini_verb_nominalized() {
+        let sentence = "彼氏と別れたのを機に、新しいバッグを買った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を機に");
+        assert_pattern_range(&patterns, "を機に", 5, 10); // たのを機に
+    }
+
+    #[test]
+    fn test_wokini_noun_pregnancy() {
+        let sentence = "妻の妊娠を機にタバコを止めることにした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を機に");
+        assert_pattern_range(&patterns, "を機に", 2, 7); // 妊娠を機に
+    }
+
+    #[test]
+    fn test_wokini_noun_inspection() {
+        let sentence = "車検を機に、新しい車を買うことにした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を機に");
+        assert_pattern_range(&patterns, "を機に", 0, 5); // 車検を機に
+    }
+}

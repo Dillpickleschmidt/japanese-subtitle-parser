@@ -1211,7 +1211,64 @@ pub fn nisakigakete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: を機に
+// Pattern: を機に (taking advantage of, on the occasion of)
+// Structures: Verb[た] + の + を機に or Noun + を機に
 pub fn wokini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を as 格助詞
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 機 as noun
+    #[derive(Debug)]
+    struct KiNounMatcher;
+    impl Matcher for KiNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "機"
+                && token.base_form == "機"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match に as 格助詞
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match の as nominalizer (名詞/非自立)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.base_form == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun or (Verb + た)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoNominalizerMatcher,
+        )))), // Optional の for verb nominalization
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KiNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
