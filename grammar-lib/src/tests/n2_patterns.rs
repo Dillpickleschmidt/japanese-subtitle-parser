@@ -9623,3 +9623,62 @@ mod toshiteha_tests {
         assert_pattern_range(&patterns, "としては", 4, 10); // 趣味としては
     }
 }
+
+// Pattern: としても (even if we assume that)
+// Data source: grammar_points_data.json["としても"]
+// Testing: structure.standard[0-3]
+//   - standard[0]: Verb + としても
+//   - standard[1]: い-Adj + としても
+//   - standard[2]: な-Adj + (だ) + としても
+//   - standard[3]: Noun + (だ) + としても
+mod toshitemo_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_toshitemo() {
+        // Testing: Verb + としても
+        // Example adapted from grammar data: たとえ早くついたとしても
+        let sentence = "たとえ早くついたとしても、一番乗りになることはないだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としても");
+        assert_pattern_range(&patterns, "としても", 7, 12); // たとしても
+    }
+
+    #[test]
+    fn test_i_adjective_toshitemo() {
+        // Testing: い-Adj + としても
+        // Example adapted from grammar data: 正しいとしても
+        let sentence = "あなたが言っている事が正しいとしても、私は賛成できません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としても");
+        assert_pattern_range(&patterns, "としても", 11, 18); // 正しいとしても
+    }
+
+    #[test]
+    fn test_na_adjective_toshitemo() {
+        // Testing: な-Adj + だ + としても
+        // Example adapted from grammar data: 簡単だとしても
+        let sentence = "たとえ仕事が簡単だとしても、仕事は丁寧にやるべきだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としても");
+        assert_pattern_range(&patterns, "としても", 8, 13); // だとしても
+    }
+
+    #[test]
+    fn test_noun_toshitemo() {
+        // Testing: Noun + だ + としても
+        // Example adapted from grammar data: 冗談だとしても
+        let sentence = "冗談だとしても、そういうことは言わない方がいいと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "としても");
+        assert_pattern_range(&patterns, "としても", 2, 7); // だとしても
+    }
+}

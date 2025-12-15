@@ -5563,7 +5563,7 @@ declare_patterns! {
     Toshitemo {
         name: "としても",
         matcher_fn: crate::matchers::n2::toshitemo,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

@@ -5299,9 +5299,34 @@ pub fn toshiteha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: としても
+// Pattern: としても (even if we assume that)
+// Structures: Verb/Adjective/Noun + (だ) + として + も
 pub fn toshitemo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct ToshiteMatcher;
+    impl Matcher for ToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "として"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, Adjective, or Noun (potentially followed by だ)
+        TokenMatcher::Custom(Arc::new(ToshiteMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ]
 }
 
 // Pattern: それにしても
