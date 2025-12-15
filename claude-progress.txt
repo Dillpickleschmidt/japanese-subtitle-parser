@@ -1,3 +1,79 @@
+## Session 363 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented 1 N3 pattern (～(の)姿)
+**Patterns completed**: 1 (～(の)姿 - N3 newly implemented)
+**Tests added**: 5 new tests for ～(の)姿 (all passing)
+**Total tests**: 2320 passing, 1 ignored (was 2315 passing, 1 ignored - net +5 tests)
+
+### ✅ Pattern Implemented: ～(の)姿 (figure / appearance / state)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 3 (moderate - detected and highlighted in overlay)
+
+**Pattern**: 姿（すがた）is a noun meaning "figure" or "appearance" that functions as a suffix to describe the outward appearance or state of someone/something. When used after verbs or nouns, it describes what someone looks like, their posture, or how they appear while performing an action. Translated as "(A) looking", "wearing (A)", "clad in (A)", or "performing (A)".
+
+**Structures tested**: 5 comprehensive tests covering all major variants
+1. Verb + 姿: 働いている姿 (figure working) - chars 15-16
+2. Verb + 姿: 悲しんでいる姿 (sad state) - chars 9-10
+3. Noun + の + 姿: 人の姿 (person's figure) - chars 7-8
+4. Noun + の + 姿: 歩く姿 (walking appearance) - chars 4-5
+5. Noun + 姿 (no の): 花嫁姿 (bride appearance, compound) - chars 8-9
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (uff5e_no_sugata function, lines 2870-2888)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (sugata_tests module, lines 12606-12668)
+- Pattern: grammar-lib/src/patterns.rs (Uff5eNoSugata variant, lines 3136-3142)
+
+**Tokenization patterns**:
+```
+姿 (general noun):
+- 姿 (名詞/一般) - general noun
+- Surface: 姿, Base: 姿
+- POS: 名詞/一般
+```
+
+**Key implementation points**:
+1. Single-token matcher: 姿 alone
+2. SugataMatcher checks surface == "姿", base_form == "姿", POS == 名詞/一般
+3. Pattern matches just 姿 (not the preceding content)
+4. After verbs: follows attributive form (dictionary/ている forms)
+5. After nouns: の may or may not appear (optional)
+6. Pattern priority: 3 (moderate - detected and highlighted in overlay)
+
+**Pattern ranges**: Include only 姿 (1 character)
+- After verb: 姿 (1 char)
+- After noun + の: 姿 (1 char)
+- After noun (no の): 姿 (1 char for compounds)
+- Pattern captures just the appearance marker
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json
+- Cover all major structural variants: verb forms, noun + の, noun without の
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: 姿 focuses primarily on the way someone appears to the observer, describing their visual presence or physical state. It can describe actual appearance (clothing, posture) or the way someone looks while performing an action. The pattern emphasizes the observer's impression of the person's outward state.
+
+**Usage contexts**:
+- Describing appearance: What someone looks like or how they're dressed
+- Actions in progress: How someone looks while doing something
+- Emotional states: Visible expressions of emotion
+- Presence/absence: Noting someone's visible presence or lack thereof
+
+**Caution from grammar data**:
+- After nouns, の may be omitted for kanji compounds and clothing terms (e.g., 花嫁姿)
+- の should NOT be dropped after simple words like 人, 時, 元
+- The pattern emphasizes visual/physical appearance, not internal states
+
+**Related patterns**:
+- よう (N4) - "appearance/seems" (different nuance, more about inference)
+- 様子 (N3) - "situation/appearance" (broader context, not yet implemented)
+
+---
+
 ## Session 362 - 2025-12-14
 
 ### ✅ Session Summary
