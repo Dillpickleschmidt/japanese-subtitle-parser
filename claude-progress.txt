@@ -1,3 +1,102 @@
+## Session 410 - 2025-12-15
+
+### ✅ Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (よりしかたがない)
+**Patterns completed**: 1 (よりしかたがない - N2)
+**Tests added**: 2 new tests (all passing)
+**Total tests**: 2675 passing, 1 ignored (was 2673 passing, 1 ignored - net +2 tests)
+
+**Session highlights**:
+- Implemented よりしかたがない (there is no choice but, cannot be helped)
+- Simple pattern with 2 structure variants
+- Handles optional が particle between しかた and ない
+- Clean test-first implementation
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: よりしかたがない (there is no choice but, cannot be helped)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: よりしかたがない is a set phrase combining より (comparison particle), 仕方 (しかた) 'way/method', が (subject marker, optional), and ない (negative). Translates as "there is no choice but (A)", "cannot be helped", or "(A) cannot be avoided". Expresses that given the situation, there is no alternative to doing (A).
+
+**Structures tested**: Both structure variants from grammar_points_data.json
+1. Verb + より + 仕方がない: 立て直すよりしかたがない (chars 36-48) - "no choice but to rebuild"
+2. Verb + より + 仕方ない: 働くよりしかたない (chars 15-24) - "no choice but to work" (が dropped)
+
+**Implementation**: Matcher in n2.rs (lines 2534-2597), tests in n2_patterns.rs (lines 5566-5595)
+
+**Key notes**:
+- Pattern structure: Verb(基本形) + より(格助詞) + しかた(名詞/ナイ形容詞語幹) + (が)(optional) + ない(形容詞 or 助動詞)
+- Custom matchers: YoriParticleMatcher, ShikataMatcher, GaParticleMatcher (optional), NaiMatcher
+- Handles both forms: with が (しかたがない) and without (しかたない)
+- NaiMatcher accepts both 形容詞 and 助動詞 POS tags for ない
+- Related pattern: よりほかにない (similar meaning using 他 instead of 仕方)
+- Register: standard
+
+**Tokenization observations**:
+- **With が**: 立て直す(動詞/基本形) + より(助詞/格助詞) + しかた(名詞/ナイ形容詞語幹) + が(助詞/格助詞) + ない(形容詞)
+- **Without が**: 働く(動詞/基本形) + より(助詞/格助詞) + しかた(名詞/ナイ形容詞語幹) + ない(助動詞/特殊・ナイ)
+
+**Pattern ranges**: Full construction from verb through ない
+- Both test cases verified with correct character ranges
+- Optional が handled via TokenMatcher::Optional
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 136 remaining (down from 137 - completed 1 pattern!)
+- N1: 186 remaining
+- Total: ~324 patterns remaining
+
+### Quality Metrics
+✅ All 2 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested (both with and without が)
+✅ No regressions (all 2675 tests passing)
+
+### Technical Notes
+
+**Simple construction pattern**:
+- Straightforward verb + particle + noun + particle + negative pattern
+- Optional が handled cleanly with TokenMatcher::Optional
+- NaiMatcher flexible to handle both 形容詞 and 助動詞 forms of ない
+- This demonstrates the importance of testing actual tokenization - ない can be tagged differently
+
+**Implementation Approach**:
+- Followed test-first workflow strictly
+- Wrote both tests with print_debug first
+- Analyzed actual tokenization from Kagome (noticed ない can be 形容詞 or 助動詞)
+- Built matcher based on observed token structure (not assumptions)
+- Removed print_debug and added assertions after verification
+- Verified no regressions before committing
+
+### Next Steps
+Continue with simple N2 patterns (2-3 structure variants). Good candidates from feature_list.json:
+- てからでないと - 2 structures
+- ないではいられない - 2 std, 2 pol (4 total)
+- ねばならない - 3 std, 3 pol (6 total)
+- に際して - 3 structures
+- にあたり・にあたって - 3 structures
+- ～ところに・～ところへ - 3 structures
+- ぶりに - 3 std, 3 pol (6 total)
+- ては〜ては - 2 structures
+
+Target: Continue implementing 1-2 patterns per session, prioritizing patterns with fewer structures for steady progress.
+
+**Session outcome**: Successfully completed 1 N2 pattern with full coverage of both structure variants! Total of 2 new tests added, all passing, no regressions.
+
+---
+
 ## Session 409 - 2025-12-15
 
 ### ✅ Session Summary - COMPLETE
