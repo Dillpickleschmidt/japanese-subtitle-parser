@@ -1525,9 +1525,55 @@ pub fn niwatatte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に沿って
+// Pattern: に沿って (along, in accordance with, in line with)
+// Structures: Noun + にそって/にそった/にそう
 pub fn nisotte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match particle に
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match そ verb (base='そう')
+    #[derive(Debug)]
+    struct SouVerbMatcher;
+    impl super::Matcher for SouVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "そう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match て particle or た auxiliary (for にそって/にそった forms)
+    #[derive(Debug)]
+    struct TeOrTaMatcher;
+    impl super::Matcher for TeOrTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match て (接続助詞)
+            if token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞") {
+                return true;
+            }
+            // Match た (助動詞)
+            if token.surface == "た" && token.pos.first().is_some_and(|pos| pos == "助動詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding noun
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(SouVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeOrTaMatcher)))),
+    ]
 }
 
 // Pattern: た末・の末

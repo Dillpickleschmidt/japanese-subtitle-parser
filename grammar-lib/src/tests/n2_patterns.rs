@@ -3916,3 +3916,45 @@ fn test_niwatatte_ta_form() {
     assert_has_pattern(&patterns, "にわたって");
     assert_pattern_range(&patterns, "にわたって", 1, 8); // 年間にわたった
 }
+
+// Pattern: に沿って (along, in accordance with, in line with)
+// Data source: grammar_points_data.json["に沿って"]
+// Testing all structure variants with print_debug
+
+#[test]
+fn test_nisotte_te_form() {
+    // Testing: structure.standard[0] - "Noun + にそって"
+    let sentence = "会社のルールにそって、残業をする方は必ずタイムカードを押してからにしてください";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "に沿って");
+    assert_pattern_range(&patterns, "に沿って", 3, 10); // ルールにそって
+}
+
+#[test]
+fn test_nisotte_ta_form() {
+    // Testing: structure.standard[1] - "Noun + にそった + Noun"
+    let sentence = "ご予算内でお客様のご希望にそったお家を建てれるよう全力を尽くします";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "に沿って");
+    assert_pattern_range(&patterns, "に沿って", 10, 16); // 希望にそった
+}
+
+// TODO: Undetectable - "Noun + にそう" (dictionary form)
+// The にそう form in the example sentence "希望にそう方向で進めたい" tokenizes
+// as に (particle) + そう (副詞/助詞類接続) instead of に + そう (verb).
+// Kagome misidentifies "そう" as an adverb in this context rather than the verb
+// 沿う (to follow along). This creates ambiguity with the auxiliary そう (seems like).
+// The pattern can only reliably detect にそって and にそった forms where
+// the verb is clearly conjugated.
+//
+// #[test]
+// fn test_nisotte_u_form() {
+//     let sentence = "クライアント様の希望にそう方向で進めたいと思います";
+//     let tokens = tokenize_sentence(sentence);
+//     let patterns = detect_patterns(&tokens);
+//     assert_has_pattern(&patterns, "に沿って");
+// }
