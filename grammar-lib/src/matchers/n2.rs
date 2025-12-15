@@ -6671,9 +6671,13 @@ pub fn tetamaranai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にせよ・にしろ
+// Pattern: にせよ・にしろ (even if, no matter if)
+// Structures: Same as にしろ～にしろ, but used singly (not repeated)
+// Any + に (格助詞) + しろ/せよ (動詞, サ変・スル, 命令形)
 pub fn niseyo_u30fb_nishiro() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Reuse the same matcher as にしろ～にしろ
+    // The single form and repeated form have the same structure
+    nishiro_uff5e_nishiro()
 }
 
 // Pattern: 何しろ (at any rate, after all)

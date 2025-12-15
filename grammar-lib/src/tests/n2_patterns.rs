@@ -9505,3 +9505,63 @@ mod nanishiro_tests {
         assert_pattern_range(&patterns, "何しろ", 0, 4); // なにしろ
     }
 }
+
+// Pattern: にせよ・にしろ (even if, no matter if)
+// Data source: grammar_points_data.json["にせよ・にしろ"]
+// Testing: structure.standard[0-3] - Single form usage (not repeated)
+//
+// Structure variants:
+//   - standard[0]: Verb + にしろ/にせよ
+//   - standard[1]: い-Adjective + にしろ/にせよ
+//   - standard[2]: な-Adjective + (である) + にしろ/にせよ
+//   - standard[3]: Noun + (である) + にしろ/にせよ
+//
+// Note: This is the single form, not the repeated form (にしろ～にしろ)
+
+mod niseyo_nishiro_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_niseyo() {
+        // Example from grammar data: 参加しないにせよ
+        let sentence = "飲み会に参加しないにせよ、参加費は明日までに持ってきてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にせよ・にしろ");
+        assert_pattern_range(&patterns, "にせよ・にしろ", 7, 12); // ないにせよ
+    }
+
+    #[test]
+    fn test_i_adj_nishiro() {
+        // Example from grammar data: 怖いにしろ
+        let sentence = "怖いにしろ、私の仕事なのでやらなくてはならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にせよ・にしろ");
+        assert_pattern_range(&patterns, "にせよ・にしろ", 0, 5); // 怖いにしろ
+    }
+
+    #[test]
+    fn test_na_adj_niseyo() {
+        // Example from grammar data: 不便であるにせよ
+        let sentence = "どんなに不便であるにせよ、私は自然が豊かな田舎に住みたいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にせよ・にしろ");
+        assert_pattern_range(&patterns, "にせよ・にしろ", 7, 12); // あるにせよ
+    }
+
+    #[test]
+    fn test_noun_nishiro() {
+        // Example from grammar data: 子供にしろ
+        let sentence = "あの人は相手が子供にしろ、一切手加減はしない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にせよ・にしろ");
+        assert_pattern_range(&patterns, "にせよ・にしろ", 7, 12); // 子供にしろ
+    }
+}
