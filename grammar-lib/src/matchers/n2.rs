@@ -5884,9 +5884,39 @@ pub fn toiukotoha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ふうに
+// Pattern: ふうに (in the manner of, like)
+// Structures: Verb/Adjective/Noun/Demonstrative + ふう + に
 pub fn fuuni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ふう as non-independent noun, na-adjective stem
+    #[derive(Debug)]
+    struct FuuMatcher;
+    impl super::Matcher for FuuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ふう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match に particle (adverbializing or case particle)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding word (verb, adjective, noun, demonstrative)
+        TokenMatcher::Custom(Arc::new(FuuMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
 }
 
 // Pattern: という風に

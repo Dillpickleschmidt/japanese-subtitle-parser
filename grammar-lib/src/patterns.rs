@@ -5659,7 +5659,7 @@ declare_patterns! {
     Fuuni {
         name: "ふうに",
         matcher_fn: crate::matchers::n2::fuuni,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },
