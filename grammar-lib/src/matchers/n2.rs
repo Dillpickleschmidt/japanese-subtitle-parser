@@ -5479,9 +5479,39 @@ pub fn niha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 思うように
+// Pattern: 思うように (as hoped/as desired)
+// Structures: Phrase + 思うように/思うような + (Outcome/Noun)
 pub fn omouyouni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.base_form == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NiNaMatcher;
+    impl Matcher for NiNaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化"))
+                || (token.surface == "な"
+                    && token.base_form == "だ"
+                    && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::specific_verb("思う"),
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Custom(Arc::new(NiNaMatcher)),
+    ]
 }
 
 // Pattern: かと思ったら・かと思うと (just when I thought, no sooner than)

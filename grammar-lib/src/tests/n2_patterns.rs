@@ -10059,3 +10059,60 @@ mod osoregaaru_tests {
         assert_pattern_range(&patterns, "恐れがある", 14, 21); // 恐れがあります
     }
 }
+
+// Pattern: 思うように (as hoped/as desired)
+// Data source: grammar_points_data.json["思うように"]
+// Structures to test:
+//   - standard[0]: Phrase + 思うように + (Outcome)
+//   - standard[1]: Phrase + 思うような + Noun
+mod omouyouni_tests {
+    use super::*;
+
+    #[test]
+    fn test_omouyouni_negative() {
+        // Testing: 思うように + negative outcome
+        // Realistic context: work not going well
+        let sentence = "最近仕事が思うように行かなくてストレスが溜まってる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "思うように");
+        assert_pattern_range(&patterns, "思うように", 5, 10); // 思うように
+    }
+
+    #[test]
+    fn test_omouyouni_positive() {
+        // Testing: 思うように + positive outcome
+        // Realistic context: plans going as expected
+        let sentence = "今回のプロジェクトは思うように進んでいます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "思うように");
+        assert_pattern_range(&patterns, "思うように", 10, 15); // 思うように
+    }
+
+    #[test]
+    fn test_omouyouni_ability() {
+        // Testing: 思うように + できない (inability)
+        // Realistic context: physical limitation
+        let sentence = "事故に遭ってから指が思うように動かなくなった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "思うように");
+        assert_pattern_range(&patterns, "思うように", 10, 15); // 思うように
+    }
+
+    #[test]
+    fn test_omouyouna_noun() {
+        // Testing: 思うような + Noun
+        // Realistic context: describing results
+        let sentence = "思うような結果を得ることができませんでした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "思うように");
+        assert_pattern_range(&patterns, "思うように", 0, 5); // 思うような
+    }
+}
