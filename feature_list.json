@@ -8641,13 +8641,13 @@
   {
     "pattern_name": "はたして",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "果（は）たして , being the て-form of the う-Verb 果（は）たす 'to fulfill', or 'to come to fruition', is an expression that is used... [2 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

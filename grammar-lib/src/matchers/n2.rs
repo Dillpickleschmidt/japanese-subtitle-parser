@@ -4266,9 +4266,20 @@ pub fn nisakidachi() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: はたして
+// Pattern: はたして (I wonder if, as expected)
+// Structures: はたして + (Question/Speculation) / はたして + Statement
 pub fn hatashite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct HatashiteMatcher;
+    impl super::Matcher for HatashiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "はたして"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(HatashiteMatcher))]
 }
 
 // Pattern: 甲斐がある

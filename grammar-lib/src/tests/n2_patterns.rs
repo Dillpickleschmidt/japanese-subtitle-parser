@@ -7646,3 +7646,63 @@ mod shitagatte_tests {
         assert_pattern_range(&patterns, "したがって", 19, 24); // したがって
     }
 }
+
+// Pattern: はたして (I wonder if, really, as expected)
+// Data source: grammar_points_data.json["はたして"]
+// Testing: structure.standard[0] - "はたして + (Question) Phrase"
+// Testing: structure.standard[1] - "はたして + Phrase"
+//
+// Structure variants:
+//   - standard[0]: はたして + question/speculation (I wonder if, really)
+//   - standard[1]: はたして + statement (as expected, sure enough)
+//
+// Note: Appears adverbially at the beginning of sentences
+// With speculation: "I wonder if", with statements: "as expected"
+
+mod hatashite_tests {
+    use super::*;
+
+    #[test]
+    fn test_hatashite_speculation() {
+        // はたして + だろうか (I wonder if)
+        let sentence = "はたして彼が言っていることは本当なのだろうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はたして");
+        assert_pattern_range(&patterns, "はたして", 0, 4); // はたして
+    }
+
+    #[test]
+    fn test_hatashite_question() {
+        // はたして + でしょうか (I wonder if)
+        let sentence = "はたして、あのやり方で本当に成功するのでしょうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はたして");
+        assert_pattern_range(&patterns, "はたして", 0, 4); // はたして
+    }
+
+    #[test]
+    fn test_hatashite_expected_result() {
+        // はたして + statement (as expected)
+        let sentence = "彼は取引先の信頼を失う事をしてしまった。はたして、彼はクビになった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はたして");
+        assert_pattern_range(&patterns, "はたして", 20, 24); // はたして
+    }
+
+    #[test]
+    fn test_hatashite_midsentence() {
+        // はたして in middle of sentence (as expected)
+        let sentence = "彼女は自分の意見を彼に押し付けようとしたが、はたして彼は自分の意見を変えなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はたして");
+        assert_pattern_range(&patterns, "はたして", 22, 26); // はたして
+    }
+}
