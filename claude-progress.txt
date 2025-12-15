@@ -1,3 +1,65 @@
+## Session 417 - 2025-12-15
+
+### Session Summary - IN PROGRESS
+**Status**: IN PROGRESS - Successfully implemented 1 N1 pattern (に至るまで)
+**Patterns completed**: 1 (N1, priority 5)
+**Tests added**: 3 new tests (all passing)
+**Total tests**: 2725 passing, 1 ignored (was 2722 passing, 1 ignored - net +3 tests)
+
+**Session highlights**:
+- Implemented に至るまで (everything from A to B, up to and including) - N1 priority 5
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- Simplified matcher to avoid false matches with てから constructions
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: に至るまで (everything from A to B, up to and including)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: 至る is an う-Verb meaning "to attain" or "to reach the climax of". When combined with に and まで, に至るまで expresses "everything from (A) to (B)", "up to and including (B)", emphasizing a wide or extreme range between two points.
+
+**Structures tested**: 3 structure variants from grammar_points_data.json
+1. Noun + に至るまで: 大人に至るまで (chars 13-20) - "up to adults"
+2. Noun + に至るまで + の + Noun: 退職に至るまでの期間 (chars 6-16) - "the period up to retirement"
+3. (Often preceded by から/より): 福岡に至るまで (chars 7-14) - "(from Osaka) to Fukuoka"
+
+**Implementation details**:
+- Matcher: Noun + に(格助詞) + 至る(動詞/基本形) + まで(副助詞) + optional(の + Noun)
+- Custom matchers: NiParticleMatcher, ItaruMatcher, MadeParticleMatcher, NoRentaikaMatcher
+- Matches core pattern only (not the optional から/より prefix) to avoid false matches
+- Pattern range includes full construction from Noun through optional の + Noun
+- Register: standard
+
+**Test count**: 3 tests (all passing)
+- test_niitarumade_kara_basic
+- test_niitarumade_no_noun
+- test_niitarumade_yori
+
+**Tokenization observations**:
+- 至る is always 動詞/自立 with 基本形 conjugation
+- に is 助詞/格助詞/一般 (case particle)
+- まで is 助詞/副助詞 (adverbial particle)
+- の (when present) is 助詞/連体化 (relativizing particle)
+
+**Implementation notes**:
+- Initially tried to include optional から/より prefix in matcher
+- Found this caused false matches with てから (after doing) constructions
+- Simplified to match only core pattern (Noun + に至るまで)
+- This approach is cleaner and more accurate
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n1.rs (implemented niitarumade())
+- grammar-lib/src/patterns.rs (updated priority from 1 to 5)
+- grammar-lib/src/tests/n1_patterns.rs (added 3 tests)
+- feature_list.json (marked に至るまで as complete)
+
+---
+
 ## Session 416 - 2025-12-15
 
 ### Session Summary - COMPLETE
