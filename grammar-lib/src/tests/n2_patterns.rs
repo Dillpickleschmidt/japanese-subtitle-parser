@@ -6876,3 +6876,69 @@ mod toiuwakedehanai_tests {
         assert_pattern_range(&patterns, "というわけではない", 4, 14); // だというわけではない
     }
 }
+
+// Pattern: を契機に (as a trigger/opportunity, led to)
+// Data source: grammar_points_data.json["を契機に"]
+// Testing structure variants:
+//   - standard[0]: Noun + を契機に
+//   - standard[1]: Verb + の/こと + を契機に
+//   - Variations: を契機にして, を契機として
+
+mod wokeikini_tests {
+    use super::*;
+
+    #[test]
+    fn test_noun_wokeikini() {
+        // Structure: Noun + を契機に
+        let sentence = "出産を契機に、会社を辞めることにした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を契機に");
+        assert_pattern_range(&patterns, "を契機に", 0, 6); // 出産を契機に
+    }
+
+    #[test]
+    fn test_verb_no_wokeikini() {
+        // Structure: Verb + の + を契機に
+        let sentence = "子供が生まれたのを契機に、パチンコをやめることに決めた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を契機に");
+        assert_pattern_range(&patterns, "を契機に", 7, 12); // のを契機に
+    }
+
+    #[test]
+    fn test_verb_koto_wokeikini() {
+        // Structure: Verb + こと + を契機に
+        let sentence = "移動制限が緩和されたことを契機に、観光客の数が増えた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を契機に");
+        assert_pattern_range(&patterns, "を契機に", 10, 16); // ことを契機に
+    }
+
+    #[test]
+    fn test_noun_wokeikini_nishite() {
+        // Structure: Noun + を契機にして (variation)
+        let sentence = "入院を契機にして、タバコを止めました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を契機に");
+        assert_pattern_range(&patterns, "を契機に", 0, 8); // 入院を契機にして
+    }
+
+    #[test]
+    fn test_noun_wokeikini_toshite() {
+        // Structure: Noun + を契機として (variation)
+        let sentence = "大統領の暗殺を契機として、戦争が始まった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を契機に");
+        assert_pattern_range(&patterns, "を契機に", 4, 12); // 暗殺を契機として
+    }
+}

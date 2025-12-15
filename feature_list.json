@@ -8430,13 +8430,13 @@
   {
     "pattern_name": "を契機に",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を契機（けいき）に is a grammar construction made up of を, the noun 契機（けいき） 'chance' or 'trigger' and に [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

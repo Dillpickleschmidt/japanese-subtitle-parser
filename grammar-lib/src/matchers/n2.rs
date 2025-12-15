@@ -3521,9 +3521,79 @@ pub fn niatari_u30fb_niatatte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を契機に
+// Pattern: を契機に (as a trigger/opportunity, led to)
+// Structures: [Noun/の/こと] + を + 契機 + に/として/にして
 pub fn wokeikini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を particle
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match 契機 (noun)
+    #[derive(Debug)]
+    struct KeikiMatcher;
+    impl Matcher for KeikiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "契機"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Match に or として
+    #[derive(Debug)]
+    struct NiToshiteMatcher;
+    impl Matcher for NiToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // に (助詞/格助詞/一般)
+            (token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞"))
+            // Or として (助詞/格助詞/連語)
+            || (token.surface == "として"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞"))
+        }
+    }
+
+    // Match し (from する, for にして variation)
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match て (for にして variation)
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Noun, の, or こと
+        TokenMatcher::Custom(Arc::new(WoMatcher)),
+        TokenMatcher::Custom(Arc::new(KeikiMatcher)),
+        TokenMatcher::Custom(Arc::new(NiToshiteMatcher)),
+        // Optional して (for にして variation)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ShiMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeMatcher)))),
+    ]
 }
 
 // Pattern: つつある
