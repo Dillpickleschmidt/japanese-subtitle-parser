@@ -4976,14 +4976,6 @@ declare_patterns! {
         jlpt: "n2",
     },
 
-    Nikagitte {
-        name: "に限って",
-        matcher_fn: crate::matchers::n2::nikagitte,
-        priority: 1,
-        category: PatternCategory::Construction,
-        jlpt: "n2",
-    },
-
     Nikagirazu {
         name: "に限らず",
         matcher_fn: crate::matchers::n2::nikagirazu,

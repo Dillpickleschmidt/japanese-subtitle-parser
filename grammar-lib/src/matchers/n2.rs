@@ -2200,9 +2200,42 @@ pub fn kanenai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を除いて
+// Pattern: を除いて (except for, excluding)
+// Structures: Noun + を + 除いて/除く/除き
 pub fn wonozoite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 除く verb in any conjugation form
+    #[derive(Debug)]
+    struct NozokuVerbMatcher;
+    impl super::Matcher for NozokuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "除く"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match て particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // This matches three variants:
+    // 1. Noun + を + 除い + て (most common: を除いて)
+    // 2. Noun + を + 除く (dictionary form: を除く)
+    // We use Optional for て to match both patterns
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("を"),
+        TokenMatcher::Custom(Arc::new(NozokuVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeParticleMatcher)))),
+    ]
 }
 
 // Pattern: にかかわらず
@@ -2212,11 +2245,6 @@ pub fn nikakawarazu() -> Vec<TokenMatcher> {
 
 // Pattern: にもかかわらず
 pub fn nimokakawarazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
-}
-
-// Pattern: に限って
-pub fn nikagitte() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 

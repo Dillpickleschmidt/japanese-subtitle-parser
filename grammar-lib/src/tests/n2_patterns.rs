@@ -4970,3 +4970,114 @@ mod nikiwotsukeru_tests {
     //     assert_pattern_range(&patterns, "に気をつける", 10, 22); // しないようにきをつけよう
     // }
 }
+
+// Pattern: に限って (particularly when, only when, in particular)
+// Data source: grammar_points_data.json["に限って"]
+// Testing: structure.standard[0] - "Noun + に限（かぎ）って"
+//
+// Structure variants:
+//   - standard[0]: Noun + に限（かぎ）って
+//
+// Note: This pattern has three meanings:
+//   1. Something unbelievable about (A)
+//   2. Something limited to (A)
+//   3. In most cases for (A), (B) is true
+
+mod nikagitte_tests {
+    use super::*;
+
+    #[test]
+    fn test_unbelievable_meaning() {
+        // Meaning 1: Unbelievable thing about A
+        // Example from grammar_points_data.json
+        let sentence = "うちの子に限って、他の子に手を出すなんて考えられない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限って");
+        assert_pattern_range(&patterns, "に限って", 3, 8); // 子に限って
+    }
+
+    #[test]
+    fn test_limited_to_meaning() {
+        // Meaning 2: Limited to A
+        // Example from grammar_points_data.json
+        let sentence = "武くんと釣りに行く日に限って、いつも雨が降るんだよな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限って");
+        assert_pattern_range(&patterns, "に限って", 9, 14); // 日に限って
+    }
+
+    #[test]
+    fn test_most_cases_meaning() {
+        // Meaning 3: In most cases for A, B is true
+        // Example from grammar_points_data.json
+        let sentence = "「クレームを入れるぞ」って言う人に限ってクレームを入れないからあまり気にしていない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限って");
+        assert_pattern_range(&patterns, "に限って", 15, 20); // 人に限って
+    }
+}
+
+// Pattern: を除いて (except for, with the exception of, excluding)
+// Data source: grammar_points_data.json["を除いて"]
+// Testing all structure variants
+//
+// Structure variants:
+//   - standard[0]: Noun + を除（のぞ）いて（は）
+//   - standard[1]: Noun + を除（のぞ）く + Noun
+//   - standard[2]: を除（のぞ）き
+
+mod wonozoite_tests {
+    use super::*;
+
+    #[test]
+    fn test_wo_nozoite() {
+        // Structure: Noun + を除いて
+        // Example from grammar_points_data.json
+        let sentence = "高橋さんと浜崎さんを除いて、他のみんなは残業をしてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を除いて");
+        assert_pattern_range(&patterns, "を除いて", 7, 13); // さんを除いて
+    }
+
+    #[test]
+    fn test_wo_nozoite_polite() {
+        // Structure: Noun + を除いて (polite sentence)
+        let sentence = "私は第２土曜日を除いて、毎日働いています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を除いて");
+        assert_pattern_range(&patterns, "を除いて", 4, 11); // 土曜日を除いて
+    }
+
+    #[test]
+    fn test_wo_nozoku_noun() {
+        // Structure: Noun + を除く + Noun (dictionary form modifying noun)
+        // Example from grammar_points_data.json
+        let sentence = "そこの壁にかけてあるギターを除く全てのギターは母親のものです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を除いて");
+        assert_pattern_range(&patterns, "を除いて", 10, 16); // ギターを除く
+    }
+
+    #[test]
+    fn test_wo_nozoku_dictionary() {
+        // Structure: Noun + を除く (dictionary form)
+        let sentence = "中田先生を除く全ての先生は同じ大学を卒業したらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を除いて");
+        assert_pattern_range(&patterns, "を除いて", 2, 7); // 先生を除く
+    }
+}
