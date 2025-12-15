@@ -9174,3 +9174,72 @@ mod nishiro_uff5e_nishiro_tests {
         assert_pattern_range(&patterns, "にしろ～にしろ", 2, 6); // 川にしろ
     }
 }
+
+// Pattern: に応えて (in response to, to meet)
+// Data source: grammar_points_data.json["に応えて"]
+// Testing all structure variants:
+//   - standard[0]: "Noun + にこたえ（て）"
+//   - standard[1]: "Noun + にこたえる(1) + Noun"
+//   - standard[2]: "(1) にこたえた"
+
+mod nikotaete_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + にこたえ（て）"
+    #[test]
+    fn test_noun_nikotaete() {
+        // Example from grammar data: 生徒達の要望にこたえて
+        let sentence = "生徒達の要望にこたえて、レッスン料金を千円安くした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に応えて");
+        assert_pattern_range(&patterns, "に応えて", 4, 11); // 要望にこたえて
+    }
+
+    #[test]
+    fn test_noun_nikotaete_hiragana() {
+        // Example from grammar data: クライアントのリクエストにこたえて
+        let sentence = "クライアントのリクエストにこたえて、デザインを少しだけ変えました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に応えて");
+        assert_pattern_range(&patterns, "に応えて", 7, 17); // リクエストにこたえて
+    }
+
+    // Testing: structure.standard[1] - "Noun + にこたえる(1) + Noun"
+    #[test]
+    fn test_noun_nikotaeru_noun() {
+        // Example from grammar data: お客様のニーズにこたえるサービス
+        let sentence = "弊社ではお客様のニーズにこたえるサービスを提供するよう、日々努力しています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に応えて");
+        assert_pattern_range(&patterns, "に応えて", 8, 16); // ニーズにこたえる
+    }
+
+    #[test]
+    fn test_noun_nikotaeru_noun_variant() {
+        // Example from grammar data: あなたの要望にこたえる自信
+        let sentence = "あなたの要望にこたえる自信はありますが、時間がかかると思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に応えて");
+        assert_pattern_range(&patterns, "に応えて", 4, 11); // 要望にこたえる
+    }
+
+    // Testing: structure.standard[2] - "(1) にこたえた" (past form)
+    #[test]
+    fn test_nikotaeta_past() {
+        // Past form example
+        let sentence = "市民の声にこたえた政策を実施することができました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に応えて");
+        assert_pattern_range(&patterns, "に応えて", 3, 9); // 声にこたえた
+    }
+}

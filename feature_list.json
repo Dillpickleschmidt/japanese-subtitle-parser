@@ -8977,13 +8977,13 @@
   {
     "pattern_name": "に応えて",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にこたえて is a construction formed from に, and the て-form of the る-Verb 応（こた）える [3 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

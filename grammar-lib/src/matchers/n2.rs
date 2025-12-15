@@ -5170,9 +5170,39 @@ pub fn wotsuujite_u30fb_wotooshite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に応えて
+// Pattern: に応えて (in response to, to meet)
+// Structures: Noun + に + こたえる/こたえて/こたえた/こたえている etc.
 pub fn nikotaete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match the verb こたえる in any form (基本形, 連用形, etc.)
+    #[derive(Debug)]
+    struct KotaeruMatcher;
+    impl super::Matcher for KotaeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "こたえる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match て or た that follows the verb
+    #[derive(Debug)]
+    struct TeOrTaMatcher;
+    impl super::Matcher for TeOrTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+                || (token.surface == "た" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Custom(Arc::new(KotaeruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            TeOrTaMatcher,
+        )))),
+    ]
 }
 
 // Pattern: それとも
