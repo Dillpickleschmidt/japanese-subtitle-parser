@@ -1,3 +1,127 @@
+## Session 426 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (に際して, にあたり・にあたって)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 6 new tests (3 for に際して, 3 for にあたり・にあたって, all passing)
+**Total tests**: 2795 passing, 1 ignored (was 2789 passing, 1 ignored - net +6 tests)
+
+**Session highlights**:
+- Implemented に際して (on the occasion of, at the time of) - 3 structure variants
+- Implemented にあたり・にあたって (on the occasion of, at the time of) - 3 structure variants
+- Both patterns use single compound tokens (助詞/格助詞/連語)
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All structure variants tested with realistic sentences
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented #1: に際して (on the occasion of, at the time of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: に際して combines に, 際する (verb meaning "to come to pass"), and て-form. It's used to show particular occasions, frequently regarding one-off events or chance occurrences. More formal than 際に. Translates as "on the occasion of (A)" or "at the time of (A)".
+
+**Structures tested**: All 3 structure variants from grammar_points_data.json
+1. Noun + に際して: 引越しに際して (chars 0-7) - "on the occasion of moving"
+2. Verb[る] + に際して: 始めるに際して (chars 10-17) - "at the time of starting"
+3. Noun + に際しての + Noun: 申し込むに際しての (chars 9-18) - "at the time of applying, the..."
+
+**Implementation details**:
+- Matcher: (Verb[基本形] or Noun) + に際して (single compound token) + optional(の)
+- Custom matchers: VerbOrNounMatcher, NisaishiteMatcher, NoRentaikaMatcher
+- に際して is always tokenized as 助詞/格助詞/連語 (particle/case-particle/phrase)
+- Optional の handles "に際しての + Noun" construction
+- Single simple pattern structure
+
+**Test count**: 3 tests (all passing)
+- test_noun_nisaishite (Noun + に際して)
+- test_verb_nisaishite (Verb[る] + に際して)
+- test_noun_nisaishite_no_noun (Verb + に際しての + Noun)
+
+**Tokenization observations**:
+- に際して: always tokenized as single token with 助詞/格助詞/連語
+- Verb in dictionary form (基本形) or any noun precedes に際して
+- の after に際して: 助詞/連体化
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs (implemented nisaishite())
+- grammar-lib/src/patterns.rs (updated priority from 1 to 4)
+- grammar-lib/src/tests/n2_patterns.rs (added 3 tests in nisaishite_tests module)
+- feature_list.json (marked に際して as complete)
+
+---
+
+### ✅ Pattern Implemented #2: にあたり・にあたって (on the occasion of, at the time of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: にあたり or にあたって combines に and the う-Verb 当たる ("to hit", "to come into contact") in formal-conjunctive or て-form. Similar to に際して, used for preparation for future events. Translates as "at the time of (A)", "when doing (A)", or "on the occasion of (A)". Unlike に際して, primarily used for positive or neutral situations only (not negative events).
+
+**Structures tested**: All 3 structure variants from grammar_points_data.json
+1. Verb[る] + にあたり: 始めるにあたり (chars 3-10) - "on the occasion of starting"
+2. Noun + にあたり: するにあたり (chars 3-9) - "at the time of doing"
+3. Same as above but にあたって: 卒業にあたって (chars 0-7) - "on the occasion of graduation"
+
+**Implementation details**:
+- Matcher: (Verb[基本形] or Noun) + (にあたり or にあたって)
+- Custom matchers: VerbOrNounMatcher, NiatariNiatatteMatcher
+- Both にあたり and にあたって are tokenized as 助詞/格助詞/連語
+- Single matcher handles both にあたり and にあたって variants
+- Simple two-token pattern structure
+
+**Test count**: 3 tests (all passing)
+- test_verb_niatari (Verb + にあたり)
+- test_noun_niatari (Noun + にあたり)
+- test_noun_niatatte (Noun + にあたって)
+
+**Tokenization observations**:
+- にあたり: always tokenized as single token with 助詞/格助詞/連語
+- にあたって: also tokenized as single token with 助詞/格助詞/連語
+- Verb in dictionary form (基本形) or any noun precedes the pattern
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs (implemented niatari_u30fb_niatatte())
+- grammar-lib/src/patterns.rs (updated priority from 1 to 4)
+- grammar-lib/src/tests/n2_patterns.rs (added 3 tests in niatari_niatatte_tests module)
+- feature_list.json (marked にあたり・にあたって as complete)
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 112 remaining (down from 114 - completed 2 patterns!)
+- N1: 179 remaining
+- Total: ~293 patterns remaining
+
+### Quality Metrics
+✅ All 6 tests have assert_pattern_range (3 + 3)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2795 tests passing)
+
+### Next Steps
+Continue with N2 priority 4 patterns. Good candidates (simple structures):
+- を契機に - 4 structures
+- ～ところに・～ところへ - 3 structures
+- ぶりに - simple pattern
+- 以来 - simple pattern
+
+Target: Continue implementing 2-3 patterns per session for steady progress.
+
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage of all structure variants! Total of 6 new tests added (3 + 3), all passing, no regressions. Both patterns were straightforward implementations using single compound tokens.
+
+---
+
 ## Session 425 - 2025-12-15
 
 ### Session Summary - COMPLETE
