@@ -2768,9 +2768,66 @@ pub fn gakeni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ていては
+// Pattern: ていては (if you keep doing, if one continues with)
+// Structures: Verb[て] + いては
 pub fn teiteha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for い (いる verb in 連用形, non-auxiliary)
+    #[derive(Debug)]
+    struct IRuyoukeiMatcher;
+    impl super::Matcher for IRuyoukeiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "い"
+                && token.base_form == "いる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Matcher for て or で particle (after verb)
+    #[derive(Debug)]
+    struct TeDeParticleMatcher;
+    impl super::Matcher for TeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Matcher for て particle (after いる)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.base_form == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Matcher for は particle
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl super::Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeDeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IRuyoukeiMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(HaParticleMatcher)),
+    ]
 }
 
 // Pattern: ところだった ②

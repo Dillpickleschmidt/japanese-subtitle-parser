@@ -5316,3 +5316,50 @@ mod tsutsuaru_tests {
         assert_pattern_range(&patterns, "つつある", 32, 40); // 減りつつあります
     }
 }
+
+// Pattern: ていては (if you keep doing, if one continues with)
+// Data source: grammar_points_data.json["ていては"]
+// Testing: structure.standard[0] - "Verb[て] + いては"
+//
+// Structure variants:
+//   - standard[0]: Verb［て］+ いては (indicates negative outcome if continuing action)
+
+mod teiteha_tests {
+    use super::*;
+
+    #[test]
+    fn test_teiteha_eating_snacks() {
+        // Structure: Verb[て] + いては (negative consequence)
+        // Example from grammar_points_data.json: 食べていては (if you keep eating)
+        let sentence = "毎日お菓子ばかりを食べていては、いつまで経っても痩せませんよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていては");
+        assert_pattern_range(&patterns, "ていては", 9, 15); // 食べていては
+    }
+
+    #[test]
+    fn test_teiteha_going_out() {
+        // Structure: Verb[て] + いては (で variant)
+        // Example from grammar_points_data.json: でいては (if you keep going)
+        let sentence = "毎晩遊んでいてはお金はたまりませんよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていては");
+        assert_pattern_range(&patterns, "ていては", 2, 8); // 遊んでいては
+    }
+
+    #[test]
+    fn test_teiteha_worrying() {
+        // Structure: Verb[て] + いては
+        // Example from grammar_points_data.json: していては (if you keep worrying)
+        let sentence = "仕事の事ばかりを気にしていては、旅行は楽しめませんよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ていては");
+        assert_pattern_range(&patterns, "ていては", 10, 15); // していては
+    }
+}
