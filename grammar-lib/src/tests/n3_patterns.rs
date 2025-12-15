@@ -12352,3 +12352,52 @@ mod ippoude_tests {
         assert_pattern_range(&patterns, "一方で", 0, 3); // 一方で
     }
 }
+
+// Pattern: 上で (upon / after - formal)
+// Data source: grammar_points_data.json["上で"]
+// Structures:
+//   standard[0]: Verb[た] + 上（うえ）で
+//   standard[1]: Noun + の + 上（うえ）で
+mod uede_tests {
+    use super::*;
+
+    #[test]
+    fn verb_ta_uede() {
+        let sentence = "この企画は社長と相談した上で、キャンセルすることに決めました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上で");
+        assert_pattern_range(&patterns, "上で", 12, 14); // 上で
+    }
+
+    #[test]
+    fn verb_ta_uede_various() {
+        let sentence = "色んな車を運転した上で、どの車を買うか決めたいと思います";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上で");
+        assert_pattern_range(&patterns, "上で", 9, 11); // 上で
+    }
+
+    #[test]
+    fn noun_no_uede_confirm() {
+        let sentence = "以下の内容を確認の上で、サインをしてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上で");
+        assert_pattern_range(&patterns, "上で", 9, 11); // 上で
+    }
+
+    #[test]
+    fn noun_no_uede_login() {
+        let sentence = "以下のリンクからログインの上で、内容変更をしてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "上で");
+        assert_pattern_range(&patterns, "上で", 13, 15); // 上で
+    }
+}

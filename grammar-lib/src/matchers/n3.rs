@@ -1893,8 +1893,38 @@ pub fn saichuuni() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 上で
+// Pattern: 上で (upon / after - formal progression)
+// Structures: Verb[た] + 上で / Noun + の + 上で
 pub fn uede() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for 上 (dependent noun meaning "above/upon")
+    #[derive(Debug)]
+    struct UeMatcher;
+    impl Matcher for UeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "上"
+                && token.base_form == "上"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for で particle
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(UeMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+    ]
 }
 
 // Pattern: おかげで (thanks to / because of)
