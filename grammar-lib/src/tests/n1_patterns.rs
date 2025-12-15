@@ -404,3 +404,38 @@ mod niitarumade_tests {
         assert_pattern_range(&patterns, "に至るまで", 7, 14); // 福岡に至るまで
     }
 }
+
+// ============================================================================
+// に足る Tests
+// ============================================================================
+
+mod nitaru_tests {
+    use super::*;
+
+    // Pattern: に足る (worthy of, enough for)
+    // Data source: grammar_points_data.json["に足る"]
+    // Testing: structure.standard[0] - "Verb[る] + に足る + Noun"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun A + に足る + Noun B
+
+    #[test]
+    fn test_nitaru_verb() {
+        let sentence = "彼はこの試合に勝つに足る能力はないだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に足る");
+        assert_pattern_range(&patterns, "に足る", 7, 14); // 勝つに足る能力
+    }
+
+    #[test]
+    fn test_nitaru_noun() {
+        let sentence = "信頼に足る友達に、家族のことをすべて話した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に足る");
+        assert_pattern_range(&patterns, "に足る", 0, 7); // 信頼に足る友達
+    }
+}

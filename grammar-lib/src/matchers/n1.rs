@@ -296,9 +296,51 @@ pub fn gotoku_u30fb_shiki_u30fb_gotoshi() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: に足る
+// Pattern: に足る (worthy of, enough for)
+// Structures: (Verb[る] or Noun) + に + 足る + Noun
 pub fn nitaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as case particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 足る verb in 基本形
+    #[derive(Debug)]
+    struct TaruMatcher;
+    impl super::Matcher for TaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "足る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match verb in 基本形 or noun
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl super::Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形");
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+            is_verb || is_noun
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TaruMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: 極まりない・極まる
