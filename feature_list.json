@@ -8934,13 +8934,13 @@
   {
     "pattern_name": "ずに済む",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ずに済（す）む is a grammar construction used in Japanese to indicate that one can 'get away without doing (A)', or 'it's no... [3 std, 3 pol]",
     "priority": 4,
     "skip_reason": null

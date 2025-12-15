@@ -1463,9 +1463,76 @@ pub fn iyoiyo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(IyoiyoMatcher))]
 }
 
-// Pattern: ずに済む
+// Pattern: ずに済む (get away without doing, can avoid doing)
+// Structures: Verb[未然形] + ずに済む / なくて済む / ないで済む
 pub fn zunisumu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ず/なく/ない (negative auxiliaries)
+    // - ず (classical auxiliary, base='ぬ', 連用ニ接続)
+    // - なく (auxiliary, base='ない', 連用テ接続)
+    // - ない (auxiliary, base='ない', 連用デ接続)
+    #[derive(Debug)]
+    struct NegativeAuxMatcher;
+    impl super::Matcher for NegativeAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if !token.pos.first().is_some_and(|pos| pos == "助動詞") {
+                return false;
+            }
+
+            // ず variant
+            if token.surface == "ず" && token.base_form == "ぬ" {
+                return true;
+            }
+
+            // なく variant (連用テ接続)
+            if token.surface == "なく"
+                && token.base_form == "ない"
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続") {
+                return true;
+            }
+
+            // ない variant (連用デ接続)
+            if token.surface == "ない"
+                && token.base_form == "ない"
+                && token.features.get(5).is_some_and(|f| f == "連用デ接続") {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Match に/て/で particles (depending on which negative aux is used)
+    #[derive(Debug)]
+    struct NiTeDeParticleMatcher;
+    impl super::Matcher for NiTeDeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match 済む verb
+    #[derive(Debug)]
+    struct SumuMatcher;
+    impl super::Matcher for SumuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "済む"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Three variants:
+    // 1. Verb[未然形] + ず + に + 済む
+    // 2. Verb[未然形] + なく + て + 済む
+    // 3. Verb[未然形] + ない + で + 済む
+    vec![
+        TokenMatcher::verb_with_form("未然形"),
+        TokenMatcher::Custom(Arc::new(NegativeAuxMatcher)),
+        TokenMatcher::Custom(Arc::new(NiTeDeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(SumuMatcher)),
+    ]
 }
 
 // Pattern: に応じて

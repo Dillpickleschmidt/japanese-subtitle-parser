@@ -2749,3 +2749,87 @@ mod nisouinai_tests {
         assert_pattern_range(&patterns, "に相違ない", 22, 29); // からに相違ない
     }
 }
+
+// ============================================================================
+// ずに済む (zunisumu) - get away without doing / no need to do
+// ============================================================================
+#[cfg(test)]
+mod zunisumu_tests {
+    use super::*;
+
+    // Pattern: ずに済む (get away without doing, can avoid)
+    // Data source: grammar_points_data.json["ずに済む"]
+    // Testing all structure variants with print_debug first
+
+    #[test]
+    fn test_zunisumu_standard() {
+        // Structure: Verb[ない] + ずに済む
+        // Example: やらずに済む (can get away without doing)
+        let sentence = "今宿題をやっておけば後でやらずに済むから、今のうちにやっておこう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに済む");
+        assert_pattern_range(&patterns, "ずに済む", 12, 18); // やらずに済む
+    }
+
+    #[test]
+    fn test_zunisumu_polite() {
+        // Structure: Verb[ない] + ずに済みます
+        // Example: 待たずに済みます (can get by without waiting)
+        let sentence = "このVIPパスを使えば待たずに済みます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに済む");
+        assert_pattern_range(&patterns, "ずに済む", 11, 19); // 待たずに済みます
+    }
+
+    #[test]
+    fn test_zunisumu_nakutesumu() {
+        // Structure: Verb[なくて] + 済む
+        // Example: 支払わなくて済む (can get by without paying)
+        let sentence = "今月契約すると初期費用を支払わなくて済むので、今月中に契約することをお勧めします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに済む");
+        assert_pattern_range(&patterns, "ずに済む", 12, 20); // 支払わなくて済む
+    }
+
+    #[test]
+    fn test_zunisumu_naidesumu() {
+        // Structure: Verb[ないで] + 済む
+        // Example: 支払わないで済む (can get by without paying)
+        let sentence = "キャンペーン中なら配送料を支払わないで済むんだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに済む");
+        assert_pattern_range(&patterns, "ずに済む", 13, 21); // 支払わないで済む
+    }
+
+    #[test]
+    fn test_zunisumu_past() {
+        // Structure: Verb[ない] + ずに済んだ (past tense)
+        // Example: 使わずに済んだ (got by without using)
+        let sentence = "今年の冬は去年より暖かかったので、ヒーターを使わずに済んだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに済む");
+        assert_pattern_range(&patterns, "ずに済む", 22, 29); // 使わずに済んだ
+    }
+
+    #[test]
+    fn test_zunisumu_nakutesumimashita() {
+        // Structure: Verb[なくて] + 済みました (polite past)
+        // Example: 並ばなくて済みました (got by without waiting in line)
+        let sentence = "友達が予約してくれたので並ばなくて済みました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずに済む");
+        assert_pattern_range(&patterns, "ずに済む", 12, 22); // 並ばなくて済みました
+    }
+}
