@@ -8822,14 +8822,46 @@ pub fn tatoetemo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 込む ①
+// Pattern: 込む ① (to put into/go into)
+// Structures: Verb[stem] + 込む
 pub fn komu_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for compound verbs ending in 込む (kanji)
+    // Note: Both 込む① and 込む② tokenize identically
+    // Show both explanations to user when detected
+    #[derive(Debug)]
+    struct KomuMatcher;
+    impl Matcher for KomuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.base_form.ends_with("込む")
+                && token.base_form != "込む"
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KomuMatcher))]
 }
 
-// Pattern: 込む ②
+// Pattern: 込む ② (to remain in/do deeply)
+// Structures: Verb[stem] + 込む
 pub fn komu_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for compound verbs ending in 込む (kanji)
+    // Note: Both 込む① and 込む² tokenize identically
+    // Show both explanations to user when detected
+    #[derive(Debug)]
+    struct KomuMatcher;
+    impl Matcher for KomuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.base_form.ends_with("込む")
+                && token.base_form != "込む"
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(KomuMatcher))]
 }
 
 // Pattern: ふりをする (pretend to be/do)

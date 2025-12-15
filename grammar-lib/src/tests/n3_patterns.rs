@@ -13687,3 +13687,137 @@ mod kirenai_tests {
         assert_pattern_range(&patterns, "切れない", 11, 18); // 食べきれません
     }
 }
+
+// ========== 込む ① (to put into/go into) ==========
+// Pattern: 込む ① - To enter completely into doing (A)
+// Data source: grammar_points_data.json["込む ①"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + 込む
+//   polite[0]: Verb[stem] + 込みます
+
+mod komu_u2460_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + 込む (押し込む - push into)
+    #[test]
+    fn test_verb_stem_komu_push() {
+        let sentence = "ピンを壁に押し込むのは難しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ①");
+        assert_pattern_range(&patterns, "込む ①", 5, 9); // 押し込む
+    }
+
+    // Testing: standard[0] - Verb[stem] + 込む (飲み込む - swallow/drink down)
+    #[test]
+    fn test_verb_stem_komu_swallow() {
+        let sentence = "薬を飲み込むのが苦手です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ①");
+        assert_pattern_range(&patterns, "込む ①", 2, 6); // 飲み込む
+    }
+
+    // Testing: standard[0] - Verb[stem] + 込んだ (走り込んだ - ran into)
+    #[test]
+    fn test_verb_stem_konda_past() {
+        let sentence = "ドアが閉まる前に電車に走り込んだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ①");
+        assert_pattern_range(&patterns, "込む ①", 11, 16); // 走り込んだ
+    }
+
+    // Testing: standard[0] - Verb[stem] + 込む (飛び込む - leap into)
+    #[test]
+    fn test_verb_stem_komu_leap() {
+        let sentence = "サウナから出て水風呂に飛び込んだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ①");
+        assert_pattern_range(&patterns, "込む ①", 11, 16); // 飛び込んだ
+    }
+
+    // Testing: polite[0] - Verb[stem] + 込みます
+    #[test]
+    fn test_verb_stem_komimasu() {
+        let sentence = "毎朝このジュースを飲み込みます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ①");
+        assert_pattern_range(&patterns, "込む ①", 9, 15); // 飲み込みます
+    }
+}
+
+// ========== 込む ② (to remain in/do deeply) ==========
+// Pattern: 込む ② - To remain in (A), to thoroughly do (A), to do (A) intensely
+// Data source: grammar_points_data.json["込む ②"]
+//
+// Structure variants to test:
+//   standard[0]: Verb[stem] + 込む
+//   polite[0]: Verb[stem] + 込みます
+
+mod komu_u2461_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + 込む (座り込む - remain seated)
+    #[test]
+    fn test_verb_stem_komu_sit() {
+        let sentence = "道の真ん中で座り込んでいる人がいた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ②");
+        assert_pattern_range(&patterns, "込む ②", 6, 10); // 座り込ん
+    }
+
+    // Testing: standard[0] - Verb[stem] + 込む (話し込む - get lost in talking)
+    #[test]
+    fn test_verb_stem_komu_talk() {
+        let sentence = "もうこんな時間か、話し込んじゃったな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ②");
+        assert_pattern_range(&patterns, "込む ②", 9, 13); // 話し込ん
+    }
+
+    // Testing: standard[0] - Verb[stem] + 込む negative (考え込まない - don't think deeply)
+    #[test]
+    fn test_verb_stem_komu_think_negative() {
+        let sentence = "そんなに考え込まなくてもいいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ②");
+        assert_pattern_range(&patterns, "込む ②", 4, 10); // 考え込まなく
+    }
+
+    // Testing: standard[0] - Verb[stem] + 込む (思い込む - jump to conclusions)
+    #[test]
+    fn test_verb_stem_komu_believe() {
+        let sentence = "彼女は自分が天才だと思い込んでいる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ②");
+        assert_pattern_range(&patterns, "込む ②", 10, 14); // 思い込ん
+    }
+
+    // Testing: polite[0] - Verb[stem] + 込みます
+    #[test]
+    fn test_verb_stem_komimasu_think() {
+        let sentence = "この問題について深く考え込みます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "込む ②");
+        assert_pattern_range(&patterns, "込む ②", 10, 16); // 考え込みます
+    }
+}
