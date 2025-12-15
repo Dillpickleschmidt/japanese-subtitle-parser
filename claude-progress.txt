@@ -1,14 +1,15 @@
 ## Session 387 - 2025-12-15
 
 ### ✅ Session Summary
-**Status**: COMPLETE - Successfully implemented 2 N2 patterns (それなら, ものなら①)
-**Patterns completed**: 2 (それなら and ものなら① - both N2 newly implemented)
-**Tests added**: 6 new tests (all passing)
-**Total tests**: 2507 passing, 1 ignored (was 2501 passing, 1 ignored - net +6 tests)
+**Status**: COMPLETE - Successfully implemented 3 N2 patterns (それなら, ものなら①, 活かす)
+**Patterns completed**: 3 (それなら, ものなら①, and 活かす - all N2 newly implemented)
+**Tests added**: 10 new tests (all passing)
+**Total tests**: 2511 passing, 1 ignored (was 2501 passing, 1 ignored - net +10 tests)
 
 **Session highlights**:
 - Implemented それなら (if that's the case, then) - conjunction pattern
 - Implemented ものなら① (if one could / if it were possible) - hypothetical pattern
+- Implemented 活かす (to make good use of, to leverage) - verb pattern
 - Clean implementations with proper test coverage
 - All tests passing, no regressions
 
@@ -78,21 +79,57 @@
 - 直せるものなら: られる potential form (直せる) + ものなら
 - 行けるものなら: れる potential form (行ける) + ものなら
 
+---
+
+### ✅ Pattern Implemented: 活かす (to make good use of, to leverage)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4 (moderate priority - detected and highlighted)
+
+**Pattern**: 活かす (or variant kanji 生かす) is a verb meaning "to make good use of" or "to leverage". When paired with を, it shows that something is being utilized effectively. Common translations include "to make use of", "to take advantage of", "to capitalize on". Often used with adverbs of amount or quality like 十分に (adequately), 有効に (effectively), 最大限に (to the fullest).
+
+**Structures tested**: 4 tests covering various conjugation forms
+1. Noun + を + 活かす (basic): 機能を十分に活かす (13-16)
+2. Noun + を + 活かした + Noun (attributive): くせ毛を活かした髪型 (6-10)
+3. Noun + を + 生かす (variant kanji): 失敗を次に生かして (7-10)
+4. Noun + を + 活かした (with adverb): 旨味を活かした料理 (10-14)
+
+**Implementation**: Matcher in n2.rs (lines 818-831), tests in n2_patterns.rs (lines 3115-3167)
+
+**Key notes**:
+- Matches both 活かす and 生かす (same meaning, different kanji)
+- Simple single-token matcher checking verb base_form
+- Works for all conjugation forms (活かす, 活かした, 活かし, etc.)
+- **Important**: Potential form 活かせる tokenizes as '活' (noun) + 'かせる' (verb), making it undetectable by this pattern
+- Pattern range includes the verb token and may extend to following auxiliaries
+
+**Tokenization observations**:
+- 活かす: surface="活かす", base="活かす", pos=動詞/自立, 五段・サ行, 基本形
+- 生かす: surface="生かす", base="生かす", pos=動詞/自立, 五段・サ行
+- 活かし: surface="活かし", base="活かす", pos=動詞/自立, 連用形
+- 活かせる (potential): surface='活' (名詞) + surface='かせる' (動詞) - SPLIT TOKENIZATION
+
+**Pattern ranges**: Include the verb token in any conjugation
+- Basic form: 活かす (13-16)
+- 連用形 + た: 活かした (6-10, includes た auxiliary)
+- 生かす variant: 生かし (7-10)
+
 ### Test Quality Metrics (Session 387)
-✅ All 6 tests (3+3) have assert_pattern_range
+✅ All 10 tests (3+3+4) have assert_pattern_range
 ✅ No print_debug in committed tests
 ✅ Realistic sentences from grammar_points_data.json examples
-✅ No regressions (all 2507 tests passing)
+✅ No regressions (all 2511 tests passing)
 
 **Current stats**:
 - N5: All complete
 - N4: 2 remaining (meta-patterns)
 - N3: All complete! 🎉
-- N2: 163 remaining (down from 165!)
+- N2: 162 remaining (down from 165!)
 - N1: 186 remaining
-- Total: ~351 patterns remaining (down from ~353!)
+- Total: ~350 patterns remaining (down from ~353!)
 
-**Next priority**: Continue with N2 patterns - 活かす, まい, 上, 上に, 以上②, 以上に, etc.
+**Next priority**: Continue with N2 patterns - まい, 上, 上に, 以上②, 以上に, 途中に・途中で, etc.
 
 ---
 
