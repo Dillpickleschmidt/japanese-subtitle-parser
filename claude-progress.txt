@@ -7290,3 +7290,67 @@ Continue with remaining N3 priority 3 patterns:
 - もの・もん, ような気がする, わけがない, わけだ, わけではない, わけにはいかない, をはじめ, んじゃない, んだって
 
 ---
+
+## Session 418 - にかかわらず Pattern (N2) Implementation
+
+**Date**: 2025-12-15
+**Status**: COMPLETE
+
+### Completed Work
+
+Successfully implemented the **にかかわらず** (regardless of) pattern for N2 level.
+
+**Tests**: 2733 tests passing (up from 2727, added 6 new tests)
+**Files Modified**: 3 files (matchers/n2.rs, tests/n2_patterns.rs, feature_list.json)
+
+### Implementation Summary
+
+Created matcher function nikakawarazu() to handle the pattern:
+- Core structure: [Content] + に + かかわら(未然形) + ず
+- Used Wildcard matcher (min=1, max=10) with stop conditions
+- Stop conditions: は particle (係助詞) and が particle (格助詞)
+- Prevents wildcard from expanding too far back in the sentence
+
+### Tests Created (6 tests in nikakawarazu_tests module)
+
+All tests include assert_has_pattern and assert_pattern_range with correct character positions.
+
+1. test_nikakawarazu_noun_with_comma - 性別や国籍にかかわらず
+2. test_nikakawarazu_ka_ka - 降るか降らないかにかかわらず
+3. test_nikakawarazu_adjective_antonym - 上手い下手にかかわらず
+4. test_nikakawarazu_kadouka - いいかどうかにかかわらず
+5. test_nikakawarazu_affirmative_negative - できるできないにかかわらず
+6. test_nikakawarazu_simple_noun - 年齢にかかわらず
+
+### Key Implementation Points
+
+Wildcard with Stop Conditions:
+- Initially used simple Wildcard which created overlapping matches
+- Added stop conditions to prevent wildcard from going back past は/が particles
+- This ensures the pattern starts at a meaningful grammatical boundary
+
+Token Structure:
+- に: 助詞/格助詞/一般
+- かかわら: 動詞/自立, base=かかわる, form=未然形
+- ず: 助動詞, base=ぬ
+
+### Structure Variants Covered
+
+All variants from grammar_points_data.json tested:
+- standard[0]: Noun (A) + 、 + Noun (B) + にかかわらず
+- standard[1]: A + か + B + か + にかかわらず
+- standard[2]: Adj/Verb + (Antonym) Adj/Verb + にかかわらず
+- standard[3]: A + かどうか + にかかわらず
+- standard[4]: A + Aない + にかかわらず
+
+### Technical Challenge
+
+Challenge: Wildcard matcher created multiple overlapping matches with different starting points, and the pattern matcher selected the one with the most tokens (starting from position 0 instead of the grammatically correct position).
+
+Solution: Added stop_conditions to the Wildcard to prevent it from expanding past は and が particles. This ensures the pattern starts at a meaningful boundary rather than including irrelevant preceding content.
+
+### Next Steps
+
+Continue with remaining N2 priority 4 patterns: 限り, を問わず, に越したことはない, ないではいられない, ねばならない
+
+**Session outcome**: Successfully completed 1 new N2 pattern (にかかわらず) with full test coverage across 6 structure variants. Total of 6 new tests added, all passing, no regressions. All 2733 tests passing.
