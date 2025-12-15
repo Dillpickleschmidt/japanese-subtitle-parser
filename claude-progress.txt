@@ -9357,3 +9357,101 @@ Continue with N2 priority 4 patterns (95 remaining):
 ては〜ては, 結果・の結果, 以来, に先立ち, はたして, 甲斐がある, やがて, したがって, にかけては, etc.
 
 Total tests: 2841 passing, 1 ignored
+
+## Session 436 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (結果・の結果)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 4 new tests (all passing with range assertions)
+**Total tests**: 2861 passing, 1 ignored (was 2857 before session, net +4 tests)
+
+**Session highlights**:
+- Implemented 結果・の結果 (as a result of) - N2 pattern for expressing causation
+- Handles both structure types: Verb[た] + 結果 and Noun + の + 結果
+- Created TWO separate pattern declarations to handle both structures
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 4 structure variants tested with realistic sentences
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: 結果・の結果 (as a result of)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: 結果（けっか） 'result' is a noun in Japanese that is often seen paired with the past form of verbs, or with nouns followed by の. This grammar structure can be translated as 'as a result of (A), (B)', and simply indicates (A) as being the cause for how something ended up. Unlike あげく (which tends to be used only for negative results), 結果 may highlight both positive and negative results.
+
+**Structures tested**: All 2 structure variants from grammar_points_data.json
+1. Verb[た] + 結果: 運転した結果 (chars 6-12) - driving result
+2. Verb[た] + 結果 (positive): 努力した結果 (chars 4-10) - effort result
+3. Noun + の + 結果: 話し合いの結果 (chars 0-7) - discussion result
+4. Noun + の + 結果 (investigation): 調査の結果 (chars 0-5) - investigation result
+
+**Implementation details**:
+- Created TWO separate matcher functions to handle both structures:
+  - `kekka_u30fb_nokekka()`: Verb[た] + 結果 pattern
+  - `kekka_u30fb_nokekka_noun()`: Noun + の + 結果 pattern
+- Pattern declarations: Both use the same name "結果・の結果" but different enum variants
+- Helper matchers created:
+  - `kekka_noun_matcher()`: Matches 結果 (名詞/副詞可能)
+  - `no_particle_rentaika_matcher()`: Matches の (助詞/連体化)
+- Verb pattern uses: flexible_verb_form() + past_auxiliary() + kekka_noun_matcher()
+- Noun pattern uses: noun_matcher() + no_particle_rentaika_matcher() + kekka_noun_matcher()
+
+**Test count**: 4 tests (all passing)
+- test_verb_ta_kekka: "運転した結果" - negative outcome
+- test_verb_ta_kekka_positive: "努力した結果" - positive outcome
+- test_noun_no_kekka: "話し合いの結果" - discussion result
+- test_noun_no_kekka_investigation: "調査の結果" - investigation result
+
+**Tokenization observations**:
+- Verb pattern: Verb[連用形/連用タ接続] + た (助動詞) + 結果 (名詞/副詞可能)
+- Noun pattern: Noun + の (助詞/連体化) + 結果 (名詞/副詞可能)
+- 結果 always tokenizes as 名詞/副詞可能 (noun that can function as adverb)
+- た tokenizes as 助動詞, base=た
+- の tokenizes as 助詞/連体化 (nominalizing particle)
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented two functions with helper matchers
+- grammar-lib/src/patterns.rs: Added second pattern declaration for noun variant
+- grammar-lib/src/tests/n2_patterns.rs: Added kekka_u30fb_nokekka_tests module with 4 tests
+- feature_list.json: Updated status to "complete"
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 111 remaining (down from 112 - completed 1 pattern!)
+- N1: 177 remaining
+- Total: ~290 patterns remaining
+
+### Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic subtitle-quality sentences (not textbook examples)
+✅ Correct character ranges verified (full grammatical construction)
+✅ All documented structure variants tested
+✅ No regressions (all 2861 tests passing, up from 2857)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- に先立ち - prior to, before
+- はたして - as expected, really
+- 甲斐がある - be worth doing
+- やがて - before long, soon
+- したがって - therefore
+- にかけては - when it comes to
+- とっくに - long ago
+- 未だに - still (negative connotation)
+- をもとに - based on
+
+### Session End Notes
+- Codebase left in clean state
+- All tests passing (2861 passing, 1 ignored)
+- feature_list.json updated correctly
+- Ready for next session
+
+Total session time: ~45 minutes
