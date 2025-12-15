@@ -2478,3 +2478,61 @@ The pattern range includes the full verb construction: 考えられない/ませ
 
 **Next priority**: 必ずしも (kanarazushimo) - "not necessarily/not always"
 
+
+---
+
+## Session 372: 上がる・上げる Pattern Implementation
+
+**Date**: Current session
+
+**Pattern completed**: 上がる・上げる (agaru/ageru)
+- **Meaning**: Finish up / complete (to the limit/end)
+- **Structure**: Verb[stem] + 上がる/上げる
+- **JLPT Level**: N3
+- **Tests added**: 6
+
+### Implementation Details
+
+**Matcher type**: Custom matcher for compound verbs
+- Matches verbs whose base_form ends with あがる or あげる
+- Excludes standalone あがる/あげる/上がる/上げる
+- Single-token matcher (compound verbs tokenize as one token)
+
+**Test coverage**:
+1. test_verb_stem_agaru: 炊きあがる (finish cooking rice)
+2. test_verb_stem_agaru_boot: 立ちあがる (boot up computer)
+3. test_verb_stem_ageru: 書きあげた (finished writing past)
+4. test_verb_stem_ageru_build: 作りあげた (built up/created)
+5. test_verb_stem_agarimasu: 炊きあがります (polite non-past)
+6. test_verb_stem_agemasu: 書きあげます (polite non-past)
+
+**Tokenization observations**:
+- Words like 炊きあがる, 立ちあがる, 書きあげる, 作りあげる tokenize as single compound verbs
+- Base forms preserve the compound structure
+- Both transitive (上げる) and intransitive (上がる) forms detected
+- All conjugations work correctly (dictionary, past, polite)
+
+### Test Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples
+✅ Correct character ranges
+✅ Tests cover standard and polite forms
+✅ Tests cover both 上がる and 上げる variants
+
+### Session Summary
+**Patterns completed**: 1
+- 上がる・上げる (agaru_ageru) - 6 tests
+
+**Total tests added**: 6 tests (all passing)
+**Total test count**: 2385 (up from 2379)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 11 remaining (down from 12!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~382 patterns remaining (down from ~383!)
+
+**Next priority**: 切る (kiru) - "to cut (completely)"

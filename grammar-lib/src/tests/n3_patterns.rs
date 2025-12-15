@@ -13546,3 +13546,68 @@ mod agaru_u30fb_ageru_tests {
         assert_pattern_range(&patterns, "上がる・上げる", 7, 13); // 書きあげます
     }
 }
+
+// Pattern: 切る (do completely / to exhaustion)
+// Data source: grammar_points_data.json["切る"]
+// Structures:
+//   standard[0]: Verb[stem] + 切る
+//   polite[0]: Verb[stem] + 切ります
+
+mod kiru_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb[stem] + 切る (use up completely)
+    #[test]
+    fn test_verb_stem_kiru_use_up() {
+        let sentence = "自分は全部使いきったら、新しいのを買う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切る");
+        assert_pattern_range(&patterns, "切る", 5, 11); // 使いきったら
+    }
+
+    // Testing: standard[0] - Verb[stem] + 切る (finish reading)
+    #[test]
+    fn test_verb_stem_kiru_read() {
+        let sentence = "今日はライトノベルを２冊も読みきった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切る");
+        assert_pattern_range(&patterns, "切る", 13, 18); // 読みきった
+    }
+
+    // Testing: standard[0] - Verb[stem] + 切る (drink all)
+    #[test]
+    fn test_verb_stem_kiru_drink() {
+        let sentence = "水筒の水を飲みきったがまだのどが渇いている";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切る");
+        assert_pattern_range(&patterns, "切る", 5, 10); // 飲みきった
+    }
+
+    // Testing: standard[0] - Verb[stem] + 切る (at full capacity)
+    #[test]
+    fn test_verb_stem_kiru_full_capacity() {
+        let sentence = "今回の大会で全力を出しきることができて良かったです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切る");
+        assert_pattern_range(&patterns, "切る", 9, 13); // 出しきる
+    }
+
+    // Testing: polite[0] - Verb[stem] + 切ります
+    #[test]
+    fn test_verb_stem_kirimasu() {
+        let sentence = "このペンのインクは全部使いきりますから心配しないで";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "切る");
+        assert_pattern_range(&patterns, "切る", 11, 17); // 使いきります
+    }
+}

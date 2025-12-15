@@ -8565,9 +8565,27 @@ pub fn agaru_u30fb_ageru() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(AgaruAgeruMatcher))]
 }
 
-// Pattern: 切る
+// Pattern: 切る (do completely / to exhaustion)
+// Structures: Verb[stem] + 切る
 pub fn kiru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for きる as auxiliary verb
+    // Can be 自立 or 非自立, but must be 五段・ラ行 (godan-ra) conjugation
+    #[derive(Debug)]
+    struct KiruAuxiliaryMatcher;
+    impl Matcher for KiruAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.base_form == "きる"
+                && token.features.get(4).is_some_and(|f| f.starts_with("五段・ラ行"))
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(), // Verb in 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(KiruAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: 切れない

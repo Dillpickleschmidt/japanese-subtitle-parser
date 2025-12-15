@@ -6820,13 +6820,13 @@
   {
     "pattern_name": "切る",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Another verb that is often seen used after the conjunctive form of other verbs is the う - Verb 切（き）る 'to cut' [1 std, 1 pol]",
     "priority": 3,
     "skip_reason": null
