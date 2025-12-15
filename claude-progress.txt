@@ -129,9 +129,9 @@
 - N5: All complete
 - N4: 2 remaining (meta-patterns)
 - N3: All complete! 🎉
-- N2: 160 remaining (down from 163!)
+- N2: 148 remaining (down from 151!)
 - N1: 186 remaining
-- Total: ~348 patterns remaining (down from ~351!)
+- Total: ~349 patterns remaining (down from ~352!)
 
 **Next priority**: Continue with N2 patterns - 後(の) Noun, を巡って, にわたって, に沿って, た末・の末, etc.
 
