@@ -1,3 +1,134 @@
+## Session 446 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 2 N2 patterns (一旦, はもとより)
+**Patterns completed**: 2 (both N2, both priority 4)
+**Tests added**: 6 new tests (3 + 3, all passing with range assertions)
+**Total tests**: 2937 passing, 1 ignored (was 2931 before session, net +6 tests)
+
+**Session highlights**:
+- Implemented 一旦 (once, for a moment) - N2 adverb pattern
+- Implemented はもとより (not only... but also) - N2 formal expression
+- 一旦: Simple adverb pattern appearing before conditional forms (ば/たら/と)
+- はもとより: Follows nouns or nominalized verbs (の/こと) + は + もとより
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 6 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented #1: 一旦 (once, for a moment)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: 一旦（いったん） is an adverb meaning "for a short time" or "briefly", used to indicate "once (A), (B)". This pattern appears with hypothetical structures such as ば, と, or たら, and usually appears with a negated verb in the (B) part of a sentence. 一旦-based sentences indicate that returning to the previous state will be difficult, at least for a short time. Other common translations include "for the time being" and "for now".
+
+**Structures tested**: 3 test variants
+1. 一旦 + Verb[ば]: いったん再起動をすれば (chars 0-4)
+2. 一旦 + Verb[たら]: いったん泣き出したら (chars 2-6)
+3. 一旦 + Verb + と: いったん集中力が切れてしまうと (chars 0-4)
+
+**Implementation details**:
+- Simple single-token adverb matcher
+- Matches いったん (副詞/一般)
+- Checks surface, base_form, and POS for accuracy
+- Pattern appears at beginning of sentences or before conditional verbs
+
+**Test count**: 3 tests (all passing)
+- test_ittan_ba: 一旦 + Verb[ば] conditional
+- test_ittan_tara: 一旦 + Verb[たら] conditional
+- test_ittan_to: 一旦 + Verb + と conditional
+
+**Tokenization observations**:
+- いったん: Always 副詞/一般 (general adverb)
+- surface=いったん, base_form=いったん
+- Single token, straightforward detection
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented ittan() function with IttanMatcher
+- grammar-lib/src/tests/n2_patterns.rs: Added ittan_tests module with 3 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Originally means "one morning" or "one brief period" (旦 = daybreak/dawn)
+- More formal/literary than まだ
+- Emphasizes difficulty of returning to previous state
+
+---
+
+### ✅ Pattern Implemented #2: はもとより (not only... but also, let alone)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: は元（もと）より, commonly seen in hiragana as はもとより, is a formal pattern indicating "not only (A), but also (B)" or "let alone (A), (B)". It combines は + the noun 元 (origin) + より, highlighting that "even compared to the original fact of (A), (B)". Often (A) is something considered obvious or the most well-known information. May appear after nouns or verb phrases nominalized with の or こと.
+
+**Structures tested**: 3 test variants
+1. Noun + はもとより: 人はもとより (chars 9-15)
+2. Verb + こと + はもとより: ことはもとより (chars 15-22)
+3. Verb + の + はもとより: のはもとより (chars 10-16)
+
+**Implementation details**:
+- Matcher structure: Any + は (係助詞) + もとより (副詞)
+- Custom matchers created:
+  - WaKakariMatcher: matches は as binding particle (助詞/係助詞)
+  - MotoyoriMatcher: matches もとより as general adverb (副詞/一般)
+- TokenMatcher::Any handles preceding word (noun, の, こと)
+- Pattern includes full construction from noun/nominalizer through もとより
+
+**Test count**: 3 tests (all passing)
+- test_noun_hamotoyori: Noun + はもとより
+- test_verb_koto_hamotoyori: Verb + こと + はもとより
+- test_verb_no_hamotoyori: Verb + の + はもとより
+
+**Tokenization observations**:
+- は: Always 助詞/係助詞 (binding particle)
+- もとより: Always 副詞/一般 (general adverb)
+- Preceding word can be noun, の (名詞/非自立), or こと (名詞/非自立)
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented hamotoyori() function with 2 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added hamotoyori_tests module with 3 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Formal register, commonly used in writing and speeches
+- Can be written with kanji as は元より or は基より or は下より
+- Most common form in hiragana: はもとより
+- Has alternate meaning: "from the start, (A) is (B)" depending on context
+
+---
+
+**Current stats** (after both patterns):
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 106 remaining (down from 108 - completed 2 patterns!)
+- N1: 176 remaining
+- Total: ~284 patterns remaining
+
+### Quality Metrics
+✅ All 6 tests have assert_pattern_range (3 + 3)
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2937 tests passing, up from 2931)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- そうにない - doesn't seem likely
+- に反して - contrary to
+- 逆に - conversely
+- 反面 - on the other hand
+- 抜く - do something thoroughly
+
+**Session outcome**: Successfully completed 2 N2 patterns with full coverage! Total of 6 new tests added (3 + 3), all passing, no regressions. One was a simple adverb (一旦), the other a formal expression with multiple structure variants (はもとより). Clean implementation following test-first workflow.
+
+---
+
 ## Session 445 - 2025-12-15
 
 ### Session Summary - COMPLETE
