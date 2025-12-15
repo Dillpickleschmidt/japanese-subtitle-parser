@@ -5054,3 +5054,83 @@ Continue with simple N2 patterns. Good candidates:
 - Other simple positional/relational patterns
 
 Target: Keep implementing 2-3 simple patterns per session until all simple N2 patterns are complete.
+
+---
+
+## Session 396 - 2025-12-15
+
+### Summary
+Completed 2 N2 patterns with comprehensive test coverage.
+
+### Patterns Completed
+
+1. **につき** (nitsuki) - "Due to, per"
+   - N2 pattern, 1 structure variant
+   - 3 tests added (all passing)
+   - Handles TWO tokenization variants:
+     * につき (split): Noun + に(particle) + つき(verb) - "閉店につき", "工事中につき"
+     * につき_compound (single token): Noun + につき(particle) - "一人につき"
+   - Created two separate pattern definitions to handle both cases
+   - Range: Full noun + につき construction
+
+2. **次第に** (shidaini) - "Gradually, bit by bit"
+   - N2 pattern, 1 structure variant  
+   - 3 tests added (all passing)
+   - Simple adverb pattern (副詞/一般)
+   - Range: 次第に token only (single adverb)
+
+### Total Session Statistics
+**Patterns completed**: 2 patterns (につき, 次第に)
+**Total tests added**: 6 tests (all passing)
+**Total test count**: 2586 (up from 2580 - added 6 tests)
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 170 remaining (down from 172 - completed 2 patterns!)
+- N1: 186 remaining
+- Total: ~358 patterns remaining
+
+### Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ Tests cover all documented structure variants
+✅ No regressions (all 2586 tests passing)
+
+### Technical Notes
+
+**につき tokenization complexity**:
+- Kagome tokenizes につき in two different ways depending on context:
+  1. As separate tokens: Noun + に(助詞/格助詞) + つき(動詞/連用形)
+  2. As single particle token: Noun + につき(助詞/格助詞/連語)
+- Solution: Created two pattern variants (につき and につき_compound) to handle both
+- Both patterns registered in patterns.rs with same meaning but different matchers
+- This follows the pattern naming convention for multiple tokenization variants
+
+**次第に simplicity**:
+- Always tokenized as single adverb token (副詞/一般)
+- Very straightforward matcher - just check surface, base_form, and POS
+- No compound or alternate forms needed
+
+### Implementation Approach
+- Followed test-first workflow strictly
+- Used print_debug to analyze actual tokenization from Kagome
+- Built matchers based on observed token structure (not assumptions)
+- Removed print_debug and added assertions only after verification
+- Verified no regressions before committing
+
+### Next Steps
+Continue with simple N2 patterns (1 structure variant). Good candidates from earlier search:
+- に限って - 1 structure
+- に限らず - 1 structure
+- なお② - 1 structure
+- ～てこそ - 1 structure
+- 要するに - 1 structure
+- Other simple adverb/conjunction patterns
+
+Target: Keep implementing 2-3 simple patterns per session until all simple N2 patterns are complete.
+
+**Session outcome**: Successfully completed 2 N2 patterns with full test coverage! Total of 6 new tests added, all passing, no regressions.
