@@ -5788,3 +5788,90 @@ Continue with simple N2 patterns (1 structure variant). Good candidates from ear
 Target: Keep implementing 2-3 simple patterns per session until all simple N2 patterns are complete.
 
 **Session outcome**: Successfully completed 2 N2 patterns with full test coverage! Total of 6 new tests added, all passing, no regressions.
+
+---
+
+## Session 404 - 2024-01-XX
+
+### Completed Work
+**Pattern implemented**: を除いて (N2)
+- Added 4 comprehensive tests covering all structure variants
+- Pattern now passing with full test coverage
+- Also added 3 tests for に限って (pattern was already implemented)
+
+### Pattern Details: を除いて
+
+**Structures tested**:
+1. Noun + を除いて (te-form) - most common variant
+2. Noun + を除く (dictionary form) - used before nouns
+3. Both variants properly detected
+
+**Test examples**:
+- "高橋さんと浜崎さんを除いて" (chars 7-13)
+- "第２土曜日を除いて" (chars 4-11)  
+- "ギターを除く" (chars 10-16) - dictionary form
+- "先生を除く" (chars 2-7) - dictionary form
+
+**Tokenization patterns**:
+- を除いて: Noun + を(格助詞) + 除い(動詞/連用タ接続) + て(接続助詞)
+- を除く: Noun + を(格助詞) + 除く(動詞/基本形)
+
+**Matcher implementation**:
+- Matches 除く verb in any conjugation form (base_form == "除く")
+- Uses Optional for て particle to match both variants
+- Pattern structure: Noun + を + 除く + Optional(て)
+
+### Additional Cleanup
+- Removed duplicate "に限って" registration in patterns.rs
+  - Had two registrations: Nikagitte (priority 1, stub) and NiKagitte (priority 6, implemented)
+  - Removed the stub registration and function
+  - Kept the working NiKagitte implementation
+- Added 3 tests for に限って covering its 3 different meanings
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: Many remaining
+- N1: Many remaining
+- Total tests: 2641 passing (added 7 new tests)
+
+### Quality Metrics
+✅ All 7 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ Tests cover all documented structure variants
+✅ No regressions (all 2641 tests passing)
+
+### Technical Notes
+
+**Pattern range boundaries**:
+- を除いて patterns include the full grammatical construction
+- Te-form variant includes: Noun + を + 除い + て
+- Dictionary form variant includes: Noun + を + 除く
+- Ranges verified against actual tokenization output
+
+**Optional matcher usage**:
+- Used TokenMatcher::Optional for て particle
+- Allows single pattern to match both を除いて and を除く variants
+- Cleaner than creating two separate patterns
+
+### Implementation Approach
+- Followed test-first workflow strictly
+- Used print_debug to analyze actual tokenization from Kagome
+- Built matchers based on observed token structure (not assumptions)
+- Removed print_debug and added assertions only after verification
+- Verified no regressions before committing
+
+### Next Steps
+Continue with N2 patterns. Good candidates:
+- も構わず - 5 structures (need to implement)
+- にかかわらず - 10 structures
+- にもかかわらず - 4 structures
+- 限り - 5 structures
+- その他の簡単なN2パターン
+
+Target: Continue implementing N2 patterns systematically, focusing on quality over quantity.
+
+**Session outcome**: Successfully completed 1 new N2 pattern (を除いて) with full test coverage, plus added tests for existing に限って pattern. Total of 7 new tests added, all passing, no regressions.
