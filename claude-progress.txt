@@ -1,3 +1,100 @@
+## Session 441 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (に先立ち)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 4 new tests (all passing with range assertions)
+**Total tests**: 2899 passing, 1 ignored (was 2895 before session, net +4 tests)
+
+**Session highlights**:
+- Implemented に先立ち (prior to, before) - N2 formal pattern
+- Handles multiple structure variants: Verb/Noun + に + 先立って/先立ち/先立つ
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 4 structure variants tested with realistic sentences
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: に先立ち (prior to, before)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: に先立ち is a combination of に and the う-Verb 先立つ 'to take the lead' or 'to precede'. This structure connects to both nouns and verbs in their dictionary forms to indicate that (B) is a preliminary step required for (A). It may be interpreted as 'before (A), (B)', 'prior to (A), (B)', or 'in preference over (A), (B)'. The verb 先立つ may appear in different forms: 先立って (て-form), 先立ち (formal conjunctive form), or 先立つ (dictionary form when followed by another noun).
+
+**Structures tested**: 4 test variants covering all main structure types
+1. Verb[る] + に先立って: 導入するに先立って (chars 6-15) - "prior to installing"
+2. Noun + に先立って: 会議に先立って (chars 0-7) - "prior to the meeting"
+3. Noun + に先立ち: 公開に先立ち (chars 3-9) - "prior to release" (formal conjunctive)
+4. Noun + に先立つ + Noun: 引越しに先立つ (chars 0-7) - "prior to moving"
+
+**Implementation details**:
+- Matcher structure: Any + に(格助詞) + 先立つ(動詞, base=先立つ) + Optional(て)
+- Custom matchers created:
+  - NiMatcher: matches に as case particle (助詞/格助詞)
+  - SakidatsuMatcher: matches 先立つ verb (動詞/自立, base_form=先立つ)
+  - TeMatcher: matches て particle (助詞/接続助詞) - optional
+- TokenMatcher::Any handles verbs (基本形) and nouns before に
+- Optional て handles both て-form (先立って) and conjunctive form (先立ち)
+- Dictionary form (先立つ) matches when て is absent
+
+**Tokenization observations**:
+- に: Always 助詞/格助詞/一般 (case particle)
+- 先立つ verb appears in three forms:
+  - 先立って: 連用タ接続 + て (助詞/接続助詞)
+  - 先立ち: 連用形 (formal conjunctive)
+  - 先立つ: 基本形 (dictionary form)
+- TokenMatcher::Any successfully matches verbs (基本形) and nouns
+- All forms have base_form=先立つ
+
+**Test sentences used**:
+- "新しい機械を導入するに先立って、色々な会社のサイトを見てスペックを比較します" - verb example
+- "会議に先立って、資料を確認しておいてください" - noun with て-form
+- "映画の公開に先立ち、予告編が公開された" - noun with 連用形
+- "引越しに先立つ１日前に洗濯機や冷蔵庫の水抜きをしておかなければならない" - dictionary form + noun
+
+**Files modified**: 4
+- grammar-lib/src/matchers/n2.rs: Implemented nisakidachi() function with 3 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added nisakidachi_tests module with 4 tests
+- grammar-lib/src/patterns.rs: Updated priority from 1 to 4
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- This is a formal pattern used in writing and formal speech
+- The literal meaning 'standing before (A)' highlights the importance of (B) as a first step
+- 先立つ may be paired with 物 in the expression 先立つものがない ('not have the means to')
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 109 remaining (down from 110 - completed 1 pattern!)
+- N1: 176 remaining
+- Total: ~287 patterns remaining
+
+### Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All documented structure variants tested
+✅ No regressions (all 2899 tests passing, up from 2895)
+
+**Next priorities**: Continue with remaining N2 priority 4 patterns:
+- 甲斐がある - worth doing
+- やがて - before long
+- にかけては - when it comes to
+- とっくに - long ago
+- 未だに - still (even now)
+
+**Session outcome**: Successfully completed 1 N2 pattern with full coverage! Total of 4 new tests added, all passing, no regressions. Pattern uses flexible matcher to handle multiple conjugation forms (て-form, conjunctive form, dictionary form).
+
+---
+
 ## Session 440 - 2025-12-15
 
 ### Session Summary - COMPLETE
