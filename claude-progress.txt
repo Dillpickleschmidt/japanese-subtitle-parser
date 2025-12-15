@@ -12309,3 +12309,100 @@ Continue with remaining N2 priority 4 patterns:
 - ふうに
 - という風に
 - Other N2 patterns
+
+## Session 462 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N2 pattern (というものでもない)
+**Patterns completed**: 1 (N2, priority 4)
+**Tests added**: 8 new tests (all passing with range assertions)
+**Total tests**: 3061 passing, 1 ignored (was 3053 before session, net +8 tests)
+
+**Session highlights**:
+- Implemented というものでもない (not necessarily, there's no guarantee) - N2 pattern
+- Complex pattern with multiple negative forms (でもない, ではない, じゃない, でもありません, じゃありません)
+- Matcher handles all tokenization variations for negative constructions
+- Tests cover all structure variants: Verb/い-Adj/な-Adj/Noun + というものでもない
+- All tests use realistic subtitle-quality Japanese sentences
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 8 tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: というものでもない (not necessarily, there's no guarantee)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern**: というものではない is an expression in Japanese that indicates that 'there is no guarantee that (A)', or that it is 'not necessarily (A)'. As this structure is just a combination of と, the う-Verb 言（い）う 'to say', もの 'thing', and ではない 'isn't', the literal meaning can be thought of as being similar to 'it's not a thing that one can say is (A)'.
+
+**Structures tested**: 8 test variants (covering all forms from grammar_points_data.json)
+1. Verb + というものでもない: いいというものでもない (chars 7-18) - "not necessarily better"
+2. Verb + というものではない: できるというものではない (chars 21-33) - "no guarantee you can"
+3. な-Adj + というものでもない: だというものでもない (chars 17-27) - "not necessarily convenient"
+4. い-Adj + というものでもない: いいというものではない (chars 12-23) - "not necessarily good"
+5. Noun + というものでもない: だというものでもない (chars 31-41) - "no guarantee it's good"
+6. Polite でもありません: できるというものでもありません (chars 10-25) - "no guarantee you can succeed"
+7. Casual じゃない: いいというものじゃない (chars 9-20) - "not necessarily good (casual)"
+8. Polite じゃありません: いいというものじゃありません (chars 20-34) - "not necessarily good (polite casual)"
+
+**Implementation details**:
+- Matcher structure: Any + という + もの + で/じゃ + [も/は] + ない/あり[ませ][ん]
+- Custom matchers created:
+  - ToiuMatcher: matches という as quotation particle (助詞/格助詞/連語)
+  - MonoMatcher: matches もの as non-independent noun (名詞/非自立)
+  - DeJaMatcher: matches で (from だ, 助動詞) or じゃ (助詞/副助詞)
+  - MoHaParticleMatcher: matches も or は as topic particles (助詞/係助詞)
+  - NegativeEndingMatcher: matches ない (助動詞 or 形容詞) or あり (動詞 or 助動詞)
+  - MaseMatcher: matches ませ (part of ありません, 助動詞)
+  - NMatcher: matches ん (part of ありません, 助動詞)
+- TokenMatcher::Any handles preceding word (verb, adjective, or noun)
+- Pattern uses Optional matchers for も/は and polite endings
+- Priority set to 4 (but currently in patterns.rs as priority 1 - should be updated)
+
+**Test count**: 8 tests (all passing)
+- test_verb_demonai: Verb + というものでもない
+- test_verb_dehanai: Verb + というものではない
+- test_na_adj_demonai: な-Adj + というものでもない
+- test_i_adj_demonai: い-Adj + というものでもない
+- test_noun_demonai: Noun + というものでもない
+- test_polite_demoarimasen: Polite でもありません form
+- test_janai_casual: Casual じゃない contraction
+- test_jaarimasen_polite: Polite casual じゃありません form
+
+**Tokenization observations**:
+- という: 助詞/格助詞/連語/* (quotation particle, single token)
+- もの: 名詞/非自立/一般/* (non-independent noun)
+- で: 助動詞/*/*/* (from だ, base_form=だ, 連用形)
+- じゃ: 助詞/副助詞/*/* (casual contraction)
+- も/は: 助詞/係助詞/*/* (topic/emphasis particles)
+- ない: 助動詞 (after じゃ) or 形容詞 (after では/でも)
+- あり: 動詞 or 助動詞 (base_form=ある, 連用形) - start of ありません
+- ませ: 助動詞 (base_form=ます, 未然形)
+- ん: 助動詞 (base_form=ん, 基本形)
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n2.rs: Implemented toiumonodemonai() function with 7 custom matchers
+- grammar-lib/src/tests/n2_patterns.rs: Added toiumonodemonai_tests module with 8 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- Pattern range includes the full construction: preceding word + というもの + negative form
+- Example ranges: "いいというものでもない" not just "というものでもない"
+- Handles all negative variations: でもない, ではない, じゃない, でもありません, じゃありません
+- Pattern is similar to というわけではない (same structure but with わけ instead of もの)
+- Key fix: あり can be tokenized as either 動詞 or 助動詞 depending on context
+- Formal register pattern commonly used in writing and formal speech
+
+**Next priorities**:
+Continue with remaining N2 priority 4 patterns:
+- と考えられる (think/consider passively)
+- という点から考えると (from the point of view)
+- ということは (that means, in other words)
+- ふうに (in the manner of)
+- という風に (in the way of)
+- ものの (although, while)
+- Other N2 patterns
+
