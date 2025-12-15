@@ -7611,9 +7611,52 @@ pub fn wokomete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: に加えて
+// Pattern: に加えて (in addition to, besides, not only A but also B)
+// Structures: Noun + に + 加え + (て)
 pub fn nikuwaete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as case particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "格助詞")
+        }
+    }
+
+    // Match 加え verb (base=加える, 連用形)
+    #[derive(Debug)]
+    struct KuwaeMatcher;
+    impl super::Matcher for KuwaeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "加え"
+                && token.base_form == "加える"
+                && token.features.first().is_some_and(|f| f == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match て as connective particle (optional for formal-conjunctive form)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.base_form == "て"
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KuwaeMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeParticleMatcher)))),
+    ]
 }
 
 // Pattern: 何から何まで (everything from A to Z, everything and anything)

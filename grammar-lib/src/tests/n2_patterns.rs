@@ -12164,3 +12164,63 @@ mod nanikarananimade_tests {
         assert_pattern_range(&patterns, "何から何まで", 5, 11); // 何から何まで
     }
 }
+
+// Pattern: に加えて (in addition to, besides, not only A but also B)
+// Data source: grammar_points_data.json["に加えて"]
+// Testing: structure.standard[0] - "Noun + に加（くわ）え（て）"
+//
+// Formal pattern highlighting something being added to a base. Can appear as に加えて or に加え.
+
+mod nikuwaete_tests {
+    use super::*;
+
+    #[test]
+    fn test_nikuwaete_heat_humidity() {
+        let sentence = "今日は暑さに加えて湿度も高くなる恐れがあるので外に出る方は熱中症に気をつけてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に加えて");
+        assert_pattern_range(&patterns, "に加えて", 5, 9); // に加えて
+    }
+
+    #[test]
+    fn test_nikuwaete_grammar_kanji() {
+        let sentence = "今学期から文法に加えて漢字も教えることになった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に加えて");
+        assert_pattern_range(&patterns, "に加えて", 7, 11); // に加えて
+    }
+
+    #[test]
+    fn test_nikuwaete_karate_kendo() {
+        let sentence = "彼は空手に加えて、剣道もできるそうだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に加えて");
+        assert_pattern_range(&patterns, "に加えて", 4, 8); // に加えて
+    }
+
+    #[test]
+    fn test_nikuwae_formal_conjunctive() {
+        let sentence = "今年の母の日には母に花束に加え心を込めて書いた手紙を渡すつもりだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に加えて");
+        assert_pattern_range(&patterns, "に加えて", 12, 15); // に加え (without て)
+    }
+
+    #[test]
+    fn test_nikuwaete_bills() {
+        let sentence = "今年になってから電気代に加えてガス料金までもが高くなった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に加えて");
+        assert_pattern_range(&patterns, "に加えて", 11, 15); // に加えて
+    }
+}
