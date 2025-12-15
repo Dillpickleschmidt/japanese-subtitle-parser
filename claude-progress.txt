@@ -1990,3 +1990,71 @@ Initially tried Optional matchers for ような, but discovered that match_remai
 
 **Session efficiency**: Completed 3 patterns in one session, demonstrating good progress with simple adverb/conjunction patterns.
 
+
+
+---
+
+### Session 368 - Completed 言うまでもない ② Pattern (N3)
+
+**Date**: Current session
+
+**Pattern**: 言うまでもない ② (sentence-initial form of "it goes without saying")
+
+**Priority**: 3
+
+**Pattern**: Sentence-initial expression meaning "it goes without saying" or "needless to say". Unlike は言うまでもない which comes after phrases, this tends to come at the beginning of sentences.
+
+**Structures tested**: 5 tests covering all major variants
+1. いうまでもないことだが + Phrase (full form with こと + だ + が): いうまでもないことだが (0-11)
+2. いうまでもないが (mid-sentence): いうまでもないが (12-20)
+3. いうまでもないけど (variant with けど): いうまでもないけど (0-9)
+4. 言うまでもなく (single-token adverbial form): 言うまでもなく (2-9)
+5. いうまでもないけれども (variant with けれども): いうまでもないけれども (0-11)
+
+**Implementation**: Custom matcher handling two tokenization forms:
+- Split form: いう (verb) + まで (particle) + も (particle) + ない (adjective) + optional(こと + だ) + optional(が/けど/けれども)
+- Single token: 言うまでもなく (形容詞 with base form 言うまでもない)
+
+The matcher uses a single initial custom matcher that accepts either form, followed by optional matchers for the remaining tokens of the split form.
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic sentences from grammar_points_data.json examples
+- Covers both hiragana (いう) and kanji (言う) forms
+- Tests all major conjunction variants (が, けど, けれども)
+
+**Tokenization Notes**:
+- Hiragana form (いうまでもない): Splits into 4 tokens (いう + まで + も + ない)
+- Kanji form with く ending (言うまでもなく): Single token (形容詞/自立) with base form 言うまでもない
+- Optional elements (こと, だ, が/けど/etc) are properly handled with Optional matchers
+
+**Technical Challenge**: Initially attempted to use TokenMatcher::Or (which doesn't exist), then realized I could use a single custom matcher that checks for both forms in its matches() method, with the remaining matchers as Optional.
+
+---
+
+### Next Session Priorities
+
+**N3 patterns remaining** (15 left):
+- 又〜も (mata ~mo) - also, again
+- 第一 (daiichi) - first of all, primarily
+- 考えられない (kangaerarenai) - unthinkable, inconceivable
+- 必ずしも (kanarazushimo) - not necessarily
+- 連用形 (renyoukei) - conjunctive form
+- 向け (muke) - aimed at, for
+- 上がる・上げる (agaru/ageru) - completion verbs
+- 切る (kiru) - to do completely
+- 切れない (kirenai) - unable to finish completely
+
+**Strategy**: Continue with N3 patterns in order of appearance
+- Next: 又〜も (mata ~mo) - combination of adverb + noun + particle
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining (meta-patterns)
+- N3: 15 remaining (down from 16!)
+- N2: 183 remaining
+- N1: 186 remaining
+- Total: ~386 patterns remaining
+
+**Session efficiency**: Completed 1 pattern with 5 comprehensive tests covering all major structural variants and both tokenization forms.
