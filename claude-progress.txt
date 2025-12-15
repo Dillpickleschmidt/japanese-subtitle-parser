@@ -1,3 +1,109 @@
+## Session 437 - 2025-12-15
+
+### Session Summary - COMPLETE
+**Status**: COMPLETE - Successfully implemented 1 N1 pattern (ともなると・にもなると)
+**Patterns completed**: 1 (N1, priority 5)
+**Tests added**: 6 new tests (all passing with range assertions)
+**Total tests**: 2867 passing, 1 ignored (was 2861 before session, net +6 tests)
+
+**Session highlights**:
+- Implemented ともなると・にもなると (when it comes to, once) - N1 pattern
+- Handles both と and に particles as first particle
+- Handles optional も for emphasis
+- Handles both なると and なれば forms
+- Clean test-first workflow following REFERENCE_EXAMPLES.md
+- All 6 structure variants tested with realistic sentences
+- All tests pass with proper range assertions
+- No regressions
+
+---
+
+### ✅ Pattern Implemented: ともなると・にもなると (when it comes to, once)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern**: となると is a strong expression in Japanese that focuses on highlighting that once some relatively high threshold is reached, (B) will occur. The base structure is と + なる + と, with variations using も for emphasis and なれば as an alternative to なると. Standard translations are 'once (A), (B)' and 'when (A), (B)'. A more literal translation can be thought of as 'once (A) happens, it is sure to follow that (B)'.
+
+The other forms are ともなると (with も for emphasis), となれば (using ば conditional), and ともなれば. The particle も adds slight emphasis, while ば and と are used interchangeably in this specific pattern.
+
+**Important distinction**: This pattern uses と (not に) to emphasize that the outcome is unavoidable/expected. になると is a different construction that simply indicates transition without this nuance.
+
+**Structures tested**: All 6 test variants covering the main forms
+1. Noun + ともなると (with も): ゴールデンウィークともなると (chars 0-14)
+2. Verb[る] + ともなると (with も): 行くともなると (chars 4-11)
+3. Noun + となると (without も): 代となると (chars 2-7)
+4. Noun + にもなると (with に): 人にもなると (chars 2-8)
+5. Noun + ともなれば (with なれば): 人ともなれば (chars 2-8)
+6. Verb[る] + ともなれば: 作成するともなれば (chars 10-19)
+
+**Implementation details**:
+- Matcher structure: Any + と/に(格助詞) + Optional(も) + なる/なれ(動詞) + と/ば(接続助詞)
+- Custom matchers created:
+  - ToNiMatcher: matches と or に as case particle (助詞/格助詞)
+  - MoKakariMatcher: matches も as係助詞 (optional)
+  - NaruNareMatcher: matches なる (基本形) or なれ (仮定形) with base_form=なる
+  - ToBaMatcher: matches と or ば as conjunction particle (助詞/接続助詞)
+- TokenMatcher::Any handles nouns, verbs, and other preceding elements
+- Single flexible matcher handles all structural variations
+
+**Test count**: 6 tests (all passing)
+- test_noun_tomonaruto (Noun + ともなると)
+- test_verb_tomonaruto (Verb[る] + ともなると)
+- test_noun_tonaruto (Noun + となると, no も)
+- test_noun_nimonaruto (Noun + にもなると)
+- test_noun_tomonareba (Noun + ともなれば)
+- test_verb_tomonareba (Verb[る] + ともなれば)
+
+**Tokenization observations**:
+- と (first particle): 助詞/格助詞/引用 (quotation particle)
+- に (first particle): 助詞/格助詞/一般 (general case particle)
+- も: 助詞/係助詞 (binding/topic particle)
+- なる: 動詞/自立, base=なる, features[5]=基本形
+- なれ: 動詞/自立, base=なる, features[5]=仮定形
+- と (second particle): 助詞/接続助詞 (conjunction particle)
+- ば: 助詞/接続助詞 (conjunction particle)
+
+**Files modified**: 3
+- grammar-lib/src/matchers/n1.rs: Implemented tomonaruto_u30fb_nimonaruto() function with 4 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs: Added tomonaruto_tests module with 6 tests
+- feature_list.json: Updated status to "complete"
+
+**Notes**:
+- This pattern emphasizes unavoidability and expectedness of the outcome
+- The first と particle (not に) conveys this special nuance
+- になると exists but is a different, more neutral construction
+
+---
+
+**Current stats**:
+- N5: ✅ All complete
+- N4: 2 remaining (meta-patterns)
+- N3: ✅ All complete
+- N2: 112 remaining
+- N1: 175 remaining (down from 176 - completed 1 pattern!)
+- Total: ~289 patterns remaining
+
+### Quality Metrics
+✅ All 6 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentence examples from grammar_points_data.json
+✅ Correct character ranges verified
+✅ All main structure variants tested
+✅ No regressions (all 2867 tests passing, up from 2861)
+
+**Next priorities**: Continue with remaining N1 priority 5 patterns:
+- をいいことに - take advantage of
+- 如何 - how (classical)
+- ～るまでだ - nothing left but to
+- にあって - in/at (formal)
+- とは - what is called, the fact that
+
+**Session outcome**: Successfully completed 1 N1 pattern with full coverage! Total of 6 new tests added, all passing, no regressions. The pattern uses comprehensive custom matchers to handle multiple particle and conjugation variations cleanly.
+
+---
+
 ## Session 435 - 2025-12-15
 
 ### Session Summary - COMPLETE
