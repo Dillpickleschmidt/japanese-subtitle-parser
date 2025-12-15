@@ -4370,9 +4370,24 @@ pub fn kaigaaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: やがて
+// Pattern: やがて (before long, eventually, soon)
+// Structures: やがて + Phrase
 pub fn yagate() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for やがて (adverb)
+    #[derive(Debug)]
+    struct YagateMatcher;
+    impl super::Matcher for YagateMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "やがて"
+                && token.base_form == "やがて"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(YagateMatcher))]
 }
 
 // Pattern: したがって (therefore, accordingly)

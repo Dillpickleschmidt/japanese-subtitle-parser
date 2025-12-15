@@ -5339,7 +5339,7 @@ declare_patterns! {
     Yagate {
         name: "やがて",
         matcher_fn: crate::matchers::n2::yagate,
-        priority: 1,
+        priority: 4,
         category: PatternCategory::Construction,
         jlpt: "n2",
     },

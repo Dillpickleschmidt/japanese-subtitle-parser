@@ -7877,3 +7877,46 @@ mod tehanaranai_tests {
         assert_pattern_range(&patterns, "てはならない", 12, 20); // 入ってはならない
     }
 }
+
+// Pattern: やがて (before long, eventually, soon)
+// Data source: grammar_points_data.json["やがて"]
+// Testing: structure.standard[0] - "やがて + Phrase"
+mod yagate_tests {
+    use super::*;
+
+    #[test]
+    fn test_yagate_future_event() {
+        // Structure: やがて + Phrase (future prediction)
+        // Example from grammar_points_data.json: やがて人気がなくなる
+        let sentence = "そのアニメもあのアニメのようにやがて人気がなくなるでしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やがて");
+        assert_pattern_range(&patterns, "やがて", 15, 18); // やがて
+    }
+
+    #[test]
+    fn test_yagate_with_condition() {
+        // Structure: やがて + Phrase (with conditional)
+        // Example from grammar_points_data.json: やがて小説を読めるようになる
+        let sentence = "毎日漢字を読む練習をしていれば、やがて小説を読めるようになるだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やがて");
+        assert_pattern_range(&patterns, "やがて", 16, 19); // やがて
+    }
+
+    #[test]
+    fn test_yagate_immediate_future() {
+        // Structure: やがて + Phrase (near future)
+        // Example from grammar_points_data.json: やがて日が沈み始める
+        let sentence = "もう５時なので、やがて日が沈み始めるだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やがて");
+        assert_pattern_range(&patterns, "やがて", 8, 11); // やがて
+    }
+}
