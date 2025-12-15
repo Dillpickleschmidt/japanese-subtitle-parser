@@ -1,3 +1,49 @@
+## Session 379 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully implemented ざるを得ない pattern (N2)
+**Patterns completed**: 1 (ざるを得ない - N2 newly implemented)
+**Tests added**: 4 new tests (all passing)
+**Total tests**: 2439 passing, 1 ignored (was 2435 passing, 1 ignored - net +4 tests)
+
+### ✅ Pattern Implemented: ざるを得ない (cannot help but / have no choice but to)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 2.7-3.0 (moderate priority - detected and highlighted)
+
+**Pattern**: ざる is the 連体形 (attributive form) of the old-fashioned auxiliary verb ざり. When joined with 得る 'to gain/acquire' and ない, it becomes a double-negative structure meaning "cannot help doing (A)", "there is no choice but to (A)".
+
+**Structures tested**: 4 tests covering standard, polite, and suru-verb forms
+1. Regular verb standard: 諦めざるを得ない (26-34)
+2. Regular verb polite: 従わざるを得ません (10-19)  
+3. する verb special: 勉強せざるを得ない (19-28) - uses せ not し
+4. With following auxiliary: 従わざるを得ないだろう (9-20)
+
+**Implementation**: Matcher in n2.rs (lines 82-160), tests in n2_patterns.rs (lines 1980-2048)
+
+**Key notes**:
+- Classical auxiliary ざる has base_form="ぬ"
+- する verbs use 未然ヌ接続: せざる (NOT しざる)
+- More formal/literary than ～なければならない
+- Double-negative construction emphasizes lack of choice
+
+### Test Quality Metrics
+✅ All 4 tests have assert_pattern_range
+✅ No print_debug in committed tests
+✅ Realistic sentences from grammar_points_data.json
+✅ No regressions (all 2439 tests passing)
+
+**Current stats**:
+- N5: All complete
+- N4: 2 remaining
+- N3: All complete! 🎉
+- N2: 180 remaining (down from 181!)
+- N1: 186 remaining
+- Total: ~368 patterns remaining
+
+---
+
 ## Session 378 - 2025-12-14
 
 ### ✅ Session Summary
