@@ -12290,3 +12290,65 @@ mod ippouda_tests {
         assert_pattern_range(&patterns, "一方だ", 9, 12); // 一方だ
     }
 }
+
+// Pattern: 一方で (on the other hand / while / at the same time)
+// Data source: grammar_points_data.json["一方で"]
+// Structures:
+//   standard[0]: Verb + 一方（いっぽう）（で）
+//   standard[1]: い-Adjective + 一方（いっぽう）（で）
+//   standard[2]: な-Adjective + な + 一方（いっぽう）（で）
+//   standard[3]: Noun + の + 一方（いっぽう）（で）
+//   standard[4]: Phrase。 一方（いっぽう） + Phrase (sentence-initial)
+mod ippoude_tests {
+    use super::*;
+
+    #[test]
+    fn verb_ippoude() {
+        let sentence = "今日は関西は晴れる一方で、関東では雨が降るそうです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一方で");
+        assert_pattern_range(&patterns, "一方で", 9, 12); // 一方で
+    }
+
+    #[test]
+    fn verb_ippoude_without_de() {
+        let sentence = "甘えるのが好きな猫がいる一方、人間を警戒する猫も多くいます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一方で");
+        assert_pattern_range(&patterns, "一方で", 12, 14); // 一方 (without で)
+    }
+
+    #[test]
+    fn na_adjective_ippoude() {
+        let sentence = "田舎は、日中は静かな一方で、夜になると虫やカエルの鳴き声でうるさいです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一方で");
+        assert_pattern_range(&patterns, "一方で", 10, 13); // 一方で
+    }
+
+    #[test]
+    fn noun_dearu_ippoude() {
+        let sentence = "彼は歌手である一方で、政治家でもある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一方で");
+        assert_pattern_range(&patterns, "一方で", 7, 10); // 一方で
+    }
+
+    #[test]
+    fn sentence_initial_ippoude() {
+        let sentence = "一方で、長野県では夏祭りが開催される";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一方で");
+        assert_pattern_range(&patterns, "一方で", 0, 3); // 一方で
+    }
+}

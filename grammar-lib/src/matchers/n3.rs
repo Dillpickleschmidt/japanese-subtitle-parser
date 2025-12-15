@@ -7654,8 +7654,38 @@ pub fn ippouda() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 一方で
+// Pattern: 一方で (on the other hand / while / at the same time)
+// Structures: Verb/Adjective + 一方（で） / Phrase。一方（で）
 pub fn ippoude() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for 一方 - can be noun or conjunction
+    #[derive(Debug)]
+    struct IppouMatcher;
+    impl Matcher for IppouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "一方"
+                && token.base_form == "一方"
+                && (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    || token.pos.first().is_some_and(|pos| pos == "接続詞"))
+        }
+    }
+
+    // Matcher for で particle (not auxiliary verb で from だ)
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IppouMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeParticleMatcher)))),
+    ]
 }
 
 // Pattern: 遂に (finally/at last - formal)

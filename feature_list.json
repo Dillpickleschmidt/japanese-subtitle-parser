@@ -6638,13 +6638,13 @@
   {
     "pattern_name": "一方で",
     "jlpt_level": "n3",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "一方（いっぽう）で is a combination of the noun 一方（いっぽう） 'one direction', and the case marking particle で, in its nuance as 'at' [7 std, 0 pol]",
     "priority": 3,
     "skip_reason": null
