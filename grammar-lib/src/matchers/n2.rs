@@ -269,9 +269,23 @@ pub fn douyara() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(DouyaraMatcher))]
 }
 
-// Pattern: なにやら
+// Pattern: なにやら (something or other, some kind of, for some reason)
+// Structures: 何（なに）やら
 pub fn naniyara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NaniyaraMatcher;
+
+    impl super::Matcher for NaniyaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "何やら"
+                && token.base_form == "何やら"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(NaniyaraMatcher))]
 }
 
 // Pattern: よりほかない

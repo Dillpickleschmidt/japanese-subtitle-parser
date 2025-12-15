@@ -2419,3 +2419,68 @@ mod douyara_tests {
         assert_pattern_range(&patterns, "どうやら", 8, 12); // どうやら
     }
 }
+
+// Pattern: なにやら (something or other, some kind of, for some reason)
+// Data source: grammar_points_data.json["なにやら"]
+// Testing: structure.standard[0] - "何（なに）やら + Phrase"
+//
+// Structure notes:
+//   - なにやら is an adverb expressing uncertainty about what something is
+//   - Composed of 何（なに） and particle やら denoting uncertainty
+//   - Different from 何か - only used when speaker is unsure of what thing is
+//
+// Test strategy:
+//   - Test various contexts where speaker expresses uncertainty
+//   - All examples from grammar_points_data.json
+
+mod naniyara_tests {
+    use super::*;
+
+    #[test]
+    fn test_naniyara_something_said() {
+        // Example: あの人に何やら言われても何にも感じない
+        // (I don't feel anything when that person says something to me)
+        let sentence = "あの人に何やら言われても何にも感じない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なにやら");
+        assert_pattern_range(&patterns, "なにやら", 4, 7); // 何やら
+    }
+
+    #[test]
+    fn test_naniyara_some_kind() {
+        // Example: やっと子供が落ち着いたと思ったら、何やら歌い出した
+        // (When I thought my kid finally settled down, he started to sing some kind of song)
+        let sentence = "やっと子供が落ち着いたと思ったら、何やら歌い出した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なにやら");
+        assert_pattern_range(&patterns, "なにやら", 17, 20); // 何やら
+    }
+
+    #[test]
+    fn test_naniyara_for_some_reason() {
+        // Example: 家に帰ってカバンを開けたら何やら見覚えのないレシートが入ってた
+        // (When I opened my bag when I got home, there was a receipt in there for some reason)
+        let sentence = "家に帰ってカバンを開けたら何やら見覚えのないレシートが入ってた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なにやら");
+        assert_pattern_range(&patterns, "なにやら", 13, 16); // 何やら
+    }
+
+    #[test]
+    fn test_naniyara_something_happened() {
+        // Example: あの二人の間で何やらあったらしい
+        // (Apparently something happened between those two)
+        let sentence = "あの二人の間で何やらあったらしい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なにやら");
+        assert_pattern_range(&patterns, "なにやら", 7, 10); // 何やら
+    }
+}
