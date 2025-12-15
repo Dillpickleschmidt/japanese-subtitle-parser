@@ -1,3 +1,82 @@
+## Session 356 - 2025-12-14
+
+### ✅ Session Summary
+**Status**: COMPLETE - Successfully completed 1 N3 pattern
+**Patterns completed**: 1 (一方で)
+**Tests added**: 5 (all passing)
+**Total tests**: 2277 passing, 1 ignored (was 2272 passing, 1 ignored - net +5 tests)
+
+### ✅ Pattern Completed: 一方で (on the other hand / while / at the same time)
+
+**JLPT Level**: N3
+**Category**: Construction
+**Priority**: 1 (low priority, not highlighted in overlay)
+
+**Pattern**: 一方で combines the noun 一方（いっぽう）'one direction' with the case marking particle で to create a conjunction particle meaning "on the other hand", "while", or "at the same time". It's used to contrast or compare two situations that exist simultaneously. The pattern can follow verbs/adjectives in their attributive form, or appear at the beginning of a sentence. The で particle is optional in some contexts.
+
+**Structures tested**: 5 comprehensive tests covering all major variants
+1. Verb + 一方で: 晴れる一方で (while it will be sunny in Kansai) - chars 9-12
+2. Verb + 一方 (without で): いる一方 (while there are affectionate cats) - chars 12-14
+3. な-Adjective + な + 一方で: 静かな一方で (while it's quiet during the day) - chars 10-13
+4. Noun + である + 一方で: 歌手である一方で (he is a singer, while at the same time) - chars 7-10
+5. Sentence-initial: 一方で (on the other hand) - chars 0-3
+
+**Implementation details**:
+- Matcher: grammar-lib/src/matchers/n3.rs (ippoude function, lines 7657-7689)
+- Tests: grammar-lib/src/tests/n3_patterns.rs (ippoude_tests module, lines 12294-12354)
+- Pattern: grammar-lib/src/patterns.rs (Ippoude, declared at line 4065)
+
+**Tokenization patterns**:
+```
+After verbs/adjectives (一方 as noun):
+- 一方 (名詞/非自立/副詞可能) - dependent noun
+- で (助詞/格助詞/一般) - case particle (optional)
+
+Sentence-initial (一方 as conjunction):
+- 一方 (接続詞) - conjunction
+- で (助詞/格助詞/一般) - case particle (optional)
+```
+
+**Key implementation points**:
+1. Two-token matcher: 一方 + Optional(で)
+2. IppouMatcher matches 一方 as BOTH noun (名詞/非自立/副詞可能) AND conjunction (接続詞)
+3. DeParticleMatcher matches で as particle (助詞/格助詞), NOT auxiliary verb で from だ
+4. Optional(で) allows the pattern to work with or without the で particle
+5. Pattern priority: 1 (detected but not highlighted in overlay)
+
+**Pattern ranges**: Include 一方 with optional で
+- With で: 一方で (2 tokens)
+- Without で: 一方 (1 token)
+- Pattern captures just the conjunction itself, not the preceding clause
+
+**Test Quality**:
+- All 5 tests include assert_has_pattern and assert_pattern_range
+- No print_debug in final committed tests
+- Realistic subtitle-quality sentences from grammar_points_data.json examples
+- Cover all major structural variants: verb, na-adjective, noun+である, sentence-initial, with/without で
+- Correct character ranges verified for all variants
+
+**Linguistic Note**: The grammar data emphasizes the contrast between 一方で (conjunction particle, "at one direction/side") and 一方だ (auxiliary verb pattern, "in one direction"). The で in 一方で is a case particle showing location/context, whereas the で in 一方で is the conjunctive form of the copula だ. Context usually makes it clear which pattern is being used:
+- 一方で expresses comparison/contrast between two situations
+- 一方だ expresses continuous change in a single direction
+
+**Usage contexts**:
+- Contrasting situations: Showing two opposing or different situations that coexist
+- Simultaneous situations: Events or states happening at the same time
+- Sentence continuation: Starting a new sentence with contrasting information
+- Formal writing: Common in news, reports, and formal explanations
+
+**Caution**: Don't confuse 一方で with 一方だ (implemented in previous session):
+- 一方で + Phrase: "While/on the other hand" - shows contrast between situations
+- Verb + 一方だ: "keeps (verb)ing" - shows continuous change in one direction
+
+**Related patterns**:
+- 一方だ (N3) - continuous change in one direction (already implemented)
+- 一方 (N3) - standalone conjunction meaning "while/whereas" (same pattern without で)
+- その一方で - "on the other hand" with その for emphasis
+
+---
+
 ## Session 355 - 2025-12-14
 
 ### ✅ Session Summary
