@@ -1,16 +1,16 @@
 ## Session 481 - 2025-12-15
 
-### Session Summary - て当然だ Pattern Complete ✓
-**Status**: Successfully implemented て当然だ pattern
-**Patterns completed**: 1 (て当然だ - N2, priority 4)
-**Total tests**: 3149 passing, 1 ignored (added 6 new tests)
+### Session Summary - Two N2 Patterns Complete ✓
+**Status**: Successfully implemented て当然だ and のも当然だ patterns
+**Patterns completed**: 2 (both N2, priority 4)
+**Total tests**: 3155 passing, 1 ignored (added 12 new tests)
 
 **Session highlights**:
-- Implemented て当然だ (natural/a matter of course) pattern
-- Created 6 comprehensive tests covering all structure variants
+- Implemented て当然だ (natural/a matter of course) - 6 tests
+- Implemented のも当然だ (it's natural that/no wonder that) - 6 tests
+- Both patterns handle standard and polite forms
+- Both patterns handle Verb, い-Adjective, な-Adjective, and Noun variants
 - All tests passing with proper range assertions
-- Pattern handles Verb[て], い-Adj[て], and な-Adj[で] forms
-- Both standard (だ) and polite (です) forms tested
 - No regressions in test suite
 
 ---
@@ -46,6 +46,48 @@ All tests use realistic, subtitle-quality sentences and include proper range ass
 - `grammar-lib/src/matchers/n2.rs` - Implemented tetouzenda() function (71 lines)
 - `grammar-lib/src/tests/n2_patterns.rs` - Added 6 comprehensive tests
 - `feature_list.json` - Updated て当然だ to complete status
+
+---
+
+### ✓ Completed: のも当然だ (it's natural that/no wonder that)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb + の(は/も) + 当然 + だ/です
+- い-Adjective + の(は/も) + 当然 + だ/です
+- な-Adjective + なの(は/も) + 当然 + だ/です
+- Noun + (は/も) + 当然 + だ/です
+
+**Implementation details**:
+- Custom matcher `FirstTokenMatcher` handles Verb (基本形), い-Adj (基本形), な-Adj (形容動詞語幹), and Noun
+- Optional `NaCopulaMatcher` for な (助動詞/体言接続) after な-adjectives
+- Optional `NoNominalizerMatcher` for の (名詞/非自立) nominalizer
+- Custom matcher `HaMoParticleMatcher` for は or も particles (係助詞)
+- Reused `TouzenMatcher` and `DaDesuMatcher` from て当然だ pattern
+
+**Tests created**: 6 tests
+1. `test_verb_noha_touzen_da` - クビになるのは当然だ (verb + のは)
+2. `test_i_adj_noha_touzen_da` - 高いのは当然です (い-adj + のは, polite)
+3. `test_na_adj_nanoha_touzen_da` - 元気なのは当然だ (な-adj + なのは)
+4. `test_na_adj_nanomo_touzen_da` - 上手なのも当然だ (な-adj + なのも, emphasis)
+5. `test_noun_mo_touzen_da` - 落第も当然だ (noun + も, no の)
+6. `test_verb_nomo_touzen_desu` - 成功するのも当然です (verb + のも, polite)
+
+**Key differences from て当然だ**:
+- Uses の nominalizer instead of て form
+- Allows both は and も particles (のは vs のも for emphasis)
+- Can attach directly to Nouns without の (Noun + は/も pattern)
+- Slightly stronger nuance - separates statement from what speaker considers natural
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented nomotouzenda() function (138 lines)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 6 comprehensive tests
+- `feature_list.json` - Updated のも当然だ to complete status
 
 ---
 
