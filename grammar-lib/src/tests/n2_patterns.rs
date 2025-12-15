@@ -9343,3 +9343,108 @@ mod nishitara_tests {
         assert_pattern_range(&patterns, "にしたら", 0, 7); // 日本人にすれば
     }
 }
+
+// Pattern: にしても～にしても (regardless of whether A or B)
+// Data source: grammar_points_data.json["にしても～にしても"]
+// Testing: structure.standard[0] - "Verb (A) + にしても + Verb (B) + にしても"
+// Testing: structure.standard[1] - "Noun (A) + にしても + Noun (B) + にしても"
+// Testing: structure.standard[2] - "［い］Adjective (A) + にしても + ［い］Adjective (B) + にしても"
+// Testing: structure.standard[3] - "［な］Adjective (A) + にしても + ［な］Adjective (B) + にしても"
+//
+// Note: This pattern detects each "X にしても" instance separately, not the full "A にしても B にしても" structure
+
+mod nishitemo_uff5e_nishitemo_tests {
+    use super::*;
+
+    #[test]
+    fn test_verb_nishitemo_verb_nishitemo() {
+        // Example from grammar data: 出席するにしても、しないにしても
+        let sentence = "忘年会に出席するにしても、しないにしても、参加費を払わないといけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Pattern detects each instance separately
+        assert_has_pattern(&patterns, "にしても");
+        assert_pattern_range(&patterns, "にしても", 8, 12); // するにしても (first instance)
+
+        // Find second instance
+        let nishitemo_patterns: Vec<_> = patterns.iter()
+            .filter(|p| p.pattern_name == "にしても")
+            .collect();
+        assert_eq!(nishitemo_patterns.len(), 2, "Should detect both instances");
+        assert_eq!(nishitemo_patterns[1].start_char, 16);
+        assert_eq!(nishitemo_patterns[1].end_char, 20); // しないにしても (second instance)
+    }
+
+    #[test]
+    fn test_verb_nishitemo_rebuild_remodel() {
+        // Example from grammar data: 立て直すにしても、リフォームするにしても
+        let sentence = "家を立て直すにしても、リフォームするにしても、費用は同じぐらいになりそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしても");
+        assert_pattern_range(&patterns, "にしても", 6, 10); // 直すにしても (first instance)
+
+        let nishitemo_patterns: Vec<_> = patterns.iter()
+            .filter(|p| p.pattern_name == "にしても")
+            .collect();
+        assert_eq!(nishitemo_patterns.len(), 2);
+        assert_eq!(nishitemo_patterns[1].start_char, 18);
+        assert_eq!(nishitemo_patterns[1].end_char, 22); // するにしても (second instance)
+    }
+
+    #[test]
+    fn test_i_adj_nishitemo_deep_shallow() {
+        // Example from grammar data: 深いにしても、浅いにしても
+        let sentence = "水深が深いにしても、浅いにしても、ライフジャケットは着ておいた方がいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしても");
+        assert_pattern_range(&patterns, "にしても", 5, 9); // 深いにしても (first instance - includes only にしても)
+
+        let nishitemo_patterns: Vec<_> = patterns.iter()
+            .filter(|p| p.pattern_name == "にしても")
+            .collect();
+        assert_eq!(nishitemo_patterns.len(), 2);
+        assert_eq!(nishitemo_patterns[1].start_char, 12);
+        assert_eq!(nishitemo_patterns[1].end_char, 16); // 浅いにしても (second instance)
+    }
+
+    #[test]
+    fn test_na_adj_nishitemo_good_bad() {
+        // Example from grammar data: 上手にしても、下手にしても
+        let sentence = "日本語が上手にしても、下手にしても、勉強は毎日しておいた方がいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしても");
+        assert_pattern_range(&patterns, "にしても", 6, 10); // 上手にしても (first instance - includes only にしても)
+
+        let nishitemo_patterns: Vec<_> = patterns.iter()
+            .filter(|p| p.pattern_name == "にしても")
+            .collect();
+        assert_eq!(nishitemo_patterns.len(), 2);
+        assert_eq!(nishitemo_patterns[1].start_char, 13);
+        assert_eq!(nishitemo_patterns[1].end_char, 17); // 下手にしても (second instance)
+    }
+
+    #[test]
+    fn test_noun_nishitemo_weekday_holiday() {
+        // Example from grammar data: 平日にしても祝日にしても
+        let sentence = "平日にしても祝日にしても、ディズニーランドは多くの人で賑わっています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしても");
+        assert_pattern_range(&patterns, "にしても", 2, 6); // 平日にしても (first instance - includes only にしても)
+
+        let nishitemo_patterns: Vec<_> = patterns.iter()
+            .filter(|p| p.pattern_name == "にしても")
+            .collect();
+        assert_eq!(nishitemo_patterns.len(), 2);
+        assert_eq!(nishitemo_patterns[1].start_char, 8);
+        assert_eq!(nishitemo_patterns[1].end_char, 12); // 祝日にしても (second instance)
+    }
+}

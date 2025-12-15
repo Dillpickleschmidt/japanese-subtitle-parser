@@ -9019,13 +9019,13 @@
   {
     "pattern_name": "にしても～にしても",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にしても , a grammar point consisting of に, the て-form of する, and も, is used to convey that 'regardless of (A) or (B), th... [4 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
