@@ -2,9 +2,34 @@ use crate::pattern_matcher::TokenMatcher;
 use super::Matcher;
 use std::sync::Arc;
 
-// Pattern: 得る・得る
+// Pattern: 得る・得る (to be possible, can do)
+// Structures: Verb[stem] + える/うる
 pub fn eru_u30fb_eru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct VerbStemMatcher;
+    impl Matcher for VerbStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct EruUruMatcher;
+    impl Matcher for EruUruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match える (base_form="える", 一段) or うる (base_form="うる", 一段・得ル)
+            // Must be non-independent verb (非自立)
+            (token.base_form == "える" || token.base_form == "うる")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbStemMatcher)),
+        TokenMatcher::Custom(Arc::new(EruUruMatcher)),
+    ]
 }
 
 // Pattern: 〜得ない (cannot, impossible)

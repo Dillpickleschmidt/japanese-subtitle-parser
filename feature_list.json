@@ -7338,13 +7338,13 @@
   {
     "pattern_name": "得る・得る",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "得（え）る is a る-Verb that has the meaning of 'to gain', or 'to acquire' [7 std, 6 pol]",
     "priority": 4,
     "skip_reason": null

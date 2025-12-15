@@ -1898,3 +1898,81 @@ mod tedemo_tests {
         assert_pattern_range(&patterns, "てでも", 7, 13); // 徹夜してでも
     }
 }
+
+// Pattern: 得る・得る (to be possible, can do)
+// Data source: grammar_points_data.json["得る・得る"]
+// Testing structure variants: Verb[stem] + える/うる (can be える or うる in formal contexts)
+#[cfg(test)]
+mod eru_u30fb_eru_tests {
+    use super::*;
+
+    #[test]
+    fn test_eru_shinieru_can_die() {
+        // Testing: structure.standard[0] - Verb[stem] + える + だろう (volitional)
+        let sentence = "あんな状況では誰もが死にえるだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "得る・得る");
+        assert_pattern_range(&patterns, "得る・得る", 10, 17); // 死にえるだろう (includes auxiliary)
+    }
+
+    #[test]
+    fn test_eru_okorieru_can_occur() {
+        // Example from data: いくら気をつけていても、交通事故は起こりえるものだ
+        // Testing: structure.standard[0] - Verb[stem] + える (dictionary form)
+        let sentence = "いくら気をつけていても、交通事故は起こりえるものだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "得る・得る");
+        assert_pattern_range(&patterns, "得る・得る", 17, 22); // 起こりえる
+    }
+
+    #[test]
+    fn test_eru_narieru_can_become() {
+        // Example from data: そういう事はセクハラにもなりえるので
+        // Testing: structure.standard[0] - Verb[stem] + える (dictionary form)
+        let sentence = "そういう事はセクハラにもなりえるので、そういう事はやらない方がいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "得る・得る");
+        assert_pattern_range(&patterns, "得る・得る", 12, 16); // なりえる
+    }
+
+    #[test]
+    fn test_uru_kangaeuru_can_think() {
+        // Example from data: 考えうる事は、すべてこの企画書に書いておきました
+        // Testing: structure.standard[0] with うる form (used when preceding sound is え)
+        let sentence = "考えうる事は、すべてこの企画書に書いておきました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "得る・得る");
+        assert_pattern_range(&patterns, "得る・得る", 0, 4); // 考えうる
+    }
+
+    #[test]
+    fn test_eru_polite_ariemasu() {
+        // Testing: structure.polite[0] - Verb[stem] + えます
+        let sentence = "それはありえますね、確認してみます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "得る・得る");
+        assert_pattern_range(&patterns, "得る・得る", 3, 8); // ありえます
+    }
+
+    #[test]
+    fn test_eru_negative_arienai() {
+        // Example from data: マジありえない
+        // Testing: Verb[stem] + えない (negative form)
+        let sentence = "電気代がまた値上がりするみたいだよ。マジありえない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "得る・得る");
+        assert_pattern_range(&patterns, "得る・得る", 20, 25); // ありえない
+    }
+}
