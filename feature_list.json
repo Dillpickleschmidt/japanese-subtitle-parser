@@ -7492,13 +7492,13 @@
   {
     "pattern_name": "一応 ①",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used as an adverb , 一応（いちおう） can often carry the nuance of (A) not being perfect, but the minimum required in or... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null
@@ -7506,13 +7506,13 @@
   {
     "pattern_name": "一応 ②",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used as an adverb , 一応（いちおう） can often carry the nuance of (A) not being perfect or ideal, but the minimum requi... [1 std, 0 pol]",
     "priority": 4,
     "skip_reason": null

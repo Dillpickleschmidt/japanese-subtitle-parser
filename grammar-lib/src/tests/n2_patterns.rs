@@ -2535,3 +2535,79 @@ mod mangaichi_tests {
         assert_pattern_range(&patterns, "万が一", 0, 2); // 万一
     }
 }
+
+// Pattern: 一応 ① (just in case, just to be sure)
+// Pattern: 一応 ② (more or less, for the time being, tentatively)
+// Data source: grammar_points_data.json["一応 ①"] and ["一応 ②"]
+// Testing: structure.standard[0] - "一応（いちおう） + Phrase" (both patterns)
+//
+// Structure notes:
+//   - Both 一応① and 一応② use the same structure (adverb)
+//   - Meaning differs by context:
+//     - 一応①: "just in case" / "just to be sure" (preventive)
+//     - 一応②: "more or less" / "for the time being" / "tentatively" (minimum requirement)
+//   - Both tokenize identically as 副詞/助詞類接続
+//
+// Implementation note:
+//   - Since both patterns are structurally identical, implement as single pattern
+//   - Show both grammar explanations when detected (user determines meaning from context)
+
+mod ichiou_tests {
+    use super::*;
+
+    #[test]
+    fn test_ichiou_just_in_case() {
+        // Example from 一応①: 一応傘を持って行ったほうがいいかも
+        // (It might be better to bring an umbrella just in case)
+        let sentence = "今日はずっと晴れって天気予報で言ってたけど曇ってきたから一応傘を持って行ったほうがいいかも";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一応 ①");
+        assert_pattern_range(&patterns, "一応 ①", 28, 30); // 一応
+        assert_has_pattern(&patterns, "一応 ②");
+        assert_pattern_range(&patterns, "一応 ②", 28, 30); // 一応 (same detection)
+    }
+
+    #[test]
+    fn test_ichiou_just_to_be_sure() {
+        // Example from 一応①: 一応チェックしておいてくれない？
+        // (Just to be sure, can you please double check it for me?)
+        let sentence = "これで大丈夫だと思うけど、一応チェックしておいてくれない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一応 ①");
+        assert_pattern_range(&patterns, "一応 ①", 13, 15); // 一応
+        assert_has_pattern(&patterns, "一応 ②");
+        assert_pattern_range(&patterns, "一応 ②", 13, 15); // 一応 (same detection)
+    }
+
+    #[test]
+    fn test_ichiou_more_or_less() {
+        // Example from 一応②: 一応私が店長ですが、どうかなさいましたか
+        // (I'm more or less the manager. Did something happen?)
+        let sentence = "一応私が店長ですが、どうかなさいましたか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一応 ①");
+        assert_pattern_range(&patterns, "一応 ①", 0, 2); // 一応
+        assert_has_pattern(&patterns, "一応 ②");
+        assert_pattern_range(&patterns, "一応 ②", 0, 2); // 一応 (same detection)
+    }
+
+    #[test]
+    fn test_ichiou_for_time_being() {
+        // Example from 一応②: 今日は一応ここまでにしておきましょう
+        // (For the time being, let's call it a day for today)
+        let sentence = "今日は一応ここまでにしておきましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "一応 ①");
+        assert_pattern_range(&patterns, "一応 ①", 3, 5); // 一応
+        assert_has_pattern(&patterns, "一応 ②");
+        assert_pattern_range(&patterns, "一応 ②", 3, 5); // 一応 (same detection)
+    }
+}

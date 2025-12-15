@@ -332,14 +332,29 @@ pub fn tashikani() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 一応 ①
-pub fn ichiou_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+// Pattern: 一応 ① (just in case, just to be sure)
+// Pattern: 一応 ② (more or less, for the time being, tentatively)
+// Structures: 一応 (single adverb token)
+// Note: Both patterns are structurally identical - meaning differs by context
+fn ichiou_matcher() -> TokenMatcher {
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct IchiouMatcher;
+    impl super::Matcher for IchiouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "一応"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    TokenMatcher::Custom(Arc::new(IchiouMatcher))
 }
 
-// Pattern: 一応 ②
+pub fn ichiou_u2460() -> Vec<TokenMatcher> {
+    vec![ichiou_matcher()]
+}
+
 pub fn ichiou_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    vec![ichiou_matcher()]
 }
 
 // Pattern: に相違ない
