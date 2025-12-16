@@ -1796,3 +1796,69 @@ mod nari_tests {
         assert_pattern_range(&patterns, "なり", 1, 6); // 起きるなり
     }
 }
+
+// ============================================================================
+// ともなく・ともなしに Tests
+// ============================================================================
+
+mod tomonaku_tomonashini_tests {
+    use super::*;
+
+    // Pattern: ともなく・ともなしに (absentmindedly, without paying attention)
+    // Data source: grammar_points_data.json["ともなく・ともなしに"]
+    // Testing: structure.standard[0] - "Verb[る] + ともなく + Verb"
+    //          structure.standard[1] - "Verb[る] + ともなしに + Verb"
+    //
+    // Note: Action before ともなく/ともなしに is intentional, but result is unintentional
+    // Often used with たら to emphasize timing
+
+    #[test]
+    fn test_tomonaku_watching_tv() {
+        let sentence = "昨日テレビを見るともなく見ていたら、急にお母さんが出てきたから驚いた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなく・ともなしに");
+        assert_pattern_range(&patterns, "ともなく・ともなしに", 6, 12); // 見るともなく
+    }
+
+    #[test]
+    fn test_tomonaku_listening() {
+        let sentence = "話を聞くともなく、先生と黒板の方向をぼーっと見ていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなく・ともなしに");
+        assert_pattern_range(&patterns, "ともなく・ともなしに", 2, 8); // 聞くともなく
+    }
+
+    #[test]
+    fn test_tomonashini_listening_boss() {
+        let sentence = "飲み会で上司の話を聞くともなしに聞いていたら、「お前はどう思う」と聞かれたから適当に返事した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなく・ともなしに");
+        assert_pattern_range(&patterns, "ともなく・ともなしに", 9, 16); // 聞くともなしに
+    }
+
+    #[test]
+    fn test_tomonashini_walking() {
+        let sentence = "暇だったから近所を歩くともなしに歩いていたら、高校の同級生にばったりあった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなく・ともなしに");
+        assert_pattern_range(&patterns, "ともなく・ともなしに", 9, 16); // 歩くともなしに
+    }
+
+    #[test]
+    fn test_tomonaku_looking() {
+        let sentence = "窓の外を見るともなく見ていると、雨が降り始めた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともなく・ともなしに");
+        assert_pattern_range(&patterns, "ともなく・ともなしに", 4, 10); // 見るともなく
+    }
+}

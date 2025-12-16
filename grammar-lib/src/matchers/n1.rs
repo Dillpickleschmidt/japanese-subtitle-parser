@@ -1652,9 +1652,87 @@ pub fn nari() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ともなく・ともなしに
+// Pattern: ともなく・ともなしに (absentmindedly, without paying attention)
+// Structures: Verb[る] + ともなく, Verb[る] + ともなしに
 pub fn tomonaku_u30fb_tomonashini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match dictionary form verb (基本形)
+    #[derive(Debug)]
+    struct DictionaryFormVerbMatcher;
+    impl super::Matcher for DictionaryFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "基本形")
+        }
+    }
+
+    // Match とも (助詞/接続助詞) OR と (助詞/格助詞/引用)
+    #[derive(Debug)]
+    struct ToOrTomoMatcher;
+    impl super::Matcher for ToOrTomoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "とも"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+                || (token.surface == "と"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                    && token.pos.get(2).is_some_and(|pos| pos == "引用"))
+        }
+    }
+
+    // Match も (助詞/係助詞) - optional, only for ともなしに variant
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match なく (形容詞/自立, 連用テ接続, base=ない) OR なし (形容詞/自立, 文語基本形, base=ない)
+    #[derive(Debug)]
+    struct NakuOrNashiMatcher;
+    impl super::Matcher for NakuOrNashiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "なく" || token.surface == "なし")
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    // Match に particle (助詞/格助詞/一般) - optional, only for ともなしに
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Pattern 1: Verb + とも + なく (3 tokens)
+    // Pattern 2: Verb + と + も + なし + に (5 tokens)
+    // Use optional matchers for も and に to handle both variants
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryFormVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ToOrTomoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MoParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(NakuOrNashiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: 塗れ
