@@ -3347,3 +3347,59 @@ mod nagarani_tests {
         assert_pattern_range(&patterns, "ながらに", 0, 6); // いつもながら
     }
 }
+
+// ============================================================================
+// たなり・なり Tests
+// ============================================================================
+
+mod tanari_nari_tests {
+    use super::*;
+
+    // Pattern: たなり・なり (remain as is, stay in that state)
+    // Data source: grammar_points_data.json["たなり・なり"]
+    // Testing: structure.standard[0] - "Verb[た] + なり + (で) + Phrase"
+    //
+    // Pattern indicates something existing in an ongoing state after action (A)
+    // Often expresses undesirable state continuing despite (A) having happened
+    // Similar to まま but more formal
+
+    #[test]
+    fn test_tanari_basic() {
+        let sentence = "弟は彼女に振られて部屋に入ったなり、全然部屋から出てこなくなってしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たなり・なり");
+        assert_pattern_range(&patterns, "たなり・なり", 12, 17); // 入ったなり
+    }
+
+    #[test]
+    fn test_tanari_with_de() {
+        let sentence = "父が釣りにいったなりで、まだ帰ってこない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たなり・なり");
+        assert_pattern_range(&patterns, "たなり・なり", 5, 11); // いったなりで
+    }
+
+    #[test]
+    fn test_tanari_long_time() {
+        let sentence = "兄は上京したなり、帰ってこない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たなり・なり");
+        assert_pattern_range(&patterns, "たなり・なり", 2, 8); // 上京したなり
+    }
+
+    #[test]
+    fn test_tanari_comma() {
+        let sentence = "彼は座ったなり、何も言わなくなった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たなり・なり");
+        assert_pattern_range(&patterns, "たなり・なり", 2, 7); // 座ったなり
+    }
+}

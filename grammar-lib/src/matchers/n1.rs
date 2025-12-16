@@ -2632,9 +2632,39 @@ pub fn nagarani() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: たなり・なり
+// Pattern: たなり・なり (remain as is, stay in that state)
+// Structures: Verb[た] + なり + Optional(で)
 pub fn tanari_u30fb_nari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct NariParticleMatcher;
+    impl super::Matcher for NariParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なり"
+                && token.base_form == "なり"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+        }
+    }
+
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        super::past_auxiliary(),
+        TokenMatcher::Custom(Arc::new(NariParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeParticleMatcher)))),
+    ]
 }
 
 // Pattern: の極み
