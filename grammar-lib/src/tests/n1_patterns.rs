@@ -5990,3 +5990,58 @@ mod kare_u301c_kare_tests {
         assert_pattern_range(&patterns, "かれ〜かれ", 0, 6); // 暑かれ寒かれ
     }
 }
+
+// ============================================================================
+// なくして(は) Tests
+// ============================================================================
+
+mod nakushiteha_tests {
+    use super::*;
+
+    // Pattern: なくして(は) (without)
+    // Data source: grammar_points_data.json["なくして(は)"]
+    // Testing: structure.standard[0] - "Noun + なくして(は)"
+    //
+    // Other structures to test:
+    //   - standard[1]: Verb + ことなくして(は)
+
+    #[test]
+    fn test_nakushiteha_noun_simple() {
+        let sentence = "私は彼女なくしては生きていけないと思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくして(は)");
+        assert_pattern_range(&patterns, "なくして(は)", 2, 9); // 彼女なくしては
+    }
+
+    #[test]
+    fn test_nakushiteha_noun_effort() {
+        let sentence = "努力なくしては、日本語は上達しません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくして(は)");
+        assert_pattern_range(&patterns, "なくして(は)", 0, 7); // 努力なくしては
+    }
+
+    #[test]
+    fn test_nakushiteha_verb_koto() {
+        let sentence = "失敗することなくしては、成功できないと言われているが本当なのだろうか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくして(は)");
+        assert_pattern_range(&patterns, "なくして(は)", 4, 11); // ことなくしては
+    }
+
+    #[test]
+    fn test_nakushiteha_verb_koto_consider() {
+        let sentence = "相手の気持ちを考えることなくしては、友情は続かない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なくして(は)");
+        assert_pattern_range(&patterns, "なくして(は)", 10, 17); // ことなくしては
+    }
+}

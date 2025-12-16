@@ -4562,8 +4562,68 @@ pub fn u301c_ni_u301c_nai() -> Vec<TokenMatcher> {
 }
 
 // Pattern: なくして(は)
+// Pattern: なくして(は) (without)
+// Structures: Noun + なくして(は) OR Verb + ことなくして(は)
 pub fn nakushite_ha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for なくし or なく (verb なくす or adjective ない)
+    #[derive(Debug)]
+    struct NakushiNakuMatcher;
+    impl Matcher for NakushiNakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match なくし (verb なくす in 連用形)
+            (token.surface == "なくし"
+                && token.base_form == "なくす"
+                && token.pos.first().is_some_and(|p| p == "動詞"))
+            ||
+            // Match なく (adjective ない in 連用テ接続)
+            (token.surface == "なく"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|p| p == "形容詞"))
+        }
+    }
+
+    // Optional matcher for し (verb する in 連用形) - only for なく variant
+    #[derive(Debug)]
+    struct ShiVerbMatcher;
+    impl Matcher for ShiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Matcher for て particle
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Matcher for は particle
+    #[derive(Debug)]
+    struct HaMatcher;
+    impl Matcher for HaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun or こと
+        TokenMatcher::Custom(Arc::new(NakushiNakuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ShiVerbMatcher)))),
+        TokenMatcher::Custom(Arc::new(TeMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(HaMatcher)))),
+    ]
 }
 
 // Pattern: のなんのって

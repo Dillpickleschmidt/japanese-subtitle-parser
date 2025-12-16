@@ -7061,7 +7061,7 @@ declare_patterns! {
     NakushiteHa {
         name: "なくして(は)",
         matcher_fn: crate::matchers::n1::nakushite_ha,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
