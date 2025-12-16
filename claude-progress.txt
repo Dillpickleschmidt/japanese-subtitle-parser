@@ -1,19 +1,24 @@
 ## Session 505 - 2025-12-15
 
-### Session Summary - をおいてほかに〜ない Pattern Complete ✓
-**Status**: Successfully implemented をおいてほかに〜ない pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3360 passing, 1 ignored (added 4 new tests)
-**Progress**: Twenty-first N1 pattern completed!
+### Session Summary - Two N1 Patterns Complete ✓
+**Status**: Successfully implemented をおいてほかに〜ない and をもって patterns
+**Patterns completed**: 2 (N1, priority 5)
+**Total tests**: 3364 passing, 1 ignored (added 8 new tests)
+**Progress**: Twenty-first and twenty-second N1 patterns completed!
 
 **Session highlights**:
 - Implemented をおいてほかに〜ない pattern (none other than, nothing else but)
-- Pattern uses the verb をおく (to set aside) in て-form + ほかに + ない
-- Handles both variations: に and には (with optional は particle)
-- Custom matchers for verb おく in 連用タ接続, て particle, ほか noun, and ない (助動詞/形容詞)
-- Uses wildcard matcher (0-10 tokens) to capture the full construction
-- All 4 tests passing with proper range assertions
-- No regressions in test suite
+- Implemented をもって pattern (as of, effective from - time expressions)
+- をおいてほかに〜ない uses verb をおく in て-form + ほかに + ない with wildcard
+- をもって handles both をもって and をもちまして as compound particles
+- All 8 tests passing with proper range assertions (4 per pattern)
+- No regressions in test suite (3364 tests total)
+
+**Key Implementation Notes**:
+- をもって (time) is structurally identical to を以て (means) but semantically different
+- をもって tokenizes as a single compound particle: 助詞/格助詞/連語
+- Both をもって and をもちまして (polite) detected by the same matcher
+- をおいてほかに〜ない requires wildcard (0-10 tokens) between には and ない
 
 ### ✓ Completed: をおいてほかに〜ない (none other than, nothing else but)
 
@@ -53,6 +58,48 @@ All tests use realistic subtitle-quality sentences and include proper range asse
 - `grammar-lib/src/matchers/n1.rs` - Implemented wooitehokani_u301c_nai() matcher
 - `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in wooitehokani_nai_tests module
 - `feature_list.json` - Updated をおいてほかに〜ない status to complete
+
+### ✓ Completed: をもって (as of, effective from)
+
+**Grammar Point**: をもって
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+- Time expression + をもって (standard form)
+- Time expression + をもちまして (polite form)
+- 以上 + をもって (これ/これ以上)
+
+**Implementation**:
+- Matcher: `Noun + をもって/をもちまして(助詞/格助詞/連語)`
+- Custom matcher for をもって or をもちまして as compound particle
+- Checks: pos=助詞, pos[1]=格助詞, pos[2]=連語
+- Both forms tokenize as single compound particles
+
+**Tests Written: 4 tests**
+1. `test_womotte_game_service` - 2023年8月10日をもって (full date expression)
+2. `test_womotte_today` - 本日をもって (today, standard form)
+3. `test_womotte_tour` - 今回のツアーをもって (event context)
+4. `test_womochimashite_polite` - 本日をもちまして (polite form)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures full construction:
+- `日をもって` (25, 30) - time noun + をもって particle
+- `本日をもって` (0, 6) - time noun + をもって particle
+- `本日をもちまして` (22, 30) - time noun + をもちまして particle (polite)
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented womotte_2() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in womotte2_tests module
+- `feature_list.json` - Updated をもって status to complete
+
+**Notes**:
+- をもって (as of) and を以て (by means of) are structurally identical
+- Both use the same tokenization: 助詞/格助詞/連語
+- Difference is semantic: time expressions vs. means/methods
+- Priority 5 for をもって vs priority 1 for を以て (to prefer を以て in general cases)
 
 ---
 
