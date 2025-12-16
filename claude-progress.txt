@@ -1,3 +1,127 @@
+## Session 539 - 2025-12-16
+
+### Session Summary - をものともせず Pattern Complete ✓
+**Status**: Successfully implemented をものともせず pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3522 passing, 1 ignored (added 4 new tests)
+**Progress**: Fifty-seventh N1 pattern completed!
+
+**Session highlights**:
+- Implemented をものともせず pattern (undaunted by, in defiance of)
+- Handles all four structure variants: Verb/い-Adj/な-Adj + の + をものともせず, and Noun + をものともせず
+- Pattern includes optional の nominalizer and optional に particle
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3522 tests total)
+
+### ✓ Completed: をものともせず (undaunted by, in defiance of)
+
+**Grammar Point**: をものともせず
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb + の + をものともせず（に）
+2. い-Adjective + の + をものともせず（に）
+3. な-Adjective + な + の + をものともせず（に）
+4. Noun + をものともせず（に）
+
+**Meaning**:
+- "To make nothing of (A)" / "In defiance of (A)" / "Undaunted by (A)"
+- Literally: "without making (A) a thing"
+- Used when someone does something despite difficulties or obstacles
+- The particle を must follow a noun or nominalized phrase
+- Often follows negative words being praised as something not affecting the person
+
+**Tokenization**:
+- の: 名詞/非自立/一般 (nominalizer after verb/adjective)
+- を: 助詞/格助詞/一般 (case particle)
+- もの: 名詞/非自立/一般 (noun "thing")
+- と: 助詞/格助詞/引用 (quotation particle)
+- も: 助詞/係助詞 (binding particle)
+- せ: 動詞/自立, base=する, 未然ヌ接続 (する in irrealis form)
+- ず: 助動詞, base=ぬ, 連用ニ接続 (classical negative auxiliary)
+- に: 助詞/格助詞/一般 (optional case particle at end)
+
+**Implementation**:
+- Pattern: Optional(の) + を + もの + と + も + せ + ず + Optional(に)
+- Custom matchers:
+  - NoNominalizerMatcher: Matches の as 名詞/非自立/一般
+  - WoParticleMatcher: Matches を as 助詞/格助詞/一般
+  - MonoNounMatcher: Matches もの as 名詞/非自立/一般
+  - ToQuotationMatcher: Matches と as 助詞/格助詞/引用
+  - MoBindingMatcher: Matches も as 助詞/係助詞
+  - SeVerbMatcher: Matches せ (する in 未然ヌ接続)
+  - ZuAuxiliaryMatcher: Matches ず (助動詞, base=ぬ)
+  - NiParticleMatcher: Optional に as 助詞/格助詞
+- Both の and に are optional to handle all structure variants
+- Priority 5 for this N1-level formal construction
+
+**Tests Written: 4 tests**
+1. `test_womonotomosezu_verb_shaking` - 震えているのをものともせず (12, 20)
+2. `test_womonotomosezu_i_adj_hot` - 暑いのをものともせず (7, 15)
+3. `test_womonotomosezu_na_adj_dangerous` - 危険なのをものともせずに (6, 15)
+4. `test_womonotomosezu_noun_injury` - 怪我をものともせずに (7, 15)
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures の/Noun + をものともせず(に):
+- Verb: のをものともせず (12, 20) - 8 characters
+- い-Adj: のをものともせず (7, 15) - 8 characters
+- な-Adj: のをものともせずに (6, 15) - 9 characters (with に)
+- Noun: をものともせずに (7, 15) - 8 characters (with に)
+
+**Key Notes**:
+- をものともせず derives from を + もの (thing) + とも (even as) + せず (classical negative of する)
+- Classical auxiliary verb ず negates verbs (modern negative would be しない)
+- The pattern appears in formal contexts and literary writing
+- Common with words about difficulties, dangers, or obstacles
+- Cannot be used for one's own actions (unnatural to say "I" did something をものともせず)
+- Related to other classical patterns using ず (e.g., いかん〜ず)
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented womonotomosezu() matcher with 8 custom matchers
+- `grammar-lib/src/patterns.rs` - Updated Womonotomosezu priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in womonotomosezu_tests module
+- `feature_list.json` - Updated をものともせず to complete status
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (をものともせず from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found womonotomosezu() stub in n1.rs)
+7. ✓ Wrote all 4 tests first with print_debug()
+8. ✓ Analyzed tokenization output for all variants
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Updated priority in patterns.rs to 5
+11. ✓ Verified all tests detect the pattern correctly
+12. ✓ Removed print_debug() and added assertions
+13. ✓ Verified no regressions (3522 tests passing)
+14. ✓ Updated feature_list.json
+15. ✓ Committed changes
+16. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (Verb, い-Adj, な-Adj, Noun)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- には当たらない - "Does not amount to" pattern
+- ものと思う - "I think/assume that" pattern
+- を踏まえて - "Based on, considering" pattern
+- という1 - "Called/named" pattern variant
+- にとどまらず - "Not limited to" pattern
+- と思いきや - "Contrary to expectations" pattern
+- どうにも - "No matter how" pattern
+
+---
+
 ## Session 538 - 2025-12-16
 
 ### Session Summary - 〜に〜ない Pattern Partially Complete
