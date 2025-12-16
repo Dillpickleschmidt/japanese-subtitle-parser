@@ -2962,3 +2962,59 @@ mod karaaru_tests {
         assert_pattern_range(&patterns, "からある", 13, 19); // 人からいます
     }
 }
+
+// ============================================================================
+// ともあろう Tests
+// ============================================================================
+
+mod tomoarou_tests {
+    use super::*;
+
+    // Pattern: ともあろう (of all people, such as)
+    // Data source: grammar_points_data.json["ともあろう"]
+    // Testing: structure.standard[0] - "Noun + ともあろう + もの/方/人 + が"
+
+    // Testing with もの
+    #[test]
+    fn test_tomoarou_mono() {
+        let sentence = "警察ともあろうものが違法薬物を使用していたなんて信じられない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともあろう");
+        assert_pattern_range(&patterns, "ともあろう", 0, 10); // 警察ともあろうものが
+    }
+
+    // Testing with 方
+    #[test]
+    fn test_tomoarou_kata() {
+        let sentence = "教会の牧師さんともあろうお方が、詐欺で逮捕されるなんてショックすぎる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともあろう");
+        assert_pattern_range(&patterns, "ともあろう", 5, 15); // さんともあろうお方が
+    }
+
+    // Testing with 人
+    #[test]
+    fn test_tomoarou_hito() {
+        let sentence = "有名な大学の教授ともあろう人が、ろくに敬語も使えないなんておかしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともあろう");
+        assert_pattern_range(&patterns, "ともあろう", 6, 15); // 教授ともあろう人が
+    }
+
+    // Testing sarcastic usage
+    #[test]
+    fn test_tomoarou_sarcastic() {
+        let sentence = "高橋さんともあろうお方がこんな簡単なことができないなんて、珍しいですね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ともあろう");
+        assert_pattern_range(&patterns, "ともあろう", 2, 12); // さんともあろうお方が
+    }
+}
