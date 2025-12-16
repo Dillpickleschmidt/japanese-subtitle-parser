@@ -9393,9 +9393,50 @@ pub fn naidewaokanai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を限りに
+// Pattern: を限りに (ending with / no longer than / as of)
+// Structures: Noun + を限（かぎ）りに, Noun + 限（かぎ）りで
 pub fn wokagirini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を (object-marking particle)
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match かぎり as 名詞/ナイ形容詞語幹 OR 限り as 名詞/非自立
+    #[derive(Debug)]
+    struct KagiriMatcher;
+    impl Matcher for KagiriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "かぎり" || token.surface == "限り")
+                && (token.base_form == "かぎり" || token.base_form == "限り")
+                && token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Match に or で (case-marking particle)
+    #[derive(Debug)]
+    struct NiOrDeMatcher;
+    impl Matcher for NiOrDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WoMatcher)))),
+        TokenMatcher::Custom(Arc::new(KagiriMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrDeMatcher)),
+    ]
 }
 
 // Pattern: てはかなわない (can't stand, unbearable)

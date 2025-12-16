@@ -10028,3 +10028,78 @@ mod bakoso_tests {
         assert_pattern_range(&patterns, "～ばこそ", 3, 11); // 会社であればこそ
     }
 }
+
+// ============================================================================
+// を限りに Tests
+// ============================================================================
+
+mod wokagirini_tests {
+    use super::*;
+
+    // Pattern: を限りに (ending with / no longer than / as of)
+    // Data source: grammar_points_data.json["を限りに"]
+    // Testing: structure.standard[0] - "Noun + を限（かぎ）りに"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun + 限（かぎ）りで
+
+    #[test]
+    fn test_wokagirini_store_closing() {
+        // Testing: Noun[time] + を限りに + closing announcement
+        // Based on example: "明日をかぎりに店を閉店させていただく"
+        let sentence = "明日をかぎりに店を閉店させていただくことになりました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を限りに");
+        assert_pattern_range(&patterns, "を限りに", 0, 7); // 明日をかぎりに
+    }
+
+    #[test]
+    fn test_wokagirini_moving_abroad() {
+        // Testing: Noun[time] + を限りに + life change announcement
+        // Based on example: "今月をかぎりに、海外に引っ越す"
+        let sentence = "今月をかぎりに、海外に引っ越すことになりました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を限りに");
+        assert_pattern_range(&patterns, "を限りに", 0, 7); // 今月をかぎりに
+    }
+
+    #[test]
+    fn test_wokagirini_concert_disbanding() {
+        // Testing: Noun[event] + を限りに + event announcement
+        // Based on example: "来月行われるコンサートをかぎりにＳＵＭ４１は解散する"
+        let sentence = "来月行われるコンサートをかぎりに解散することを決めたそうです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を限りに");
+        assert_pattern_range(&patterns, "を限りに", 6, 16); // コンサートをかぎりに
+    }
+
+    #[test]
+    fn test_kagirinde_variant() {
+        // Testing: Noun + 限りで (less formal variant)
+        // Based on structure.standard[1]: "Noun + 限（かぎ）りで"
+        let sentence = "今年限りでこの仕事は終わりにします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を限りに");
+        assert_pattern_range(&patterns, "を限りに", 0, 5); // 今年限りで
+    }
+
+    #[test]
+    fn test_wokagirini_voice_idiom() {
+        // Testing: 声を限りに (set idiom - "to the limit of one's voice")
+        // Based on Fun Fact: "声を限りに" is an exception that doesn't follow temporal rule
+        let sentence = "息子が声をかぎりに泣いていたから大変だったよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を限りに");
+        assert_pattern_range(&patterns, "を限りに", 3, 9); // 声をかぎりに
+    }
+}
