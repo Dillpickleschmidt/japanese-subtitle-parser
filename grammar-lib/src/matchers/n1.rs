@@ -1056,9 +1056,77 @@ pub fn ika_2() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～るまでだ
+// Pattern: ～るまでだ (merely, simply, one can only but)
+// Structures: Verb[る] + まで + (の + こと)? + だ/です
 pub fn uff5e_rumadeda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in dictionary form (基本形)
+    #[derive(Debug)]
+    struct DictionaryFormVerbMatcher;
+    impl Matcher for DictionaryFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| form == "基本形")
+        }
+    }
+
+    // Match まで (助詞/副助詞)
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match の (助詞/連体化)
+    #[derive(Debug)]
+    struct NoRentaikaMatcher;
+    impl Matcher for NoRentaikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match こと (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct KotoNounMatcher;
+    impl Matcher for KotoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match だ (助動詞, 特殊・ダ, 基本形) or です (助動詞, 特殊・デス, 基本形)
+    #[derive(Debug)]
+    struct DaDesuAuxMatcher;
+    impl Matcher for DaDesuAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|form| form == "基本形")
+                && (token.base_form == "だ" || token.base_form == "です")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryFormVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+        // Optional: の + こと sequence
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoRentaikaMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            KotoNounMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(DaDesuAuxMatcher)),
+    ]
 }
 
 // Pattern: にあって

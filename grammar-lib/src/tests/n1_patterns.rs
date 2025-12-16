@@ -1103,3 +1103,87 @@ mod ika_tests {
         assert_pattern_range(&patterns, "如何", 10, 17); // のいかんである
     }
 }
+
+// ============================================================================
+// ～るまでだ Tests
+// ============================================================================
+
+mod rumadeda_tests {
+    use super::*;
+
+    // Pattern: ～るまでだ (merely, simply, one can only but)
+    // Data source: grammar_points_data.json["～るまでだ"]
+    // Testing: structure.standard[0] - "Verb[ば] + Verb[る] + まで + だ"
+    //
+    // Other structures to test:
+    //   - standard[1]: Verb[たら] + Verb[る] + まで + だ
+    //   - standard[2]: Verb[ても] + Verb[る] + まで + だ
+    //   - standard with までのこと variant
+    //   - polite[0-3]: Same forms + です
+
+    // Testing: Verb[ば] + Verb[る] + まで + だ
+    #[test]
+    fn test_rumadeda_ba_conditional() {
+        let sentence = "誰にも教えてもらえないなら、ネットで調べてみるまでだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～るまでだ");
+        assert_pattern_range(&patterns, "～るまでだ", 21, 26); // みるまでだ
+    }
+
+    // Testing: Verb[たら] + Verb[る] + まで + だ
+    #[test]
+    fn test_rumadeda_tara_conditional() {
+        let sentence = "もし失敗したのなら、もう一回挑戦するまでだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～るまでだ");
+        assert_pattern_range(&patterns, "～るまでだ", 14, 21); // 挑戦するまでだ
+    }
+
+    // Testing: Verb[る] + までのこと + だ
+    #[test]
+    fn test_rumadeda_madenokoto() {
+        let sentence = "誰も迎えにきてくれないのなら、電車で帰るまでのことだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～るまでだ");
+        assert_pattern_range(&patterns, "～るまでだ", 18, 26); // 帰るまでのことだ
+    }
+
+    // Testing: Verb[ても] + Verb[る] + まで + だ
+    #[test]
+    fn test_rumadeda_temo_conditional() {
+        let sentence = "受け入れてもらえなくても、諦めずに頑張るまでだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～るまでだ");
+        assert_pattern_range(&patterns, "～るまでだ", 17, 23); // 頑張るまでだ
+    }
+
+    // Testing: Verb[る] + まで + です (polite)
+    #[test]
+    fn test_rumadeda_polite() {
+        let sentence = "この会社に入社できなかったら、別の会社を探すまでのことです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～るまでだ");
+        assert_pattern_range(&patterns, "～るまでだ", 20, 29); // 探すまでのことです
+    }
+
+    // Testing: Simple negative situation + Verb[る] + まで + だ
+    #[test]
+    fn test_rumadeda_simple_negative() {
+        let sentence = "嫌なら辞めるまでだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～るまでだ");
+        assert_pattern_range(&patterns, "～るまでだ", 3, 9); // 辞めるまでだ
+    }
+}
