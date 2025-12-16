@@ -6408,9 +6408,26 @@ pub fn kototote() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ずくめ
+// Pattern: ずくめ (nothing but / all in)
+// Structures: Noun + ずくめ, Noun + ずくめ + の
 pub fn zukume() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct ZukumeMatcher;
+    impl super::Matcher for ZukumeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ずくめ"
+                && token.base_form == "ずくめ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(ZukumeMatcher)),
+    ]
 }
 
 // Pattern: には及ばない②

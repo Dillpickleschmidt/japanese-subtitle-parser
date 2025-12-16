@@ -6716,3 +6716,54 @@ mod sobakara_tests {
         assert_pattern_range(&patterns, "そばから", 8, 15); // 読んだそばから
     }
 }
+
+// Pattern: ずくめ (nothing but / all in)
+// Data source: grammar_points_data.json["ずくめ"]
+// Testing all structure variants with print_debug
+mod zukume_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + ずくめ"
+    #[test]
+    fn test_zukume_noun_shigoto() {
+        let sentence = "今月も仕事ずくめになりそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずくめ");
+        assert_pattern_range(&patterns, "ずくめ", 3, 8); // 仕事ずくめ
+    }
+
+    // Testing: structure.standard[0] - "Noun + ずくめ" (negative context)
+    #[test]
+    fn test_zukume_noun_iyanakoto() {
+        let sentence = "最近は嫌なことずくめで全然楽しくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずくめ");
+        assert_pattern_range(&patterns, "ずくめ", 5, 10); // ことずくめ
+    }
+
+    // Testing: structure.standard[1] - "Noun (A) + ずくめ + の + Noun (B)"
+    #[test]
+    fn test_zukume_no_noun_kuro() {
+        let sentence = "彼は黒ずくめの男たちに誘拐された。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずくめ");
+        assert_pattern_range(&patterns, "ずくめ", 2, 6); // 黒ずくめ
+    }
+
+    // Testing: structure.standard[1] - "Noun (A) + ずくめ + の + Noun (B)" (alternative example)
+    #[test]
+    fn test_zukume_no_noun_kuruma() {
+        let sentence = "家の前に黒ずくめの車が何台も止まっているんです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずくめ");
+        assert_pattern_range(&patterns, "ずくめ", 4, 8); // 黒ずくめ
+    }
+}
