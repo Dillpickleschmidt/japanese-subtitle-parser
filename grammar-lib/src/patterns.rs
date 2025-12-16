@@ -7485,7 +7485,7 @@ declare_patterns! {
     MekuU30fbMeita {
         name: "めく・めいた",
         matcher_fn: crate::matchers::n1::meku_u30fb_meita,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

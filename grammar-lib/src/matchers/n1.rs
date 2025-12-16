@@ -7488,9 +7488,49 @@ pub fn haoroka() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: めく・めいた
+// Pattern: めく・めいた (shows signs of, has appearance of)
+// Structures: Noun + めく/めいて/めいている/めいた
+//
+// Two tokenization patterns:
+// 1. Split: Noun + めく(動詞/非自立, base=めく) - e.g., 謎めく, 冗談めく, 皮肉めく
+// 2. Compound: Single token verb (動詞/自立, base=春めく/夏めく/冬めく) - e.g., 春めく, 夏めく, 冬めく
+//
+// Pattern includes full construction:
+// - Split form: Noun + めく/めい (e.g., 謎めいた, 冗談めいて)
+// - Compound form: Just verb token (e.g., 春めい, 夏めいて)
 pub fn meku_u30fb_meita() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for めく verb in any form
+    // Matches both split (動詞/非自立, base=めく) and compound (動詞/自立, base ends with めく)
+    #[derive(Debug)]
+    struct MekuVerbMatcher;
+    impl Matcher for MekuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+
+            // Split form: めく as 動詞/非自立
+            if token.base_form == "めく" && token.pos.get(1).is_some_and(|pos| pos == "非自立") {
+                return true;
+            }
+
+            // Compound form: verb with base ending in めく as 動詞/自立
+            if token.base_form.ends_with("めく")
+                && token.base_form != "めく"  // Exclude bare めく
+                && token.pos.get(1).is_some_and(|pos| pos == "自立") {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(super::noun_matcher())),
+        TokenMatcher::Custom(Arc::new(MekuVerbMatcher)),
+    ]
 }
 
 // Pattern: といわず

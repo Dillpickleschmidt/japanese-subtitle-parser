@@ -8698,3 +8698,110 @@ mod soremadeda_tests {
         assert_pattern_range(&patterns, "それまでだ", 20, 28); // 犯せばそれまでだ
     }
 }
+
+// ============================================================================
+// めく・めいた Tests
+// ============================================================================
+
+mod meku_meita_tests {
+    use super::*;
+
+    // Pattern: めく・めいた (shows signs of, has appearance of)
+    // Data source: grammar_points_data.json["めく・めいた"]
+    // Testing structure variants from grammar_points_data.json examples
+
+    #[test]
+    fn test_meku_meite_compound() {
+        // Testing: Compound verb めく (春めく as single token)
+        // From grammar_points_data.json: "やっと春めいてきた"
+        let sentence = "昨日までは嘘みたいに暑かったのに、やっと春めいてきた！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めく・めいた");
+        assert_pattern_range(&patterns, "めく・めいた", 20, 23); // 春めい (compound verb)
+    }
+
+    #[test]
+    fn test_meku_meite_split() {
+        // Testing: Noun + めいて (split form)
+        // Example: 冗談めいて言った
+        let sentence = "冗談めいて言ったが、多分冗談だったということは気づいていないと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めく・めいた");
+        assert_pattern_range(&patterns, "めく・めいた", 0, 4); // 冗談めい
+    }
+
+    #[test]
+    fn test_meku_meita_modifying_noun() {
+        // Testing: Noun + めいた (past form modifying noun)
+        // From grammar_points_data.json: "皮肉めいたことを言ってしまって"
+        let sentence = "皮肉めいたことを言ってしまって、相手が黙り込んでしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めく・めいた");
+        assert_pattern_range(&patterns, "めく・めいた", 0, 5); // 皮肉めいた
+    }
+
+    #[test]
+    fn test_meku_meita_mysterious() {
+        // Testing: Noun + めいた (common expression 謎めいた)
+        // From grammar_points_data.json: "謎めいた雰囲気"
+        let sentence = "彼女はなんか謎めいた雰囲気があるよね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めく・めいた");
+        assert_pattern_range(&patterns, "めく・めいた", 6, 10); // 謎めいた
+    }
+
+    #[test]
+    fn test_meku_season_compound() {
+        // Testing: Compound season verb (夏めく as single token)
+        // Example: 夏めいてきた
+        let sentence = "最近の陽気は、すっかり夏めいてきた感じだね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めく・めいた");
+        assert_pattern_range(&patterns, "めく・めいた", 11, 14); // 夏めい (compound verb)
+    }
+
+    #[test]
+    fn test_meku_meiteimasu_polite_compound() {
+        // Testing: Compound verb + polite form (春めいています)
+        // Polite form example
+        let sentence = "最近の天気は春めいていますね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めく・めいた");
+        assert_pattern_range(&patterns, "めく・めいた", 6, 9); // 春めい (compound verb)
+    }
+
+    #[test]
+    fn test_meku_meitekimashita_polite_split() {
+        // Testing: Noun + めいて + polite past (冬めいてきました)
+        // 冬めい is split form: 冬 + めい
+        let sentence = "ここ数日で、やっと冬めいてきました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めく・めいた");
+        assert_pattern_range(&patterns, "めく・めいた", 9, 12); // 冬めい (split: Noun + めい)
+    }
+
+    #[test]
+    fn test_meku_nazo_meiteiru() {
+        // Testing: Common set expression 謎めく + ている
+        let sentence = "あの人の行動は最近謎めいている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "めく・めいた");
+        assert_pattern_range(&patterns, "めく・めいた", 9, 12); // 謎めい
+    }
+}
