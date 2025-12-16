@@ -2656,3 +2656,72 @@ Next Priorities (N1 - Priority 5, no tests yet):
 - さぞ - "Surely/certainly" pattern
 
 ================================================================================
+
+================================================================================
+Session 547 - どうにも Pattern Complete (N1)
+================================================================================
+Date: 2025-12-16
+
+Completed Pattern: どうにも (N1 - Priority 5)
+
+Implementation Details:
+The pattern "どうにも" has two different tokenization patterns:
+1. どうにも (single token, 副詞/一般) - Most common variant
+2. どう + に + も (three separate tokens) - Less common but still occurs
+
+Solution:
+- Created two separate matcher functions:
+  * dounimo() - Matches どうにも as single token (副詞/一般)
+  * dounimo_split() - Matches どう(副詞) + に(助詞/格助詞) + も(助詞/係助詞)
+- Both registered with the same name "どうにも" and priority 1
+- This ensures detection regardless of tokenization variant
+
+Technical Implementation:
+- Matcher functions: dounimo() and dounimo_split() in grammar-lib/src/matchers/n1.rs
+- Custom matchers for precise POS tag matching
+- Pattern type: Construction pattern  
+- Priority: 1 (low - just marks the adverb, not the full construction)
+
+Test Details:
+- Module: dounimo_tests in grammar-lib/src/tests/n1_patterns.rs
+- Test count: 5 comprehensive tests
+- Structure variants tested:
+  * どうにも + できない (single token)
+  * どうにも + Verb[stem] + ようがない (single token)
+  * どうにも + ならない (split tokenization: どう+に+も)
+  * どうにも + こうにも + ならない (single token + optional expansion)
+  * どうにも + こうにも + できない (single token + optional expansion)
+- All tests include proper assertions and character range verification
+- No print_debug() in final committed code
+
+Files Modified:
+- grammar-lib/src/matchers/n1.rs - Added dounimo() and dounimo_split()
+- grammar-lib/src/patterns.rs - Registered both pattern variants
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests
+- feature_list.json - Updated どうにも to complete status
+
+Quality Checks:
+✓ Tests exist with proper assertions
+✓ All structure variants covered  
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final code
+✓ All existing tests still pass (3556 total, no regressions)
+✓ Clean git history
+
+Test Results:
+Total: 3556 tests passing (up from 3551, +5 new tests)
+All 5 dounimo tests pass with proper range assertions
+
+Next Priorities (N1 patterns without tests, Priority 5):
+- ことだし - "Since/because" pattern  
+- がん～ - Pattern variant
+- たら〜で - Conditional with で
+- べくして - "Destined to" pattern
+- まま(に)1 - "As is/while" pattern
+- かれ〜かれ - "Whether... or..." pattern
+- なくして(は) - "Without" pattern
+- のなんのって - Emphasis pattern
+- にかかっている - "Depends on" pattern
+
+================================================================================
