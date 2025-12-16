@@ -4121,9 +4121,107 @@ pub fn dounimo_split() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ことだし
+// Pattern: ことだし (since/because) - Simple form
+// Structures: Verb + ことだし, い-Adjective + ことだし
 pub fn kotodashi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for こと (noun, 非自立)
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl super::Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Matcher for だ (auxiliary verb)
+    #[derive(Debug)]
+    struct DaMatcher;
+    impl super::Matcher for DaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Matcher for し (conjunction particle)
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl super::Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Verb or い-Adjective (immediately before こと)
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(DaMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiMatcher)),
+    ]
+}
+
+// Pattern: ことだし (since/because) - Compound form
+// Structures: Noun + の + ことだし, な-Adjective + な + ことだし
+pub fn kotodashi_compound() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for の or な (particles that connect nouns/na-adj to こと)
+    #[derive(Debug)]
+    struct NoNaMatcher;
+    impl super::Matcher for NoNaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "の"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "連体化"))
+            || (token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞"))
+        }
+    }
+
+    // Reuse matchers from kotodashi()
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl super::Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct DaMatcher;
+    impl super::Matcher for DaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl super::Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Noun or な-Adjective stem
+        TokenMatcher::Custom(Arc::new(NoNaMatcher)),  // の or な
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(DaMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiMatcher)),
+    ]
 }
 
 // Pattern: がん～

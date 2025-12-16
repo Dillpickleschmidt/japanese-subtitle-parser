@@ -6986,6 +6986,14 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    KotodashiCompound {
+        name: "ことだし_compound",
+        matcher_fn: crate::matchers::n1::kotodashi_compound,
+        priority: 2,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     GanUff5e {
         name: "がん～",
         matcher_fn: crate::matchers::n1::gan_uff5e,

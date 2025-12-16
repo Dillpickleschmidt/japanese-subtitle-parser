@@ -5405,3 +5405,63 @@ mod dounimo_tests {
         assert_pattern_selected(&patterns, "どうにも");
     }
 }
+
+// ============================================================================
+// ことだし Tests
+// ============================================================================
+
+mod kotodashi_tests {
+    use super::*;
+
+    // Pattern: ことだし (since/because, listing one of multiple reasons)
+    // Data source: grammar_points_data.json["ことだし"]
+    // Structures:
+    //   - Verb + ことだし
+    //   - い-Adjective + ことだし
+    //   - な-Adjective + な + ことだし (or である + ことだし)
+    //   - Noun + の + ことだし (or である + ことだし)
+
+    #[test]
+    fn test_kotodashi_verb() {
+        // Testing structure: Verb + ことだし
+        let sentence = "せっかく君のお父さんとお母さんが来ることだし、どっかいい焼肉屋さんにでも行こう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだし");
+        assert_pattern_range(&patterns, "ことだし", 16, 22); // 来ることだし
+    }
+
+    #[test]
+    fn test_kotodashi_i_adjective() {
+        // Testing structure: い-Adjective + ことだし
+        let sentence = "天気もいいことだし、みんなで公園にでも行きましょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだし");
+        assert_pattern_range(&patterns, "ことだし", 3, 9); // いいことだし
+    }
+
+    #[test]
+    fn test_kotodashi_na_adjective() {
+        // Testing structure: な-Adjective + な + ことだし
+        let sentence = "彼が勤めている会社は有名なことだし、給料もいいんだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだし_compound");
+        assert_pattern_range(&patterns, "ことだし_compound", 10, 17); // 有名なことだし
+    }
+
+    #[test]
+    fn test_kotodashi_noun() {
+        // Testing structure: Noun + の + ことだし
+        let sentence = "彼のことだし、また遅れてくるんじゃないの。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ことだし_compound");
+        assert_pattern_range(&patterns, "ことだし_compound", 0, 6); // 彼のことだし
+    }
+}

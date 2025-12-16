@@ -11315,13 +11315,13 @@
   {
     "pattern_name": "ことだし",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ことだし is a combination of the noun こと 'thing', the auxiliary verb だ, and the conjunction particle し, used for listing ... [5 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
