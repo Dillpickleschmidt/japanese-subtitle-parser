@@ -7702,9 +7702,28 @@ pub fn nimohodogaaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にもまして
+// Pattern: にもまして (even more than, more than ever)
+// Structures: Noun + にもまして
 pub fn nimomashite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match まして as 副詞/一般
+    #[derive(Debug)]
+    struct MashiteMatcher;
+    impl Matcher for MashiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まして"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Surface("も"),
+        TokenMatcher::Custom(Arc::new(MashiteMatcher)),
+    ]
 }
 
 // Pattern: まくる

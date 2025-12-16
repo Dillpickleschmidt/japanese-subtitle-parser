@@ -9153,3 +9153,64 @@ mod nimohodogaaru_tests {
         assert_pattern_range(&patterns, "にもほどがある", 6, 17); // 失礼にもほどがあります
     }
 }
+
+// ============================================================================
+// にもまして Tests
+// ============================================================================
+
+mod nimomashite_tests {
+    use super::*;
+
+    // Pattern: にもまして (even more than, more than ever)
+    // Data source: grammar_points_data.json["にもまして"]
+    // Meaning: Implies something has surpassed a certain point, particularly when it was at a consistent level in the past
+    // Structures: Noun + にもまして, 何にもまして, 誰にもまして, いつにもまして
+
+    #[test]
+    fn test_nimomashite_noun() {
+        // Testing: structure.standard[0] - "Noun + にもまして"
+        // Example from grammar_points_data.json: "今年は去年にもまして、湿気が多い"
+        let sentence = "今年は去年にもまして、湿気が多い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもまして");
+        assert_pattern_range(&patterns, "にもまして", 3, 10); // 去年にもまして
+    }
+
+    #[test]
+    fn test_nimomashite_nani() {
+        // Testing: structure.standard[1] - "何にもまして"
+        // Example from grammar_points_data.json: "このプロジェクトを成功させることは、何にもまして大切なんだ"
+        let sentence = "このプロジェクトを成功させることは、何にもまして大切なんだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもまして");
+        assert_pattern_range(&patterns, "にもまして", 18, 24); // 何にもまして
+    }
+
+    #[test]
+    fn test_nimomashite_dare() {
+        // Testing: structure.standard[2] - "誰にもまして"
+        // Example from grammar_points_data.json: "斎藤くんは誰にもまして仕事を一生懸命やってくれる"
+        let sentence = "斎藤くんは誰にもまして仕事を一生懸命やってくれるからものすごく助かっている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもまして");
+        assert_pattern_range(&patterns, "にもまして", 5, 11); // 誰にもまして
+    }
+
+    #[test]
+    fn test_nimomashite_itsu() {
+        // Testing: structure.standard[3] - "いつにもまして"
+        // Example from grammar_points_data.json: "彼女はいつにもまして輝いている"
+        let sentence = "彼女はいつにもまして輝いている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもまして");
+        assert_pattern_range(&patterns, "にもまして", 3, 10); // いつにもまして
+    }
+}
