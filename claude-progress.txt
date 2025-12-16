@@ -1,3 +1,85 @@
+## Session 499 - 2025-12-15
+
+### Session Summary - Verb + だに Pattern Complete ✓
+**Status**: Successfully implemented Verb + だに pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3326 passing, 1 ignored (added 4 new tests)
+**Progress**: Fifteenth N1 pattern completed!
+
+**Session highlights**:
+- Implemented Verb + だに (just, merely, even) - 4 tests covering various verbs
+- Simple but elegant pattern: Verb[dictionary form] + だに (助詞/副助詞)
+- Formal adverbial particle similar to さえ/すら (even)
+- Often used with verbs expressing mental actions (考える, 思い出す, 見る, 想像する)
+- All tests use realistic, subtitle-quality sentences from actual grammar examples
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: Verb + だに (just, merely, even)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Verb[dictionary form] + だに
+
+**Implementation details**:
+2 custom matchers for precise token matching:
+1. `DictionaryFormVerbMatcher` - Matches verbs in 基本形 (dictionary form)
+2. `DaniParticleMatcher` - Matches だに (助詞/副助詞)
+
+**Key implementation insight**:
+だに is a formal adverbial particle that follows verbs in their dictionary form. It's similar to さえ and すら (even), but more commonly found in classical literature. It presents (A) as a 'minimum' or 'light' example, implying that anything greater than (A) would be more than can be handled, imagined, etc.
+
+The pattern is straightforward: a verb in 基本形 followed by the particle だに (助詞/副助詞).
+
+**Tokenization patterns**:
+All tests show consistent tokenization:
+- 考える (動詞/自立, 一段, 基本形) + だに (助詞/副助詞)
+- 思い出す (動詞/自立, 五段・サ行, 基本形) + だに (助詞/副助詞)
+- 見る (動詞/自立, 一段, 基本形) + だに (助詞/副助詞)
+- 想像する (動詞/自立, サ変・スル, 基本形) + だに (助詞/副助詞)
+
+**Tests created**: 4 tests
+1. `test_verb_dani_think` - 考えるだに (range 24-29)
+2. `test_verb_dani_remember` - 思い出すだに (range 5-11)
+3. `test_verb_dani_look` - 見るだに (range 13-17)
+4. `test_verb_dani_imagine` - 想像するだに (range 10-16)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented verb_dani() function (31 lines with 2 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 comprehensive tests in verb_dani_tests module
+- `feature_list.json` - Updated Verb + だに to complete status
+
+**Grammar meaning**:
+だに is an adverbial particle that shares a similar meaning to さえ and すら 'even', but is more commonly found in classical literature. It presents (A) as 'minimum' or 'light' examples, and therefore implies that anything greater than (A) would be more than can be handled, imagined, etc. In this use, it is often translated as 'just (A)', or 'merely (A)'.
+
+This is a formal structure, and will be seen far more often in literature than it will be spoken. Despite this, it is actually quite common in anime and manga when characters are being dramatic.
+
+As (A) presents a 'minimum', it will often be a word which expresses something that depicts the difference between reality and fantasy. For example, if (A) was 想像するだに 'even in my imagination'. The 'minimum' is the imagination, for which the opposite end of the spectrum would be 'in reality'.
+
+Common translations:
+- "just (A)"
+- "merely (A)"
+- "even (A)" (in some contexts)
+
+**Pattern range note**:
+The pattern captures the full grammatical construction:
+- Verb + だに: Full phrase from verb to だに
+
+Examples:
+- 考えるだに (just thinking about)
+- 思い出すだに (just remembering)
+- 見るだに (just looking at)
+- 想像するだに (just imagining)
+
+---
+
 ## Session 498 - 2025-12-15
 
 ### Session Summary - Two N1 Patterns Complete ✓
