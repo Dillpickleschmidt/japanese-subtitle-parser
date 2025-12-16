@@ -8309,3 +8309,74 @@ mod nitarinai_tests {
         assert_pattern_range(&patterns, "に足りない", 7, 14); // 取るにたりない
     }
 }
+
+// ============================================================================
+// べからず Tests
+// ============================================================================
+
+mod bekarazu_tests {
+    use super::*;
+
+    // Pattern: べからず (must not, ought not to)
+    // Data source: grammar_points_data.json["べからず"]
+    // Testing structure variants:
+    //   standard[0]: Verb + べからず
+    //   standard[2]: する → す + べからず (exception)
+    //   standard[3]: Verb + べからざる + Noun
+
+    #[test]
+    fn test_bekarazu_basic() {
+        // Testing: Verb + べからず (basic form)
+        // Classic proverb: 初心忘れるべからず (Do not forget beginner's humility)
+        let sentence = "初心忘れるべからず。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べからず");
+        assert_pattern_range(&patterns, "べからず", 2, 9); // 忘れるべからず
+    }
+
+    #[test]
+    fn test_bekarazu_facility() {
+        // Testing: Verb + べからず (prohibition sign)
+        let sentence = "この施設内ではスケートボードなどのことをするべからず。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べからず");
+        assert_pattern_range(&patterns, "べからず", 20, 26); // するべからず
+    }
+
+    #[test]
+    fn test_bekarazaru_yurusu() {
+        // Testing: 許す + べからざる (set expression - unforgivable)
+        let sentence = "配達員を装って玄関のドアを開けさせるのは、許すべからざる行為だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べからず");
+        assert_pattern_range(&patterns, "べからず", 21, 28); // 許すべからざる
+    }
+
+    #[test]
+    fn test_bekarazaru_suu() {
+        // Testing: 吸う + べからざる (must not smoke)
+        let sentence = "吸うべからざる場所でタバコを吸っているのを見られたら、罰金だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べからず");
+        assert_pattern_range(&patterns, "べからず", 0, 7); // 吸うべからざる
+    }
+
+    #[test]
+    fn test_bekarazaru_kaku() {
+        // Testing: 欠く + べからざる (set expression - indispensable)
+        let sentence = "水は人間にとって欠くべからざる資源である。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べからず");
+        assert_pattern_range(&patterns, "べからず", 8, 15); // 欠くべからざる
+    }
+}

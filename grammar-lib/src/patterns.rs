@@ -7445,7 +7445,7 @@ declare_patterns! {
     Bekarazu {
         name: "べからず",
         matcher_fn: crate::matchers::n1::bekarazu,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

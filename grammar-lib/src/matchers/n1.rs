@@ -7238,9 +7238,63 @@ pub fn nitarinai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: べからず
+// Pattern: べからず (must not, ought not to)
+// Structures: Verb[基本形] + べから + ず/ざる (+ Noun)
 pub fn bekarazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match べから (助動詞, base=べし, 未然形)
+    #[derive(Debug)]
+    struct BekaraMatcher;
+    impl Matcher for BekaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "べから"
+                && token.base_form == "べし"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ず (助動詞, base=ぬ, 連用ニ接続)
+    #[derive(Debug)]
+    struct ZuMatcher;
+    impl Matcher for ZuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用ニ接続")
+        }
+    }
+
+    // Match ざる (助動詞, base=ぬ, 体言接続)
+    #[derive(Debug)]
+    struct ZaruMatcher;
+    impl Matcher for ZaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ざる"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match ず or ざる
+    #[derive(Debug)]
+    struct ZuOrZaruMatcher;
+    impl Matcher for ZuOrZaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            let zu_matcher = ZuMatcher;
+            let zaru_matcher = ZaruMatcher;
+            zu_matcher.matches(token) || zaru_matcher.matches(token)
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("基本形"),
+        TokenMatcher::Custom(Arc::new(BekaraMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuOrZaruMatcher)),
+    ]
 }
 
 // Pattern: んばかりに
