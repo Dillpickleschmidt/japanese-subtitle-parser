@@ -5637,3 +5637,124 @@ All tests use realistic legal/contractual sentences from grammar_points_data.jso
 - を限りに - "Until/as of" pattern (2 std, 0 pol)
 
 ================================================================================
+
+================================================================================
+
+## Session 576 Continued - 2025-12-16
+
+### Session Summary - ないでもない Complete ✓
+**Status**: Implemented 1 more N1 pattern successfully  
+**Patterns completed this session**: 2 (ものとする, ないでもない - both N1, priority 5)
+**Total tests**: 3695 passing (6 new tests total, no regressions)
+**Progress**: Ninetieth N1 pattern completed!
+
+**Session highlights**:
+- Implemented ないでもない (kind of / might / not not)
+- Double negative pattern expressing neither confirmation nor denial
+- Handles three variants: でもない, ではない, ものでもない
+- All structure variants tested with realistic subtitle-quality sentences
+
+### ✓ Completed: ないでもない (kind of / might / not not)
+
+**Grammar Point**: ないでもない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb[ない] + で + も + ない (でもない standard form)
+2. Verb[ない] + で + は + ない (ではない variant)
+3. Verb[ない] + もの + で + も + ない (ものでもない variant)
+
+**Meaning**:
+- "Kind of (A)" / "Might (A)" / "A little (A)"
+- Literal: "to not not be (A)" (double negative)
+- Expresses neither confirming nor denying something
+- Used when speaker cannot fully confirm or deny (A)
+- Also used to avoid directly disagreeing with someone
+- Softens the statement, making it less assertive
+- Completely interchangeable with なくもない (less common)
+
+**Tokenization**:
+でもない form:
+- ない (助動詞/連用デ接続, base=ない) - negative after verb
+- で (助詞/接続助詞, base=で) - conjunctive particle
+- も (助詞/係助詞) - binding particle "even"
+- ない (形容詞/基本形, base=ない) - adjective "not"
+
+ではない form:
+- ない (形容詞/基本形, base=ない) - adjective
+- で (助動詞/特殊・ダ/連用形, base=だ) - copula
+- は (助詞/係助詞) - topic particle
+- ない (助動詞/特殊・ナイ/基本形, base=ない) - auxiliary
+
+ものでもない form:
+- ない (助動詞/特殊・ナイ/基本形, base=ない) - negative after verb
+- もの (名詞/非自立/一般) - nominalizer
+- で (助動詞/特殊・ダ/連用形, base=だ) - copula
+- も (助詞/係助詞) - binding particle
+- ない (形容詞/基本形, base=ない) - adjective
+
+**Implementation**:
+Created two separate matcher functions:
+1. naidemonai() - Matches でもない and ものでもない variants
+   - NaiAuxiliaryMatcher - Matches ない as auxiliary or adjective
+   - MonoNounMatcher (optional) - Matches もの as 名詞/非自立
+   - DeCopulaMatcher - Matches で (base=だ or で)
+   - MoParticleMatcher - Matches も as 助詞/係助詞
+   - NaiFinalMatcher - Matches final ない
+
+2. naidewanai() - Matches ではない variant
+   - NaiMatcher - Matches ない (adjective or auxiliary)
+   - DeCopulaMatcher - Matches で (base=だ)
+   - WaParticleMatcher - Matches は as 助詞/係助詞
+   - NaiMatcher - Matches final ない
+
+**Tests Written: 3 tests (all passing)**
+1. test_naidemonai_verb_negative - ないでもない (10, 16)
+2. test_naidemonai_dewa_variant - ないではない (22, 28)
+3. test_naidemonai_mono_variant - ないものでもない (10, 18)
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures ない + construction only:
+- ないでもない (10, 16) - 6 characters (standard form)
+- ないではない (22, 28) - 6 characters (では variant)
+- ないものでもない (10, 18) - 8 characters (もの variant)
+
+**Key Notes**:
+- Pattern captures only the ない + でもない construction, not the preceding verb
+- This is correct because the grammar point focuses on the double negative structure
+- Both でもない and ではない variants use same pattern name in declarations
+- Optional もの matcher allows detection of ないものでもない variant
+- Related pattern なくもない is completely interchangeable but less common
+- Double negative softens assertion - polite way to express slight agreement/possibility
+- Priority updated from 1 to 5 in patterns.rs for both variants
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented naidemonai() and naidewanai() with custom matchers
+- grammar-lib/src/patterns.rs - Added both pattern declarations with priority 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests in naidemonai_tests module
+- feature_list.json - Updated ないでもない to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (でもない, ではない, ものでもない)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3695 total, +3 new)
+✓ Clean git history
+
+**Session Total**: 2 N1 patterns completed (ものとする + ないでもない)
+**Session Tests**: 6 new tests added (3 each)
+**Total Test Count**: 3695 passing
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- もさることながら - "Not only but also" pattern (1 std, 0 pol)
+- ものと思っていた - "Thought that" pattern (4 std, 4 pol)
+- でなくてなんだろう - Rhetorical "if not A what else" pattern (2 std, 0 pol)
+- ただ〜のみ - "Only/merely" pattern (4 std, 4 pol)
+- ～てやる - "Do for someone" pattern (1 std, 1 pol)
+
+================================================================================
