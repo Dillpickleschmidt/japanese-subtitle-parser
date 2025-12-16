@@ -3275,3 +3275,41 @@ Next Priorities (N1 patterns without tests, Priority 5):
 - ぐらいなら - "Rather than" pattern
 
 ================================================================================
+
+## Session 552 (Continued) - 2025-12-16
+
+### てやまない Complete ✓
+**Status**: Implemented てやまない pattern successfully
+**Patterns completed this session**: 2 (がん～ and てやまない - both N1, priority 5)
+**Total tests**: 3580 passing (6 new tests total, no regressions)
+
+**Session Summary**:
+- Patterns completed: 2 (がん～ and てやまない)
+- New tests added: 6 (3 for がん～, 3 for てやまない)
+- Total tests passing: 3580 (up from 3574 at session start)
+- No regressions
+- Both patterns properly documented and committed
+- Clean codebase state
+
+**がん～ Pattern**:
+- Colloquial intensifier meaning "majorly/completely/furiously"
+- Pattern: ガン (katakana noun) + Verb/Noun
+- Examples: ガン見, ガン無視, ガン切れ
+
+**てやまない Pattern**:
+- Formal expression meaning "never cease to, earnestly"
+- Pattern: Verb[て] + やまない or Verb[て] + やみません (polite)
+- Used exclusively with feelings/emotions (not temporary ones)
+- Examples: 愛してやまない, 祈ってやみません, 後悔してやまない
+
+**Next Priorities** (N1 patterns without tests, Priority 5):
+- ぐらいなら - "Rather than" pattern
+- まま(に)1 - "Just as, ままに" pattern
+- かれ〜かれ - "Whether... or..." pattern
+- なくして(は) - "Without" pattern
+- のなんのって - "Extremely" pattern
+- にかかっている - "Depends on" pattern
+
+**Note**: たら〜で pattern was explored but is too complex for current matcher framework (requires comparing base_forms of repeating words across tokens).
+
+================================================================================
