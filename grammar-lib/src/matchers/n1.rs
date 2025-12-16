@@ -8253,9 +8253,42 @@ pub fn sazo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(SazoMatcher))]
 }
 
-// Pattern: ときたら
+// Pattern: ときたら (when it comes to / that darn)
+// Structures: Noun + ときたら
+// Note: Written in kana (not と来たら). Kagome tokenizes as とく + たら
 pub fn tokitara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches とき (tokenized as とく verb in 連用形)
+    #[derive(Debug)]
+    struct TokiMatcher;
+    impl super::Matcher for TokiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "とき"
+                && token.base_form == "とく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Matches たら (仮定形 of た auxiliary)
+    #[derive(Debug)]
+    struct TaraMatcher;
+    impl super::Matcher for TaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),  // Preceding noun
+        TokenMatcher::Custom(Arc::new(TokiMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraMatcher)),
+    ]
 }
 
 // Pattern: びる

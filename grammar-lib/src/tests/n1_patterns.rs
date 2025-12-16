@@ -9601,3 +9601,68 @@ mod toareba_tests {
         assert_pattern_range(&patterns, "とあれば", 3, 9); // いいとあれば
     }
 }
+
+// ============================================================================
+// ときたら Tests
+// ============================================================================
+
+mod tokitara_tests {
+    use super::*;
+
+    // Pattern: ときたら (when it comes to / that darn)
+    // Data source: grammar_points_data.json["ときたら"]
+    // Testing: structure.standard[0] - "Noun + ときたら"
+    //
+    // Meaning: Casually expressing mild frustration or highlighting something about (A)
+    // Components: と (case-marking particle) + 来たら (conditional of 来る)
+    // Almost exclusively written in kana (ときたら, not と来たら)
+    // Can express frustration or just highlight something "to be expected"
+
+    #[test]
+    fn test_tokitara_son_complaint() {
+        // Testing: Noun + ときたら (expressing frustration)
+        // Based on: "うちの息子ときたら、就職もしないで家でダラダラしている"
+        let sentence = "うちの息子ときたら、就職もしないで家でダラダラしている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ときたら");
+        assert_pattern_range(&patterns, "ときたら", 3, 9); // 息子ときたら
+    }
+
+    #[test]
+    fn test_tokitara_brother_complaint() {
+        // Testing: Noun + ときたら (expressing frustration)
+        // Based on: "うちの弟ときたら、朝から文句ばかり言ってくる"
+        let sentence = "うちの弟ときたら、朝から文句ばかり言ってくるから本当にうざい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ときたら");
+        assert_pattern_range(&patterns, "ときたら", 3, 8); // 弟ときたら
+    }
+
+    #[test]
+    fn test_tokitara_boss_complaint() {
+        // Testing: Noun + ときたら (expressing frustration)
+        // Based on: "私の上司ときたら、自分が仕事できないくせに..."
+        let sentence = "私の上司ときたら、自分が仕事できないくせに少しでもミスをしたらものすごく怒る。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ときたら");
+        assert_pattern_range(&patterns, "ときたら", 2, 8); // 上司ときたら
+    }
+
+    #[test]
+    fn test_tokitara_dog_expected() {
+        // Testing: Noun + ときたら (highlighting what's to be expected)
+        // Based on: "うちの犬ときたら、家にお客さんが来るとその人に飛びつく"
+        let sentence = "うちの犬ときたら、家にお客さんが来るとその人に飛びつくから困る。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ときたら");
+        assert_pattern_range(&patterns, "ときたら", 3, 8); // 犬ときたら
+    }
+}
