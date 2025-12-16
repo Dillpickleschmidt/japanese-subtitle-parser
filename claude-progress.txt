@@ -1,3 +1,109 @@
+## Session 606 - 2025-12-16
+
+### Session Summary - には及ばない① Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (には及ばない① - N1, priority 5)
+**Total tests**: 3867 passing (5 new tests, no regressions)
+**Progress**: One hundred and nineteenth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented には及ばない① (no need to / unnecessary)
+- Polite expression for indicating something is unnecessary
+- Handles both casual (及ばない) and polite (及びません) variants
+- Pattern works with nouns and verbs, often with お/ご prefixes for politeness
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: には及ばない① (no need to / unnecessary)
+
+**Grammar Point**: には及ばない①
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Noun + には及ばない (standard)
+2. Verb[dictionary] + には及ばない
+3. (お/ご) + Noun + には及ばない (polite prefix)
+4. Polite forms: には及びません
+
+**Meaning**:
+- "There is no need to (A)" / "(A) is unnecessary"
+- Combination of に (case-marking particle) + は (topic particle) + 及ばない (negated form of 及ぶ "to reach")
+- Literal: "It does not extend to (A)"
+- Used after nouns or verbs in dictionary form
+- Often preceded by お or ご for politeness in formal situations
+- Used in polite speech to decline offers or indicate something isn't necessary
+
+**Tokenization pattern**:
+- Preceding word (Noun or Verb in basic form)
+- に (助詞/格助詞/一般)
+- は (助詞/係助詞)
+- 及び or 及ば (動詞/自立/五段・バ行, base=及ぶ) - 連用形 or 未然形
+- ない (助動詞, 特殊・ナイ) OR ませ (助動詞, 特殊・マス, 未然形)
+- Optional: ん (助動詞, 不変化型) for polite negative
+
+**Implementation**:
+Created 5 custom matchers for precise pattern matching:
+1. NiMatcher - Matches に as 助詞/格助詞/一般
+2. WaMatcher - Matches は as 助詞/係助詞
+3. OyobuMatcher - Matches 及ぶ verb (及び in 連用形 or 及ば in 未然形)
+4. NaiMaseMatcher - Matches ない (casual negative) or ませ (polite negative prep)
+5. NMatcher - Optional ん for polite negative ending (ません)
+
+Pattern matcher sequence:
+- TokenMatcher::Any (noun/verb)
+- NiMatcher (に)
+- WaMatcher (は)
+- OyobuMatcher (及び/及ば)
+- NaiMaseMatcher (ない/ませ)
+- Optional(NMatcher) (ん for ません)
+
+**Tests Written: 5 tests (all passing)**
+1. test_niwaoyobanai_noun_basic - 心配には及ばない (0, 8) - basic noun + pattern
+2. test_niwaoyobanai_verb_dictionary - いただくには及びません (8, 19) - verb + polite form
+3. test_niwaoyobanai_go_prefix - 心配には及びません (1, 10) - ご prefix (starts after prefix)
+4. test_niwaoyobanai_o_prefix - お礼には及びません (0, 9) - お prefix (included in pattern)
+5. test_niwaoyobanai_explanation - 説明には及びません (15, 24) - する-verb + polite
+
+**Character Ranges**: Pattern captures preceding word + には及ばない/には及びません:
+- 心配には及ばない (0, 8) - 8 characters (noun + pattern, casual)
+- いただくには及びません (8, 19) - 11 characters (verb + pattern, polite)
+- 心配には及びません (1, 10) - 9 characters (after ご prefix)
+- お礼には及びません (0, 9) - 9 characters (includes お prefix)
+- 説明には及びません (15, 24) - 9 characters (noun + pattern, polite)
+
+**Key Notes**:
+- Pattern includes the preceding word (full grammatical construction)
+- Handles both casual (ない) and polite (ません) endings
+- Optional ん matcher allows matching both ませ and ません
+- Often used with お/ご prefixes in polite contexts
+- The ① variant means "no need to" (polite decline)
+- Different from ② variant which means "cannot compare to" (extent comparison)
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nihaoyobanai_u2460() with 5 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in niwaoyobanai_tests module
+- feature_list.json - Updated には及ばない① to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (noun, verb, with prefixes, casual and polite)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3862 + 5 = 3867 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- に即して - "In accordance with" pattern
+- ないまでも - "Even if not" pattern
+- をよそに - "Ignoring/disregarding" pattern
+- に限ったことではない - "Not limited to" pattern
+- とは比べものにならない - "Cannot be compared to" pattern
+
+================================================================================
+
 ## Session 605 - 2025-12-16
 
 ### Session Summary - を限りに Complete ✓
