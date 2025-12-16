@@ -10025,3 +10025,41 @@ Status: Complete - all tests pass, no regressions, clean commit
 Next priorities: Continue with N1 priority 5 patterns (nihaoyobanai 1&2, nisokushite, naimademo, etc.)
 
 ================================================================================
+## Session 613 - 2025-12-16
+
+### Session Summary - まじき Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (まじき - N1, priority 5)
+**Total tests**: 3902 passing (5 new tests, no regressions)
+**Progress**: One hundred and twenty-sixth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented まじき (must not / unbecoming of)
+- Classical auxiliary verb pattern in attributive form (体言接続)
+- Handles three structure variants: にあるまじき, としてあるまじき, and 許すまじき
+- Pattern uses optional matchers to handle both particle variants (に/として)
+- All structure variants tested with realistic subtitle sentences
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented majiki() with 7 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in majiki_tests module
+- feature_list.json - Updated まじき to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (にある, としてある, ゆるす)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3897 + 5 = 3902 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- に恥じない - "Not ashamed of / worthy of" pattern
+- に言わせれば・に言わせると・に言わせたら - "If you ask (person)" pattern
+- ったら・といったら - Complex emphatic pattern
+- には及ばない② - "Does not reach / is inferior to" pattern
+
+================================================================================
+
