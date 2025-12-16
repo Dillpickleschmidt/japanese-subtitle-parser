@@ -9381,9 +9381,87 @@ pub fn zujimai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に言わせれば・に言わせると・に言わせたら
+// Pattern: に言わせれば・に言わせると・に言わせたら (if you ask / according to)
+// Structures: Noun + に/から + 言わせれば/言わせると/言わせたら
 pub fn niiwasereba_u30fb_niiwaseruto_u30fb_niiwasetara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に or から (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct NiOrKaraMatcher;
+    impl Matcher for NiOrKaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "から")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match いわ (動詞/自立, base=いう, 未然形)
+    #[derive(Debug)]
+    struct IwaMatcher;
+    impl Matcher for IwaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いわ"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match せれ (仮定形 for ば), せる (基本形 for と), or せ (連用形 for たら)
+    // All are 動詞/接尾, base=せる
+    #[derive(Debug)]
+    struct SeMatcher;
+    impl Matcher for SeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "せれ" || token.surface == "せる" || token.surface == "せ")
+                && token.base_form == "せる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match ば (助詞/接続助詞), と (助詞/接続助詞), or たら (助動詞, base=た, 仮定形)
+    #[derive(Debug)]
+    struct BaOrToOrTaraMatcher;
+    impl Matcher for BaOrToOrTaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ば
+            if token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            // Match と
+            if token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            // Match たら
+            if token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiOrKaraMatcher)),
+        TokenMatcher::Custom(Arc::new(IwaMatcher)),
+        TokenMatcher::Custom(Arc::new(SeMatcher)),
+        TokenMatcher::Custom(Arc::new(BaOrToOrTaraMatcher)),
+    ]
 }
 
 // Pattern: ったら・といったら

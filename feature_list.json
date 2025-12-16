@@ -12421,13 +12421,13 @@
   {
     "pattern_name": "に言わせれば・に言わせると・に言わせたら",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に言（い）わせれば is a structure that will be attached to nouns, in order to indicate a person or group that is giving a stro... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

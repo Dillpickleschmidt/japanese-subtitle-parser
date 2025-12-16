@@ -10839,3 +10839,88 @@ mod tohaiumonono_tests {
     //     assert_pattern_range(&patterns, "とは言うものの", 0, 7); // とはいうものの
     // }
 }
+
+// に言わせれば・に言わせると・に言わせたら Tests
+mod niiwasereba_tests {
+    use super::*;
+
+    // Pattern: に言わせれば・に言わせると・に言わせたら (if you ask / according to)
+    // Data source: grammar_points_data.json["に言わせれば・に言わせると・に言わせたら"]
+    // Testing: structure.standard[0] - "Noun + に言わせれば"
+    //
+    // Other structures to test:
+    //   - standard[1]: に言わせると, に言わせたら (と/たら variants)
+    //
+    // Note: Pattern can also use から instead of に occasionally
+
+    #[test]
+    fn test_niiwasereba_watashi() {
+        // Testing: standard[0] - "私にいわせれば"
+        // Sentence from grammar_points_data.json
+        let sentence = "私にいわせれば５キロを２５分で走るのは簡単だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 7); // 私にいわせれば
+    }
+
+    #[test]
+    fn test_niiwasereba_kare() {
+        // Testing: standard[0] - "彼にいわせれば"
+        // Sentence from grammar_points_data.json
+        let sentence = "私はあのパーソナルトレーナーは厳しすぎると思ったが、彼にいわせれば優しすぎるらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 26, 33); // 彼にいわせれば
+    }
+
+    #[test]
+    fn test_niiwasereba_senmonka() {
+        // Testing: standard[0] - "専門家にいわせれば"
+        // Sentence from grammar_points_data.json
+        // Note: Pattern matches "家にいわせれば" (家 from 専門家)
+        let sentence = "専門家にいわせれば、もっと早い対応をするべきだったそうです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 2, 9); // 家にいわせれば
+    }
+
+    #[test]
+    fn test_karaiiwasereba_variant() {
+        // Testing: から variant instead of に
+        // Sentence from grammar_points_data.json
+        let sentence = "私からいわせれば、なんでそんなことして許されると思ったのかがわからない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 8); // 私からいわせれば
+    }
+
+    #[test]
+    fn test_niiwaseruto_variant() {
+        // Testing: standard[1] - "に言わせると"
+        let sentence = "母にいわせると、最近の若者は我慢が足りないらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 7); // 母にいわせると
+    }
+
+    #[test]
+    fn test_niiwasetara_variant() {
+        // Testing: standard[1] - "に言わせたら"
+        let sentence = "先生にいわせたら、この問題は簡単だそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 8); // 先生にいわせたら
+    }
+}
