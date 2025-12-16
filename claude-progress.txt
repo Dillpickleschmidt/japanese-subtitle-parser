@@ -1,9 +1,178 @@
+## Session 544 - 2025-12-16
+
+### Session Summary - という1 Marked Undetectable + にとどまらず Complete ✓
+**Status**: Marked という1 as undetectable (architectural limitation) + implemented にとどまらず pattern
+**Patterns completed**: 1 (にとどまらず - N1, priority 5)
+**Patterns marked undetectable**: 1 (という1 - requires cross-token validation)
+**Total tests**: 3540 passing, 1 ignored (net: removed 4 という1 tests, added 4 にとどまらず tests)
+**Progress**: Sixty-first N1 pattern completed!
+
+**Session highlights**:
+- Investigated という1 pattern architecture requirements
+- Determined という1 cannot be implemented with current TokenMatcher design (requires comparing token 0 and token 2)
+- Documented という1 as undetectable with clear technical explanation
+- Implemented にとどまらず pattern (not limited to, not stopping at)
+- 3-token pattern: に + とどまら(未然形) + ず
+- Handles verb and noun structures
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3540 tests total)
+
+### ✓ Completed: にとどまらず (not limited to, not stopping at)
+
+**Grammar Point**: にとどまらず
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb + にとどまらず
+2. Noun + (である) + にとどまらず
+3. な-Adjective + である + にとどまらず
+
+**Meaning**:
+- "Not limited to (A)" / "Not stopping at (A)"
+- Formal construction showing something extends beyond (A)
+- Used when (B) expands outward from the pre-existing boundaries of (A)
+- Classical auxiliary verb ず (negative form)
+
+**Tokenization**:
+- に: 助詞/格助詞/一般 (case particle)
+- とどまら: 動詞/自立, base=とどまる, 未然形 (verb in irrealis form)
+- ず: 助動詞, base=ぬ, 連用ニ接続 (classical negative auxiliary)
+
+**Implementation**:
+- Pattern: に + とどまら + ず
+- Custom matchers:
+  - NiParticleMatcher: Matches に as 助詞/格助詞
+  - TodomaruVerbMatcher: Matches とどまる in 未然形
+  - ZuAuxiliaryMatcher: Matches ず (助動詞, base=ぬ)
+- Simple 3-token pattern
+- Priority 5 (overrides generic ずに pattern which has priority 2.3)
+
+**Tests Written: 4 tests (all passing)**
+1. `test_nitodomarazu_verb` - 管理するにとどまらず (12, 18) - not only manages
+2. `test_nitodomarazu_verb_teach` - 行うにとどまらず (8, 14) - not only teach
+3. `test_nitodomarazu_noun` - 日本にとどまらず (5, 11) - not only in Japan
+4. `test_nitodomarazu_noun_children` - 子供にとどまらず (7, 13) - not limited to children
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures に + とどまらず:
+- Verb case 1: にとどまらず (12, 18) - 6 characters
+- Verb case 2: にとどまらず (8, 14) - 6 characters
+- Noun case 1: にとどまらず (5, 11) - 6 characters
+- Noun case 2: にとどまらず (7, 13) - 6 characters
+
+**Key Notes**:
+- Classical negative ず (not modern ない) is characteristic of formal/literary grammar
+- The particle に marks the boundary or extent being exceeded
+- とどまる literally means "to remain" or "to be limited to"
+- Common in formal contexts: business, academic, news
+- (B) must be something that logically extends from (A), not unrelated
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented nitodomarazu() matcher with 3 custom matchers
+- `grammar-lib/src/patterns.rs` - Updated Nitodomarazu priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in nitodomarazu_tests module
+- `feature_list.json` - Updated にとどまらず to complete status
+
+---
+
+### ⚠️ Marked Undetectable: という1 (every single A)
+
+**Grammar Point**: という1
+**JLPT Level**: N1
+**Priority**: 5 (not implemented)
+**Structure**: Noun (A) + という + Noun (A) - where BOTH nouns must be IDENTICAL
+
+**Undetectable Reason**:
+This pattern requires **cross-token validation** (checking if token[0].surface == token[2].surface).
+The current TokenMatcher architecture only allows matchers to examine one token at a time via the
+`Matcher` trait's `matches(&self, token: &KagomeToken)` method.
+
+**Technical Details**:
+- The `match_pattern_at()` function processes tokens sequentially
+- Each TokenMatcher only receives the current token being matched
+- No mechanism exists to compare tokens at different positions in the pattern
+- Implementing this would require:
+  1. Adding a new TokenMatcher::MatchesPrevious { offset: isize } variant
+  2. Modifying match_pattern_at() to track previously matched tokens
+  3. Extending token_matches() to accept match history
+  4. This represents a significant architectural change
+
+**Workaround**:
+- The basic という pattern (priority 1) already matches "Noun + という + Noun" structures
+- Users can see という detected at the correct range
+- They should manually check if both nouns are identical to determine meaning:
+  - Identical nouns → という1 (every single A)
+  - Different nouns → basic という (A called B)
+
+**Examples that CANNOT be distinguished**:
+- 床という床 = "every single floor" (という detected, but not という1 specifically)
+- 電柱という電柱 = "every single telephone pole"
+- 道という道 = "every single road"
+- 今日という今日 = "today of all days"
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Updated toiu1() comment with technical explanation
+- `grammar-lib/src/tests/n1_patterns.rs` - Replaced tests with detailed undetectable comment
+- `feature_list.json` - Updated という1 category to "skip" with detailed skip_reason
+
+---
+
+### Session Workflow Summary
+
+**Steps Completed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh (3540 tests passing)
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Analyzed という1 WIP from previous session
+5. ✓ Investigated TokenMatcher architecture for cross-token validation
+6. ✓ Determined という1 is architecturally undetectable
+7. ✓ Documented という1 as undetectable with technical explanation
+8. ✓ Removed という1 test stubs, marked pattern as skip
+9. ✓ Selected next highest priority N1 pattern (にとどまらず, priority 5)
+10. ✓ Reviewed grammar_points_data.json for structures
+11. ✓ Found existing nitodomarazu() stub in n1.rs
+12. ✓ Wrote all 4 tests first with print_debug()
+13. ✓ Analyzed tokenization output for all variants
+14. ✓ Implemented matcher based on actual tokens (3-token pattern)
+15. ✓ Updated priority in patterns.rs to 5
+16. ✓ Verified all tests detect the pattern correctly (confidence 7.0)
+17. ✓ Removed print_debug() and added assertions
+18. ✓ Verified no regressions (3540 tests passing)
+19. ✓ Updated feature_list.json for both patterns
+20. ✓ Committed changes with clear messages
+21. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All にとどまらず structure variants tested (verb and noun forms)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct pattern ranges verified (character positions)
+- ✓ No print_debug() in final committed tests
+- ✓ All existing tests still pass (no regressions)
+- ✓ という1 properly documented as undetectable with technical reasoning
+- ✓ Clean git history with descriptive commit messages
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- と思いきや - "Contrary to expectations" pattern
+- どうにも - "No matter how" pattern
+- ことだし - "Since, because" pattern
+- がん〜 - Classical auxiliary pattern (appears unusual, may be typo?)
+- か否か - "Whether or not" pattern
+- たら〜で - Repeating word pattern
+- べくして - Classical べし form
+
+**Final Status**: Session completed successfully with 1 pattern fully implemented (にとどまらず) and 1 pattern properly documented as undetectable (という1). Codebase left in clean, compilable state with all tests passing.
+
+---
+
 ## Session 543 - 2025-12-16
 
-### Session Summary - を踏まえて Pattern Complete ✓ + という1 WIP
+### Session Summary - を踏まえて Pattern Complete ✓ + という1 WIP (SUPERSEDED)
 **Status**: Successfully implemented を踏まえて pattern + started という1 pattern
 **Patterns completed**: 1 (を踏まえて - N1, priority 5)
-**Patterns in progress**: 1 (という1 - N1, priority 5, WIP)
+**Patterns in progress**: 1 (という1 - N1, priority 5, WIP - LATER MARKED UNDETECTABLE)
 **Total tests**: 3540 passing, 1 ignored (added 8 new tests: 4 complete, 4 WIP)
 **Progress**: Sixtieth N1 pattern completed!
 
