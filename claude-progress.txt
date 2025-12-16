@@ -1,17 +1,18 @@
 ## Session 506 - 2025-12-15
 
-### Session Summary - とはいえ Pattern Complete ✓
-**Status**: Successfully implemented とはいえ pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3370 passing, 1 ignored (added 5 new tests)
-**Progress**: Twenty-third N1 pattern completed!
+### Session Summary - Two N1 Patterns Complete ✓
+**Status**: Successfully implemented とはいえ and ならでは patterns
+**Patterns completed**: 2 (N1, priority 5)
+**Total tests**: 3373 passing, 1 ignored (added 9 new tests)
+**Progress**: Twenty-third and twenty-fourth N1 patterns completed!
 
 **Session highlights**:
 - Implemented とはいえ pattern (although, be that as it may)
-- Pattern matches と + は + いえ (quotation particle + topic particle + imperative form of いう)
-- Works with verbs, い-adjectives, な-adjectives, nouns (with/without だ), and sentence-initial position
-- All 5 tests passing with proper range assertions
-- No regressions in test suite (3370 tests total)
+- Implemented ならでは pattern (unique to, impossible if not)
+- とはいえ matches と + は + いえ (quotation particle + topic particle + imperative form of いう)
+- ならでは tokenizes as single noun suffix (名詞/接尾/一般)
+- All 9 tests passing with proper range assertions (5 for とはいえ, 4 for ならでは)
+- No regressions in test suite (3373 tests total)
 
 **Key Implementation Notes**:
 - Pattern structure: と (格助詞/引用) + は (係助詞) + いえ (命令ｅ form of いう)
@@ -57,9 +58,47 @@ All tests use realistic subtitle-quality sentences and include proper range asse
 - `とはいえ` (9, 13) in sentence-initial context
 
 **Files Modified:**
-- `grammar-lib/src/matchers/n1.rs` - Implemented tohaie() matcher
-- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 tests in tohaie_tests module
-- `feature_list.json` - Updated とはいえ status to complete
+- `grammar-lib/src/matchers/n1.rs` - Implemented tohaie() and naradeha() matchers
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 tests in tohaie_tests module, 4 tests in naradeha_tests module
+- `feature_list.json` - Updated とはいえ and ならでは status to complete
+
+### ✓ Completed: ならでは (unique to, impossible if not)
+
+**Grammar Point**: ならでは
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+- Noun + ならでは + の + Noun (most common)
+- Noun + ならでは + だ/です
+- Noun + ならでは + Verb (less common)
+
+**Implementation**:
+- Matcher: `Noun + ならでは(名詞/接尾/一般)`
+- ならでは tokenizes as a single token (noun suffix)
+- Custom matcher checks: surface="ならでは", base_form="ならでは", pos=名詞/接尾
+- Simple two-token pattern works across all usage contexts
+
+**Tests Written: 4 tests**
+1. `test_naradeha_no_noun` - 名古屋ならではの (Noun + の + Noun structure)
+2. `test_naradeha_da` - さんならではだ (Noun + だ structure)
+3. `test_naradeha_desu` - 地域ならではです (Noun + です structure - polite)
+4. `test_naradeha_verb` - 都会ならではだ (with verb context)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures Noun + ならでは:
+- `名古屋ならでは` (5, 12) - place name + ならでは
+- `さんならでは` (17, 23) - person name honorific + ならでは
+- `地域ならでは` (7, 13) - noun + ならでは
+- `都会ならでは` (11, 17) - noun + ならでは
+
+**Key Notes**:
+- ならでは is always used for positive evaluation
+- Common in advertising and slogans
+- Historically from negative conjunctive form of classical copula なり + は
+- Equivalent in meaning to modern でなくては (if it isn't A)
 
 ---
 
