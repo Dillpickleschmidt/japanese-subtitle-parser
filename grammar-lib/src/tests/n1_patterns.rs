@@ -4192,3 +4192,61 @@ mod i_adj_ku_monantomonai_tests {
         assert_pattern_range(&patterns, "い-Adj[く] + もなんともない", 7, 16); // たくもなんともない
     }
 }
+
+// ============================================================================
+// たら最後 Tests
+// ============================================================================
+
+mod tarasaigo_tests {
+    use super::*;
+
+    // Pattern: たら最後 (once X happens, Y inevitably follows)
+    // Data source: grammar_points_data.json["たら最後"]
+    // Structures:
+    //   - standard[0]: Verb[た] + が + 最後
+    //   - standard[1]: Verb[たら] + 最後
+
+    #[test]
+    fn test_tara_saigo_ta_ga() {
+        // Testing: Verb[た] + が + 最後 (once you lose trust...)
+        let sentence = "友達の間でも信頼を失ったが最後、取り戻すにはかなりの時間がかかる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら最後");
+        assert_pattern_range(&patterns, "たら最後", 9, 15); // 失ったが最後
+    }
+
+    #[test]
+    fn test_tara_saigo_ta_ga_contract() {
+        // Testing: Verb[た] + が + 最後 (once you sign a contract...)
+        let sentence = "その会社と契約をしたが最後、解約するのがものすごくめんどくさい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら最後");
+        assert_pattern_range(&patterns, "たら最後", 8, 13); // したが最後
+    }
+
+    #[test]
+    fn test_tara_saigo_tara() {
+        // Testing: Verb[たら] + 最後 (once you get bitten...)
+        let sentence = "あの蛇に噛まれたら最後、体が麻痺するらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら最後");
+        assert_pattern_range(&patterns, "たら最後", 6, 11); // れたら最後
+    }
+
+    #[test]
+    fn test_tara_saigo_tara_talking() {
+        // Testing: Verb[たら] + 最後 (once Tanaka starts talking...)
+        let sentence = "田中さんが話し始めたら最後、口が疲れるまでずっと話し続ける。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら最後");
+        assert_pattern_range(&patterns, "たら最後", 7, 13); // 始めたら最後
+    }
+}

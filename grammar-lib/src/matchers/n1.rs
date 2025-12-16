@@ -3156,9 +3156,51 @@ pub fn deare_u301c_deare() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: たら最後
+// Pattern: たら最後 (once X happens, Y inevitably follows)
+// Structures: Verb[た] + が + 最後 / Verb[たら] + 最後
 pub fn tarasaigo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match た (助動詞/基本形) or たら (助動詞/仮定形)
+    #[derive(Debug)]
+    struct TaOrTaraMatcher;
+    impl Matcher for TaOrTaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+                && (token.features.get(5).is_some_and(|f| f == "基本形")
+                    || token.features.get(5).is_some_and(|f| f == "仮定形"))
+        }
+    }
+
+    // Match が as 接続助詞 (used in た + が + 最後)
+    #[derive(Debug)]
+    struct GaConjunctionMatcher;
+    impl Matcher for GaConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match 最後 as noun
+    #[derive(Debug)]
+    struct SaigoMatcher;
+    impl Matcher for SaigoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "最後" && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TaOrTaraMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            GaConjunctionMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(SaigoMatcher)),
+    ]
 }
 
 // Pattern: いかなる

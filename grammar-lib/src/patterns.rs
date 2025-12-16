@@ -6837,7 +6837,7 @@ declare_patterns! {
     Tarasaigo {
         name: "たら最後",
         matcher_fn: crate::matchers::n1::tarasaigo,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
