@@ -1,18 +1,18 @@
 ## Session 507 - 2025-12-15
 
-### Session Summary - 並み Pattern Complete ✓
-**Status**: Successfully implemented 並み pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3377 passing, 1 ignored (added 4 new tests)
-**Progress**: Twenty-fifth N1 pattern completed!
+### Session Summary - Two N1 Patterns Complete ✓
+**Status**: Successfully implemented 並み and こそすれ〜ない patterns
+**Patterns completed**: 2 (N1, priority 5)
+**Total tests**: 3380 passing, 1 ignored (added 7 new tests)
+**Progress**: Twenty-fifth and twenty-sixth N1 patterns completed!
 
 **Session highlights**:
 - Implemented 並み pattern (on par with, as good as)
-- Pattern matches Noun + 並み (noun suffix)
+- Implemented こそすれ〜ない pattern (certainly not B, but A)
 - 並み tokenizes as 名詞/接尾/一般 (noun suffix)
-- Simple two-token matcher: noun_matcher() + custom 並み matcher
-- All 4 tests passing with proper range assertions
-- No regressions in test suite (3377 tests total)
+- こそすれ uses classical realis form of する, but Kagome tokenizes as すれる verb
+- All 7 tests passing with proper range assertions (4 for 並み, 3 for こそすれ〜ない)
+- No regressions in test suite (3380 tests total)
 
 ### ✓ Completed: 並み (on par with, as good as)
 
@@ -58,25 +58,67 @@ All tests use realistic subtitle-quality sentences and include proper range asse
 - `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in nami_tests module
 - `feature_list.json` - Updated 並み status to complete
 
+### ✓ Completed: こそすれ〜ない (certainly not B, but A)
+
+**Grammar Point**: こそすれ〜ない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+- Noun (サ変接続) + こそすれ (する-verbs)
+- Verb (連用形) + こそすれ (regular verb stems)
+- Verb + れ (連用形) + こそすれ (passive verbs)
+
+**Implementation**:
+- Matcher: `こそ(助詞/係助詞) + すれ(すれる verb, 連用形)`
+- Custom matchers for both components with proper POS verification
+- Pattern range captures just こそすれ (4 characters)
+- Despite being classical realis form of する, Kagome tokenizes as すれる
+
+**Tests Written: 3 tests**
+1. `test_kososure_suru_verb` - 悪化こそすれ (する-verb + こそすれ)
+2. `test_kososure_verb_stem` - 上がりこそすれ (verb stem + こそすれ)
+3. `test_kososure_passive_verb` - されこそすれ (passive verb + こそすれ)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures こそすれ:
+- `こそすれ` (14, 18) - after する-verb 悪化
+- `こそすれ` (12, 16) - after verb stem 上がり
+- `こそすれ` (4, 8) - after passive され
+
+**Key Notes**:
+- Classical realis form (perfective form) with no modern counterpart
+- Also exists as こそなれ (from なる) and こそあれ (from ある)
+- Emphasizes "certainly not B, but A" where B is negative
+- This pattern implements only こそすれ (from する), not こそなれ or こそあれ
+- The すれ is tokenized as すれる (to rub) by Kagome, not as classical する
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented kososure_u301c_nai() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 3 tests in kososure_nai_tests module
+- `feature_list.json` - Updated こそすれ〜ない status to complete
+
 **Workflow Followed**:
 1. ✓ Read project documentation and progress
 2. ✓ Verified environment with init.sh
 3. ✓ Checked for regressions (all tests passing)
-4. ✓ Selected highest priority incomplete pattern (並み from N1)
+4. ✓ Selected highest priority incomplete patterns (並み and こそすれ〜ない from N1)
 5. ✓ Reviewed grammar_points_data.json for structures
-6. ✓ Checked for existing stub (found nami() stub in n1.rs)
+6. ✓ Checked for existing stubs (found nami() and kososure_u301c_nai() stubs)
 7. ✓ Wrote all tests first with print_debug()
 8. ✓ Analyzed tokenization output
-9. ✓ Implemented matcher based on actual tokens
+9. ✓ Implemented matchers based on actual tokens
 10. ✓ Verified all tests pass
 11. ✓ Removed print_debug() and added assertions
-12. ✓ Verified no regressions (3377 tests passing)
+12. ✓ Verified no regressions (3380 tests passing)
 13. ✓ Updated feature_list.json
 14. ✓ Committed changes
 15. ✓ Updated claude-progress.txt
 
 **Quality Checks Passed**:
-- ✓ All structure variants tested (standard and polite forms)
+- ✓ All structure variants tested (standard and polite forms for 並み, 3 variants for こそすれ〜ない)
 - ✓ Realistic subtitle-quality sentences used
 - ✓ Correct character ranges verified
 - ✓ No print_debug() in final code
@@ -84,7 +126,6 @@ All tests use realistic subtitle-quality sentences and include proper range asse
 - ✓ Clean git history
 
 **Next Priorities** (N1 - no tests yet, priority 5):
-- こそすれ〜ない - "Far from, not at all" pattern, clear structure
 - ともあろう - "For someone/something to" pattern, detectable
 - 以前 - "Before, prior to" pattern, temporal expression
 - との - Quotation/reporting pattern, clear structure
@@ -92,6 +133,7 @@ All tests use realistic subtitle-quality sentences and include proper range asse
 - ただ〜のみ - "Only" pattern, emphatic construction
 - ～てやる - "Do for (someone)" pattern, verb-based
 - を余儀なくさせる - "Force/compel" pattern, detectable
+- かたがた - "While, on the occasion of" pattern, detectable
 
 ---
 
