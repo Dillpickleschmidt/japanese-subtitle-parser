@@ -4653,3 +4653,58 @@ mod taru_tests {
         assert_pattern_range(&patterns, "たる", 0, 6); // 警察たるもの
     }
 }
+
+mod nara_u301c_de_tests {
+    use super::*;
+
+    // Pattern: なら〜で (if X, should/must do X properly)
+    // Data source: grammar_points_data.json["なら〜で"]
+    // Testing: structure.standard[0-4]
+    //
+    // Structures:
+    //   - standard[0]: Verb[る] + なら + Verb[る] + で
+    //   - standard[1]: い-Adjective + なら + い-Adjective + で
+    //   - standard[2]: な-Adjective + なら + な-Adjective + で
+    //   - standard[3]: Noun + なら + Noun + で
+    //   - standard[4]: Optional の before なら (のなら variant)
+
+    #[test]
+    fn test_nara_de_verb() {
+        let sentence = "仕事するならするでちゃんとしろ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら〜で");
+        assert_pattern_range(&patterns, "なら〜で", 0, 9); // 仕事するならするで
+    }
+
+    #[test]
+    fn test_nara_de_i_adjective() {
+        let sentence = "欲しいなら欲しいで始めっから言ってくれればよかったのに！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら〜で");
+        assert_pattern_range(&patterns, "なら〜で", 0, 9); // 欲しいなら欲しいで
+    }
+
+    #[test]
+    fn test_nara_de_na_adjective() {
+        let sentence = "嫌なら嫌でやめればいい。嫌々やっていても誰のためにもならないでしょ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら〜で");
+        assert_pattern_range(&patterns, "なら〜で", 0, 5); // 嫌なら嫌で
+    }
+
+    #[test]
+    fn test_nara_de_verb_with_break() {
+        let sentence = "休むなら休むでちゃんと休んでください。仕事のことはわたしたちに任せてもらって全然いいんで。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なら〜で");
+        assert_pattern_range(&patterns, "なら〜で", 0, 7); // 休むなら休むで
+    }
+}

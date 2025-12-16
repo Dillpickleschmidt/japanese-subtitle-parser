@@ -6893,7 +6893,7 @@ declare_patterns! {
     NaraU301cDe {
         name: "なら〜で",
         matcher_fn: crate::matchers::n1::nara_u301c_de,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

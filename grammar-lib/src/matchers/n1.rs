@@ -3445,9 +3445,53 @@ pub fn taru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なら〜で
+// Pattern: なら〜で (if X, should/must do X properly)
+// Structures: Word + なら + Same Word + で
+// Works with verbs, い-adjectives, な-adjectives, nouns
 pub fn nara_u301c_de() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches なら as 助動詞 with base だ in 仮定形
+    #[derive(Debug)]
+    struct NaraMatcher;
+    impl super::Matcher for NaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    // Matches で as 助詞/接続助詞 or 助詞/格助詞
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    // Matches verbs (動詞), い-adjectives (形容詞), な-adjectives (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct FirstWordMatcher;
+    impl super::Matcher for FirstWordMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                || token.pos.first().is_some_and(|pos| pos == "形容詞")
+                || (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(FirstWordMatcher)),
+        TokenMatcher::Custom(Arc::new(NaraMatcher)),
+        TokenMatcher::Custom(Arc::new(FirstWordMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+    ]
 }
 
 // Pattern: をものともせず

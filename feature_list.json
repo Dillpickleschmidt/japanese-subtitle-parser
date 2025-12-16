@@ -11175,13 +11175,13 @@
   {
     "pattern_name": "なら〜で",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "なら〜で is a structure which appears in situations where the same word will repeat twice, followed by some sort of opini... [5 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
