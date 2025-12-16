@@ -1,3 +1,93 @@
+## Session 597 - 2025-12-16
+
+### Session Summary - や否や Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (や否や - N1, priority 5)
+**Total tests**: 3817 passing (3 new tests, no regressions)
+**Progress**: One hundred and tenth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented や否や (as soon as / no sooner than)
+- Formal expression meaning "as soon as (A)" or "no sooner than (A)"
+- Single-token particle: やいなや tokenized as 助詞/接続助詞
+- Pattern: Verb[基本形/dictionary form] + やいなや
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: や否や (as soon as)
+
+**Grammar Point**: や否や
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structure**:
+- Verb[る/dictionary form] + や否（いな）や + Phrase[た]
+
+**Meaning**:
+- "As soon as (A)" / "No sooner than (A)"
+- Formal expression indicating that (B) happens immediately after (A)
+- Literal: "at a point when neither (A) or not (A) could be determined, (B)"
+- や highlights that the preceding action is not limited to that point
+- Generally used when (B) is something spontaneous or surprising
+- Note: Simplified や form (without 否や) also exists with same meaning
+
+**Tokenization pattern**:
+- Verb (動詞/自立, conjugation form = 基本形)
+- やいなや (助詞/接続助詞, surface=やいなや, base=やいなや)
+
+**Implementation**:
+Created YainayaMatcher for precise POS checking:
+- Matches やいなや as 助詞/接続助詞
+- Surface must be "やいなや"
+- POS must be 助詞 (particle) and 接続助詞 (connective particle)
+
+Pattern matcher sequence:
+- TokenMatcher::verb_with_form("基本形") + YainayaMatcher
+- Captures Verb[dictionary form] + やいなや
+
+**Tests Written: 3 tests (all passing)**
+1. test_yainaya_burglar - 見るやいなや (12, 18) - burglar scene
+2. test_yainaya_dog_bark - 見るやいなや (4, 10) - dog barking
+3. test_yainaya_sit_down - 座るやいなや (4, 10) - sitting down
+
+**Character Ranges**: Pattern captures Verb + やいなや:
+- 見るやいなや (12, 18) - 6 characters
+- 見るやいなや (4, 10) - 6 characters
+- 座るやいなや (4, 10) - 6 characters
+
+**Key Notes**:
+- Pattern includes the verb before やいなや (full grammatical construction)
+- やいなや is a single token (not split into や + いなや)
+- Verb must be in 基本形 (dictionary form/non-past)
+- Simplified form や (without いなや) exists but left for future implementation
+- Formal expression typically used in literary or formal contexts
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented yainaya() with YainayaMatcher
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests in yainaya_tests module
+- feature_list.json - Updated や否や to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (verb + やいなや)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3814 + 3 = 3817 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- というところ - "Approximately" pattern
+- に照らして・に照らすと - "In light of" pattern
+- とあれば - "If/when it comes to" pattern
+- ときたら - "Speaking of/when it comes to" pattern
+- びる - Suffix pattern
+- にしたところで - "Even if" pattern
+- ～ばこそ - "Precisely because" pattern
+- ても差し支えない - "It's okay even if" pattern
+
+================================================================================
+
 ## Session 595 - 2025-12-16
 
 ### Session Summary - にもほどがある Complete ✓
