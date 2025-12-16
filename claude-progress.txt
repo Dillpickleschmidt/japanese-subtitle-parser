@@ -1,3 +1,101 @@
+## Session 592 - 2025-12-16
+
+### Session Summary - といわず Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (といわず - N1, priority 5)
+**Total tests**: 3784 passing (3 new tests, no regressions)
+**Progress**: One hundred and fifth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented といわず (not just...but also everything)
+- Formal expression combining と (quotation particle) + 言わず (negative stem of いう) + ず (classical negative)
+- Pattern appears TWICE in succession: Noun A といわず + Noun B といわず
+- Handles compound nouns (e.g., 仕事中 = 仕事 + 中, 休憩中 = 休憩 + 中)
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: といわず (not just...but also everything)
+
+**Grammar Point**: といわず
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structure**:
+- Noun (A) + といわず + Noun (B) + といわず
+
+**Meaning**:
+- "Not just (A) or (B), but all" / "(A), (B) and everything else"
+- Indicates something applies to everything in a category, not limited to (A) or (B)
+- Literal: "without saying (A), and without saying (B), (C)" = "without limiting it to (A)"
+- Both (A) and (B) must be part of a logical group (e.g., hands/feet, morning/afternoon, wardrobe/shelves)
+- Rarely used in everyday speech - formal/literary expression
+
+**Tokenization pattern**:
+The pattern appears twice in succession:
+1. Noun (名詞, can be compound like 仕事中)
+2. と (助詞/格助詞/引用)
+3. いわ (動詞/自立/五段・ワ行促音便/未然形, base=いう)
+4. ず (助動詞/特殊・ヌ/連用ニ接続, base=ぬ)
+5. 、(comma, optional)
+6. Noun (second noun)
+7. と (助詞/格助詞/引用)
+8. いわ (動詞/自立/五段・ワ行促音便/未然形, base=いう)
+9. ず (助動詞/特殊・ヌ/連用ニ接続, base=ぬ)
+
+**Implementation**:
+Created 4 custom matchers for precise matching:
+1. ToParticleMatcher - Matches と as 助詞/格助詞/引用
+2. IwaMatcher - Matches いわ (未然形 of いう)
+3. ZuMatcher - Matches ず (助動詞, base=ぬ)
+4. CommaMatcher - Matches 、(comma) as 記号/読点
+5. CompoundNounMatcher - Matches any noun token (allows compound nouns)
+
+Pattern matcher sequence:
+- Noun(s) + と + いわ + ず + (optional comma) + Noun(s) + と + いわ + ず
+- Uses CompoundNounMatcher with 0-2 optional additional noun tokens to handle compound nouns like 仕事中
+
+**Tests Written: 3 tests (all passing)**
+1. test_toiwazu_tansu_tana - タンスといわず、棚といわず (11, 24) - wardrobe and shelves
+2. test_toiwazu_shigotochu_kyuukeichu - 仕事中といわず、休憩中といわず (2, 17) - work/break time (compound nouns)
+3. test_toiwazu_kodomo_otona - 子供といわず、大人といわず (5, 18) - children and adults
+
+**Character Ranges**: Pattern captures full double occurrence (Noun A といわず + Noun B といわず):
+- タンスといわず、棚といわず (11, 24) - 13 characters
+- 仕事中といわず、休憩中といわず (2, 17) - 15 characters (compound nouns)
+- 子供といわず、大人といわず (5, 18) - 13 characters
+
+**Key Notes**:
+- Pattern includes BOTH occurrences of といわず (not just one)
+- Handles compound nouns where a noun phrase consists of multiple noun tokens
+- Optional comma matcher allows for punctuation between the two occurrences
+- Must be used with nouns from the same logical category/group
+- Classical grammar element (ず from ぬ) expressing negation
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented toiwazu() with 5 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests in toiwazu_tests module
+- feature_list.json - Updated といわず to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (simple and compound noun forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3781 + 3 = 3784 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- にもほどがある - "There are limits" pattern
+- にもまして - "More than" pattern
+- まくる - Intensive action suffix
+- どうにか - "Somehow or other" adverb
+- や否や - "As soon as" pattern
+- というところ - "Approximately" pattern
+- ったらない・といったらない - "Extremely" pattern
+
+================================================================================
+
 ## Session 591 - 2025-12-16
 
 ### Session Summary - めく・めいた Complete ✓
