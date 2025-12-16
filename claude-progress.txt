@@ -1,14 +1,16 @@
 ## Session 488 - 2025-12-15
 
-### Session Summary - のではないだろうか Pattern Complete ✓
-**Status**: Successfully implemented のではないだろうか (rhetorical question pattern)
-**Patterns completed**: 1 (N2, priority 4)
-**Total tests**: 3223 passing, 1 ignored (added 6 new tests)
+### Session Summary - Two N2 Patterns Complete ✓
+**Status**: Successfully implemented のではないだろうか and 気 patterns
+**Patterns completed**: 2 (both N2, priority 4)
+**Total tests**: 3226 passing, 1 ignored (added 9 new tests)
 
 **Session highlights**:
-- Implemented のではないだろうか (I think, isn't it?, don't you think?)
-- Complex 8-token pattern with multiple optional components
-- Handles all verb/adjective/noun structure variants
+- Implemented のではないだろうか (I think, isn't it?, don't you think?) - 6 tests
+- Implemented 気 (feeling, spirit, motivation to do) - 3 tests
+- のではないだろうか: Complex 8-token pattern with multiple optional components
+- 気: Simple 2-token pattern (Verb + 気)
+- Handles all verb/adjective/noun structure variants for のではないだろうか
 - Supports both standard (だろう) and polite (でしょう) forms
 - Supports casual variants (ん instead of の, じゃ instead of では)
 - Key learning: Use token.pos for POS checks, token.features.get(5) for conjugation forms
@@ -69,6 +71,47 @@ Rhetorical question used to express opinion indirectly in a modest way. Common t
 - "Don't you think that (A)?"
 
 The elongated phrase makes the statement more tentative and polite than directly asserting something.
+
+---
+
+### ✓ Completed: 気 (feeling, spirit, motivation to do)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb (基本形) + 気
+
+**Implementation details**:
+Simple two-token pattern:
+1. Verb in dictionary form (基本形)
+2. 気 (名詞/非自立/一般)
+
+Expresses will or desire to do an action - "to feel like doing (A)".
+
+**Common usage patterns**:
+- Verb + 気がある (to have the feeling of doing A)
+- Verb + 気がない (to not have the feeling of doing A)
+- Verb + 気がする (to feel like A)
+- Verb + 気がしない (to not feel like A)
+- Verb + 気が出る (for the feeling of A to come about)
+- Verb + 気が出ない (for the feeling of A to not come about)
+
+**Tests created**: 3 tests
+1. `test_ki_ga_nai` - 勉強をする気がなくなった (no motivation to study, range 3-6)
+2. `test_ki_ga_suru` - 明日までに終わる気がしない (don't feel like can finish, range 5-9)
+3. `test_ki_ga_aru` - 本気で頑張る気がある (have motivation to try hard, range 3-7)
+
+**Important note**:
+やる気 (motivation/will to do) is tokenized as a SINGLE noun (名詞/一般), not as やる + 気. Therefore, compound nouns like やる気,勇気, etc. are not detected by this pattern. The pattern only matches when 気 appears as a separate token after a verb in dictionary form.
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented ki() function (30 lines with 2 custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 3 comprehensive tests
+- `feature_list.json` - Updated 気 to complete status
 
 ---
 
