@@ -1,3 +1,102 @@
+## Session 521 - 2025-12-16
+
+### Session Summary - べく Pattern Complete ✓
+**Status**: Successfully implemented べく pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3442 passing, 1 ignored (added 4 new tests)
+**Progress**: Fortieth N1 pattern completed!
+
+**Session highlights**:
+- Implemented べく pattern (in order to, for the purpose of)
+- Classical auxiliary verb - attaches to dictionary form of verbs
+- Handles both classical (す + べく) and modern (する + べく) forms of する
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3442 tests total)
+
+### ✓ Completed: べく (in order to, for the purpose of)
+
+**Grammar Point**: べく
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+- Verb[基本形] + べく (standard form - e.g., 守るべく, 買うべく)
+- す + べく (classical する - e.g., 防止すべく)
+- する + べく (modern する - e.g., 優勝するべく)
+
+**Implementation**:
+- Matcher: Verb[基本形 or 文語基本形] + べく (助動詞, base='べし')
+- Custom matchers:
+  - DictionaryFormVerbMatcher: Matches verbs in 基本形 or 文語基本形
+  - BekuMatcher: Matches べく as 助動詞 with base form べし
+- Pattern detects full grammatical construction: Verb + べく
+- Both classical (文語基本形) and modern (基本形) forms supported
+
+**Tests Written: 4 tests**
+1. `test_beku_verb_dictionary` - 守るべく (regular verb in dictionary form)
+2. `test_beku_verb_kau` - 買うべく (う-verb in dictionary form)
+3. `test_beku_subeku_classical` - 防止すべく (す + べく, classical する)
+4. `test_beku_surubeku_modern` - 優勝するべく (する + べく, modern variant)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures Verb + べく:
+- `守るべく` (10, 14) - regular verb + べく (4 chars)
+- `買うべく` (5, 9) - う-verb + べく (4 chars)
+- `防止すべく` (9, 14) - 防止 + す + べく (5 chars, classical)
+- `優勝するべく` (5, 11) - 優勝 + する + べく (6 chars, modern)
+
+**Key Notes**:
+- べく is the conjunctive form of classical auxiliary verb べし
+- Only attaches to verbs expressing intentional actions with a purpose
+- Very formal structure, rarely used in standard speech
+- Classical form す + べく is correct, but modern する + べく also accepted
+- Literal meaning closer to "to attain (A)" with emphasis on strong goal
+- From kanji 可（べ）し meaning "to be permissible"
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented beku() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in beku_tests module
+- `feature_list.json` - Updated べく status to complete
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (べく from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found beku() stub in n1.rs)
+7. ✓ Wrote all 4 tests first with print_debug()
+8. ✓ Analyzed tokenization output for all variants
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Verified all tests pass
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Verified no regressions (3442 tests passing)
+13. ✓ Updated feature_list.json
+14. ✓ Committed changes
+15. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (regular verbs, す+べく, する+べく)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- ところを - "At a time when" pattern, detectable
+- にして② - "And also" pattern, detectable
+- つ〜つ - Classical verb pattern
+- であれ〜であれ - "Whether A or B" pattern
+- たら最後 - "Once A, definitely B" pattern
+- いかなる - "What kind of, any" pattern
+- なりに - "In one's own way" pattern
+- れる・られる + ままに - "As one is made to" pattern
+
+---
+
 ## Session 520 - 2025-12-16
 
 ### Session Summary - だの Pattern Complete ✓
