@@ -4509,9 +4509,25 @@ pub fn tehakanawanai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: かたがた
+// Pattern: かたがた (in addition to, along with, while doing)
+// Structures: Noun + かたがた
 pub fn katagata() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct KatagataMatcher;
+    impl Matcher for KatagataMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かたがた"
+                && token.base_form == "かたがた"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(KatagataMatcher)),
+    ]
 }
 
 // Pattern: を余儀なくさせる

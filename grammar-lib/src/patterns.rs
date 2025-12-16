@@ -7797,7 +7797,7 @@ declare_patterns! {
     Katagata {
         name: "かたがた",
         matcher_fn: crate::matchers::n1::katagata,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

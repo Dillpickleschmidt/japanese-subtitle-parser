@@ -4548,3 +4548,53 @@ mod nimatsuwaru_tests {
         assert_pattern_range(&patterns, "にまつわる", 4, 13); // 神社にまつわる神話
     }
 }
+
+// ============================================================================
+// かたがた Tests
+// ============================================================================
+
+mod katagata_tests {
+    use super::*;
+
+    // Pattern: かたがた (in addition to, along with, while doing)
+    // Data source: grammar_points_data.json["かたがた"]
+    // Testing: structure.standard[0] - "Noun + かたがた"
+    // Testing: structure.standard[1] - "[する]Verb + かたがた"
+    //
+    // Meaning: "In addition to doing (A), (B)" / "Along with (A), (B)"
+    // Both (A) and (B) have equal priority, but (B) has nuance of "while (A), also (B) in passing"
+    // Formal structure primarily used with apologies or thanks
+
+    #[test]
+    fn test_katagata_engagement_report() {
+        // Testing: 婚約の報告 + かたがた (partly for the purpose of engagement report)
+        let sentence = "婚約の報告かたがた、お父様とお母様に会いに行きます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かたがた");
+        assert_pattern_range(&patterns, "かたがた", 3, 9); // 報告かたがた
+    }
+
+    #[test]
+    fn test_katagata_pregnancy_report() {
+        // Testing: 妊娠の報告 + かたがた (partly for the purpose of pregnancy report)
+        let sentence = "妊娠の報告かたがた、相手の両親の家を訪ねた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かたがた");
+        assert_pattern_range(&patterns, "かたがた", 3, 9); // 報告かたがた
+    }
+
+    #[test]
+    fn test_katagata_thank_you() {
+        // Testing: お礼 + かたがた (partly for the purpose of thanking)
+        let sentence = "お礼かたがた、そちらにお伺いをしたいと思っています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かたがた");
+        assert_pattern_range(&patterns, "かたがた", 0, 6); // お礼かたがた
+    }
+}
