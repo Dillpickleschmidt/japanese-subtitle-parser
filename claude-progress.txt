@@ -1,3 +1,107 @@
+## Session 605 - 2025-12-16
+
+### Session Summary - を限りに Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (を限りに - N1, priority 5)
+**Total tests**: 3862 passing (5 new tests, no regressions)
+**Progress**: One hundred and eighteenth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented を限りに (ending with / no longer than / as of)
+- Formal expression for announcing the end of something
+- Handles both を限りに and 限りで variants (with and without を particle)
+- Pattern includes noun + optional を + かぎり/限り + に/で
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: を限りに (ending with / no longer than / as of)
+
+**Grammar Point**: を限りに
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + を限（かぎ）りに (formal)
+2. Noun + 限（かぎ）りで (less formal variant)
+
+**Meaning**:
+- "Ending with (A), (B)" / "No longer than (A), (B)" / "As of (A)"
+- Expresses a time for which something that was continuing will finish by
+- Used for making proclamations or announcements
+- Combination of を (adverbial particle) + 限り (limit) + に/で (case-marking particle)
+- Primarily used with words indicating specific time or place viewed temporally
+- Exception: Set idiom 声を限りに "to the limit of one's voice" (crying/shouting as loud as possible)
+
+**Tokenization patterns**:
+**For を限りに:**
+- Noun (名詞/副詞可能 or 名詞/一般)
+- を (助詞/格助詞/一般)
+- かぎり (名詞/ナイ形容詞語幹, base=かぎり)
+- に (助詞/格助詞/一般)
+
+**For 限りで:**
+- Noun (名詞/副詞可能 or 名詞/一般)
+- 限り (名詞/非自立/副詞可能, base=限り)
+- で (助詞/格助詞/一般)
+
+**Implementation**:
+Created 3 custom matchers for flexible pattern matching:
+1. WoMatcher - Matches を as 助詞/格助詞/一般 (optional)
+2. KagiriMatcher - Matches かぎり (名詞/ナイ形容詞語幹) or 限り (名詞/非自立) with base form check
+3. NiOrDeMatcher - Matches に or で as 助詞/格助詞
+
+Pattern matcher sequence:
+- super::noun_matcher() (noun)
+- TokenMatcher::Optional(WoMatcher) (optional を)
+- KagiriMatcher (かぎり or 限り)
+- NiOrDeMatcher (に or で)
+
+**Tests Written: 5 tests (all passing)**
+1. test_wokagirini_store_closing - 明日をかぎりに (0, 7) - time announcement
+2. test_wokagirini_moving_abroad - 今月をかぎりに (0, 7) - life change announcement
+3. test_wokagirini_concert_disbanding - コンサートをかぎりに (6, 16) - event announcement
+4. test_kagirinde_variant - 今年限りで (0, 5) - で variant (less formal)
+5. test_wokagirini_voice_idiom - 声をかぎりに (3, 9) - set idiom exception
+
+**Character Ranges**: Pattern captures Noun + [を] + かぎり/限り + に/で:
+- 明日をかぎりに (0, 7) - 7 characters (noun + を + かぎり + に)
+- 今月をかぎりに (0, 7) - 7 characters (noun + を + かぎり + に)
+- コンサートをかぎりに (6, 16) - 10 characters (compound noun + を + かぎり + に)
+- 今年限りで (0, 5) - 5 characters (noun + 限り + で, no を)
+- 声をかぎりに (3, 9) - 6 characters (noun + を + かぎり + に, idiom)
+
+**Key Notes**:
+- Pattern includes the preceding noun (full grammatical construction)
+- Optional を matcher allows matching both を限りに and 限りで variants
+- KagiriMatcher checks for both かぎり (hiragana) and 限り (kanji) as they tokenize differently
+- Base form can be either かぎり or 限り depending on tokenization
+- More formal than similar structure 限りで
+- Used primarily for announcements: store closings, retirements, disbanding, moving, etc.
+- Special idiom: 声を限りに "crying/shouting to the limit of one's voice"
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented wokagirini() with 3 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in wokagirini_tests module
+- feature_list.json - Updated を限りに to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (を限りに and 限りで)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3857 + 5 = 3862 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- にひきかえ - "In contrast to" pattern
+- ものなら② - Conditional pattern variant
+- 始末だ - "End up in a bad situation" pattern
+- に堪えない - "Unbearable / Cannot bear" pattern
+- を前提に - "Based on the premise that" pattern
+
+================================================================================
+
 ## Session 603 - 2025-12-16
 
 ### Session Summary - といおうか Complete ✓
