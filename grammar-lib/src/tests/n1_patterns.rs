@@ -8805,3 +8805,53 @@ mod meku_meita_tests {
         assert_pattern_range(&patterns, "めく・めいた", 9, 12); // 謎めい
     }
 }
+
+// ============================================================================
+// といわず Tests
+// ============================================================================
+
+mod toiwazu_tests {
+    use super::*;
+
+    // Pattern: といわず (not just...but also everything)
+    // Data source: grammar_points_data.json["といわず"]
+    // Testing: structure.standard[0] - "Noun (A) + といわず + Noun (B) + といわず"
+    //
+    // Meaning: "Not just (A) or (B), but all" / "(A), (B) and everything else"
+    // Usage: と + 言わず (negative stem of 言う) + ず (classical negative)
+    // Note: Must use with nouns that belong to the same logical group
+
+    #[test]
+    fn test_toiwazu_tansu_tana() {
+        // Testing: Noun + といわず + Noun + といわず (wardrobe and shelves)
+        let sentence = "旅行から帰ってきたら、タンスといわず、棚といわず、家中泥棒に物色されていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といわず");
+        assert_pattern_range(&patterns, "といわず", 11, 24); // タンスといわず、棚といわず
+    }
+
+    #[test]
+    fn test_toiwazu_shigotochu_kyuukeichu() {
+        // Testing: Noun + といわず + Noun + といわず (work time and break time)
+        // Compound nouns: 仕事中 = 仕事 + 中, 休憩中 = 休憩 + 中
+        let sentence = "彼は仕事中といわず、休憩中といわず、ずっとユーチューブを見ている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といわず");
+        assert_pattern_range(&patterns, "といわず", 2, 17); // 仕事中といわず、休憩中といわず
+    }
+
+    #[test]
+    fn test_toiwazu_kodomo_otona() {
+        // Testing: Noun + といわず + Noun + といわず (children and adults)
+        let sentence = "この映画は子供といわず、大人といわず、みんなに愛されている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といわず");
+        assert_pattern_range(&patterns, "といわず", 5, 18); // 子供といわず、大人といわず
+    }
+}

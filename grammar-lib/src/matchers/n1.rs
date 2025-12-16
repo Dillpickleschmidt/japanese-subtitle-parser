@@ -7533,9 +7533,93 @@ pub fn meku_u30fb_meita() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: といわず
+// Pattern: といわず (not just...but also everything)
+// Structures: Noun (A) + といわず + Noun (B) + といわず
 pub fn toiwazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と as 助詞/格助詞/引用
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match いわ (未然形 of いう)
+    #[derive(Debug)]
+    struct IwaMatcher;
+    impl Matcher for IwaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いわ"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| form == "未然形")
+        }
+    }
+
+    // Match ず (助動詞/特殊・ヌ/連用ニ接続, base=ぬ)
+    #[derive(Debug)]
+    struct ZuMatcher;
+    impl Matcher for ZuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match punctuation (comma)
+    #[derive(Debug)]
+    struct CommaMatcher;
+    impl Matcher for CommaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "、" && token.pos.first().is_some_and(|pos| pos == "記号")
+        }
+    }
+
+    // Match compound nouns (multiple consecutive noun tokens)
+    #[derive(Debug)]
+    struct CompoundNounMatcher;
+    impl Matcher for CompoundNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Pattern: Noun(s) + と + いわ + ず (appears twice)
+    // We'll match: Noun+ + と + いわ + ず + (optional comma) + Noun+ + と + いわ + ず
+    // Note: Nouns can be compound (multiple noun tokens like 仕事中 = 仕事 + 中)
+    vec![
+        // First noun phrase (one or more consecutive nouns)
+        TokenMatcher::Custom(Arc::new(CompoundNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CompoundNounMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CompoundNounMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IwaMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuMatcher)),
+        // Optional comma between the two occurrences
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(CommaMatcher)))),
+        // Second noun phrase (one or more consecutive nouns)
+        TokenMatcher::Custom(Arc::new(CompoundNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CompoundNounMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            CompoundNounMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IwaMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuMatcher)),
+    ]
 }
 
 // Pattern: にもほどがある

@@ -12015,13 +12015,13 @@
   {
     "pattern_name": "といわず",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used in succession, と言（い）わず indicates that something is not limited to either (A) or (B), but applies to everyth... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
