@@ -12391,4 +12391,48 @@ mod wazukani_tests {
         assert_has_pattern(&patterns, "幸い・幸いなことに");
         assert_pattern_range(&patterns, "幸い・幸いなことに", 0, 4); // 幸いにも
     }
+
+    // Pattern: てしょうがない (cannot be helped, extremely)
+    // Data source: grammar_points_data.json["てしょうがない"]
+    // Testing: structure.standard[0] - "Verb[て] + しょうがない"
+    //
+    // Structure variants tested:
+    //   - standard[0]: Verb[て] + しょうがない
+    //   - standard[1]: い-Adjective[て] + しょうがない
+    //
+    // UNDETECTABLE:
+    //   - standard[2]: な-Adjective + で + しょうがない
+    //     Kagome tokenizes でしょうがない as でしょう (です/未然形) + が + ない
+    //     instead of で + しょうが + ない, making it indistinguishable from
+    //     "probably X" (でしょう) + "there isn't" (がない)
+    #[test]
+    fn test_teshouganai_verb() {
+        let sentence = "日本語が上手になりたくてしょうがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てしょうがない");
+        assert_pattern_range(&patterns, "てしょうがない", 11, 18); // てしょうがない
+    }
+
+    #[test]
+    fn test_teshouganai_i_adj() {
+        let sentence = "部屋が暑くてしょうがない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てしょうがない");
+        assert_pattern_range(&patterns, "てしょうがない", 5, 12); // てしょうがない
+    }
+
+    // TODO: Undetectable - な-Adjective + で + しょうがない
+    // Kagome consistently tokenizes でしょうがない as:
+    //   でしょ (助動詞/特殊・デス/未然形) + う (助動詞) + が (助詞/接続助詞) + ない (形容詞)
+    // This means it interprets it as でしょう ("probably") + がない ("there isn't")
+    // rather than で + しょうがない, making detection impossible.
+    //
+    // Examples that don't work:
+    //   - 不便でしょうがない → 不便でしょう + がない
+    //   - 暇でしょうがない → 暇でしょう + がない
+    //   - 好きでしょうがない → 好きでしょう + がない
 }

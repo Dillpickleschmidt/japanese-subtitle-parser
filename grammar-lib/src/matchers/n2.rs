@@ -7372,9 +7372,49 @@ pub fn uff5e_niataisuru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てしょうがない
+// Pattern: てしょうがない (cannot be helped, extremely)
+// Structures: Verb/Adj[て/で] + しょうがない
 pub fn teshouganai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て or で particle (接続助詞 or copula)
+    #[derive(Debug)]
+    struct TeDeMatcher;
+    impl Matcher for TeDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.features.first().is_some_and(|f| f == "助詞")
+                && token.features.get(1).is_some_and(|f| f == "接続助詞")
+        }
+    }
+
+    // Match しょうが (名詞/ナイ形容詞語幹)
+    #[derive(Debug)]
+    struct ShougaMatcher;
+    impl Matcher for ShougaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しょうが"
+                && token.features.first().is_some_and(|f| f == "名詞")
+                && token.features.get(1).is_some_and(|f| f == "ナイ形容詞語幹")
+        }
+    }
+
+    // Match ない (助動詞/特殊・ナイ)
+    #[derive(Debug)]
+    struct NaiAuxMatcher;
+    impl Matcher for NaiAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.features.first().is_some_and(|f| f == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(TeDeMatcher)),
+        TokenMatcher::Custom(Arc::new(ShougaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxMatcher)),
+    ]
 }
 
 // Pattern: だけましだ (at least, should be grateful for)
