@@ -2447,3 +2447,59 @@ mod ni_sakigakete_tests {
         assert_pattern_range(&patterns, "に先駆けて", 0, 6); // 業界に先駆け
     }
 }
+
+// ============================================================================
+// をおいてほかに〜ない Tests
+// ============================================================================
+
+mod wooitehokani_nai_tests {
+    use super::*;
+
+    // Pattern: をおいてほかに〜ない (none other than, nothing else but)
+    // Data source: grammar_points_data.json["をおいてほかに〜ない"]
+    // Testing: structure.standard[0] - "Noun + をおいてほか + には(1) + … + ない"
+    //
+    // Structure variants to test:
+    //   - standard[0]: Noun + をおいてほか + には + ... + ない
+    //   - standard[1]: Noun + をおいてほか + に + ... + ない (には without は)
+
+    #[test]
+    fn test_wooitehokani_nai_person() {
+        let sentence = "こんなに詳しい人は高橋教授をおいてほかにいない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をおいてほかに〜ない");
+        assert_pattern_range(&patterns, "をおいてほかに〜ない", 11, 23); // 教授をおいてほかにいない
+    }
+
+    #[test]
+    fn test_wooitehokani_nai_place() {
+        let sentence = "最初のライブは、大阪をおいてほかにない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をおいてほかに〜ない");
+        assert_pattern_range(&patterns, "をおいてほかに〜ない", 8, 19); // 大阪をおいてほかにない
+    }
+
+    #[test]
+    fn test_wooitehokani_nai_bunpro() {
+        let sentence = "日本語の文法を習いたいなら、文プロをおいてほかにない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をおいてほかに〜ない");
+        assert_pattern_range(&patterns, "をおいてほかに〜ない", 15, 26); // プロをおいてほかにない
+    }
+
+    #[test]
+    fn test_wooitehokani_niwa_nai() {
+        let sentence = "この分野の専門家はあの先生をおいてほかにはいない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をおいてほかに〜ない");
+        assert_pattern_range(&patterns, "をおいてほかに〜ない", 11, 24); // 先生をおいてほかにはいない
+    }
+}

@@ -10797,13 +10797,13 @@
   {
     "pattern_name": "をおいてほかに〜ない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を措（お）いて is a grammar pattern that expresses something similar to 'none other than (A)', or 'nothing else but (A)' [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

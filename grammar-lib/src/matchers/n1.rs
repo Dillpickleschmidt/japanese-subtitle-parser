@@ -2092,9 +2092,77 @@ pub fn deare() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: をおいてほかに〜ない
+// Pattern: をおいてほかに〜ない (none other than, nothing else but)
+// Structures: Noun + をおいて + ほか + に(は) + ... + ない
 pub fn wooitehokani_u301c_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match をおく verb in 連用タ接続 form
+    #[derive(Debug)]
+    struct OkuVerbMatcher;
+    impl Matcher for OkuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "おく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| form == "連用タ接続")
+        }
+    }
+
+    // Match て as conjunctive particle
+    #[derive(Debug)]
+    struct TeConjunctiveMatcher;
+    impl Matcher for TeConjunctiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match ほか as noun
+    #[derive(Debug)]
+    struct HokaMatcher;
+    impl Matcher for HokaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほか" && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match ない (either 助動詞 or 形容詞)
+    #[derive(Debug)]
+    struct NaiNegativeMatcher;
+    impl Matcher for NaiNegativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Match は particle (optional)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("を"),
+        TokenMatcher::Custom(Arc::new(OkuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeConjunctiveMatcher)),
+        TokenMatcher::Custom(Arc::new(HokaMatcher)),
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 10,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NaiNegativeMatcher)),
+    ]
 }
 
 // Pattern: をもって
