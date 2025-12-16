@@ -11875,13 +11875,13 @@
   {
     "pattern_name": "Verb[ない]もの(だろう)か",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When paired with negative expressions, the noun 物（もの） and either the sentence-ending particle か or a combination of だ... [1 std, 1 pol]",
     "priority": 5,
     "skip_reason": null

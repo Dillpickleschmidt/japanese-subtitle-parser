@@ -2861,9 +2861,81 @@ pub fn wokanete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Verb[ない]もの(だろう)か
+// Pattern: Verb[ない]もの(だろう)か (if only, isn't there a way to)
+// Structures: Verb[ない] + もの + (だろう/でしょう) + か
 pub fn verb_nai_mono_darou_ka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ない (助動詞 or 形容詞 for existence)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|p| p == "助動詞")
+                    || token.pos.first().is_some_and(|p| p == "形容詞"))
+        }
+    }
+
+    // Match もの (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.base_form == "もの"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Match だろ or でしょ (助動詞, 未然形 of だ or です)
+    #[derive(Debug)]
+    struct DarouDeshouMatcher;
+    impl Matcher for DarouDeshouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だろ" || token.surface == "でしょ")
+                && (token.base_form == "だ" || token.base_form == "です")
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f.contains("未然"))
+        }
+    }
+
+    // Match う (助動詞, 基本形)
+    #[derive(Debug)]
+    struct UMatcher;
+    impl Matcher for UMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match か (助詞/副助詞／並立助詞／終助詞)
+    #[derive(Debug)]
+    struct KaMatcher;
+    impl Matcher for KaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+        }
+    }
+
+    // Pattern: ない + もの + Optional(だろう/でしょう) + か
+    vec![
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DarouDeshouMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(UMatcher)))),
+        TokenMatcher::Custom(Arc::new(KaMatcher)),
+    ]
 }
 
 // Pattern: Verb[て] + みせる (I will definitely do, I swear I will do)

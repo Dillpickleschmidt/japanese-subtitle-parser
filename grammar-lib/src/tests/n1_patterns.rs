@@ -3092,3 +3092,70 @@ mod izen_tests {
         assert_pattern_range(&patterns, "以前", 9, 12); // 以前に
     }
 }
+
+// ============================================================================
+// Verb[ない]もの(だろう)か Tests
+// ============================================================================
+
+mod verb_nai_mono_darou_ka_tests {
+    use super::*;
+
+    // Pattern: Verb[ない]もの(だろう)か (if only, isn't there a way to)
+    // Data source: grammar_points_data.json["Verb[ない]もの(だろう)か"]
+    // Testing: structure.standard[0] - "Verb[できる][ない] + もの + (だろう) + か"
+
+    // Test basic ないものか structure
+    #[test]
+    fn test_nai_mono_ka() {
+        let sentence = "これはもっとシンプルにできないものか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[ない]もの(だろう)か");
+        assert_pattern_range(&patterns, "Verb[ない]もの(だろう)か", 13, 18); // ないものか
+    }
+
+    // Test ないものだろうか structure
+    #[test]
+    fn test_nai_mono_darou_ka() {
+        let sentence = "こっちから言わないとやって貰えないものだろうか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[ない]もの(だろう)か");
+        assert_pattern_range(&patterns, "Verb[ない]もの(だろう)か", 15, 23); // ないものだろうか
+    }
+
+    // Test polite form: ないものでしょうか
+    #[test]
+    fn test_nai_mono_deshou_ka_polite() {
+        let sentence = "難しいのはわかっているんですが、佐々木さんの腕でなんとかできないものでしょうか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[ない]もの(だろう)か");
+        assert_pattern_range(&patterns, "Verb[ない]もの(だろう)か", 30, 39); // ないものでしょうか
+    }
+
+    // Test with existence: ないものか (lack of existence)
+    #[test]
+    fn test_nai_mono_ka_existence() {
+        let sentence = "仕事をもう少し楽にする方法はないものか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[ない]もの(だろう)か");
+        assert_pattern_range(&patterns, "Verb[ない]もの(だろう)か", 14, 19); // ないものか
+    }
+
+    // Test with existence: ないものだろうか (lack of existence)
+    #[test]
+    fn test_nai_mono_darou_ka_existence() {
+        let sentence = "もっと楽にお金を稼げる仕事はないものだろうか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[ない]もの(だろう)か");
+        assert_pattern_range(&patterns, "Verb[ない]もの(だろう)か", 14, 22); // ないものだろうか
+    }
+}
