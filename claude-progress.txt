@@ -1,3 +1,116 @@
+## Session 531 - 2025-12-16
+
+### Session Summary - 訳あり(訳あって) Pattern Complete ✓
+**Status**: Successfully implemented 訳あり(訳あって) pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3492 passing, 1 ignored (added 5 new tests)
+**Progress**: Forty-ninth N1 pattern completed!
+
+**Session highlights**:
+- Implemented 訳あり(訳あって) pattern (for a reason, defective)
+- Handles both hiragana (わけ) and kanji (訳) forms
+- Works with multiple particles: な, の, で, て
+- Covers all 5 structure variants from grammar_points_data.json
+- All 5 tests passing with proper range assertions
+- No regressions in test suite (3492 tests total)
+
+### ✓ Completed: 訳あり(訳あって) (for a reason, defective)
+
+**Grammar Point**: 訳あり(訳あって)
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+- 訳あり + Noun (direct attachment - e.g., わけあり商品 - defective products)
+- 訳あり + な + Noun (like な-adjective - e.g., 訳ありな人 - person with a background)
+- 訳あり + の + Noun (with の - e.g., わけありの商品 - defective products)
+- 訳あって + Phrase (て-form - e.g., わけあって - for a reason)
+- 訳あり + で + Phrase (with で - e.g., 訳ありで - for a reason)
+
+**Meaning**:
+- "For a reason (which isn't specified)" / "Defective" / "Stigmatized"
+- Used when there's a complicated reason that the speaker doesn't want to explain
+- 訳あり = わけ (reason) + あり (continuative form of ある)
+- Euphemistic way to describe things with problems or complicated backgrounds
+- Common with products (defective goods) and properties (stigmatized/haunted)
+
+**Implementation**:
+- Pattern: わけ/訳 (名詞 or 動詞/連用形) + あり/あっ (動詞) + Optional(な/の/で/て)
+- Custom matchers:
+  - WakeMatcher: Matches わけ or 訳 (noun or verb in 連用形)
+  - AtteMatcher: Matches あり or あっ (ある verb in various forms)
+  - FollowingParticleMatcher: Optional particles な/の/で/て
+- Handles multiple tokenization variants (hiragana vs kanji, different POS tags)
+- Priority 5 for this N1-level construction
+
+**Tests Written: 5 tests**
+1. `test_wakeari_direct_noun` - わけあり商品 (defective products, direct)
+2. `test_wakeari_na_noun` - 訳ありな人 (person with a background, な-adjective)
+3. `test_wakeari_no_noun` - わけありの商品 (defective products, with の)
+4. `test_wakeatte_phrase` - わけあって (for a reason, て-form)
+5. `test_wakeari_de_phrase` - 訳ありで (for a reason, with で)
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures full construction:
+- わけあり (0, 4) - 4 characters (direct)
+- 訳ありな (12, 16) - 4 characters (with な)
+- わけありの (0, 5) - 5 characters (with の)
+- わけあって (0, 5) - 5 characters (て-form)
+- 訳ありで (3, 7) - 4 characters (with で)
+
+**Key Notes**:
+- わけ can be tokenized as either 名詞/一般 or 動詞/自立/連用形 depending on context
+- 訳 typically appears as 名詞 (一般 or 接尾)
+- あり can be 動詞/自立 (base ある) or 動詞/ラ変 (classical copula)
+- The pattern is flexible to handle all tokenization variants
+- Common in everyday speech despite being euphemistic
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented wakeari_yakuatte() matcher
+- `grammar-lib/src/patterns.rs` - Updated WakeariYakuatte priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 tests in wakeari_yakuatte_tests module
+- `feature_list.json` - Updated 訳あり(訳あって) to complete status
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (訳あり(訳あって) from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found wakeari_yakuatte() stub in n1.rs)
+7. ✓ Wrote all 5 tests first with print_debug()
+8. ✓ Analyzed tokenization output for all variants
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Verified all tests detect the pattern correctly
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Updated priority in patterns.rs to 5
+13. ✓ Verified no regressions (3492 tests passing)
+14. ✓ Updated feature_list.json
+15. ✓ Committed changes
+16. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (5 variants: direct, な, の, て, で)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- 相まって - "Combined with, coupled with" pattern
+- 次第です - "It depends on" pattern
+- 折には - "On the occasion of" pattern
+- 始末だ - "End up, result in" pattern
+- んばかりに - "As if, almost" pattern
+- んがため(に) - "In order to" (classical) pattern
+- にまつわる - "Related to, surrounding" pattern
+- たる - Classical auxiliary verb pattern
+
+---
+
 ## Session 530 - 2025-12-16
 
 ### Session Summary - いかなる Pattern Complete ✓
