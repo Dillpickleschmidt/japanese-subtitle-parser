@@ -6901,9 +6901,59 @@ pub fn wa_u301c_wa() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なりとも
+// Pattern: なりとも (at least, even)
+// Structures: Noun + なりとも
+//
+// Note: This pattern has two tokenization variants:
+// 1. Split: Noun + なり(助動詞) + と(助詞) + も(助詞) - e.g., 一度なりとも, 一時なりとも, 一目なりとも
+// 2. Compound adverb: 多少なりとも, わずかなりとも (副詞/一般 as single token)
+//
+// The compound adverb case is undetectable with the current 4-token pattern matcher.
+// TODO: Consider adding a separate pattern for compound adverbs ending in なりとも.
 pub fn naritomo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Matcher for なり (助動詞/文語・ナリ)
+    #[derive(Debug)]
+    struct NariAuxiliaryMatcher;
+    impl Matcher for NariAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なり"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "なり"
+        }
+    }
+
+    // Matcher for と particle (格助詞/引用)
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Matcher for も particle (係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Matches split pattern: Noun + なり + と + も
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NariAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ]
 }
 
 // Pattern: に至っても

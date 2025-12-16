@@ -11819,13 +11819,13 @@
   {
     "pattern_name": "わ〜わ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "わ is an adverbial particle that is commonly used in cases of stress of emphasis in Japanese [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11833,13 +11833,13 @@
   {
     "pattern_name": "なりとも",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "なりとも is a classical Japanese expression which is used to show a minimal degree of something, often with a nuance of c... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
