@@ -10992,3 +10992,69 @@ mod nihaoyobanai_u2461_tests {
         assert_pattern_range(&patterns, "には及ばない②", 9, 19); // 技術にはおよびません
     }
 }
+
+// ============================================================
+// に難くない Tests
+// ============================================================
+
+#[cfg(test)]
+mod nikatakunai_tests {
+    use super::*;
+
+    // Pattern: に難くない (not difficult to / not hard to)
+    // Data source: grammar_points_data.json["に難くない"]
+    // Testing: structure.standard[0] - "想像 + (する) + に難くない"
+    #[test]
+    fn test_nikatakunai_souzou() {
+        let sentence = "そう言う叱り方は子供にいい影響を与えないだろうことは想像にかたくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に難くない");
+        assert_pattern_range(&patterns, "に難くない", 26, 34); // 想像にかたくない
+    }
+
+    // Testing: structure.standard[1] - "予想 + (する) + に難くない"
+    #[test]
+    fn test_nikatakunai_yosou() {
+        let sentence = "このプロジェクトを中止したら多くの人に迷惑がかかることは予想にかたくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に難くない");
+        assert_pattern_range(&patterns, "に難くない", 28, 36); // 予想にかたくない
+    }
+
+    // Testing: structure.standard[2] - "察する + に難くない"
+    #[test]
+    fn test_nikatakunai_sassuru() {
+        let sentence = "彼の複雑な心境は察するにかたくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に難くない");
+        assert_pattern_range(&patterns, "に難くない", 8, 17); // 察するにかたくない
+    }
+
+    // Testing: structure.standard[3] - "理解 + (する) + に難くない"
+    #[test]
+    fn test_nikatakunai_rikai() {
+        let sentence = "子供を亡くした親たちの気持ちは理解にかたくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に難くない");
+        assert_pattern_range(&patterns, "に難くない", 15, 23); // 理解にかたくない
+    }
+
+    // Testing: structure.polite[0] - "想像 + (する) + に難くありません"
+    #[test]
+    fn test_nikatakunai_polite() {
+        let sentence = "その結果は予想にかたくありませんでした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に難くない");
+        assert_pattern_range(&patterns, "に難くない", 5, 19); // 予想にかたくありませんでした
+    }
+}

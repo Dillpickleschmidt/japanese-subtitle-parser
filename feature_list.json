@@ -12519,13 +12519,13 @@
   {
     "pattern_name": "に難くない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にかたくない is a formal grammar pattern that uses a different version of the い-Adjective 難（むずか）しい 'difficult', 難（かた）い, whi... [7 std, 7 pol]",
     "priority": 5,
     "skip_reason": null
