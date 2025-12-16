@@ -1,3 +1,77 @@
+## Session 488 - 2025-12-15
+
+### Session Summary - のではないだろうか Pattern Complete ✓
+**Status**: Successfully implemented のではないだろうか (rhetorical question pattern)
+**Patterns completed**: 1 (N2, priority 4)
+**Total tests**: 3223 passing, 1 ignored (added 6 new tests)
+
+**Session highlights**:
+- Implemented のではないだろうか (I think, isn't it?, don't you think?)
+- Complex 8-token pattern with multiple optional components
+- Handles all verb/adjective/noun structure variants
+- Supports both standard (だろう) and polite (でしょう) forms
+- Supports casual variants (ん instead of の, じゃ instead of では)
+- Key learning: Use token.pos for POS checks, token.features.get(5) for conjugation forms
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: のではないだろうか (I think, isn't it?, don't you think?)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb + の/ん + では/じゃ + ない + だろう/でしょう + か
+- い-Adjective + の/ん + では/じゃ + ない + だろう/でしょう + か
+- Noun + なの/なん + では/じゃ + ない + だろう/でしょう + か
+- な-Adjective + なの/なん + では/じゃ + ない + だろう/でしょう + か
+
+**Implementation details**:
+Pattern uses 8 custom matchers for precise token matching:
+1. Optional な (copula, 体言接続) for nouns/な-adjectives
+2. の or ん (nominalizer, 名詞/非自立/一般)
+3. で (助動詞, 連用形, base=だ) OR じゃ (助詞/副助詞)
+4. Optional は (助詞/係助詞) - only after で, not after じゃ
+5. ない (助動詞, 特殊・ナイ)
+6. だろ (助動詞, 未然形, base=だ) OR でしょ (助動詞, 未然形, base=です)
+7. う (助動詞, 不変化型)
+8. か (助詞/副助詞／並立助詞／終助詞)
+
+**Key implementation insights**:
+- Initial implementation failed because used token.features for POS checks
+- Fixed by using token.pos.first() and token.pos.get(1) for POS
+- Conjugation type at token.features.get(4), form at token.features.get(5)
+- Optional な matcher allows pattern to work with both verb/i-adj and noun/na-adj
+- Optional は matcher handles では vs じゃ variants elegantly
+
+**Tests created**: 6 tests
+1. `test_nodehanaidarouka_verb_standard` - 先輩は疲れているのではないだろうか (verb, range 8-17)
+2. `test_nodehanaidarouka_i_adj_standard` - 彼女は忙しいのではないだろうか (い-adj, range 6-15)
+3. `test_nodehanaidarouka_noun_standard` - あの人は犯人なのではないだろうか (noun + な, range 6-16)
+4. `test_nodehanaidarouka_na_adj_standard` - 好きなのではないだろうか (な-adj + な, range 16-26)
+5. `test_nodehanaidarouka_verb_polite` - 成功するのではないでしょうか (polite でしょう, range 6-16)
+6. `test_nodehanaidarouka_verb_casual_n` - 欲しがっているんじゃないだろうか (casual ん+じゃ, range 15-24)
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented nodehanaidarouka() function (110 lines with 8 custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 6 comprehensive tests
+- `feature_list.json` - Updated のではないだろうか to complete status
+
+**Grammar meaning**:
+Rhetorical question used to express opinion indirectly in a modest way. Common translations:
+- "I think it's (A), isn't it?"
+- "It might be that (A)"
+- "Don't you think that (A)?"
+
+The elongated phrase makes the statement more tentative and polite than directly asserting something.
+
+---
+
 ## Session 487 - 2025-12-15
 
 ### Session Summary - Two N2 Patterns Complete ✓
