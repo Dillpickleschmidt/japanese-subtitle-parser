@@ -7002,9 +7002,48 @@ pub fn niitattemo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を兼ねて
+// Pattern: を兼ねて (also partly for the purpose of / to double as)
+// Structures: Noun + を/も + 兼（か）ねて
 pub fn wokanete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match かね (verb base=かねる)
+    #[derive(Debug)]
+    struct KaneruVerbMatcher;
+    impl super::Matcher for KaneruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "かねる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.surface == "かね"
+        }
+    }
+
+    // Match て particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match を or も particle
+    #[derive(Debug)]
+    struct WoOrMoParticleMatcher;
+    impl super::Matcher for WoOrMoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "を" || token.surface == "も")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(), // Noun
+        TokenMatcher::Custom(Arc::new(WoOrMoParticleMatcher)), // を or も
+        TokenMatcher::Custom(Arc::new(KaneruVerbMatcher)), // かね
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)), // て
+    ]
 }
 
 // Pattern: Verb[ない]もの(だろう)か (if only, isn't there a way to)

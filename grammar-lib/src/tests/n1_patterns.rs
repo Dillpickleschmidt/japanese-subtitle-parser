@@ -8103,3 +8103,77 @@ mod niitattemo_tests {
         assert_pattern_range(&patterns, "に至っても", 17, 24); // 結果に至っても
     }
 }
+
+// ============================================================================
+// を兼ねて Tests
+// ============================================================================
+
+mod wokanete_tests {
+    use super::*;
+
+    // Pattern: を兼ねて (also partly for the purpose of / to double as)
+    // Data source: grammar_points_data.json["を兼ねて"]
+    // Testing: structure.standard[0] - "Noun + を + 兼（か）ねて"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun + も + 兼（か）ねて (も replacing を)
+    //
+    // Meaning: "To (A) at the same time as (B)" / "To double as (A)"
+    // Highlights (B) as primary goal, (A) is secondary/supporting goal
+    // 兼（か）ねる = to stretch across to / to do concurrently
+
+    #[test]
+    fn test_wokanete_bokeBoushi() {
+        // Testing: Noun + をかねて (防止をかねて)
+        let sentence = "おばあちゃんはボケ防止をかねて、毎日クロスワードパズルをしています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を兼ねて");
+        assert_pattern_range(&patterns, "を兼ねて", 9, 15); // 防止をかねて
+    }
+
+    #[test]
+    fn test_wokanete_benkyou() {
+        // Testing: Noun + をかねて (勉強をかねて)
+        let sentence = "日本語の勉強をかねて、英語の字幕なしで日本の映画をみています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を兼ねて");
+        assert_pattern_range(&patterns, "を兼ねて", 4, 10); // 勉強をかねて
+    }
+
+    #[test]
+    fn test_wokanete_diet() {
+        // Testing: Noun + をかねて (ダイエットをかねて)
+        let sentence = "ダイエットをかねて、毎朝ランニングしています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を兼ねて");
+        assert_pattern_range(&patterns, "を兼ねて", 0, 9); // ダイエットをかねて
+    }
+
+    #[test]
+    fn test_wokanete_multiple_nouns() {
+        // Testing: Multiple nouns with と (発散をかねて)
+        let sentence = "運動不足とストレス発散をかねて、キックボクシングジムに通っている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を兼ねて");
+        assert_pattern_range(&patterns, "を兼ねて", 9, 15); // 発散をかねて
+    }
+
+    #[test]
+    fn test_wokanete_taichou_kanri() {
+        // Testing: Multiple nouns with と (節約をかねて)
+        let sentence = "体調管理と節約をかねて、寝る時はエアコンを使わないようにしている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を兼ねて");
+        assert_pattern_range(&patterns, "を兼ねて", 5, 11); // 節約をかねて
+    }
+}

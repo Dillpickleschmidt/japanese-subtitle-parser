@@ -7405,7 +7405,7 @@ declare_patterns! {
     Wokanete {
         name: "を兼ねて",
         matcher_fn: crate::matchers::n1::wokanete,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
