@@ -1467,3 +1467,86 @@ mod toha_tests {
         assert_pattern_range(&patterns, "とは", 7, 12); // 買えるとは
     }
 }
+
+// ============================================================================
+// じゃあるまいし Tests
+// ============================================================================
+
+mod jaarumaishi_tests {
+    use super::*;
+
+    // Pattern: じゃあるまいし (it's not like, you're not)
+    // Data source: grammar_points_data.json["じゃあるまいし"]
+    // Testing: structure.standard[0] - "Noun + じゃある + まいし" (or ではある)
+    //
+    // Other structures to test:
+    //   - standard[1]: Verb + ん + じゃある + まいし
+    //   - standard[2]: Verb + わけ + じゃある + まいし
+    //   - Note: ではある and でもある are alternatives to じゃある
+
+    // Testing: structure.standard[0] - "Noun + じゃある + まいし"
+    #[test]
+    fn test_jaarumaishi_noun_ja() {
+        let sentence = "もう子供じゃあるまいし、行動する前に少しでも考えたらどうなの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃあるまいし");
+        assert_pattern_range(&patterns, "じゃあるまいし", 2, 11); // 子供じゃあるまいし
+    }
+
+    // Testing: structure.standard[0] - "Noun + ではある + まいし"
+    #[test]
+    fn test_jaarumaishi_noun_deha() {
+        let sentence = "子供ではあるまいし、自分の責任は自分で取りなさい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃあるまいし");
+        assert_pattern_range(&patterns, "じゃあるまいし", 0, 9); // 子供ではあるまいし
+    }
+
+    // Testing: structure.standard[1] - "Verb + ん + じゃある + まいし"
+    #[test]
+    fn test_jaarumaishi_verb_n_ja() {
+        let sentence = "親に止められているんじゃあるまいし、好きに自分が行きたいところに行けばいいんじゃないの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃあるまいし");
+        assert_pattern_range(&patterns, "じゃあるまいし", 9, 17); // んじゃあるまいし
+    }
+
+    // Testing: structure.standard[1] - "Verb + ん + ではある + まいし"
+    #[test]
+    fn test_jaarumaishi_verb_n_deha() {
+        let sentence = "誰かに教えられたんではあるまいし、自分で調べることもできるでしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃあるまいし");
+        assert_pattern_range(&patterns, "じゃあるまいし", 8, 16); // んではあるまいし
+    }
+
+    // Testing: structure.standard[2] - "Verb + わけ + じゃある + まいし"
+    #[test]
+    fn test_jaarumaishi_verb_wake_ja() {
+        let sentence = "減るわけじゃあるまいし、少しぐらい貸してくれてもいいじゃん。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃあるまいし");
+        assert_pattern_range(&patterns, "じゃあるまいし", 2, 11); // わけじゃあるまいし
+    }
+
+    // Testing: structure.standard[2] - "Verb + わけ + ではある + まいし"
+    #[test]
+    fn test_jaarumaishi_verb_wake_deha() {
+        let sentence = "忘れるわけではあるまいし、メモを取る必要はないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "じゃあるまいし");
+        assert_pattern_range(&patterns, "じゃあるまいし", 3, 12); // わけではあるまいし
+    }
+}
