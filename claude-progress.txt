@@ -1,7 +1,70 @@
 ## Session 487 - 2025-12-15
 
-### Session Summary - 幸い・幸いなことに Pattern Complete ✓
-**Status**: Successfully implemented 幸い・幸いなことに pattern with all variants
+### Session Summary - Two N2 Patterns Complete ✓
+**Status**: Successfully implemented 幸い・幸いなことに and てしょうがない patterns
+**Patterns completed**: 2 (both N2, priority 4)
+**Total tests**: 3217 passing, 1 ignored (added 6 new tests)
+
+**Session highlights**:
+- Implemented 幸い・幸いなことに (fortunately, luckily) - 4 tests, all variants
+- Implemented てしょうがない (cannot be helped, extremely) - 2 tests
+- てしょうがない has tokenization limitation with な-adjectives
+- Both patterns use custom matchers for precise detection
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: てしょうがない (cannot be helped, extremely)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb[て] + しょうがない
+- い-Adjective[て] + しょうがない
+
+**Undetectable variant**:
+- な-Adjective + で + しょうがない (tokenization issue)
+
+**Implementation details**:
+- TeDeMatcher for て or で particle (助詞/接続助詞)
+- ShougaMatcher for しょうが (名詞/ナイ形容詞語幹)
+- NaiAuxMatcher for ない (助動詞/特殊・ナイ)
+- Pattern matches: て/で + しょうが + ない sequence
+
+**Tokenization challenge**:
+The な-adjective variant **でしょうがない** is consistently tokenized by Kagome as:
+- でしょ (助動詞/特殊・デス/未然形) + う (助動詞) + が (助詞/接続助詞) + ない (形容詞)
+
+This interprets it as **でしょう** ("probably") + **がない** ("there isn't"), making it indistinguishable from the conjectural form. Examples:
+- 不便でしょうがない → 不便でしょう + がない
+- 暇でしょうがない → 暇でしょう + がない
+- 好きでしょうがない → 好きでしょう + がない
+
+The verb and い-adjective forms work correctly because they use **て** (not **で**), which doesn't create this ambiguity.
+
+**Tests created**: 2 tests
+1. `test_teshouganai_verb` - 日本語が上手になりたくてしょうがない (verb + て, range 11-18)
+2. `test_teshouganai_i_adj` - 部屋が暑くてしょうがない (い-adj + て, range 5-12)
+
+**Key implementation notes**:
+- Expression means "(A) cannot be helped" or "extremely (A)"
+- Comes from 仕様（しよう）abbreviated to しょう meaning "way" or "method"
+- Variant しかたがない (仕方がない) is more polite but has same meaning
+- Pattern range includes the full て/でしょうがない construction
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented teshouganai() function (43 lines)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 2 tests + TODO comment documenting undetectable variant
+- `feature_list.json` - Updated てしょうがない to complete status
+
+---
+
+### Previous Summary - 幸い・幸いなことに Pattern Complete ✓
 **Patterns completed**: 1 (N2, priority 4)
 **Total tests**: 3215 passing, 1 ignored (added 4 new tests)
 
