@@ -1,3 +1,106 @@
+## Session 609 - 2025-12-16
+
+### Session Summary - をよそに Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (をよそに - N1, priority 5)
+**Total tests**: 3882 passing (5 new tests, no regressions)
+**Progress**: One hundred and twenty-second N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented をよそに (ignoring/disregarding)
+- Formal expression for indicating someone is ignoring or disregarding something
+- Handles both direct noun patterns and nominalized phrase patterns (Phrase + の)
+- Pattern includes the full grammatical construction (preceding word + をよそに)
+- Often used critically about actions seen as irresponsible
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: をよそに (ignoring/disregarding)
+
+**Grammar Point**: をよそに
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Noun + をよそに (e.g., 心配をよそに, 反対をよそに, 視線をよそに)
+2. Phrase + の + をよそに (e.g., 体調が悪いのをよそに)
+
+**Meaning**:
+- "Ignoring (A)" / "Disregarding (A)" / "Putting (A) completely aside, (B)"
+- Combination of を (adverbial particle) + 余所（よそ）"other place" + に (case-marking particle)
+- Literal meaning: "putting (A) completely aside"
+- Expresses that (A) has nothing to do with the speaker or that the speaker is ignoring it in relation to something else
+- (A) expresses some overall situation, while (B) indicates an action done without thought or care toward those circumstances
+- Often used critically about actions that are seen as irresponsible
+- Formal expression, seen more often in writing
+- Generally not used to refer to the speaker's own actions
+
+**Tokenization pattern**:
+- Word (Noun or の) + を + よそ + に
+- Preceding word: Noun, の (名詞/非自立/一般), or other word
+- を: 助詞/格助詞/一般
+- よそ: 名詞/代名詞/一般 (base=よそ, surface=よそ)
+- に: 助詞/格助詞/一般
+
+**Implementation**:
+Created 3 custom matchers for precise pattern matching:
+1. WoMatcher - Matches を as 助詞/格助詞/一般
+2. YosoMatcher - Matches よそ as 名詞 (any noun subtype)
+3. NiMatcher - Matches に as 助詞/格助詞/一般
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding word - noun, の, or other)
+- WoMatcher (を particle)
+- YosoMatcher (よそ noun)
+- NiMatcher (に particle)
+
+**Tests Written: 5 tests (all passing)**
+1. test_woyosoni_noun_basic - 心配をよそに (4, 10) - basic noun + pattern
+2. test_woyosoni_noun_objections - 反対をよそに (6, 12) - objections context
+3. test_woyosoni_noun_eyes - 視線をよそに (5, 11) - eyes/gaze context
+4. test_woyosoni_phrase_nominalized - のをよそに (8, 13) - nominalized phrase + pattern
+5. test_woyosoni_concerns - 懸念をよそに (7, 13) - concerns context
+
+**Character Ranges**: Pattern captures preceding word + をよそに:
+- 心配をよそに (4, 10) - 6 characters (noun + pattern)
+- 反対をよそに (6, 12) - 6 characters (noun + pattern)
+- 視線をよそに (5, 11) - 6 characters (noun + pattern)
+- のをよそに (8, 13) - 5 characters (の + pattern)
+- 懸念をよそに (7, 13) - 6 characters (noun + pattern)
+
+**Key Notes**:
+- Pattern includes the preceding word (full grammatical construction)
+- Works with both direct nouns (心配, 反対, 視線, 懸念) and nominalized phrases (の)
+- TokenMatcher::Any at the start captures any preceding word type
+- Used when actions are done without thought or care toward circumstances
+- Often implies criticism of irresponsible or inconsiderate behavior
+- More formal than casual speech, typically found in writing or formal contexts
+- Priority updated from 1 to 5 in patterns.rs to reflect correct level
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented woyosoni() with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in woyosoni_tests module
+- feature_list.json - Updated をよそに to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (noun and phrase + の)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3877 + 5 = 3882 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- に限ったことではない - "Not limited to" pattern
+- とは比べものにならない - "Cannot be compared to" pattern
+- まじき - "Should not" pattern
+- の至り - "Highest level of" pattern
+- に恥じない - "Not ashamed of" pattern
+
+================================================================================
+
 ## Session 608 - 2025-12-16
 
 ### Session Summary - ないまでも Complete ✓
