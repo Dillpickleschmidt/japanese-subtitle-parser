@@ -11735,13 +11735,13 @@
   {
     "pattern_name": "もさることながら",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "もさることながら is a construction in Japanese that is often translated as 'it goes without saying that (A), but (B)', or 'no... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

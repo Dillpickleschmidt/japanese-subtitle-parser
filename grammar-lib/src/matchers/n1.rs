@@ -6486,9 +6486,63 @@ pub fn naidewanai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: もさることながら
+// Pattern: もさることながら (not only A but also B)
+// Structures: Noun + もさることながら
 pub fn mosarukotonagara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match も particle (係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match さる (連体詞)
+    #[derive(Debug)]
+    struct SaruRentaishiMatcher;
+    impl Matcher for SaruRentaishiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さる"
+                && token.base_form == "さる"
+                && token.pos.first().is_some_and(|p| p == "連体詞")
+        }
+    }
+
+    // Match こと noun
+    #[derive(Debug)]
+    struct KotoNounMatcher;
+    impl Matcher for KotoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.base_form == "こと"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Match ながら particle (接続助詞)
+    #[derive(Debug)]
+    struct NagaraParticleMatcher;
+    impl Matcher for NagaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ながら"
+                && token.base_form == "ながら"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(SaruRentaishiMatcher)),
+        TokenMatcher::Custom(Arc::new(KotoNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NagaraParticleMatcher)),
+    ]
 }
 
 // Pattern: ものと思っていた

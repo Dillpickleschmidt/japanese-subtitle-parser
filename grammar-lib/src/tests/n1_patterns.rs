@@ -7496,3 +7496,25 @@ mod naidemonai_tests {
         assert_pattern_range(&patterns, "ないでもない", 10, 18); // ないものでもない
     }
 }
+
+// ============================================================================
+// もさることながら Tests
+// ============================================================================
+
+mod mosarukotonagara_tests {
+    use super::*;
+
+    // Pattern: もさることながら (not only A but also B)
+    // Data source: grammar_points_data.json["もさることながら"]
+    // Testing: structure.standard[0] - "Noun + もさることながら"
+
+    #[test]
+    fn test_mosarukotonagara_brand_products() {
+        let sentence = "あのブランドが出す商品もさることながら、マーケティングも素晴らしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "もさることながら");
+        assert_pattern_range(&patterns, "もさることながら", 9, 19); // 商品もさることながら
+    }
+}
