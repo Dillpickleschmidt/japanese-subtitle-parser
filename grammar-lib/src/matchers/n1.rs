@@ -8226,9 +8226,150 @@ pub fn nihikikae() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: それまでだ
+// Pattern: それまでだ (if that happens, it's all over)
+// Structures: Verb[たら] + それまでだ / Verb[ば] + それまでだ
 pub fn soremadeda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in 連用タ接続 (for たら form)
+    #[derive(Debug)]
+    struct VerbRenyouTaMatcher;
+    impl super::Matcher for VerbRenyouTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match verb in 仮定形 (for ば form)
+    #[derive(Debug)]
+    struct VerbKateiFormMatcher;
+    impl super::Matcher for VerbKateiFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match たら auxiliary (仮定形 of た)
+    #[derive(Debug)]
+    struct TaraAuxiliaryMatcher;
+    impl super::Matcher for TaraAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+        }
+    }
+
+    // Match ば particle
+    #[derive(Debug)]
+    struct BaParticleMatcher;
+    impl super::Matcher for BaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match それ pronoun
+    #[derive(Debug)]
+    struct SoreMatcher;
+    impl super::Matcher for SoreMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "それ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "代名詞")
+        }
+    }
+
+    // Match まで particle
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl super::Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match だ auxiliary
+    #[derive(Debug)]
+    struct DaAuxiliaryMatcher;
+    impl super::Matcher for DaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Create two variants: Verb[たら] + それまでだ and Verb[ば] + それまでだ
+    let tara_variant = vec![
+        TokenMatcher::Custom(Arc::new(VerbRenyouTaMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(SoreMatcher)),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(DaAuxiliaryMatcher)),
+    ];
+
+    let ba_variant = vec![
+        TokenMatcher::Custom(Arc::new(VerbKateiFormMatcher)),
+        TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(SoreMatcher)),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(DaAuxiliaryMatcher)),
+    ];
+
+    // Return the combined pattern (either variant can match)
+    // We'll use alternation by checking both patterns
+    // For now, return tara_variant as the primary (we'll need to handle both)
+    // Actually, we need to return one matcher that handles both cases
+    // Let's create a combined approach using OR logic for the first two tokens
+
+    // Match either Verb[連用タ接続] or Verb[仮定形]
+    #[derive(Debug)]
+    struct VerbConditionalFormMatcher;
+    impl super::Matcher for VerbConditionalFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| {
+                    f == "連用タ接続" || f == "仮定形"
+                })
+        }
+    }
+
+    // Match either たら or ば
+    #[derive(Debug)]
+    struct ConditionalMarkerMatcher;
+    impl super::Matcher for ConditionalMarkerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match たら (助動詞)
+            if token.surface == "たら"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+            {
+                return true;
+            }
+            // Match ば (助詞/接続助詞)
+            if token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbConditionalFormMatcher)),
+        TokenMatcher::Custom(Arc::new(ConditionalMarkerMatcher)),
+        TokenMatcher::Custom(Arc::new(SoreMatcher)),
+        TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(DaAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: といおうか

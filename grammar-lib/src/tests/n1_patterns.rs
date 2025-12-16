@@ -8648,3 +8648,53 @@ mod haoroka_tests {
         assert_pattern_range(&patterns, "はおろか", 2, 10); // パソコンはおろか
     }
 }
+
+// ============================================================================
+// それまでだ Tests
+// ============================================================================
+
+mod soremadeda_tests {
+    use super::*;
+
+    // Pattern: それまでだ (if that happens, it's all over / all in vain)
+    // Data source: grammar_points_data.json["それまでだ"]
+    // Testing structure variants:
+    //   - standard[0]: "Verb[たら] + それまでだ"
+    //   - standard[1]: "Verb[ば] + それまでだ"
+
+    #[test]
+    fn test_soremadeda_tara_conditional() {
+        // Testing: Verb[たら] + それまでだ
+        // From grammar_points_data.json: "ここで見つかったらそれまでだ"
+        let sentence = "もう少し我慢をしろ！ここで見つかったらそれまでだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それまでだ");
+        assert_pattern_range(&patterns, "それまでだ", 13, 24); // 見つかったらそれまでだ
+    }
+
+    #[test]
+    fn test_soremadeda_ba_conditional() {
+        // Testing: Verb[ば] + それまでだ
+        // From grammar_points_data.json: "外部に漏れればそれまでだ"
+        let sentence = "このことが外部に漏れればそれまでだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それまでだ");
+        assert_pattern_range(&patterns, "それまでだ", 8, 17); // 漏れればそれまでだ
+    }
+
+    #[test]
+    fn test_soremadeda_mistake() {
+        // Testing: Verb[ば] + それまでだ
+        // From grammar_points_data.json: "ミスを犯せばそれまでだ"
+        let sentence = "やっとここまでたどり着いた。ここでミスを犯せばそれまでだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "それまでだ");
+        assert_pattern_range(&patterns, "それまでだ", 20, 28); // 犯せばそれまでだ
+    }
+}

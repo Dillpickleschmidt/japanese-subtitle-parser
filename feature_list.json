@@ -12715,13 +12715,13 @@
   {
     "pattern_name": "それまでだ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ばそれまでだ is a hypothetical expression used when one wishes to indicate that ‘if (A) is reached, that’s as far as it wil... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
