@@ -1,3 +1,106 @@
+## Session 522 - 2025-12-16
+
+### Session Summary - ところを Pattern Complete ✓
+**Status**: Successfully implemented ところを pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3447 passing, 1 ignored (added 5 new tests)
+**Progress**: Forty-first N1 pattern completed!
+
+**Session highlights**:
+- Implemented ところを pattern (at a time when, in spite of)
+- Pattern structure: Any + ところ + を
+- Handles verb, adjective, and noun variants
+- All 5 tests passing with proper range assertions
+- No regressions in test suite (3447 tests total)
+- Also updated 飽くまで(も) to complete status (already implemented in session 514)
+
+### ✓ Completed: ところを (at a time when, in spite of)
+
+**Grammar Point**: ところを
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+- Verb + ところを (e.g., 休んでいるところを)
+- い-Adjective + ところを (e.g., お忙しいところを)
+- な-Adjective + な + ところを (e.g., ご多忙なところを)
+- Noun + の + ところを (e.g., お急ぎのところを)
+
+**Implementation**:
+- Matcher: `Any + ところ(名詞) + を(格助詞)`
+- Custom matchers:
+  - TokoroMatcher: ところ as 名詞 (surface="ところ", base_form="ところ")
+  - WoParticleMatcher: を as 助詞/格助詞
+- Pattern detects: [preceding element] + ところ + を
+- TokenMatcher::Any captures one token before ところ (verb, adjective, particle, etc.)
+
+**Tests Written: 5 tests**
+1. `test_tokorowo_verb_teiru` - 休んでいるところを (verb て-form + いる)
+2. `test_tokorowo_verb_caught` - しているところを (verb て-form + いる, caught context)
+3. `test_tokorowo_i_adjective` - お忙しいところを (い-adjective compound)
+4. `test_tokorowo_na_adjective` - ご多忙なところを (な-adjective + な)
+5. `test_tokorowo_noun` - お急ぎのところを (noun + の)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures varying context:
+- `いるところを` (3, 9) or (5, 11) - verb + ところを
+- `お忙しいところを` (0, 8) - full adjective compound + ところを
+- `なところを` (3, 8) - な + ところを
+- `のところを` (3, 8) - の + ところを
+
+**Key Notes**:
+- Two primary meanings:
+  1. "In spite of (A)" / "Regardless of (A)" - politely acknowledging interruption
+  2. "When (A)" / "At the time of (A)" - situation interrupted by another action
+- Follows any structure that could pair with a noun
+- を itself may be omitted (but we only match the を form)
+- Often used in polite apologies: "申し訳ないんですけど" (I'm sorry but...)
+- Can have positive or negative nuance depending on context
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented tokorowo() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 tests in tokorowo_tests module
+- `feature_list.json` - Updated ところを and 飽くまで(も) to complete status
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (ところを from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found tokorowo() stub in n1.rs)
+7. ✓ Wrote all 5 tests first with print_debug()
+8. ✓ Analyzed tokenization output for all variants
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Verified all tests pass
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Verified no regressions (3447 tests passing)
+13. ✓ Updated feature_list.json (ところを and 飽くまで(も))
+14. ✓ Committed changes
+15. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (verb, い-adj, な-adj, noun)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- にして② - "And also" pattern, detectable
+- つ〜つ - Classical verb pattern
+- であれ〜であれ - "Whether A or B" pattern
+- たら最後 - "Once A, definitely B" pattern
+- いかなる - "What kind of, any" pattern
+- なりに - "In one's own way" pattern
+- れる・られる + ままに - "As one is made to" pattern
+- にまつわる - "Related to" pattern
+
+---
+
 ## Session 521 - 2025-12-16
 
 ### Session Summary - べく Pattern Complete ✓
