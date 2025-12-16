@@ -10979,13 +10979,13 @@
   {
     "pattern_name": "あくまでも",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "飽（あ）く is the old-fashioned and somewhat poetic version of 飽（あ）きる the る-Verb meaning 'to tire of (A)', or 'to get sick... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

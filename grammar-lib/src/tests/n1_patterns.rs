@@ -3159,3 +3159,59 @@ mod verb_nai_mono_darou_ka_tests {
         assert_pattern_range(&patterns, "Verb[ない]もの(だろう)か", 14, 22); // ないものだろうか
     }
 }
+
+// ============================================================================
+// あくまでも Tests
+// ============================================================================
+
+mod akumademo_tests {
+    use super::*;
+
+    // Pattern: あくまでも (to the end, persistently)
+    // Data source: grammar_points_data.json["あくまでも"]
+    // Testing: structure.standard[0] - "あくまで（も） + Phrase"
+
+    // Test standard form: あくまでも (with も)
+    #[test]
+    fn test_akumademo_with_mo() {
+        let sentence = "容疑者はあくまでも自分がしたことを認めようとしませんでした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あくまでも");
+        assert_pattern_range(&patterns, "あくまでも", 4, 9); // あくまでも
+    }
+
+    // Test without も: あくまで
+    #[test]
+    fn test_akumademo_without_mo() {
+        let sentence = "犯人のことなら私にお任せください！あくまで彼を捕まえるまで探し続けるつもりです！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あくまでも");
+        assert_pattern_range(&patterns, "あくまでも", 17, 21); // あくまで
+    }
+
+    // Test sentence-initial with intention (つもり)
+    #[test]
+    fn test_akumademo_with_tsumori() {
+        let sentence = "私たちはあくまでもあなたのお子さんを見つけるつもりです！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あくまでも");
+        assert_pattern_range(&patterns, "あくまでも", 4, 9); // あくまでも
+    }
+
+    // Test mid-sentence placement
+    #[test]
+    fn test_akumademo_mid_sentence() {
+        let sentence = "彼女はあくまでも子供たちには秘密にしておこうと思っていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あくまでも");
+        assert_pattern_range(&patterns, "あくまでも", 3, 8); // あくまでも
+    }
+}

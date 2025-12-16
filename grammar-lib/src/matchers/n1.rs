@@ -2485,8 +2485,23 @@ pub fn dano() -> Vec<TokenMatcher> {
 }
 
 // Pattern: あくまでも
+/// Pattern: あくまでも (to the end, persistently, stubbornly)
+/// Structures: あくまで（も） + Phrase
 pub fn akumademo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Custom matcher for あくまでも or あくまで (adverb)
+    #[derive(Debug)]
+    struct AkumademoMatcher;
+    impl super::Matcher for AkumademoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "あくまでも" || token.surface == "あくまで")
+                && token.base_form == token.surface  // base_form matches surface
+                && token.pos.first().is_some_and(|pos| pos == "副詞")  // adverb
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(AkumademoMatcher))]
 }
 
 // Pattern: べく
