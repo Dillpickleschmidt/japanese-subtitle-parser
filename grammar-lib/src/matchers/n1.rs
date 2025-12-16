@@ -3236,9 +3236,27 @@ pub fn kososure_u301c_nai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 並み
+// Pattern: 並み (on par with, as good as)
+// Structures: Noun + 並み + (だ/です/の/に)
 pub fn nami() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 並み as noun suffix
+    #[derive(Debug)]
+    struct NamiMatcher;
+    impl super::Matcher for NamiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "並み"
+                && token.base_form == "並み"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NamiMatcher)),
+    ]
 }
 
 // Pattern: に先駆けて (ahead of, in advance of)

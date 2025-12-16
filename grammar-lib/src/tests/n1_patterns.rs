@@ -2688,3 +2688,58 @@ mod naradeha_tests {
         assert_pattern_range(&patterns, "ならでは", 11, 17); // 都会ならでは
     }
 }
+
+#[cfg(test)]
+mod nami_tests {
+    use super::*;
+
+    // Pattern: 並み (on par with, as good as)
+    // Data source: grammar_points_data.json["並み"]
+    // Testing all structure variants:
+    //   - standard[0]: Noun + 並み + だ
+    //   - standard[1]: Noun + 並み + の + Noun
+    //   - standard[2]: Noun + 並み + に + Phrase
+    //   - polite[0]: Noun + 並み + です
+    //   - polite[1]: Noun + 並み + の + Noun (same as standard)
+    //   - polite[2]: Noun + 並み + に + Phrase (same as standard)
+
+    #[test]
+    fn test_nami_da() {
+        let sentence = "あの子のサーブの仕方はプロ並みだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "並み");
+        assert_pattern_range(&patterns, "並み", 11, 15); // プロ並み
+    }
+
+    #[test]
+    fn test_nami_no_noun() {
+        let sentence = "まだ５月なのに８月並みの暑さだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "並み");
+        assert_pattern_range(&patterns, "並み", 7, 11); // ８月並み
+    }
+
+    #[test]
+    fn test_nami_ni_phrase() {
+        let sentence = "彼は日本語をネイティブ並みに話せるから安心できる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "並み");
+        assert_pattern_range(&patterns, "並み", 6, 13); // ネイティブ並み
+    }
+
+    #[test]
+    fn test_nami_desu() {
+        let sentence = "彼女の料理の腕前はプロ並みです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "並み");
+        assert_pattern_range(&patterns, "並み", 9, 13); // プロ並み
+    }
+}

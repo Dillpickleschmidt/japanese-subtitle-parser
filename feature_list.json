@@ -12911,14 +12911,14 @@
   {
     "pattern_name": "並み",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "並（な）み is the noun form of the classical verb 並（な）む, which has the same meaning as 並（なら）ぶ, ‘to line up’, or ‘to be in ... [3 std, 3 pol]",
+    "passes": true,
+    "description": "並（な）み is the noun form of the classical verb 並（な）む, which has the same meaning as 並（なら）ぶ, 'to line up', or 'to be in ... [3 std, 3 pol]",
     "priority": 5,
     "skip_reason": null
   },
