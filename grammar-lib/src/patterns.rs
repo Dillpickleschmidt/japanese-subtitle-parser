@@ -7269,7 +7269,7 @@ declare_patterns! {
     NgatameNi {
         name: "んがため(に)",
         matcher_fn: crate::matchers::n1::ngatame_ni,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

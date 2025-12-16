@@ -6011,9 +6011,79 @@ pub fn gatera() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: んがため(に)
+// Pattern: んがため(に) (for the purpose of, in order to)
+// Structures: Verb[未然形] + ん + が + ため + に/の
 pub fn ngatame_ni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ん (can be 助動詞 or 名詞 depending on context)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl super::Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "名詞"))
+        }
+    }
+
+    // Match が (接続助詞 or 格助詞)
+    #[derive(Debug)]
+    struct GaMatcher;
+    impl super::Matcher for GaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.base_form == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+        }
+    }
+
+    // Match ため as noun
+    #[derive(Debug)]
+    struct TameMatcher;
+    impl super::Matcher for TameMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ため"
+                && token.base_form == "ため"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match に or の particle
+    #[derive(Debug)]
+    struct NiOrNoParticleMatcher;
+    impl super::Matcher for NiOrNoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "の")
+                && token.base_form == token.surface
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match verb in 未然形 or 連用形 (for causative forms like させる → させん)
+    #[derive(Debug)]
+    struct VerbBeforeNMatcher;
+    impl super::Matcher for VerbBeforeNMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f == "未然形" || f == "連用形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbBeforeNMatcher)),
+        TokenMatcher::Custom(Arc::new(NMatcher)),
+        TokenMatcher::Custom(Arc::new(GaMatcher)),
+        TokenMatcher::Custom(Arc::new(TameMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiOrNoParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: いかん〜ず (regardless of, irrespective of)

@@ -7185,3 +7185,75 @@ mod dani_shinai_tests {
         assert_pattern_range(&patterns, "だに + しない", 16, 25); // にだに思わなかった (includes に before だに)
     }
 }
+
+// ============================================================================
+// んがため(に) Tests
+// ============================================================================
+
+mod ngatame_ni_tests {
+    use super::*;
+
+    // Pattern: んがため(に) (for the purpose of, in order to)
+    // Data source: grammar_points_data.json["んがため(に)"]
+    // Testing: structure.standard[0] - "Verb[ない] + ん + が + ため(に)"
+    //
+    // Structure variants:
+    //   - standard[0]: Verb[ない] + んがため(に)
+    //   - standard[1]: Verb[ない] + んがための + Noun
+    //   - Exception: する → せんがため
+
+    // Testing: structure.standard[0] - Verb + んがために
+    #[test]
+    fn test_ngatame_ni_basic() {
+        let sentence = "彼は若い頃からお金を貯めんがために、色々と我慢してきた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んがため(に)");
+        assert_pattern_range(&patterns, "んがため(に)", 10, 17); // 貯めんがために
+    }
+
+    // Testing: structure.standard[0] - Verb + んがために (different verb)
+    #[test]
+    fn test_ngatame_ni_kanae() {
+        let sentence = "私の両親たちは私たちの夢を叶えんがために、毎日休まずに仕事をしてきました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んがため(に)");
+        assert_pattern_range(&patterns, "んがため(に)", 13, 20); // 叶えんがために
+    }
+
+    // Testing: structure.standard[1] - Verb + んがための + Noun
+    #[test]
+    fn test_ngatame_no_noun_katsu() {
+        let sentence = "こんなことはしたくないが大会で勝たんがためのことだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んがため(に)");
+        assert_pattern_range(&patterns, "んがため(に)", 15, 22); // 勝たんがための
+    }
+
+    // Testing: structure.standard[1] - Verb + んがための + Noun (different verb)
+    #[test]
+    fn test_ngatame_no_noun_uru() {
+        let sentence = "売れ残りの商品を売らんがための作戦を考えたが何も思いつかなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んがため(に)");
+        assert_pattern_range(&patterns, "んがため(に)", 8, 15); // 売らんがための
+    }
+
+    // Testing: Exception - する → せんがため
+    #[test]
+    fn test_ngatame_ni_suru_exception() {
+        let sentence = "彼女は自分の作戦を成功させんがために、友達を裏切った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んがため(に)");
+        assert_pattern_range(&patterns, "んがため(に)", 12, 18); // せんがために
+    }
+}
