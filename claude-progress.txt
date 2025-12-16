@@ -1,3 +1,95 @@
+## Session 498 - 2025-12-15
+
+### Session Summary - One N1 Pattern Complete ✓
+**Status**: Successfully implemented 塗れ (まみれ) pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3320 passing, 1 ignored (added 4 new tests)
+**Progress**: Thirteenth N1 pattern completed!
+
+**Session highlights**:
+- Implemented 塗れ (まみれ - completely covered in, smeared all over with) - 4 tests
+- Handles both compound and split tokenization forms:
+  - Compound: 泥まみれ, 血まみれ (single token nouns)
+  - Split: 借金 + まみれ (noun + suffix)
+- Two matcher functions: nure_compound() and nure()
+- MamireCompoundMatcher checks base_form.ends_with("まみれ")
+- MamireSuffixMatcher matches まみれ as 名詞/接尾/一般
+- All tests use realistic, subtitle-quality sentences from actual grammar examples
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: 塗れ (まみれ - completely covered in)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Noun + まみれ (both compound and split forms)
+- Noun + まみれ + の + Noun
+- Noun + まみれ + になって + Phrase
+
+**Implementation details**:
+2 pattern variants to handle different tokenization:
+1. `nure_compound()` - Compound words ending in まみれ (MamireCompoundMatcher)
+2. `nure()` - Split form with まみれ suffix (MamireSuffixMatcher)
+
+**Key implementation insight**:
+Kagome tokenizes まみれ words in two different ways depending on frequency:
+- **Compound**: Common combinations like 泥まみれ (mud-covered) and 血まみれ (blood-covered) are single tokens tagged as 名詞/一般 or 名詞/形容動詞語幹
+- **Split**: Less common combinations like 借金まみれ (debt-ridden) split into Noun + まみれ where まみれ is tagged as 名詞/接尾/一般
+
+Both patterns use the same name "塗れ" to ensure detection regardless of tokenization.
+
+**Tokenization patterns**:
+1. **Compound forms**:
+   - 泥まみれ (名詞/一般, base=泥まみれ)
+   - 血まみれ (名詞/形容動詞語幹, base=血まみれ)
+2. **Split form**:
+   - 借金 (名詞/サ変接続) + まみれ (名詞/接尾/一般)
+
+**Tests created**: 4 tests
+1. `test_mamire_basic` - 泥まみれ (compound, range 1-5)
+2. `test_mamire_blood` - 血まみれ (compound, range 8-12)
+3. `test_mamire_no_noun` - 泥まみれの (compound + の, range 3-7)
+4. `test_mamire_debt` - 借金まみれ (split, range 3-8)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented nure_compound() and nure() functions (48 lines with 2 custom matchers)
+- `grammar-lib/src/patterns.rs` - Added NureCompound pattern declaration
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 comprehensive tests in mamire_tests module
+- `feature_list.json` - Updated 塗れ to complete status
+
+**Grammar meaning**:
+まみれ is a grammar pattern that indicates being "completely covered in (A)", "smeared all over with (A)", or "stained with (A)". It follows nouns and may appear as まみれの when linked directly to a second noun.
+
+In the vast majority of cases, まみれ is used in regard to something negative, or can be perceived negatively even if it is not physical, like debt or desires. Examples of physically negative things include blood, mud, oil, etc.
+
+Common translations:
+- "completely covered in (A)"
+- "smeared all over with (A)"
+- "stained with (A)"
+- "drowning in (A)" (figuratively)
+
+**Etymology fun fact**:
+まみれ is the noun form of the る-Verb 塗（まみ）れる, coming from the same kanji and with a similar meaning as 塗（ぬ）る, "to paint". Just like "to paint", まみれる and まみれ primarily describe something covering the outer surface of another object, rather than its contents.
+
+**Pattern range note**:
+The pattern captures the full まみれ construction:
+- Compound: Full compound noun (泥まみれ, 血まみれ)
+- Split: Noun + まみれ suffix (借金まみれ)
+
+Examples:
+- 泥まみれ (mud-covered)
+- 血まみれ (blood-covered)
+- 借金まみれ (debt-ridden)
+
+---
+
 ## Session 497 - 2025-12-15
 
 ### Session Summary - Two N1 Patterns Complete ✓
