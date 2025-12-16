@@ -3713,9 +3713,47 @@ pub fn monotoomou() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を踏まえて
+// Pattern: を踏まえて (considering, based on)
+// Structures: Noun + を + ふまえ(る) + て/た/た上で/ての
 pub fn wofumaete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を particle
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match ふまえ verb (base=ふまえる)
+    #[derive(Debug)]
+    struct FumaeVerbMatcher;
+    impl Matcher for FumaeVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ふまえる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match て or た (after ふまえ)
+    #[derive(Debug)]
+    struct TeTaMatcher;
+    impl Matcher for TeTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" && token.pos.first().is_some_and(|p| p == "助詞"))
+                || (token.surface == "た" && token.pos.first().is_some_and(|p| p == "助動詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(FumaeVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeTaMatcher)),
+    ]
 }
 
 // Pattern: ゆえに (because of, due to, consequently)

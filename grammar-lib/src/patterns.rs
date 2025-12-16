@@ -6925,7 +6925,7 @@ declare_patterns! {
     Wofumaete {
         name: "を踏まえて",
         matcher_fn: crate::matchers::n1::wofumaete,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

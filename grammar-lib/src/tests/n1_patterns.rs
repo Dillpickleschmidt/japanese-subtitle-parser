@@ -5019,3 +5019,65 @@ mod monotoomou_tests {
         assert_pattern_range(&patterns, "ものと思う", 15, 21); // ものとおもっ
     }
 }
+
+// ============================================================================
+// を踏まえて Tests
+// ============================================================================
+
+mod wofumaete_tests {
+    use super::*;
+
+    // Pattern: を踏まえて (considering, based on)
+    // Data source: grammar_points_data.json["を踏まえて"]
+    // Testing structure.standard variants
+    //
+    // Structures to test:
+    //   - standard[0]: Noun + を踏まえて
+    //   - standard[1]: Noun (A) + を踏まえた + Noun (B)
+    //   - standard[2]: を踏まえた上で
+    //   - standard[3]: を踏まえての
+
+    #[test]
+    fn test_wofumaete_basic_te_form() {
+        // Testing: structure.standard[0] - "Noun + を踏まえて"
+        let sentence = "お客様の意見をふまえて、色々と機能を追加するつもりです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を踏まえて");
+        assert_pattern_range(&patterns, "を踏まえて", 6, 11); // をふまえて
+    }
+
+    #[test]
+    fn test_wofumaete_attributive_form() {
+        // Testing: structure.standard[1] - "Noun (A) + を踏まえた + Noun (B)"
+        let sentence = "先週の反省をふまえた計画を立てる必要がある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を踏まえて");
+        assert_pattern_range(&patterns, "を踏まえて", 5, 10); // をふまえた
+    }
+
+    #[test]
+    fn test_wofumaete_uede_form() {
+        // Testing: structure.standard[2] - "を踏まえた上で"
+        let sentence = "前回の失敗をふまえた上で、今回はもう少し気をつけて挑戦してみる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を踏まえて");
+        assert_pattern_range(&patterns, "を踏まえて", 5, 10); // をふまえた
+    }
+
+    #[test]
+    fn test_wofumaete_no_form() {
+        // Testing: structure.standard[3] - "を踏まえての"
+        let sentence = "アンケート結果をふまえての提案をお願いします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を踏まえて");
+        assert_pattern_range(&patterns, "を踏まえて", 7, 12); // をふまえて
+    }
+}
