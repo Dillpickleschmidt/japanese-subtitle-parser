@@ -7814,9 +7814,65 @@ pub fn ichi_uff5e_taritomo_uff5e_nai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ったらない・といったらない
+// Pattern: ったらない・といったらない (too X for words / indescribably X)
+// Structures: Noun/Adj/Verb + (と)いったら + ない/ありゃしない/ありません
 pub fn ttaranai_u30fb_toittaranai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と as quotation particle
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match いっ (連用タ接続 of いう)
+    #[derive(Debug)]
+    struct IttaMatcher;
+    impl Matcher for IttaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いっ"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match たら (仮定形 of た auxiliary)
+    #[derive(Debug)]
+    struct TaraMatcher;
+    impl Matcher for TaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match ない (adjective or auxiliary) - final ending
+    #[derive(Debug)]
+    struct NaiEndingMatcher;
+    impl Matcher for NaiEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                    || token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    // Pattern: Noun/Adj/Verb + (optional と) + いっ + たら + ない
+    // This matches the most common forms: といったらない and ったらない
+    // The longer forms (ありゃしない, ありません) will be matched by separate patterns if needed
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ToParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(IttaMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiEndingMatcher)),
+    ]
 }
 
 // Pattern: に照らして・に照らすと

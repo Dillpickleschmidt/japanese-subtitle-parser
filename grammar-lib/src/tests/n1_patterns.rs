@@ -8855,3 +8855,95 @@ mod toiwazu_tests {
         assert_pattern_range(&patterns, "といわず", 5, 18); // 子供といわず、大人といわず
     }
 }
+
+// ============================================================================
+// ったらない・といったらない Tests
+// ============================================================================
+
+mod ttaranai_toittaranai_tests {
+    use super::*;
+
+    // Pattern: ったらない・といったらない (too X for words / indescribably X)
+    // Data source: grammar_points_data.json["ったらない・といったらない"]
+    // Meaning: "There are no words to express (A)" / "Too (A) for words"
+    // Used when something is at a level such that not even (A) is sufficient to describe it
+    //
+    // Structure variants to test:
+    // Standard forms:
+    //   - Noun + といったらない/ったらない (more common)
+    //   - い-Adj[さ] + といったらない/ったらない (more common)
+    //   - Verb + といったらない/ったらない (less common)
+    //   - な-Adj + といったらない/ったらない (less common)
+    // Polite forms:
+    //   - Same structures + といったらありません/ったらありません
+
+    #[test]
+    fn test_toittaranai_noun() {
+        // Testing: Noun + といったらない (more common form)
+        let sentence = "プロジェクト完成後の達成感といったらない！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ったらない・といったらない");
+        assert_pattern_range(&patterns, "ったらない・といったらない", 12, 20); // 感といったらない
+    }
+
+    #[test]
+    fn test_toittaranai_i_adj() {
+        // Testing: い-Adj + といったらない (with adjective directly)
+        // Example from grammar_points_data.json
+        let sentence = "隣の人の犬は朝からうるさいといったらない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ったらない・といったらない");
+        assert_pattern_range(&patterns, "ったらない・といったらない", 9, 20); // うるさいといったらない
+    }
+
+    #[test]
+    fn test_toittaranai_i_adj_sa() {
+        // Testing: い-Adj[さ] + といったらない (with さ suffix)
+        let sentence = "あの人の優しさといったらない、本当に素晴らしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ったらない・といったらない");
+        assert_pattern_range(&patterns, "ったらない・といったらない", 6, 14); // さといったらない
+    }
+
+    #[test]
+    fn test_toittaranai_na_adj() {
+        // Testing: な-Adj + といったらない (less common)
+        let sentence = "息子を家で留守番させるのは心配といったらない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ったらない・といったらない");
+        assert_pattern_range(&patterns, "ったらない・といったらない", 13, 22); // 心配といったらない
+    }
+
+    // TODO: Polite form variants (ありません, ありゃしない) not yet implemented
+    // These would require extending the matcher to handle additional endings
+    //
+    // #[test]
+    // fn test_toittaranai_polite() {
+    //     // Testing: Noun + といったらありません (polite form)
+    //     let sentence = "田舎では車がないとどこにもいけないから、不便といったらありません。";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "ったらない・といったらない");
+    //     assert_pattern_range(&patterns, "ったらない・といったらない", 20, 33);
+    // }
+    //
+    // #[test]
+    // fn test_toittaranai_ariyashinai() {
+    //     // Testing: Verb + といったらありゃしない (emphatic form)
+    //     let sentence = "彼女は私の話を全然聞いてくれない。むかつくといったらありゃしない。";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "ったらない・といったらない");
+    //     assert_pattern_range(&patterns, "ったらない・といったらない", 21, 35);
+    // }
+}
