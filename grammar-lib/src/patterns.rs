@@ -6901,7 +6901,7 @@ declare_patterns! {
     Womonotomosezu {
         name: "をものともせず",
         matcher_fn: crate::matchers::n1::womonotomosezu,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

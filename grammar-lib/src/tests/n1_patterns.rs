@@ -4788,3 +4788,59 @@ mod u301c_ni_u301c_nai_tests {
         assert_pattern_range(&patterns, "〜に〜ない", 36, 48); // 辞めようにも辞められない
     }
 }
+
+// Pattern: をものともせず (undaunted by, in defiance of)
+// Data source: grammar_points_data.json["をものともせず"]
+// Testing structures:
+//   - standard[0]: Verb + の + をものともせず（に）
+//   - standard[1]: い-Adjective + の + をものともせず（に）
+//   - standard[2]: な-Adjective + な + の + をものともせず（に）
+//   - standard[3]: Noun + をものともせず（に）
+#[cfg(test)]
+mod womonotomosezu_tests {
+    use super::*;
+
+    // Testing: standard[0] - Verb + の + をものともせず（に）
+    #[test]
+    fn test_womonotomosezu_verb_shaking() {
+        let sentence = "谷口選手は足が震えているのをものともせず、レースを完走した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をものともせず");
+        assert_pattern_range(&patterns, "をものともせず", 12, 20); // のをものともせず
+    }
+
+    // Testing: standard[1] - い-Adjective + の + をものともせず（に）
+    #[test]
+    fn test_womonotomosezu_i_adj_hot() {
+        let sentence = "彼らは外が暑いのをものともせず、一日中街頭募金活動をした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をものともせず");
+        assert_pattern_range(&patterns, "をものともせず", 7, 15); // のをものともせず
+    }
+
+    // Testing: standard[2] - な-Adjective + な + の + をものともせず（に）
+    #[test]
+    fn test_womonotomosezu_na_adj_dangerous() {
+        let sentence = "彼女は危険なのをものともせずに、子供たちを助けに行った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をものともせず");
+        assert_pattern_range(&patterns, "をものともせず", 6, 15); // のをものともせずに
+    }
+
+    // Testing: standard[3] - Noun + をものともせず（に）
+    #[test]
+    fn test_womonotomosezu_noun_injury() {
+        let sentence = "彼は手首の怪我をものともせずに試合で優勝した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をものともせず");
+        assert_pattern_range(&patterns, "をものともせず", 7, 15); // をものともせずに
+    }
+}

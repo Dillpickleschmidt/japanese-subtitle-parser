@@ -3494,9 +3494,115 @@ pub fn nara_u301c_de() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: をものともせず
+// Pattern: をものともせず (undaunted by, in defiance of)
+// Structures: Verb/Adjective + の + をものともせず or Noun + をものともせず
 pub fn womonotomosezu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches の as nominalizer (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.base_form == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matches を case particle (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matches もの (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct MonoNounMatcher;
+    impl Matcher for MonoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.base_form == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matches と as quotation particle (助詞/格助詞/引用)
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Matches も as binding particle (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoBindingMatcher;
+    impl Matcher for MoBindingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matches せ (する in 未然ヌ接続)
+    #[derive(Debug)]
+    struct SeVerbMatcher;
+    impl Matcher for SeVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "せ"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然ヌ接続")
+        }
+    }
+
+    // Matches ず (助動詞, base=ぬ)
+    #[derive(Debug)]
+    struct ZuAuxiliaryMatcher;
+    impl Matcher for ZuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matches optional に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        // Optional の (for Verb/Adjective + の patterns)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)))),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MonoNounMatcher)),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(MoBindingMatcher)),
+        TokenMatcher::Custom(Arc::new(SeVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
+        // Optional に at the end
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiParticleMatcher)))),
+    ]
 }
 
 // Pattern: には当たらない
