@@ -3998,9 +3998,127 @@ pub fn toomoikiya() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: どうにも
+// Pattern: どうにも (even however/no way)
+// Structures: どうにも（こうにも） + (Negative expressions)
 pub fn dounimo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match どうにも as single token (副詞/一般)
+    #[derive(Debug)]
+    struct DounimoAdverbMatcher;
+    impl Matcher for DounimoAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どうにも"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match どう (副詞/助詞類接続)
+    #[derive(Debug)]
+    struct DouAdverbMatcher;
+    impl Matcher for DouAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match こう (副詞/助詞類接続)
+    #[derive(Debug)]
+    struct KouAdverbMatcher;
+    impl Matcher for KouAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match に (助詞/格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match も (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // どうにも as single token OR どう + に + も
+    let dounimo_variants = vec![
+        vec![TokenMatcher::Custom(Arc::new(DounimoAdverbMatcher))],
+        vec![
+            TokenMatcher::Custom(Arc::new(DouAdverbMatcher)),
+            TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+            TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        ],
+    ];
+
+    // Optional こう + に + も
+    let kounimo = vec![
+        TokenMatcher::Custom(Arc::new(KouAdverbMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ];
+
+    // Main pattern: Match どうにも as single token (most common case)
+    // The split tokenization (どう + に + も) will be handled by a separate pattern
+    vec![TokenMatcher::Custom(Arc::new(DounimoAdverbMatcher))]
+}
+
+// Pattern: どうにも (split tokenization variant)
+// Structures: どう + に + も (when tokenized as three separate tokens)
+pub fn dounimo_split() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match どう (副詞/助詞類接続)
+    #[derive(Debug)]
+    struct DouAdverbMatcher;
+    impl Matcher for DouAdverbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    // Match に (助詞/格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match も (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DouAdverbMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ]
 }
 
 // Pattern: ことだし

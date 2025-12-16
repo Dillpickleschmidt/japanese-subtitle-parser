@@ -5334,3 +5334,74 @@ mod kainaka_tests {
         assert_pattern_selected(&patterns, "か否か");
     }
 }
+
+// Pattern: どうにも
+// Data source: grammar_points_data.json["どうにも"]
+// Structures to test:
+//   - standard[0]: どうにも（こうにも） + (Negative)Verb[できる]
+//   - standard[1]: どうにも（こうにも） + Verb[stem] + ようがない
+//   - standard[2]: どうにもできない
+//   - standard[3]: どうにも（こうにも）ならない
+mod dounimo_tests {
+    use super::*;
+
+    #[test]
+    fn test_dounimo_dekinai() {
+        // Testing structure: どうにも + できない
+        let sentence = "そんなこと急に言われても、どうにもできないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうにも");
+        assert_pattern_range(&patterns, "どうにも", 13, 17); // どうにも
+        assert_pattern_selected(&patterns, "どうにも");
+    }
+
+    #[test]
+    fn test_dounimo_youganai() {
+        // Testing structure: どうにも + Verb[stem] + ようがない
+        let sentence = "自分で読むだけじゃどうにも理解しようがないので、先生に聞くことにした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうにも");
+        assert_pattern_range(&patterns, "どうにも", 9, 13); // どうにも
+        assert_pattern_selected(&patterns, "どうにも");
+    }
+
+    #[test]
+    fn test_dounimo_naranai() {
+        // Testing structure: どうにも + ならない (split tokenization: どう + に + も)
+        let sentence = "今更頑張ってもどうにもならないよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうにも");
+        assert_pattern_range(&patterns, "どうにも", 7, 11); // どうにも (split as どう+に+も)
+        assert_pattern_selected(&patterns, "どうにも");
+    }
+
+    #[test]
+    fn test_dounimo_kounimo_naranai() {
+        // Testing structure: どうにも + こうにも + ならない
+        let sentence = "そんなことを言われてもどうにもこうにもなりません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうにも");
+        assert_pattern_range(&patterns, "どうにも", 11, 15); // どうにも
+        assert_pattern_selected(&patterns, "どうにも");
+    }
+
+    #[test]
+    fn test_dounimo_kounimo_dekinai() {
+        // Testing structure: どうにも + こうにも + できない
+        let sentence = "説明してあげたいけど、どうにもこうにも説明できない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうにも");
+        assert_pattern_range(&patterns, "どうにも", 11, 15); // どうにも
+        assert_pattern_selected(&patterns, "どうにも");
+    }
+}

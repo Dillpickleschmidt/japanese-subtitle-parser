@@ -6970,6 +6970,14 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    DounimoSplit {
+        name: "どうにも",
+        matcher_fn: crate::matchers::n1::dounimo_split,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     Kotodashi {
         name: "ことだし",
         matcher_fn: crate::matchers::n1::kotodashi,
