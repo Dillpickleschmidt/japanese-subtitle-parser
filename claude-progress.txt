@@ -1,3 +1,111 @@
+## Session 607 - 2025-12-16
+
+### Session Summary - に即して Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (に即して - N1, priority 5)
+**Total tests**: 3872 passing (5 new tests, no regressions)
+**Progress**: One hundred and twentieth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented に即して (in accordance with / based on)
+- Formal expression for doing something in the best possible way based on rules/facts/circumstances
+- Handles both て-form (に即して) and た-form (に即した) variants
+- Supports alternative kanji 則 (same pronunciation, similar meaning)
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: に即して (in accordance with / based on)
+
+**Grammar Point**: に即して
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Noun + に即（そく）して (て-form, used before verbs)
+2. Noun + に即（そく）した + Noun (た-form, modifying noun)
+3. Noun + に則（そく）して/に則（そく）した (alternative kanji variant)
+
+**Meaning**:
+- "In accordance with (A)" / "In line with (A)" / "Based on (A)"
+- Formal expression for doing something in the best possible way to handle a matter
+- Combination of に (case-marking particle) + 即（そく）する (する-verb meaning "to be in accordance with")
+- Used when things are being done based on circumstances, situations, facts, laws, or standards
+- More formal than similar pattern に沿って
+- Alternative kanji 則（そく）has the same meaning and pronunciation
+
+**Tokenization patterns**:
+**For に即して (て-form):**
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- 即し (動詞/自立, base=即す, 五段・サ行, 連用形)
+- て (助詞/接続助詞)
+
+**For に即した (た-form, modifying noun):**
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- 即し (動詞/自立, base=即す, 五段・サ行, 連用形)
+- た (助動詞, 特殊・タ, 基本形)
+
+**For に則して/に則した (alternative kanji):**
+- Same pattern but with 則し (base=則す) instead of 即し (base=即す)
+
+**Implementation**:
+Created 3 custom matchers for precise pattern matching:
+1. NiMatcher - Matches に as 助詞/格助詞/一般
+2. SokushiMatcher - Matches 即し or 則し (both verbs 動詞/自立, base forms: 即す or 則す)
+3. TeOrTaMatcher - Matches て (助詞/接続助詞) or た (助動詞, base=た)
+
+Pattern matcher sequence:
+- noun_matcher() (preceding noun)
+- NiMatcher (に)
+- SokushiMatcher (即し or 則し)
+- TeOrTaMatcher (て or た)
+
+**Tests Written: 5 tests (all passing)**
+1. test_nisokushite_te_form_rules - ルールに即して (3, 10) - て-form with rules
+2. test_nisokushite_te_form_facts - 事実に即して (9, 15) - て-form with facts
+3. test_nisokushita_modifying_noun_work_hours - 法律に即した (0, 6) - た-form modifying noun
+4. test_nisokushita_modifying_noun_punishment - 法律に即した (20, 26) - た-form with different context
+5. test_nisokushite_alternative_kanji - 現実に則した (0, 6) - alternative kanji 則
+
+**Character Ranges**: Pattern captures Noun + に即して/に即した/に則した:
+- ルールに即して (3, 10) - 7 characters (て-form)
+- 事実に即して (9, 15) - 6 characters (て-form)
+- 法律に即した (0, 6) - 6 characters (た-form)
+- 法律に即した (20, 26) - 6 characters (た-form)
+- 現実に則した (0, 6) - 6 characters (alternative kanji, た-form)
+
+**Key Notes**:
+- Pattern includes the preceding noun (full grammatical construction)
+- て-form (に即して) is used before verbs or at end of sentence
+- た-form (に即した) is used to modify a following noun
+- Both kanji variants (即 and 則) have the same meaning and pronunciation
+- Formal expression typically used in business, legal, or official contexts
+- Used when doing something based on rules, facts, circumstances, or standards
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nisokushite() with 3 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in nisokushite_tests module
+- feature_list.json - Updated に即して to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (て-form, た-form, alternative kanji)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3867 + 5 = 3872 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ないまでも - "Even if not" pattern
+- をよそに - "Ignoring/disregarding" pattern
+- に限ったことではない - "Not limited to" pattern
+- とは比べものにならない - "Cannot be compared to" pattern
+- まじき - "Should not" pattern
+
+================================================================================
+
 ## Session 606 - 2025-12-16
 
 ### Session Summary - には及ばない① Complete ✓
