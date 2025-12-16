@@ -6818,3 +6818,75 @@ mod zujimai_tests {
         assert_pattern_range(&patterns, "ずじまい", 5, 12); // 告白せずじまい
     }
 }
+
+// ============================================================================
+// ずにはおかない Tests
+// ============================================================================
+
+mod zunihaokanai_tests {
+    use super::*;
+
+    // Pattern: ずにはおかない (will certainly do / will not fail to do)
+    // Data source: grammar_points_data.json["ずにはおかない"]
+    // Testing: structure.standard[0] - "Verb [ない-stem] + ずには + おかない"
+    //
+    // Structure variants:
+    //   - standard[0]: Verb [ない-stem] + ずには + おかない
+    //   - standard[1]: Verb [ない] + では + おかない
+    //   - standard[2]: Exception: する→せずにはおかない
+
+    // Testing: structure.standard[0] - regular verb with ずには
+    #[test]
+    fn test_zunihaokanai_verb_tsukamaeru() {
+        let sentence = "あんなひどいことをした人だから、警察も捕まえずにはおかないだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはおかない");
+        assert_pattern_range(&patterns, "ずにはおかない", 19, 32); // 捕まえずにはおかないだろう
+    }
+
+    // Testing: structure.standard[0] - with causative verb
+    #[test]
+    fn test_zunihaokanai_causative_kandou() {
+        let sentence = "あの人のスピーチは聞く人を感動させずにはおかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはおかない");
+        assert_pattern_range(&patterns, "ずにはおかない", 16, 24); // せずにはおかない
+    }
+
+    // Testing: structure.standard[2] - する verb exception (becomes せず)
+    #[test]
+    fn test_zunihaokanai_suru_verb_chousa() {
+        let sentence = "メディアにも取り上げられたから、警察も調査をせずにはおかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはおかない");
+        assert_pattern_range(&patterns, "ずにはおかない", 22, 30); // せずにはおかない
+    }
+
+    // Testing: structure.standard[1] - ないでは form
+    #[test]
+    fn test_zunihaokanai_naidewa_uttaeru() {
+        let sentence = "こんなことをされたのだから、お客さんも訴えないではおかないだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないではおかない");
+        assert_pattern_range(&patterns, "ないではおかない", 19, 32); // 訴えないではおかないだろう
+    }
+
+    // Testing: structure.standard[1] - ないでは form with different verb
+    #[test]
+    fn test_zunihaokanai_naidewa_chikara() {
+        let sentence = "この犬は３０キロになるから、躾に力を入れないではおかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないではおかない");
+        assert_pattern_range(&patterns, "ないではおかない", 18, 28); // 入れないではおかない
+    }
+}

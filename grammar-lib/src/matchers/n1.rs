@@ -6622,9 +6622,134 @@ pub fn toiouka() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ずにはおかない
+// Pattern: ずにはおかない (will certainly do / will not fail to do)
+// Structure: Verb[ない-stem] + ず + には + おかない
 pub fn zunihaokanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in mizenkei (negative stem) form for ず
+    #[derive(Debug)]
+    struct MizenkeiVerbMatcher;
+    impl Matcher for MizenkeiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.pos.first().is_none_or(|pos| pos != "動詞") {
+                return false;
+            }
+            // Match verbs in 未然形, 未然ヌ接続, or 未然レル接続
+            token.features.get(5).is_some_and(|f| {
+                f == "未然形" || f == "未然ヌ接続" || f == "未然レル接続"
+            })
+        }
+    }
+
+    // Match ず (classical negative auxiliary)
+    #[derive(Debug)]
+    struct ZuMatcher;
+    impl Matcher for ZuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ヌ")
+        }
+    }
+
+    // Match ない (negative auxiliary)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ")
+        }
+    }
+
+    // Match おか (from おく)
+    #[derive(Debug)]
+    struct OkaMatcher;
+    impl Matcher for OkaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "おか"
+                && token.base_form == "おく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MizenkeiVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuMatcher)),
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Surface("は"),
+        TokenMatcher::Custom(Arc::new(OkaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
+}
+
+// Pattern: ないではおかない (will certainly do / will not fail to do - ないでは form)
+// Structure: Verb[ない] + では + おかない
+pub fn naidewaokanai() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match verb in mizenkei (negative stem) form
+    #[derive(Debug)]
+    struct MizenkeiVerbMatcher;
+    impl Matcher for MizenkeiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.pos.first().is_none_or(|pos| pos != "動詞") {
+                return false;
+            }
+            // Match verbs in 未然形
+            token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ない (negative auxiliary)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ")
+        }
+    }
+
+    // Match で (from だ)
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ダ")
+        }
+    }
+
+    // Match おか (from おく)
+    #[derive(Debug)]
+    struct OkaMatcher;
+    impl Matcher for OkaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "おか"
+                && token.base_form == "おく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MizenkeiVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+        TokenMatcher::Custom(Arc::new(DeMatcher)),
+        TokenMatcher::Surface("は"),
+        TokenMatcher::Custom(Arc::new(OkaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: を限りに

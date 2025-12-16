@@ -7861,7 +7861,15 @@ declare_patterns! {
     Zunihaokanai {
         name: "ずにはおかない",
         matcher_fn: crate::matchers::n1::zunihaokanai,
-        priority: 1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Naidewaokanai {
+        name: "ないではおかない",
+        matcher_fn: crate::matchers::n1::naidewaokanai,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
