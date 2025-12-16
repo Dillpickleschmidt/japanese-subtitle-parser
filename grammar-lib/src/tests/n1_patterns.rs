@@ -6890,3 +6890,85 @@ mod zunihaokanai_tests {
         assert_pattern_range(&patterns, "ないではおかない", 18, 28); // 入れないではおかない
     }
 }
+
+// ============================================================================
+// ずにはすまない Tests
+// ============================================================================
+
+mod zunihasumanai_tests {
+    use super::*;
+
+    // Pattern: ずにはすまない (won't get away without doing / have no choice but to do)
+    // Data source: grammar_points_data.json["ずにはすまない"]
+    // Testing: structure.standard[0] - "Verb[ない] + ずには + すまない"
+    //
+    // Other structures to test:
+    //   - standard[1]: Verb[ない] + では + すまない (alternative form)
+    //   - Exception: する → せずにはすまない
+
+    // Testing: structure.standard[0] - regular verb with ずには
+    #[test]
+    fn test_zunihasumanai_verb_ayamaru() {
+        let sentence = "あんなに迷惑をかけてしまったんだから、謝らずにはすまないだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはすまない");
+        assert_pattern_range(&patterns, "ずにはすまない", 19, 31); // 謝らずにはすまないだろう (includes だろう via token combiner)
+    }
+
+    // Testing: structure.standard[0] - regular verb with ずには
+    #[test]
+    fn test_zunihasumanai_verb_iku() {
+        let sentence = "取引先のお偉いさんに飲みに誘われたから、行かずにはすまない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはすまない");
+        assert_pattern_range(&patterns, "ずにはすまない", 20, 29); // 行かずにはすまない
+    }
+
+    // Testing: structure.standard[0] - regular verb with ずには
+    #[test]
+    fn test_zunihasumanai_verb_deru() {
+        let sentence = "会社の先輩からの電話は出ずにはすまない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはすまない");
+        assert_pattern_range(&patterns, "ずにはすまない", 11, 19); // 出ずにはすまない
+    }
+
+    // Testing: exception - する verb becomes せず
+    #[test]
+    fn test_zunihasumanai_suru_verb_benshou() {
+        let sentence = "やばい、田中君のゲーム機を壊してしまった。これは、弁償せずにはすまないな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずにはすまない");
+        assert_pattern_range(&patterns, "ずにはすまない", 25, 35); // 弁償せずにはすまない (does not include な)
+    }
+
+    // Testing: structure.standard[1] - ないでは form
+    #[test]
+    fn test_zunihasumanai_naidewa_ayamaru() {
+        let sentence = "父が大切にしていた釣竿を折ってしまった。謝らないではすまない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないではすまない");
+        assert_pattern_range(&patterns, "ないではすまない", 20, 30); // 謝らないではすまない
+    }
+
+    // Testing: structure.standard[1] - ないでは form with different verb
+    #[test]
+    fn test_zunihasumanai_naidewa_harau() {
+        let sentence = "税金は払わないではすまない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないではすまない");
+        assert_pattern_range(&patterns, "ないではすまない", 3, 13); // 払わないではすまない
+    }
+}

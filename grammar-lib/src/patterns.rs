@@ -7805,7 +7805,15 @@ declare_patterns! {
     Zunihasumanai {
         name: "ずにはすまない",
         matcher_fn: crate::matchers::n1::zunihasumanai,
-        priority: 1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Naidewasumanai {
+        name: "ないではすまない",
+        matcher_fn: crate::matchers::n1::naidewasumanai,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
