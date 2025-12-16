@@ -5747,3 +5747,54 @@ mod gan_uff5e_tests {
         assert_pattern_range(&patterns, "がん～", 6, 10); // ガン切れ
     }
 }
+
+// ============================================================================
+// てやまない Tests (Never cease to, earnestly)
+// ============================================================================
+
+mod teyamanai_tests {
+    use super::*;
+
+    // Pattern: てやまない (never cease to, earnestly, from the bottom of one's heart)
+    // Data source: grammar_points_data.json["てやまない"]
+    // Structure variants:
+    //   1. Verb[て] + やまない (standard)
+    //   2. Verb[て] + やみません (polite)
+    // Used exclusively with feelings/emotions (not temporary ones)
+
+    #[test]
+    fn test_teyamanai_love() {
+        // Testing structure: Verb[て] + やまない
+        // From example: 私が愛してやまない犬
+        let sentence = "私が愛してやまない犬が急に体を壊したから心配でしょうがない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てやまない");
+        assert_pattern_range(&patterns, "てやまない", 2, 9); // 愛してやまない
+    }
+
+    #[test]
+    fn test_teyamanai_regret() {
+        // Testing structure: Verb[て] + やまない
+        // From example: 後悔してやまない
+        let sentence = "あんなことを親にさせてしまって後悔してやまない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てやまない");
+        assert_pattern_range(&patterns, "てやまない", 15, 23); // 後悔してやまない
+    }
+
+    #[test]
+    fn test_teyamanai_polite_pray() {
+        // Testing structure: Verb[て] + やみません (polite)
+        // From example: 祈ってやみません
+        let sentence = "１日も早く普通の生活に戻れる様に祈ってやみません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てやまない");
+        assert_pattern_range(&patterns, "てやまない", 16, 24); // 祈ってやみません
+    }
+}

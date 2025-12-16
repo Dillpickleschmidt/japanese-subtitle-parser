@@ -4525,9 +4525,76 @@ pub fn nikakatteiru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てやまない
+// Pattern: てやまない (never cease to, earnestly)
+// Structures: Verb[て] + やまない, Verb[て] + やみません
 pub fn teyamanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb やむ in either 未然形 (for やまない) or 連用形 (for やみません)
+    #[derive(Debug)]
+    struct YamuMatcher;
+    impl super::Matcher for YamuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "やむ"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.features.get(5).map(|f| f.as_str()) == Some("未然形")
+                    || token.features.get(5).map(|f| f.as_str()) == Some("連用形"))
+        }
+    }
+
+    // Match ない (auxiliary) or ません
+    #[derive(Debug)]
+    struct NaiMasenMatcher;
+    impl super::Matcher for NaiMasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (助動詞)
+            if token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // Match ませ (ます, 未然形)
+            if token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).map(|f| f.as_str()) == Some("未然形")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match ん (for ません)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl super::Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match て or で particle
+    #[derive(Debug)]
+    struct TeFormMatcher;
+    impl super::Matcher for TeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),  // Verb in 連用形 or 連用タ接続
+        TokenMatcher::Custom(Arc::new(TeFormMatcher)),  // て or で
+        TokenMatcher::Custom(Arc::new(YamuMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMasenMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))),  // Optional ん for polite
+    ]
 }
 
 // Pattern: ぐらいなら
