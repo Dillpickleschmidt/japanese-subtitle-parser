@@ -1,3 +1,116 @@
+## Session 533 - 2025-12-16
+
+### Session Summary - れる・られる + ままに Pattern Complete ✓
+**Status**: Successfully implemented れる・られる + ままに pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3500 passing, 1 ignored (added 4 new tests)
+**Progress**: Fifty-first N1 pattern completed!
+
+**Session highlights**:
+- Implemented れる・られる + ままに pattern (as one is told/ordered)
+- Works with passive verbs (れる/られる) + communication verbs (言う, 命じる, 聞く)
+- Handles optional が conjunction particle and に case particle
+- Formal construction expressing "to do (B) as (A) was done to me"
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3500 tests total)
+
+### ✓ Completed: れる・られる + ままに (as one is told/ordered)
+
+**Grammar Point**: れる・られる + ままに
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+- Verb[られる] + ままに (as I was told - basic form)
+- Verb[られる] + が + ままに (as I was told - with が conjunction)
+- Verb[られる] + まま + に (with に particle)
+- Verb[られる] + が + まま + に (with both が and に)
+
+**Meaning**:
+- "To do (B) as (A) was done to me"
+- "As one is told/ordered"
+- "In compliance with what was communicated"
+- Used with passive verbs (れる/られる) paired with communication verbs
+- Common verbs: 言う (say), 命じる (order), 聞く (ask), 教える (teach)
+- Emphasizes lack of resistance or questioning
+
+**Implementation**:
+- Pattern: Verb[未然形] + れる/られる(動詞/接尾/基本形) + Optional(が接続助詞) + まま(名詞) + Optional(に格助詞)
+- Custom matchers:
+  - ReruRareruMatcher: Matches れる/られる as 動詞/接尾/基本形
+  - GaConjunctionMatcher: Matches が as 助詞/接続助詞 (optional)
+  - MamaMatcher: Matches まま as 名詞/非自立/副詞可能
+  - NiParticleMatcher: Matches に as 助詞/格助詞 (optional)
+- Uses TokenMatcher::Any to capture the preceding verb in 未然形
+- Priority 5 for this N1-level formal construction
+
+**Tests Written: 4 tests**
+1. `test_rareru_mamani_iwareru` - 言われるままに (as I was told)
+2. `test_rareru_mamani_meijirareru` - 命じられるままに (as ordered)
+3. `test_rareru_mamani_kikareru` - 聞かれるままに (as I was asked)
+4. `test_rareru_ga_mamani` - 言われるがままに (as I was told - with が)
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures Verb + れる/られる + (が) + まま + (に):
+- 言われるままに (5, 12) - 7 characters
+- 命じられるままに (7, 15) - 8 characters
+- 聞かれるままに (3, 10) - 7 characters
+- 言われるがままに (12, 20) - 8 characters (with が)
+
+**Key Notes**:
+- まま means "in the state of" - maintaining the condition as-is
+- に marks the manner/means of doing something
+- が adds contrast: "but" or "although", though focus is on non-resistance
+- The pattern never uses past tense (られた is unnatural)
+- Typically appears with verbs indicating communication or instruction
+- Emphasizes compliance without argument or resistance
+- More formal than casual equivalents
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented reru_u30fb_rareru_mamani() matcher
+- `grammar-lib/src/patterns.rs` - Updated ReruU30fbRareruMamani priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in reru_rareru_mamani_tests module
+- `feature_list.json` - Updated れる・られる + ままに to complete status
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (れる・られる + ままに from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found reru_u30fb_rareru_mamani() stub in n1.rs)
+7. ✓ Wrote all 4 tests first with print_debug()
+8. ✓ Analyzed tokenization output for all variants
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Updated priority in patterns.rs to 5
+11. ✓ Verified all tests detect the pattern correctly
+12. ✓ Removed print_debug() and added assertions
+13. ✓ Verified no regressions (3500 tests passing)
+14. ✓ Updated feature_list.json
+15. ✓ Committed changes
+16. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (basic, with が, with に, with both)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- にまつわる - "Related to, surrounding" pattern
+- たる - Classical auxiliary verb pattern
+- なら〜で - "If it's X, then Y" pattern
+- をものともせず - "Undaunted by" pattern
+- には当たらない - "Does not amount to" pattern
+- ものと思う - "I think/assume that" pattern
+- を踏まえて - "Based on, considering" pattern
+
+---
+
 ## Session 532 - 2025-12-16
 
 ### Session Summary - いかん〜ず Pattern Complete ✓
