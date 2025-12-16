@@ -1,3 +1,97 @@
+## Session 601 - 2025-12-16
+
+### Session Summary - びる Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (びる - N1, priority 5)
+**Total tests**: 3843 passing (5 new tests, no regressions)
+**Progress**: One hundred and fifteenth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented びる (seeming/looking like) - verb suffix pattern
+- Handles compound verb forms where びる is recognized by Kagome as part of the base form
+- Matches verbs like 大人びる, 古びる, 田舎びる, ひなびる
+- Pattern includes auxiliary verbs (た) but not particles (て) in the range
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: びる (seeming/looking like)
+
+**Grammar Point**: びる
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Noun + びる (e.g., 大人びる - adult-like)
+2. い-Adjective stem + びる (e.g., 幼びる - young-looking, but not recognized by Kagome)
+3. Noun/Adj + びた + Noun (modifying noun form, e.g., 古びたアルバム - aged album)
+4. Various conjugations: びて, びた, びている
+
+**Meaning**:
+- "(A) looking" / "(A) seeming" / "behaving like (A)"
+- Used exclusively as a suffix attached to limited set of expressions
+- Based on visual information or appearance
+- Formal expression, often in literary contexts
+- Common expressions: 大人びる (mature-looking), 古びる (aged/weathered), ひなびる (rustic/quaint), 田舎びる (rural-like), 物寂びる (lonely/desolate-looking)
+
+**Tokenization pattern**:
+- Single compound verb token: 動詞/自立 with base_form ending in びる
+- Examples: surface='大人び' base='大人びる', surface='古び' base='古びる', surface='田舎び' base='田舎びる'
+- Auxiliary た is included in pattern range (助動詞)
+- Particle て is NOT included in pattern range (助詞/接続助詞)
+
+**Implementation**:
+Created BiruVerbMatcher custom matcher:
+- Matches: 動詞/自立 with base_form ending in びる
+- Excludes bare びる (if it exists)
+- Compound form only (unlike めく which can be split)
+
+Pattern matcher sequence:
+- TokenMatcher::Custom(Arc::new(BiruVerbMatcher))
+- Captures just the verb token, pattern matcher extends range to include auxiliaries
+
+**Tests Written: 5 tests (all passing)**
+1. test_biru_otonaびる_て_form - 大人び (3, 6) - adult-looking (て-form, particle not included)
+2. test_biru_furuびた_modifying_noun - 古びた (11, 14) - aged (た auxiliary included)
+3. test_biru_inakabita_modifying_noun - 田舎びた (12, 16) - rural-like (た auxiliary included)
+4. test_biru_hinabita_modifying_noun - ひなびた (0, 4) - rustic/quaint (た auxiliary included)
+5. test_biru_inakaびて_いる - 田舎び (4, 7) - rural-like progressive (て particle not included)
+
+**Character Ranges**:
+- With た (auxiliary): Includes verb + た (e.g., 古びた, 田舎びた, ひなびた)
+- With て (particle): Only verb (e.g., 大人び, 田舎び) - て is separate
+
+**Key Notes**:
+- Pattern range behavior: auxiliaries (助動詞) included, particles (助詞) excluded
+- 幼びる (from 幼い) is grammatically valid but NOT recognized by Kagome - tokenizes as separate words
+- Unlike めく which can have split forms, びる only appears as compound verbs in Kagome's dictionary
+- Common with nouns describing appearance or character traits
+- Limited set of expressions - not freely productive
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented biru() with BiruVerbMatcher
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in biru_tests module
+- feature_list.json - Updated びる to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All detectable structure variants tested (noun + びる variations)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified (understanding auxiliary vs particle distinction)
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3838 + 5 = 3843 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- にしたところで - "Even if" pattern
+- ～ばこそ - "Precisely because" pattern
+- には及ばない① - "There's no need to" pattern
+- に即して - "In accordance with" pattern
+- ないまでも - "Even if not" pattern
+- をよそに - "Ignoring/disregarding" pattern
+
+================================================================================
+
 ## Session 599 - 2025-12-16
 
 ### Session Summary - 2 N1 Patterns Complete ✓
