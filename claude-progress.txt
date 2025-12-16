@@ -1,3 +1,92 @@
+## Session 553 - 2025-12-16
+
+### Session Summary - ぐらいなら Complete ✓
+**Status**: Implemented ぐらいなら pattern successfully
+**Patterns completed**: 1 (ぐらいなら - N1, priority 5)
+**Total tests**: 3584 passing (3 new tests, no regressions)
+**Progress**: Continuing N1 pattern implementation!
+
+**Session highlights**:
+- Implemented ぐらいなら (would rather B than A, better off B than A)
+- 3-token pattern: Verb[dictionary] + ぐらい/くらい + なら
+- Both ぐらい and くらい variants handled by same pattern
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include full construction (Verb + ぐらいなら)
+
+### ✓ Completed: ぐらいなら (would rather / better off)
+
+**Grammar Point**: ぐらいなら
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb[dictionary] + ぐらいなら + Phrase
+2. Verb[dictionary] + くらいなら + Phrase (alternative)
+
+**Meaning**:
+- "Would rather (B) than (A)" / "Better off (B) than (A)"
+- Literal: "If it gets to the extent of (A), then (B)" where (B) is preferable
+- Combines くらい 'about/extent' and なら 'if' (conditional)
+- Often used with suggestions/opinions like ほうがいい, ほうがましだ
+
+**Tokenization**:
+- Verb: 動詞 (基本形 - dictionary form)
+- ぐらい/くらい: 助詞/副助詞 (adverbial particle)
+- なら: 助動詞, base=だ, 仮定形 (conditional auxiliary)
+
+**Implementation**:
+- Pattern: Verb[基本形] + ぐらい/くらい + なら
+- Custom matchers:
+  - GuraiKuraiMatcher: Matches ぐらい or くらい (助詞/副助詞)
+  - NaraMatcher: Matches なら (助動詞, base=だ, 仮定形)
+- Priority 5 for N1 standard construction
+- Pattern includes the full grammatical unit
+- Range: Verb + ぐらいなら/くらいなら
+
+**Tests Written: 3 tests (all passing)**
+1. `test_gurainara_with_gurai` - 引っ越すぐらいなら (5, 14) - would rather than move
+2. `test_kurainara_with_kurai` - 働くくらいなら (7, 14) - would rather than work
+3. `test_gurainara_buy_new` - 直すくらいなら (7, 14) - would rather than fix
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures Verb + ぐらいなら/くらいなら:
+- 引っ越すぐらいなら (5, 14) - 9 characters
+- 働くくらいなら (7, 14) - 7 characters
+- 直すくらいなら (7, 14) - 7 characters
+
+**Key Notes**:
+- Existing pattern くらい② (N3) also matches, but ぐらいなら is more specific (higher confidence 3.3 vs 2.2)
+- Both ぐらい and くらい handled by same matcher - no need for separate patterns
+- Exclusively used with verb dictionary form (基本形)
+- Second clause (B) typically contains suggestions or preferences
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented gurainara() with 2 custom matchers
+- `grammar-lib/src/patterns.rs` - Updated Gurainara priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 3 tests in gurainara_tests module
+- `feature_list.json` - Updated ぐらいなら to complete status
+
+**Quality Checks**:
+- ✓ Tests exist with proper assertions
+- ✓ All structure variants tested (ぐらい and くらい)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (3584 total, no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- まま(に)1 - "Just as, ままに" pattern
+- かれ〜かれ - "Whether... or..." pattern
+- なくして(は) - "Without" pattern
+- のなんのって - "Extremely" pattern
+- にかかっている - "Depends on" pattern
+- 折には - "On occasion of" pattern
+
+================================================================================
+
 ## Session 551 - 2025-12-16
 
 ### Session Summary - がてら Complete ✓
