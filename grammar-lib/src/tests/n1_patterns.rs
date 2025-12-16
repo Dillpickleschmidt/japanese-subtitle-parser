@@ -7905,3 +7905,54 @@ mod wa_wa_de_tests {
         assert_pattern_range(&patterns, "わ〜わ（で）", 32, 43); // わ画面は割れているわで
     }
 }
+
+// ============================================================================
+// わ〜わ Tests
+// ============================================================================
+
+mod wa_wa_tests {
+    use super::*;
+
+    // Pattern: わ〜わ (more and more / keeps happening / so much)
+    // Data source: grammar_points_data.json["わ〜わ"]
+    // Testing: structure.standard[0] - "Verb［る］+ わ + Verb［る］+ わ(*)"
+    // (*) The same verb has to be repeated
+    //
+    // Note: This implementation cannot verify that the same verb is repeated
+    // (requires cross-token validation). It will match any Verb + わ + Verb + わ pattern.
+    // This may result in false positives if different verbs are used.
+
+    #[test]
+    fn test_wa_wa_same_verb() {
+        // Testing: Same verb repeated (from grammar_points_data.json example)
+        let sentence = "空き家を買ったのはいいけど、家中にはゴキブリがいるわいるわ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わ〜わ");
+        assert_pattern_range(&patterns, "わ〜わ", 23, 29); // いるわいるわ
+    }
+
+    #[test]
+    fn test_wa_wa_suru_verb() {
+        // Testing: する verb shorthand (勉強するわするわ)
+        let sentence = "あの子は医者になりたいって決めてから、毎日勉強するわするわ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わ〜わ");
+        assert_pattern_range(&patterns, "わ〜わ", 21, 29); // 勉強するわするわ
+    }
+
+    #[test]
+    fn test_wa_wa_simple() {
+        // Simple test case with で following
+        // Note: This sentence ends with で, so both わ〜わ and わ〜わ（で） will match
+        let sentence = "子供達が喧嘩して泣くわ泣くわで大変だった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わ〜わ");
+        assert_pattern_range(&patterns, "わ〜わ", 8, 15); // 泣くわ泣くわで
+    }
+}

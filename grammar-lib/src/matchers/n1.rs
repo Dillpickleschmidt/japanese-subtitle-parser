@@ -6865,9 +6865,40 @@ pub fn tobakari_uff08_ni_uff09() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: わ〜わ
+// Pattern: わ〜わ (more and more / keeps happening / so much)
+// Structures: Verb(dictionary) + わ + Verb(dictionary) + わ
+// Note: Cannot verify that the same verb is repeated (requires cross-token validation).
+// This will match any Verb + わ + Verb + わ pattern, which may include false positives.
 pub fn wa_u301c_wa() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match わ particle (助詞/終助詞)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わ"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "終助詞")
+        }
+    }
+
+    // Match verb in dictionary form (基本形)
+    #[derive(Debug)]
+    struct DictionaryVerbMatcher;
+    impl Matcher for DictionaryVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(DictionaryVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+    ]
 }
 
 // Pattern: なりとも
