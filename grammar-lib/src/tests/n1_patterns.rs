@@ -4072,3 +4072,56 @@ mod tsu_u301c_tsu_tests {
         assert_pattern_range(&patterns, "つ〜つ", 0, 6); // 行きつ戻りつ
     }
 }
+
+// Pattern: であれ〜であれ (whether X or Y)
+// Data source: grammar_points_data.json["であれ〜であれ"]
+// Structures to test:
+//   - standard[0]: Noun (A) + であれ + Noun (B) + であれ
+//   - standard[1]: な-Adjective (A) + であれ + な-Adjective (B) + であれ
+mod deare_u301c_deare_tests {
+    use super::*;
+
+    #[test]
+    fn test_deare_deare_nouns_child_adult() {
+        // Testing: standard[0] - Noun (A) + であれ + Noun (B) + であれ
+        let sentence = "子供であれ大人であれ、入場料は４０００円です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "であれ〜であれ");
+        assert_pattern_range(&patterns, "であれ〜であれ", 0, 10); // 子供であれ大人であれ
+    }
+
+    #[test]
+    fn test_deare_deare_nouns_quality_price() {
+        // Testing: standard[0] - Noun (A) + であれ + Noun (B) + であれ
+        let sentence = "品質であれ価格であれ、この製品は最高だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "であれ〜であれ");
+        assert_pattern_range(&patterns, "であれ〜であれ", 0, 10); // 品質であれ価格であれ
+    }
+
+    #[test]
+    fn test_deare_deare_nouns_employee_types() {
+        // Testing: standard[0] - Noun (A) + であれ + Noun (B) + であれ
+        let sentence = "正社員であれアルバイトであれ、客には関係がない話だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "であれ〜であれ");
+        assert_pattern_range(&patterns, "であれ〜であれ", 0, 14); // 正社員であれアルバイトであれ
+    }
+
+    #[test]
+    fn test_deare_deare_na_adjectives() {
+        // Testing: standard[1] - な-Adjective (A) + であれ + な-Adjective (B) + であれ
+        let sentence = "簡単であれ複雑であれ、全ての問題を解かなければならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "であれ〜であれ");
+        assert_pattern_range(&patterns, "であれ〜であれ", 0, 10); // 簡単であれ複雑であれ
+    }
+}

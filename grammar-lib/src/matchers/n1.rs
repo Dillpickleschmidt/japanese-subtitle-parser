@@ -3105,9 +3105,55 @@ pub fn akumade_mo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: であれ〜であれ
+// Pattern: であれ〜であれ (whether X or Y, no matter if X or Y)
+// Structures: Noun/な-Adj + であれ + Noun/な-Adj + であれ
+// Note: Handles compound nouns like 日本製 (multiple consecutive noun tokens)
 pub fn deare_u301c_deare() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match で (auxiliary verb だ in 連用形)
+    #[derive(Debug)]
+    struct DeAuxiliaryMatcher;
+    impl Matcher for DeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    // Match あれ (auxiliary verb ある in 命令ｅ form)
+    #[derive(Debug)]
+    struct AreImperativeMatcher;
+    impl Matcher for AreImperativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あれ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ある"
+                && token.features.get(5).is_some_and(|f| f.contains("命令"))
+        }
+    }
+
+    // Noun or な-Adjective stem (形容動詞語幹)
+    // Both are categorized as 名詞 in pos.first()
+    #[derive(Debug)]
+    struct NounOrNaAdjectiveMatcher;
+    impl Matcher for NounOrNaAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        // First noun/な-adjective + であれ
+        TokenMatcher::Custom(Arc::new(NounOrNaAdjectiveMatcher)),
+        TokenMatcher::Custom(Arc::new(DeAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(AreImperativeMatcher)),
+        // Second noun/な-adjective + であれ
+        TokenMatcher::Custom(Arc::new(NounOrNaAdjectiveMatcher)),
+        TokenMatcher::Custom(Arc::new(DeAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(AreImperativeMatcher)),
+    ]
 }
 
 // Pattern: たら最後

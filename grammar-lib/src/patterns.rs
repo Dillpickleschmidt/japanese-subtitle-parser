@@ -6829,7 +6829,7 @@ declare_patterns! {
     DeareU301cDeare {
         name: "であれ〜であれ",
         matcher_fn: crate::matchers::n1::deare_u301c_deare,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
