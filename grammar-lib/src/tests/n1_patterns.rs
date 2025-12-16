@@ -2172,3 +2172,70 @@ mod karasuru_tests {
         assert_pattern_range(&patterns, "からの", 7, 12); // 十人からの
     }
 }
+
+// ============================================================================
+// にして① Tests
+// ============================================================================
+
+mod nishite_tests {
+    use super::*;
+
+    // Pattern: にして① (at (A), over (A), only when (A))
+    // Data source: grammar_points_data.json["にして①"]
+    // Testing all structure variants
+
+    #[test]
+    fn test_nishite_age_counter() {
+        // Testing: structure.standard[0] - "Number + Counter + にして"
+        let sentence = "３０歳にして初めて海外旅行に行った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にして①");
+        assert_pattern_range(&patterns, "にして①", 0, 6); // ３０歳にして
+    }
+
+    #[test]
+    fn test_nishite_ordinal_counter() {
+        // Testing: structure.standard[0] - "Number + Counter + にして"
+        let sentence = "五回目にしてやっと資格を取ることができた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にして①");
+        assert_pattern_range(&patterns, "にして①", 0, 6); // 五回目にして
+    }
+
+    #[test]
+    fn test_nishite_noun() {
+        // Testing: structure.standard[1] - "Noun + にして"
+        let sentence = "犯人たちは一瞬にして暗闇の中へと消えた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にして①");
+        assert_pattern_range(&patterns, "にして①", 5, 10); // 一瞬にして
+    }
+
+    #[test]
+    fn test_nishite_with_youyaku() {
+        // Testing: にして followed by ようやく (finally)
+        let sentence = "５０歳にしてようやく、イタリアに住んでいる従兄弟の家に行くことができた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にして①");
+        assert_pattern_range(&patterns, "にして①", 0, 6); // ５０歳にして
+    }
+
+    #[test]
+    fn test_nishite_with_hajimete() {
+        // Testing: にして followed by 初めて (for the first time)
+        let sentence = "母は６０歳にして初めて、コンサートに行ったらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にして①");
+        assert_pattern_range(&patterns, "にして①", 2, 8); // ６０歳にして
+    }
+}

@@ -1958,9 +1958,69 @@ pub fn karano() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にして①
+// Pattern: にして① (at (A), over (A), only when (A))
+// Structures: Number + Counter + にして, Noun + にして
 pub fn nishite_u2460() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match number/counter or regular noun
+    #[derive(Debug)]
+    struct NumberCounterOrNounMatcher;
+    impl super::Matcher for NumberCounterOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match 名詞 (any noun type)
+            token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match し (する in 連用形)
+    #[derive(Debug)]
+    struct ShiVerbMatcher;
+    impl super::Matcher for ShiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match て particle (接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        // Match number/counter or noun - use specific noun types to avoid matching across particles
+        TokenMatcher::Custom(Arc::new(NumberCounterOrNounMatcher)),
+        // Optional: allow one more noun token (for multi-token numbers like ３０)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberCounterOrNounMatcher)))),
+        // Optional: allow one more noun token (for counters like 歳, or suffixes like 目)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberCounterOrNounMatcher)))),
+        // Match に
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        // Match し
+        TokenMatcher::Custom(Arc::new(ShiVerbMatcher)),
+        // Match て
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: ものを
