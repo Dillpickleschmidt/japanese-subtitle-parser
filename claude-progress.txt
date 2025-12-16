@@ -6185,3 +6185,79 @@ All tests use realistic subtitle-quality sentences from grammar_points_data.json
 **Total Test Count**: 3705 passing
 
 ================================================================================
+
+================================================================================
+Session 580: とばかり（に） Pattern Implementation
+Date: 2025-12-16
+Status: ✓ COMPLETE
+================================================================================
+
+**Pattern Implemented**: とばかり（に） (N1)
+
+**Grammar Pattern**: とばかり（に） (as if to say / seeming that)
+
+**Pattern Meaning**:
+Formal construction showing something is being done "as if to say (A)" or "seeming that (A)".
+Combination of と (quotation particle) + ばかり (adverbial particle) meaning "basically exactly as described".
+Indicates that while (A) is as described, it is not literally the case.
+Optional に follows when the sentence describes what is actually happening.
+
+**Implementation Details**:
+
+Created tobakari_uff08_ni_uff09() matcher with 3 custom matchers:
+1. ToQuotationMatcher - matches と (助詞/格助詞/引用)
+2. BakariMatcher - matches ばかり (助詞/副助詞)
+3. NiCaseMatcher - optional, matches に (助詞/格助詞/一般)
+
+**Structure Pattern**:
+Quote/Noun + と + ばかり + (に)
+
+**Tests Added**: 3 tests in tobakarini_tests module
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures と + ばかり + optional に:
+
+- 「待ってました」とばかりに (17, 22) - 5 characters (quote + with に)
+- 「俺の話聞いてるか」とばかり (13, 17) - 4 characters (quote + without に)
+- チャンスとばかりに (25, 30) - 5 characters (noun + with に)
+
+**Structure Coverage:**
+
+✓ standard[0]: Quote + とばかり（に）
+  - With に: 「待ってました」とばかりに
+  - Without に: 「俺の話聞いてるか」とばかり
+✓ standard[1]: Noun + とばかり（に）
+  - チャンスとばかりに
+
+**Key Notes:**
+
+- Formal/written style pattern (register: formal)
+- Can appear after almost any word due to と creating a quote
+- に often follows when sentence describes what is actually happening
+- Abbreviation of と言わんばかり (to only just not be at the point where A is said)
+- Won't be used to describe the speaker themselves (unless in third person)
+- Pattern matches only the と + ばかり + (に) part, not the content before it
+- Both quoted phrases and nouns can precede とばかり
+
+**Files Modified:**
+
+- grammar-lib/src/matchers/n1.rs - Implemented tobakari_uff08_ni_uff09() at line 6823
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests in tobakarini_tests module
+- feature_list.json - Updated とばかり（に） to complete status
+
+**Quality Checks:**
+
+✓ Tests exist with proper assertions
+✓ All structure variants tested (2 standard forms: quote + noun, with/without に)
+✓ Realistic subtitle-quality sentences used (from grammar_points_data.json)
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3718 total, +3 new)
+✓ Clean git history
+
+**Session Update**: 1 N1 pattern completed (とばかり（に）)
+**Session Tests**: 3 new tests added
+**Total Test Count**: 3718 passing
+
+================================================================================
