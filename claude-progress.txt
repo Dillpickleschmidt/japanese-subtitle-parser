@@ -1,3 +1,127 @@
+## Session 612 - 2025-12-16
+
+### Session Summary - とは比べものにならない Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (とは比べものにならない - N1, priority 5)
+**Total tests**: 3897 passing (5 new tests, no regressions)
+**Progress**: One hundred and twenty-fifth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented とは比べものにならない (cannot be compared to / nothing compared to)
+- Emphatic expression used to highlight something is far beyond comparison
+- Handles casual (にならない), polite (になりません), and emphatic (にはならない) forms
+- Pattern includes full grammatical construction: Noun + とは + くらべもの + に + [は] + なる + ない/ません
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: とは比べものにならない (cannot be compared to)
+
+**Grammar Point**: とは比べものにならない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + とは比べものにならない (standard form)
+2. Noun + とは比べものになりません (polite form)
+3. Noun + とは比べものにはならない (with emphatic は)
+
+**Meaning**:
+- "Cannot be compared to (A)" / "Nothing compared to (A)"
+- Emphasizes that something is far beyond what could possibly be compared
+- Combination of と (case-marking particle) + は (adverbial particle) + 比べもの (comparable thing) + に (particle) + ならない (negated なる)
+- Used to express that quality, quantity, or some feature is not comparable
+- The optional は before ならない adds further emphasis or highlights contrast
+
+**Tokenization pattern**:
+**Standard form (にならない):**
+- Noun (名詞)
+- と (助詞/格助詞/一般)
+- は (助詞/係助詞)
+- くらべ (動詞/自立, base=くらべる, 連用形)
+- もの (名詞/接尾/一般)
+- に (助詞/格助詞/一般)
+- なら (動詞/自立 or 非自立, base=なる, 未然形)
+- ない (助動詞, 特殊・ナイ)
+
+**Emphatic form (にはならない):**
+- Same as above, but with additional は (助詞/係助詞) before なる
+
+**Polite form (になりません):**
+- Same structure, but:
+- なり (動詞/自立, base=なる, 連用形)
+- ませ (助動詞, base=ます, 未然形)
+- ん (助動詞, 不変化型)
+
+**Implementation**:
+Created 8 custom matchers for precise pattern matching:
+1. ToMatcher - Matches と as 助詞/格助詞/一般
+2. WaMatcher - Matches は as 助詞/係助詞
+3. KurabeMatcher - Matches くらべ (base=くらべる, 動詞)
+4. MonoMatcher - Matches もの as 名詞
+5. NiMatcher - Matches に as 助詞/格助詞/一般
+6. NaruMatcher - Matches なら (未然形) or なり (連用形), base=なる
+7. NaiOrMaseMatcher - Matches ない (助動詞) or ませ (助動詞)
+8. NMatcher - Matches ん (助動詞) for polite negative ending
+
+Pattern matcher sequence:
+- noun_matcher() (preceding noun)
+- ToMatcher (と)
+- WaMatcher (は)
+- KurabeMatcher (くらべ)
+- MonoMatcher (もの)
+- NiMatcher (に)
+- Optional(WaMatcher) (optional は before なる for emphasis)
+- NaruMatcher (なら/なり)
+- NaiOrMaseMatcher (ない/ませ)
+- Optional(NMatcher) (ん for polite negative)
+
+**Tests Written: 5 tests (all passing)**
+1. test_tohakurabemononinaranai_company_parts - 部品とはくらべものにならない (17, 31) - standard form
+2. test_tohakurabemononinaranai_mothers_spaghetti - スパゲティーとはくらべものにならない (5, 23) - standard form
+3. test_tohakurabemononinaranai_hokkaido_cold - 北海道とはくらべものにはならない (7, 23) - with emphatic は
+4. test_tohakurabemononinaranai_polite - 技術とはくらべものになりません (2, 17) - polite form
+5. test_tohakurabemononinaranai_quality - 店とはくらべものにならない (9, 22) - standard form
+
+**Character Ranges**: Pattern captures Noun + とは比べものにならない/になりません:
+- 部品とはくらべものにならない (17, 31) - 14 characters
+- スパゲティーとはくらべものにならない (5, 23) - 18 characters
+- 北海道とはくらべものにはならない (7, 23) - 16 characters (with は)
+- 技術とはくらべものになりません (2, 17) - 15 characters (polite)
+- 店とはくらべものにならない (9, 22) - 13 characters
+
+**Key Notes**:
+- Pattern includes the preceding noun (full grammatical construction)
+- Optional は matcher between に and なる handles emphatic variant
+- NaruMatcher accepts both なら (未然形, for ない) and なり (連用形, for ます)
+- NaiOrMaseMatcher handles both casual (ない) and polite (ませ) endings
+- Optional ん matcher completes polite negative (ません)
+- Used to emphasize large differences in quality, quantity, or other measurable features
+- Neologism 比べもの = 比べる (compare) + もの (thing) = "comparable thing"
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented tohakurabemononinaranai() with 8 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in tohakurabemononinaranai_tests module
+- feature_list.json - Updated とは比べものにならない to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (standard, polite, with emphatic は)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3892 + 5 = 3897 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ったら・といったら - Complex emphatic pattern (has empty "about" field - may need research)
+- とは言うものの - "Having said that" pattern
+- と来たら - "Speaking of" pattern
+- ならいざ知らず - "Let alone / not to mention" pattern
+- にかこつけて - "Using as an excuse" pattern
+
+================================================================================
+
 ## Session 611 - 2025-12-16
 
 ### Session Summary - に限ったことではない Complete ✓
