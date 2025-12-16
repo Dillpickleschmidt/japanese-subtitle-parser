@@ -6588,3 +6588,73 @@ mod sazo_tests {
         assert_pattern_range(&patterns, "さぞ", 21, 24); // さぞや
     }
 }
+
+// ============================================================================
+// でもなんでもない Tests
+// ============================================================================
+
+mod demonandemonai_tests {
+    use super::*;
+
+    // Pattern: でもなんでもない (not at all / definitely not)
+    // Data source: grammar_points_data.json["でもなんでもない"]
+    // Testing: structure.standard[0] - "Noun + でもなんでもない"
+    //
+    // Other structures to test:
+    //   - standard[1]: な-Adjective + でもなんでもない
+    //   - polite[0]: Noun + でもなんでもないです
+    //   - polite[1]: な-Adjective + でもなんでもないです
+    //   - Caution: い-Adjective + くもなんでもない (less common variant)
+
+    #[test]
+    fn test_demonandemonai_noun_fan() {
+        let sentence = "俺はファンでもなんでもないよ、ただあの人が作曲した曲を聞くのが好きなだけ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもなんでもない");
+        assert_pattern_range(&patterns, "でもなんでもない", 2, 13); // ファンでもなんでもない
+    }
+
+    #[test]
+    fn test_demonandemonai_noun_friend() {
+        let sentence = "あっ、あの人ですか？友達でもなんでもないですよ、なんかさっき急に話しかけてきたので話していただけです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもなんでもない");
+        assert_pattern_range(&patterns, "でもなんでもない", 10, 22); // 友達でもなんでもないです (includes polite です)
+    }
+
+    #[test]
+    fn test_demonandemonai_na_adj_bothersome() {
+        let sentence = "迷惑でもなんでもないですよ、ゆっくりしていってください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもなんでもない");
+        assert_pattern_range(&patterns, "でもなんでもない", 0, 12); // 迷惑でもなんでもないです (includes polite です)
+    }
+
+    #[test]
+    fn test_demonandemonai_na_adj_like() {
+        let sentence = "好きでもなんでもない人からそんなこと言われても全然嬉しくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもなんでもない");
+        assert_pattern_range(&patterns, "でもなんでもない", 0, 10); // 好きでもなんでもない (no です in this sentence)
+    }
+
+    // Note: い-Adjective + くもなんでもない variant is less common
+    // Testing one example for completeness
+    #[test]
+    fn test_demonandemonai_i_adj_heavy() {
+        let sentence = "これ重くもなんでもないじゃん。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でもなんでもない");
+        assert_pattern_range(&patterns, "でもなんでもない", 2, 14); // 重くもなんでもないじゃん (includes casual じゃん)
+    }
+}

@@ -11539,13 +11539,13 @@
   {
     "pattern_name": "でもなんでもない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "でもなんでもない is a structure seen after nouns or な-Adjectives in Japanese to indicate that something is 'definitely not (A... [2 std, 2 pol]",
     "priority": 5,
     "skip_reason": null

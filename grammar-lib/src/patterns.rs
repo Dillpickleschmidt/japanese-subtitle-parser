@@ -7157,7 +7157,23 @@ declare_patterns! {
     Demonandemonai {
         name: "でもなんでもない",
         matcher_fn: crate::matchers::n1::demonandemonai,
-        priority: 1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    DemonandemonaiDemo {
+        name: "でもなんでもない",
+        matcher_fn: crate::matchers::n1::demonandemonai_demo,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    DemonandemonaiKumo {
+        name: "でもなんでもない",
+        matcher_fn: crate::matchers::n1::demonandemonai_kumo,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

@@ -5202,9 +5202,200 @@ pub fn toatte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: でもなんでもない
+// Pattern: でもなんでもない (not at all / definitely not)
+// Structures: Noun + でもなんでもない / な-Adj + でもなんでもない / い-Adj + くもなんでもない
 pub fn demonandemonai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match で (助詞/格助詞/一般) case particle
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match も (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match なん (名詞/代名詞/一般)
+    #[derive(Debug)]
+    struct NanNounMatcher;
+    impl super::Matcher for NanNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なん"
+                && token.base_form == "なん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match ない (形容詞/自立)
+    #[derive(Debug)]
+    struct NaiAdjectiveMatcher;
+    impl super::Matcher for NaiAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    // Pattern: [Any] + で + も + なん + で + も + ない
+    // This handles nouns: ファン + で + も + なん + で + も + ない
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NanNounMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAdjectiveMatcher)),
+    ]
+}
+
+// Pattern: でもなんでもない (combined でも variant)
+// Handles な-adjectives: 迷惑 + でも + なん + で + も + ない
+pub fn demonandemonai_demo() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match でも (助詞/副助詞) - single token
+    #[derive(Debug)]
+    struct DemoParticleMatcher;
+    impl super::Matcher for DemoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "でも"
+                && token.base_form == "でも"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match で (助詞/格助詞/一般) case particle
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match も (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match なん (名詞/代名詞/一般)
+    #[derive(Debug)]
+    struct NanNounMatcher;
+    impl super::Matcher for NanNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なん"
+                && token.base_form == "なん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match ない (形容詞/自立)
+    #[derive(Debug)]
+    struct NaiAdjectiveMatcher;
+    impl super::Matcher for NaiAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    // Pattern: [Any] + でも + なん + で + も + ない
+    // This handles な-adjectives: 迷惑 + でも + なん + で + も + ない
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(DemoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NanNounMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAdjectiveMatcher)),
+    ]
+}
+
+// Pattern: でもなんでもない (くも variant for い-adjectives)
+// Handles い-adjectives: 重く + も + なん + で + も + ない
+pub fn demonandemonai_kumo() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match も (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match で (助詞/格助詞/一般) case particle
+    #[derive(Debug)]
+    struct DeParticleMatcher;
+    impl super::Matcher for DeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match なん (名詞/代名詞/一般)
+    #[derive(Debug)]
+    struct NanNounMatcher;
+    impl super::Matcher for NanNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なん"
+                && token.base_form == "なん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match ない (形容詞/自立)
+    #[derive(Debug)]
+    struct NaiAdjectiveMatcher;
+    impl super::Matcher for NaiAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    // Pattern: [Any] + も + なん + で + も + ない
+    // This handles い-adjectives in ku-form: 重く + も + なん + で + も + ない
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NanNounMatcher)),
+        TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAdjectiveMatcher)),
+    ]
 }
 
 // Pattern: ぐるみで (including / all over)
