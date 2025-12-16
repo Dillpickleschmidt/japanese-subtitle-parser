@@ -4443,3 +4443,63 @@ mod ikan_u301c_zu_tests {
         assert_pattern_range(&patterns, "いかん〜ず", 3, 12); // いかんにかかわらず
     }
 }
+
+// ============================================================================
+// れる・られる + ままに Tests
+// ============================================================================
+
+mod reru_rareru_mamani_tests {
+    use super::*;
+
+    // Pattern: れる・られる + ままに (as one is told/ordered)
+    // Data source: grammar_points_data.json["れる・られる + ままに"]
+    // Testing: structure.standard[0] - "Verb[られる] + (が) + まま + (に)"
+    //
+    // Note: Pattern works with passive verbs (れる/られる) paired with verbs
+    // indicating communication (言う, 命じる, 聞く, etc.)
+    // Means: "to do (B) as (A) was done to me"
+
+    #[test]
+    fn test_rareru_mamani_iwareru() {
+        // Testing: 言われる + ままに (as I was told)
+        let sentence = "私は先輩に言われるままにしただけですよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる + ままに");
+        assert_pattern_range(&patterns, "れる・られる + ままに", 5, 12); // 言われるままに
+    }
+
+    #[test]
+    fn test_rareru_mamani_meijirareru() {
+        // Testing: 命じられる + ままに (as ordered)
+        let sentence = "日本では上司に命じられるままに仕事をしている人が多い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる + ままに");
+        assert_pattern_range(&patterns, "れる・られる + ままに", 7, 15); // 命じられるままに
+    }
+
+    #[test]
+    fn test_rareru_mamani_kikareru() {
+        // Testing: 聞かれる + ままに (as I was asked)
+        let sentence = "警察に聞かれるままに、仲間の名前を教えた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる + ままに");
+        assert_pattern_range(&patterns, "れる・られる + ままに", 3, 10); // 聞かれるままに
+    }
+
+    #[test]
+    fn test_rareru_ga_mamani() {
+        // Testing: 言われる + が + ままに (as I was told - with が)
+        let sentence = "婚活アプリで出会った人に言われるがままに、ギフトカードを買ってしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "れる・られる + ままに");
+        assert_pattern_range(&patterns, "れる・られる + ままに", 12, 20); // 言われるがままに
+    }
+}

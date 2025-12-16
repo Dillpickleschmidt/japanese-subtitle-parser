@@ -6869,7 +6869,7 @@ declare_patterns! {
     ReruU30fbRareruMamani {
         name: "れる・られる + ままに",
         matcher_fn: crate::matchers::n1::reru_u30fb_rareru_mamani,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

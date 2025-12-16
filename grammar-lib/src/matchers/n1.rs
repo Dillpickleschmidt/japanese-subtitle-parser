@@ -3309,9 +3309,64 @@ pub fn narini_sorenari() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: れる・られる + ままに
+// Pattern: れる・られる + ままに (as one is told/ordered)
+// Structures: Verb[られる] + (が) + まま + (に)
 pub fn reru_u30fb_rareru_mamani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match れる/られる passive auxiliary (動詞/接尾/基本形, base れる or られる)
+    #[derive(Debug)]
+    struct ReruRareruMatcher;
+    impl Matcher for ReruRareruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.get(1).is_some_and(|p| p == "接尾")
+                && (token.base_form == "れる" || token.base_form == "られる")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match が as conjunction particle (助詞/接続助詞)
+    #[derive(Debug)]
+    struct GaConjunctionMatcher;
+    impl Matcher for GaConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match まま noun (名詞/非自立/副詞可能)
+    #[derive(Debug)]
+    struct MamaMatcher;
+    impl Matcher for MamaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まま"
+                && token.base_form == "まま"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Match に case particle (助詞/格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    vec![
+        // Verb[未然形] is already matched, we look for れる/られる
+        TokenMatcher::Any, // The verb in 未然形 before れる/られる
+        TokenMatcher::Custom(Arc::new(ReruRareruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaConjunctionMatcher)))),
+        TokenMatcher::Custom(Arc::new(MamaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiParticleMatcher)))),
+    ]
 }
 
 // Pattern: にまつわる
