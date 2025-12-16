@@ -1,3 +1,125 @@
+## Session 616 - 2025-12-16
+
+### Session Summary - に言わせれば・に言わせると・に言わせたら Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (に言わせれば・に言わせると・に言わせたら - N1, priority 5)
+**Total tests**: 3917 passing (6 new tests, no regressions)
+**Progress**: One hundred and twenty-eighth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented に言わせれば・に言わせると・に言わせたら (if you ask / according to)
+- Expression using causative form of 言う (to say) with conditional particles (ば, と, たら)
+- Handles both に and から particles before the verb
+- All three conditional variants tested: せれば (ば conditional), せると (と conditional), せたら (たら conditional)
+- Pattern used to indicate a person or group giving a strong opinion
+
+### ✓ Completed: に言わせれば・に言わせると・に言わせたら (if you ask / according to)
+
+**Grammar Point**: に言わせれば・に言わせると・に言わせたら
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + に + 言わせれば (e.g., 私にいわせれば)
+2. Noun + に + 言わせると (e.g., 母にいわせると)
+3. Noun + に + 言わせたら (e.g., 先生にいわせたら)
+4. Noun + から + 言わせれば (e.g., 私からいわせれば) - から variant
+
+**Meaning**:
+- "If you ask (A), (B)" / "According to (A), (B)" / "In (A)'s opinion, (B)"
+- Indicates a person or group giving a strong opinion
+- Literal: "If (A) is allowed to speak, (B)"
+- Combination of に/から (particle) + 言う (to say) + せる (causative auxiliary) + ば/と/たら (conditional)
+- Can sound self-important, so best used sparingly when giving your own opinions
+- ば is the most common conditional form
+
+**Tokenization patterns**:
+**に言わせれば (standard):**
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- いわ (動詞/自立, base=いう, 未然形)
+- せれ (動詞/接尾, base=せる, 仮定形)
+- ば (助詞/接続助詞)
+
+**に言わせると (と conditional):**
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- いわ (動詞/自立, base=いう, 未然形)
+- せる (動詞/接尾, base=せる, 基本形)
+- と (助詞/接続助詞)
+
+**に言わせたら (たら conditional):**
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- いわ (動詞/自立, base=いう, 未然形)
+- せ (動詞/接尾, base=せる, 連用形)
+- たら (助動詞, base=た, 仮定形)
+
+**から variant:**
+- Same structure but から (助詞/格助詞/一般) instead of に
+
+**Implementation**:
+Created 4 custom matchers for precise pattern matching:
+1. NiOrKaraMatcher - Matches に or から as 助詞/格助詞/一般
+2. IwaMatcher - Matches いわ (base=いう, 未然形, 動詞/自立)
+3. SeMatcher - Matches せれ (仮定形), せる (基本形), or せ (連用形) - all base=せる, 動詞/接尾
+4. BaOrToOrTaraMatcher - Matches ば (助詞/接続助詞), と (助詞/接続助詞), or たら (助動詞, 仮定形)
+
+Pattern matcher sequence:
+- super::noun_matcher() (preceding noun)
+- NiOrKaraMatcher (に or から)
+- IwaMatcher (いわ)
+- SeMatcher (せれ/せる/せ)
+- BaOrToOrTaraMatcher (ば/と/たら)
+
+**Tests Written: 6 tests (all passing)**
+1. test_niiwasereba_watashi - 私にいわせれば (0, 7) - standard ば form
+2. test_niiwasereba_kare - 彼にいわせれば (26, 33) - ば form in mid-sentence
+3. test_niiwasereba_senmonka - 家にいわせれば (2, 9) - ば form (家 from 専門家)
+4. test_karaiiwasereba_variant - 私からいわせれば (0, 8) - から variant
+5. test_niiwaseruto_variant - 母にいわせると (0, 7) - と conditional
+6. test_niiwasetara_variant - 先生にいわせたら (0, 8) - たら conditional
+
+**Character Ranges**: Pattern captures Noun + に/から + いわせれば/と/たら:
+- 私にいわせれば (0, 7) - 7 characters (に + ば form)
+- 彼にいわせれば (26, 33) - 7 characters (に + ば form)
+- 家にいわせれば (2, 9) - 7 characters (に + ば form)
+- 私からいわせれば (0, 8) - 8 characters (から + ば form)
+- 母にいわせると (0, 7) - 7 characters (に + と form)
+- 先生にいわせたら (0, 8) - 8 characters (に + たら form)
+
+**Key Notes**:
+- Pattern includes the preceding noun (full grammatical construction)
+- NiOrKaraMatcher handles both に and から particles (から is less common but valid)
+- SeMatcher handles three conjugation forms to match all three conditional variants
+- BaOrToOrTaraMatcher handles all three conditional particles
+- All structure variants tested with realistic sentences from grammar_points_data.json
+- ば is most common, と and たら are alternative conditionals with similar meaning
+- Pattern works with any noun indicating a person or group
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented niiwasereba_u30fb_niiwaseruto_u30fb_niiwasetara() with 4 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs - Added 6 tests in niiwasereba_tests module
+- feature_list.json - Updated に言わせれば・に言わせると・に言わせたら to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (ば, と, たら conditionals, に and から particles)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3911 + 6 = 3917 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ったら・といったら - Complex emphatic pattern (has empty "about" field - may need research)
+- には及ばない② - "Not as good as" pattern (distinct from には及ばない①)
+- に難くない - "Not difficult to" pattern
+- ならいざ知らず - "Let alone / not to mention" pattern
+- にかこつけて - "Using as an excuse" pattern
+
+================================================================================
 ## Session 615 - 2025-12-16
 
 ### Session Summary - とは言うものの Complete ✓
