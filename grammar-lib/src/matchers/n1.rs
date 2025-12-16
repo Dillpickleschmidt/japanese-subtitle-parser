@@ -6956,9 +6956,50 @@ pub fn naritomo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に至っても
+// Pattern: に至っても (even when it reaches/even if it comes to)
+// Structures: Verb + に至（いた）っても / Noun + に至（いた）っても
 pub fn niitattemo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 至っ (te-form only for this pattern)
+    #[derive(Debug)]
+    struct ItatteVerbMatcher;
+    impl super::Matcher for ItatteVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "至る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.surface == "至っ"
+        }
+    }
+
+    // Match て particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match も particle
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Custom(Arc::new(ItatteVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+    ]
 }
 
 // Pattern: を兼ねて

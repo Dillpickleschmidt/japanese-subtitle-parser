@@ -7397,7 +7397,7 @@ declare_patterns! {
     Niitattemo {
         name: "に至っても",
         matcher_fn: crate::matchers::n1::niitattemo,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

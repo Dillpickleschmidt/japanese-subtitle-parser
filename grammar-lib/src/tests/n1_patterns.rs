@@ -8029,3 +8029,77 @@ mod naritomo_tests {
     //     // This is a different grammatical pattern, not the classical なりとも
     // }
 }
+
+// ============================================================================
+// に至っても Tests
+// ============================================================================
+
+mod niitattemo_tests {
+    use super::*;
+
+    // Pattern: に至っても (even when it reaches/even if it comes to)
+    // Data source: grammar_points_data.json["に至っても"]
+    // Testing: structure.standard[0] - "Verb + に至（いた）っても"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun + に至（いた）っても
+    //
+    // Meaning: Presents extreme example from which some result (often negative) will not occur
+    // Contrast: に至っては (topic marker は) vs に至っても (even も)
+    // Usage: "Even if it came to (A), (B)" - (B) often negative, showing (A) couldn't affect (A)
+
+    #[test]
+    fn test_niitattemo_verb_makikomareru() {
+        // Testing: Verb + に至っても (経つに至っても)
+        let sentence = "あの事故に巻き込まれてから２年経つに至っても、相手は謝罪すらもしてこない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至っても");
+        assert_pattern_range(&patterns, "に至っても", 15, 22); // 経つに至っても
+    }
+
+    #[test]
+    fn test_niitattemo_verb_naru() {
+        // Testing: Verb + に至っても (なるに至っても)
+        let sentence = "社会人になるに至っても、まだ自分が子供だと思っている人は少なくないだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至っても");
+        assert_pattern_range(&patterns, "に至っても", 4, 11); // なるに至っても
+    }
+
+    #[test]
+    fn test_niitattemo_noun_genzai() {
+        // Testing: Noun + に至っても (現在に至っても)
+        let sentence = "彼と別れて３年経った現在に至っても、男の人を信用することができない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至っても");
+        assert_pattern_range(&patterns, "に至っても", 10, 17); // 現在に至っても
+    }
+
+    #[test]
+    fn test_niitattemo_noun_asagata() {
+        // Testing: Noun + に至っても (朝方に至っても)
+        let sentence = "この会議は朝方に至っても、続きそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至っても");
+        assert_pattern_range(&patterns, "に至っても", 5, 12); // 朝方に至っても
+    }
+
+    #[test]
+    fn test_niitattemo_noun_kekka() {
+        // Testing: Noun + に至っても (結果に至っても)
+        let sentence = "これは俺が決めたことだから、どんな結果に至っても、絶対に後悔しない！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至っても");
+        assert_pattern_range(&patterns, "に至っても", 17, 24); // 結果に至っても
+    }
+}
