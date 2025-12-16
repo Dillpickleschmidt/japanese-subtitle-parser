@@ -7693,7 +7693,7 @@ declare_patterns! {
     Tohakurabemononinaranai {
         name: "とは比べものにならない",
         matcher_fn: crate::matchers::n1::tohakurabemononinaranai,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

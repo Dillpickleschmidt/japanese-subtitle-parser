@@ -10536,3 +10536,78 @@ mod nikagittakotodehanai_tests {
         assert_pattern_range(&patterns, "に限ったことではない", 5, 21); // 男性にかぎったことではありません
     }
 }
+
+// ============================================================================
+// とは比べものにならない Tests
+// ============================================================================
+
+mod tohakurabemononinaranai_tests {
+    use super::*;
+
+    // Pattern: とは比べものにならない (cannot be compared to / nothing compared to)
+    // Data source: grammar_points_data.json["とは比べものにならない"]
+    // Testing: structure.standard[0] - "Noun + とは比べものにならない"
+    //
+    // Other structures to test:
+    //   - polite[0]: Noun + とは比べものになりません
+
+    #[test]
+    fn test_tohakurabemononinaranai_company_parts() {
+        // Testing: structure.standard[0] - "Noun + とは比べものにならない"
+        // Context: Company B parts cannot be compared to Company A parts
+        let sentence = "Ａ社の作る部品はいいが、Ｂ社の作る部品とはくらべものにならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは比べものにならない");
+        assert_pattern_range(&patterns, "とは比べものにならない", 17, 31); // 部品とはくらべものにならない
+    }
+
+    #[test]
+    fn test_tohakurabemononinaranai_mothers_spaghetti() {
+        // Testing: structure.standard[0] - "Noun + とは比べものにならない"
+        // Context: cannot be compared to mother's spaghetti
+        let sentence = "お母さんのスパゲティーとはくらべものにならないが、ここのシェフが作るやつはなかなか美味しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは比べものにならない");
+        assert_pattern_range(&patterns, "とは比べものにならない", 5, 23); // スパゲティーとはくらべものにならない
+    }
+
+    #[test]
+    fn test_tohakurabemononinaranai_hokkaido_cold() {
+        // Testing: structure.standard[0] - "Noun + とは比べものにはならない"
+        // Context: Gifu cannot be compared to Hokkaido (with extra は particle)
+        let sentence = "岐阜は寒いが、北海道とはくらべものにはならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは比べものにならない");
+        assert_pattern_range(&patterns, "とは比べものにならない", 7, 23); // 北海道とはくらべものにはならない
+    }
+
+    #[test]
+    fn test_tohakurabemononinaranai_polite() {
+        // Testing: structure.polite[0] - "Noun + とは比べものになりません"
+        // Context: polite form - cannot be compared to
+        let sentence = "昔の技術とはくらべものになりません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは比べものにならない");
+        assert_pattern_range(&patterns, "とは比べものにならない", 2, 17); // 技術とはくらべものになりません
+    }
+
+    #[test]
+    fn test_tohakurabemononinaranai_quality() {
+        // Testing: structure.standard[0] - "Noun + とは比べものにならない"
+        // Context: quality comparison - cannot be compared
+        let sentence = "この店の料理は他の店とはくらべものにならないほど美味しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは比べものにならない");
+        assert_pattern_range(&patterns, "とは比べものにならない", 9, 22); // 店とはくらべものにならない
+    }
+}

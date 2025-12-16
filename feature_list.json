@@ -12351,13 +12351,13 @@
   {
     "pattern_name": "とは比べものにならない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In order to emphasize that something is far beyond what could possibly be compared to (A), the emphatic phrase とは比（くら... [1 std, 1 pol]",
     "priority": 5,
     "skip_reason": null

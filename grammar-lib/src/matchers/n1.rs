@@ -9028,9 +9028,115 @@ pub fn nikagittakotodehanai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とは比べものにならない
+// Pattern: とは比べものにならない (cannot be compared to)
+// Structures: Noun + とは比べものにならない/になりません
 pub fn tohakurabemononinaranai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // と matcher (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // は matcher (助詞/係助詞)
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // くらべ matcher (動詞/自立, base=くらべる, 連用形)
+    #[derive(Debug)]
+    struct KurabeMatcher;
+    impl Matcher for KurabeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "くらべ"
+                && token.base_form == "くらべる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // もの matcher (名詞/接尾/一般)
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // に matcher (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // なる matcher - matches both なら (未然形) and なり (連用形)
+    #[derive(Debug)]
+    struct NaruMatcher;
+    impl Matcher for NaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "なら" || token.surface == "なり")
+                && token.base_form == "なる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // ない or ませ matcher (for casual and polite forms)
+    #[derive(Debug)]
+    struct NaiOrMaseMatcher;
+    impl Matcher for NaiOrMaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface == "ない" && token.pos.first().is_some_and(|pos| pos == "助動詞") {
+                return true;
+            }
+            if token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // ん matcher (助動詞, 不変化型) - for polite negative ending
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+        TokenMatcher::Custom(Arc::new(WaMatcher)),
+        TokenMatcher::Custom(Arc::new(KurabeMatcher)),
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaMatcher)))), // Optional は before なる
+        TokenMatcher::Custom(Arc::new(NaruMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiOrMaseMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))), // Optional ん for polite
+    ]
 }
 
 // Pattern: まじき
