@@ -1,3 +1,112 @@
+## Session 614 - 2025-12-16
+
+### Session Summary - に恥じない Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (に恥じない - N1, priority 5)
+**Total tests**: 3907 passing (5 new tests, no regressions)
+**Progress**: One hundred and twenty-sixth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented に恥じない (lives up to / not ashamed of)
+- Formal expression for showing something lives up to expected standards or quality
+- Handles both casual (に恥じない) and polite (に恥じません) forms
+- Pattern includes full grammatical construction: Noun + に + 恥じない/恥じません
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: に恥じない (lives up to / not ashamed of)
+
+**Grammar Point**: に恥じない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Noun + に恥（は）じない (standard negative)
+2. Noun + に恥（は）じない + Noun (modifying a noun)
+3. Noun + に恥（は）じません (polite negative)
+4. Noun + に恥（は）じません + Noun (polite, modifying a noun)
+
+**Meaning**:
+- "Lives up to (A)" / "Not ashamed of (A)" / "Without shaming (A)"
+- Formal expression showing something lives up to expected standard or quality level
+- Combination of に (case-marking particle) + 恥じる (る-Verb "to shame") negated form
+- Literal translation: "without shaming (A)"
+- Usually used with nouns indicating well-known aspects: 名（な）"name", 名誉（めいよ）"reputation"
+- Only used in positive contexts where someone/something is being praised
+
+**Tokenization pattern**:
+**Standard form (に恥じない):**
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- はじ (動詞/自立, base=はじる, 一段, 未然形)
+- ない (助動詞, 特殊・ナイ, 基本形)
+
+**Polite form (に恥じません):**
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- はじ (動詞/自立, base=はじる, 一段, 連用形)
+- ませ (助動詞, 特殊・マス, 未然形)
+- ん (助動詞, 不変化型)
+
+**Implementation**:
+Created 4 custom matchers for precise pattern matching:
+1. NiMatcher - Matches に as 助詞/格助詞/一般
+2. HajiMatcher - Matches はじ (base=はじる, 動詞/自立, 未然形 or 連用形)
+3. NaiOrMaseMatcher - Matches ない (助動詞, 特殊・ナイ) OR ませ (助動詞, 特殊・マス)
+4. NMatcher - Matches ん (助動詞, 不変化型) for polite negative ending
+
+Pattern matcher sequence:
+- noun_matcher() (preceding noun)
+- NiMatcher (に)
+- HajiMatcher (はじ in 未然形 or 連用形)
+- NaiOrMaseMatcher (ない or ませ)
+- Optional(NMatcher) (ん for polite negative)
+
+**Tests Written: 5 tests (all passing)**
+1. test_nihajinai_standard_name_reputation - 名にはじない (18, 24) - standard form
+2. test_nihajinai_standard_modifying_noun - 名にはじない (5, 11) - modifying noun
+3. test_nihajinai_standard_company - 名にはじない (3, 9) - company reputation
+4. test_nihajinai_polite_name - 名にはじません (5, 12) - polite form
+5. test_nihajinai_polite_modifying_noun - 名にはじません (6, 13) - polite modifying noun
+
+**Character Ranges**: Pattern captures Noun + に恥じない/に恥じません:
+- 名にはじない (18, 24) - 6 characters (standard)
+- 名にはじない (5, 11) - 6 characters (standard)
+- 名にはじない (3, 9) - 6 characters (standard)
+- 名にはじません (5, 12) - 7 characters (polite)
+- 名にはじません (6, 13) - 7 characters (polite)
+
+**Key Notes**:
+- Pattern includes the preceding noun (full grammatical construction)
+- HajiMatcher handles both 未然形 (for ない) and 連用形 (for ます)
+- NaiOrMaseMatcher handles both casual and polite forms
+- Optional ん matcher completes polite negative (ません)
+- Used only in positive contexts to praise/show respect
+- Commonly used with 名 (name), 名誉 (reputation), etc.
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nihajinai() with 4 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in nihajinai_tests module
+- feature_list.json - Updated に恥じない to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (standard and polite, modifying and non-modifying)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3902 + 5 = 3907 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- に言わせれば・に言わせると・に言わせたら - "If you ask (person)" pattern
+- ったら・といったら - Complex emphatic pattern
+- には及ばない② - "Not as good as" pattern (distinct from には及ばない①)
+- とは言うものの - "Having said that" pattern
+- に難くない - "Not difficult to" pattern
+
+================================================================================
+
 ## Session 612 - 2025-12-16
 
 ### Session Summary - とは比べものにならない Complete ✓
