@@ -5696,3 +5696,54 @@ mod gatera_tests {
         assert_pattern_range(&patterns, "がてら", 0, 5); // 運動がてら
     }
 }
+
+// ============================================================================
+// がん～ Tests (Colloquial Intensifier)
+// ============================================================================
+
+mod gan_uff5e_tests {
+    use super::*;
+
+    // Pattern: がん～ (colloquial intensifier - "majorly/completely/furiously")
+    // Data source: grammar_points_data.json["がん～"]
+    // Structure variants:
+    //   1. ガン見 (specific expression - "furiously stare")
+    //   2. ガン + Verb[stem] (productive pattern)
+    // Note: This is colloquial/slang - ガン from ガンガン (onomatopoeia)
+
+    #[test]
+    fn test_gan_mi_specific() {
+        // Testing structure: ガン見 (specific colloquial expression)
+        // From example: 周りの人たちにガン見された
+        let sentence = "電車の中で転んで、周りの人たちにガン見されたときは恥ずかしかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がん～");
+        assert_pattern_range(&patterns, "がん～", 16, 19); // ガン見
+    }
+
+    #[test]
+    fn test_gan_mushi_ignore() {
+        // Testing structure: ガン + Noun (ガン無視 - completely ignore)
+        // From example: 両親の電話をガン無視していたら
+        let sentence = "両親の電話をガン無視していたら家まで来られた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がん～");
+        assert_pattern_range(&patterns, "がん～", 6, 10); // ガン無視
+    }
+
+    #[test]
+    fn test_gan_gire_angry() {
+        // Testing structure: ガン + Noun (ガン切れ - majorly angry)
+        // From example: 今日も先輩にガン切れされたよ
+        let sentence = "今日も先輩にガン切れされたよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がん～");
+        assert_pattern_range(&patterns, "がん～", 6, 10); // ガン切れ
+    }
+}

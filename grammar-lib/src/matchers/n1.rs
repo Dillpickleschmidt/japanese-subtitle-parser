@@ -4224,9 +4224,43 @@ pub fn kotodashi_compound() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: がん～
+// Pattern: がん～ (colloquial intensifier - "majorly/completely/furiously")
+// Structures: ガン + Verb[stem], ガン + Noun (suru-verb)
 pub fn gan_uff5e() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match "ガン" (katakana) as a noun
+    #[derive(Debug)]
+    struct GanMatcher;
+    impl super::Matcher for GanMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ガン"
+                && token.base_form == "ガン"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match verb (any conjugation form including stem) or noun following ガン
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl super::Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verbs (including stem form 連用形)
+            if token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return true;
+            }
+            // Match nouns (including サ変接続 and 接尾 like 無視, 切れ)
+            if token.pos.first().is_some_and(|pos| pos == "名詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(GanMatcher)),
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+    ]
 }
 
 // Pattern: か否か (whether or not) - Variant 1
