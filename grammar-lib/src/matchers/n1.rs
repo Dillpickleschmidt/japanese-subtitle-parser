@@ -7622,9 +7622,84 @@ pub fn toiwazu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にもほどがある
+// Pattern: にもほどがある (there is a limit to)
+// Structures: Word + にも + ほどがある
 pub fn nimohodogaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as 助詞/格助詞
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match も as 助詞/係助詞
+    #[derive(Debug)]
+    struct MoMatcher;
+    impl Matcher for MoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ほど as 助詞/副助詞
+    #[derive(Debug)]
+    struct HodoMatcher;
+    impl Matcher for HodoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ほど"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match が as 助詞/格助詞
+    #[derive(Debug)]
+    struct GaMatcher;
+    impl Matcher for GaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ある verb (基本形 or 連用形 for あり+ます)
+    #[derive(Debug)]
+    struct AruMatcher;
+    impl Matcher for AruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ある" || token.surface == "あり")
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ます auxiliary
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます" && token.base_form == "ます"
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding word (verb, adjective, or noun)
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(MoMatcher)),
+        TokenMatcher::Custom(Arc::new(HodoMatcher)),
+        TokenMatcher::Custom(Arc::new(GaMatcher)),
+        TokenMatcher::Custom(Arc::new(AruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))), // Optional ます for polite form
+    ]
 }
 
 // Pattern: にもまして

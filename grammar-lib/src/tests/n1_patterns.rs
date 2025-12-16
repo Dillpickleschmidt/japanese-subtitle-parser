@@ -9070,3 +9070,86 @@ mod tehakanawanai_tests {
         assert_pattern_range(&patterns, "てはかなわない", 13, 22); // られてはかなわない
     }
 }
+
+// Pattern: にもほどがある (there is a limit to / you are too)
+// Data source: grammar_points_data.json["にもほどがある"]
+// Testing structure variants:
+//   - standard[0]: Verb + にもほどがある
+//   - standard[1]: い-Adjective + にも + ほどがある
+//   - standard[2]: な-Adjective + にも + ほどがある
+//   - standard[3]: Noun + にも + ほどがある
+//   - polite[0-3]: Same forms + あります
+mod nimohodogaaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_nimohodogaaru_verb() {
+        // Testing: structure.standard[0] - "Verb + にもほどがある"
+        // Example from grammar_points_data.json: "飲み過ぎにもほどがあるよ"
+        let sentence = "お前またぶっ倒れるまで飲み続けたの？飲み過ぎにもほどがあるよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもほどがある");
+        assert_pattern_range(&patterns, "にもほどがある", 20, 29); // 過ぎにもほどがある
+    }
+
+    #[test]
+    fn test_nimohodogaaru_i_adjective() {
+        // Testing: structure.standard[1] - "い-Adjective + にも + ほどがある"
+        // Example from grammar_points_data.json: "図々しいにもほどがある"
+        let sentence = "あいつからまたメールがきた。図々しいにもほどがあるって。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもほどがある");
+        assert_pattern_range(&patterns, "にもほどがある", 14, 25); // 図々しいにもほどがある
+    }
+
+    #[test]
+    fn test_nimohodogaaru_na_adjective() {
+        // Testing: structure.standard[2] - "な-Adjective + にも + ほどがある"
+        // Example from grammar_points_data.json: "失礼にもほどがある"
+        let sentence = "先輩に向かって「お前」っていうのは失礼にもほどがある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもほどがある");
+        assert_pattern_range(&patterns, "にもほどがある", 17, 26); // 失礼にもほどがある
+    }
+
+    #[test]
+    fn test_nimohodogaaru_noun() {
+        // Testing: structure.standard[3] - "Noun + にも + ほどがある"
+        // Example from grammar_points_data.json: "冗談にもほどがある"
+        let sentence = "そういうことは相手を傷つけるから冗談にもほどがある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもほどがある");
+        assert_pattern_range(&patterns, "にもほどがある", 16, 25); // 冗談にもほどがある
+    }
+
+    #[test]
+    fn test_nimohodogaaru_positive_use() {
+        // Testing: Positive/joking use with positive adjective
+        // Example from grammar_points_data.json: "うまいにもほどがある"
+        let sentence = "店出せるほどの美味しさじゃん！うまいにもほどがあるだろ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもほどがある");
+        assert_pattern_range(&patterns, "にもほどがある", 15, 27); // うまいにもほどがあるだろ
+    }
+
+    #[test]
+    fn test_nimohodogaaru_polite() {
+        // Testing: structure.polite[0] - "Verb + にもほどがあります"
+        let sentence = "そんな態度は失礼にもほどがありますよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にもほどがある");
+        assert_pattern_range(&patterns, "にもほどがある", 6, 17); // 失礼にもほどがあります
+    }
+}
