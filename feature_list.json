@@ -11749,13 +11749,13 @@
   {
     "pattern_name": "ものと思っていた",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "物（もの）と思（おも）う is made up of the noun 物（もの） 'thing', the case marking particle と, and the う-Verb 思（おも）う 'to think' [4 std, 4 pol]",
     "priority": 5,
     "skip_reason": null

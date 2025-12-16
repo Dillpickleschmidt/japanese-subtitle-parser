@@ -6545,9 +6545,86 @@ pub fn mosarukotonagara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ものと思っていた
+// Pattern: ものと思っていた (was under the impression that)
+// Structures: [Attributive form] + ものと思（おも）っていた/いました
 pub fn monotoomotteita() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match もの (dependent noun)
+    #[derive(Debug)]
+    struct MonoNounMatcher;
+    impl Matcher for MonoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.base_form == "もの"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Match と (quotation particle)
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.base_form == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "引用")
+        }
+    }
+
+    // Match 思っ (verb "思う" in 連用タ接続)
+    #[derive(Debug)]
+    struct OmotMatcher;
+    impl Matcher for OmotMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "思っ"
+                && token.base_form == "思う"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match て particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Match い (from いる verb in 連用形)
+    #[derive(Debug)]
+    struct IruRenyouMatcher;
+    impl Matcher for IruRenyouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "い"
+                && token.base_form == "いる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Match た (past auxiliary) or まし+た (polite past)
+    // We use TokenMatcher::Any for flexibility to match both patterns
+
+    vec![
+        TokenMatcher::Any, // Previous word in attributive form (verb/adj/noun+の)
+        TokenMatcher::Custom(Arc::new(MonoNounMatcher)),
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(OmotMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IruRenyouMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 2,
+            stop_conditions: vec![],
+        }, // Matches た (1 token) or まし+た (2 tokens)
+    ]
 }
 
 // Pattern: でなくてなんだろう

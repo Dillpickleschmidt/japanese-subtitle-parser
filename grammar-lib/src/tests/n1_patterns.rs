@@ -7518,3 +7518,70 @@ mod mosarukotonagara_tests {
         assert_pattern_range(&patterns, "もさることながら", 9, 19); // 商品もさることながら
     }
 }
+
+// ============================================================================
+// ものと思っていた Tests
+// ============================================================================
+
+mod monotoomotteita_tests {
+    use super::*;
+
+    // Pattern: ものと思っていた (was under the impression that)
+    // Data source: grammar_points_data.json["ものと思っていた"]
+    // Testing structure variants
+
+    // Testing: structure.standard[0] - "Verb + ものと思（おも）っていた"
+    #[test]
+    fn test_monotoomotteita_verb() {
+        let sentence = "てっきり帰りに食べてくるものと思っていたから、あなたの分は作ってないですよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものと思っていた");
+        assert_pattern_range(&patterns, "ものと思っていた", 10, 20); // くるものと思っていた
+    }
+
+    // Testing: structure.standard[1] - "［い］Adjective + ものと思（おも）っていた"
+    #[test]
+    fn test_monotoomotteita_i_adjective() {
+        let sentence = "私の母は猫が好きではないものと思っていたが、聞いてみたらただ猫アレルギーがあるそうだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものと思っていた");
+        assert_pattern_range(&patterns, "ものと思っていた", 10, 20); // ないものと思っていた
+    }
+
+    // Testing: structure.standard[2] - "［な］Adjective + な + ものと思（おも）っていた"
+    #[test]
+    fn test_monotoomotteita_na_adjective() {
+        let sentence = "彼女は料理が得意なものと思っていたけど、実は全然作れないらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものと思っていた");
+        assert_pattern_range(&patterns, "ものと思っていた", 8, 17); // なものと思っていた
+    }
+
+    // Testing: structure.standard[3] - "Noun + の + ものと思（おも）っていた"
+    #[test]
+    fn test_monotoomotteita_noun() {
+        let sentence = "ゲートボールは老人しかやらないものと思っていたが、最近は若者の間で流行っているらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものと思っていた");
+        assert_pattern_range(&patterns, "ものと思っていた", 13, 23); // ないものと思っていた
+    }
+
+    // Testing: structure.polite[0] - "Verb + ものと思（おも）っていました"
+    #[test]
+    fn test_monotoomotteita_verb_polite() {
+        let sentence = "彼はもう帰ったものと思っていました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものと思っていた");
+        assert_pattern_range(&patterns, "ものと思っていた", 6, 17); // たものと思っていました
+    }
+}
