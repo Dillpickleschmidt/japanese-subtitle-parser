@@ -1,15 +1,15 @@
 ## Session 599 - 2025-12-16
 
-### Session Summary - とあれば Complete ✓
-**Status**: Implemented 1 N1 pattern successfully
-**Patterns completed**: 1 (とあれば - N1, priority 5)
-**Total tests**: 3830 passing (4 new tests, no regressions)
-**Progress**: One hundred and thirteenth N1 pattern completed! 🎉
+### Session Summary - 2 N1 Patterns Complete ✓
+**Status**: Implemented 2 N1 patterns successfully
+**Patterns completed**: 2 (とあれば, ときたら - both N1, priority 5)
+**Total tests**: 3834 passing (8 new tests, no regressions)
+**Progress**: One hundred and thirteenth + fourteenth N1 patterns completed! 🎉
 
 **Session highlights**:
-- Implemented とあれば (if/when it comes to)
-- Emphatic version of なら 'if' for formal situations
-- Handles both noun + とあれば and verb/adjective + とあれば (quotation form)
+- Implemented とあれば (if/when it comes to) - emphatic conditional
+- Implemented ときたら (when it comes to / that darn) - casual frustration expression
+- Both patterns handle nuanced meanings based on context
 - All structure variants tested with realistic subtitle sentences from grammar_points_data.json
 
 ### ✓ Completed: とあれば (if/when it comes to)
@@ -83,7 +83,6 @@ Pattern matcher sequence:
 ✓ Clean git history
 
 **Next Priorities** (N1 patterns with priority 5, needs_implementation):
-- ときたら - "Speaking of/when it comes to" pattern
 - びる - Suffix pattern
 - にしたところで - "Even if" pattern
 - ～ばこそ - "Precisely because" pattern
@@ -91,6 +90,78 @@ Pattern matcher sequence:
 - には及ばない① - "There's no need to" pattern
 - に即して - "In accordance with" pattern
 - ないまでも - "Even if not" pattern
+- をよそに - "Ignoring/disregarding" pattern
+
+================================================================================
+
+### ✓ Completed 2: ときたら (when it comes to / that darn)
+
+**Grammar Point**: ときたら
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Casual
+
+**Pattern structure**:
+- Noun + ときたら
+
+**Meaning**:
+- "When it comes to (A)" / "That darn (A)" / "That blasted (A)"
+- Casually expressing mild frustration toward (A) in a lighthearted manner
+- Can also highlight something about (A) that is "to be expected" or "only natural"
+- Combination of と (case-marking particle) + 来る (to come) + たら (conditional)
+- Almost exclusively written in kana (ときたら), not kanji (と来たら)
+- Literal: "when (A) comes" → "when it comes to (A)"
+- The context (B clause) determines whether it's frustration or just highlighting expectations
+
+**Tokenization pattern** (how Kagome processes it):
+**Important**: Despite the grammatical origin being と + 来たら, Kagome tokenizes ときたら differently:
+- Noun (名詞/一般)
+- とき (動詞/非自立, base=とく, 連用形) - tokenized as verb とく (to sharpen), NOT と + き
+- たら (助動詞, base=た, 仮定形)
+
+**Implementation**:
+Created 2 custom matchers to match the actual tokenization:
+1. TokiMatcher - Matches とき as 動詞/非自立 with base=とく in 連用形
+2. TaraMatcher - Matches たら as 助動詞 with base=た in 仮定形
+
+Pattern matcher sequence:
+- noun_matcher() + TokiMatcher + TaraMatcher
+- Captures full grammatical construction from noun through たら
+
+**Tests Written: 4 tests (all passing)**
+1. test_tokitara_son_complaint - 息子ときたら (3, 9) - expressing frustration
+2. test_tokitara_brother_complaint - 弟ときたら (3, 8) - expressing frustration
+3. test_tokitara_boss_complaint - 上司ときたら (2, 8) - expressing frustration
+4. test_tokitara_dog_expected - 犬ときたら (3, 8) - highlighting expected behavior
+
+**Character Ranges**: Pattern captures Noun + ときたら:
+- 息子ときたら (3, 9) - 6 characters
+- 弟ときたら (3, 8) - 5 characters
+- 上司ときたら (2, 8) - 6 characters
+- 犬ときたら (3, 8) - 5 characters
+
+**Key Notes**:
+- Pattern includes the preceding noun (full grammatical construction)
+- Almost exclusively written in kana in casual speech/writing
+- Kagome's tokenization treats it as とく verb + たら, not と + 来たら
+- Dual nuance: frustration/complaint OR highlighting natural expectations
+- The (B) clause context determines the nuance (negative → frustration, neutral → expected)
+- Common with family members, pets, superiors (うちの息子, うちの犬, 私の上司)
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented tokitara() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in tokitara_tests module
+- feature_list.json - Updated ときたら to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (noun + ときたら in different contexts)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3830 + 4 = 3834 total)
+✓ Clean git history
 
 ================================================================================
 
