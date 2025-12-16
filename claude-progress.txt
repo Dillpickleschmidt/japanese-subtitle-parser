@@ -1,17 +1,17 @@
 ## Session 499 - 2025-12-15
 
-### Session Summary - Verb + だに Pattern Complete ✓
-**Status**: Successfully implemented Verb + だに pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3326 passing, 1 ignored (added 4 new tests)
-**Progress**: Fifteenth N1 pattern completed!
+### Session Summary - Two N1 Patterns Complete ✓
+**Status**: Successfully implemented Verb + だに and Verb[て] + みせる patterns
+**Patterns completed**: 2 (both N1, priority 5)
+**Total tests**: 3330 passing, 1 ignored (added 8 new tests)
+**Progress**: Fifteenth and sixteenth N1 patterns completed!
 
 **Session highlights**:
 - Implemented Verb + だに (just, merely, even) - 4 tests covering various verbs
-- Simple but elegant pattern: Verb[dictionary form] + だに (助詞/副助詞)
-- Formal adverbial particle similar to さえ/すら (even)
-- Often used with verbs expressing mental actions (考える, 思い出す, 見る, 想像する)
-- All tests use realistic, subtitle-quality sentences from actual grammar examples
+- Implemented Verb[て] + みせる (I will definitely do) - 4 tests covering standard and polite forms
+- だに: Simple pattern with Verb[dictionary form] + だに (助詞/副助詞)
+- てみせる: Te-form pattern with Verb[て] + みせる (auxiliary verb)
+- Both patterns use realistic, subtitle-quality sentences from actual grammar examples
 - All tests passing with proper range assertions
 - No regressions in test suite
 
@@ -77,6 +77,74 @@ Examples:
 - 思い出すだに (just remembering)
 - 見るだに (just looking at)
 - 想像するだに (just imagining)
+
+---
+
+### ✓ Completed: Verb[て] + みせる (I will definitely do, I swear I will do)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Verb[て] + みせる (standard)
+- Verb[て] + みせます (polite)
+
+**Implementation details**:
+2 custom matchers for precise token matching:
+1. `TeParticleMatcher` - Matches て or で (助詞/接続助詞)
+2. `MiseruAuxiliaryMatcher` - Matches みせる (動詞/非自立)
+
+Uses `flexible_verb_form()` to match verb stems in 連用形 or 連用タ接続.
+
+**Key implementation insight**:
+てみせる is an emphatic structure where the speaker indicates they will do (A) in a way that is clear to the listener. The literal translation "I will show you that I'll do (A)" captures the nuance. The pattern uses みせる (to show) as an auxiliary verb (動詞/非自立), not the main verb.
+
+**Tokenization patterns**:
+1. **Standard form**: Verb (連用タ接続) + て (助詞/接続助詞) + みせる (動詞/非自立, 基本形)
+   - 勝っ + て + みせる
+   - 合格し + て + みせる
+   - 完走し + て + みせる
+
+2. **Polite form**: Verb (連用形) + て (助詞/接続助詞) + みせ (動詞/非自立, 連用形) + ます (助動詞)
+   - せ + て + みせ + ます
+
+**Tests created**: 4 tests
+1. `test_te_miseru_win` - 勝ってみせる (range 13-19)
+2. `test_te_miseru_pass` - 合格してみせる (range 7-14)
+3. `test_te_miseru_finish` - 完走してみせる (range 7-14)
+4. `test_te_miseru_polite` - せてみせます (range 10-16)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented verb_te_miseru() function (33 lines with 2 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 comprehensive tests in verb_te_miseru_tests module
+- `feature_list.json` - Updated Verb[て] + みせる to complete status
+
+**Grammar meaning**:
+て見（み）せる, primarily written in hiragana, is an emphatic structure that indicates that the speaker is going to do (A) in a way that it is clear to the listener. This can be translated as "I will definitely (A)", or "I swear I will (A)", but the literal translation of "I will show you that I'll do (A)" also makes the point clear.
+
+Due to みせる requiring a target for who the speaker is showing, this grammar pattern will only be used when there is either directly someone that will be shown (A), or when the speaker is talking about showing someone (A) that does not happen to be there at the moment either physically or temporally. It will not be used when simply strongly stating that you will do (A), unless who sees that (A) is important.
+
+Common translations:
+- "I will definitely (A)"
+- "I swear I will (A)"
+- "I'll show you that I'll (A)"
+
+**Pattern range note**:
+The pattern captures the full grammatical construction:
+- Verb + て + みせる: Full phrase from verb stem to みせる
+- Verb + て + みせます: Full phrase from verb stem to ます
+
+Examples:
+- 勝ってみせる (I will definitely win)
+- 合格してみせる (I will definitely pass)
+- 完走してみせる (I will definitely finish)
+- せてみせます (I will definitely make it happen - polite)
+
+**Note on causative constructions**:
+When used with causative verbs (終わらせてみせます), the pattern starts from the causative auxiliary せる, not the main verb. This is correct because せる itself functions as a verb in the construction. The full meaning is "I will definitely make (it) finish", where せる (causative) combines with てみせる (emphatic showing).
 
 ---
 
