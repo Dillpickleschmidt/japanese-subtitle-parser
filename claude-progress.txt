@@ -1,15 +1,17 @@
 ## Session 493 - 2025-12-15
 
-### Session Summary - Fifth N1 Pattern Complete ✓
-**Status**: Successfully implemented １～たりとも～ない pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3278 passing, 1 ignored (added 5 new tests)
-**Progress**: Fifth N1 pattern completed!
+### Session Summary - Two More N1 Patterns Complete ✓
+**Status**: Successfully implemented １～たりとも～ない and Adj限りだ patterns
+**Patterns completed**: 2 (both N1, priority 5)
+**Total tests**: 3282 passing, 1 ignored (added 9 new tests total)
+**Progress**: Fifth and sixth N1 patterns completed!
 
 **Session highlights**:
 - Implemented １～たりとも～ない (not even one, not a single) - 5 tests covering all variants
-- Handles multiple tokenization cases: たり as 助動詞 (with counters) or 助詞/並立助詞 (with adverbs)
-- Pattern structure: Counter/Quantifier + たりとも (combination of たり + と + も)
+- Implemented Adj限りだ (extremely, as ~ as can be) - 4 tests covering all structure variants
+- １～たりとも～ない: Handles multiple tokenization cases (たり as 助動詞 or 助詞/並立助詞)
+- Adj限りだ: Works with both い-adjectives and な-adjectives, both standard and polite forms
+- Both patterns use custom matchers for precise token detection
 - Special expression 何人たりとも (no matter who, no exceptions) works correctly
 - All tests passing with proper range assertions
 - No regressions in test suite
@@ -84,6 +86,73 @@ The pattern captures the counter/quantifier + たりとも portion:
 - 人たりとも (not 何人たりとも) - captures the grammatical construction
 
 The preceding number is part of the phrase context but the core grammatical pattern is the counter/quantifier + たりとも combination.
+
+---
+
+### ✓ Completed: Adj限りだ (extremely, as ~ as can be)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- い-Adjective + 限り + だ (standard form)
+- な-Adjective + な + 限り + だ (standard form)
+- い-Adjective + 限り + です (polite form)
+- な-Adjective + な + 限り + です (polite form)
+
+**Implementation details**:
+4 custom matchers for precise token matching:
+1. `AdjectiveMatcher` - Matches い-adjectives (形容詞/自立, 基本形) OR な-adjectives (名詞/形容動詞語幹)
+2. `NaCopulaMatcher` - Optional な copula (助動詞/体言接続) for な-adjectives
+3. `KagiriMatcher` - 限り (名詞/非自立/副詞可能)
+4. `DaDesuMatcher` - だ or です (助動詞, 基本形)
+
+**Key implementation insight**:
+Pattern uses an Optional matcher for the な copula, allowing it to match both:
+- い-adjectives: Adjective + 限り + だ/です (no な)
+- な-adjectives: Adjective + な + 限り + だ/です (with な)
+
+The matcher automatically handles both adjective types.
+
+**Tokenization patterns**:
+1. **い-Adjective**: 羨ましい (形容詞/自立, 基本形) + 限り + だ
+2. **な-Adjective**: 残念 (名詞/形容動詞語幹) + な (助動詞/体言接続) + 限り + だ
+3. **Polite forms**: Same patterns but with です instead of だ
+
+**Tests created**: 4 tests
+1. `test_kagirida_i_adj_standard` - 羨ましい限りだ (い-adj + だ, range 15-22)
+2. `test_kagirida_na_adj_standard` - 残念な限りだ (な-adj + だ, range 19-25)
+3. `test_kagirida_i_adj_polite` - 嬉しい限りです (い-adj + です, range 27-34)
+4. `test_kagirida_na_adj_polite` - 不快な限りです (な-adj + です, range 14-21)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented adjkagirida() function (76 lines with 4 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 comprehensive tests
+- `feature_list.json` - Updated Adj限りだ to complete status
+
+**Grammar meaning**:
+限（かぎ）りだ is simply a mix of the noun 限（かぎ）り ('limit') and the auxiliary verb だ/です. The literal meaning is "the limit of (A)", where (A) is some describable feature.
+
+Common translations:
+- "extremely (A)"
+- "as (A) as can be"
+- "very (A)"
+
+Fairly formal grammar point that highlights the intensity of traits as perceived by the speaker. The adjective is often an emotion that the speaker themselves is experiencing, rather than a direct quality of the object.
+
+**Common adjectives used**:
+- 嬉（うれ）しい - The feeling of happiness
+- 頼（たの）もしい - The feeling of reliability
+- 羨（うらや）ましい - The feeling of jealousy
+- 寂（さみ）しい - The feeling of loneliness
+- 恥（は）ずかしい - The feeling of embarrassment
+- 心強（こころづよ）い - The feeling of reassurance
+- 残念（ざんねん）- The feeling of disappointment
+
+The intensity of the adjective changes depending on the speaker, rather than being an objective property of the target.
 
 ---
 
