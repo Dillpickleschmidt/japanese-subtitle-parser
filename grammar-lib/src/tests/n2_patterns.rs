@@ -12791,3 +12791,49 @@ mod toitta_tests {
         assert_pattern_range(&patterns, "といった", 6, 16); // パクチーといった香味
     }
 }
+
+// Pattern: を込めて (full of, filled with, with)
+// Data source: grammar_points_data.json["を込めて"]
+// Testing: structure.standard[0] - "Noun + を込めて"
+//
+// Structure:
+//   - standard[0]: Noun + を込めて (only one structure)
+//   - No polite forms
+//
+// Meaning: "full of (A)", "filled with (A)", "with (A)"
+// Used primarily with nouns expressing feelings or emotions
+// From 込める (to pack into, to load with) in て-form
+
+mod wokomete_tests {
+    use super::*;
+
+    #[test]
+    fn test_wokomete_gratitude() {
+        let sentence = "感謝の気持ちを込めて、1年間お世話になった先生に花束をあげた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を込めて");
+        assert_pattern_range(&patterns, "を込めて", 3, 10); // 気持ちを込めて
+    }
+
+    #[test]
+    fn test_wokomete_love() {
+        let sentence = "夫は毎晩、愛を込めて晩御飯を作ってくれる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を込めて");
+        assert_pattern_range(&patterns, "を込めて", 5, 10); // 愛を込めて
+    }
+
+    #[test]
+    fn test_wokomete_heart() {
+        let sentence = "歌うのが下手でも、心を込めて歌えば上手に聞こえる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を込めて");
+        assert_pattern_range(&patterns, "を込めて", 9, 14); // 心を込めて
+    }
+}

@@ -8121,9 +8121,59 @@ pub fn toitta() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を込めて
+// Pattern: を込めて (full of, filled with)
+// Structures: Noun + を + 込め + て
 pub fn wokomete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for noun (expressing emotion/feeling)
+    #[derive(Debug)]
+    struct NounMatcher;
+    impl Matcher for NounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Matcher for を particle (格助詞)
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Matcher for 込め verb (連用形 of 込める)
+    #[derive(Debug)]
+    struct KomeMatcher;
+    impl Matcher for KomeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "込める"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Matcher for て particle (接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NounMatcher)),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KomeMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: に加えて (in addition to, besides, not only A but also B)
