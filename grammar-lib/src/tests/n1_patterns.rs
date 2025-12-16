@@ -5110,3 +5110,67 @@ mod wofumaete_tests {
 //   - 電柱という電柱 = "every single telephone pole"
 //   - 道という道 = "every single road"
 //   - 今日という今日 = "today of all days"
+
+// ============================================================================
+// にとどまらず Tests (not limited to, not stopping at)
+// ============================================================================
+
+mod nitodomarazu_tests {
+    use super::*;
+
+    // Pattern: にとどまらず (not limited to, not stopping at)
+    // Data source: grammar_points_data.json["にとどまらず"]
+    // Testing: structure.standard[0] - "Verb + にとどまらず"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun + (である) + にとどまらず
+    //   - standard[2]: な-Adjective + である + にとどまらず
+
+    #[test]
+    fn test_nitodomarazu_verb() {
+        // From grammar data: 管理するにとどまらず (not only manages)
+        let sentence = "彼は会社の経費を管理するにとどまらず、社員の給料も管理している。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にとどまらず");
+        assert_pattern_range(&patterns, "にとどまらず", 12, 18); // にとどまらず
+        assert_pattern_selected(&patterns, "にとどまらず");
+    }
+
+    #[test]
+    fn test_nitodomarazu_verb_teach() {
+        // From grammar data: 行うにとどまらず (not only teach)
+        let sentence = "先生は授業を行うにとどまらず、部活の指導などもしなくてはならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にとどまらず");
+        assert_pattern_range(&patterns, "にとどまらず", 8, 14); // にとどまらず
+        assert_pattern_selected(&patterns, "にとどまらず");
+    }
+
+    #[test]
+    fn test_nitodomarazu_noun() {
+        // From grammar data: 日本にとどまらず (not only in Japan)
+        let sentence = "寿司は日本にとどまらず、世界中で人気がある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にとどまらず");
+        assert_pattern_range(&patterns, "にとどまらず", 5, 11); // にとどまらず
+        assert_pattern_selected(&patterns, "にとどまらず");
+    }
+
+    #[test]
+    fn test_nitodomarazu_noun_children() {
+        // From grammar data: 子供にとどまらず (not limited to children)
+        let sentence = "この漫画は子供にとどまらず、大人の間でも話題になっている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にとどまらず");
+        assert_pattern_range(&patterns, "にとどまらず", 7, 13); // にとどまらず
+        assert_pattern_selected(&patterns, "にとどまらず");
+    }
+}

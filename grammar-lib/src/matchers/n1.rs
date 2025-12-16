@@ -3867,8 +3867,50 @@ pub fn yueno() -> Vec<TokenMatcher> {
 }
 
 // Pattern: にとどまらず
+// Pattern: にとどまらず (not limited to, not stopping at)
+// Structures: Verb/Noun/な-Adj + に + とどまら(ず) + ず
+// Verb/Noun can be preceded by optional である for formal register
 pub fn nitodomarazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match とどまる verb in 未然形 (とどまら)
+    #[derive(Debug)]
+    struct TodomaruVerbMatcher;
+    impl Matcher for TodomaruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "とどまる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ず auxiliary (base=ぬ)
+    #[derive(Debug)]
+    struct ZuAuxiliaryMatcher;
+    impl Matcher for ZuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TodomaruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: と思いきや

@@ -11273,13 +11273,13 @@
   {
     "pattern_name": "にとどまらず",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にとどまらず is a formal structure that pairs the case marking particle に, the う-Verb 止（とど）まる 'to remain', or 'to be limite... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
