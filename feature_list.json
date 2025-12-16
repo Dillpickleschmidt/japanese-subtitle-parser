@@ -12099,13 +12099,13 @@
   {
     "pattern_name": "や否や",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "や否（いな）や , like か否（いな）か, is a grammar pattern that makes use of 否（いな）  'no', an interjection [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

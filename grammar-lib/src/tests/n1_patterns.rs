@@ -9325,3 +9325,66 @@ mod dounika_tests {
         assert_pattern_range(&patterns, "どうにか", 8, 12); // どうにか
     }
 }
+
+// ============================================================================
+// や否や Tests
+// ============================================================================
+
+mod yainaya_tests {
+    use super::*;
+
+    // Pattern: や否や (as soon as)
+    // Data source: grammar_points_data.json["や否や"]
+    // Testing: structure.standard[0] - "Verb[る] + や否（いな）や + Phrase[た]"
+    //
+    // Note: The caution section mentions that や can be used alone (without 否や)
+    // for the same meaning, but we'll focus on the full や否や pattern first.
+
+    #[test]
+    fn test_yainaya_burglar() {
+        // Testing: structure.standard[0] - "Verb[る] + や否や"
+        // Example from grammar_points_data.json: "見るやいなや"
+        let sentence = "私が部屋から出てくるのを見るやいなや、空き巣が手に持っていたものを私に投げて、逃げていった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "や否や");
+        assert_pattern_range(&patterns, "や否や", 12, 18); // 見るやいなや
+    }
+
+    #[test]
+    fn test_yainaya_dog_bark() {
+        // Testing: structure.standard[0] - "Verb[る] + や否や"
+        // Example from grammar_points_data.json: "見るやいなや"
+        let sentence = "俺の顔を見るやいなや友達の犬が吠え出した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "や否や");
+        assert_pattern_range(&patterns, "や否や", 4, 10); // 見るやいなや
+    }
+
+    #[test]
+    fn test_yainaya_sit_down() {
+        // Testing: structure.standard[0] - "Verb[る] + や否や"
+        // Example from grammar_points_data.json: "座るやいなや"
+        let sentence = "彼は席に座るやいなや「とりあえず生一つ」といった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "や否や");
+        assert_pattern_range(&patterns, "や否や", 4, 10); // 座るやいなや
+    }
+
+    // TODO: Test the simplified や form (without 否や) mentioned in caution section
+    // #[test]
+    // fn test_ya_simplified() {
+    //     // Testing: structure.standard[1] - "Verb[る] + や"
+    //     // Example from grammar_points_data.json caution: "開くや"
+    //     let sentence = "彼は本を開くや、寝た。";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //     print_debug(sentence, &tokens, &patterns);
+    //     // This might be a separate pattern or variant
+    // }
+}

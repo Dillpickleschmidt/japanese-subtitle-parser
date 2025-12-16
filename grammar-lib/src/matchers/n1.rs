@@ -7851,9 +7851,26 @@ pub fn dounika() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(DounikaMatcher))]
 }
 
-// Pattern: や否や
+// Pattern: や否や (as soon as)
+// Structures: Verb[る] + や否や
 pub fn yainaya() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match やいなや as connective particle
+    #[derive(Debug)]
+    struct YainayaMatcher;
+    impl super::Matcher for YainayaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "やいなや"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("基本形"),
+        TokenMatcher::Custom(Arc::new(YainayaMatcher)),
+    ]
 }
 
 // Pattern: 次第です (because, the reason is)
