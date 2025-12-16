@@ -7253,3 +7253,99 @@ All 4 structure variants tested with realistic examples.
 Codebase clean and ready for next pattern.
 
 ================================================================================
+
+================================================================================
+
+## Session 583 - 2025-12-16
+
+### Session Summary - なりとも Complete
+**Status**: Implemented 1 N1 pattern successfully
+**Pattern completed**: なりとも (N1, priority 5)
+**Total tests**: 3728 passing (3 new tests, no regressions)
+**Progress**: Ninety-seventh N1 pattern completed
+
+**Session highlights**:
+- Implemented なりとも (at least, even) - classical Japanese expression
+- Pattern shows minimal degree with concession nuance
+- Formal/polite speech pattern, often used in requests
+- Documented tokenization limitation for compound adverbs
+
+### Completed: なりとも (at least, even)
+
+**Grammar Point**: なりとも
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard (formal/classical)
+
+**Pattern structure**: Noun + なりとも
+
+**Meaning**:
+- At least, even (with nuance of concession)
+- Classical expression used to show minimal degree
+- Often carries humble or pleading tone
+- Common in formal speech and written requests
+
+**Tokenization patterns**:
+
+Split pattern (4 tokens):
+- Noun + なり(助動詞/文語・ナリ) + と(助詞/格助詞) + も(助詞/係助詞)
+- Examples: 一度なりとも, 一時なりとも, 一目なりとも
+
+Compound adverb (1 token - undetectable):
+- XなりとMo (副詞/一般) - e.g., 多少なりとも
+- Cannot be matched by current 4-token pattern
+
+**Implementation**:
+
+Matcher: naritomo() in matchers/n1.rs
+Custom matchers:
+1. noun_matcher() - Matches any noun
+2. NariAuxiliaryMatcher - Matches なり as 助動詞/文語・ナリ
+3. ToParticleMatcher - Matches と as 助詞/格助詞/引用
+4. MoParticleMatcher - Matches も as 助詞/係助詞
+
+**Tests Added**: 3 tests in naritomo_tests module
+1. test_naritomo_once - 一度なりとも [chars 9-14]
+2. test_naritomo_moment - 一時なりとも [chars 6-11]
+3. test_naritomo_brief_glance - 一目なりとも [chars 8-14]
+
+Undetectable cases documented:
+- Compound adverb: 多少なりとも (single 副詞 token)
+- Different grammar: わずかなりとも (verb なる, not auxiliary なり)
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented naritomo()
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests
+- feature_list.json - Updated なりとも to complete
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All detectable structure variants tested
+✓ Realistic sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in committed tests
+✓ All existing tests pass (3728 total, +3 new)
+✓ Undetectable cases documented with TODO comments
+✓ Clean git history
+
+**Session Stats**:
+- 1 N1 pattern completed (なりとも)
+- 3 new tests added
+- Total test count: 3728 passing
+- Known limitations documented
+- Codebase left in clean, working state
+
+================================================================================
+
+================================================================================
+
+## Session 585 - 2025-12-16
+
+### はおろか Complete
+
+Pattern: はおろか (let alone) - N1 formal
+Tests: 3770 passing (+4 new)
+Files: matchers/n1.rs, patterns.rs (priority 6), tests/n1_patterns.rs, feature_list.json
+Commit: d07f567
+
+================================================================================
