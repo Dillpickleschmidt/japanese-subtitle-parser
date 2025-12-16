@@ -5538,3 +5538,102 @@ Next Priorities (N1 patterns without tests, Priority 5):
 **Next Priorities**: zukume, zujimae, zuniwaokanai, zuniwasumanai, sobakara, soremadeda
 
 ================================================================================
+
+================================================================================
+
+## Session 576 - 2025-12-16
+
+### Session Summary - ものとする Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (ものとする - N1, priority 5)
+**Total tests**: 3692 passing (3 new tests, no regressions)
+**Progress**: Eighty-ninth N1 pattern completed!
+
+**Session highlights**:
+- Implemented ものとする (shall / supposing that / on the assumption that)
+- Formal/legal pattern expressing determination or assumption for discussion
+- Handles both standard (ものとする) and polite (ものとします) forms
+- All structure variants tested with realistic subtitle-quality sentences
+
+### ✓ Completed: ものとする (shall / supposing that / on the assumption that)
+
+**Grammar Point**: ものとする
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb + ものとする (standard form)
+2. Verb + ものとします (polite form)
+
+**Meaning**:
+- "Supposing that (A)" / "On the assumption that (A)" / "(A) shall"
+- Implies the word/phrase before もの is a strong determination
+- Presents a situation where speaker determines (A) is true for sake of discussion
+- Primarily seen in legalese and contractual writing
+- Almost always appears at the end of a sentence
+- Used to highlight things taken as facts in formal documents
+
+**Tokenization**:
+Standard form (ものとする):
+- Verb (動詞/基本形 or other forms)
+- もの (名詞/非自立/一般)
+- と (助詞/格助詞/一般)
+- する (動詞/基本形, base=する)
+
+Polite form (ものとします):
+- Verb (動詞/基本形 or other forms)
+- もの (名詞/非自立/一般)
+- と (助詞/格助詞/一般)
+- し (動詞/連用形, base=する)
+- ます (助動詞/特殊・マス/基本形)
+
+**Implementation**:
+Created custom matchers to handle:
+1. MonoNounMatcher - Matches もの as 名詞/非自立
+2. ToParticleMatcher - Matches と as 助詞/格助詞
+3. Pattern: Verb + もの + と + する (する matches both する and します via specific_verb)
+
+**Tests Written: 3 tests (all passing)**
+1. test_monotosuru_standard_form - 払うものとする (8, 15)
+2. test_monotosuru_contract_example - 請求するものとする (23, 32)
+3. test_monotosuru_polite_form - 取り下げるものとします (5, 16)
+
+All tests use realistic legal/contractual sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures verb + full construction:
+- 払うものとする (8, 15) - 7 characters
+- 請求するものとする (23, 32) - 9 characters  
+- 取り下げるものとします (5, 16) - 11 characters (polite form)
+
+**Key Notes**:
+- Pattern appears primarily in formal/legal contexts
+- Both standard and polite forms use the same matcher (specific_verb("する") matches both)
+- もの (thing) implies strong determination/assumption
+- Used in contracts, regulations, and formal declarations
+- Related to ものとして but ものとする appears at sentence end
+- Pattern priority updated from 1 to 5 in patterns.rs
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented monotosuru() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests in monotosuru_tests module
+- feature_list.json - Updated ものとする to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (standard and polite forms)
+✓ Realistic legal/contractual sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3692 total, +3 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ただ〜のみ - "Only/merely" pattern (4 std, 4 pol structures)
+- ～てやる - "Do for someone" pattern (1 std, 1 pol)
+- を余儀なくさせる - "Force to" pattern (2 std, 2 pol)
+- てはかなわない - "Can't stand" pattern (6 std, 6 pol)
+- を限りに - "Until/as of" pattern (2 std, 0 pol)
+
+================================================================================
