@@ -10461,3 +10461,78 @@ mod noitari_tests {
         assert_pattern_range(&patterns, "の至り", 12, 17); // 赤面の至り
     }
 }
+
+// ============================================================================
+// に限ったことではない Tests
+// ============================================================================
+
+mod nikagittakotodehanai_tests {
+    use super::*;
+
+    // Pattern: に限ったことではない (not limited to / not only)
+    // Data source: grammar_points_data.json["に限ったことではない"]
+    // Testing: structure.standard[0] - "Noun + に限（かぎ）ったことではない"
+    //
+    // Other structures to test:
+    //   - polite[0]: Noun + に限（かぎ）ったことではありません
+
+    #[test]
+    fn test_nikagittakotodehanai_young_people() {
+        // Testing: structure.standard[0] - "Noun + にかぎったことではない"
+        // Context: not limited to young people
+        let sentence = "最近の若者は挨拶ができないと言われているが、若者にかぎったことではない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限ったことではない");
+        assert_pattern_range(&patterns, "に限ったことではない", 22, 35); // 若者にかぎったことではない
+    }
+
+    #[test]
+    fn test_nikagittakotodehanai_today() {
+        // Testing: structure.standard[0] - "Noun + にかぎったことではない"
+        // Context: not limited to today
+        let sentence = "今日にかぎったことではないが、なんか仕事する気にならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限ったことではない");
+        assert_pattern_range(&patterns, "に限ったことではない", 0, 13); // 今日にかぎったことではない
+    }
+
+    #[test]
+    fn test_nikagittakotodehanai_japanese() {
+        // Testing: structure.standard[0] - "Noun + にかぎったことではない"
+        // Context: not limited to Japanese
+        let sentence = "文法が難しいのは日本語にかぎったことではない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限ったことではない");
+        assert_pattern_range(&patterns, "に限ったことではない", 8, 22); // 日本語にかぎったことではない
+    }
+
+    #[test]
+    fn test_nikagittakotodehanai_polite_this_company() {
+        // Testing: structure.polite[0] - "Noun + にかぎったことではありません"
+        // Context: not limited to this company (polite form)
+        let sentence = "このような問題はうちの会社にかぎったことではありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限ったことではない");
+        assert_pattern_range(&patterns, "に限ったことではない", 11, 27); // 会社にかぎったことではありません
+    }
+
+    #[test]
+    fn test_nikagittakotodehanai_polite_men() {
+        // Testing: structure.polite[0] - "Noun + にかぎったことではありません"
+        // Context: not limited to men (polite form)
+        let sentence = "この悩みは男性にかぎったことではありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に限ったことではない");
+        assert_pattern_range(&patterns, "に限ったことではない", 5, 21); // 男性にかぎったことではありません
+    }
+}

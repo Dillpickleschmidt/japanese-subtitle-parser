@@ -8904,9 +8904,128 @@ pub fn woyosoni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に限ったことではない
+// Pattern: に限ったことではない (not limited to / not only)
+// Structures: Noun + に + かぎっ + た + こと + で + は + ない/ありません
 pub fn nikagittakotodehanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match かぎっ (動詞/自立, base=かぎる, 連用タ接続)
+    #[derive(Debug)]
+    struct KagitMatcher;
+    impl Matcher for KagitMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かぎっ"
+                && token.base_form == "かぎる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match た (助動詞, 特殊・タ)
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match こと (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match で (助動詞, 特殊・ダ, 連用形, base=だ)
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match は (助詞/係助詞)
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match ない (助動詞 or 形容詞)
+    // OR match あり+ませ+ん sequence for polite form
+    #[derive(Debug)]
+    struct NaiOrArimasenMatcher;
+    impl Matcher for NaiOrArimasenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (助動詞, 特殊・ナイ) or ない (形容詞)
+            if token.surface == "ない" && token.base_form == "ない" {
+                return token.pos.first().is_some_and(|pos| pos == "助動詞" || pos == "形容詞");
+            }
+            // Match あり for polite form (動詞, base=ある)
+            if token.surface == "あり" && token.base_form == "ある" {
+                return token.pos.first().is_some_and(|pos| pos == "動詞");
+            }
+            false
+        }
+    }
+
+    // Match ませ (助動詞, 特殊・マス, 未然形) - optional for polite
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match ん (助動詞, 不変化型) - optional for polite
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(KagitMatcher)),
+        TokenMatcher::Custom(Arc::new(TaMatcher)),
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(DeMatcher)),
+        TokenMatcher::Custom(Arc::new(WaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiOrArimasenMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MaseMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))),
+    ]
 }
 
 // Pattern: とは比べものにならない

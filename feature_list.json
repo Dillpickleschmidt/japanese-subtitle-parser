@@ -12337,13 +12337,13 @@
   {
     "pattern_name": "に限ったことではない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に限（かぎ）ったことではない is a fairly emphatic expression that, like several other grammar patterns, makes use of the う-Verb 限（か... [1 std, 1 pol]",
     "priority": 5,
     "skip_reason": null
