@@ -6087,3 +6087,55 @@ mod nonannotte_tests {
         assert_pattern_range(&patterns, "のなんのって", 7, 14); // なのなんのって
     }
 }
+
+// ============================================================================
+// にかかっている Tests
+// ============================================================================
+
+mod nikakatteiru_tests {
+    use super::*;
+
+    // Pattern: にかかっている (depends on)
+    // Data source: grammar_points_data.json["にかかっている"]
+    // Testing all structure variants
+
+    #[test]
+    fn test_nikakatteiru_noun_basic() {
+        let sentence = "地球の未来は若者にかかっているから、若者を教育しなくてはいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかっている");
+        assert_pattern_range(&patterns, "にかかっている", 8, 15); // にかかっている
+    }
+
+    #[test]
+    fn test_nikakatteiru_kadouka() {
+        let sentence = "自分で立ち上げた会社が成功するかどうかは自分の努力にかかっている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかっている");
+        assert_pattern_range(&patterns, "にかかっている", 25, 32); // にかかっている
+    }
+
+    #[test]
+    fn test_nikakatteiru_question_word() {
+        let sentence = "来月旅行に行けるかは、部長が僕に休みをくれるかにかかっている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかっている");
+        assert_pattern_range(&patterns, "にかかっている", 23, 30); // にかかっている
+    }
+
+    #[test]
+    fn test_nikakatteiru_polite() {
+        let sentence = "この商品の売れ行きはマーケティングが成功するかどうかにかかっています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかかっている");
+        assert_pattern_range(&patterns, "にかかっている", 26, 34); // にかかっています
+    }
+}
