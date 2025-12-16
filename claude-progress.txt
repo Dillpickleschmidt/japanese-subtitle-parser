@@ -1,3 +1,100 @@
+## Session 507 - 2025-12-15
+
+### Session Summary - 並み Pattern Complete ✓
+**Status**: Successfully implemented 並み pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3377 passing, 1 ignored (added 4 new tests)
+**Progress**: Twenty-fifth N1 pattern completed!
+
+**Session highlights**:
+- Implemented 並み pattern (on par with, as good as)
+- Pattern matches Noun + 並み (noun suffix)
+- 並み tokenizes as 名詞/接尾/一般 (noun suffix)
+- Simple two-token matcher: noun_matcher() + custom 並み matcher
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3377 tests total)
+
+### ✓ Completed: 並み (on par with, as good as)
+
+**Grammar Point**: 並み
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+- Noun + 並み + だ
+- Noun + 並み + の + Noun
+- Noun + 並み + に + Phrase
+- Noun + 並み + です (polite)
+
+**Implementation**:
+- Matcher: `Noun + 並み(名詞/接尾/一般)`
+- Custom matcher checks: surface="並み", base_form="並み", pos=名詞/接尾/一般
+- Simple two-token pattern works across all usage contexts
+- Pattern range includes the full Noun + 並み construction
+
+**Tests Written: 4 tests**
+1. `test_nami_da` - プロ並みだ (Noun + 並み + だ structure)
+2. `test_nami_no_noun` - ８月並みの (Noun + 並み + の + Noun structure)
+3. `test_nami_ni_phrase` - ネイティブ並みに (Noun + 並み + に + Phrase structure)
+4. `test_nami_desu` - プロ並みです (Noun + 並み + です structure - polite)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures Noun + 並み:
+- `プロ並み` (11, 15) - professional level
+- `８月並み` (7, 11) - August level (heat)
+- `ネイティブ並み` (6, 13) - native level
+- `プロ並み` (9, 13) - professional level
+
+**Key Notes**:
+- 並み is from classical verb 並む (same as 並ぶ, "to line up")
+- Means "on par with", "worthy of", "as standard for"
+- Can only be used when the standard/norm is well-recognized
+- Used with recognized standards: プロ (professional), ネイティブ (native), specific months (for weather), etc.
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented nami() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in nami_tests module
+- `feature_list.json` - Updated 並み status to complete
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (並み from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stub (found nami() stub in n1.rs)
+7. ✓ Wrote all tests first with print_debug()
+8. ✓ Analyzed tokenization output
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Verified all tests pass
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Verified no regressions (3377 tests passing)
+13. ✓ Updated feature_list.json
+14. ✓ Committed changes
+15. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (standard and polite forms)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- こそすれ〜ない - "Far from, not at all" pattern, clear structure
+- ともあろう - "For someone/something to" pattern, detectable
+- 以前 - "Before, prior to" pattern, temporal expression
+- との - Quotation/reporting pattern, clear structure
+- ものとする - "Assume/treat as" pattern, detectable
+- ただ〜のみ - "Only" pattern, emphatic construction
+- ～てやる - "Do for (someone)" pattern, verb-based
+- を余儀なくさせる - "Force/compel" pattern, detectable
+
+---
+
 ## Session 506 - 2025-12-15
 
 ### Session Summary - Two N1 Patterns Complete ✓
