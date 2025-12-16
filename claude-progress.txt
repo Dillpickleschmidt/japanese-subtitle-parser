@@ -10518,3 +10518,40 @@ Next priorities: Continue with N1 priority 5 patterns (nihaoyobanai 1&2, nisokus
 
 ================================================================================
 
+
+================================================================================
+## Session 617 - Part 2 Summary
+
+### Additional Pattern Completed: に難くない ✓
+**Second pattern completed in this session**: に難くない (not difficult to)
+**Total session progress**: 2 N1 patterns (には及ばない② + に難くない)
+**Total tests**: 3927 passing (5 new tests for に難くない)
+**Cumulative progress**: 130 N1 patterns completed
+
+**Pattern**: に難くない
+- Formal expression meaning "not difficult to (verb)"
+- Uses alternative form of 難しい: 難い (かたい - ceremonious/reformed version)
+- Limited to verbs indicating thinking/conjecture: 想像, 予想, 察する, 理解, 推測
+- Structure: Noun[suru-verb] + (する) + に + 難く + ない/ありません
+- Handles both standalone nouns (想像にかたくない) and suru-verbs with explicit する (察するにかたくない)
+- Priority: 5
+
+**Implementation highlights**:
+- Optional する matcher handles cases where suru-verb includes explicit する
+- Custom matchers for かたく (adjective), ない/あり (negative endings)
+- Polite form support: に難くありません/ませんでした
+- Tests cover: 想像, 予想, 察する, 理解, and polite form
+
+**Files modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented nikatakunai() with 5 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests
+- feature_list.json - Updated status to complete
+
+**Session 617 Total Stats**:
+- Patterns: 2 (には及ばない②, に難くない)
+- Tests: 10 (5 + 5)
+- Total passing: 3927
+- No regressions
+- Clean git history
+
