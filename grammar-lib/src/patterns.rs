@@ -7765,7 +7765,7 @@ declare_patterns! {
     NihaoyobanaiU2461 {
         name: "には及ばない②",
         matcher_fn: crate::matchers::n1::nihaoyobanai_u2461,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

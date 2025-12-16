@@ -9565,8 +9565,115 @@ pub fn zukume() -> Vec<TokenMatcher> {
 }
 
 // Pattern: には及ばない②
+// Pattern: には及ばない② (not as good as / no match for)
+// Structures: Noun + には及ばない, Noun + の足元にも及ばない
 pub fn nihaoyobanai_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as 助詞/格助詞/一般
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match は as 助詞/係助詞 (optional for にも variant)
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match も as 助詞/係助詞 (for にも variant in set expression)
+    #[derive(Debug)]
+    struct MoMatcher;
+    impl Matcher for MoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match およぶ verb (およば in 未然形 or および in 連用形)
+    #[derive(Debug)]
+    struct OyobuMatcher;
+    impl Matcher for OyobuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "およぶ"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && (token.surface == "およば" || token.surface == "および")
+        }
+    }
+
+    // Match ない (助動詞) or ませ (助動詞, 未然形 of ます)
+    #[derive(Debug)]
+    struct NaiMaseMatcher;
+    impl Matcher for NaiMaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (casual negative)
+            if token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ")
+            {
+                return true;
+            }
+
+            // Match ませ (polite negative prep)
+            if token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f.starts_with("特殊・マス"))
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Optional ん for polite negative (ません)
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "不変化型")
+        }
+    }
+
+    // Create matcher that handles both には and にも variants
+    #[derive(Debug)]
+    struct WaOrMoMatcher;
+    impl Matcher for WaOrMoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "は" || token.surface == "も")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(), // Preceding noun
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(WaOrMoMatcher)), // は or も
+        TokenMatcher::Custom(Arc::new(OyobuMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMaseMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))),
+    ]
 }
 
 // Pattern: とは言うものの

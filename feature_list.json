@@ -12477,13 +12477,13 @@
   {
     "pattern_name": "には及ばない②",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned in the には及（およ）ばない grammar point lesson as a polite expression, には及（およ）ばない may simply show the extent of ... [4 std, 4 pol]",
     "priority": 5,
     "skip_reason": null

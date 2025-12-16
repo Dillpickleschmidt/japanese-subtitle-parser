@@ -10924,3 +10924,71 @@ mod niiwasereba_tests {
         assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 8); // 先生にいわせたら
     }
 }
+
+// ============================================================
+// には及ばない② Tests
+// ============================================================
+
+#[cfg(test)]
+mod nihaoyobanai_u2461_tests {
+    use super::*;
+
+    // Pattern: には及ばない② (not as good as / no match for)
+    // Data source: grammar_points_data.json["には及ばない②"]
+    // Testing: structure.standard[0] - "Noun + には及ばない"
+    #[test]
+    fn test_nihaoyobanai2_beach_comparison() {
+        let sentence = "この海は沖縄の海にはおよばないが、結構綺麗だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない②");
+        assert_pattern_range(&patterns, "には及ばない②", 7, 15); // 海にはおよばない
+    }
+
+    // Testing: structure.standard[0] - "Noun + には及ばない"
+    #[test]
+    fn test_nihaoyobanai2_restaurant_taste() {
+        let sentence = "あの一流レストランの味にはおよばないが、かなり似ている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない②");
+        assert_pattern_range(&patterns, "には及ばない②", 10, 18); // 味にはおよばない
+    }
+
+    // Testing: structure.standard[0] - "Noun + には及ばない"
+    #[test]
+    fn test_nihaoyobanai2_guitar_skill() {
+        let sentence = "彼はものすごくギターが上手いが、布袋寅泰にはおよばない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない②");
+        assert_pattern_range(&patterns, "には及ばない②", 18, 27); // 寅泰にはおよばない
+    }
+
+    // Testing: set expression - "Noun + の足元にも及ばない"
+    // Note: "あしもと" tokenizes as two separate nouns (あし + もと)
+    // Pattern matches "もとにはおよばない" (もと is treated as the noun before には)
+    #[test]
+    fn test_nihaoyobanai2_ashimoto_set_expression() {
+        let sentence = "どれだけ頑張っても、青木先輩のあしもとにはおよばない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない②");
+        assert_pattern_range(&patterns, "には及ばない②", 17, 26); // もとにはおよばない
+    }
+
+    // Testing: structure.polite[0] - "Noun + には及びません"
+    #[test]
+    fn test_nihaoyobanai2_polite_form() {
+        let sentence = "当社の技術は彼らの技術にはおよびませんが、努力しています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない②");
+        assert_pattern_range(&patterns, "には及ばない②", 9, 19); // 技術にはおよびません
+    }
+}
