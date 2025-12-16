@@ -3602,3 +3602,58 @@ mod dano_tests {
         assert_eq!(dano_matches.len(), 2, "Should detect both だの occurrences");
     }
 }
+
+// ============================================================================
+// べく Tests
+// ============================================================================
+
+mod beku_tests {
+    use super::*;
+
+    // Pattern: べく (in order to, for the purpose of)
+    // Data source: grammar_points_data.json["べく"]
+    // Testing structures:
+    //   - standard[0]: Verb[る] + べく (standard form)
+    //   - Exceptions: す + べく (classical する)
+    //   - Modern: する + べく (modern variant)
+
+    #[test]
+    fn test_beku_verb_dictionary() {
+        let sentence = "地域の高齢者の安全を守るべく、交番が設置されました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べく");
+        assert_pattern_range(&patterns, "べく", 10, 14); // 守るべく
+    }
+
+    #[test]
+    fn test_beku_verb_kau() {
+        let sentence = "新しい家を買うべく、彼は貯金を始めた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べく");
+        assert_pattern_range(&patterns, "べく", 5, 9); // 買うべく
+    }
+
+    #[test]
+    fn test_beku_subeku_classical() {
+        let sentence = "ここでの交通事故を防止すべく、ガードレールなどの設備を設置することになった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べく");
+        assert_pattern_range(&patterns, "べく", 9, 14); // 防止すべく (す+べく classical)
+    }
+
+    #[test]
+    fn test_beku_surubeku_modern() {
+        let sentence = "次の大会で優勝するべく、彼らは毎日朝から夜まで練習をするようにしている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べく");
+        assert_pattern_range(&patterns, "べく", 5, 11); // 優勝するべく (する+べく modern)
+    }
+}

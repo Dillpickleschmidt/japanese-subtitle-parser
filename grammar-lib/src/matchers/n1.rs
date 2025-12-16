@@ -2869,9 +2869,39 @@ pub fn akumademo() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(AkumademoMatcher))]
 }
 
-// Pattern: べく
+// Pattern: べく (in order to, for the purpose of)
+// Structures: Verb[基本形/文語基本形] + べく
 pub fn beku() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match べく as auxiliary verb with base form べし
+    #[derive(Debug)]
+    struct BekuMatcher;
+    impl super::Matcher for BekuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "べく"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "べし"
+        }
+    }
+
+    // Match verb in dictionary form (基本形 or 文語基本形)
+    #[derive(Debug)]
+    struct DictionaryFormVerbMatcher;
+    impl super::Matcher for DictionaryFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "基本形" || form == "文語基本形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryFormVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(BekuMatcher)),
+    ]
 }
 
 // Pattern: ところを
