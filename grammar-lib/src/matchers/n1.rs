@@ -5435,9 +5435,56 @@ pub fn gurumide() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: そばから
+// Pattern: そばから (as soon as / right after)
+// Structures: Verb[る] + そばから, Verb[た] + そばから
 pub fn sobakara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match そば (noun "side")
+    #[derive(Debug)]
+    struct SobaMatcher;
+    impl Matcher for SobaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "そば"
+                && token.base_form == "そば"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match から as case particle (格助詞)
+    #[derive(Debug)]
+    struct KaraParticleMatcher;
+    impl Matcher for KaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match verb in dictionary form or continuative form (連用形/連用タ接続)
+    #[derive(Debug)]
+    struct VerbBeforeSobaMatcher;
+    impl Matcher for VerbBeforeSobaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+            // Dictionary form (基本形) or continuative forms
+            if let Some(form) = token.features.get(5) {
+                form == "基本形" || form == "連用形" || form == "連用タ接続"
+            } else {
+                false
+            }
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbBeforeSobaMatcher)),
+        TokenMatcher::Optional(Box::new(super::past_auxiliary())), // た/だ for past tense
+        TokenMatcher::Custom(Arc::new(SobaMatcher)),
+        TokenMatcher::Custom(Arc::new(KaraParticleMatcher)),
+    ]
 }
 
 // Pattern: 訳あり(訳あって) (for a reason, defective)

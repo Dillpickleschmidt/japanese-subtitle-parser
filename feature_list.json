@@ -11567,13 +11567,13 @@
   {
     "pattern_name": "そばから",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "そばから is a combination of the noun 側（そば） 'side', and the case marking particle から 'from' [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

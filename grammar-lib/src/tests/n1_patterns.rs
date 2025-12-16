@@ -6658,3 +6658,61 @@ mod demonandemonai_tests {
         assert_pattern_range(&patterns, "でもなんでもない", 2, 14); // 重くもなんでもないじゃん (includes casual じゃん)
     }
 }
+
+// ============================================================================
+// そばから Tests
+// ============================================================================
+
+mod sobakara_tests {
+    use super::*;
+
+    // Pattern: そばから (as soon as / right after)
+    // Data source: grammar_points_data.json["そばから"]
+    // Testing: structure.standard[0] - "Verb[る] + そばから"
+    //          structure.standard[1] - "Verb[た] + そばから"
+    //
+    // Meaning: "As soon as (A), (B)" - usually (B) is something annoying
+    // that happens immediately and nullifies (A)
+    //
+    // Etymology: そば (side) + から (from) = "from right beside (A)"
+
+    #[test]
+    fn test_sobakara_verb_dictionary_yaburu() {
+        let sentence = "彼女は約束をするそばからすぐ約束を破る。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そばから");
+        assert_pattern_range(&patterns, "そばから", 6, 12); // するそばから
+    }
+
+    #[test]
+    fn test_sobakara_verb_dictionary_shippai() {
+        let sentence = "彼は注意するそばから失敗をするから、私のいうことは聞いていないんだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そばから");
+        assert_pattern_range(&patterns, "そばから", 2, 10); // 注意するそばから
+    }
+
+    #[test]
+    fn test_sobakara_verb_past_kowareru() {
+        let sentence = "パソコンを直したそばからまた壊れてしまうから困っている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そばから");
+        assert_pattern_range(&patterns, "そばから", 5, 12); // 直したそばから
+    }
+
+    #[test]
+    fn test_sobakara_verb_past_wasureru() {
+        let sentence = "早く読みすぎると読んだそばから忘れるから、もっとゆっくり読むようにしている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "そばから");
+        assert_pattern_range(&patterns, "そばから", 8, 15); // 読んだそばから
+    }
+}
