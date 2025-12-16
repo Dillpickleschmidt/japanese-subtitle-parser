@@ -1,3 +1,124 @@
+## Session 570 - 2025-12-16
+
+### Session Summary - ずにはすまない Complete ✓
+**Status**: Implemented 1 N1 pattern with 2 form variants successfully
+**Patterns completed**: 1 (ずにはすまない - N1, priority 5)
+**Total tests**: 3661 passing (6 new tests, no regressions)
+**Progress**: Eighty-second N1 pattern completed!
+
+**Session highlights**:
+- Implemented ずにはすまない (won't get away without doing / have no choice but to do)
+- Two form variants: ずにはすまない and ないではすまない (both registered as separate patterns)
+- Classical auxiliary ず + には + すまない construction
+- Handles regular verbs (謝らずには), する verbs (せずには)
+- Fixed DeMatcher to handle two tokenization variants of で (助動詞 or 助詞/接続助詞)
+- Token combiner extends ranges to include following だろう when present
+- All structure variants tested with realistic subtitle sentences
+
+### ✓ Completed: ずにはすまない (won't get away without doing / have no choice but to do)
+
+**Grammar Point**: ずにはすまない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb [ない-stem] + ず + には + すまない (classical form)
+2. Verb [ない] + では + すまない (modern alternative)
+3. Exception: する→せずにはすまない
+
+**Meaning**:
+- "Won't get away without doing (A)" / "Have no choice but to do (A)"
+- Literally: "it will not come to pass that (A) is not done"
+- Formal expression indicating obligation or necessity
+- The action (A) is expected according to anyone, not just personal feelings
+- Used when someone cannot avoid doing something due to circumstances
+- Expresses strong social or moral obligation
+
+**Tokenization**:
+ずにはすまない form:
+- Verb (動詞/未然形 or 未然ヌ接続 or 未然レル接続)
+- ず (助動詞/特殊・ヌ/連用ニ接続, base=ぬ)
+- に (助詞/格助詞)
+- は (助詞/係助詞)
+- すま (動詞/自立/未然形, base=すむ)
+- ない (助動詞/特殊・ナイ)
+
+ないではすまない form:
+- Verb (動詞/未然形)
+- ない (助動詞/特殊・ナイ)
+- で (助動詞/特殊・ダ/連用形, base=だ) OR で (助詞/接続助詞, base=で) **[Two variants!]**
+- は (助詞/係助詞)
+- すま (動詞/自立/未然形, base=すむ)
+- ない (助動詞/特殊・ナイ)
+
+**Implementation**:
+- Two separate pattern registrations: zunihasumanai() and naidewasumanai()
+- Custom matcher MizenkeiVerbMatcher: Matches verbs in 未然形/未然ヌ接続/未然レル接続
+- Custom matchers for ず, ない, で, and すま with strict POS/feature checks
+- **Critical fix**: DeMatcher handles two tokenization variants of で:
+  1. で (助動詞, base=だ) - copula form
+  2. で (助詞/接続助詞, base=で) - conjunctive particle
+- Both patterns have priority 5 for N1 construction
+- Range includes the full verb + auxiliary + すまない construction
+- Token combiner may extend range to include following だろう
+
+**Tests Written: 6 tests (all passing)**
+1. test_zunihasumanai_verb_ayamaru - 謝らずにはすまない (19, 31) - with だろう
+2. test_zunihasumanai_verb_iku - 行かずにはすまない (20, 29) - regular verb
+3. test_zunihasumanai_verb_deru - 出ずにはすまない (11, 19) - regular verb
+4. test_zunihasumanai_suru_verb_benshou - 弁償せずにはすまない (25, 35) - する verb
+5. test_zunihasumanai_naidewa_ayamaru - 謝らないではすまない (20, 30) - ないでは form
+6. test_zunihasumanai_naidewa_harau - 払わないではすまない (3, 13) - ないでは form
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures verb + full construction:
+- 謝らずにはすまないだろう (19, 31) - 12 characters (includes だろう via token combiner)
+- 行かずにはすまない (20, 29) - 9 characters
+- 出ずにはすまない (11, 19) - 8 characters
+- 弁償せずにはすまない (25, 35) - 10 characters (する→せ exception)
+- 謝らないではすまない (20, 30) - 10 characters (ないでは form)
+- 払わないではすまない (3, 13) - 10 characters (ないでは form)
+
+**Key Notes**:
+- Reused MizenkeiVerbMatcher from ずにはおかない implementation
+- Critical fix: Updated DeMatcher to handle two tokenization variants of で
+- Without this fix, some sentences (like 税金は払わないではすまない) would not be detected
+- Kagome inconsistently tokenizes ないで as either "ない + で(助動詞)" or "ない + で(助詞/接続助詞)"
+- Two separate pattern declarations allow both forms to be detected independently
+- Both forms express the same meaning, just different expression styles
+- Token combiner behavior causes some tests to include trailing だろう in ranges
+- Works seamlessly with various verb types (regular, する)
+- Related to ずにはおかない but with すむ ("to come to pass") instead of おく ("to leave")
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented zunihasumanai() and naidewasumanai()
+- grammar-lib/src/patterns.rs - Added both pattern declarations with priority 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 6 tests in zunihasumanai_tests module
+- feature_list.json - Updated ずにはすまない to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (ずには and ないでは forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified (with token combiner extension noted)
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3661 total, +6 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- それまでだ - "That's as far as it goes" pattern
+- ただ〜のみ - "Only/merely" pattern
+- だに + しない - Classical "not even" pattern
+- たら〜で - Conditional with repeated words
+- ったら・といったら - Emphatic conditional pattern
+- ったらない・といったらない - Extreme quality pattern
+- でなくてなんだろう - Rhetorical "if not A, what else" pattern
+- てはかなわない - "Can't stand" pattern
+
+================================================================================
+
 ## Session 569 - 2025-12-16
 
 ### Session Summary - ずにはおかない Complete ✓
