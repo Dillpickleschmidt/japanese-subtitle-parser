@@ -1383,9 +1383,71 @@ pub fn jaarumaishi() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: てからというもの
+// Pattern: てからというもの (ever since)
+// Structures: Verb[て] + から + というもの OR それから + というもの
 pub fn tekaratoiumono() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て (助詞/接続助詞) OR それから (接続詞)
+    #[derive(Debug)]
+    struct TeOrSorekaraMatcher;
+    impl Matcher for TeOrSorekaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface == "て" {
+                token.pos.first().is_some_and(|p| p == "助詞")
+                    && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+            } else if token.surface == "それから" {
+                token.pos.first().is_some_and(|p| p == "接続詞")
+            } else {
+                false
+            }
+        }
+    }
+
+    // Match から (助詞/格助詞/一般) - only after て, not after それから
+    #[derive(Debug)]
+    struct KaraParticleMatcher;
+    impl Matcher for KaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match という (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct ToiuMatcher;
+    impl Matcher for ToiuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "という"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "連語")
+        }
+    }
+
+    // Match もの (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Pattern: (て OR それから) + optional から + という + もの
+    // When it's て, から is required; when it's それから, から is already included
+    vec![
+        TokenMatcher::Custom(Arc::new(TeOrSorekaraMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            KaraParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(ToiuMatcher)),
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+    ]
 }
 
 // Pattern: かたわら

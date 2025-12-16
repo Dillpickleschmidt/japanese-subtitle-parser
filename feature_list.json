@@ -10629,13 +10629,13 @@
   {
     "pattern_name": "てからというもの",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "てからというもの is an extension of the grammar point てから meaning 'after (A)', and partners と言（い）う 'that which is' with もの 't... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

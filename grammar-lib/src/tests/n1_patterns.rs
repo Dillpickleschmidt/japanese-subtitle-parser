@@ -1550,3 +1550,73 @@ mod jaarumaishi_tests {
         assert_pattern_range(&patterns, "じゃあるまいし", 3, 12); // わけではあるまいし
     }
 }
+
+// ============================================================================
+// てからというもの Tests
+// ============================================================================
+
+mod tekaratoiumono_tests {
+    use super::*;
+
+    // Pattern: てからというもの (ever since)
+    // Data source: grammar_points_data.json["てからというもの"]
+    // Testing: structure.standard[0] - "Verb[て] + から + というもの"
+    //
+    // Other structures to test:
+    //   - standard[1]: それから + というもの (at beginning of new sentence)
+
+    // Testing: structure.standard[0] - "Verb[て] + から + というもの"
+    #[test]
+    fn test_tekaratoiumono_verb_te() {
+        let sentence = "この会社に入社してからというもの、日付が変わる前に家に帰ったことがない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てからというもの");
+        assert_pattern_range(&patterns, "てからというもの", 8, 16); // てからというもの
+    }
+
+    // Testing: structure.standard[0] - another example
+    #[test]
+    fn test_tekaratoiumono_walking() {
+        let sentence = "仕事に行く前に散歩に行くようにしてからというもの、どんどん体重が減ってきた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てからというもの");
+        assert_pattern_range(&patterns, "てからというもの", 16, 24); // てからというもの
+    }
+
+    // Testing: structure.standard[0] - another example
+    #[test]
+    fn test_tekaratoiumono_movie() {
+        let sentence = "ファイナルデスティネーションという映画を見てからというもの、木材を運んだトラックの後ろを走るのを避けるようになった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てからというもの");
+        assert_pattern_range(&patterns, "てからというもの", 21, 29); // てからというもの
+    }
+
+    // Testing: structure.standard[1] - "それから + というもの"
+    #[test]
+    fn test_tekaratoiumono_sorekara() {
+        let sentence = "彼は社長にみんなの前でものすごく怒られた。それからというもの彼は別人になったかのように性格が変わった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てからというもの");
+        assert_pattern_range(&patterns, "てからというもの", 21, 30); // それからというもの
+    }
+
+    // Testing: structure.standard[1] - another それから example
+    #[test]
+    fn test_tekaratoiumono_sorekara_train() {
+        let sentence = "先月彼女が痴漢にあった。それからというもの、満員電車を避けるようになった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てからというもの");
+        assert_pattern_range(&patterns, "てからというもの", 12, 21); // それからというもの
+    }
+}
