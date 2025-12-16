@@ -5835,9 +5835,38 @@ pub fn wakeari_yakuatte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に至って・に至り
+// Pattern: に至って・に至り (only when/going as far as)
+// Structures: Verb + に至って, Noun + に至って, に至り
 pub fn niitatte_u30fb_niitari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 至って (te-form) or 至り (conjunctive form)
+    #[derive(Debug)]
+    struct ItatteMatcher;
+    impl super::Matcher for ItatteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "至る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.surface == "至っ" || token.surface == "至り")
+        }
+    }
+
+    // Match て particle following 至っ
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Custom(Arc::new(ItatteMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeParticleMatcher)))),
+    ]
 }
 
 // Pattern: だに + しない

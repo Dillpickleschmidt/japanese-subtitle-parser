@@ -11595,13 +11595,13 @@
   {
     "pattern_name": "に至って・に至り",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Just like in other grammar points that include the う-Verb 至（いた）る 'to result in', or 'to reach a climax', に至（いた）って wil... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

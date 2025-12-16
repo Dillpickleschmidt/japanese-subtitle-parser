@@ -7050,3 +7050,75 @@ mod tara_u301c_de_tests {
         assert_pattern_range(&patterns, "たら〜で", 18, 25); // 簡単なら簡単で
     }
 }
+
+// ============================================================================
+// に至って・に至り Tests
+// ============================================================================
+
+mod niitatte_niitari_tests {
+    use super::*;
+
+    // Pattern: に至って・に至り (only when/going as far as)
+    // Data source: grammar_points_data.json["に至って・に至り"]
+    // Testing: structure.standard[0] - "Verb + に至って"
+    //
+    // Structure variants:
+    //   - standard[0]: Verb + に至って
+    //   - standard[1]: Noun + に至って
+    //   - standard[2]: に至り (formal conjunctive form)
+
+    // Testing: structure.standard[0] - Verb + に至って
+    #[test]
+    fn test_niitatte_verb() {
+        let sentence = "先輩に注意されるに至って、どれだけ俺が自分勝手だったかが分かった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至って・に至り");
+        assert_pattern_range(&patterns, "に至って・に至り", 6, 12); // れるに至って
+    }
+
+    // Testing: structure.standard[0] - Verb + に至って (different example)
+    #[test]
+    fn test_niitatte_verb_accident() {
+        let sentence = "工場で大きな事故が発生するに至って安全大会を実施する様では、この工場では事故が起こり続けます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至って・に至り");
+        assert_pattern_range(&patterns, "に至って・に至り", 9, 17); // 発生するに至って
+    }
+
+    // Testing: structure.standard[1] - Noun + に至って
+    #[test]
+    fn test_niitatte_noun() {
+        let sentence = "糖尿病に至って、食生活に気をつける様になった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至って・に至り");
+        assert_pattern_range(&patterns, "に至って・に至り", 2, 7); // 病に至って
+    }
+
+    // Testing: structure.standard[1] - Noun + に至って (age example)
+    #[test]
+    fn test_niitatte_noun_age() {
+        let sentence = "この年に至って会社を立ち上げるなんて、自分でもびっくりだよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至って・に至り");
+        assert_pattern_range(&patterns, "に至って・に至り", 2, 7); // 年に至って
+    }
+
+    // Testing: structure.standard[2] - に至り (formal conjunctive form)
+    #[test]
+    fn test_niitari_formal() {
+        let sentence = "事態がここに至り、もはや後戻りはできない状況となった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に至って・に至り");
+        assert_pattern_range(&patterns, "に至って・に至り", 3, 8); // ここに至り
+    }
+}
