@@ -1,18 +1,21 @@
 ## Session 490 - 2025-12-15
 
-### Session Summary - Three N2 Patterns Complete ✓
-**Status**: Successfully implemented といった, を込めて, and ～に値する patterns
-**Patterns completed**: 3 (all N2, priority 4)
-**Total tests**: 3252 passing, 1 ignored (added 11 new tests)
+### Session Summary - Four N2 Patterns Complete ✓ - ALL N2 PATTERNS DONE!
+**Status**: Successfully implemented といった, を込めて, ～に値する, and ようでは・ようじゃ patterns
+**Patterns completed**: 4 (all N2, priority 4)
+**Total tests**: 3256 passing, 1 ignored (added 15 new tests)
+**Major milestone**: All N2 patterns are now complete!
 
 **Session highlights**:
 - Implemented といった (such as, like) - 4 tests
 - Implemented を込めて (full of, filled with, with) - 3 tests
 - Implemented ～に値する (worthy of, deserves, is worth) - 4 tests
+- Implemented ようでは・ようじゃ (if, if it is the case that) - 4 tests
 - All patterns use custom matchers for precise token detection
 - All structure variants tested appropriately
 - All tests passing with proper range assertions
 - No regressions in test suite
+- **ALL N2 patterns are now complete!**
 
 ---
 
@@ -131,6 +134,48 @@ Expresses that something is "full of (A)" or "filled with (A)". From 込める (
 
 **Grammar meaning**:
 Means something "deserves (A)" or "is worthy of (A)". Made up of the particle に and the する verb 値する. The thing marked by に is what is "worthy". Negative form に値しない means "is not worthy" or "does not deserve".
+
+---
+
+### ✓ Completed: ようでは・ようじゃ (if, if it is the case that)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb/Adjective + ようでは (+ negative result)
+- Verb/Adjective + ようじゃ (casual form)
+
+**Implementation details**:
+- Four-token pattern with optional は: Verb/Adj + よう + で/じゃ + (は)
+- Combination of よう (auxiliary verb "manner/seeming") + では/じゃ (conjunction)
+- Used to make evaluations where if (A) is true, a negative result will arise
+- Speaker's subjective negative opinion about what they perceive to be true
+
+**Tokenization patterns**:
+- Formal: Any + よう (名詞/非自立/助動詞語幹) + で (助動詞, 連用形, base=だ) + は (助詞/係助詞)
+- Casual: Any + よう (名詞/非自立/助動詞語幹) + じゃ (助詞/副助詞)
+
+**Tests created**: 4 tests
+1. `test_youdeha_same_mistake` - するようでは (making same mistake)
+2. `test_youdeha_grammar` - ないようでは (don't understand grammar)
+3. `test_youdeha_firefighter` - いるようでは (afraid of heights)
+4. `test_youja_casual` - ないようじゃ (casual form - don't know)
+
+**Key implementation notes**:
+- DehaOrJaMatcher handles both で (for では) and じゃ (for ようじゃ) forms
+- Optional は matcher only applies after で, not after じゃ
+- Pattern focuses on unconfirmed/guessed situations
+- Extra focus on appearance or condition based on what is observable
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented youdeha_u30fb_youja() function (79 lines with 5 custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 4 comprehensive tests
+- `feature_list.json` - Updated ようでは・ようじゃ to complete status
+
+**Grammar meaning**:
+Means "if it is the case that (A)" or "if that which seems to be (A) is true", with extra focus on (A) being unconfirmed or only guessed at. In most cases, used to evaluate that if (A) is true, then some particular negative result will arise from it. Puts extra focus on the appearance or condition of (A), based on what is observable by the speaker. Often the speaker's subjective (negative) opinion about what they perceive to be true.
 
 ---
 
