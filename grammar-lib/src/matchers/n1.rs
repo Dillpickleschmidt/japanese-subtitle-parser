@@ -8306,9 +8306,78 @@ pub fn uff5e_bakoso() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ても差し支えない
+// Pattern: ても差し支えない (it's not a hindrance if, may I)
+// Structures: Verb[ても]/Adj[ても] + 差し支え + ありません
+//            Noun[でも]/な-Adj[でも] + 差し支え + ありません
 pub fn temosashitsukaenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ても or でも (can be two tokens: て/で + も, or single token でも)
+    #[derive(Debug)]
+    struct TemoDemoMatcher;
+    impl super::Matcher for TemoDemoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Single token でも (助詞/副助詞)
+            if token.surface == "でも"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+            {
+                return true;
+            }
+            // Or て/で particle (when followed by も)
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+        }
+    }
+
+    // Match さしつかえ (verb さしつかえる in 連用形)
+    #[derive(Debug)]
+    struct SashitsukaeMatcher;
+    impl super::Matcher for SashitsukaeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "さしつかえる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match あり (ある in 連用形)
+    #[derive(Debug)]
+    struct AriMatcher;
+    impl super::Matcher for AriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match ません or ん (negative)
+    #[derive(Debug)]
+    struct MasenNMatcher;
+    impl super::Matcher for MasenNMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "ます" || token.base_form == "ん")
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(TemoDemoMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(SashitsukaeMatcher)),
+        TokenMatcher::Custom(Arc::new(AriMatcher)),
+        TokenMatcher::Custom(Arc::new(MasenNMatcher)),
+    ]
 }
 
 // Pattern: には及ばない①

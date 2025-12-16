@@ -12267,13 +12267,13 @@
   {
     "pattern_name": "ても差し支えない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ても差（さ）し支（つか）えない is a polite expression used in a similar way to てもいい 'may I', or 'do you mind' [5 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

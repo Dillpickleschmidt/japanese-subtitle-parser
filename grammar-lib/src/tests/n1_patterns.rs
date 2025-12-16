@@ -9666,3 +9666,69 @@ mod tokitara_tests {
         assert_pattern_range(&patterns, "ときたら", 3, 8); // 犬ときたら
     }
 }
+
+// ============================================================================
+// ても差し支えない Tests (it's not a hindrance if, do you mind if)
+// ============================================================================
+
+mod temosashitsukaenai_tests {
+    use super::*;
+
+    // Pattern: ても差し支えない (it's not a hindrance if, may I, do you mind if)
+    // Data source: grammar_points_data.json["ても差し支えない"]
+    // Testing: structure.standard[0] - "Verb[ても] + 差し支え + ありません"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun[でも] + 差し支え + ありません
+    //   - standard[2]: な-Adjective[でも] + 差し支え + ありません
+    //   - standard[3]: い-Adjective[ても] + 差し支え + ありません
+    //   - With variations: ない, ないでしょう, ございません
+
+    #[test]
+    fn test_temosashitsukaenai_verb_permission() {
+        // Testing: Verb[ても] + 差し支え + ありません (granting permission)
+        // Based on: "ここに座ってもらってもさしつかえありません"
+        let sentence = "ここに座ってもらってもさしつかえありません。どうぞお座りください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても差し支えない");
+        assert_pattern_range(&patterns, "ても差し支えない", 9, 21); // てもさしつかえありません
+    }
+
+    #[test]
+    fn test_temosashitsukaenai_i_adjective() {
+        // Testing: い-Adjective[ても] + 差し支え + ありません
+        // Based on: "お風呂は熱くてもさしつかえありません"
+        let sentence = "お風呂は熱くてもさしつかえありません。むしろ熱い方がありがたいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても差し支えない");
+        assert_pattern_range(&patterns, "ても差し支えない", 6, 18); // てもさしつかえありません
+    }
+
+    #[test]
+    fn test_temosashitsukaenai_na_adjective_question() {
+        // Testing: な-Adjective[でも] + 差し支え + ありませんか (asking permission)
+        // Based on: "私はまだ初心者です。下手でもさしつかえありませんか"
+        let sentence = "私はまだ初心者です。下手でもさしつかえありませんか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても差し支えない");
+        assert_pattern_range(&patterns, "ても差し支えない", 12, 24); // でもさしつかえありません
+    }
+
+    #[test]
+    fn test_temosashitsukaenai_noun_time() {
+        // Testing: Noun[でも] + 差し支え + ありませんか (asking about timing)
+        // Based on: "今週はものすごく忙しいので来週でもさしつかえありませんか"
+        let sentence = "今週はものすごく忙しいので来週でもさしつかえありませんか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ても差し支えない");
+        assert_pattern_range(&patterns, "ても差し支えない", 15, 27); // でもさしつかえありません
+    }
+}
