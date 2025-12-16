@@ -8719,9 +8719,144 @@ pub fn nisokushite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ないまでも
+// Pattern: ないまでも (even if not / may not be... but)
+// Structures:
+// 1. Verb[ない] + までも (e.g., 言えないまでも)
+// 2. Noun + ではない + までも (e.g., 毎週ではないまでも)
+// 3. Noun + じゃない + までも (e.g., 幸せじゃないまでも)
 pub fn naimademo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ない as auxiliary verb (for verbs and じゃない)
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ")
+        }
+    }
+
+    // Match ない as adjective (for ではない)
+    #[derive(Debug)]
+    struct NaiAdjectiveMatcher;
+    impl Matcher for NaiAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    // Match で particle
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match は particle
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match じゃ particle
+    #[derive(Debug)]
+    struct JaMatcher;
+    impl Matcher for JaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "じゃ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match まで particle
+    #[derive(Debug)]
+    struct MadeMatcher;
+    impl Matcher for MadeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match も particle
+    #[derive(Debug)]
+    struct MoMatcher;
+    impl Matcher for MoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Create three separate matchers for each variant
+    // Since we can only return one vec, we'll create a compound matcher
+
+    // Custom matcher that handles all three variants
+    #[derive(Debug)]
+    struct NaimademoCompound;
+    impl Matcher for NaimademoCompound {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない (auxiliary or adjective)
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Match verbs (for Verb + ない pattern)
+    #[derive(Debug)]
+    struct VerbMatcher;
+    impl Matcher for VerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match nouns (for Noun + ではない/じゃない pattern)
+    #[derive(Debug)]
+    struct NounMatcher;
+    impl Matcher for NounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match verb OR noun OR adjective (broader match for start)
+    #[derive(Debug)]
+    struct VerbNounOrAdjMatcher;
+    impl Matcher for VerbNounOrAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞" || pos == "名詞" || pos == "形容詞")
+        }
+    }
+
+    // Single pattern that uses wildcard to match the varying middle part
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbNounOrAdjMatcher)), // Verb, Noun, or Adjective
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 2,
+            stop_conditions: vec![TokenMatcher::Custom(Arc::new(NaimademoCompound))],
+        }, // Optional particles before ない (で+は or じゃ)
+        TokenMatcher::Custom(Arc::new(NaimademoCompound)), // ない
+        TokenMatcher::Custom(Arc::new(MadeMatcher)),       // まで
+        TokenMatcher::Custom(Arc::new(MoMatcher)),         // も
+    ]
 }
 
 // Pattern: をよそに

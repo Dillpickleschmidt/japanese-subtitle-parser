@@ -10248,3 +10248,70 @@ mod nisokushite_tests {
         assert_pattern_range(&patterns, "に即して", 0, 6); // 現実に則した
     }
 }
+
+// Pattern: ないまでも (even if not / may not be... but)
+// Data source: grammar_points_data.json["ないまでも"]
+// Structure: Verb[ない] + までも / Noun + ではない/じゃない + までも
+mod naimademo_tests {
+    use super::*;
+
+    #[test]
+    fn test_naimademo_verb_negative_masterpiece() {
+        // Testing: structure.standard[0] - "Verb[ない] + までも + Phrase"
+        // Example from grammar data: 名作だとは言えないまでも
+        let sentence = "この作品は名作だとは言えないまでも、なかなかいい作品だと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないまでも");
+        assert_pattern_range(&patterns, "ないまでも", 10, 17); // 言えないまでも
+    }
+
+    #[test]
+    fn test_naimademo_verb_negative_eliminate() {
+        // Testing: structure.standard[0] - "Verb[ない] + までも + Phrase"
+        // Example from grammar data: 完全になくせないまでも
+        let sentence = "犯罪などは完全になくせないまでも、減らすように頑張るべきだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないまでも");
+        assert_pattern_range(&patterns, "ないまでも", 8, 16); // なくせないまでも
+    }
+
+    #[test]
+    fn test_naimademo_verb_negative_become() {
+        // Testing: structure.standard[0] - "Verb[ない] + までも + Phrase"
+        // Example from grammar data: なれないまでも
+        let sentence = "プロ野球選手にはなれないまでも、プロ野球に関わる仕事をしているので満足している。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないまでも");
+        assert_pattern_range(&patterns, "ないまでも", 8, 15); // なれないまでも
+    }
+
+    #[test]
+    fn test_naimademo_noun_dewanai() {
+        // Testing: structure.standard[1] - "Noun + ではない + までも + Phrase"
+        // Example from grammar data: 毎週ではないまでも
+        let sentence = "毎週ではないまでも、娘に会えるだけ幸せだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないまでも");
+        assert_pattern_range(&patterns, "ないまでも", 0, 9); // 毎週ではないまでも
+    }
+
+    #[test]
+    fn test_naimademo_noun_janai() {
+        // Testing: structure.standard[2] note - "(1) じゃない"
+        // Example from grammar data: 幸せじゃないまでも
+        let sentence = "好きな仕事ができないから幸せじゃないまでも、生活費に困っていないから文句は言えない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないまでも");
+        assert_pattern_range(&patterns, "ないまでも", 12, 21); // 幸せじゃないまでも
+    }
+}

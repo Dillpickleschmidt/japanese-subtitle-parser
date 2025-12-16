@@ -12309,13 +12309,13 @@
   {
     "pattern_name": "ないまでも",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ないまでも is a combination of the negated form of a verb, the case-marking particle まで 'until', and the adverbial particl... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
