@@ -7680,9 +7680,52 @@ pub fn keikougaaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～に値する
+// Pattern: ～に値する (worthy of, deserves, is worth)
+// Structures: Verb/Noun + に + 値する/値しない
 pub fn uff5e_niataisuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for verb (dictionary form) or noun
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verbs in dictionary form (基本形)
+            if token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+            {
+                return true;
+            }
+            // Match nouns
+            token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Matcher for に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Matcher for 値する/値し verb (base=値する)
+    #[derive(Debug)]
+    struct AtaisuruMatcher;
+    impl Matcher for AtaisuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "値する" && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AtaisuruMatcher)),
+    ]
 }
 
 // Pattern: てしょうがない (cannot be helped, extremely)

@@ -12837,3 +12837,61 @@ mod wokomete_tests {
         assert_pattern_range(&patterns, "を込めて", 9, 14); // 心を込めて
     }
 }
+
+// Pattern: ～に値する (worthy of, deserves, is worth)
+// Data source: grammar_points_data.json["～に値する"]
+// Testing: structure.standard[0-3] - "Verb/Noun + に値する (+ Noun)"
+//
+// Structures:
+//   - standard[0]: Verb + に値する
+//   - standard[1]: Noun + に値する
+//   - standard[2]: Verb + に値する + Noun
+//   - standard[3]: Noun + に値する + Noun
+//   - No polite forms
+//   - Negative: に値しない (is not worthy of)
+//
+// Meaning: "deserves (A)", "is worthy of (A)", "is worth (A)"
+
+mod niataisuru_tests {
+    use super::*;
+
+    #[test]
+    fn test_niataisuru_noun_scam() {
+        let sentence = "その手法は詐欺に値するから、見直したほうがいいと思いますよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～に値する");
+        assert_pattern_range(&patterns, "～に値する", 5, 11); // 詐欺に値する
+    }
+
+    #[test]
+    fn test_niataisuru_verb_reading() {
+        let sentence = "これは読むに値する論文だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～に値する");
+        assert_pattern_range(&patterns, "～に値する", 3, 9); // 読むに値する
+    }
+
+    #[test]
+    fn test_niataisuru_negative_respect() {
+        let sentence = "彼の行動は尊敬に値しない。人として当たり前なことをしたまでだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～に値する");
+        assert_pattern_range(&patterns, "～に値する", 5, 12); // 尊敬に値しない
+    }
+
+    #[test]
+    fn test_niataisuru_negative_watching() {
+        let sentence = "あの舞台は大根役者の集まりなので、見るに値しない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～に値する");
+        assert_pattern_range(&patterns, "～に値する", 17, 24); // 見るに値しない
+    }
+}
