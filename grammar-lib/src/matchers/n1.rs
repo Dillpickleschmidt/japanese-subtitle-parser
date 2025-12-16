@@ -6627,9 +6627,101 @@ pub fn monotoomotteita() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: でなくてなんだろう
+// Pattern: でなくてなんだろう (if not A, then what is it?)
+// Structures: Noun + でなくてなん + だろう/であろう + (か)
 pub fn denakutenandarou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match で (助動詞, 特殊・ダ, 連用形)
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match なく (助動詞, 特殊・ナイ, 連用テ接続)
+    #[derive(Debug)]
+    struct NakuMatcher;
+    impl Matcher for NakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なく"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ない"
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続")
+        }
+    }
+
+    // Match なん (名詞, 代名詞)
+    #[derive(Debug)]
+    struct NanMatcher;
+    impl Matcher for NanMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "代名詞")
+        }
+    }
+
+    // Match だろ/で (for だろう or であろう)
+    #[derive(Debug)]
+    struct DaroOrDeMatcher;
+    impl Matcher for DaroOrDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && ((token.surface == "だろ" && token.base_form == "だ" && token.features.get(5).is_some_and(|f| f == "未然形"))
+                    || (token.surface == "で" && token.base_form == "だ" && token.features.get(5).is_some_and(|f| f == "連用形")))
+        }
+    }
+
+    // Match あろ (optional, for であろう)
+    #[derive(Debug)]
+    struct AroMatcher;
+    impl Matcher for AroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あろ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ある"
+                && token.features.get(5).is_some_and(|f| f == "未然ウ接続")
+        }
+    }
+
+    // Match う (助動詞, 不変化型)
+    #[derive(Debug)]
+    struct UMatcher;
+    impl Matcher for UMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "不変化型")
+        }
+    }
+
+    // Match か (optional)
+    #[derive(Debug)]
+    struct KaMatcher;
+    impl Matcher for KaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(DeMatcher)),
+        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        TokenMatcher::Surface("て"),
+        TokenMatcher::Custom(Arc::new(NanMatcher)),
+        TokenMatcher::Custom(Arc::new(DaroOrDeMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(AroMatcher)))),
+        TokenMatcher::Custom(Arc::new(UMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KaMatcher)))),
+    ]
 }
 
 // Pattern: はさておき・はさておいて

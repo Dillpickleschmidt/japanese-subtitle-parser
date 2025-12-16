@@ -7585,3 +7585,57 @@ mod monotoomotteita_tests {
         assert_pattern_range(&patterns, "ものと思っていた", 6, 17); // たものと思っていました
     }
 }
+
+// ============================================================================
+// でなくてなんだろう Tests
+// ============================================================================
+
+mod denakutenandarou_tests {
+    use super::*;
+
+    // Pattern: でなくてなんだろう (if not A, then what is it?)
+    // Data source: grammar_points_data.json["でなくてなんだろう"]
+    // Testing: structure.standard[0] - "Noun + でなくてなん + だろう（か）"
+
+    #[test]
+    fn test_denakutenandarou_darou() {
+        let sentence = "あの子が新しいってだけでいじめられている。あれはパワハラでなくてなんだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でなくてなんだろう");
+        assert_pattern_range(&patterns, "でなくてなんだろう", 24, 37); // パワハラでなくてなんだろう
+    }
+
+    #[test]
+    fn test_denakutenandarou_darou_ka() {
+        let sentence = "私の家だけ浸水しなかった。これが奇跡でなくてなんだろうか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でなくてなんだろう");
+        assert_pattern_range(&patterns, "でなくてなんだろう", 16, 28); // 奇跡でなくてなんだろうか
+    }
+
+    // Testing: structure.standard[1] - "Noun + でなくてなん + であろう（か）"
+
+    #[test]
+    fn test_denakutenandarou_dearou() {
+        let sentence = "俺はこんなに夜遅くまでタダ働きをしている。俺は社畜でなくてなんであろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でなくてなんだろう");
+        assert_pattern_range(&patterns, "でなくてなんだろう", 23, 35); // 社畜でなくてなんであろう
+    }
+
+    #[test]
+    fn test_denakutenandarou_dearou_ka() {
+        let sentence = "説明欄には新品だと書いてあったのに届いた商品は傷だらけだった。これは詐欺でなくてなんであろうか。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "でなくてなんだろう");
+        assert_pattern_range(&patterns, "でなくてなんだろう", 34, 47); // 詐欺でなくてなんであろうか
+    }
+}
