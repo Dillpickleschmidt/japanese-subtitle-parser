@@ -11343,13 +11343,13 @@
   {
     "pattern_name": "か否か",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "否（いな）  'no' is an interjection in Japanese that is primarily paired with the adverbial particle か 'or' when stating '... [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

@@ -6989,7 +6989,15 @@ declare_patterns! {
     Kainaka {
         name: "か否か",
         matcher_fn: crate::matchers::n1::kainaka,
-        priority: 1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    KainakaKaInaka {
+        name: "か否か",
+        matcher_fn: crate::matchers::n1::kainaka_ka_inaka,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

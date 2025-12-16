@@ -5262,3 +5262,75 @@ mod toomoikiya_tests {
         assert_pattern_selected(&patterns, "と思いきや");
     }
 }
+
+// ============================================================================
+// か否か Tests
+// ============================================================================
+
+mod kainaka_tests {
+    use super::*;
+
+    // Pattern: か否か (whether or not)
+    // Data source: grammar_points_data.json["か否か"]
+    // Testing all structures from structure.standard array
+
+    #[test]
+    fn test_kainaka_verb() {
+        // Testing structure: Verb + か否か
+        let sentence = "この授業を楽しむかいなかは自分次第だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か否か");
+        assert_pattern_range(&patterns, "か否か", 5, 12); // 楽しむかいなか
+        assert_pattern_selected(&patterns, "か否か");
+    }
+
+    #[test]
+    fn test_kainaka_i_adjective() {
+        // Testing structure: い-Adjective + か否か
+        let sentence = "怖いかいなかは別として、この映画はとても面白かった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か否か");
+        assert_pattern_range(&patterns, "か否か", 0, 6); // 怖いかいなか
+        assert_pattern_selected(&patterns, "か否か");
+    }
+
+    #[test]
+    fn test_kainaka_na_adjective() {
+        // Testing structure: な-Adjective + である + か否か
+        let sentence = "あの人が貧乏であるかいなかは私たちには関係のないことです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か否か");
+        assert_pattern_range(&patterns, "か否か", 7, 13); // あるかいなか
+        assert_pattern_selected(&patterns, "か否か");
+    }
+
+    #[test]
+    fn test_kainaka_noun() {
+        // Testing structure: Noun + か否か
+        let sentence = "あの人がこの子の父親かいなか、ＤＮＡ検査をしなくてはわからない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か否か");
+        assert_pattern_range(&patterns, "か否か", 8, 14); // 父親かいなか
+        assert_pattern_selected(&patterns, "か否か");
+    }
+
+    #[test]
+    fn test_kainaka_noun_with_dearu() {
+        // Testing structure: Noun + である + か否か
+        let sentence = "彼が適切な候補であるかいなかについては慎重に検討すべきだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "か否か");
+        assert_pattern_range(&patterns, "か否か", 8, 14); // あるかいなか
+        assert_pattern_selected(&patterns, "か否か");
+    }
+}

@@ -4013,9 +4013,67 @@ pub fn gan_uff5e() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: か否か
+// Pattern: か否か (whether or not) - Variant 1
+// Structures: Verb/Adj/Noun + かいな + か
 pub fn kainaka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for かいな (noun)
+    #[derive(Debug)]
+    struct KainaMatcher;
+    impl super::Matcher for KainaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かいな" && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Matcher for か particle
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl super::Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Matches: Any token + かいな(noun) + か(particle)
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(KainaMatcher)),
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+    ]
+}
+
+// Pattern: か否か (whether or not) - Variant 2
+// Structures: Verb/Adj/Noun + である + か + いなか
+// This variant appears after である or in certain contexts
+pub fn kainaka_ka_inaka() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for いなか (noun)
+    #[derive(Debug)]
+    struct InakaMatcher;
+    impl super::Matcher for InakaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いなか" && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Matcher for か particle
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl super::Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Matches: Any token + か(particle) + いなか(noun)
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(InakaMatcher)),
+    ]
 }
 
 // Pattern: たら〜で
