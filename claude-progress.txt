@@ -1,3 +1,97 @@
+## Session 551 - 2025-12-16
+
+### Session Summary - がてら Complete ✓
+**Status**: Implemented がてら pattern successfully
+**Patterns completed**: 1 (がてら - N1, priority 5)
+**Total tests**: 3574 passing (4 new tests, no regressions)
+**Progress**: Sixty-seventh N1 pattern completed!
+
+**Session highlights**:
+- Implemented がてら (while doing, on the occasion of)
+- Simple 3-token pattern: [Verb/Noun] + が + てら
+- Tokenization splits "がてら" into が (particle) + てら (verb)
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include Verb/Noun + がてら (full construction)
+
+### ✓ Completed: がてら (while doing, on the occasion of)
+
+**Grammar Point**: がてら
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb[stem] + がてら
+2. Noun + がてら
+
+**Meaning**:
+- "While (A), (B)" / "On the occasion of (A), (B)"
+- Unlike ながら, focuses on (A) being a good opportunity to do (B)
+- Etymology: がてら comes from かてあり (糅つ "to mix" + あり)
+- Used primarily in formal situations
+- (A) is typically a noun signifying physical movement
+
+**Tokenization**:
+- [Verb/Noun]: 動詞 (連用形) or 名詞
+- が: 助詞/格助詞/一般 (case particle)
+- てら: 動詞/自立, base=てる, 未然形
+
+**Implementation**:
+- Pattern: [Any] + が + てら
+- Custom matchers:
+  - GaParticleMatcher: Matches が (助詞/格助詞)
+  - TeraMatcher: Matches てら (動詞, base=てる, 未然形)
+- Priority 5 for N1 formal construction
+- Pattern includes the verb/noun before がてら
+- Range: Verb/Noun + がてら (e.g., 迎えがてら, 散歩がてら)
+
+**Tests Written: 4 tests (all passing)**
+1. `test_gatera_verb_stem_pick_up` - 迎えがてら (5, 10) - while picking up
+2. `test_gatera_verb_stem_visit` - 行きがてら (5, 10) - while going
+3. `test_gatera_noun_dog_walk` - 散歩がてら (6, 11) - on the occasion of a walk
+4. `test_gatera_noun_exercise` - 運動がてら (0, 5) - on the occasion of exercise
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures Verb/Noun + がてら:
+- 迎えがてら (5, 10) - 5 characters
+- 行きがてら (5, 10) - 5 characters
+- 散歩がてら (6, 11) - 5 characters
+- 運動がてら (0, 5) - 5 characters
+
+**Key Notes**:
+- Kagome consistently tokenizes がてら as が + てら (never as single token)
+- Similar to ながら but emphasizes utilizing an opportunity
+- The preceding noun is typically a physical movement (散歩, 運動, etc.)
+- Formal register - common in written/formal speech
+- Pattern successfully distinguishes from other が particle uses
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented gatera() with 2 custom matchers
+- `grammar-lib/src/patterns.rs` - Updated Gatera priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in gatera_tests module
+- `feature_list.json` - Updated がてら to complete status
+
+**Quality Checks**:
+- ✓ Tests exist with proper assertions
+- ✓ All structure variants tested (verb stem, noun)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (3574 total, no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+1. かれ〜かれ - Classical whether...or pattern
+2. がん〜 - Colloquial intensifying prefix (ガン見, ガン無視)
+3. が早いか - Immediately after pattern
+4. ぐらいなら - Would rather than pattern
+5. ぐるみで - Including/all over pattern
+6. こととて - Classical reason pattern
+7. さぞ - Emphatic adverb
+
+================================================================================
+
 ## Session 549 - 2025-12-16
 
 ### Session Summary - べくして Complete ✓
