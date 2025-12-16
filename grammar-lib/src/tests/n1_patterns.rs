@@ -10684,3 +10684,80 @@ mod majiki_tests {
         assert_pattern_range(&patterns, "まじき", 8, 16); // ゆるすまじき行為
     }
 }
+
+// ============================================================================
+// に恥じない Tests
+// ============================================================================
+
+mod nihajinai_tests {
+    use super::*;
+
+    // Pattern: に恥じない (lives up to / not ashamed of)
+    // Data source: grammar_points_data.json["に恥じない"]
+    // Testing: structure.standard[0] - "Noun + に恥（は）じない"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun + に恥（は）じない + Noun
+    //   - polite[0]: Noun + に恥（は）じません
+    //   - polite[1]: Noun + に恥（は）じません + Noun
+
+    #[test]
+    fn test_nihajinai_standard_name_reputation() {
+        // Testing: structure.standard[0] - "Noun + に恥じない"
+        // Context: lives up to the name/reputation
+        let sentence = "あの大学のバスケチームは日本一という名にはじない強さだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に恥じない");
+        assert_pattern_range(&patterns, "に恥じない", 18, 24); // 名にはじない
+    }
+
+    #[test]
+    fn test_nihajinai_standard_modifying_noun() {
+        // Testing: structure.standard[1] - "Noun + に恥じない + Noun"
+        // Context: modifying a following noun
+        let sentence = "日本代表の名にはじないよう、ベストを尽くします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に恥じない");
+        assert_pattern_range(&patterns, "に恥じない", 5, 11); // 名にはじない
+    }
+
+    #[test]
+    fn test_nihajinai_standard_company() {
+        // Testing: structure.standard[0] - "Noun + に恥じない"
+        // Context: living up to the company's reputation
+        let sentence = "会社の名にはじないよう、精一杯頑張ります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に恥じない");
+        assert_pattern_range(&patterns, "に恥じない", 3, 9); // 名にはじない
+    }
+
+    #[test]
+    fn test_nihajinai_polite_name() {
+        // Testing: polite[0] - "Noun + に恥じません"
+        // Context: polite form
+        let sentence = "日本代表の名にはじませんよう、努力を続けます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に恥じない");
+        assert_pattern_range(&patterns, "に恥じない", 5, 12); // 名にはじません
+    }
+
+    #[test]
+    fn test_nihajinai_polite_modifying_noun() {
+        // Testing: polite[1] - "Noun + に恥じません + Noun"
+        // Context: polite form modifying noun
+        let sentence = "このチームの名にはじません活動を心がけます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に恥じない");
+        assert_pattern_range(&patterns, "に恥じない", 6, 13); // 名にはじません
+    }
+}

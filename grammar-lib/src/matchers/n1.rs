@@ -9273,9 +9273,67 @@ pub fn noitari() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に恥じない
+// Pattern: に恥じない (lives up to / not ashamed of)
+// Structures: Noun + に + 恥じない/恥じません
 pub fn nihajinai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches に as 助詞/格助詞/一般
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl super::Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "一般")
+        }
+    }
+
+    // Matches はじ (base=はじる, 動詞/自立, either 未然形 or 連用形)
+    #[derive(Debug)]
+    struct HajiMatcher;
+    impl super::Matcher for HajiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "はじ"
+                && token.base_form == "はじる"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.get(1).is_some_and(|p| p == "自立")
+                && (token.features.get(5).is_some_and(|f| f == "未然形")
+                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+        }
+    }
+
+    // Matches ない (助動詞, 特殊・ナイ) OR ませ (助動詞, 特殊・マス)
+    #[derive(Debug)]
+    struct NaiOrMaseMatcher;
+    impl super::Matcher for NaiOrMaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "助動詞")
+                && ((token.surface == "ない" && token.base_form == "ない")
+                    || (token.surface == "ませ" && token.base_form == "ます"))
+        }
+    }
+
+    // Matches ん (助動詞, 不変化型) for polite negative
+    #[derive(Debug)]
+    struct NMatcher;
+    impl super::Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "不変化型")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(HajiMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiOrMaseMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))),
+    ]
 }
 
 // Pattern: ずじまい (end up not doing)
