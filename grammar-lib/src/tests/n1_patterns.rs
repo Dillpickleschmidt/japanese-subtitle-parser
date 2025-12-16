@@ -3267,3 +3267,83 @@ mod wohete_tests {
         assert_pattern_range(&patterns, "を経て", 4, 9); // 期間を経て
     }
 }
+
+// ============================================================================
+// ながらに Tests
+// ============================================================================
+
+mod nagarani_tests {
+    use super::*;
+
+    // Pattern: ながらに (while being, as)
+    // Data source: grammar_points_data.json["ながらに"]
+    // Testing: structure.standard variants - limited set of words
+    //
+    // Key variants to test:
+    //   - standard[0]: Verb[stem] + ながら(に)
+    //   - standard[1]: Noun + ながら(に)
+    //   - standard[2]: Verb[stem] + ながら + の + Noun
+    //   - standard[4-5]: 生きながら(にして), 生まれながら(にして)
+    //   - standard[6-8]: 昔ながら, いつもながら, 毎回ながら
+    //   - standard[9-10]: 涙ながらに, 溜め息ながら
+
+    #[test]
+    fn test_nagarani_verb_stem_ni() {
+        let sentence = "家に居ながらにして仕事ができるから便利だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらに");
+        assert_pattern_range(&patterns, "ながらに", 2, 9); // 居ながらにして
+    }
+
+    #[test]
+    fn test_nagarani_noun() {
+        let sentence = "子供ながらにして、なぜ親がいつも喧嘩をしていたか理解していた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらに");
+        assert_pattern_range(&patterns, "ながらに", 0, 8); // 子供ながらにして
+    }
+
+    #[test]
+    fn test_nagarani_umareru() {
+        let sentence = "自由権は人が生まれながらに持っている権利の一つだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらに");
+        assert_pattern_range(&patterns, "ながらに", 5, 13); // が生まれながらに
+    }
+
+    #[test]
+    fn test_nagarani_namida() {
+        let sentence = "彼女は涙ながらに彼を見送った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらに");
+        assert_pattern_range(&patterns, "ながらに", 3, 8); // 涙ながらに
+    }
+
+    #[test]
+    fn test_nagarani_mukashi() {
+        let sentence = "この町には昔ながらの建物が残っている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらに");
+        assert_pattern_range(&patterns, "ながらに", 4, 10); // は昔ながらの
+    }
+
+    #[test]
+    fn test_nagarani_itsumo() {
+        let sentence = "いつもながら素晴らしい演奏でした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ながらに");
+        assert_pattern_range(&patterns, "ながらに", 0, 6); // いつもながら
+    }
+}

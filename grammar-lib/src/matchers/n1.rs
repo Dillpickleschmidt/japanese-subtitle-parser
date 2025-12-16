@@ -2500,9 +2500,136 @@ pub fn wohete() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ながらに
+// Pattern: ながらに (while being, as)
+// Structures:
+//   - Noun/Verb[stem] + ながら + に(して)
+//   - Compound adverbs: 昔ながら, 生まれながら, いつもながら + Optional(に/の)
 pub fn nagarani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for noun or verb stem before ながら (non-compound cases)
+    #[derive(Debug)]
+    struct NounOrVerbStemMatcher;
+    impl Matcher for NounOrVerbStemMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Noun
+            if token.pos.first().is_some_and(|pos| pos == "名詞") {
+                return true;
+            }
+            // Verb stem (連用形)
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+            {
+                return true;
+            }
+            // Adverb (for いつもながら case)
+            if token.pos.first().is_some_and(|pos| pos == "副詞") {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Matcher for ながら as 助詞/接続助詞
+    #[derive(Debug)]
+    struct NagaraParticleMatcher;
+    impl Matcher for NagaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ながら"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for compound adverbs ending in ながら
+    #[derive(Debug)]
+    struct NagaraCompoundMatcher;
+    impl Matcher for NagaraCompoundMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.surface.ends_with("ながら")
+        }
+    }
+
+    // Matcher for ながら: either as 助詞 or compound adverb
+    #[derive(Debug)]
+    struct NagaraMatcher;
+    impl Matcher for NagaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ながら as 助詞/接続助詞
+            if token.surface == "ながら"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            // Match compound adverbs ending in ながら
+            if token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.surface.ends_with("ながら")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Matcher for に or の particle after ながら
+    #[derive(Debug)]
+    struct NiNoParticleMatcher;
+    impl Matcher for NiNoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if !token.pos.first().is_some_and(|pos| pos == "助詞") {
+                return false;
+            }
+            // に as 副詞化 or 格助詞
+            if token.surface == "に"
+                && (token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+            {
+                return true;
+            }
+            // の as 連体化
+            if token.surface == "の" && token.pos.get(1).is_some_and(|pos| pos == "連体化") {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Matcher for して (する in て-form)
+    #[derive(Debug)]
+    struct ShiteMatcher;
+    impl Matcher for ShiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Matcher for て particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Pattern: (Noun/Verb/Adverb) + (ながら or compound) + Optional(に/の) + Optional(して)
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NagaraMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiNoParticleMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ShiteMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            TeParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: たなり・なり
