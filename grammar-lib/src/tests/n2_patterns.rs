@@ -12735,3 +12735,59 @@ mod monogaaru_tests {
         assert_pattern_range(&patterns, "ものがある", 11, 18); // ものがあります
     }
 }
+
+// Pattern: といった (such as, like)
+// Data source: grammar_points_data.json["といった"]
+// Testing: structure.standard[0] - "Noun + といった + Noun"
+//
+// Structure:
+//   - standard[0]: Noun + といった + Noun (only one structure)
+//   - No polite forms
+//
+// Meaning: "(B) such as (A)" or "(B) like (A)"
+// Expresses that (B) belongs to a general category, giving (A) as an example
+// Can be used with や/とか if there are multiple examples
+
+mod toitta_tests {
+    use super::*;
+
+    #[test]
+    fn test_toitta_single_noun() {
+        let sentence = "私の父は、ゲートボールといったスポーツが好きだそうです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といった");
+        assert_pattern_range(&patterns, "といった", 5, 19); // ゲートボールといったスポーツ
+    }
+
+    #[test]
+    fn test_toitta_japanese_sweets() {
+        let sentence = "日本では寿司といった料理が人気です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といった");
+        assert_pattern_range(&patterns, "といった", 4, 12); // 寿司といった料理
+    }
+
+    #[test]
+    fn test_toitta_multiple_examples() {
+        let sentence = "旦那は洗濯や料理といった家事は一切しません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といった");
+        assert_pattern_range(&patterns, "といった", 6, 14); // 料理といった家事
+    }
+
+    #[test]
+    fn test_toitta_pot_herbs() {
+        let sentence = "私は生姜とかパクチーといった香味野菜を使った料理が苦手です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といった");
+        assert_pattern_range(&patterns, "といった", 6, 16); // パクチーといった香味
+    }
+}

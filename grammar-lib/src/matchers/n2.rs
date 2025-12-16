@@ -8079,9 +8079,46 @@ pub fn ikinari() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(IkinariMatcher))]
 }
 
-// Pattern: といった
+// Pattern: といった (such as, like)
+// Structures: Noun + といった + Noun
 pub fn toitta() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for preceding noun
+    #[derive(Debug)]
+    struct PrecedingNounMatcher;
+    impl Matcher for PrecedingNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    // Matcher for といった particle (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct ToittaMatcher;
+    impl Matcher for ToittaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "といった"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "連語")
+        }
+    }
+
+    // Matcher for following noun (the category)
+    #[derive(Debug)]
+    struct CategoryNounMatcher;
+    impl Matcher for CategoryNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "名詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(PrecedingNounMatcher)),
+        TokenMatcher::Custom(Arc::new(ToittaMatcher)),
+        TokenMatcher::Custom(Arc::new(CategoryNounMatcher)),
+    ]
 }
 
 // Pattern: を込めて
