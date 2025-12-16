@@ -2057,9 +2057,39 @@ pub fn monowo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: であれ
+// Pattern: であれ (even if)
+// Structures: Noun/な-Adjective/WH-Word + であれ
 pub fn deare() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match で (auxiliary verb だ in 連用形)
+    #[derive(Debug)]
+    struct DeAuxiliaryMatcher;
+    impl Matcher for DeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+        }
+    }
+
+    // Match あれ (auxiliary verb ある in 命令ｅ form)
+    #[derive(Debug)]
+    struct AreImperativeMatcher;
+    impl Matcher for AreImperativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あれ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ある"
+                && token.features.get(5).is_some_and(|f| f.contains("命令"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun, な-Adjective stem, or question word
+        TokenMatcher::Custom(Arc::new(DeAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(AreImperativeMatcher)),
+    ]
 }
 
 // Pattern: をおいてほかに〜ない

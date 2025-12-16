@@ -10783,13 +10783,13 @@
   {
     "pattern_name": "であれ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Functioning as an extension of である , the formal copula that is a combination of the conjunctive form of the auxiliary... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

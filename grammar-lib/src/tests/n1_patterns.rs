@@ -2322,3 +2322,72 @@ mod monowo_tests {
         assert_pattern_range(&patterns, "ものを", 9, 13); // なものを
     }
 }
+
+// ============================================================================
+// であれ Tests
+// ============================================================================
+
+mod deare_tests {
+    use super::*;
+
+    // Pattern: であれ (even if)
+    // Data source: grammar_points_data.json["であれ"]
+    // Testing: structure.standard[0] - "Noun + であれ"
+    // Testing: structure.standard[1] - "な-Adjective + であれ"
+    // Testing: structure.standard[2] - "WH-Word + であれ"
+
+    #[test]
+    fn test_deare_noun() {
+        // Testing: structure.standard[0] - Noun + であれ
+        let sentence = "子供であれ、法律は守らなくてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "であれ");
+        assert_pattern_range(&patterns, "であれ", 0, 5); // 子供であれ
+    }
+
+    #[test]
+    fn test_deare_noun_profession() {
+        // Testing: structure.standard[0] - Noun + であれ (with profession/role)
+        let sentence = "医者であれ、完璧な診断ができるとは限らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "であれ");
+        assert_pattern_range(&patterns, "であれ", 0, 5); // 医者であれ
+    }
+
+    #[test]
+    fn test_deare_wh_word() {
+        // Testing: structure.standard[2] - WH-Word + であれ
+        let sentence = "理由が何であれ、家族や友達を裏切るのはよくない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "であれ");
+        assert_pattern_range(&patterns, "であれ", 3, 7); // 何であれ
+    }
+
+    #[test]
+    fn test_deare_na_adjective() {
+        // Testing: structure.standard[1] - な-Adjective + であれ
+        let sentence = "どんなに複雑であれ、解決策は必ずある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "であれ");
+        assert_pattern_range(&patterns, "であれ", 4, 9); // 複雑であれ
+    }
+
+    #[test]
+    fn test_deare_noun_position() {
+        // Testing: structure.standard[0] - Noun + であれ (position/status)
+        let sentence = "上司であれ、間違いを犯すこともある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "であれ");
+        assert_pattern_range(&patterns, "であれ", 0, 5); // 上司であれ
+    }
+}
