@@ -11441,13 +11441,13 @@
   {
     "pattern_name": "のなんのって",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "のなんのって is a casual phrase that is used in spoken Japanese to indicate that the word before it is 'excessively (A)', o... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

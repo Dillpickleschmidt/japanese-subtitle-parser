@@ -4626,9 +4626,136 @@ pub fn nakushite_ha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: のなんのって
+// Pattern: のなんのって (extremely, so much that)
+// Structures: Verb + のなんのって, い-Adj + のなんのって, な-Adj + な + のなんのって
 pub fn nonannotte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の as any form (particle or noun)
+    #[derive(Debug)]
+    struct NoMatcher;
+    impl super::Matcher for NoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+        }
+    }
+
+    // Match な auxiliary (da copula in rentaikei form)
+    #[derive(Debug)]
+    struct NaAuxiliaryMatcher;
+    impl super::Matcher for NaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match なんの as proper noun - used after verbs
+    #[derive(Debug)]
+    struct NannoProperNounMatcher;
+    impl super::Matcher for NannoProperNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なんの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "固有名詞")
+        }
+    }
+
+    // Match ん as dependent noun (only for adjective patterns)
+    #[derive(Debug)]
+    struct NNounMatcher;
+    impl super::Matcher for NNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.base_form == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match って particle
+    #[derive(Debug)]
+    struct TteParticleMatcher;
+    impl super::Matcher for TteParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "って"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // This pattern has multiple tokenization patterns:
+    // 1. Verb[た] + の(連体化) + なんの(固有名詞) + って
+    // 2. い-Adj + の(名詞/非自立) + な(助動詞) + ん(名詞/非自立) + の(連体化) + って
+    // 3. な-Adj + な(助動詞) + の(名詞/非自立) + な(助動詞) + ん(名詞/非自立) + の(連体化) + って
+    //
+    // Strategy: Use wildcard to capture preceding context (1-3 tokens) + の + (な or なんの) + [optional ん + の] + って
+    // This allows us to match from the verb/adjective rather than just from auxiliary
+
+    // Adjective pattern: Wildcard + の(非自立) + な(助動詞) + ん(名詞) + の(連体化) + って
+
+    vec![
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 1,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NoMatcher)),                 // の (any form)
+        TokenMatcher::Custom(Arc::new(NaAuxiliaryMatcher)),       // な (auxiliary only)
+        TokenMatcher::Custom(Arc::new(NNounMatcher)),             // ん
+        TokenMatcher::Custom(Arc::new(NoMatcher)),                 // の (again)
+        TokenMatcher::Custom(Arc::new(TteParticleMatcher)),       // って
+    ]
+}
+
+// Pattern: のなんのって (extremely) - Verb variant
+// Structures: Verb[た] + のなんのって
+pub fn nonannotte_verb() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Reuse the same matchers
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    #[derive(Debug)]
+    struct NannoMatcher;
+    impl super::Matcher for NannoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なんの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "固有名詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct TteMatcher;
+    impl super::Matcher for TteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "って"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Verb pattern: Wildcard + の(連体化) + なんの(固有名詞) + って
+    vec![
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 1,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),        // の (particle, not noun)
+        TokenMatcher::Custom(Arc::new(NannoMatcher)),             // なんの (proper noun)
+        TokenMatcher::Custom(Arc::new(TteMatcher)),               // って
+    ]
 }
 
 // Pattern: にかかっている

@@ -6045,3 +6045,45 @@ mod nakushiteha_tests {
         assert_pattern_range(&patterns, "なくして(は)", 10, 17); // ことなくしては
     }
 }
+
+// ============================================================================
+// のなんのって Tests
+// ============================================================================
+
+mod nonannotte_tests {
+    use super::*;
+
+    // Pattern: のなんのって (extremely, so much that)
+    // Data source: grammar_points_data.json["のなんのって"]
+    // Testing all structure variants
+
+    #[test]
+    fn test_nonannotte_verb() {
+        let sentence = "あんな痩せているのにあの量一人で食べちゃうなんて、びっくりしたのなんのって。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなんのって");
+        assert_pattern_range(&patterns, "のなんのって", 30, 37); // たのなんのって
+    }
+
+    #[test]
+    fn test_nonannotte_i_adjective() {
+        let sentence = "名古屋の夏は暑いのなんのって、外に出た瞬間シャツが汗でびっしょりになるんだよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなんのって");
+        assert_pattern_range(&patterns, "のなんのって", 6, 14); // 暑いのなんのって
+    }
+
+    #[test]
+    fn test_nonannotte_na_adjective() {
+        let sentence = "あの建物は丈夫なのなんのって、去年あった震度７の地震までも耐えたんだよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "のなんのって");
+        assert_pattern_range(&patterns, "のなんのって", 7, 14); // なのなんのって
+    }
+}
