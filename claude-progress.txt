@@ -1,17 +1,18 @@
 ## Session 568 - 2025-12-16
 
-### Session Summary - ずくめ Complete ✓
-**Status**: Implemented ずくめ pattern successfully
-**Patterns completed**: 1 (ずくめ - N1, priority 5)
-**Total tests**: 3646 passing (4 new tests, no regressions)
-**Progress**: Seventy-ninth N1 pattern completed!
+### Session Summary - ずくめ & ずじまい Complete ✓
+**Status**: Implemented 2 N1 patterns successfully
+**Patterns completed**: 2 (ずくめ, ずじまい - both N1, priority 5)
+**Total tests**: 3650 passing (8 new tests, no regressions)
+**Progress**: Seventy-ninth and eightieth N1 patterns completed!
 
 **Session highlights**:
-- Implemented ずくめ (nothing but / all in)
-- Handles both simple noun + ずくめ and noun + ずくめ + の constructions
-- Clean tokenization: ずくめ always appears as 名詞/接尾/一般
+- Implemented ずくめ (nothing but / all in) and ずじまい (end up not doing)
+- ずくめ: Handles noun + ずくめ and noun + ずくめ + の constructions
+- ずじまい: Handles verb［ない］+ ず + じまい with both regular and する verbs
+- Classical auxiliary ず combined with conjunctive form of しまう
+- Token combiner extends ranges to include following copula (だった)
 - All structure variants tested with realistic subtitle sentences
-- Pattern ranges include full noun phrase (noun + ずくめ)
 
 ### ✓ Completed: ずくめ (nothing but / all in)
 
@@ -80,8 +81,82 @@ All tests use realistic subtitle-quality sentences from grammar_points_data.json
 ✓ All existing tests still pass (3646 total, +4 new)
 ✓ Clean git history
 
+================================================================================
+
+### ✓ Completed: ずじまい (end up not doing)
+
+**Grammar Point**: ずじまい
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structure**:
+1. Verb［ない］+ ず + じまい
+
+**Meaning**:
+- "End up not doing (A)" / "Not have done (A) in the end"
+- Combines classical auxiliary verb ず ('not') with voiced conjunctive form of しまう (じまい)
+- Expresses regret about (A) not happening
+- Often followed by だった or でした (separate from pattern)
+- For する verbs: する → せず (未然ヌ接続)
+- For regular verbs: use 未然形 + ず
+
+**Tokenization**:
+All variants tokenize as:
+- Verb (未然形 or 未然ヌ接続) + ず (助動詞) + じまい (名詞/接尾/一般)
+Examples:
+- 使わ (動詞, 未然形) + ず (助動詞, 特殊・ヌ) + じまい (名詞/接尾/一般)
+- 行か (動詞, 未然形) + ず (助動詞, 特殊・ヌ) + じまい (名詞/接尾/一般)
+- せ (動詞, 未然ヌ接続) + ず (助動詞, 特殊・ヌ) + じまい (名詞/接尾/一般) [for する verbs]
+
+**Implementation**:
+- Pattern: Verb (未然形/未然ヌ接続) + ず + じまい
+- Three custom matchers:
+  1. MizenVerbMatcher: Matches verbs in 未然形 or 未然ヌ接続
+  2. ZuAuxiliaryMatcher: Matches ず (助動詞) with base form ぬ
+  3. JimaiMatcher: Matches じまい as 名詞/接尾
+- Priority 5 for N1 construction
+- Range includes verb + ず + じまい (token combiner may extend to include だった)
+
+**Tests Written: 4 tests (all passing)**
+1. test_zujimai_verb_tsukau - 使わずじまい (14, 20) - ended up not using
+2. test_zujimai_verb_iku_datta - 行かずじまいだった (27, 36) - ended up not going (with だった)
+3. test_zujimai_verb_tsukau_denshi - 使わずじまいだった (36, 45) - ended up not using (with だった)
+4. test_zujimai_suru_verb_kokuhaku - 告白せずじまい (5, 12) - ended up not confessing (する verb)
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**:
+Pattern captures verb + ず + じまい, but token combiner extends to include following だった:
+- 使わずじまい (14, 20) - 6 characters (without だった)
+- 行かずじまいだった (27, 36) - 9 characters (includes だった via token combination)
+- 使わずじまいだった (36, 45) - 9 characters (includes だった via token combination)
+- 告白せずじまい (5, 12) - 7 characters (する verb becomes せず)
+
+**Key Notes**:
+- Classical Japanese construction using literary auxiliary ず
+- する verbs use 未然ヌ接続 form (せず, not しず)
+- Regular verbs use standard 未然形 (使わず, 行かず, etc.)
+- Token combiner automatically extends range when followed by だった/でした
+- This is expected behavior - similar to how そうだ includes both parts
+- Pattern emphasizes regret about something not happening
+- Very formal/literary register despite modern usage
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented zujimai() with 3 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in zujimai_tests module
+- feature_list.json - Updated ずじまい to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (regular verbs and する verbs)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified (including token combiner behavior)
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3650 total, +4 new from ずくめ + 4 new from ずじまい)
+✓ Clean git history
+
 **Next Priorities** (N1 patterns with priority 5, needs_implementation):
-- ずじまい - "End up not doing" pattern
 - ずにはおかない - "Cannot help but" pattern
 - ずにはすまない - "Won't get away without" pattern
 - それまでだ - "That's as far as it goes" pattern
