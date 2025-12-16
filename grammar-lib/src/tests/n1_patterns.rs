@@ -2743,3 +2743,47 @@ mod nami_tests {
         assert_pattern_range(&patterns, "並み", 9, 13); // プロ並み
     }
 }
+
+#[cfg(test)]
+mod kososure_nai_tests {
+    use super::*;
+
+    // Pattern: こそすれ〜ない (certainly not B, but A)
+    // Data source: grammar_points_data.json["こそすれ〜ない"]
+    // Testing structure variants:
+    //   - standard[0]: する-Verb + こそすれ (noun + こそすれ)
+    //   - standard[1]: Verb stem + こそすれ (conjunctive form)
+    //
+    // Note: This pattern uses the classical realis form of する (すれ)
+    // The pattern emphasizes "A, but certainly not B" where B is negative
+
+    #[test]
+    fn test_kososure_suru_verb() {
+        let sentence = "このままだと日本の経済は悪化こそすれ、回復はしないだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こそすれ〜ない");
+        assert_pattern_range(&patterns, "こそすれ〜ない", 14, 18); // こそすれ
+    }
+
+    #[test]
+    fn test_kososure_verb_stem() {
+        let sentence = "あのカードは値段が上がりこそすれ、下がりはしないだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こそすれ〜ない");
+        assert_pattern_range(&patterns, "こそすれ〜ない", 12, 16); // こそすれ
+    }
+
+    #[test]
+    fn test_kososure_passive_verb() {
+        let sentence = "感謝されこそすれ、文句を言われる筋合いはない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こそすれ〜ない");
+        assert_pattern_range(&patterns, "こそすれ〜ない", 4, 8); // こそすれ
+    }
+}

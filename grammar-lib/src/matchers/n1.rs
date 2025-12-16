@@ -3231,9 +3231,43 @@ pub fn tomoarou() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: こそすれ〜ない
+// Pattern: こそすれ〜ない (certainly not B, but A)
+// Structures: Noun/Verb + こそ + すれ
+// Note: Classical realis form of する, but tokenizes as すれる (verb, 連用形)
 pub fn kososure_u301c_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match こそ particle
+    #[derive(Debug)]
+    struct KosoMatcher;
+    impl super::Matcher for KosoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こそ"
+                && token.base_form == "こそ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match すれ (tokenized as すれる verb in 連用形)
+    #[derive(Debug)]
+    struct SureMatcher;
+    impl super::Matcher for SureMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "すれ"
+                && token.base_form == "すれる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f.contains("連用形"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KosoMatcher)),
+        TokenMatcher::Custom(Arc::new(SureMatcher)),
+    ]
 }
 
 // Pattern: 並み (on par with, as good as)
