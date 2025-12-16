@@ -6346,6 +6346,14 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    Toiu1 {
+        name: "という1",
+        matcher_fn: crate::matchers::n1::toiu1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     MamaNi {
         name: "まま(に)",
         matcher_fn: crate::matchers::n1::mama_ni,

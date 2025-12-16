@@ -5081,3 +5081,58 @@ mod wofumaete_tests {
         assert_pattern_range(&patterns, "を踏まえて", 7, 12); // をふまえて
     }
 }
+
+// ============================================================================
+// という1 Tests (Noun + という + Noun - same noun repeated for emphasis)
+// ============================================================================
+
+mod toiu1_tests {
+    use super::*;
+
+    // Pattern: という1 (every single A)
+    // Data source: grammar_points_data.json["という1"]
+    // Testing: structure.standard[0] - "Noun (A) + という + Noun (A)"
+    //
+    // This pattern emphasizes "every single (A)" by repeating the same noun
+    // Example: 床という床 = "every single floor"
+
+    #[test]
+    fn test_toiu1_floor() {
+        // From grammar data: 床という床 = "every single floor"
+        let sentence = "空き家に入ったら床という床が全てゴミに覆われていたのでびっくりした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    #[test]
+    fn test_toiu1_pole() {
+        // From grammar data: 電柱という電柱 = "every single telephone pole"
+        let sentence = "この街の電柱という電柱に広告の張り紙が沢山貼られてあった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    #[test]
+    fn test_toiu1_road() {
+        // From grammar data: 道という道 = "every single road"
+        let sentence = "サミットの近くの道という道は閉鎖されている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    #[test]
+    fn test_toiu1_today() {
+        // Abstract expression: 今日という今日 = "today of all days"
+        let sentence = "今日という今日は絶対あいつを許さない！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+}

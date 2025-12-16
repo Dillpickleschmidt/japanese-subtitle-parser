@@ -23,6 +23,13 @@ pub fn toiu() -> Vec<TokenMatcher> {
     ]
 }
 
+// Pattern: という1 (every single A)
+// Structures: Noun (A) + という + Noun (A) - same noun repeated
+// Meaning: "every single (A)" / "(A) of all (A)s"
+pub fn toiu1() -> Vec<TokenMatcher> {
+    vec![]  // TODO: Implement - needs custom logic to check if nouns are identical
+}
+
 // Match まま (unchanged state noun)
 fn mama_matcher() -> TokenMatcher {
     #[derive(Debug)]
