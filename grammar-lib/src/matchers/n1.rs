@@ -6320,9 +6320,49 @@ pub fn nihajinai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ずじまい
+// Pattern: ずじまい (end up not doing)
+// Structures: Verb［ない］+ ず + じまい
 pub fn zujimai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct ZuAuxiliaryMatcher;
+    impl super::Matcher for ZuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct JimaiMatcher;
+    impl super::Matcher for JimaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "じまい"
+                && token.base_form == "じまい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match verb in 未然形 or 未然ヌ接続 (for する verbs)
+    #[derive(Debug)]
+    struct MizenVerbMatcher;
+    impl super::Matcher for MizenVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| {
+                    form == "未然形" || form == "未然ヌ接続"
+                })
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(MizenVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(JimaiMatcher)),
+    ]
 }
 
 // Pattern: に言わせれば・に言わせると・に言わせたら

@@ -6767,3 +6767,54 @@ mod zukume_tests {
         assert_pattern_range(&patterns, "ずくめ", 4, 8); // 黒ずくめ
     }
 }
+
+// Pattern: ずじまい (end up not doing)
+// Data source: grammar_points_data.json["ずじまい"]
+// Testing structure variant with print_debug
+mod zujimai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Verb［ない］+ ず + じまい"
+    #[test]
+    fn test_zujimai_verb_tsukau() {
+        let sentence = "マウンテンバイクを買ったが、使わずじまいで売ってしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずじまい");
+        assert_pattern_range(&patterns, "ずじまい", 14, 20); // 使わずじまい
+    }
+
+    // Testing: structure.standard[0] - with だった ending (token combiner extends range)
+    #[test]
+    fn test_zujimai_verb_iku_datta() {
+        let sentence = "コンサートのチケットを買ったが、色々とやることがあって行かずじまいだった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずじまい");
+        assert_pattern_range(&patterns, "ずじまい", 27, 36); // 行かずじまいだった (includes copula)
+    }
+
+    // Testing: structure.standard[0] - longer sentence with だった
+    #[test]
+    fn test_zujimai_verb_tsukau_denshi() {
+        let sentence = "日本で使うために電子辞書を持っていったが、持ち運ぶのが面倒だったから結局使わずじまいだった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずじまい");
+        assert_pattern_range(&patterns, "ずじまい", 36, 45); // 使わずじまいだった (includes copula)
+    }
+
+    // Testing: structure.standard[0] - with する verb (becomes せず)
+    #[test]
+    fn test_zujimai_suru_verb_kokuhaku() {
+        let sentence = "好きな子に告白せずじまいで、高校を卒業してしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずじまい");
+        assert_pattern_range(&patterns, "ずじまい", 5, 12); // 告白せずじまい
+    }
+}
