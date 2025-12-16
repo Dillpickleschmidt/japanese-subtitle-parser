@@ -1,18 +1,20 @@
 ## Session 488 - 2025-12-15
 
-### Session Summary - Two N2 Patterns Complete ✓
-**Status**: Successfully implemented のではないだろうか and 気 patterns
-**Patterns completed**: 2 (both N2, priority 4)
-**Total tests**: 3226 passing, 1 ignored (added 9 new tests)
+### Session Summary - Three N2 Patterns Complete ✓
+**Status**: Successfully implemented のではないだろうか, 気, and ものだから patterns
+**Patterns completed**: 3 (all N2, priority 4)
+**Total tests**: 3230 passing, 1 ignored (added 13 new tests)
 
 **Session highlights**:
 - Implemented のではないだろうか (I think, isn't it?, don't you think?) - 6 tests
 - Implemented 気 (feeling, spirit, motivation to do) - 3 tests
+- Implemented ものだから (because, the reason is) - 4 tests
 - のではないだろうか: Complex 8-token pattern with multiple optional components
 - 気: Simple 2-token pattern (Verb + 気)
-- Handles all verb/adjective/noun structure variants for のではないだろうか
+- ものだから: 4-token pattern with optional components (もの/もん, だ/で, から)
+- Handles all verb/adjective/noun structure variants
 - Supports both standard (だろう) and polite (でしょう) forms
-- Supports casual variants (ん instead of の, じゃ instead of では)
+- Supports casual/abbreviated variants (ん/じゃ, もん/もので/もんで)
 - Key learning: Use token.pos for POS checks, token.features.get(5) for conjugation forms
 - All tests passing with proper range assertions
 - No regressions in test suite
@@ -112,6 +114,54 @@ All tests use realistic, subtitle-quality sentences and include proper range ass
 - `grammar-lib/src/matchers/n2.rs` - Implemented ki() function (30 lines with 2 custom matchers)
 - `grammar-lib/src/tests/n2_patterns.rs` - Added 3 comprehensive tests
 - `feature_list.json` - Updated 気 to complete status
+
+---
+
+### ✓ Completed: ものだから (because, the reason is)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb + ものだから/もので/もんで/もんだから
+- い-Adjective + ものだから/もので/もんで/もんだから
+- な-Adjective + な + ものだから/もので/もんで/もんだから
+- Noun + な + ものだから/もので/もんで/もんだから
+
+**Implementation details**:
+Pattern uses 4 token matchers with optional components:
+1. Optional な (copula, 体言接続) for な-adjectives/nouns
+2. もの or もん (名詞/非自立/一般) - casual abbreviation
+3. だ (基本形) or で (連用形) - both 助動詞, base=だ
+4. Optional から (助詞/接続助詞) - only after だ, not after で
+
+**Abbreviated forms**:
+- ものだから → もので (conjunctive form, で indicates something follows)
+- ものだから → もんで (casual version of もので)
+- ものだから → もんだから (casual version of ものだから)
+
+**Grammar meaning**:
+Strong explanatory phrase used when giving an excuse or explaining reasoning. Emphasizes that situation (A) led to speaker doing (B). More emphatic than plain から. Common translations:
+- "because (A)"
+- "the reason is (A)"
+- "it's that (A)"
+
+**Tests created**: 4 tests
+1. `test_monodakara_verb` - 今仕事をしているものだから (verb, range 8-13)
+2. `test_monode_verb` - 娘の発表会があるもので (verb, conjunctive, range 8-11)
+3. `test_monde_i_adj` - 減ってきているもんで (い-adj + て + いる, casual, range 19-22)
+4. `test_monodakara_na_adj` - 苦手なものだから (な-adj + な, range 6-12)
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented monodakara() function (58 lines with 4 custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 4 comprehensive tests
+- `feature_list.json` - Updated ものだから to complete status
+
+**Related pattern**:
+ものですから is the polite version (uses です instead of だ) and is tracked separately in feature_list.json.
 
 ---
 
