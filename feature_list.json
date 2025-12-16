@@ -11623,13 +11623,13 @@
   {
     "pattern_name": "がてら",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "がてら is a neologism that is used in the same way as an adverbial particle in modern Japanese, and will connect to the ... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

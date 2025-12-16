@@ -5631,3 +5631,68 @@ mod shidaidesu_tests {
         assert_pattern_range(&patterns, "次第です", 54, 58); // 次第です
     }
 }
+
+// ============================================================================
+// がてら Tests
+// ============================================================================
+
+mod gatera_tests {
+    use super::*;
+
+    // Pattern: がてら (while doing, on the occasion of)
+    // Data source: grammar_points_data.json["がてら"]
+    // Testing: structure.standard[0] - "Verb[stem] + がてら"
+    // Testing: structure.standard[1] - "Noun + がてら"
+    //
+    // Meaning: "While (A), (B)" / "On the occasion of (A), (B)"
+    // Unlike ながら, focuses on (A) being a good opportunity to do (B)
+    // Formal register
+
+    #[test]
+    fn test_gatera_verb_stem_pick_up() {
+        // Testing structure: Verb[stem] + がてら
+        // From example: 弟を駅から迎えがてらに、今夜の夕飯の買い物をしに行く
+        let sentence = "弟を駅から迎えがてらに、今夜の夕飯の買い物をしに行く。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がてら");
+        assert_pattern_range(&patterns, "がてら", 5, 10); // 迎えがてら
+    }
+
+    #[test]
+    fn test_gatera_verb_stem_visit() {
+        // Testing structure: Verb[stem] + がてら
+        // From example: 友達の家に行きがてら、近くの神社にお参りに行った
+        let sentence = "友達の家に行きがてら、近くの神社にお参りに行った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がてら");
+        assert_pattern_range(&patterns, "がてら", 5, 10); // 行きがてら
+    }
+
+    #[test]
+    fn test_gatera_noun_dog_walk() {
+        // Testing structure: Noun + がてら
+        // From example: ワンちゃんの散歩がてらに、ペットショップにいってくる
+        let sentence = "ワンちゃんの散歩がてらに、ペットショップにいってくる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がてら");
+        assert_pattern_range(&patterns, "がてら", 6, 11); // 散歩がてら
+    }
+
+    #[test]
+    fn test_gatera_noun_exercise() {
+        // Testing structure: Noun + がてら
+        // From example: 運動がてらに会社まで自転車で行くことにした
+        let sentence = "運動がてらに会社まで自転車で行くことにした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がてら");
+        assert_pattern_range(&patterns, "がてら", 0, 5); // 運動がてら
+    }
+}

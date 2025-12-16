@@ -7165,7 +7165,7 @@ declare_patterns! {
     Gatera {
         name: "がてら",
         matcher_fn: crate::matchers::n1::gatera,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

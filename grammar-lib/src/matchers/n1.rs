@@ -4613,9 +4613,38 @@ pub fn dani_shinai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: がてら
+// Pattern: がてら (while doing, on the occasion of)
+// Structures: Verb[stem] + がてら, Noun + がてら
 pub fn gatera() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches が particle (格助詞)
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matches てら (tokenized as verb, base=てる, 未然形)
+    #[derive(Debug)]
+    struct TeraMatcher;
+    impl Matcher for TeraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "てら"
+                && token.base_form == "てる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb or Noun
+        TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TeraMatcher)),
+    ]
 }
 
 // Pattern: んがため(に)
