@@ -1,3 +1,108 @@
+## Session 520 - 2025-12-16
+
+### Session Summary - だの Pattern Complete ✓
+**Status**: Successfully implemented だの pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3438 passing, 1 ignored (added 5 new tests)
+**Progress**: Thirty-ninth N1 pattern completed!
+
+**Session highlights**:
+- Implemented だの pattern (things like, and whatnot - listing particle)
+- Pattern handles two tokenization variants: single token だの and split だ + の
+- Structure: A + だの + B + だの (requires at least two occurrences)
+- Can follow verbs, adjectives, nouns, or quotations
+- All 5 tests passing with proper range assertions
+- No regressions in test suite (3438 tests total)
+
+### ✓ Completed: だの (things like, and whatnot)
+
+**Grammar Point**: だの
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+- Verb + だの (e.g., やめるだの)
+- い-Adjective + だの (e.g., 汚いだの)
+- Noun + だの (e.g., 揚げ物だの)
+- Quotation + だの (e.g., 「嫌」だの)
+- Pattern requires at least two だの occurrences in same sentence
+
+**Implementation**:
+- Two patterns: `dano` (single token) and `dano_split` (two tokens)
+- だの tokenizes as:
+  1. Single token: だの (助詞/並立助詞) - most common
+  2. Two tokens: だ (助動詞) + の (名詞/非自立/一般) - after adjectives/nouns
+- Both patterns detect just the だの marker itself (2-3 characters)
+- Custom matchers verify proper POS tags for each tokenization variant
+
+**Tests Written: 5 tests**
+1. `test_dano_verbs` - やめるだの...手伝わないだの (verb + だの, both single tokens)
+2. `test_dano_i_adjectives` - 汚いだの...危ないだの (single token + split token)
+3. `test_dano_nouns` - 揚げ物だの...弁当だの (single token + split token)
+4. `test_dano_nandano` - 大嫌いだの...嫌いだの (single token + split token)
+5. `test_dano_quotations` - 「嫌」だの...「大変」だの (both single tokens)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures だの marker (2 chars) or だ + の (2 chars):
+- だの (single): chars 8-10, 18-20 (verbs test)
+- だの (single): chars 7-9 (adjectives test)
+- だの_split: chars 12-14 (adjectives test - だ + の)
+- だの (single): chars 3-5 (nouns test)
+- だの_split: chars 11-13 (nouns test - だ + の)
+
+**Key Notes**:
+- Lists at least two examples using だの after each item
+- Often lists opposites or things sharing same negative trait
+- Expresses frustration or boredom with items in that category
+- Historically: auxiliary verb だ + case-marking particle の
+- Modern usage: standalone adverbial particle (並立助詞)
+- Similar to など and とか but more emphatic/negative
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented dano() and dano_split() matchers
+- `grammar-lib/src/patterns.rs` - Added both Dano and DanoSplit patterns
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 tests in dano_tests module
+- `feature_list.json` - Updated だの status to complete
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (だの from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found dano() stub in n1.rs)
+7. ✓ Wrote all 5 tests first with print_debug()
+8. ✓ Analyzed tokenization output - discovered two tokenization variants
+9. ✓ Implemented TWO matchers (single token and split token variants)
+10. ✓ Verified all tests pass
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Verified no regressions (3438 tests passing)
+13. ✓ Updated feature_list.json
+14. ✓ Committed changes
+15. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (verbs, adjectives, nouns, quotations)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- べく - "In order to" pattern, classical auxiliary
+- ところを - "At a time when" pattern, detectable
+- にして② - "And also" pattern, detectable
+- つ〜つ - Classical verb pattern
+- であれ〜であれ - "Whether A or B" pattern
+- たら最後 - "Once A, definitely B" pattern
+- いかなる - "What kind of, any" pattern
+- い-Adj[く] + もなんともない - "Not (A) or anything" pattern
+
+---
+
 ## Session 519 - 2025-12-16
 
 ### Session Summary - にしてみれば Pattern Complete ✓
