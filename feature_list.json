@@ -9425,13 +9425,13 @@
   {
     "pattern_name": "のではないだろうか",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "のではないだろうか is a fairly long grammar pattern in Japanese that is used when one wants to express their opinion indirectl... [7 std, 7 pol]",
     "priority": 4,
     "skip_reason": null

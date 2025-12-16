@@ -11443,9 +11443,67 @@ mod toka_tests {
 //   Polite:
 //   - polite[0-3]: Same as standard but with でしょうか instead of だろうか
 
-// TODO: のではないだろうか pattern tests
-// Pattern is complex and needs further investigation into token.pos vs token.features usage
-// Tests were written but matcher implementation incomplete
+// Testing all structure variants
+
+#[test]
+fn test_nodehanaidarouka_verb_standard() {
+    let sentence = "先輩は疲れているのではないだろうか";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "のではないだろうか");
+    assert_pattern_range(&patterns, "のではないだろうか", 8, 17);
+}
+
+#[test]
+fn test_nodehanaidarouka_i_adj_standard() {
+    let sentence = "彼女は忙しいのではないだろうか";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "のではないだろうか");
+    assert_pattern_range(&patterns, "のではないだろうか", 6, 15);
+}
+
+#[test]
+fn test_nodehanaidarouka_noun_standard() {
+    let sentence = "あの人は犯人なのではないだろうか";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "のではないだろうか");
+    assert_pattern_range(&patterns, "のではないだろうか", 6, 16);
+}
+
+#[test]
+fn test_nodehanaidarouka_na_adj_standard() {
+    let sentence = "長谷川さんは田中さんのことが好きなのではないだろうか";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "のではないだろうか");
+    assert_pattern_range(&patterns, "のではないだろうか", 16, 26);
+}
+
+#[test]
+fn test_nodehanaidarouka_verb_polite() {
+    let sentence = "彼は成功するのではないでしょうか";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "のではないだろうか");
+    assert_pattern_range(&patterns, "のではないだろうか", 6, 16);
+}
+
+#[test]
+fn test_nodehanaidarouka_verb_casual_n() {
+    let sentence = "息子がおもちゃを欲しがっているんじゃないだろうか";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    assert_has_pattern(&patterns, "のではないだろうか");
+    assert_pattern_range(&patterns, "のではないだろうか", 15, 24);
+}
 
 // Pattern: て当然だ (natural/a matter of course)
 // Data source: grammar_points_data.json["て当然だ"]
