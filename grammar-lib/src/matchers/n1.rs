@@ -3605,9 +3605,65 @@ pub fn womonotomosezu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: には当たらない
+// Pattern: には当たらない (not worth doing, no need to)
+// Structures: Verb + に(は) + あたらない/あたりません
 pub fn nihaataranai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for は particle
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for あたる verb in 未然形 (for ない)
+    #[derive(Debug)]
+    struct AtaraMizenMatcher;
+    impl Matcher for AtaraMizenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "あたる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Matcher for ない auxiliary (must follow あたら)
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match: Verb (dictionary form) + に + (は optional) + あたら + ない
+    vec![
+        TokenMatcher::Verb {
+            conjugation_form: None, // Dictionary form
+            base_form: None,
+        },
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(AtaraMizenMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: ものと思う

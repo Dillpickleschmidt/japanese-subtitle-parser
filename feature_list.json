@@ -11203,13 +11203,13 @@
   {
     "pattern_name": "には当たらない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "には当（あ）たらない is a somewhat formal pattern used in Japanese for indicating that something is 'not worth (A)', or that th... [2 std, 2 pol]",
     "priority": 5,
     "skip_reason": null

@@ -6909,7 +6909,7 @@ declare_patterns! {
     Nihaataranai {
         name: "には当たらない",
         matcher_fn: crate::matchers::n1::nihaataranai,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
