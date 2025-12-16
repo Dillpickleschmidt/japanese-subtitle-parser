@@ -9635,13 +9635,13 @@
   {
     "pattern_name": "ものがある",
     "jlpt_level": "n2",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ものがある is an interesting grammar structure in Japanese that is used to declare that something has a particular trait o... [3 std, 3 pol]",
     "priority": 4,
     "skip_reason": null

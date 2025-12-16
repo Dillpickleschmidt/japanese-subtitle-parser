@@ -12661,3 +12661,77 @@ mod monodesukara_tests {
         assert_pattern_range(&patterns, "ものですから・もので", 8, 14); // もんですから
     }
 }
+
+// Pattern: ものがある (I feel strongly that, there is something ~ about)
+// Data source: grammar_points_data.json["ものがある"]
+// Testing structure variants:
+//   - standard[0]: Verb + ものがある
+//   - standard[1]: い-Adjective + ものがある
+//   - standard[2]: な-Adjective + な + ものがある
+//   - polite[0-2]: Same + あります
+//
+// Note: Expresses speaker's subjective feeling that something has a particular trait
+
+mod monogaaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_monogaaru_verb() {
+        let sentence = "この映画は人の心を動かすものがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものがある");
+        assert_pattern_range(&patterns, "ものがある", 12, 17); // ものがある
+    }
+
+    #[test]
+    fn test_monogaaru_verb_negative() {
+        let sentence = "彼の話には納得いかないものがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものがある");
+        assert_pattern_range(&patterns, "ものがある", 11, 16); // ものがある
+    }
+
+    #[test]
+    fn test_monogaaru_i_adj() {
+        let sentence = "自分が好きなことを仕事にできるのは、嬉しいものがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものがある");
+        assert_pattern_range(&patterns, "ものがある", 21, 26); // ものがある
+    }
+
+    #[test]
+    fn test_monogaaru_na_adj() {
+        let sentence = "子供だけで川で遊ばせるのは、危険なものがある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものがある");
+        assert_pattern_range(&patterns, "ものがある", 16, 22); // なものがある
+    }
+
+    #[test]
+    fn test_monogaaru_polite() {
+        let sentence = "彼の運動神経の良さは目を見張るものがあります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものがある");
+        assert_pattern_range(&patterns, "ものがある", 15, 22); // ものがあります
+    }
+
+    #[test]
+    fn test_monogaaru_i_adj_polite() {
+        let sentence = "彼女の努力には感心するものがあります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものがある");
+        assert_pattern_range(&patterns, "ものがある", 11, 18); // ものがあります
+    }
+}

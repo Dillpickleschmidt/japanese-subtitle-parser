@@ -7583,9 +7583,79 @@ pub fn monodesukara_u30fb_monode() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ものがある
+// Pattern: ものがある (I feel strongly that, there is something ~ about)
+// Structures:
+//   - Verb + ものがある/あります
+//   - い-Adjective + ものがある/あります
+//   - な-Adjective + な + ものがある/あります
+// Expresses speaker's subjective feeling that something has a particular trait
 pub fn monogaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Optional な (copula, 体言接続) for な-adjectives
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl super::Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // もの (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl super::Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // が (助詞/格助詞)
+    #[derive(Debug)]
+    struct GaMatcher;
+    impl super::Matcher for GaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // ある (動詞/自立/五段・ラ行, base=ある)
+    // Can be in 基本形 (ある) or 連用形 (あり) for polite forms
+    #[derive(Debug)]
+    struct AruMatcher;
+    impl super::Matcher for AruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.get(1).is_some_and(|p| p == "自立")
+        }
+    }
+
+    // Optional ます (助動詞, base=ます, 基本形)
+    #[derive(Debug)]
+    struct MasuMatcher;
+    impl super::Matcher for MasuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ます"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "ます"
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaCopulaMatcher)))),
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(GaMatcher)),
+        TokenMatcher::Custom(Arc::new(AruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+    ]
 }
 
 // Pattern: 傾向がある (tendency/trend)
