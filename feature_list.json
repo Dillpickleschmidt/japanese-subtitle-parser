@@ -11385,13 +11385,13 @@
   {
     "pattern_name": "まま(に)1",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Unlike the ままに that is partnered with passive structures like れる and られる 'to do as one is told', when paired with ver... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

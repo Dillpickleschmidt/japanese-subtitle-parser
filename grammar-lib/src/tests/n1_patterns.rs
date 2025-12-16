@@ -5849,3 +5849,74 @@ mod gurainara_tests {
         assert_pattern_range(&patterns, "ぐらいなら", 7, 14); // 直すくらいなら
     }
 }
+
+// ============================================================================
+// まま(に)1 Tests
+// ============================================================================
+
+mod mamani1_tests {
+    use super::*;
+
+    // Pattern: まま(に)1 (as one wishes, on a whim)
+    // Data source: grammar_points_data.json["まま(に)1"]
+    // Testing: structure.standard[0] - "Verb[dictionary] + (が) + まま(に)"
+    //
+    // Note: This is DIFFERENT from the basic まま(に) pattern:
+    // - まま(に): Verb[た/ない] + まま = "left in the state of"
+    // - まま(に)1: Verb[dictionary] + まま(に) = "as one wishes/desires"
+    //
+    // Common expressions:
+    // - 思うままに = as one thinks/wishes
+    // - 思いつくままに = whatever comes to mind
+    // - 気の向くままに = as one's interest is inclined
+    // - 足の向くままに = wherever one's feet take them
+    // - 欲するままに = as one desires
+
+    #[test]
+    fn test_mamani1_omou_mamani() {
+        // Testing: Verb[dictionary] + ままに (思う + ままに)
+        // Example: 自分が思うままに使えばいいよ
+        let sentence = "これはもうあなたのものだから、自分が思うままに使えばいいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まま(に)1");
+        assert_pattern_range(&patterns, "まま(に)1", 18, 23); // 思うままに
+    }
+
+    #[test]
+    fn test_mamani1_muku_mamani() {
+        // Testing: Verb[dictionary] + ままに (向く + ままに)
+        // Example: 足の向くままに旅をする
+        let sentence = "僕はしばらくの間一人で、足の向くままに旅をする。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まま(に)1");
+        assert_pattern_range(&patterns, "まま(に)1", 14, 19); // 向くままに
+    }
+
+    #[test]
+    fn test_mamani1_omoitsuku_mamani() {
+        // Testing: Verb[dictionary] + ままに (思いつく + ままに)
+        // Example: 思いつくままに書いてくれればいい
+        let sentence = "文法とかは気にしなくていい！ただ思いつくままに書いてくれればいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まま(に)1");
+        assert_pattern_range(&patterns, "まま(に)1", 16, 23); // 思いつくままに
+    }
+
+    #[test]
+    fn test_mamani1_with_ga_particle() {
+        // Testing: Verb[dictionary] + が + ままに (optional が particle)
+        // Example: 心が向くままに生きる
+        let sentence = "心が向くままに生きるのが一番だと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まま(に)1");
+        assert_pattern_range(&patterns, "まま(に)1", 2, 7); // 向くままに (が is optional, not included in range)
+    }
+}

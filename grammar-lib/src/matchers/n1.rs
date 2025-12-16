@@ -205,6 +205,38 @@ pub fn mama_ni_noun() -> Vec<TokenMatcher> {
     ]
 }
 
+// Pattern: まま(に)1 (as one wishes, on a whim)
+// Structure: Verb[dictionary form] + (が) + まま(に)
+// Meaning: "to do as one wishes/desires", "on a whim"
+// Different from basic まま(に) which uses past/negative forms and means "left unchanged"
+pub fn mama_ni_1() -> Vec<TokenMatcher> {
+    #[derive(Debug)]
+    struct DictionaryFormVerbMatcher;
+    impl Matcher for DictionaryFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryFormVerbMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaParticleMatcher)))),
+        mama_matcher(),
+        TokenMatcher::Optional(Box::new(ni_particle_matcher())),
+    ]
+}
+
 // Pattern: に至るまで (everything from A to B, up to and including)
 // Structures: Noun B + に + 至る + まで (+ の + Noun C)
 // Note: Often preceded by "Noun A + から/より" but we match the core pattern only

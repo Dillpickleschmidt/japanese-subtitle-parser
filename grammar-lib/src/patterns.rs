@@ -6402,6 +6402,14 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    MamaNi1 {
+        name: "まま(に)1",
+        matcher_fn: crate::matchers::n1::mama_ni_1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     Niitarumade {
         name: "に至るまで",
         matcher_fn: crate::matchers::n1::niitarumade,
