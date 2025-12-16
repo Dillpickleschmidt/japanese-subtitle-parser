@@ -1,3 +1,111 @@
+## Session 595 - 2025-12-16
+
+### Session Summary - にもほどがある Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (にもほどがある - N1, priority 5)
+**Total tests**: 3803 passing (6 new tests, no regressions)
+**Progress**: One hundred and ninth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented にもほどがある (there is a limit to / you are too)
+- Critical expression stating something is excessive or too much
+- Handles all word types: Verb + にもほどがある, い-Adj + にもほどがある, な-Adj + にもほどがある, Noun + にもほどがある
+- Supports both standard (ある) and polite (あります) forms
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: にもほどがある (there is a limit to)
+
+**Grammar Point**: にもほどがある
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb + にもほどがある (飲み過ぎにもほどがある)
+2. い-Adjective + にも + ほどがある (図々しいにもほどがある)
+3. な-Adjective + にも + ほどがある (失礼にもほどがある)
+4. Noun + にも + ほどがある (冗談にもほどがある)
+5. Polite forms: All above + ます (失礼にもほどがあります)
+
+**Meaning**:
+- "There is a limit to (A)" / "How (A) can one be" / "You are too (A)"
+- Critical expression stating something is excessive or too much based on speaker's opinion
+- Component parts: に (particle) + も (adverbial particle) + ほど (noun: bounds/limits) + が (particle) + ある (to exist)
+- Literal: "there are bounds even within (A)" → "there is a limit to (A)"
+- Usually used critically, but can be used jokingly with positive adjectives (うまいにもほどがある)
+
+**Tokenization pattern**:
+- Preceding word (Verb, Adjective, or Noun)
+- に (助詞/格助詞/一般)
+- も (助詞/係助詞)
+- ほど (助詞/副助詞)
+- が (助詞/格助詞/一般)
+- ある or あり (動詞/自立, base=ある)
+- Optional: ます (助動詞) for polite form
+
+**Implementation**:
+Created 6 custom matchers for precise pattern matching:
+1. NiMatcher - Matches に as 助詞/格助詞
+2. MoMatcher - Matches も as 助詞/係助詞
+3. HodoMatcher - Matches ほど as 助詞/副助詞
+4. GaMatcher - Matches が as 助詞/格助詞
+5. AruMatcher - Matches ある/あり (verb, base=ある)
+6. MasuMatcher - Matches ます auxiliary (optional for polite form)
+
+Pattern matcher sequence:
+- Any (preceding word) + に + も + ほど + が + ある + Optional(ます)
+- Captures full grammatical construction from preceding word through ある/あります
+
+**Tests Written: 6 tests (all passing)**
+1. test_nimohodogaaru_verb - 過ぎにもほどがある (20, 29) - verb form
+2. test_nimohodogaaru_i_adjective - 図々しいにもほどがある (14, 25) - い-adjective
+3. test_nimohodogaaru_na_adjective - 失礼にもほどがある (17, 26) - な-adjective
+4. test_nimohodogaaru_noun - 冗談にもほどがある (16, 25) - noun form
+5. test_nimohodogaaru_positive_use - うまいにもほどがある (15, 27) - positive/joking use
+6. test_nimohodogaaru_polite - 失礼にもほどがあります (6, 17) - polite form
+
+**Character Ranges**: Pattern captures preceding word + にもほどがある:
+- 過ぎにもほどがある (20, 29) - 9 characters
+- 図々しいにもほどがある (14, 25) - 11 characters
+- 失礼にもほどがある (17, 26) - 9 characters
+- 冗談にもほどがある (16, 25) - 9 characters
+- うまいにもほどがあるだろ (15, 27) - 12 characters (includes だろ)
+- 失礼にもほどがあります (6, 17) - 11 characters
+
+**Key Notes**:
+- Pattern includes the preceding word (verb/adjective/noun) before に
+- Works with all major word types: verbs, い-adjectives, な-adjectives, nouns
+- For compound verbs (飲み過ぎ), pattern starts from the final verb component (過ぎ)
+- Despite negative critical usage in most contexts, can be used positively/jokingly (うまいにもほどがある)
+- Polite form uses あり+ます (ある conjugated to 連用形)
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nimohodogaaru() with 6 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 6 tests in nimohodogaaru_tests module
+- feature_list.json - Updated にもほどがある to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (verb, い-adj, な-adj, noun, polite form)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3797 + 6 = 3803 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- にもまして - "More than" pattern
+- まくる - Intensive action suffix
+- どうにか - "Somehow or other" adverb
+- や否や - "As soon as" pattern
+- というところ - "Approximately" pattern
+- に照らして・に照らすと - "In light of" pattern
+- とあれば - "If/when it comes to" pattern
+- ときたら - "Speaking of/when it comes to" pattern
+
+================================================================================
+
 ## Session 594 - 2025-12-16
 
 ### Session Summary - 2 N1 Patterns Complete ✓
