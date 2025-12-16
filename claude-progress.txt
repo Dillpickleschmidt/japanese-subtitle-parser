@@ -1,3 +1,118 @@
+## Session 563 - 2025-12-16
+
+### Session Summary - こととて Complete ✓
+**Status**: Implemented こととて pattern successfully
+**Patterns completed**: 1 (こととて - N1, priority 5)
+**Total tests**: 3625 passing (4 new tests, no regressions)
+**Progress**: Seventy-fifth N1 pattern completed!
+
+**Session highlights**:
+- Implemented こととて (due to / because of)
+- Classical formal expression combining こと + binding particle とて
+- Handles three structure variants: Verb+こととて, Verb+ぬ+こととて, Noun+の+こととて
+- Used Wildcard matcher with stop conditions to capture appropriate context
+- All structure variants tested with realistic subtitle sentences
+
+### ✓ Completed: こととて (due to / because of)
+
+**Grammar Point**: こととて
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb + こととて (起こったこととて - "due to it having happened")
+2. Verb[ない] + ぬ + こととて (知らぬこととて - "due to not knowing", classical negative)
+3. Noun + の + こととて (新人のこととて - "due to being a newbie")
+
+**Meaning**:
+- "Due to (A)" / "Because of (A)"
+- Classical/formal expression for presenting reasons
+- Almost exclusively used in writing in modern Japanese
+- Primarily used when asking for forgiveness
+- (A) is typically something for which negative result of (B) is obvious/expected
+
+**Etymology**:
+- こと = noun "thing"
+- とて = binding particle for presenting reasons
+- とて thought to be combination of と (case particle) + て (conjunction particle)
+- Or possibly conjunctive form of classical auxiliary verb たり
+
+**Tokenization**:
+All variants tokenize consistently as:
+- こと: 名詞/非自立/一般 (dependent noun)
+- と: 助詞/格助詞/引用 (quotative case particle)
+- て: 助詞/接続助詞 (conjunctive particle)
+
+Preceding context varies:
+- Verb patterns: Verb + た (past auxiliary) or ぬ (classical negative)
+- Noun pattern: Noun/Adverb + の (nominalizer particle)
+
+**Implementation**:
+- Pattern: [Wildcard 1-2 tokens] + こと + と + て
+- Wildcard captures 1-2 tokens before こととて to include the reason clause
+- Stop conditions prevent capturing beyond sentence boundaries:
+  - Stops at case particles (に, を, で, etc.) except の
+  - Stops at topic/binding particles (は, も)
+  - Does NOT stop at adverbs/nouns (allows patterns like "突然のこととて")
+- Custom matchers:
+  1. KotoMatcher: Matches こと (名詞/非自立)
+  2. ToParticleMatcher: Matches と (助詞/格助詞)
+  3. TeParticleMatcher: Matches て (助詞/接続助詞)
+  4. StopAtSentenceBoundary: Stop condition for wildcard expansion
+- Priority 5 for N1 formal construction
+- Range includes the reason clause + こととて
+
+**Tests Written: 4 tests (all passing)**
+1. test_kototote_verb_past - 起こったこととて (10, 18) - due to having happened
+2. test_kototote_verb_nu_negative - 知らぬこととて (9, 16) - due to not knowing
+3. test_kototote_noun_no_newbie - 新人のこととて (0, 7) - due to being a newbie
+4. test_kototote_noun_no_sudden - 突然のこととて (0, 7) - due to suddenness
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures reason clause + こととて:
+- 起こったこととて (10, 18) - 8 characters (Verb + た + こととて)
+- 知らぬこととて (9, 16) - 7 characters (Verb + ぬ + こととて)
+- 新人のこととて (0, 7) - 7 characters (Noun + の + こととて)
+- 突然のこととて (0, 7) - 7 characters (Adverb + の + こととて)
+
+**Key Implementation Notes**:
+- Initially tried TokenMatcher::Any but only captured 1 token
+- Switched to Wildcard with min:1, max:3 but captured too much context
+- Final solution: Wildcard with min:1, max:2 plus stop conditions
+- Stop conditions crucial to prevent including unrelated particles/adverbs
+- Max of 2 tokens prevents patterns like "について あまり 知らぬ" (3 tokens)
+- Allows "突然 の" (2 tokens) and "知ら ぬ" (2 tokens) correctly
+- Example stop behavior: "商品について|あまり知らぬこととて" stops at について
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented kototote() with 4 custom matchers
+- grammar-lib/src/patterns.rs - Updated Kototote priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in kototote_tests module
+- feature_list.json - Updated こととて to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (verb+た, verb+ぬ, noun+の, adverb+の)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3625 total, +4 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- さぞ - "Surely/no doubt" emphatic adverb
+- ずくめ - "Completely/solely" pattern
+- ずじまい - "End up not doing" pattern
+- ずにはおかない - "Cannot help but" pattern
+- ずにはすまない - "Cannot avoid" pattern
+- そばから - "As soon as" pattern
+- それまでだ - "That's the end" pattern
+- ただ〜のみ - "Only" emphatic pattern
+
+================================================================================
+
 ## Session 561 - 2025-12-16
 
 ### Session Summary - ぐるみで Complete ✓
