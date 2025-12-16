@@ -1,3 +1,98 @@
+## Session 579 - 2025-12-16
+
+### Session Summary - はさておき・はさておいて Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (はさておき・はさておいて - N1, priority 5)
+**Total tests**: 3710 passing (5 new tests, no regressions)
+**Progress**: Ninety-fifth N1 pattern completed!
+
+**Session highlights**:
+- Implemented はさておき・はさておいて (leaving aside, apart from)
+- Formal pattern for moving away from topic (A) to discuss something more important (B)
+- Handles both はさておき (連用形) and はさておいて (連用タ接続 + て) forms
+- Works with nouns (感想はさておき) and phrases (かどうかはさておき)
+- All structure variants tested with realistic subtitle sentences
+- Pattern correctly captures は + さておく construction
+
+### ✓ Completed: はさておき・はさておいて (leaving aside, apart from)
+
+**Grammar Point**: はさておき・はさておいて
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + はさておき (感想はさておき, ことはさておき)
+2. Phrase + かどうか + はさておき (あるかどうかはさておき)
+3. Noun + はさておいて (冗談はさておいて) - conjunctive form with て
+
+**Meaning**:
+- "Leaving aside (A)", "Apart from (A)"
+- Combination of は (adverbial particle) + さて (now, moving on) + 置き (conjunctive form of 置く - to place/leave)
+- Used when (A) is topic speaker wants to move away from to discuss something more important
+- Follows nouns or phrases ending with かどうか
+- Set expression: 冗談はさておき (jokes aside, moving on to serious business)
+
+**Tokenization patterns**:
+はさておき form:
+- は (助詞/係助詞)
+- さておき (動詞/自立/五段・カ行イ音便/連用形, base=さておく)
+
+はさておいて form:
+- は (助詞/係助詞)
+- さておい (動詞/自立/五段・カ行イ音便/連用タ接続, base=さておく)
+- て (助詞/接続助詞)
+
+**Implementation**:
+Created custom matchers:
+1. HaKakariMatcher - Matches は as 助詞/係助詞
+2. SateokiMatcher - Matches さておき or さておい (base=さておく, 連用形 or 連用タ接続)
+3. TeMatcher - Optional て particle (助詞/接続助詞)
+
+Pattern matcher sequence:
+- は + さておき + (optional て)
+- Handles both forms with single pattern declaration
+
+**Tests Written: 5 tests (all passing)**
+1. test_hasateoki_noun_kansou - 感想はさておき (6, 11)
+2. test_hasateoki_noun_sonna - ことはさておき (5, 10)
+3. test_hasateoki_kadouka_jishin - かどうかはさておき (13, 18)
+4. test_hasateoki_kadouka_kanojo - かはさておき (10, 15)
+5. test_hasateoite_joudan - 冗談はさておいて (2, 8)
+
+**Character Ranges**: Pattern captures は + さておき/さておいて:
+- 感想はさておき (6, 11) - 5 characters (は + さておき)
+- ことはさておき (5, 10) - 5 characters
+- かどうかはさておき (13, 18) - 5 characters
+- かはさておき (10, 15) - 5 characters
+- 冗談はさておいて (2, 8) - 6 characters (Noun + は + さておいて)
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented hasateoki_u30fb_hasateoite() with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in hasateoki_tests module
+- feature_list.json - Updated はさておき・はさておいて to complete status
+
+**Quality Checks**:
+✓ All structure variants tested (はさておき and はさておいて forms)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed code
+✓ All existing tests still pass (3710 total, +5 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- 折には - "On occasions when" pattern
+- とばかり（に） - "As if to say" pattern
+- わ〜わ - Repeated particle pattern for contrast
+- なりとも - "Even if just" pattern (classical)
+- に至っても - "Even when it reaches" pattern
+- を兼ねて - "Serving also as" pattern
+- に足りない - "Not worth" pattern
+- べからず - Classical prohibition pattern
+
+================================================================================
+
 ## Session 575 - 2025-12-16
 
 ### Session Summary - ～なり～なり Complete ✓
