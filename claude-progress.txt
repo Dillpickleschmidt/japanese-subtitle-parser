@@ -1,3 +1,101 @@
+## Session 515 - 2025-12-15
+
+### Session Summary - を経て Pattern Complete ✓
+**Status**: Successfully implemented を経て pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3415 passing, 1 ignored (added 4 new tests)
+**Progress**: Thirty-fourth N1 pattern completed!
+
+**Session highlights**:
+- Implemented を経て pattern (through, via, after undergoing)
+- Pattern structure: Noun + を + 経（へ）て
+- Used custom matchers for を particle, 経る verb (連用形), and て particle
+- Formal pattern used for expressing passage of time or experience
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3415 tests total)
+
+### ✓ Completed: を経て (through, via, after undergoing)
+
+**Grammar Point**: を経て
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+- Noun + を経（へ）て
+
+**Implementation**:
+- Matcher: `Noun + を(格助詞) + 経る(動詞,連用形) + て(接続助詞)`
+- Custom matchers for each component:
+  - WoParticleMatcher: を as 助詞/格助詞
+  - HeruVerbMatcher: 経る as 動詞 in 連用形
+  - TeParticleMatcher: て as 助詞/接続助詞
+- Pattern detects full grammatical construction: Noun + を + 経 + て
+
+**Tests Written: 4 tests**
+1. `test_wohete_time_period` - 約２年間の交際を経て結婚しました (dating period → marriage)
+2. `test_wohete_experience` - 日本への留学を経て、日本の文化などを学ぶ (study abroad)
+3. `test_wohete_various_experiences` - 色々な経験を経て、成長していく (various experiences)
+4. `test_wohete_long_period` - 長い試験期間を経て、ようやく合格 (long test period)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures Noun + を + 経 + て:
+- `交際を経て` (20, 25) - 5 characters
+- `留学を経て` (4, 9) - 5 characters
+- `経験を経て` (5, 10) - 5 characters
+- `期間を経て` (4, 9) - 5 characters
+
+**Key Notes**:
+- 経る means "to elapse" or "to pass" in terms of time
+- Different from 過ぎる: 経る focuses on what happened during the period, 過ぎる focuses on reaching the end
+- Used in formal contexts: biographies, introductions, formal writing
+- Emphasizes the process/experience leading up to a result
+- Literal meaning: "having undergone (A)"
+- Often followed by description of significance or result of that experience
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented wohete() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in wohete_tests module
+- `feature_list.json` - Updated を経て status to complete
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (を経て from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found wohete() stub in n1.rs)
+7. ✓ Wrote all tests first with print_debug()
+8. ✓ Analyzed tokenization output
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Verified all tests pass
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Verified no regressions (3415 tests passing)
+13. ✓ Updated feature_list.json
+14. ✓ Committed changes
+15. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (only one variant in this pattern)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- ながらに - "While being" pattern, detectable
+- たなり・なり - "Remain as is" pattern, clear structure
+- の極み - "The height of" pattern, detectable
+- にしてみれば - "From perspective of" pattern
+- だの - "Things like" pattern, listing
+- べく - "In order to" pattern, classical auxiliary
+- ところを - "At a time when" pattern, detectable
+- にして② - "And also" pattern, detectable
+
+---
+
 ## Session 514 - 2025-12-15
 
 ### Session Summary - あくまでも Pattern Complete ✓
