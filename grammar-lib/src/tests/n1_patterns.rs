@@ -6139,3 +6139,80 @@ mod nikakatteiru_tests {
         assert_pattern_range(&patterns, "にかかっている", 26, 34); // にかかっています
     }
 }
+
+// ============================================================================
+// ずとも Tests
+// ============================================================================
+
+mod zutomo_tests {
+    use super::*;
+
+    // Pattern: ずとも (even if not / don't have to)
+    // Data source: grammar_points_data.json["ずとも"]
+    // Testing: structure.standard[0] - "Verb[ない] + ず + とも"
+    //
+    // Structures to test:
+    //   - standard[0]: Verb[ない] + ず + とも
+    //   - standard[1]: Noun + ならずとも (from なる[ない])
+    //   - Exception: する → せずとも
+
+    #[test]
+    fn test_zutomo_verb_regular() {
+        let sentence = "昔は練習せずとも新しい曲を完璧に弾けたのに、今となってはどんだけ練習しても上手く弾けないんだよな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずとも");
+        assert_pattern_range(&patterns, "ずとも", 2, 8); // 練習せずとも
+    }
+
+    #[test]
+    fn test_zutomo_verb_kiku() {
+        let sentence = "あなたが今ものすごく落ち込んでいるということは聞かずとも分かりますよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずとも");
+        assert_pattern_range(&patterns, "ずとも", 23, 28); // 聞かずとも
+    }
+
+    #[test]
+    fn test_zutomo_verb_study() {
+        let sentence = "日本に留学せずとも、日本語を習得する方法はあるが、日本に行って勉強する方が楽しそうだから私は日本に留学したいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずとも");
+        assert_pattern_range(&patterns, "ずとも", 3, 9); // 留学せずとも
+    }
+
+    #[test]
+    fn test_zutomo_narazu_noun() {
+        let sentence = "専門家ならずとも、彼は政治について色々と知っている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずとも");
+        assert_pattern_range(&patterns, "ずとも", 3, 8); // ならずとも
+    }
+
+    #[test]
+    fn test_zutomo_narazu_parent() {
+        let sentence = "親ならずとも子育てが大変だということは見てわかるはずだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずとも");
+        assert_pattern_range(&patterns, "ずとも", 1, 6); // ならずとも
+    }
+
+    #[test]
+    fn test_zutomo_with_yoi() {
+        let sentence = "来週の試合の相手はあの弱いチームだから、そんなに練習せずとも良いだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ずとも");
+        assert_pattern_range(&patterns, "ずとも", 24, 30); // 練習せずとも
+    }
+}

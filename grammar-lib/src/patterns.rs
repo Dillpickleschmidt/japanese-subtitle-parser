@@ -7122,6 +7122,14 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    ZutomoSplit {
+        name: "ずとも",
+        matcher_fn: crate::matchers::n1::zutomo_split,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     Toatte {
         name: "とあって",
         matcher_fn: crate::matchers::n1::toatte,
