@@ -12494,3 +12494,50 @@ mod wazukani_tests {
     //   - 暇でしょうがない → 暇でしょう + がない
     //   - 好きでしょうがない → 好きでしょう + がない
 }
+
+// Pattern: 気 (feeling, spirit, motivation to do)
+// Data source: grammar_points_data.json["気"]
+// Testing: structure.standard[0] - "Verb + 気"
+//
+// Common patterns:
+//   - やる気 (motivation to do)
+//   - Verb + 気がする (feel like verb-ing)
+//   - Verb + 気がない (don't feel like verb-ing)
+//   - Verb + 気が出る (motivation comes about)
+
+mod ki_tests {
+    use super::*;
+
+    // NOTE: やる気 is tokenized as a single noun (名詞/一般), not Verb + 気
+    // So it won't match this pattern. The pattern only matches when 気 is a separate token.
+
+    #[test]
+    fn test_ki_ga_nai() {
+        let sentence = "勉強をする気がなくなった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "気");
+        assert_pattern_range(&patterns, "気", 3, 6); // する気
+    }
+
+    #[test]
+    fn test_ki_ga_suru() {
+        let sentence = "明日までに終わる気がしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "気");
+        assert_pattern_range(&patterns, "気", 5, 9); // 終わる気
+    }
+
+    #[test]
+    fn test_ki_ga_aru() {
+        let sentence = "本気で頑張る気がある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "気");
+        assert_pattern_range(&patterns, "気", 3, 7); // 頑張る気
+    }
+}

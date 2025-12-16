@@ -7328,9 +7328,36 @@ pub fn kotoninatteiru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 気
+// Pattern: 気 (feeling, spirit, motivation to do)
+// Structures: Verb + 気
 pub fn ki() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Verb in 基本形 (dictionary form)
+    #[derive(Debug)]
+    struct VerbDictionaryFormMatcher;
+    impl super::Matcher for VerbDictionaryFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // 気 (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct KiMatcher;
+    impl super::Matcher for KiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "気"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbDictionaryFormMatcher)),
+        TokenMatcher::Custom(Arc::new(KiMatcher)),
+    ]
 }
 
 // Pattern: げ (seeming, appearance)
