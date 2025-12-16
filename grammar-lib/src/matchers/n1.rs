@@ -3660,8 +3660,131 @@ pub fn kare_u301c_kare() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 〜に〜ない
+// Pattern: 〜に〜ない (cannot X even if one wants to)
+// Structures: Verb[る] + に + Verb[potential negative]
+//            Verb[よう] + にも + Verb[potential negative]
+//            する + に + できない
 pub fn u301c_ni_u301c_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for optional volitional う/よう
+    // Note: For godan verbs, it's う auxiliary (助動詞)
+    //       For ichidan verbs, it's よう noun suffix (名詞/接尾)
+    #[derive(Debug)]
+    struct VolitionalMatcher;
+    impl Matcher for VolitionalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Godan verbs: う auxiliary
+            if token.surface == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "う"
+            {
+                return true;
+            }
+            // Ichidan verbs: よう noun suffix
+            if token.surface == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.base_form == "よう"
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Matcher for optional も particle
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for optional verb before potential auxiliary (for ichidan verbs)
+    // Matches: 辞め (base=辞める, 未然形) that comes before られる
+    #[derive(Debug)]
+    struct OptionalVerbBeforePotentialMatcher;
+    impl Matcher for OptionalVerbBeforePotentialMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Only match verbs in 未然形 (ichidan verb stems before られる)
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+                // Should NOT be a potential form itself (not ending in える/れる/できる/られる)
+                && !token.base_form.ends_with("える")
+                && !token.base_form.ends_with("れる")
+                && token.base_form != "できる"
+                && token.base_form != "られる"
+        }
+    }
+
+    // Matcher for potential form verb in 未然形 + ない/なかった
+    // This matches:
+    // - Godan verbs: 笑え (base=笑える), 断れ (base=断れる)
+    // - Ichidan potential auxiliary: られ (base=られる)
+    // - Special: でき (base=できる) for する verbs
+    #[derive(Debug)]
+    struct PotentialNegativeMatcher;
+    impl Matcher for PotentialNegativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Matches potential verb forms (笑える, 断れる, できる, られる) in 未然形
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "自立")
+                    || token.pos.get(1).is_some_and(|pos| pos == "接尾"))
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && (token.base_form.ends_with("える")
+                    || token.base_form.ends_with("れる")
+                    || token.base_form == "できる"
+                    || token.base_form == "られる")
+        }
+    }
+
+    // Matcher for ない auxiliary (present or past)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ない"
+        }
+    }
+
+    // Matcher for optional た auxiliary (for past tense)
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // First verb (dictionary or volitional form)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(VolitionalMatcher)))),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(OptionalVerbBeforePotentialMatcher)))), // Optional verb stem (for ichidan: 辞め before られ)
+        TokenMatcher::Custom(Arc::new(PotentialNegativeMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TaMatcher)))),
+    ]
 }
 
 // Pattern: なくして(は)

@@ -7013,7 +7013,7 @@ declare_patterns! {
     U301cNiU301cNai {
         name: "〜に〜ない",
         matcher_fn: crate::matchers::n1::u301c_ni_u301c_nai,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
