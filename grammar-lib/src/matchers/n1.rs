@@ -7189,9 +7189,53 @@ pub fn aimatte() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に足りない
+// Pattern: に足りない (not worth / not sufficient)
+// Structures: Verb[基本形] + に + 足りない
 pub fn nitarinai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に particle
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match たり from たりる (足りる)
+    #[derive(Debug)]
+    struct TariMatcher;
+    impl Matcher for TariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たり"
+                && token.base_form == "たりる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ない auxiliary
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Verb {
+            conjugation_form: Some("基本形"),
+            base_form: None,
+        },
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(TariMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: べからず

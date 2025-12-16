@@ -7437,7 +7437,7 @@ declare_patterns! {
     Nitarinai {
         name: "に足りない",
         matcher_fn: crate::matchers::n1::nitarinai,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

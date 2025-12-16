@@ -8253,3 +8253,59 @@ mod tada_nomi_tests {
         assert_pattern_range(&patterns, "ただ〜のみ", 6, 10); // 進むのみ
     }
 }
+
+// ============================================================================
+// に足りない Tests
+// ============================================================================
+
+mod nitarinai_tests {
+    use super::*;
+
+    // Pattern: に足りない (not worth / not sufficient)
+    // Data source: grammar_points_data.json["に足りない"]
+    // Testing: structure.standard[0] - "Verb + に足（た）りない"
+
+    #[test]
+    fn test_nitarinai_shinjiru() {
+        // Testing: Verb[る] + に + 足りない (conspiracy theorist example)
+        let sentence = "彼は陰謀論者だから、あの人のいうことは信じるにたりない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に足りない");
+        assert_pattern_range(&patterns, "に足りない", 19, 27); // 信じるにたりない
+    }
+
+    #[test]
+    fn test_nitarinai_shinrai() {
+        // Testing: Verb[する] + に + 足りない (trust example)
+        let sentence = "彼は信頼するにたりない人だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に足りない");
+        assert_pattern_range(&patterns, "に足りない", 2, 11); // 信頼するにたりない
+    }
+
+    #[test]
+    fn test_nitarinai_uru() {
+        // Testing: Verb[る] + に + 足りない (sell example)
+        let sentence = "買取の金額が売るにたりない金額だった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に足りない");
+        assert_pattern_range(&patterns, "に足りない", 6, 13); // 売るにたりない
+    }
+
+    #[test]
+    fn test_nitarinai_toru() {
+        // Testing: 取る + に + 足りない (idiom - worthless)
+        let sentence = "周りから見ると取るにたりない、ただのゴミだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に足りない");
+        assert_pattern_range(&patterns, "に足りない", 7, 14); // 取るにたりない
+    }
+}
