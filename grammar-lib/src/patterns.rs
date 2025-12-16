@@ -6917,7 +6917,7 @@ declare_patterns! {
     Monotoomou {
         name: "ものと思う",
         matcher_fn: crate::matchers::n1::monotoomou,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

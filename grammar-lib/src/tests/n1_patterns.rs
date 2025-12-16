@@ -4961,3 +4961,61 @@ mod tono_tests {
         assert_pattern_range(&patterns, "との", 10, 14); // との指摘
     }
 }
+
+// ============================================================================
+// ものと思う Tests
+// ============================================================================
+
+mod monotoomou_tests {
+    use super::*;
+
+    // Pattern: ものと思う (believe that, have confidence that)
+    // Data source: grammar_points_data.json["ものと思う"]
+    // Testing: structure.standard[0] - "Verb + ものと思う"
+    //
+    // Other structures to test:
+    //   - standard[1]: い-Adjective + ものと思う
+    //   - standard[2]: な-Adjective + な + ものと思う
+    //   - standard[3]: Noun + な + ものと思う
+    //   - polite variants with います
+
+    #[test]
+    fn test_monotoomou_verb() {
+        let sentence = "あの人はなんでもできると自信ありげに言っていたんで、仕事ができるものとおもっていたが全然だった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものと思う");
+        assert_pattern_range(&patterns, "ものと思う", 32, 38); // ものとおもっ
+    }
+
+    #[test]
+    fn test_monotoomou_i_adjective() {
+        let sentence = "夫の部屋からものすごいキーボードの音が聞こえたから、忙しいものとおもっていたがただゲームをしていただけだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものと思う");
+        assert_pattern_range(&patterns, "ものと思う", 29, 35); // ものとおもっ
+    }
+
+    #[test]
+    fn test_monotoomou_na_adjective() {
+        let sentence = "結婚は幸せなものとおもう人は多いだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものと思う");
+        assert_pattern_range(&patterns, "ものと思う", 6, 12); // ものとおもう
+    }
+
+    #[test]
+    fn test_monotoomou_noun() {
+        let sentence = "日本で最も寒い月は１２月であるものとおもっている人が多いが、実は２月だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものと思う");
+        assert_pattern_range(&patterns, "ものと思う", 15, 21); // ものとおもっ
+    }
+}
