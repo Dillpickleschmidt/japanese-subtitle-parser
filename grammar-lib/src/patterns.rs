@@ -6933,7 +6933,7 @@ declare_patterns! {
     Yueni {
         name: "ゆえに",
         matcher_fn: crate::matchers::n1::yueni,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
@@ -7886,6 +7886,22 @@ declare_patterns! {
         name: "を機に",
         matcher_fn: crate::matchers::n1::wokini,
         priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    YueniConjunction {
+        name: "ゆえに_conjunction",
+        matcher_fn: crate::matchers::n1::yueni_conjunction,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    Yueno {
+        name: "ゆえの",
+        matcher_fn: crate::matchers::n1::yueno,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

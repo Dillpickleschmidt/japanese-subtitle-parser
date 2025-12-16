@@ -3138,9 +3138,104 @@ pub fn wofumaete() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ゆえに
+// Pattern: ゆえに (because of, due to, consequently)
+// Structures:
+//   - Noun/Adj/Verb + ゆえ + に
+//   - Noun/Adj/Verb + ゆえ + の (modifying noun)
+//   - が + ゆえに (single token, 接続詞)
 pub fn yueni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ゆえ as 名詞 (接尾 or 非自立/副詞可能)
+    #[derive(Debug)]
+    struct YueMatcher;
+    impl Matcher for YueMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ゆえ"
+                && token.base_form == "ゆえ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "接尾" || pos == "非自立"))
+        }
+    }
+
+    // Match に as 助詞/格助詞
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.base_form == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ゆえに as single token (接続詞) - used after が or at sentence start
+    #[derive(Debug)]
+    struct YueniConjunctionMatcher;
+    impl Matcher for YueniConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ゆえに"
+                && token.base_form == "ゆえに"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(YueMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+    ]
+}
+
+// Pattern: ゆえに (conjunction form - single token)
+// Used after が or at sentence start
+pub fn yueni_conjunction() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct YueniConjunctionMatcher;
+    impl Matcher for YueniConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ゆえに"
+                && token.base_form == "ゆえに"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(YueniConjunctionMatcher))]
+}
+
+// Pattern: ゆえの (modifying noun)
+pub fn yueno() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match ゆえ as 名詞
+    #[derive(Debug)]
+    struct YueMatcher;
+    impl Matcher for YueMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ゆえ"
+                && token.base_form == "ゆえ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match の as 助詞/連体化
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.base_form == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(YueMatcher)),
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+    ]
 }
 
 // Pattern: にとどまらず
