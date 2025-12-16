@@ -5920,3 +5920,73 @@ mod mamani1_tests {
         assert_pattern_range(&patterns, "まま(に)1", 2, 7); // 向くままに (が is optional, not included in range)
     }
 }
+
+// ============================================================================
+// かれ〜かれ Tests
+// ============================================================================
+
+mod kare_u301c_kare_tests {
+    use super::*;
+
+    // Pattern: かれ〜かれ (whether A or B)
+    // Data source: grammar_points_data.json["かれ〜かれ"]
+    // Testing: structure.standard[0-5] - Various い-Adjective stem + かれ pairs
+    //
+    // Structures:
+    //   - standard[0]: い-Adjective[stem] + かれ + い-Adjective[antonym stem] + かれ
+    //   - standard[1]: 遅かれ早かれ - sooner or later
+    //   - standard[2]: 多かれ少なかれ - more or less
+    //   - standard[3]: to a greater or lesser extent
+    //   - standard[4]: 良かれ悪しかれ - good or bad
+    //   - standard[5]: for better or worse
+    //
+    // Note: This pattern uses a very limited set of adjectives in set phrases
+
+    #[test]
+    fn test_kare_kare_osokare_hayakare() {
+        // Testing: 遅かれ早かれ (sooner or later)
+        // Most common fixed expression
+        let sentence = "遅かれ早かれ、このことは公になるだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かれ〜かれ");
+        assert_pattern_range(&patterns, "かれ〜かれ", 0, 6); // 遅かれ早かれ
+    }
+
+    #[test]
+    fn test_kare_kare_ookare_sukunakare() {
+        // Testing: 多かれ少なかれ (more or less)
+        // Common fixed expression
+        let sentence = "どんな人でも多かれ少なかれ悩みを抱えて生きている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かれ〜かれ");
+        assert_pattern_range(&patterns, "かれ〜かれ", 6, 13); // 多かれ少なかれ
+    }
+
+    #[test]
+    fn test_kare_kare_yokare_ashikare() {
+        // Testing: 良かれ悪しかれ (for better or worse)
+        // Note: 悪し is archaic form of 悪い
+        let sentence = "この発明は、良かれ悪しかれたくさんの人に影響を与えるだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かれ〜かれ");
+        assert_pattern_range(&patterns, "かれ〜かれ", 6, 13); // 良かれ悪しかれ
+    }
+
+    #[test]
+    fn test_kare_kare_atsukare_samukare() {
+        // Testing: 暑かれ寒かれ (whether hot or cold)
+        // Less common but valid variant
+        let sentence = "暑かれ寒かれ、脱水症状は起こりうるので水分補給はこまめにしてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かれ〜かれ");
+        assert_pattern_range(&patterns, "かれ〜かれ", 0, 6); // 暑かれ寒かれ
+    }
+}

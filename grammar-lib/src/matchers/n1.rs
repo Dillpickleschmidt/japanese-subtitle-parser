@@ -4409,9 +4409,28 @@ pub fn bekushite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: かれ〜かれ
+// Pattern: かれ〜かれ (whether A or B)
+// Structures: い-Adjective[かれ] + い-Adjective[かれ]
+// Fixed expressions: 遅かれ早かれ, 多かれ少なかれ, 良かれ悪しかれ, etc.
 pub fn kare_u301c_kare() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for かれ form (imperative e-form of い-adjective)
+    #[derive(Debug)]
+    struct KareFormMatcher;
+    impl Matcher for KareFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface.ends_with("かれ")
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "命令ｅ")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(KareFormMatcher)),
+        TokenMatcher::Custom(Arc::new(KareFormMatcher)),
+    ]
 }
 
 // Pattern: 〜に〜ない
