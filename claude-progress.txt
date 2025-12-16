@@ -1,3 +1,118 @@
+## Session 556 - 2025-12-16
+
+### Session Summary - なくして(は) Complete ✓
+**Status**: Implemented なくして(は) pattern successfully
+**Patterns completed**: 1 (なくして(は) - N1, priority 5)
+**Total tests**: 3595 passing (4 new tests, no regressions)
+**Progress**: Sixty-ninth N1 pattern completed!
+
+**Session highlights**:
+- Implemented なくして(は) (without - hypothetical expression)
+- Handles TWO different tokenization patterns:
+  1. Noun + なくし(verb) + て + は
+  2. こと + なく(adjective) + し(verb) + て + は
+- Single matcher with optional し token handles both variants elegantly
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include full construction (Noun/こと + なくしては)
+
+### ✓ Completed: なくして(は) (without - if not for A, then not B)
+
+**Grammar Point**: なくして(は)
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Noun + なくして(は)
+2. Verb + ことなくして(は)
+
+**Meaning**:
+- "If not for (A), then not (B)" / "Without (A), (B) is impossible"
+- Hypothetical expression showing (B) cannot be achieved without (A)
+- May also appear as なしには or なしでは (less formal variants)
+- The determination comes across strongly - emphasizes impossibility
+- Etymology: なく (ない adjective conjunctive form) + して (conjunction particle) + は
+
+**Tokenization**:
+
+**Pattern 1 (Noun + なくして(は))**:
+- Noun: 名詞 (any noun)
+- なくし: 動詞/自立, base=なくす, 連用形 (verb "to lose/lack")
+- て: 助詞/接続助詞
+- は: 助詞/係助詞 (optional)
+
+**Pattern 2 (Verb + ことなくして(は))**:
+- こと: 名詞/非自立/一般 (nominalizer)
+- なく: 形容詞/自立, base=ない, 連用テ接続 (adjective "not" in conjunctive form)
+- し: 動詞/自立, base=する, 連用形 (verb "to do")
+- て: 助詞/接続助詞
+- は: 助詞/係助詞 (optional)
+
+**Implementation**:
+- Single matcher handles both tokenization patterns elegantly
+- Pattern: [Any] + なくし/なく + (optional し) + て + (optional は)
+- Custom matchers:
+  - NakushiNakuMatcher: Matches both なくし (verb なくす) OR なく (adjective ない)
+  - ShiVerbMatcher: Matches し (verb する) - made optional to handle both patterns
+  - TeMatcher: Matches て (助詞/接続助詞)
+  - HaMatcher: Matches は (助詞/係助詞) - made optional as は can be omitted
+- Priority 5 for N1 formal construction
+- Pattern includes the full grammatical unit
+- Range: Noun/こと + なくして(は)
+
+**Tests Written: 4 tests (all passing)**
+1. `test_nakushiteha_noun_simple` - 彼女なくしては (2, 9) - without her
+2. `test_nakushiteha_noun_effort` - 努力なくしては (0, 7) - without effort
+3. `test_nakushiteha_verb_koto` - ことなくしては (4, 11) - without failing
+4. `test_nakushiteha_verb_koto_consider` - ことなくしては (10, 17) - without considering
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures full construction:
+- 彼女なくしては (2, 9) - 7 characters (includes noun)
+- 努力なくしては (0, 7) - 7 characters (includes noun)
+- ことなくしては (4, 11) - 7 characters (includes こと)
+- ことなくしては (10, 17) - 7 characters (includes こと)
+
+**Key Notes**:
+- Two different tokenization patterns handled by single matcher using Optional
+- なくす verb pattern: Direct attachment to nouns (彼女なくして)
+- ない adjective pattern: Used with nominalized verbs (考えることなく)
+- Both patterns mean "without" but have different grammatical structures
+- The optional し token is the key to handling both patterns
+- Pattern 1: なくし + て (no し needed - it's part of なくし)
+- Pattern 2: なく + し + て (し is separate token)
+- The (は) is optional in both patterns
+- Formal register - rarely used in casual speech
+- Always followed by negative consequence in second clause
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented nakushite_ha() with 4 custom matchers
+- `grammar-lib/src/patterns.rs` - Updated NakushiteHa priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in nakushiteha_tests module
+- `feature_list.json` - Updated なくして(は) to complete status
+
+**Quality Checks**:
+- ✓ Tests exist with proper assertions
+- ✓ All structure variants tested (noun and verb + こと forms)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (3595 total, no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- たら〜で - "Even if A then A" repeating word pattern (SKIP: requires cross-token validation)
+- のなんのって - "Extremely" pattern
+- にかかっている - "Depends on" pattern
+- ってば・ったら - Insisting on viewpoint pattern
+- ずとも - Classical negative conditional
+- とあって - Formal expression with とあって
+- でもなんでもない - "Not at all" pattern
+- ぐるみで - "Including/all over" pattern
+
+================================================================================
+
 ## Session 554 - 2025-12-16
 
 ### Session Summary - まま(に)1 Complete ✓
