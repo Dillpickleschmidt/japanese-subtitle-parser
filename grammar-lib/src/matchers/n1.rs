@@ -1781,9 +1781,64 @@ pub fn nure() -> Vec<TokenMatcher> {
     vec![super::noun_matcher(), TokenMatcher::Custom(Arc::new(MamireSuffixMatcher))]
 }
 
-// Pattern: ようが～まいが
+// Pattern: ようが～まいが (whether or not)
+// Structures: Verb[volitional] + が + Verb[まい] + が
+//
+// Main pattern: Verb + う/よう + が + (same verb) + まい + が
+// The pattern can also use antonyms with adjectives/nouns:
+// - Adj[かろう] + が + Adj[かろう] + が
+// - Noun + だろう + が + Noun + だろう + が
+//
+// For now, we implement the main verb pattern with Verb + う/よう + が + Verb + まい + が
 pub fn youga_uff5e_maiga() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match volitional auxiliary う or よう
+    #[derive(Debug)]
+    struct VolitionalAuxMatcher;
+    impl Matcher for VolitionalAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "う" || token.surface == "よう")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match が as conjunction particle
+    #[derive(Debug)]
+    struct GaConjunctionMatcher;
+    impl Matcher for GaConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match まい auxiliary verb
+    #[derive(Debug)]
+    struct MaiAuxiliaryMatcher;
+    impl Matcher for MaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まい" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        // First part: Verb(未然ウ接続) + う/よう + が
+        TokenMatcher::Any, // Verb in 未然ウ接続 form
+        TokenMatcher::Custom(Arc::new(VolitionalAuxMatcher)),
+        TokenMatcher::Custom(Arc::new(GaConjunctionMatcher)),
+        // Wildcard to allow different verb or same verb
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 3,
+            stop_conditions: vec![],
+        },
+        // Second part: Verb(基本形) + まい + が
+        TokenMatcher::Any, // Verb in dictionary form
+        TokenMatcher::Custom(Arc::new(MaiAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(GaConjunctionMatcher)),
+    ]
 }
 
 // Pattern: からする

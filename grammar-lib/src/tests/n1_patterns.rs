@@ -1918,3 +1918,66 @@ mod mamire_tests {
         assert_pattern_range(&patterns, "塗れ", 3, 8); // 借金まみれ
     }
 }
+
+// ============================================================================
+// ようが～まいが Tests
+// ============================================================================
+
+mod youga_maiga_tests {
+    use super::*;
+
+    // Pattern: ようが～まいが (whether or not)
+    // Data source: grammar_points_data.json["ようが～まいが"]
+    // Testing: structure.standard - Verb[volitional] + が + Verb[まい] + が
+    //
+    // Main structure implemented: Verb[う/よう] + が + Verb[まい] + が
+    //
+    // TODO: Additional variants not yet implemented:
+    //   - Adj[かろう] + が + Adj[かろう] + が (antonym pattern)
+    //   - Noun + だろう + が + Noun + だろう + が (antonym pattern)
+    //   These require different matchers as they use antonyms rather than positive/negative volitionals
+
+    #[test]
+    fn test_youga_maiga_verb_attend() {
+        let sentence = "忘年会に出席しようが出席するまいが、会費はみんなからもらっています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようが～まいが");
+        assert_pattern_range(&patterns, "ようが～まいが", 4, 17); // 出席しようが出席するまいが
+    }
+
+    #[test]
+    fn test_youga_maiga_verb_rain() {
+        let sentence = "雨が降ろうが降るまいが、明日は絶対に釣りに行くと決めた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようが～まいが");
+        assert_pattern_range(&patterns, "ようが～まいが", 2, 11); // 降ろうが降るまいが
+    }
+
+    // TODO: Undetectable - Adjective かろう variant
+    // Pattern: Adj[かろう] + が + Adj[かろう] + が uses antonyms (楽しかろう vs 楽しくなかろう)
+    // instead of positive/negative volitionals. This requires a separate matcher.
+    //
+    // #[test]
+    // fn test_youga_maiga_adjective() {
+    //     let sentence = "楽しかろうが楽しくなかろうが、学校は子供の仕事だから学校には行かなくてはだめだ。";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //     assert_has_pattern(&patterns, "ようが～まいが");
+    // }
+
+    // TODO: Undetectable - Noun だろう variant
+    // Pattern: Noun + だろう + が + Noun + だろう + が uses different nouns (犬 vs 猫)
+    // instead of positive/negative volitionals. This requires a separate matcher.
+    //
+    // #[test]
+    // fn test_youga_maiga_noun() {
+    //     let sentence = "犬であろうが猫であろうが、どちらにしても動物なので軽い気持ちで買ってはいけない。";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //     assert_has_pattern(&patterns, "ようが～まいが");
+    // }
+}
