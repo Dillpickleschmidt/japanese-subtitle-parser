@@ -1981,3 +1981,59 @@ mod youga_maiga_tests {
     //     assert_has_pattern(&patterns, "ようが～まいが");
     // }
 }
+
+// ============================================================================
+// Verb + だに Tests
+// ============================================================================
+
+mod verb_dani_tests {
+    use super::*;
+
+    // Pattern: Verb + だに (just, merely, even)
+    // Data source: grammar_points_data.json["Verb + だに"]
+    // Testing: structure.standard[0] - "Verb + だに"
+    //
+    // Note: だに is a formal adverbial particle similar to さえ/すら (even)
+    // It follows verbs in dictionary form and expresses "just (A)" or "merely (A)"
+    // Often used with verbs like 考える, 思い出す, 見る, 想像する
+
+    #[test]
+    fn test_verb_dani_think() {
+        let sentence = "あんな地獄みたいな職場にまた明日も行かないとって考えるだに気が重くなる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + だに");
+        assert_pattern_range(&patterns, "Verb + だに", 24, 29); // 考えるだに
+    }
+
+    #[test]
+    fn test_verb_dani_remember() {
+        let sentence = "彼のことを思い出すだに、悲しくなります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + だに");
+        assert_pattern_range(&patterns, "Verb + だに", 5, 11); // 思い出すだに
+    }
+
+    #[test]
+    fn test_verb_dani_look() {
+        let sentence = "部長からもらった仕事の量を見るだに、やる気が失せる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + だに");
+        assert_pattern_range(&patterns, "Verb + だに", 13, 17); // 見るだに
+    }
+
+    #[test]
+    fn test_verb_dani_imagine() {
+        let sentence = "そんな恐ろしいことを想像するだに身震いがする。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + だに");
+        assert_pattern_range(&patterns, "Verb + だに", 10, 16); // 想像するだに
+    }
+}

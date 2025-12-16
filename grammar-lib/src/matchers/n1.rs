@@ -2230,9 +2230,36 @@ pub fn i_adj_ku_monantomonai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Verb + だに
+// Pattern: Verb + だに (just, merely, even)
+// Structures: Verb[dictionary form] + だに
 pub fn verb_dani() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verbs in dictionary form (基本形)
+    #[derive(Debug)]
+    struct DictionaryFormVerbMatcher;
+    impl Matcher for DictionaryFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match だに particle (助詞/副助詞)
+    #[derive(Debug)]
+    struct DaniParticleMatcher;
+    impl Matcher for DaniParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だに"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryFormVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(DaniParticleMatcher)),
+    ]
 }
 
 // Pattern: ～なり～なり
