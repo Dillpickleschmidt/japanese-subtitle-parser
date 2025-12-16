@@ -1,3 +1,119 @@
+## Session 542 - 2025-12-16
+
+### Session Summary - ものと思う Pattern Complete ✓
+**Status**: Successfully implemented ものと思う pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3532 passing, 1 ignored (added 4 new tests)
+**Progress**: Fifty-ninth N1 pattern completed!
+
+**Session highlights**:
+- Implemented ものと思う pattern (believe that, have confidence that)
+- Simple 3-token pattern: もの + と + おもう
+- Handles all four structure variants: Verb, い-Adj, な-Adj, Noun + ものと思う
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3532 tests total)
+
+### ✓ Completed: ものと思う (believe that, have confidence that)
+
+**Grammar Point**: ものと思う
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb + ものと思う
+2. い-Adjective + ものと思う
+3. な-Adjective + な + ものと思う
+4. Noun + である + ものと思う
+
+**Meaning**:
+- "To believe that (A)" / "To have confidence that (A)"
+- もの (物) as abstract thing - something with all qualities of something concrete
+- と is the quotation particle
+- 思う means "to think"
+- Pattern follows words in attributive form
+- Can be used with past tense (思った) to mean "as I had believed" / "I was under the impression that"
+
+**Tokenization**:
+- もの: 名詞/非自立/一般 (dependent noun)
+- と: 助詞/格助詞/引用 (quotation particle)
+- おもう: 動詞/自立, base=おもう (verb "to think")
+- For な-adjective: な (助動詞, base=だ, 体言接続) comes before もの
+- For noun: で (助動詞, base=だ) + ある (助動詞) comes before もの
+
+**Implementation**:
+- Pattern: もの + と + おもう
+- Custom matchers:
+  - MonoMatcher: Matches もの as 名詞/非自立/一般
+  - ToQuotationMatcher: Matches と as 助詞/格助詞/引用
+  - OmouVerbMatcher: Matches おもう verb (any conjugation)
+- Simple 3-token pattern (doesn't include preceding word to keep range tight)
+- Priority 5 for this N1-level formal construction
+
+**Tests Written: 4 tests**
+1. `test_monotoomou_verb` - できるものとおもっ (32, 38) - believe can do work
+2. `test_monotoomou_i_adjective` - ものとおもっ (29, 35) - believed was busy
+3. `test_monotoomou_na_adjective` - ものとおもう (6, 12) - believe marriage is happy
+4. `test_monotoomou_noun` - ものとおもっ (15, 21) - believe December is coldest
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures もの + と + おもう (in various conjugations):
+- Verb case: ものとおもっ (32, 38) - 6 characters
+- い-Adj case: ものとおもっ (29, 35) - 6 characters
+- な-Adj case: ものとおもう (6, 12) - 6 characters
+- Noun case: ものとおもっ (15, 21) - 6 characters
+
+**Key Notes**:
+- もの here represents an abstract thing, not a physical object
+- Pattern can be followed by various verb conjugations: 思う, 思っている, 思った, 思います
+- Slightly formal but can appear in daily speech
+- Different from もの meaning "thing" as physical object (different POS tags)
+- The と particle specifically marks quotation/thought content
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented monotoomou() matcher with 3 custom matchers
+- `grammar-lib/src/patterns.rs` - Updated Monotoomou priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in monotoomou_tests module
+- `feature_list.json` - Updated ものと思う to complete status
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing - 3528)
+4. ✓ Selected highest priority incomplete pattern (ものと思う from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found monotoomou() stub in n1.rs)
+7. ✓ Wrote all 4 tests first with print_debug()
+8. ✓ Analyzed tokenization output for all variants
+9. ✓ Implemented matcher based on actual tokens (3-token pattern)
+10. ✓ Updated priority in patterns.rs to 5
+11. ✓ Verified all tests detect the pattern correctly
+12. ✓ Removed print_debug() and added assertions
+13. ✓ Verified no regressions (3532 tests passing)
+14. ✓ Updated feature_list.json
+15. ✓ Committed changes
+16. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (Verb, い-Adj, な-Adj, Noun)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- を踏まえて - "Based on, considering" pattern
+- にとどまらず - "Not limited to" pattern
+- と思いきや - "Contrary to expectations" pattern
+- どうにも - "No matter how" pattern
+- ことだし - "Since, because" pattern
+- がん〜 - Classical auxiliary pattern
+- か否か - "Whether or not" pattern
+
+---
+
 ## Session 541 - 2025-12-16
 
 ### Session Summary - との Pattern Complete ✓
