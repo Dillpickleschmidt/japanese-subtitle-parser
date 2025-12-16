@@ -1,3 +1,68 @@
+## Session 506 - 2025-12-15
+
+### Session Summary - とはいえ Pattern Complete ✓
+**Status**: Successfully implemented とはいえ pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3370 passing, 1 ignored (added 5 new tests)
+**Progress**: Twenty-third N1 pattern completed!
+
+**Session highlights**:
+- Implemented とはいえ pattern (although, be that as it may)
+- Pattern matches と + は + いえ (quotation particle + topic particle + imperative form of いう)
+- Works with verbs, い-adjectives, な-adjectives, nouns (with/without だ), and sentence-initial position
+- All 5 tests passing with proper range assertions
+- No regressions in test suite (3370 tests total)
+
+**Key Implementation Notes**:
+- Pattern structure: と (格助詞/引用) + は (係助詞) + いえ (命令ｅ form of いう)
+- Custom matchers for each component with proper POS verification
+- Range captures just とはいえ itself (3 characters) as it's the grammatical marker
+- Sentence-initial detection works after punctuation (。)
+
+### ✓ Completed: とはいえ (although, be that as it may)
+
+**Grammar Point**: とはいえ
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+- Verb + とはいえ + Phrase
+- い-Adjective + とはいえ + Phrase
+- Noun + (だ) + とはいえ + Phrase
+- な-Adjective + (だ) + とはいえ + Phrase
+- Phrase (A)。とはいえ + Phrase (B) - sentence-initial
+
+**Implementation**:
+- Matcher: `と(格助詞/引用) + は(係助詞) + いえ(動詞, 命令ｅ form)`
+- Custom matcher for と as quotation particle (助詞/格助詞)
+- Custom matcher for は as topic particle (助詞/係助詞)
+- Custom matcher for いえ as imperative form of いう (動詞, features[5] contains "命令")
+- Pattern detects the grammatical construction regardless of what precedes it
+
+**Tests Written: 5 tests**
+1. `test_tohaie_verb` - 分かったとはいえ (verb + past tense)
+2. `test_tohaie_i_adjective` - 新しいとはいえ (い-adjective)
+3. `test_tohaie_noun_with_da` - 日本人だとはいえ (noun + だ)
+4. `test_tohaie_na_adjective` - 安全だとはいえ (な-adjective + だ)
+5. `test_tohaie_sentence_initial` - 。とはいえ (after punctuation)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures the とはいえ marker:
+- `とはいえ` (12, 16) in verb context
+- `とはいえ` (10, 14) in い-adjective context
+- `とはいえ` (4, 8) in noun context
+- `とはいえ` (7, 11) in な-adjective context
+- `とはいえ` (9, 13) in sentence-initial context
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented tohaie() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 tests in tohaie_tests module
+- `feature_list.json` - Updated とはいえ status to complete
+
+---
+
 ## Session 505 - 2025-12-15
 
 ### Session Summary - Two N1 Patterns Complete ✓
