@@ -9468,3 +9468,71 @@ mod toiutokoro_tests {
         assert_pattern_range(&patterns, "というところ", 5, 16); // 時間といったところです
     }
 }
+
+// ============================================================================
+// に照らして・に照らすと Tests
+// ============================================================================
+
+mod niterashite_niterasuto_tests {
+    use super::*;
+
+    // Pattern: に照らして・に照らすと (in light of / in accordance with)
+    // Data source: grammar_points_data.json["に照らして・に照らすと"]
+    //
+    // Meaning: Used comparatively similar to "in light of" in English
+    // Translation: "in light of (A)", "in accordance with (A)", "as reflected by (A)"
+    // Used to illustrate (B) from the perspective of (A)
+    //
+    // Structure variants from grammar_points_data.json:
+    // - standard[0]: Noun + に照らして
+    // - standard[1]: Noun (A) + に照らした + Noun (B)
+    // - standard[2]: に照らすと
+
+    #[test]
+    fn test_niterashite_experience() {
+        // Testing: structure.standard[0] - "Noun + に照らして"
+        // Example from grammar_points_data.json: "経験に照らして"
+        let sentence = "母は自分の経験に照らして、こういう時はどうすればいいかをアドバイスしてくれた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に照らして・に照らすと");
+        assert_pattern_range(&patterns, "に照らして・に照らすと", 5, 12); // 経験に照らして
+    }
+
+    #[test]
+    fn test_niterashite_law() {
+        // Testing: structure.standard[0] - "Noun + に照らして"
+        // Example from grammar_points_data.json: "法律に照らして"
+        let sentence = "労働基準法を守らない会社は法律に照らして罰せられるべきだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に照らして・に照らすと");
+        assert_pattern_range(&patterns, "に照らして・に照らすと", 13, 20); // 法律に照らして
+    }
+
+    #[test]
+    fn test_niterashita_modifying_noun() {
+        // Testing: structure.standard[1] - "Noun (A) + に照らした + Noun (B)"
+        // Example from grammar_points_data.json: "経済統計に照らした犯罪統計"
+        let sentence = "経済統計に照らした強盗と窃盗事件に関する犯罪統計。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に照らして・に照らすと");
+        assert_pattern_range(&patterns, "に照らして・に照らすと", 2, 9); // 統計に照らした
+    }
+
+    #[test]
+    fn test_niterasuto_conditional() {
+        // Testing: structure.standard[2] - "に照らすと"
+        // This is the conditional form "に照らすと" (if we illuminate with...)
+        let sentence = "法律に照らすと、この行為は明らかに違法だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に照らして・に照らすと");
+        assert_pattern_range(&patterns, "に照らして・に照らすと", 0, 7); // 法律に照らすと
+    }
+}

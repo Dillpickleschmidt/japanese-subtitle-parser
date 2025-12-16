@@ -8085,9 +8085,108 @@ pub fn ttaranai_u30fb_toittaranai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に照らして・に照らすと
+// Pattern: に照らして・に照らすと (in light of / in accordance with)
+// Structures: Noun + に + 照らして/照らした/照らすと
+//
+// Examples:
+// - 経験に照らして (in light of experience)
+// - 法律に照らして (in accordance with the law)
+// - 経済統計に照らした犯罪統計 (crime statistics in light of economic statistics)
+// - 法律に照らすと (in light of the law, if we apply...)
 pub fn niterashite_u30fb_niterasuto() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as 助詞/格助詞/一般
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 照らす as 動詞/自立 (any conjugation form)
+    #[derive(Debug)]
+    struct TerasuVerbMatcher;
+    impl Matcher for TerasuVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "照らす"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    // Match て (助詞/接続助詞) for に照らして
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match た (助動詞) for に照らした
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+        }
+    }
+
+    // Match と (助詞/接続助詞) for に照らすと
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match any of the three endings: て, た, or と
+    #[derive(Debug)]
+    struct TerasuEndingMatcher;
+    impl Matcher for TerasuEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // て (助詞/接続助詞)
+            if token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            // た (助動詞)
+            if token.surface == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "た"
+            {
+                return true;
+            }
+            // と (助詞/接続助詞)
+            if token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    vec![
+        super::noun_matcher(), // Preceding noun (経験, 法律, etc.)
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(TerasuVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TerasuEndingMatcher)),
+    ]
 }
 
 // Pattern: とあれば

@@ -12169,13 +12169,13 @@
   {
     "pattern_name": "に照らして・に照らすと",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に照（て）らして is an expression based on the standard meaning of the う-Verb 照（て）らす 'to illuminate', and is primarily used c... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

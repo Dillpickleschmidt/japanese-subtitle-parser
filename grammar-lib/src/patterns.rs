@@ -7589,7 +7589,7 @@ declare_patterns! {
     NiterashiteU30fbNiterasuto {
         name: "に照らして・に照らすと",
         matcher_fn: crate::matchers::n1::niterashite_u30fb_niterasuto,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
