@@ -10387,3 +10387,77 @@ mod woyosoni_tests {
         assert_pattern_range(&patterns, "をよそに", 7, 13); // 懸念をよそに
     }
 }
+
+// ============================================================================
+// の至り Tests
+// ============================================================================
+
+mod noitari_tests {
+    use super::*;
+
+    // Pattern: の至り (the utmost / extreme of)
+    // Data source: grammar_points_data.json["の至り"]
+    // Testing: structure.standard[0] - "Noun + の + 至り + だ"
+    // Testing: structure.polite[0] - "Noun + の + 至り + です"
+    //
+    // Meaning: Formal expression highlighting that (A) is the highest level of something
+    // Usually used with emotions: 光栄 (honor), 感謝 (gratitude), 恐縮 (obligation), etc.
+
+    #[test]
+    fn test_noitari_gratitude_standard() {
+        // Testing: structure.standard[0] - "Noun + の + 至り + だ"
+        let sentence = "こんな素晴らしい賞をいただき、感謝の至りだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の至り");
+        assert_pattern_range(&patterns, "の至り", 15, 20); // 感謝の至り
+    }
+
+    #[test]
+    fn test_noitari_honor_polite() {
+        // Testing: structure.polite[0] - "Noun + の + 至り + です"
+        let sentence = "このような大切な式に招待していただき、光栄の至りです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の至り");
+        assert_pattern_range(&patterns, "の至り", 19, 24); // 光栄の至り
+    }
+
+    #[test]
+    fn test_noitari_obligation_polite() {
+        // Testing: structure.polite[0] - "Noun + の + 至り + です"
+        // Different context: 恐縮 (feeling obligated/grateful)
+        let sentence = "４年間色々と教えていただき、恐縮の至りです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の至り");
+        assert_pattern_range(&patterns, "の至り", 14, 19); // 恐縮の至り
+    }
+
+    #[test]
+    fn test_noitari_youthful_indiscretion() {
+        // Testing: structure.standard[0] - "Noun + の + 至り + だ"
+        // Set expression: 若気の至り (youthful indiscretion)
+        let sentence = "大学生の頃は若気の至りで、色々と悪いことをしてしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の至り");
+        assert_pattern_range(&patterns, "の至り", 6, 11); // 若気の至り
+    }
+
+    #[test]
+    fn test_noitari_embarrassment() {
+        // Testing: structure.standard[0] - "Noun + の + 至り + だ"
+        // Different context: 赤面 (embarrassment)
+        let sentence = "あんなミスをしてしまい、赤面の至りだった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の至り");
+        assert_pattern_range(&patterns, "の至り", 12, 17); // 赤面の至り
+    }
+}

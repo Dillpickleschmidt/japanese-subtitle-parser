@@ -8919,9 +8919,38 @@ pub fn majiki() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: の至り
+// Pattern: の至り (the utmost / extreme of)
+// Structures: Noun + の + 至り + だ/です
 pub fn noitari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の (助詞/連体化)
+    #[derive(Debug)]
+    struct NoMatcher;
+    impl Matcher for NoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match 至り (名詞/一般, base=至り)
+    #[derive(Debug)]
+    struct ItariMatcher;
+    impl Matcher for ItariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "至り"
+                && token.base_form == "至り"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NoMatcher)),
+        TokenMatcher::Custom(Arc::new(ItariMatcher)),
+    ]
 }
 
 // Pattern: に恥じない

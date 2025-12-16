@@ -7709,7 +7709,7 @@ declare_patterns! {
     Noitari {
         name: "の至り",
         matcher_fn: crate::matchers::n1::noitari,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

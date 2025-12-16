@@ -12379,13 +12379,13 @@
   {
     "pattern_name": "の至り",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "の至（いた）り is a set, formal expression used to highlight that (A) is the highest level of something, and will often be u... [1 std, 1 pol]",
     "priority": 5,
     "skip_reason": null
