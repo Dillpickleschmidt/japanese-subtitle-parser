@@ -7309,7 +7309,7 @@ declare_patterns! {
     Uff5eNariUff5eNari {
         name: "～なり～なり",
         matcher_fn: crate::matchers::n1::uff5e_nari_uff5e_nari,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

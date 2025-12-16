@@ -7317,3 +7317,90 @@ mod nimo_nai_tests {
         assert_pattern_range(&patterns, "にも～ない", 17, 28); // 連絡しようにもできない
     }
 }
+
+mod uff5e_nari_uff5e_nari_tests {
+    use super::*;
+
+    // Pattern: ～なり～なり (either...or...)
+    // Data source: grammar_points_data.json["～なり～なり"]
+    // Testing all structure variants with print_debug
+    //
+    // Structure variants:
+    //   - standard[0]: Verb(A) + なり + Verb(B) + なり + する
+    //   - standard[1]: Noun(A) + (Particle) + なり + Noun(B) + (Particle) + なり
+    //   - standard[2]: Noun(A) + なり + Noun(B) + なり + (Particle)
+    //   - standard[3]: Verb + なり + WH-Word + (Particle) + なり + する
+    //   - standard[4]: Noun + (Particle) + なり + WH-Word + (Particle) + なり
+
+    // Testing: structure.standard[0] - Verb(A) + なり + Verb(B) + なり + する
+    #[test]
+    fn test_nari_nari_verb_verb_suru() {
+        let sentence = "タバコを吸うなり弁当食べるなりして待ってな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～なり～なり");
+        assert_pattern_range(&patterns, "～なり～なり", 4, 15); // 吸うなり弁当食べるなり
+    }
+
+    // Testing: structure.standard[0] - Verb(A) + なり + Verb(B) + なり + する (variant 2)
+    #[test]
+    fn test_nari_nari_uru_suteru() {
+        let sentence = "いらないなら売るなり捨てるなりしてもらっても結構ですので。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～なり～なり");
+        assert_pattern_range(&patterns, "～なり～なり", 6, 15); // 売るなり捨てるなり
+    }
+
+    // Testing: structure.standard[1] - Noun(A) + なり + Noun(B) + なり
+    #[test]
+    fn test_nari_nari_noun_simple() {
+        let sentence = "遅れるなら電話なりメールなりするのが社会人としての常識じゃないのか？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～なり～なり");
+        assert_pattern_range(&patterns, "～なり～なり", 5, 14); // 電話なりメールなり
+    }
+
+    // Testing: structure.standard[3] - Verb + なり + WH-Word + Particle + Verb + なり
+    #[test]
+    fn test_nari_nari_verb_wh() {
+        let sentence = "行くなり何をするなりして自分で決めてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～なり～なり");
+        assert_pattern_range(&patterns, "～なり～なり", 0, 10); // 行くなり何をするなり
+    }
+
+    // TODO: Undetectable - Noun + なり + Noun + なり + に
+    // In the sentence "俺なり高橋なりに", the second なり is tokenized as a noun (名詞/一般),
+    // not as a particle. This makes it indistinguishable from the なりに pattern structurally.
+    //
+    // #[test]
+    // fn test_nari_nari_noun_noun_particle() {
+    //     let sentence = "俺なり高橋なりに相談してくれればいいのに！";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "～なり～なり");
+    //     assert_pattern_range(&patterns, "～なり～なり", 0, 8); // 俺なり高橋なりに
+    // }
+
+    // TODO: Undetectable - Noun + に + なり (Verb "become")
+    // In the sentence "家になりどこになり", the なり tokens are parsed as the verb "なる" (become)
+    // in 連用形, not as the adverbial particle なり. This is a different grammatical construction.
+    //
+    // #[test]
+    // fn test_nari_nari_noun_wh() {
+    //     let sentence = "家になりどこになり好きなところで勉強していいよ。";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "～なり～なり");
+    //     assert_pattern_range(&patterns, "～なり～なり", 0, 9); // 家になりどこになり
+    // }
+}

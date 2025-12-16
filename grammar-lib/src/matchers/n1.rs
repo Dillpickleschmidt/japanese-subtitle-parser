@@ -6324,9 +6324,52 @@ pub fn verb_dani() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～なり～なり
+// Pattern: ～なり～なり (either...or...)
+// Structures: Item1 + なり + Item2 + なり
+// Item can be: Verb(dictionary), Noun, or Noun + Particle
+// Note: なり can be 助詞/接続助詞, 助詞/並立助詞, or 助詞/副助詞
 pub fn uff5e_nari_uff5e_nari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for なり as adverbial particle (not verb なる)
+    #[derive(Debug)]
+    struct NariParticleMatcher;
+    impl Matcher for NariParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface != "なり" {
+                return false;
+            }
+            if !token.pos.first().is_some_and(|pos| pos == "助詞") {
+                return false;
+            }
+            // Check if second POS element is one of the valid particle types
+            token.pos.get(1).is_some_and(|p| {
+                p == "接続助詞" || p == "並立助詞" || p == "副助詞"
+            })
+        }
+    }
+
+    // Matcher for verb or noun
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞" || pos == "名詞")
+        }
+    }
+
+    // Pattern: (Verb|Noun) + なり + (1-8 tokens) + なり
+    // Simple pattern without wildcards between item and なり for now
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NariParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 8,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(NariParticleMatcher)),
+    ]
 }
 
 // Pattern: ないでもない
