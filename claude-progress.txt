@@ -1,13 +1,14 @@
 ## Session 598 - 2025-12-16
 
-### Session Summary - というところ Complete ✓
-**Status**: Implemented 1 N1 pattern successfully
-**Patterns completed**: 1 (というところ - N1, priority 5)
-**Total tests**: 3822 passing (5 new tests, no regressions)
-**Progress**: One hundred and eleventh N1 pattern completed! 🎉
+### Session Summary - 2 N1 Patterns Complete ✓
+**Status**: Implemented 2 N1 patterns successfully
+**Patterns completed**: 2 (というところ, に照らして・に照らすと - both N1, priority 5)
+**Total tests**: 3826 passing (9 new tests, no regressions)
+**Progress**: One hundred and eleventh + twelfth N1 patterns completed! 🎉
 
 **Session highlights**:
 - Implemented というところ (I would say about / approximately)
+- Implemented に照らして・に照らすと (in light of / in accordance with)
 - Grammar expression for highlighting approximate numbers or degrees
 - Handles both という and といった (past form) variants
 - Works with both だ (standard) and です (polite) endings
@@ -87,8 +88,99 @@ Pattern matcher sequence:
 ✓ All existing tests still pass (3817 + 5 = 3822 total)
 ✓ Clean git history
 
+---
+
+### ✓ Completed 2: に照らして・に照らすと (in light of / in accordance with)
+
+**Grammar Point**: に照らして・に照らすと
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + に照らして (in light of / in accordance with)
+2. Noun + に照らした + Noun (modifying noun form)
+3. Noun + に照らすと (conditional: if we apply...)
+
+**Meaning**:
+- "In light of (A)" / "In accordance with (A)" / "As reflected by (A)"
+- Based on standard meaning of う-Verb 照らす ("to illuminate")
+- Used comparatively similar to "in light of" in English
+- Illustrates (B) from the perspective of (A)
+- Usually refers to situations, level of experience, laws, statistics, etc.
+- に marks (A) as the "doer" of 照らす (transitive verb)
+- Literal: "(B) as reflected/illuminated by (A)"
+- More explicitly: "as made clear by (A), (B)" or "as made evident by (A), (B)"
+- (B) is almost always a judgment logically based on (A)
+
+**Tokenization patterns**:
+**For に照らして:**
+- Noun (名詞, e.g., 経験, 法律)
+- に (助詞/格助詞/一般)
+- 照らし (動詞/自立/五段・サ行/連用形, base=照らす)
+- て (助詞/接続助詞)
+
+**For に照らした (modifying noun):**
+- Noun (名詞, e.g., 統計)
+- に (助詞/格助詞/一般)
+- 照らし (動詞/自立/五段・サ行/連用形, base=照らす)
+- た (助動詞/特殊・タ/基本形)
+
+**For に照らすと:**
+- Noun (名詞, e.g., 法律)
+- に (助詞/格助詞/一般)
+- 照らす (動詞/自立/五段・サ行/基本形, base=照らす)
+- と (助詞/接続助詞)
+
+**Implementation**:
+Created 5 custom matchers for flexible pattern matching:
+1. NiMatcher - Matches に as 助詞/格助詞
+2. TerasuVerbMatcher - Matches 照らす as 動詞/自立 (any conjugation)
+3. TerasuEndingMatcher - Combined matcher for て, た, or と endings
+   - て (助詞/接続助詞) for に照らして
+   - た (助動詞) for に照らした
+   - と (助詞/接続助詞) for に照らすと
+
+Pattern matcher sequence:
+- super::noun_matcher() + NiMatcher + TerasuVerbMatcher + TerasuEndingMatcher
+- Captures full grammatical construction from noun through ending
+
+**Tests Written: 4 tests (all passing)**
+1. test_niterashite_experience - 経験に照らして (5, 12) - based on experience
+2. test_niterashite_law - 法律に照らして (13, 20) - in accordance with law
+3. test_niterashita_modifying_noun - 統計に照らした (2, 9) - modifying noun form
+4. test_niterasuto_conditional - 法律に照らすと (0, 7) - conditional form
+
+**Character Ranges**: Pattern captures Noun + に + 照らす + ending:
+- 経験に照らして (5, 12) - 7 characters (noun + に + verb + て)
+- 法律に照らして (13, 20) - 7 characters (noun + に + verb + て)
+- 統計に照らした (2, 9) - 7 characters (noun + に + verb + た)
+- 法律に照らすと (0, 7) - 7 characters (noun + に + verb + と)
+
+**Key Notes**:
+- Pattern includes the preceding noun (full grammatical construction)
+- Handles all three main forms: に照らして, に照らした, に照らすと
+- に marks the noun as the agent doing the "illuminating" (transitive verb)
+- Commonly used with experience (経験), laws (法律), statistics (統計)
+- Used to make judgments based on established facts or standards
+- More formal expression, often in legal, academic, or professional contexts
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented niterashite_u30fb_niterasuto() with 5 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in niterashite_niterasuto_tests module
+- feature_list.json - Updated に照らして・に照らすと to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (に照らして, に照らした, に照らすと)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3822 + 4 = 3826 total)
+✓ Clean git history
+
 **Next Priorities** (N1 patterns with priority 5, needs_implementation):
-- に照らして・に照らすと - "In light of" pattern
 - とあれば - "If/when it comes to" pattern
 - ときたら - "Speaking of/when it comes to" pattern
 - びる - Suffix pattern
