@@ -1,3 +1,120 @@
+## Session 617 - 2025-12-16
+
+### Session Summary - には及ばない② Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (には及ばない② - N1, priority 5)
+**Total tests**: 3922 passing (5 new tests, no regressions)
+**Progress**: One hundred and twenty-ninth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented には及ばない② (not as good as / no match for)
+- Comparison pattern showing something doesn't reach the level of something else
+- Handles both には (standard) and にも (set expression) variants
+- Handles both casual (にはおよばない) and polite (にはおよびません) forms
+- All structure variants tested with realistic sentences from grammar_points_data.json
+
+### ✓ Completed: には及ばない② (not as good as / no match for)
+
+**Grammar Point**: には及ばない②
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + には及ばない (standard negative)
+2. Noun + には及びません (polite negative)
+3. Noun + の足元にも及ばない (set expression: "not even reach the feet of")
+
+**Meaning**:
+- "Not as good as (A)" / "No match for (A)" / "Cannot be compared to (A)"
+- Shows that something doesn't reach the level/extent of something else
+- Combination of に (case-marking particle) + は (adverbial particle) + 及ぶ (to reach) + ない (negative)
+- Literal translation: "does not extend to (A)"
+- Used when (A) is being given extremely high praise
+- Different from には及ばない① which means "there is no need to"
+
+**Tokenization patterns**:
+**Standard form (にはおよばない):**
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- は (助詞/係助詞)
+- およば (動詞/自立, base=およぶ, 未然形)
+- ない (助動詞, 特殊・ナイ)
+
+**Polite form (にはおよびません):**
+- Noun (名詞)
+- に (助詞/格助詞/一般)
+- は (助詞/係助詞)
+- および (動詞/自立, base=およぶ, 連用形)
+- ませ (助動詞, 特殊・マス, 未然形)
+- ん (助動詞, 不変化型)
+
+**Set expression (にもおよばない):**
+- Same structure but も instead of は
+
+**Implementation**:
+Created 6 custom matchers for precise pattern matching:
+1. NiMatcher - Matches に as 助詞/格助詞/一般
+2. WaOrMoMatcher - Matches は or も as 助詞/係助詞
+3. OyobuMatcher - Matches およば (未然形) or および (連用形), base=およぶ
+4. NaiMaseMatcher - Matches ない (助動詞) or ませ (助動詞)
+5. NMatcher - Optional, matches ん (助動詞) for polite negative
+
+Pattern matcher sequence:
+- super::noun_matcher() (preceding noun)
+- NiMatcher (に)
+- WaOrMoMatcher (は or も)
+- OyobuMatcher (およば/および)
+- NaiMaseMatcher (ない/ませ)
+- Optional(NMatcher) (ん)
+
+**Tests Written: 5 tests (all passing)**
+1. test_nihaoyobanai2_beach_comparison - 海にはおよばない (7, 15) - beach comparison
+2. test_nihaoyobanai2_restaurant_taste - 味にはおよばない (10, 18) - restaurant taste
+3. test_nihaoyobanai2_guitar_skill - 寅泰にはおよばない (18, 27) - guitar skill comparison
+4. test_nihaoyobanai2_ashimoto_set_expression - もとにはおよばない (17, 26) - set expression
+5. test_nihaoyobanai2_polite_form - 技術にはおよびません (9, 19) - polite form
+
+**Character Ranges**: Pattern captures Noun + には/にも + 及ばない/及びません:
+- 海にはおよばない (7, 15) - 8 characters (beach)
+- 味にはおよばない (10, 18) - 8 characters (taste)
+- 寅泰にはおよばない (18, 27) - 9 characters (person name)
+- もとにはおよばない (17, 26) - 9 characters (set expression, "もと" from "足元")
+- 技術にはおよびません (9, 19) - 10 characters (polite)
+
+**Key Notes**:
+- Pattern includes the preceding noun (full grammatical construction)
+- WaOrMoMatcher handles both には and にも variants (set expression uses も)
+- OyobuMatcher uses hiragana matching (およば/および) not kanji (及ば/及び)
+- NaiMaseMatcher handles both casual (ない) and polite (ませ) forms
+- Optional NMatcher completes polite negative (ません)
+- Different from には及ばない① which means "no need to" (formal polite expression)
+- Used for comparisons where (A) is considered superior
+- Priority set to 5 to ensure proper detection
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nihaoyobanai_u2461() with 6 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in nihaoyobanai_u2461_tests module
+- feature_list.json - Updated には及ばない② to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (standard, polite, set expression)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3917 + 5 = 3922 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ったら・といったら - Complex emphatic pattern (has empty "about" field - may need research)
+- に難くない - "Not difficult to" pattern
+- ならいざ知らず - "Let alone / not to mention" pattern
+- を禁じ得ない - "Cannot help but" pattern
+- にかこつけて - "Using as an excuse" pattern
+
+================================================================================
 ## Session 616 - 2025-12-16
 
 ### Session Summary - に言わせれば・に言わせると・に言わせたら Complete ✓
