@@ -1,3 +1,88 @@
+## Session 500 - 2025-12-15
+
+### Session Summary - からする Pattern Complete ✓
+**Status**: Successfully implemented からする (about X, X or more, starting at X)
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3336 passing, 1 ignored (added 6 new tests)
+**Progress**: Seventeenth N1 pattern completed!
+
+**Session highlights**:
+- Implemented からする pattern with two structural variants (からする and からの)
+- Created two matcher functions: karasuru() for する variant, karano() for の variant
+- Pattern matches Number + Counter + からする/からします/からの
+- Uses Wildcard matcher to handle multi-token numbers (e.g., 三百万円 = 3 tokens)
+- Custom matchers for numbers/counters, から particle, する verb, and の particle
+- All 6 tests passing with proper range assertions
+- No regressions in test suite
+
+### ✓ Completed: からする (about X, X or more, starting at X)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Number + Counter + からする (standard)
+- Number + Counter + からします (polite)
+- Number + Counter + からの + Noun
+
+**Implementation details**:
+Created two matcher functions to handle both structural variants:
+
+1. **karasuru()** - Matches からする/からします variant
+   - NumberOrCounterMatcher: Matches 名詞/数 or 名詞/接尾/助数詞
+   - KaraParticleMatcher: Matches から (助詞/格助詞)
+   - SuruVerbMatcher: Matches する (動詞)
+   - Uses Wildcard to match 1+ number/counter tokens
+
+2. **karano()** - Matches からの variant
+   - Same number/counter and から matchers
+   - NoParticleMatcher: Matches の (助詞/連体化)
+
+**Key implementation insight**:
+からする appears after numbers/counters to indicate a minimum from which an estimation is being made. The tricky part was handling multi-token numbers like 三百万円 (three, hundred, ten-thousand, yen) which are 4 separate tokens. The Wildcard matcher allows matching 0-5 tokens between the first number and から particle to capture all number/counter tokens.
+
+Both からする and からの are structure variants of the same grammar point, so they needed separate pattern declarations but share the same meaning.
+
+**Tokenization patterns**:
+Examples showing number tokenization:
+- １５万からする: １(名詞/数) + ５(名詞/数) + 万(名詞/数) + から + する
+- 三百万円からする: 三(名詞/数) + 百(名詞/数) + 万(名詞/数) + 円(名詞/接尾/助数詞) + から + する
+- 十人からの: 十(名詞/数) + 人(名詞/接尾/助数詞) + から + の
+
+**Tests created**: 6 tests covering all structure variants
+1. test_karasuru_basic - "１５万からする" (standard form, sentence-final)
+2. test_karasuru_with_noun - "１５万からするやつ" (standard + following noun)
+3. test_karasuru_no_variant - "１億からのお金" (からの + noun)
+4. test_karasuru_polite - "３千円からします" (polite form)
+5. test_karasuru_watch_example - "三百万円からする時計" (multi-token number with kanji)
+6. test_karasuru_people_count - "十人からの人" (people counter with からの)
+
+All tests use realistic, subtitle-quality sentences from grammar_points_data.json examples.
+
+**Pattern ranges**:
+Full grammatical construction from first number token to する/の:
+- 8-15: "１５万からする"
+- 3-11: "三百万円からする"
+- 12-17: "１億からの"
+- 7-12: "十人からの"
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented karasuru() and karano() (116 lines)
+- `grammar-lib/src/patterns.rs` - Added Karano pattern declaration
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 6 comprehensive tests in karasuru_tests module
+- `feature_list.json` - Updated からする to complete status
+
+**Grammar meaning**:
+からする indicates a minimum estimate when talking about amounts, especially money. It's slightly formal and typically used with large numbers. The speaker emphasizes that they don't know the exact amount, but it starts from at least (A).
+
+Common with:
+- Money amounts (most frequent)
+- People counts (with からの)
+- Size/weight/distance use からある instead (separate pattern)
+
+---
+
 ## Session 499 - 2025-12-15
 
 ### Session Summary - Two N1 Patterns Complete ✓
