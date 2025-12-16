@@ -6348,3 +6348,69 @@ Test cases:
 **Total Test Count**: 3722 passing
 
 ================================================================================
+
+================================================================================
+Session 582: わ〜わ Pattern Implementation
+Date: 2025-12-16
+Status: ✓ COMPLETE
+================================================================================
+
+**Pattern Implemented**: わ〜わ (N1)
+
+**Grammar Pattern**: わ〜わ (more and more / keeps happening / so much)
+
+**Pattern Meaning**:
+Emphatic adverbial particle used after dictionary form of repeated verb.
+Highlights large amount, successive occurrence, or increasing intensity.
+Emphasizes speaker's surprise regarding extent of action.
+
+**Implementation Details**:
+
+Created wa_u301c_wa() matcher with 2 custom matchers:
+1. DictionaryVerbMatcher - matches verb in 基本形 (dictionary form)
+2. WaParticleMatcher - matches わ (助詞/終助詞)
+
+**Structure Pattern**: Verb(基本形) + わ + Verb(基本形) + わ
+
+**Known Limitation - Cross-Token Validation**:
+
+Cannot verify same verb repeated (requires cross-token validation).
+Matches ANY Verb + わ + Verb + わ pattern without checking verb identity.
+May have false positives if different verbs used. Limitation documented.
+
+**Tests Added**: 3 tests in wa_wa_tests module
+
+- いるわいるわ (23, 29) - same verb repeated
+- 勉強するわするわ (21, 29) - する verb shorthand
+- 泣くわ泣くわで (8, 15) - with で following
+
+**Files Modified**:
+
+- grammar-lib/src/matchers/n1.rs - Implemented wa_u301c_wa() at line 6868
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests in wa_wa_tests module
+- feature_list.json - Updated わ〜わ to complete status
+
+**Quality Checks**:
+
+✓ Tests exist with proper assertions
+✓ All structure variants tested
+✓ Realistic sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in committed tests
+✓ All existing tests pass (3725 total, +3 new)
+✓ Clean git history
+
+**Session Update**: 1 N1 pattern completed (わ〜わ)
+**Session Tests**: 3 new tests added
+**Total Test Count**: 3725 passing
+
+================================================================================
+
+SESSIONS 581-582 SUMMARY:
+- 2 N1 patterns completed: わ〜わ（で） and わ〜わ
+- 7 new tests added (4 + 3)
+- Total tests: 3725 passing
+- Both patterns have known limitations documented
+- Codebase left in clean, working state
+
+================================================================================
