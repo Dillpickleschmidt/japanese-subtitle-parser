@@ -5465,3 +5465,56 @@ mod kotodashi_tests {
         assert_pattern_range(&patterns, "ことだし_compound", 0, 6); // 彼のことだし
     }
 }
+
+// ============================================================================
+// べくして Tests
+// ============================================================================
+
+mod bekushite_tests {
+    use super::*;
+
+    // Pattern: べくして (as expected, destined to)
+    // Data source: grammar_points_data.json["べくして"]
+    //
+    // Structure variants:
+    //   1. (Intransitive) Verb + べくして + (same Verb)
+    //   2. Verb (passive られる) + べくして + (same Verb)
+    //
+    // Note: The same verb must appear twice (before and after べくして)
+
+    #[test]
+    fn test_bekushite_intransitive_verb() {
+        // Testing structure: Intransitive Verb + べくして + same Verb (past)
+        // From example: 勝つべくして勝った
+        let sentence = "毎日トレーニングしてきたから、大会で勝つべくして勝ったんだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べくして");
+        assert_pattern_range(&patterns, "べくして", 18, 24); // 勝つべくして
+    }
+
+    #[test]
+    fn test_bekushite_intransitive_verb_happen() {
+        // Testing structure: Intransitive Verb + べくして + same Verb (past)
+        // From example: 起こるべくして起こった
+        let sentence = "何回も訴えたが対応してくれなかったので、この事故は起こるべくして起こった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べくして");
+        assert_pattern_range(&patterns, "べくして", 25, 32); // 起こるべくして
+    }
+
+    #[test]
+    fn test_bekushite_intransitive_verb_meet() {
+        // Testing structure: Intransitive Verb + べくして + same Verb (past)
+        // From example: 出会うべくして出会った
+        let sentence = "最近、彼女とは出会うべくして出会ったと感じることが多い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べくして");
+        assert_pattern_range(&patterns, "べくして", 7, 14); // 出会うべくして
+    }
+}

@@ -4297,9 +4297,50 @@ pub fn tara_u301c_de() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: べくして
+// Pattern: べくして (as expected, destined to)
+// Structures: Verb + べく + し + て
 pub fn bekushite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match べく (classical auxiliary verb べし in 連用形)
+    #[derive(Debug)]
+    struct BekuMatcher;
+    impl Matcher for BekuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "べく"
+                && token.base_form == "べし"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match し from する (連用形)
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match て (conjunctive particle)
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb before べくして
+        TokenMatcher::Custom(Arc::new(BekuMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiMatcher)),
+        TokenMatcher::Custom(Arc::new(TeMatcher)),
+    ]
 }
 
 // Pattern: かれ〜かれ

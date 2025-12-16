@@ -7029,7 +7029,7 @@ declare_patterns! {
     Bekushite {
         name: "べくして",
         matcher_fn: crate::matchers::n1::bekushite,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
