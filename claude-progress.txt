@@ -7349,3 +7349,109 @@ Files: matchers/n1.rs, patterns.rs (priority 6), tests/n1_patterns.rs, feature_l
 Commit: d07f567
 
 ================================================================================
+
+================================================================================
+
+## Session 590 - 2025-12-16
+
+### Session Summary - それまでだ Complete ✓
+**Status**: Implemented 1 N1 pattern successfully  
+**Pattern completed**: それまでだ (N1, priority 5)
+**Total tests**: 3773 passing (3 new tests, no regressions)
+**Progress**: One hundred and fourth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented それまでだ (if that happens, it's all over / all in vain)
+- Hypothetical expression indicating "if (A) happens, everything is wasted"
+- Handles both たら and ば conditional forms
+- All structure variants tested with realistic examples from grammar_points_data.json
+
+### ✓ Completed: それまでだ (if that happens, it's all over)
+
+**Grammar Point**: それまでだ
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb[たら] + それまでだ (見つかったらそれまでだ - if they find you, that's it)
+2. Verb[ば] + それまでだ (漏れればそれまでだ - if it leaks, it's all over)
+
+**Meaning**:
+- "If (A) happens, that's the end / it's all over"
+- Indicates that everything up to that point will go to waste
+- Expresses that reaching condition (A) means total failure/loss
+- Often used with ても/でも in first clause: "even if (A), if also (B), then it's pointless"
+
+**Tokenization patterns**:
+
+For たら variant:
+- Verb (動詞/連用タ接続, e.g., 見つかっ, 訴えられ)
+- たら (助動詞, base=た, 仮定形)
+- それ (名詞/代名詞)
+- まで (助詞/副助詞)
+- だ (助動詞)
+
+For ば variant:
+- Verb (動詞/仮定形, e.g., 漏れれ, 犯せ)
+- ば (助詞/接続助詞)
+- それ (名詞/代名詞)
+- まで (助詞/副助詞)
+- だ (助動詞)
+
+**Implementation**:
+Matcher: soremadeda() in matchers/n1.rs
+
+Custom matchers created:
+1. VerbConditionalFormMatcher - Matches verbs in 連用タ接続 OR 仮定形
+2. ConditionalMarkerMatcher - Matches たら (助動詞) OR ば (助詞/接続助詞)
+3. SoreMatcher - Matches それ as 名詞/代名詞
+4. MadeParticleMatcher - Matches まで as 助詞/副助詞
+5. DaAuxiliaryMatcher - Matches だ as 助動詞
+
+Pattern sequence handles both conditional forms in a single matcher by accepting either verb form (連用タ接続 or 仮定形) followed by either conditional marker (たら or ば).
+
+**Tests added**: 3 tests in soremadeda_tests module
+1. test_soremadeda_tara_conditional - たら variant [chars 13-24]
+2. test_soremadeda_ba_conditional - ば variant [chars 8-17]
+3. test_soremadeda_mistake - Additional ば variant [chars 20-28]
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json.
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented soremadeda() with dual conditional support
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests (lines 8652-8700)
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- feature_list.json - Updated それまでだ to complete
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (たら and ば)
+✓ Realistic sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in committed tests
+✓ All existing tests pass (3773 total, +3 new)
+✓ Clean git history
+
+**Session Stats**:
+- 1 N1 pattern completed (それまでだ)
+- 3 new tests added
+- Total test count: 3773 passing
+- Codebase left in clean, working state
+
+**Next priorities**:
+Continue with remaining N1 priority 5 patterns:
+- ったら・といったら
+- ったらない・といったらない
+- てはかなわない
+- ても差し支えない
+- とあれば
+- という1
+- というところ
+- といおうか
+- といわず
+- どうにか
+- ときたら
+- など...
+
+================================================================================
