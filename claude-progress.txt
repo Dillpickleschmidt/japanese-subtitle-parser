@@ -8120,3 +8120,72 @@ Continue with remaining N1 priority 5 patterns:
 - など...
 
 ================================================================================
+
+================================================================================
+Session 596 (continued) - December 16, 2025
+================================================================================
+
+**Pattern Completed:** まくる (N1, priority 5)
+
+**Summary:**
+Implemented まくる pattern that indicates an action is done over and over, a lot,
+or with great vigor. The pattern attaches to the conjunctive form of volitional
+verbs. Comes from 捲る (makuru) "to roll/turn", literally "to do (A) around and
+again". Translates to "to (A) like crazy", "to do nothing but (A)", etc.
+
+**Implementation Details:**
+Two patterns created to handle different Kagome tokenizations:
+
+1. まくる (split tokenization):
+   - flexible_verb_form() + MakuruMatcher
+   - Matches: Verb stem + まくる as separate tokens (買い + まくる)
+   - MakuruMatcher checks: base_form == "まくる" and verb POS
+
+2. まくる_compound (compound tokenization):
+   - MakuruCompoundMatcher only
+   - Matches: Compound verbs as single token (歌いまくる)
+   - MakuruCompoundMatcher checks: base_form.ends_with("まくる") and not equal to "まくる"
+
+This dual-pattern approach mirrors the めく pattern implementation and ensures
+all Kagome tokenization variants are caught.
+
+**Tests added**: 3 tests in makuru_tests module
+1. test_makuru_simple_past - "買いまくった" (split) [chars 11-17]
+2. test_makuru_te_iru - "食べまくってる" (split) [chars 17-22]
+3. test_makuru_compound - "歌いまくった" (compound) [chars 8-14]
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json.
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented makuru() and makuru_compound()
+- grammar-lib/src/patterns.rs - Added both patterns with priority 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests (lines 9218-9266)
+- feature_list.json - Updated まくる to complete
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All tokenization variants tested (split and compound)
+✓ Realistic sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in committed tests
+✓ All existing tests pass (3810 total, +3 new)
+✓ Clean git history
+
+**Session Stats (Total):**
+- 2 N1 patterns completed (にもまして, まくる)
+- 7 new tests added (4 + 3)
+- Total test count: 3810 passing
+- Codebase left in clean, working state
+
+**Next priorities:**
+Continue with remaining N1 priority 5 patterns:
+- どうにか
+- や否や
+- というところ
+- に照らして・に照らすと
+- といおうか
+- といわず
+- ときたら
+- など...
+
+================================================================================
