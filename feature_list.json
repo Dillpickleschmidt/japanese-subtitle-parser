@@ -10881,13 +10881,13 @@
   {
     "pattern_name": "～たまでだ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In comparison to ～るまでだ, the grammar pattern expressing that 'one can only but (A)', ～たまでだ works in a similar way, wit... [2 std, 2 pol]",
     "priority": 5,
     "skip_reason": null

@@ -2385,9 +2385,73 @@ pub fn atteno() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～たまでだ
+// Pattern: ～たまでだ (I simply/only did A)
+// Structures: Verb[た] + まで + だ/です, Verb[た] + までのこと + だ/です
 pub fn uff5e_tamadeda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Helper: Match まで as 副助詞
+    #[derive(Debug)]
+    struct MadeParticleMatcher;
+    impl super::Matcher for MadeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まで"
+                && token.base_form == "まで"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    // Helper: Match の as 連体化 particle
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.base_form == "の"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "連体化")
+        }
+    }
+
+    // Helper: Match こと as 非自立 noun
+    #[derive(Debug)]
+    struct KotoNounMatcher;
+    impl super::Matcher for KotoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.base_form == "こと"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Helper: Match だ or です as auxiliary verb
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl super::Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && (token.base_form == "だ" || token.base_form == "です")
+        }
+    }
+
+    // Pattern: Verb[連用形/連用タ接続] + た + まで + Optional(の + こと) + だ/です
+    super::concat(vec![
+        vec![super::flexible_verb_form()],
+        vec![super::past_auxiliary()],
+        vec![TokenMatcher::Custom(Arc::new(MadeParticleMatcher))],
+        vec![
+            TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+                NoParticleMatcher,
+            )))),
+            TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+                KotoNounMatcher,
+            )))),
+        ],
+        vec![TokenMatcher::Custom(Arc::new(DaDesuMatcher))],
+    ])
 }
 
 // Pattern: を経て

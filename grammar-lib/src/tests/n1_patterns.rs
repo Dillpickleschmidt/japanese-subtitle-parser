@@ -2829,3 +2829,60 @@ mod atteno_tests {
         assert_pattern_range(&patterns, "あっての", 15, 25); // お金があっての幸せだ
     }
 }
+
+// ============================================================================
+// ～たまでだ Tests
+// ============================================================================
+
+mod tamadeda_tests {
+    use super::*;
+
+    // Pattern: ～たまでだ (I simply/only did A)
+    // Data source: grammar_points_data.json["～たまでだ"]
+    // Testing all structure variants
+
+    // Testing: structure.standard[0] - "Verb[た] + まで + だ"
+    #[test]
+    fn test_tamadeda_standard() {
+        let sentence = "なんで俺が悪者扱いされないといけないんだ？俺はただ自分の意見を言ったまでだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～たまでだ");
+        assert_pattern_range(&patterns, "～たまでだ", 31, 37); // 言ったまでだ
+    }
+
+    // Testing: structure.standard[1] - "Verb[た] + までのこと + だ"
+    #[test]
+    fn test_tamadeda_made_no_koto() {
+        let sentence = "最近学校にも行かないし部屋からも出ないから、聞いたまでのことだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～たまでだ");
+        assert_pattern_range(&patterns, "～たまでだ", 22, 31); // 聞いたまでのことだ
+    }
+
+    // Testing: structure.polite[0] - "Verb[た] + まで + です"
+    #[test]
+    fn test_tamadeda_polite() {
+        let sentence = "そんなお礼とかはやめてください、人として当たり前のことをしたまでです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～たまでだ");
+        assert_pattern_range(&patterns, "～たまでだ", 28, 34); // したまでです
+    }
+
+    // Testing: structure.polite[1] - "Verb[た] + までのこと + です"
+    // Note: This is the same structure as standard[1], just used in polite context
+    #[test]
+    fn test_tamadeda_made_no_koto_polite_context() {
+        let sentence = "お婆さんが困った顔をしていたから、助けたまでのことです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～たまでだ");
+        assert_pattern_range(&patterns, "～たまでだ", 17, 27); // 助けたまでのことです
+    }
+}
