@@ -9139,9 +9139,104 @@ pub fn tohakurabemononinaranai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: まじき
+// Pattern: まじき (must not / unbecoming of)
+// Structures:
+//   1. Noun + にある/としてある + まじき + Noun
+//   2. Verb (許す) + まじき + Noun
 pub fn majiki() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match として (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct ToshiteMatcher;
+    impl Matcher for ToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "として"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "連語")
+        }
+    }
+
+    // Match に or として
+    #[derive(Debug)]
+    struct NiOrToshiteMatcher;
+    impl Matcher for NiOrToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            NiMatcher.matches(token) || ToshiteMatcher.matches(token)
+        }
+    }
+
+    // Match ある (動詞, base=ある)
+    #[derive(Debug)]
+    struct AruMatcher;
+    impl Matcher for AruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ある"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match まじき (助動詞, base=まじ, 体言接続)
+    #[derive(Debug)]
+    struct MajikiMatcher;
+    impl Matcher for MajikiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まじき"
+                && token.base_form == "まじ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match ゆるす (動詞, base=ゆるす, 基本形)
+    #[derive(Debug)]
+    struct YurusuMatcher;
+    impl Matcher for YurusuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ゆるす"
+                && token.base_form == "ゆるす"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    // Match either:
+    // 1. Noun + にある/としてある + まじき + Noun
+    // 2. ゆるす + まじき + Noun
+    // We need to capture both patterns, so we use a compound matcher
+    #[derive(Debug)]
+    struct MajikiCompoundMatcher;
+    impl Matcher for MajikiCompoundMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // This is the first token - can be noun or ゆるす verb
+            token.pos.first().is_some_and(|p| p == "名詞" || p == "動詞")
+        }
+    }
+
+    // Pattern sequence:
+    // Word (Noun or ゆるす)
+    // + Optional(に/として + ある)
+    // + まじき
+    // + Noun
+    vec![
+        TokenMatcher::Custom(Arc::new(MajikiCompoundMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiOrToshiteMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(AruMatcher)))),
+        TokenMatcher::Custom(Arc::new(MajikiMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: の至り (the utmost / extreme of)

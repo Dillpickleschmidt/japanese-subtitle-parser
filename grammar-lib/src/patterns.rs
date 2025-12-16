@@ -7701,7 +7701,7 @@ declare_patterns! {
     Majiki {
         name: "まじき",
         matcher_fn: crate::matchers::n1::majiki,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

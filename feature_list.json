@@ -12365,13 +12365,13 @@
   {
     "pattern_name": "まじき",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "まじき is the attributive form of まじ, a classical auxiliary verb that has been replaced almost entirely by まい 'must not'... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

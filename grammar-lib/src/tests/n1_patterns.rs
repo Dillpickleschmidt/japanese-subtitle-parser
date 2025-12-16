@@ -10611,3 +10611,76 @@ mod tohakurabemononinaranai_tests {
         assert_pattern_range(&patterns, "とは比べものにならない", 9, 22); // 店とはくらべものにならない
     }
 }
+
+// ============================================================================
+// まじき Tests
+// ============================================================================
+
+mod majiki_tests {
+    use super::*;
+
+    // Pattern: まじき (must not / unbecoming of)
+    // Data source: grammar_points_data.json["まじき"]
+    // Testing: structure.standard[0] - "Noun (A) + にある(1) + まじき + Noun (B)"
+    // Note: (1) means "としてある" variant is also possible
+
+    #[test]
+    fn test_majiki_niarumajiki_teacher() {
+        // Testing: structure.standard[0] - "Noun + にあるまじき + Noun"
+        // Context: unbecoming behavior for a teacher
+        let sentence = "生徒に手を挙げることは先生にあるまじき行為だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まじき");
+        assert_pattern_range(&patterns, "まじき", 11, 22); // 先生にあるまじき行為だ - includes だ
+    }
+
+    #[test]
+    fn test_majiki_niarumajiki_police() {
+        // Testing: structure.standard[0] - "Noun + にあるまじき + Noun"
+        // Context: unbecoming behavior for a police officer
+        let sentence = "彼は飲酒運転という警察官にあるまじき行動をし、クビになった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まじき");
+        assert_pattern_range(&patterns, "まじき", 9, 20); // 警察官にあるまじき行動
+    }
+
+    #[test]
+    fn test_majiki_toshitearumajiki_prime_minister() {
+        // Testing: structure.standard[0] - variant with として
+        // Context: unbecoming statement for a prime minister
+        let sentence = "先日、斉藤首相は総理としてあるまじき発言をし、SNSで炎上している。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まじき");
+        assert_pattern_range(&patterns, "まじき", 8, 20); // 総理としてあるまじき発言
+    }
+
+    #[test]
+    fn test_majiki_toshitearumajiki_physician() {
+        // Testing: structure.standard[0] - variant with として
+        // Context: unbecoming mistake for a physician
+        let sentence = "彼は医師としてあるまじきミスをしてしまい、医師免許を剥奪された。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まじき");
+        assert_pattern_range(&patterns, "まじき", 2, 14); // 医師としてあるまじきミス
+    }
+
+    #[test]
+    fn test_majiki_yurusumajiki_unforgivable() {
+        // Testing: structure.standard[1] - "許すまじき + Noun"
+        // Context: unforgivable act
+        let sentence = "煽り運転のようなゆるすまじき行為をした場合、免許は取り消しになります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まじき");
+        assert_pattern_range(&patterns, "まじき", 8, 16); // ゆるすまじき行為
+    }
+}
