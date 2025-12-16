@@ -1,3 +1,100 @@
+## Session 610 - 2025-12-16
+
+### Session Summary - の至り Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (の至り - N1, priority 5)
+**Total tests**: 3887 passing (5 new tests, no regressions)
+**Progress**: One hundred and twenty-third N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented の至り (the utmost / extreme of)
+- Formal expression highlighting that something is at the highest level
+- Used with emotion nouns: 光栄 (honor), 感謝 (gratitude), 恐縮 (obligation), 赤面 (embarrassment)
+- Includes set expression: 若気の至り (youthful indiscretion)
+- Pattern structure: Noun + の + 至り
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: の至り (the utmost / extreme of)
+
+**Grammar Point**: の至り
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Noun + の + 至り + だ (standard form)
+2. Noun + の + 至り + です (polite form)
+
+**Meaning**:
+- "The utmost (A)" / "The extreme of (A)"
+- Formal expression for highlighting that (A) is the highest level of something
+- Combination of の (case-marking particle) + 至り (noun meaning "pinnacle" or "climax")
+- Usually used with emotion nouns that can be experienced to a high degree
+- Common with: 光栄 (honor), 感謝 (gratitude), 恐縮 (obligation), 赤面 (embarrassment)
+- Set expression: 若気の至り "youthful indiscretion" (blunder made due to being young)
+
+**Tokenization pattern**:
+- Noun (名詞 - various subtypes: 一般, サ変接続, etc.)
+- の (助詞/連体化) - case-marking particle
+- 至り (名詞/一般, base=至り, surface=至り)
+- Optional: だ/です (助動詞) or で (助詞/格助詞/一般)
+
+**Implementation**:
+Created 2 custom matchers for precise pattern matching:
+1. NoMatcher - Matches の as 助詞/連体化
+2. ItariMatcher - Matches 至り as 名詞 (base=至り)
+
+Pattern matcher sequence:
+- noun_matcher() (preceding noun)
+- NoMatcher (の particle)
+- ItariMatcher (至り noun)
+
+**Tests Written: 5 tests (all passing)**
+1. test_noitari_gratitude_standard - 感謝の至りだ (15, 20) - standard form with gratitude
+2. test_noitari_honor_polite - 光栄の至りです (19, 24) - polite form with honor
+3. test_noitari_obligation_polite - 恐縮の至りです (14, 19) - polite form with obligation
+4. test_noitari_youthful_indiscretion - 若気の至りで (6, 11) - set expression
+5. test_noitari_embarrassment - 赤面の至りだった (12, 17) - standard past form
+
+**Character Ranges**: Pattern captures Noun + の + 至り:
+- 感謝の至り (15, 20) - 5 characters (gratitude)
+- 光栄の至り (19, 24) - 5 characters (honor)
+- 恐縮の至り (14, 19) - 5 characters (obligation)
+- 若気の至り (6, 11) - 5 characters (set expression)
+- 赤面の至り (12, 17) - 5 characters (embarrassment)
+
+**Key Notes**:
+- Pattern includes the preceding noun (full grammatical construction)
+- Works with various emotion nouns expressing feelings to a high degree
+- The set expression 若気の至り is commonly used for mistakes made due to youth
+- Usually appears before だ/です but can also appear with other particles like で
+- Formal register, typically used in polite or literary contexts
+- Priority set to 5 in patterns.rs (N1 level)
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented noitari() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in noitari_tests module
+- feature_list.json - Updated の至り to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (standard and polite forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3882 + 5 = 3887 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ったら・といったら - Complex emphatic pattern
+- とは比べものにならない - "Cannot be compared to" pattern
+- とは言うものの - "Having said that" pattern
+- と来たら - "Speaking of" pattern
+- ないまでも - "Even if not" pattern
+
+================================================================================
+
 ## Session 609 - 2025-12-16
 
 ### Session Summary - をよそに Complete ✓
