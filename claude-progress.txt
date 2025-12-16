@@ -5758,3 +5758,94 @@ All tests use realistic subtitle-quality sentences from grammar_points_data.json
 - ～てやる - "Do for someone" pattern (1 std, 1 pol)
 
 ================================================================================
+
+================================================================================
+SESSION 577 - 2024-XX-XX
+================================================================================
+
+**Pattern Implemented: もさることながら (N1, Priority 5)**
+
+**Pattern Details:**
+- Meaning: "It goes without saying that (A), but (B)" / "Not only A but also B"
+- Structure: Noun + もさることながら
+- JLPT Level: N1
+- Category: Construction (formal register)
+- Priority: 5
+
+**Implementation Approach:**
+
+The pattern もさることながら is a fixed construction consisting of:
+- Noun (any general noun)
+- も (係助詞 particle)
+- さる (連体詞 - adnominal/rentaishi)
+- こと (名詞/非自立/一般 - dependent noun)
+- ながら (助詞/接続助詞 - conjunctive particle)
+
+**Matcher Implementation (matchers/n1.rs):**
+
+Created mosarukotonagara() function with 4 custom matchers:
+1. MoParticleMatcher - Matches も as 係助詞
+2. SaruRentaishiMatcher - Matches さる as 連体詞 (important: not verb)
+3. KotoNounMatcher - Matches こと noun
+4. NagaraParticleMatcher - Matches ながら as 接続助詞
+
+Key implementation detail: さる is tokenized as 連体詞 (adnominal), not as a verb.
+This is important because さる can also be a verb (猿/去る), so we specifically check
+for the 連体詞 POS tag to match only the "certain/particular" meaning used in this
+construction.
+
+**Tests Written: 1 test (passing)**
+
+1. test_mosarukotonagara_brand_products - Standard structure
+   - Sentence: あのブランドが出す商品もさることながら、マーケティングも素晴らしい。
+   - Pattern range: (9, 19) = 商品もさることながら
+
+**Character Ranges:**
+
+Pattern captures the full construction including the noun:
+- 商品もさることながら (9, 19) - 10 characters
+- Includes: noun (商品) + も + さる + こと + ながら
+
+**Structure Coverage:**
+
+✓ standard[0]: Noun + もさることながら
+  (Only 1 structure variant exists according to grammar_points_data.json)
+
+**Key Notes:**
+
+- Pattern has only one structure variant (no polite forms)
+- Fixed construction - all particles and words must appear in exact sequence
+- Used in formal contexts to emphasize B while acknowledging A's importance
+- Common pattern in formal writing and speeches
+- Often followed by も in the B clause to parallel the A clause
+- No conjugation variations - always the same form
+
+**Files Modified:**
+
+- grammar-lib/src/matchers/n1.rs - Implemented mosarukotonagara() with 4 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs - Added 1 test in mosarukotonagara_tests module
+- feature_list.json - Updated もさることながら to complete status
+
+**Quality Checks:**
+
+✓ Tests exist with proper assertions
+✓ All structure variants tested (only 1 variant exists)
+✓ Realistic subtitle-quality sentence used (from grammar_points_data.json)
+✓ Correct character range verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3696 total, +1 new)
+✓ Clean git history
+
+**Session Total**: 1 N1 pattern completed (もさることながら)
+**Session Tests**: 1 new test added
+**Total Test Count**: 3696 passing
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+
+- ものと思っていた - "Thought that" pattern (4 std, 4 pol)
+- でなくてなんだろう - Rhetorical "if not A what else" pattern (2 std, 0 pol)
+- はさておき・はさておいて - "Leaving aside/apart from" pattern (4 std, 0 pol)
+- 折には - Temporal "at the time when" pattern (5 std, 0 pol)
+- とばかり（に） - "As if to say/seeming that" pattern (2 std, 0 pol)
+
+================================================================================
