@@ -7183,3 +7183,73 @@ Undetectable cases documented:
 - Codebase left in clean, working state
 
 ================================================================================
+
+**Session highlights**:
+- Implemented に則って・に則り (in accordance with, based on)
+- Formal expression for following laws, traditions, standards, codes
+- Pattern matches Noun + に + verb(則る/のっとる) in any conjugation
+- Updated priority from 1 to 5 (appropriate for formal construction)
+
+### Completed: に則って・に則り (in accordance with, based on)
+
+**Grammar Point**: に則って・に則り
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structure**: Noun + に + verb(則る/のっとる) in various conjugations
+
+**Meaning**:
+- In accordance with (A), based on (A), in line with (A)
+- Used with foundations, laws, traditions, standards with long history
+- Formal expression for conforming to established principles
+
+**Tokenization patterns**:
+- のっとって: Noun + に + のっとっ(verb) + て(particle)
+- のっとった: Noun + に + のっとっ(verb) + た(auxiliary)
+- 則り: Noun + に + 則り(verb/連用形)
+- 則っての: Noun + に + 則っ(verb) + て + の
+
+**Implementation**:
+Matcher: ninottotte_u30fb_ninottori() in matchers/n1.rs
+- Custom matcher NottoruVerbMatcher checks verb base_form
+- Accepts both kanji (則る) and hiragana (のっとる) forms
+- Matches verb in any conjugation
+
+**Tests Added**: 4 tests in ninottotte_tests module
+1. test_ninottotte_te_form - chars [13-20]
+2. test_ninottotte_ta_form_modifier - chars [9-17]
+3. test_ninottori_continuative - chars [7-11]
+4. test_ninottotte_no_form - chars [0-5]
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented ninottotte_u30fb_ninottori()
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests
+- feature_list.json - Updated to complete
+
+**Session Stats**:
+- 1 N1 pattern completed
+- 4 new tests added
+- Total test count: 3766 passing (up from 3762)
+- No regressions
+- Clean git history
+
+================================================================================
+
+================================================================================
+
+## Session 584 - 2025-12-16
+
+### に則って・に則り Complete
+**Status**: 1 N1 pattern completed successfully
+**Pattern**: に則って・に則り (in accordance with, based on) - formal N1
+**Tests**: 3766 passing (+4 new, no regressions)
+**Implementation**: Noun + に + verb(則る/のっとる) in any conjugation
+**Priority**: Updated from 1 to 5
+**Files Modified**: matchers/n1.rs, patterns.rs, tests/n1_patterns.rs, feature_list.json
+
+All 4 structure variants tested with realistic examples.
+Codebase clean and ready for next pattern.
+
+================================================================================
