@@ -1,3 +1,107 @@
+## Session 573 - 2025-12-16
+
+### Session Summary - だに + しない Complete ✓
+**Status**: Implemented だに + しない pattern successfully
+**Patterns completed**: 1 (だに + しない - N1, priority 5)
+**Total tests**: 3676 passing (4 new tests, no regressions)
+**Progress**: Eighty-fifth N1 pattern completed!
+
+**Session highlights**:
+- Implemented だに + しない (not even, cannot even)
+- Classical adverbial particle similar to さえ/すら but more formal/literary
+- TWO tokenization variants requiring separate matcher functions
+- Handles both サ変接続 nouns (予想だに, 想像だに) and regular nouns (思いだに)
+- Special handling for 夢にだに (idiom where に is part of the expression)
+- All structure variants tested with realistic subtitle sentences
+
+### ✓ Completed: だに + しない (not even, cannot even)
+
+**Grammar Point**: だに + しない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal/Literary
+
+**Pattern structures**:
+1. Noun(サ変接続) + だ + に + し + ない (予想だにしない, 想像だにしない)
+2. Noun + だに(助詞/副助詞) + Verb + ない (思いだにしない)
+3. Exception: 夢にだに思わない (idiom where に + だに is part of expression)
+
+**Meaning**:
+- "Not even (A), so not (B)" / "Not (B) at all"
+- Presents minimum/light examples to which (A) does not apply
+- Classical particle more common in literature than modern speech
+- Used in limited set of expressions: 想像だに, 考えるだに, 夢にだに, 聞くだに, 微動だに
+
+**Tokenization (Two variants)**:
+**Variant 1 - サ変接続 nouns** (予想, 想像):
+- Noun (名詞/サ変接続)
+- だ (助動詞/特殊・ダ/基本形)
+- に (助詞/格助詞)
+- し (動詞, base=する, 未然形 or 連用形)
+- なかっ (助動詞, base=ない)
+- た (助動詞)
+
+**Variant 2 - Regular nouns with だに as single particle** (思い, 夢):
+- Noun (名詞/一般)
+- だに (助詞/副助詞) **[Single token]**
+- Verb phrase (may include て, いる)
+- ない (助動詞)
+
+**Implementation**:
+- Two separate matcher functions: `dani_shinai()` and `dani_shinai_particle()`
+- Both registered as pattern "だに + しない" with priority 5
+- First matcher: Exact sequence Noun + だ(助動詞) + に + し + ない
+- Second matcher: Noun + だに(助詞/副助詞) + Wildcard(1-3) + ない
+- Custom matchers for precise POS/feature checking
+- Wildcard allows for verb phrases with auxiliaries (していなかった, etc.)
+
+**Tests Written: 4 tests (all passing)**
+1. test_dani_shinai_yosou - 予想だにしなかった (20, 29) - サ変接続 noun
+2. test_dani_shinai_souzou - 想像だにしなかった (11, 20) - サ変接続 noun
+3. test_dani_shinai_omoi - 思いだにしていなかった (19, 30) - regular noun with ている
+4. test_dani_shinai_yume_ni_dani - にだに思わなかった (16, 25) - idiom (includes に before だに)
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures noun + full construction:
+- 予想だにしなかった (20, 29) - 9 characters
+- 想像だにしなかった (11, 20) - 9 characters
+- 思いだにしていなかった (19, 30) - 11 characters (includes auxiliary)
+- にだに思わなかった (16, 25) - 9 characters (includes preceding に particle)
+
+**Key Notes**:
+- Kagome tokenizes だに differently depending on preceding noun type
+- サ変接続 nouns: だ + に as separate tokens
+- Regular nouns: だに as single 助詞/副助詞 token
+- Both tokenizations represent the same grammar pattern
+- 夢にだに idiom includes the に particle as part of the expression
+- Pattern is classical/literary but still used in modern Japanese in fixed expressions
+- Related to さえ and すら but more formal register
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented dani_shinai() and dani_shinai_particle()
+- grammar-lib/src/patterns.rs - Added DaniShinai and DaniShinaiParticle with priority 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in dani_shinai_tests module
+- feature_list.json - Updated だに + しない to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All tokenization variants tested (だ + に and だに forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3676 total, +4 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- んがため(に) - "For the purpose of" pattern (formal/literary)
+- にも～ない - "Despite wanting to" pattern
+- ～なり～なり - Classical listing pattern
+- ないでもない - Double negative pattern
+- もさることながら - "Not only but also" pattern
+
+================================================================================
+
 ## Session 572 - 2025-12-16
 
 ### Session Summary - に至って・に至り Complete ✓
