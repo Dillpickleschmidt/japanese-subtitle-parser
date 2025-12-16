@@ -5156,9 +5156,50 @@ pub fn zutomo_split() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とあって
+// Pattern: とあって (since/because of)
+// Structures: Verb/Adjective/Noun + (だ) + とあって
 pub fn toatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と particle (either quotative or general case particle)
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match あっ (verb ある in 連用タ接続 form)
+    #[derive(Debug)]
+    struct AtteMatcher;
+    impl Matcher for AtteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| form == "連用タ接続")
+        }
+    }
+
+    // Match て particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AtteMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: でもなんでもない

@@ -11525,13 +11525,13 @@
   {
     "pattern_name": "とあって",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "とあって is a formal grammar expression that combines the case marking particle と with the て-form of ある 'to be' [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

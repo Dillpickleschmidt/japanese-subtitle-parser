@@ -7149,7 +7149,7 @@ declare_patterns! {
     Toatte {
         name: "とあって",
         matcher_fn: crate::matchers::n1::toatte,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

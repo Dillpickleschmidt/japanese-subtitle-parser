@@ -6476,3 +6476,59 @@ mod kototote_tests {
         assert_pattern_range(&patterns, "こととて", 0, 7); // 突然のこととて
     }
 }
+
+// ============================================================================
+// とあって Tests
+// ============================================================================
+
+mod toatte_tests {
+    use super::*;
+
+    // Pattern: とあって (since, because of)
+    // Data source: grammar_points_data.json["とあって"]
+    // Testing all structure variants:
+    //   - standard[0]: Verb + とあって
+    //   - standard[1]: い-Adjective + とあって
+    //   - standard[2]: な-Adjective + (だ) + とあって
+    //   - standard[3]: Noun + (だ) + とあって
+
+    #[test]
+    fn test_toatte_verb() {
+        let sentence = "あのグループの卒業ライブが行われるとあって、この会場は大勢のファンで溢れている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とあって");
+        assert_pattern_range(&patterns, "とあって", 15, 21); // れるとあって
+    }
+
+    #[test]
+    fn test_toatte_i_adjective() {
+        let sentence = "北海道は夏の間でも涼しいとあって、冬の間だけでなく夏にも多くの観光客が訪れるらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とあって");
+        assert_pattern_range(&patterns, "とあって", 9, 16); // 涼しいとあって
+    }
+
+    #[test]
+    fn test_toatte_na_adjective() {
+        let sentence = "あの街は便利だとあって、土地の値段が高い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とあって");
+        assert_pattern_range(&patterns, "とあって", 6, 11); // だとあって
+    }
+
+    #[test]
+    fn test_toatte_noun() {
+        let sentence = "お盆の最終日とあって、高速道路だけでなく、下道もものすごく混んでいる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とあって");
+        assert_pattern_range(&patterns, "とあって", 5, 10); // 日とあって
+    }
+}
