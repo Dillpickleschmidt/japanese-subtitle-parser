@@ -8060,3 +8060,63 @@ Continue with remaining N1 priority 5 patterns:
 - など...
 
 ================================================================================
+
+================================================================================
+Session 596 - December 16, 2025
+================================================================================
+
+**Pattern Completed:** にもまして (N1, priority 5)
+
+**Summary:**
+Implemented にもまして pattern that indicates something has surpassed a certain
+point, particularly when it was at a consistent level in the past but has now
+risen. The pattern combines に (case particle) + も (adverbial "even") + まして
+(て-form of 増す "to increase"), literally meaning "even increasing from (A), (B)".
+
+**Implementation Details:**
+Matcher uses standard pattern detection:
+1. noun_matcher() - Matches any noun (standard nouns, 何, 誰, いつ, etc.)
+2. Surface("に") - Case particle
+3. Surface("も") - Adverbial particle for emphasis
+4. MashiteMatcher - Custom matcher for まして as 副詞/一般
+
+**Tests added**: 4 tests in nimomashite_tests module
+1. test_nimomashite_noun - "今年は去年にもまして、湿気が多い" [chars 3-10]
+2. test_nimomashite_nani - "何にもまして大切なんだ" [chars 18-24]
+3. test_nimomashite_dare - "誰にもまして仕事を一生懸命やってくれる" [chars 5-11]
+4. test_nimomashite_itsu - "いつにもまして輝いている" [chars 3-10]
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json.
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented nimomashite() (lines 7705-7727)
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests (lines 9157-9216)
+- feature_list.json - Updated にもまして to complete
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (standard noun, 何, 誰, いつ)
+✓ Realistic sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in committed tests
+✓ All existing tests pass (3807 total, +4 new)
+✓ Clean git history
+
+**Session Stats:**
+- 1 N1 pattern completed (にもまして)
+- 4 new tests added
+- Total test count: 3807 passing
+- Codebase left in clean, working state
+
+**Next priorities:**
+Continue with remaining N1 priority 5 patterns:
+- まくる
+- どうにか
+- や否や
+- というところ
+- といおうか
+- といわず
+- ときたら
+- など...
+
+================================================================================

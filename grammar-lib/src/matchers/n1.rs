@@ -7726,9 +7726,46 @@ pub fn nimomashite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: まくる
+// Pattern: まくる (split tokenization - do repeatedly/excessively)
+// Structures: Verb[stem] + まくる
 pub fn makuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match まくる as 動詞 (自立 or 非自立)
+    #[derive(Debug)]
+    struct MakuruMatcher;
+    impl Matcher for MakuruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "まくる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "自立")
+                    || token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(MakuruMatcher)),
+    ]
+}
+
+// Pattern: まくる (compound tokenization - single token verbs ending in まくる)
+// Structures: Compound verb (e.g., 歌いまくる, 飲みまくる) as single token
+pub fn makuru_compound() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match compound verbs where base_form ends with まくる (but not まくる itself)
+    #[derive(Debug)]
+    struct MakuruCompoundMatcher;
+    impl Matcher for MakuruCompoundMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.base_form.ends_with("まくる")
+                && token.base_form != "まくる"
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(MakuruCompoundMatcher))]
 }
 
 // Pattern: わ〜わ（で） (with A and B, C)

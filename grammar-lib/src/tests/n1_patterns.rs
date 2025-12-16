@@ -9214,3 +9214,53 @@ mod nimomashite_tests {
         assert_pattern_range(&patterns, "にもまして", 3, 10); // いつにもまして
     }
 }
+
+// ============================================================================
+// まくる Tests
+// ============================================================================
+
+mod makuru_tests {
+    use super::*;
+
+    // Pattern: まくる (do repeatedly/excessively, like crazy)
+    // Data source: grammar_points_data.json["まくる"]
+    // Meaning: Indicates an action is done over and over, a lot, or with great vigor
+    // Structures: Verb[stem] + まくる, Verb[て] + Verb[て] + Verb[stem] + まくる
+    // Note: Verb must be volitional (controllable action)
+
+    #[test]
+    fn test_makuru_simple_past() {
+        // Testing: structure.standard[0] - "Verb[stem] + まくる" (split tokenization)
+        // Example from grammar_points_data.json: "買いまくった"
+        let sentence = "昨日は釣具屋でルアーを買いまくったから、来週までご飯とふりかけで我慢しなきゃいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まくる");
+        assert_pattern_range(&patterns, "まくる", 11, 17); // 買いまくった
+    }
+
+    #[test]
+    fn test_makuru_te_iru() {
+        // Testing: structure.standard[0] - "Verb[stem] + まくる" with ている (split tokenization)
+        // Example from grammar_points_data.json: "食べまくってる"
+        let sentence = "久しぶりに実家に帰って、母の料理を食べまくってるから少し太ってきた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まくる");
+        assert_pattern_range(&patterns, "まくる", 17, 22); // 食べまくっ
+    }
+
+    #[test]
+    fn test_makuru_compound() {
+        // Testing: structure.standard[0] - "Verb[stem] + まくる" (compound tokenization)
+        // Example from grammar_points_data.json: "歌いまくった"
+        let sentence = "昨日はカラオケで歌いまくったから、声が全然でない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "まくる_compound");
+        assert_pattern_range(&patterns, "まくる_compound", 8, 14); // 歌いまくった
+    }
+}

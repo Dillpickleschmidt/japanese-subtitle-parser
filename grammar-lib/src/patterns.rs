@@ -7517,7 +7517,15 @@ declare_patterns! {
     Makuru {
         name: "まくる",
         matcher_fn: crate::matchers::n1::makuru,
-        priority: 1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    MakuruCompound {
+        name: "まくる_compound",
+        matcher_fn: crate::matchers::n1::makuru_compound,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
