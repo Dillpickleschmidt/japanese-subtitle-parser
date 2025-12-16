@@ -5518,3 +5518,65 @@ mod bekushite_tests {
         assert_pattern_range(&patterns, "べくして", 7, 14); // 出会うべくして
     }
 }
+
+// ============================================================================
+// 相まって Tests
+// ============================================================================
+
+mod aimatte_tests {
+    use super::*;
+
+    // Pattern: 相まって (combined with, coupled with)
+    // Data source: grammar_points_data.json["相まって"]
+    // Testing structure variants:
+    //   - standard[0]: Noun + が + 相（あい）まって
+    //   - standard[1]: Noun + と + 相（あい）まって
+
+    #[test]
+    fn test_aimatte_with_ga_particle() {
+        // Testing structure: Noun + が + 相まって
+        // From example: このステーキはシェフ特製のソースが相まって、とても美味しい
+        let sentence = "このステーキはシェフ特製のソースが相まって、とても美味しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "相まって");
+        assert_pattern_range(&patterns, "相まって", 13, 21); // ソースが相まって
+    }
+
+    #[test]
+    fn test_aimatte_with_to_particle() {
+        // Testing structure: Noun + と + 相まって
+        // From example: あの古い屋敷は霧と相まって不気味な雰囲気を出しています
+        let sentence = "あの古い屋敷は霧と相まって不気味な雰囲気を出しています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "相まって");
+        assert_pattern_range(&patterns, "相まって", 7, 13); // 霧と相まって
+    }
+
+    #[test]
+    fn test_aimatte_twitter_popularity() {
+        // Testing structure: Noun + と + 相まって
+        // From example: ツイッターでの流行と相まって、この漫画は若者の間ではすごく人気だ
+        let sentence = "ツイッターでの流行と相まって、この漫画は若者の間ではすごく人気だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "相まって");
+        assert_pattern_range(&patterns, "相まって", 7, 14); // 流行と相まって
+    }
+
+    #[test]
+    fn test_aimatte_client_ideas() {
+        // Testing structure: Noun + が + 相まって
+        // From example: クライアントのアイデアと私たちの努力が相まって
+        let sentence = "クライアントのアイデアと私たちの努力が相まって、とてもいいイベントを開催することができた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "相まって");
+        assert_pattern_range(&patterns, "相まって", 16, 23); // 努力が相まって
+    }
+}

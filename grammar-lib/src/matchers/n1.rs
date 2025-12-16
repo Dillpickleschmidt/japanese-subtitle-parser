@@ -4955,9 +4955,36 @@ pub fn verb_te_miseru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 相まって
+// Pattern: 相まって (combined with, coupled with)
+// Structures: Noun + が/と + 相まって
 pub fn aimatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match が or と particle
+    #[derive(Debug)]
+    struct GaToParticleMatcher;
+    impl super::Matcher for GaToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "が" || token.surface == "と")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match 相まって as adverb
+    #[derive(Debug)]
+    struct AimatteMatcher;
+    impl super::Matcher for AimatteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "相まって"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(GaToParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AimatteMatcher)),
+    ]
 }
 
 // Pattern: に足りない
