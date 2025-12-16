@@ -10315,3 +10315,75 @@ mod naimademo_tests {
         assert_pattern_range(&patterns, "ないまでも", 12, 21); // 幸せじゃないまでも
     }
 }
+
+// ============================================================================
+// をよそに Tests
+// ============================================================================
+
+mod woyosoni_tests {
+    use super::*;
+
+    // Pattern: をよそに (ignoring/disregarding)
+    // Data source: grammar_points_data.json["をよそに"]
+    // Testing: structure.standard[0] - "Noun + をよそに"
+
+    #[test]
+    fn test_woyosoni_noun_basic() {
+        // Testing: structure.standard[0] - "Noun + をよそに"
+        // Example from grammar data: 親の心配をよそに
+        let sentence = "彼は親の心配をよそに、毎晩夜遅くまで友達と遊んでいる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をよそに");
+        assert_pattern_range(&patterns, "をよそに", 4, 10); // 心配をよそに
+    }
+
+    #[test]
+    fn test_woyosoni_noun_objections() {
+        // Testing: structure.standard[0] - "Noun + をよそに"
+        // Example from grammar data: 社員の反対をよそに
+        let sentence = "社長は社員の反対をよそに、仕事の効率を上げるために休憩所を撤去した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をよそに");
+        assert_pattern_range(&patterns, "をよそに", 6, 12); // 反対をよそに
+    }
+
+    #[test]
+    fn test_woyosoni_noun_eyes() {
+        // Testing: structure.standard[0] - "Noun + をよそに"
+        // Example from grammar data: 周囲の視線をよそに
+        let sentence = "彼は周囲の視線をよそに、コンビニの店員に暴言を吐き続けていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をよそに");
+        assert_pattern_range(&patterns, "をよそに", 5, 11); // 視線をよそに
+    }
+
+    #[test]
+    fn test_woyosoni_phrase_nominalized() {
+        // Testing: structure.standard[1] - "Phrase + の + をよそに"
+        // This structure would be like: "病気であるのをよそに" (ignoring that [they] are sick)
+        let sentence = "彼女は体調が悪いのをよそに、仕事を続けていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をよそに");
+        assert_pattern_range(&patterns, "をよそに", 8, 13); // のをよそに
+    }
+
+    #[test]
+    fn test_woyosoni_concerns() {
+        // Testing: structure.standard[0] - "Noun + をよそに"
+        // Different context: 懸念 (concerns)
+        let sentence = "彼らは環境への懸念をよそに、工場の建設を進めた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をよそに");
+        assert_pattern_range(&patterns, "をよそに", 7, 13); // 懸念をよそに
+    }
+}

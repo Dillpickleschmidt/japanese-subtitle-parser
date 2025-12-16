@@ -7677,7 +7677,7 @@ declare_patterns! {
     Woyosoni {
         name: "をよそに",
         matcher_fn: crate::matchers::n1::woyosoni,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

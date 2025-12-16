@@ -12323,13 +12323,13 @@
   {
     "pattern_name": "をよそに",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を余所（よそ）に is used to express that (A) is something that effectively has nothing to do with the speaker, or that the sp... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

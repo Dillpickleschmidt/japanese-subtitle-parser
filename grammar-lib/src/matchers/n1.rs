@@ -8859,9 +8859,49 @@ pub fn naimademo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: をよそに
+// Pattern: をよそに (ignoring/disregarding)
+// Structures: Noun + をよそに, Phrase + の + をよそに
 pub fn woyosoni() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を particle (格助詞/一般)
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl super::Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match よそ noun (名詞/代名詞/一般)
+    #[derive(Debug)]
+    struct YosoMatcher;
+    impl super::Matcher for YosoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よそ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match に particle (格助詞/一般)
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl super::Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun, の, or other word before を
+        TokenMatcher::Custom(Arc::new(WoMatcher)),
+        TokenMatcher::Custom(Arc::new(YosoMatcher)),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+    ]
 }
 
 // Pattern: に限ったことではない
