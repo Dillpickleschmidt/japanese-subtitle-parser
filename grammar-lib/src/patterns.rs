@@ -7565,7 +7565,7 @@ declare_patterns! {
     Toiutokoro {
         name: "というところ",
         matcher_fn: crate::matchers::n1::toiutokoro,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

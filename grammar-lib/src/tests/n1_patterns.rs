@@ -9388,3 +9388,83 @@ mod yainaya_tests {
     //     // This might be a separate pattern or variant
     // }
 }
+
+// ============================================================================
+// というところ Tests
+// ============================================================================
+
+mod toiutokoro_tests {
+    use super::*;
+
+    // Pattern: というところ (I would say about / approximately)
+    // Data source: grammar_points_data.json["というところ"]
+    //
+    // Meaning: Used when highlighting an approximate number or degree for something
+    // Translation: "I would say about (A)", "I guess about (A)"
+    //
+    // Structure variants from grammar_points_data.json:
+    // - standard[0]: Phrase + というところ + だ
+    // - standard[1]: といったところ, ってとこ (casual variants)
+    // - polite[0]: Phrase + というところ + です
+    // - polite[1]: といったところ, ってとこ (casual variants)
+
+    #[test]
+    fn test_toiutokoro_time_period() {
+        // Testing: structure.standard[0] - "Phrase + というところ + だ"
+        // Example from grammar_points_data.json: "二週間で終わるというところだ"
+        let sentence = "このペースだとこの工事はあと二週間で終わるというところだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というところ");
+        assert_pattern_range(&patterns, "というところ", 18, 28); // 終わるというところだ
+    }
+
+    #[test]
+    fn test_toiutokoro_degree() {
+        // Testing: structure.standard[0] - "Phrase + というところ"
+        // Example from grammar_points_data.json: "汗が出るぐらい辛いというところ"
+        let sentence = "どれぐらい辛いって聞かれても汗が出るぐらい辛いというところかな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というところ");
+        assert_pattern_range(&patterns, "というところ", 21, 29); // 辛いというところ
+    }
+
+    #[test]
+    fn test_toiutokoro_duration() {
+        // Testing: structure.polite[0] - "Phrase + というところ + です"
+        // Example from grammar_points_data.json: "15分というところです"
+        let sentence = "電車で行けば30分かかるけど、車なら15分というところです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というところ");
+        assert_pattern_range(&patterns, "というところ", 20, 29); // 分というところです
+    }
+
+    #[test]
+    fn test_toittatokoro_price() {
+        // Testing: structure variant - "といったところ + です" (past form)
+        // Example from grammar_points_data.json: "5000万といったところです"
+        let sentence = "これぐらいの物件だったら5000万といったところですね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というところ");
+        assert_pattern_range(&patterns, "というところ", 16, 26); // 万といったところです
+    }
+
+    #[test]
+    fn test_toittatokoro_walk() {
+        // Testing: structure variant - "といったところ + です" (past form)
+        // Example from grammar_points_data.json: "1時間といったところです"
+        let sentence = "徒歩だと1時間といったところです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "というところ");
+        assert_pattern_range(&patterns, "というところ", 5, 16); // 時間といったところです
+    }
+}

@@ -7904,9 +7904,56 @@ pub fn shidaidesu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: というところ
+// Pattern: というところ (I would say about / approximately)
+// Structures: Phrase + という/といった + ところ + だ/です
+//
+// Examples:
+// - 二週間で終わるというところだ (I would say it will finish in two weeks)
+// - 15分というところです (I would say about 15 minutes)
+// - 5000万といったところです (I would say about 50 million)
 pub fn toiutokoro() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match という or といった as 助詞/格助詞/連語
+    #[derive(Debug)]
+    struct ToiuVariantMatcher;
+    impl Matcher for ToiuVariantMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "という" || token.surface == "といった")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    // Match ところ as 名詞/非自立/副詞可能
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(2).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Match だ or です as auxiliary verb (optional ending)
+    #[derive(Debug)]
+    struct DaDeSuMatcher;
+    impl Matcher for DaDeSuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding phrase/number/expression
+        TokenMatcher::Custom(Arc::new(ToiuVariantMatcher)),
+        TokenMatcher::Custom(Arc::new(TokoroMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaDeSuMatcher)))),
+    ]
 }
 
 // Pattern: １～たりとも～ない (not even one, not a single)
