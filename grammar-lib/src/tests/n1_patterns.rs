@@ -9536,3 +9536,68 @@ mod niterashite_niterasuto_tests {
         assert_pattern_range(&patterns, "に照らして・に照らすと", 0, 7); // 法律に照らすと
     }
 }
+
+// ============================================================================
+// とあれば Tests
+// ============================================================================
+
+mod toareba_tests {
+    use super::*;
+
+    // Pattern: とあれば (if/when it comes to)
+    // Data source: grammar_points_data.json["とあれば"]
+    // Testing: structure.standard[0] - "Noun + （だ）+ とあれば"
+    //
+    // Meaning: Emphatic version of なら 'if'. 'If (A) is the case, then (B)'
+    // Components: と (case-marking particle) + あれば (hypothetical form of ある)
+    // Used when (A) is a special circumstance leading to (B), which is usually
+    // something unavoidable (しかない, なければならない, ざるを得ない, etc.)
+
+    #[test]
+    fn test_toareba_noun_direct() {
+        // Testing: Noun + とあれば (without copula)
+        // Based on: "お前の頼みとあればやるしかないだろ"
+        let sentence = "お前の頼みとあればやるしかないだろ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とあれば");
+        assert_pattern_range(&patterns, "とあれば", 3, 9); // 頼みとあれば
+    }
+
+    #[test]
+    fn test_toareba_senpai_orders() {
+        // Testing: Noun + とあれば
+        // Based on: "先輩の指示とあれば従わないわけにはいけないけど"
+        let sentence = "先輩の指示とあれば従わないわけにはいけないけど。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とあれば");
+        assert_pattern_range(&patterns, "とあれば", 3, 9); // 指示とあれば
+    }
+
+    #[test]
+    fn test_toareba_verb_quotation() {
+        // Testing: Verb + とあれば (quotation form)
+        // Based on: "データを復元できるとあれば、いくらでも出します"
+        let sentence = "データを復元できるとあれば、いくらでも出します！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とあれば");
+        assert_pattern_range(&patterns, "とあれば", 6, 13); // できるとあれば
+    }
+
+    #[test]
+    fn test_toareba_adjective_quotation() {
+        // Testing: い-Adjective + とあれば (quotation form)
+        // Based on: "状態がいいとあれば４万円ぐらいで売れる"
+        let sentence = "状態がいいとあれば４万円ぐらいで売れると思いますよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とあれば");
+        assert_pattern_range(&patterns, "とあれば", 3, 9); // いいとあれば
+    }
+}

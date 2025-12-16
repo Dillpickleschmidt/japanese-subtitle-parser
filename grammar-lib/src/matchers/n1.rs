@@ -8189,9 +8189,51 @@ pub fn niterashite_u30fb_niterasuto() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とあれば
+// Pattern: とあれば (if/when it comes to)
+// Structures: Noun + とあれば, Verb/Adj + とあれば (quotation)
 pub fn toareba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches と as 助詞/格助詞 (can be 一般 or 引用)
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl super::Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matches あれ (仮定形 of ある)
+    #[derive(Debug)]
+    struct AreMatcher;
+    impl super::Matcher for AreMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あれ"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Matches ば as 助詞/接続助詞
+    #[derive(Debug)]
+    struct BaMatcher;
+    impl super::Matcher for BaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding word (noun/verb/adjective)
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+        TokenMatcher::Custom(Arc::new(AreMatcher)),
+        TokenMatcher::Custom(Arc::new(BaMatcher)),
+    ]
 }
 
 // Pattern: さぞ (you must be very, I dare say that)
