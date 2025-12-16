@@ -2499,9 +2499,49 @@ pub fn tokorowo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: からある
+// Pattern: からある (as much as, as many as)
+// Structures: Number + Counter + から + ある/いる
 pub fn karaaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match counter suffix (助数詞)
+    #[derive(Debug)]
+    struct CounterMatcher;
+    impl Matcher for CounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(2).is_some_and(|pos| pos == "助数詞")
+        }
+    }
+
+    // Match から particle
+    #[derive(Debug)]
+    struct KaraParticleMatcher;
+    impl Matcher for KaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.base_form == "から"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ある or いる verb
+    #[derive(Debug)]
+    struct AruIruMatcher;
+    impl Matcher for AruIruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "ある" || token.base_form == "いる")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(CounterMatcher)),
+        TokenMatcher::Custom(Arc::new(KaraParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AruIruMatcher)),
+    ]
 }
 
 // Pattern: にして②

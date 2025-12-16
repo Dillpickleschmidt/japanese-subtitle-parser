@@ -2886,3 +2886,79 @@ mod tamadeda_tests {
         assert_pattern_range(&patterns, "～たまでだ", 17, 27); // 助けたまでのことです
     }
 }
+
+// ============================================================================
+// からある Tests
+// ============================================================================
+
+mod karaaru_tests {
+    use super::*;
+
+    // Pattern: からある (as much as, as many as)
+    // Data source: grammar_points_data.json["からある"]
+    // Testing: structure.standard[0] - "Number + Counter + からある"
+    #[test]
+    fn test_karaaru_weight() {
+        let sentence = "おじいちゃんは８０歳なのに６０キロからあるダンベルを持ち上げることができる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からある");
+        assert_pattern_range(&patterns, "からある", 15, 21); // キロからある
+    }
+
+    // Testing: structure.standard[1] - "Number + Counter + からある + Noun"
+    #[test]
+    fn test_karaaru_with_noun() {
+        let sentence = "彼は小柄であるにも関わらず、７０キロからある冷蔵庫を一人で持ち上げることができる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からある");
+        assert_pattern_range(&patterns, "からある", 16, 22); // キロからある
+    }
+
+    // Testing: structure.standard[2] - "Number + Counter + からいる"
+    #[test]
+    fn test_karairu_people() {
+        let sentence = "この会社には正社員が３０００人からいる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からある");
+        assert_pattern_range(&patterns, "からある", 14, 19); // 人からいる
+    }
+
+    // Testing: structure.standard[3] - "Number + Counter + からいる + Noun"
+    #[test]
+    fn test_karairu_with_noun() {
+        let sentence = "あのコンサートには一万人からいる人数がいる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からある");
+        assert_pattern_range(&patterns, "からある", 11, 16); // 人からいる
+    }
+
+    // Testing: structure.polite[0] - "Number + Counter + からあります"
+    #[test]
+    fn test_karaaru_polite() {
+        let sentence = "この建物は、築１００年からあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からある");
+        assert_pattern_range(&patterns, "からある", 10, 17); // 年からあります
+    }
+
+    // Testing: structure.polite[2] - "Number + Counter + からいます"
+    #[test]
+    fn test_karairu_polite() {
+        let sentence = "この学校には、生徒が５００人からいます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からある");
+        assert_pattern_range(&patterns, "からある", 13, 19); // 人からいます
+    }
+}

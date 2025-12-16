@@ -10755,13 +10755,13 @@
   {
     "pattern_name": "にして①",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the case-marking particle に is combined with the て-form of する, it often carries the meaning of 'at (A)', 'over (... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10769,13 +10769,13 @@
   {
     "pattern_name": "ものを",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ものを is a grammar point that functions in a similar way to のに in that it will express that (A) is something that was d... [6 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10783,13 +10783,13 @@
   {
     "pattern_name": "であれ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Functioning as an extension of である , the formal copula that is a combination of the conjunctive form of the auxiliary... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10797,13 +10797,13 @@
   {
     "pattern_name": "をおいてほかに〜ない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を措（お）いて is a grammar pattern that expresses something similar to 'none other than (A)', or 'nothing else but (A)' [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10811,13 +10811,13 @@
   {
     "pattern_name": "をもって",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used with time related expressions, the structure をもって is often translated as 'as of (A)', or 'effective from (A)' [3 std, 3 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10825,13 +10825,13 @@
   {
     "pattern_name": "とはいえ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "とは言（い）え is one of the standard grammar patterns in Japanese that makes use of the imperative form in order to strongl... [5 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10839,13 +10839,13 @@
   {
     "pattern_name": "ならでは",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ならでは is a construction which indicates that something is 'unique to (A)', or 'impossible if not (A)' [5 std, 5 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10867,13 +10867,13 @@
   {
     "pattern_name": "あっての",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "あっての is a pattern which emphasizes that (B) is something that only exists because of (A) [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10881,13 +10881,13 @@
   {
     "pattern_name": "～たまでだ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "In comparison to ～るまでだ, the grammar pattern expressing that 'one can only but (A)', ～たまでだ works in a similar way, wit... [2 std, 2 pol]",
     "priority": 5,
     "skip_reason": null
@@ -12897,13 +12897,13 @@
   {
     "pattern_name": "こそすれ〜ない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Occasionally in Japanese, the adverbial particle こそ will be seen followed by the realis form (sometimes referred to a... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -12911,27 +12911,27 @@
   {
     "pattern_name": "並み",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "並（な）み is the noun form of the classical verb 並（な）む, which has the same meaning as 並（なら）ぶ, ‘to line up’, or ‘to be in ... [3 std, 3 pol]",
+    "passes": true,
+    "description": "並（な）み is the noun form of the classical verb 並（な）む, which has the same meaning as 並（なら）ぶ, 'to line up', or 'to be in ... [3 std, 3 pol]",
     "priority": 5,
     "skip_reason": null
   },
   {
     "pattern_name": "に先駆けて",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に先駆（さきが）け , is an expression used after nouns which indicates that something is being done ‘ahead of (A)’, or in a wa... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
