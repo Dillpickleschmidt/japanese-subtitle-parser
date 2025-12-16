@@ -6369,3 +6369,55 @@ mod gurumide_tests {
         assert_pattern_range(&patterns, "ぐるみで", 0, 5); // 街ぐるみの
     }
 }
+
+// Pattern: が早いか (as soon as, no sooner than)
+// Data source: grammar_points_data.json["が早いか"]
+// Testing structure variants:
+//   - standard[0]: Verb[dictionary] + が早いか + Phrase[past]
+//   - standard[1]: Verb[past] + が早いか + Phrase[past]
+//
+// Note: This pattern is formal and expresses immediate succession of actions
+// The second action (B) is always in past tense and often unexpected
+mod ga_hayai_ka_tests {
+    use super::*;
+
+    #[test]
+    fn test_ga_hayai_ka_dictionary_form() {
+        let sentence = "彼女は彼が書いた手紙を読むが早いか、悲しさのあまりで泣き始めた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が早いか");
+        assert_pattern_range(&patterns, "が早いか", 11, 17); // 読むが早いか
+    }
+
+    #[test]
+    fn test_ga_hayai_ka_dictionary_form_sit() {
+        let sentence = "息子は食卓に座るが早いか、並べてあった夕食を吸い込むように食い上げた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が早いか");
+        assert_pattern_range(&patterns, "が早いか", 6, 12); // 座るが早いか
+    }
+
+    #[test]
+    fn test_ga_hayai_ka_past_form_alarm() {
+        let sentence = "木村くんはアラームが鳴ったが早いか、スヌーズボタンを押した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が早いか");
+        assert_pattern_range(&patterns, "が早いか", 12, 17); // たが早いか
+    }
+
+    #[test]
+    fn test_ga_hayai_ka_past_form_police() {
+        let sentence = "警察官は犯人を見つけたが早いか、犯人に飛びつき手錠をかけた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "が早いか");
+        assert_pattern_range(&patterns, "が早いか", 10, 15); // たが早いか
+    }
+}

@@ -6064,9 +6064,66 @@ pub fn tohaiumonono() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: が早いか
+// Pattern: が早いか (as soon as, no sooner than)
+// Structures: Verb[dictionary] + が + 早い + か
+//            Verb[連用タ接続] + た + が + 早い + か
 pub fn gahayaika() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verbs in dictionary form OR past auxiliary た/だ
+    #[derive(Debug)]
+    struct VerbOrPastMatcher;
+    impl Matcher for VerbOrPastMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Dictionary form verb
+            (token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形"))
+            // OR past auxiliary た/だ
+            || (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "た" || token.base_form == "だ"))
+        }
+    }
+
+    // Match が as 助詞/接続助詞 (conjunctive particle)
+    #[derive(Debug)]
+    struct GaConjunctionMatcher;
+    impl Matcher for GaConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match 早い as adjective in basic form
+    #[derive(Debug)]
+    struct HayaiMatcher;
+    impl Matcher for HayaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "早い"
+                && token.base_form == "早い"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match か as adverbial particle
+    #[derive(Debug)]
+    struct KaAdverbialMatcher;
+    impl Matcher for KaAdverbialMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrPastMatcher)),
+        TokenMatcher::Custom(Arc::new(GaConjunctionMatcher)),
+        TokenMatcher::Custom(Arc::new(HayaiMatcher)),
+        TokenMatcher::Custom(Arc::new(KaAdverbialMatcher)),
+    ]
 }
 
 // Pattern: に難くない
