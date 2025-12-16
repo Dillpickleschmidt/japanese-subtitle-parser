@@ -7518,9 +7518,69 @@ pub fn monodakara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ものですから・もので
+// Pattern: ものですから・もので (because, the reason is - polite version)
+// Structures:
+//   - Verb/Adjective + ものですから (polite です form)
+//   - な-Adj/Noun + な + ものですから
+//   - Abbreviated: もので, もんで, もんですから
+// This is the polite/formal version of ものだから (uses です instead of だ)
 pub fn monodesukara_u30fb_monode() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Optional な (copula, 体言接続) for な-adjectives/nouns
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl super::Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // もの or もん (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl super::Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "もの" || token.surface == "もん")
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // です (基本形, base=です) only - NOT で with base=だ
+    // This pattern should ONLY match the polite です version, not だ
+    // The で (base=だ) version is matched by ものだから pattern
+    #[derive(Debug)]
+    struct DesuMatcher;
+    impl super::Matcher for DesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "です"
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Optional から (助詞/接続助詞) - only after です
+    #[derive(Debug)]
+    struct KaraMatcher;
+    impl super::Matcher for KaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaCopulaMatcher)))),
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(DesuMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KaraMatcher)))),
+    ]
 }
 
 // Pattern: ものがある

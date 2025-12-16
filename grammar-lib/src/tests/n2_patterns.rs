@@ -12595,3 +12595,69 @@ mod monodakara_tests {
         assert_pattern_range(&patterns, "ものだから", 6, 12); // なものだから
     }
 }
+
+// Pattern: ものですから・もので (because, the reason is - polite/formal version)
+// Data source: grammar_points_data.json["ものですから・もので"]
+// Testing structure variants:
+//   - standard[0]: Verb + ものですから (polite です)
+//   - standard[1]: い-Adjective + ものですから
+//   - standard[2]: な-Adjective + な + ものですから
+//   - standard[3]: Noun + な + ものですから
+//   - Casual: もんですから
+//
+// Note: This pattern ONLY matches the polite です forms (ものですから, もんですから)
+// The abbreviated forms もので/もんで (with で base=だ) are matched by ものだから pattern
+
+mod monodesukara_tests {
+    use super::*;
+
+    #[test]
+    fn test_monodesukara_verb() {
+        let sentence = "昔大工として働いていたものですから、リフォームなら私に任せてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものですから・もので");
+        assert_pattern_range(&patterns, "ものですから・もので", 11, 17); // ものですから
+    }
+
+    #[test]
+    fn test_monodesukara_i_adj() {
+        let sentence = "この道路は狭いものですから、スピードを落として運転をしてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものですから・もので");
+        assert_pattern_range(&patterns, "ものですから・もので", 7, 13); // ものですから
+    }
+
+    #[test]
+    fn test_monodesukara_na_adj() {
+        let sentence = "苦いものが苦手なものですから、コーヒーやお茶は飲めません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものですから・もので");
+        assert_pattern_range(&patterns, "ものですから・もので", 7, 14); // なものですから
+    }
+
+    #[test]
+    fn test_monodesukara_noun() {
+        let sentence = "この車は中古なものですから、不具合だらけです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものですから・もので");
+        assert_pattern_range(&patterns, "ものですから・もので", 6, 13); // なものですから
+    }
+
+    #[test]
+    fn test_mondesukara_casual() {
+        let sentence = "私はその場にいたもんですから、よく知っています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものですから・もので");
+        assert_pattern_range(&patterns, "ものですから・もので", 8, 14); // もんですから
+    }
+}
