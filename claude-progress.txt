@@ -1,3 +1,120 @@
+## Session 608 - 2025-12-16
+
+### Session Summary - ないまでも Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (ないまでも - N1, priority 5)
+**Total tests**: 3877 passing (5 new tests, no regressions)
+**Progress**: One hundred and twenty-first N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented ないまでも (even if not / may not be... but)
+- Handles three structure variants: Verb[ない] + までも, Noun + ではない + までも, Noun + じゃない + までも
+- Used compound matcher with wildcard to capture optional particles (で+は or じゃ) before ない
+- Pattern correctly distinguishes between ない as auxiliary (for verbs/じゃない) and adjective (for ではない)
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: ないまでも (even if not / may not be... but)
+
+**Grammar Point**: ないまでも
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb[ない] + までも + Phrase (e.g., 言えないまでも)
+2. Noun + ではない + までも + Phrase (e.g., 毎週ではないまでも)
+3. Noun + じゃない + までも + Phrase (e.g., 幸せじゃないまでも)
+
+**Meaning**:
+- "Even though not (A), (B)" / "It may not be (A), but (B)"
+- Combination of negated form + まで (case-marking particle "until") + も (adverbial particle "even")
+- Presents extreme (A) which hasn't been reached, but lower extent (B) cannot be denied
+- Literal: "even though not reaching (A), (B)"
+- Used in both positive and negative situations
+- (B) phrase often expresses wish/demand with たい, てほしい, てください, etc.
+
+**Tokenization patterns**:
+**For Verb + ない + までも:**
+- Verb in 未然形 (e.g., 言え, なくせ, なれ)
+- ない (助動詞, 特殊・ナイ, 基本形)
+- まで (助詞/副助詞)
+- も (助詞/係助詞)
+
+**For Noun + ではない + までも:**
+- Noun (名詞)
+- で (助詞/格助詞/一般)
+- は (助詞/係助詞)
+- ない (形容詞/自立, 形容詞・アウオ段, 基本形) - Note: adjective, not auxiliary
+- まで (助詞/副助詞)
+- も (助詞/係助詞)
+
+**For Noun + じゃない + までも:**
+- Noun (名詞)
+- じゃ (助詞/副助詞)
+- ない (助動詞, 特殊・ナイ, 基本形)
+- まで (助詞/副助詞)
+- も (助詞/係助詞)
+
+**Implementation**:
+Created compound matcher using wildcard approach:
+- VerbNounOrAdjMatcher: Matches verb, noun, or adjective as starting point
+- Wildcard(0, 2): Captures optional particles before ない (で+は or じゃ)
+- NaimademoCompound: Matches ない (either auxiliary or adjective)
+- MadeMatcher: Matches まで particle
+- MoMatcher: Matches も particle
+
+Pattern matcher sequence:
+- TokenMatcher::Custom(VerbNounOrAdjMatcher) - Start with verb/noun/adj
+- Wildcard with stop_conditions to prevent over-matching
+- NaimademoCompound (ない in either form)
+- MadeMatcher (まで)
+- MoMatcher (も)
+
+**Tests Written: 5 tests (all passing)**
+1. test_naimademo_verb_negative_masterpiece - 言えないまでも (10, 17) - verb + ない
+2. test_naimademo_verb_negative_eliminate - なくせないまでも (8, 16) - verb + ない
+3. test_naimademo_verb_negative_become - なれないまでも (8, 15) - verb + ない
+4. test_naimademo_noun_dewanai - 毎週ではないまでも (0, 9) - noun + で + は + ない
+5. test_naimademo_noun_janai - 幸せじゃないまでも (12, 21) - noun + じゃ + ない
+
+**Character Ranges**: Pattern captures full construction:
+- 言えないまでも (10, 17) - 7 characters (verb + ない + までも)
+- なくせないまでも (8, 16) - 8 characters (verb + ない + までも)
+- なれないまでも (8, 15) - 7 characters (verb + ない + までも)
+- 毎週ではないまでも (0, 9) - 9 characters (noun + で + は + ない + までも)
+- 幸せじゃないまでも (12, 21) - 9 characters (noun + じゃ + ない + までも)
+
+**Key Notes**:
+- Pattern includes the preceding word (verb or noun) for full grammatical construction
+- Wildcard approach handles variable-length particle sequences before ない
+- ない can be either auxiliary verb (助動詞) or adjective (形容詞) depending on context
+- For verbs: ない is auxiliary, for ではない: ない is adjective, for じゃない: ない is auxiliary
+- Starting with VerbNounOrAdjMatcher prevents over-matching from particles earlier in sentence
+- Stop conditions in wildcard prevent matching beyond intended scope
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented naimademo() with compound wildcard matcher
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in naimademo_tests module
+- feature_list.json - Updated ないまでも to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (verb, ではない, じゃない)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3872 + 5 = 3877 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- をよそに - "Ignoring/disregarding" pattern
+- に限ったことではない - "Not limited to" pattern
+- とは比べものにならない - "Cannot be compared to" pattern
+- まじき - "Should not" pattern
+- の至り - "Highest level of" pattern
+
+================================================================================
+
 ## Session 607 - 2025-12-16
 
 ### Session Summary - に即して Complete ✓
