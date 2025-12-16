@@ -1,3 +1,106 @@
+## Session 554 - 2025-12-16
+
+### Session Summary - まま(に)1 Complete ✓
+**Status**: Implemented まま(に)1 pattern successfully
+**Patterns completed**: 1 (まま(に)1 - N1, priority 5)
+**Total tests**: 3587 passing (4 new tests, no regressions)
+**Progress**: Sixty-eighth N1 pattern completed!
+
+**Session highlights**:
+- Implemented まま(に)1 (as one wishes, on a whim)
+- 4-token pattern: Verb[dictionary] + (が) + まま + (に)
+- Different from basic まま(に) which uses past/negative forms
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include full construction (Verb + ままに)
+
+### ✓ Completed: まま(に)1 (as one wishes / on a whim)
+
+**Grammar Point**: まま(に)1
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb[dictionary] + (が) + まま(に)
+
+**Meaning**:
+- "To do (A) as one wishes/desires" / "To do (A) on a whim"
+- Indicates letting the action of (A) happen in whatever way is most natural
+- Not making any particular effort to control the outcome
+- Different from basic まま(に) which means "left in the state of"
+
+**Common expressions**:
+- 思うままに = as one thinks/wishes
+- 思いつくままに = whatever comes to mind
+- 気の向くままに = as one's interest is inclined
+- 足の向くままに = wherever one's feet take them
+- 欲するままに = as one desires
+- 風の吹くままに = in whatever way the wind blows
+
+**Tokenization**:
+- Verb: 動詞 (基本形 - dictionary form)
+- が: 助詞/格助詞 (optional)
+- まま: 名詞/非自立/副詞可能
+- に: 助詞/格助詞/一般 (optional)
+
+**Implementation**:
+- Pattern: Verb[基本形] + (が) + まま + (に)
+- Custom matchers:
+  - DictionaryFormVerbMatcher: Matches 動詞 with features[5] = 基本形
+  - GaParticleMatcher: Matches が (助詞/格助詞) - optional
+  - Reused mama_matcher() and ni_particle_matcher() from existing まま(に) patterns
+- Priority 5 for N1 standard construction
+- Pattern includes the full grammatical unit
+- Range: Verb + ままに (が is optional, not included in range when present)
+
+**Tests Written: 4 tests (all passing)**
+1. `test_mamani1_omou_mamani` - 思うままに (18, 23) - as one thinks
+2. `test_mamani1_muku_mamani` - 向くままに (14, 19) - wherever directed
+3. `test_mamani1_omoitsuku_mamani` - 思いつくままに (16, 23) - whatever comes to mind
+4. `test_mamani1_with_ga_particle` - 向くままに (2, 7) - with optional が particle
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures Verb + ままに:
+- 思うままに (18, 23) - 5 characters
+- 向くままに (14, 19) - 5 characters
+- 思いつくままに (16, 23) - 7 characters
+- 向くままに (2, 7) - 5 characters (が not included in range)
+
+**Key Notes**:
+- This pattern is DIFFERENT from existing まま(に) patterns
+- Basic まま(に): Verb[た/ない] + まま = "left in the state of"
+- まま(に)1: Verb[dictionary] + まま(に) = "as one wishes/desires"
+- Only limited verbs commonly used with this pattern
+- Indicates natural, uncontrolled action
+- Optional が particle between verb and まま (not included in pattern range)
+- Optional に particle after まま (included in pattern range when present)
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented mama_ni_1() with 2 custom matchers
+- `grammar-lib/src/patterns.rs` - Added MamaNi1 pattern declaration
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in mamani1_tests module
+- `feature_list.json` - Updated まま(に)1 to complete status
+
+**Quality Checks**:
+- ✓ Tests exist with proper assertions
+- ✓ All structure variants tested (with/without が, with/without に)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (3587 total, no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- かれ〜かれ - "Whether... or..." pattern (requires cross-token validation - may be undetectable)
+- なくして(は) - "Without" pattern
+- のなんのって - "Extremely" pattern
+- にかかっている - "Depends on" pattern
+- ずとも - Classical negative conditional
+- とあって - Formal expression
+
+================================================================================
+
 ## Session 553 - 2025-12-16
 
 ### Session Summary - ぐらいなら Complete ✓
