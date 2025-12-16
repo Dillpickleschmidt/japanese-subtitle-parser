@@ -2818,3 +2818,122 @@ explanations, allowing users to determine meaning from context (similar to ら�
 - Documentation updated
 - Ready for next pattern implementation
 
+
+
+---
+
+## Session 502 - 2025-12-15
+
+### Completed Work
+
+**Pattern Implemented: ものを (N1)**
+
+Status: ✅ Complete - All tests passing (3347/3347)
+
+**Pattern Details:**
+- **Name**: ものを
+- **JLPT Level**: N1
+- **Meaning**: "if only... but", expresses regret/frustration about something that didn't happen
+- **Structure**: Verb/Adjective + ものを
+- **Category**: Construction
+- **Priority**: 1 (low priority, common pattern)
+
+**Implementation:**
+- Matcher: `Any + もの(非自立) + を(格助詞)`
+- Custom matchers for もの (non-independent noun) and を (particle)
+- Handles multiple structure variants:
+  * Verb + た/だ + ものを (past auxiliary + ものを)
+  * い-Adjective + ものを
+  * な-Adjective + な + ものを
+  * Works with various conditionals (ば, たら, なら)
+
+**Tests Written: 6 tests**
+1. `test_monowo_ba_verb` - Verb with たら conditional
+2. `test_monowo_ba_i_adjective` - Past tense verb (だものを)
+3. `test_monowo_ba_na_adjective` - な-Adjective + な + ものを
+4. `test_monowo_ba_verb_simple` - Simpler verb example (いいものを)
+5. `test_monowo_tara_conditional` - With たら/なら conditionals
+6. `test_monowo_na_adjective_simple` - Simple な-adjective
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures the immediate context before ものを:
+- `だものを` (auxiliary + もの + を)
+- `たものを` (past auxiliary + もの + を)
+- `なものを` (な-adjective auxiliary + もの + を)
+- `いいものを` (い-adjective + もの + を)
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Added monowo() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 6 tests in monowo_tests module
+- `feature_list.json` - Updated ものを status to complete
+
+### Project Status
+
+**Total Tests**: 3347 passing, 1 ignored
+**Patterns Complete**: Added 1 N1 pattern
+
+**Current Pattern Distribution:**
+- N5: Most patterns complete
+- N4: Most patterns complete
+- N3: Most patterns complete
+- N2: Most patterns complete
+- N1: Gradual progress (ものを now complete)
+
+**Next Priorities**:
+1. Continue with N1 patterns (highest priority incomplete patterns)
+2. Focus on patterns with clear structures in grammar_points_data.json
+3. Avoid patterns that are purely semantic/conceptual
+
+**Recommended Next Patterns** (N1 - no tests yet):
+- であれ - Formal copula extension, clear structure
+- をおいてほかに〜ない - Formal pattern with を, detectable
+- をもって - Time-related formal pattern, detectable
+- とはいえ - "Although" pattern, clear structure
+- ならでは - "Unique to" pattern, detectable
+- あっての - Emphasis pattern, detectable
+- ～たまでだ - "Just did" pattern, verb-based
+
+### Session Notes
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (ものを from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Wrote all tests first with print_debug()
+7. ✓ Analyzed tokenization output
+8. ✓ Implemented matcher based on actual tokens
+9. ✓ Verified all tests pass
+10. ✓ Removed print_debug() and added assertions
+11. ✓ Verified no regressions
+12. ✓ Updated feature_list.json
+13. ✓ Committed changes
+14. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (verb, い-adj, な-adj)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Key Learnings**:
+- Pattern ものを follows similar structure to other "complaint/regret" patterns
+- The もの is a non-independent noun (名詞/非自立)
+- Pattern appears after various conjugated forms (verbs, adjectives, auxiliaries)
+- TokenMatcher::Any is appropriate here as the preceding token can vary widely
+- The pattern range captures the immediate grammatical context (auxiliary/adjective + ものを)
+
+**Time Investment**: Appropriate - one pattern completed properly
+
+### Codebase State
+
+**Status**: Clean and ready for next session
+- All tests passing (3347/3347)
+- No uncommitted changes (except feature_list_temp.json, feature_list_updated.json, logs - not part of codebase)
+- No regressions
+- Documentation updated
+- Ready for next pattern implementation
