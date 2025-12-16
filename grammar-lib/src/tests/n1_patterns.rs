@@ -1675,3 +1675,69 @@ mod katawara_tests {
         assert_pattern_range(&patterns, "かたわら", 2, 10); // 子育てのかたわら
     }
 }
+
+// ============================================================================
+// を皮切りに (starting with, beginning with)
+// Data source: grammar_points_data.json["を皮切りに"]
+// ============================================================================
+#[cfg(test)]
+mod wokawakirini_tests {
+    use super::*;
+
+    // Pattern: を皮切りに (starting with, beginning with)
+    // Data source: grammar_points_data.json["を皮切りに"]
+    // Testing: structure.standard[0] - "Noun + を皮切りに"
+    #[test]
+    fn test_wokawakirini_noun_nishite() {
+        let sentence = "クラスメイトの高橋さんを皮切りに、クラスみんな風邪になってしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を皮切りに");
+        assert_pattern_range(&patterns, "を皮切りに", 11, 16); // を皮切りに
+    }
+
+    // Testing: structure.standard[1] - "Verb[た] + の + を皮切りに"
+    #[test]
+    fn test_wokawakirini_verb_ru_nishite() {
+        let sentence = "藤田先輩がやめたのを皮切りに、他の人たちもどんどんやめていった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を皮切りに");
+        assert_pattern_range(&patterns, "を皮切りに", 9, 14); // を皮切りに
+    }
+
+    // Testing: structure.standard[1] - "Verb[た] + の + を皮切りに"
+    #[test]
+    fn test_wokawakirini_verb_ta_nishite() {
+        let sentence = "あの俳優はテレビ東京に出演したのを皮切りに、色々な局に出演することになった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を皮切りに");
+        assert_pattern_range(&patterns, "を皮切りに", 16, 21); // を皮切りに
+    }
+
+    // Testing: structure.standard[0] with alternative "を皮切りとして"
+    #[test]
+    fn test_wokawakirini_noun_toshite() {
+        let sentence = "あのグループは名古屋を皮切りとして、全国でライブを行った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を皮切りに");
+        assert_pattern_range(&patterns, "を皮切りに", 10, 17); // を皮切りとして
+    }
+
+    // Testing: Noun + を皮切りに (basic form)
+    #[test]
+    fn test_wokawakirini_noun_short() {
+        let sentence = "佐々木さんの発言を皮切りに、賛成する人が出てきた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を皮切りに");
+        assert_pattern_range(&patterns, "を皮切りに", 8, 13); // を皮切りに
+    }
+}

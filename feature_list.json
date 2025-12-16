@@ -10657,13 +10657,13 @@
   {
     "pattern_name": "を皮切りに",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を皮切（かわき）りに is a grammar structure that will be utilized with nouns in order to show the starting point for something,... [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

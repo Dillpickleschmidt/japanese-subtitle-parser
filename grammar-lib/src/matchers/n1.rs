@@ -1503,9 +1503,60 @@ pub fn katawara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を皮切りに
+// Pattern: を皮切りに (starting with, beginning with)
+// Structures: Noun/の + を + 皮切り + に/として/にして
 pub fn wokawakirini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を particle (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 皮切り (名詞/一般)
+    #[derive(Debug)]
+    struct KawakiriMatcher;
+    impl Matcher for KawakiriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "皮切り"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match に particle OR として (助詞/格助詞)
+    #[derive(Debug)]
+    struct NiOrToshiteMatcher;
+    impl Matcher for NiOrToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface == "に" {
+                return token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "格助詞");
+            }
+            if token.surface == "として" {
+                return token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                    && token.pos.get(2).is_some_and(|pos| pos == "連語");
+            }
+            false
+        }
+    }
+
+    // Match optional にして (に + し + て sequence)
+    // This is handled by making the following tokens optional:
+    // し (連用形 of する) + て (接続助詞)
+
+    vec![
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KawakiriMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrToshiteMatcher)),
+    ]
 }
 
 // Pattern: に至っては (when it comes to, as for)
