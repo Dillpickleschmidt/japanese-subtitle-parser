@@ -1,19 +1,17 @@
 ## Session 498 - 2025-12-15
 
-### Session Summary - One N1 Pattern Complete ✓
-**Status**: Successfully implemented 塗れ (まみれ) pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3320 passing, 1 ignored (added 4 new tests)
-**Progress**: Thirteenth N1 pattern completed!
+### Session Summary - Two N1 Patterns Complete ✓
+**Status**: Successfully implemented 塗れ and ようが～まいが patterns
+**Patterns completed**: 2 (both N1, priority 5)
+**Total tests**: 3322 passing, 1 ignored (added 6 new tests)
+**Progress**: Thirteenth and fourteenth N1 patterns completed!
 
 **Session highlights**:
-- Implemented 塗れ (まみれ - completely covered in, smeared all over with) - 4 tests
-- Handles both compound and split tokenization forms:
-  - Compound: 泥まみれ, 血まみれ (single token nouns)
-  - Split: 借金 + まみれ (noun + suffix)
-- Two matcher functions: nure_compound() and nure()
-- MamireCompoundMatcher checks base_form.ends_with("まみれ")
-- MamireSuffixMatcher matches まみれ as 名詞/接尾/一般
+- Implemented 塗れ (まみれ - completely covered in) - 4 tests with compound/split forms
+- Implemented ようが～まいが (whether or not) - 2 tests for verb volitional patterns
+- 塗れ handles both compound (泥まみれ) and split (借金+まみれ) tokenization
+- ようが～まいが detects Verb[う/よう] + が + Verb[まい] + が patterns
+- Both patterns work seamlessly with proper wildcard handling
 - All tests use realistic, subtitle-quality sentences from actual grammar examples
 - All tests passing with proper range assertions
 - No regressions in test suite
@@ -87,6 +85,74 @@ Examples:
 - 泥まみれ (mud-covered)
 - 血まみれ (blood-covered)
 - 借金まみれ (debt-ridden)
+
+---
+
+### ✓ Completed: ようが～まいが (whether or not)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Verb[volitional] + が + Verb[まい] + が (whether or not)
+
+**Implementation details**:
+3 custom matchers for precise token matching:
+1. `VolitionalAuxMatcher` - Matches う or よう (助動詞)
+2. `GaConjunctionMatcher` - Matches が (助詞/接続助詞)
+3. `MaiAuxiliaryMatcher` - Matches まい (助動詞, negative volitional)
+
+**Key implementation insight**:
+The pattern combines positive and negative volitional auxiliary verbs to express "whether or not (A)". The structure is:
+- Verb (未然ウ接続 form) + う/よう + が
+- (Optional wildcard for noun/verb variation)
+- Verb (基本形) + まい + が
+
+The wildcard (0-3 tokens) handles cases where the same verb is repeated (出席しよう + 出席するまい) or different verbs are used.
+
+**Tokenization patterns**:
+1. **Same verb repetition**:
+   - 出席しよ (動詞, 未然ウ接続) + う (助動詞) + が (助詞/接続助詞) + 出席 (名詞) + する (動詞, 基本形) + まい + が
+2. **Simple verb**:
+   - 降ろ (動詞, 未然ウ接続) + う + が + 降る (動詞, 基本形) + まい + が
+
+**Tests created**: 2 tests
+1. `test_youga_maiga_verb_attend` - 出席しようが出席するまいが (range 4-17)
+2. `test_youga_maiga_verb_rain` - 降ろうが降るまいが (range 2-11)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented youga_uff5e_maiga() function (58 lines with 3 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 2 comprehensive tests in youga_maiga_tests module
+- `feature_list.json` - Updated ようが～まいが to complete status
+
+**Grammar meaning**:
+When both the positive and negative volitional auxiliary verbs are combined with a verb in Japanese, it has the nuance of "whether or not (A)", the result will be (B)". This is quite emphatic, and has a literal meaning similar to "say it does (A) or say it doesn't (A), it will still be (B)".
+
+The positive auxiliary verbs of volition are either う or よう, while the negative auxiliary verb of volition is まい. The case marking particle が appears after both the positive and the negative volitional forms.
+
+Common translations:
+- "whether (A) or not"
+- "whether it (A)s or doesn't (A)"
+- "even if (A) or not (A)"
+
+**Important notes**:
+- While this structure is primarily seen after verbs, it can also appear with adjectives and nouns using different forms:
+  - Adjectives: Adj[かろう] + が + Adj[かろう] + が (using antonyms)
+  - Nouns: Noun + だろう + が + Noun + だろう + が (using different nouns)
+- The current implementation handles only the verb pattern with う/よう + まい
+- Adjective and noun variants require separate matchers (documented as TODO in tests)
+- Based primarily on the use of volitionals, this grammar pattern often indicates the speaker's strong will or opinion that will not change regardless of (A)
+
+**Pattern range note**:
+The pattern captures the full volitional construction from the first volitional form through the second が:
+- Verb + う/よう + が + Verb + まい + が
+
+Examples:
+- 出席しようが出席するまいが (whether attending or not)
+- 降ろうが降るまいが (whether it rains or not)
 
 ---
 
