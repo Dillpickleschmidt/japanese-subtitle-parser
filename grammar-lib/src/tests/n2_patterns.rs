@@ -12895,3 +12895,60 @@ mod niataisuru_tests {
         assert_pattern_range(&patterns, "～に値する", 17, 24); // 見るに値しない
     }
 }
+
+// Pattern: ようでは・ようじゃ (if, if it is the case that)
+// Data source: grammar_points_data.json["ようでは・ようじゃ"]
+// Testing: structure.standard[0-1] - "Verb + ようでは/ようじゃ"
+//
+// Structures:
+//   - standard[0]: Verb + ようでは (+ negative result)
+//   - standard[1]: Verb + ようじゃ (casual form)
+//   - No polite forms
+//
+// Meaning: "if it is the case that (A)", "if (A)" with focus on unconfirmed/guessed situation
+// Used when (A) would lead to a negative result
+// Speaker's subjective negative opinion about what they perceive to be true
+
+mod youdeha_tests {
+    use super::*;
+
+    #[test]
+    fn test_youdeha_same_mistake() {
+        let sentence = "こんな毎日同じミスをするようでは、いつまで経っても店長にはなれませんよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようでは・ようじゃ");
+        assert_pattern_range(&patterns, "ようでは・ようじゃ", 10, 16); // するようでは
+    }
+
+    #[test]
+    fn test_youdeha_grammar() {
+        let sentence = "これらの文法が分からないようでは、N2に合格することはできません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようでは・ようじゃ");
+        assert_pattern_range(&patterns, "ようでは・ようじゃ", 10, 16); // ないようでは
+    }
+
+    #[test]
+    fn test_youdeha_firefighter() {
+        let sentence = "これぐらいの高さで怖がっているようでは消防士にはなれませんよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようでは・ようじゃ");
+        assert_pattern_range(&patterns, "ようでは・ようじゃ", 13, 19); // いるようでは
+    }
+
+    #[test]
+    fn test_youja_casual() {
+        let sentence = "そんなことも知らないようじゃ、話にならないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようでは・ようじゃ");
+        assert_pattern_range(&patterns, "ようでは・ようじゃ", 8, 14); // ないようじゃ
+    }
+}

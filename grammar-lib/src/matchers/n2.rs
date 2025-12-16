@@ -7933,9 +7933,83 @@ pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ようでは・ようじゃ
+// Pattern: ようでは・ようじゃ (if, if it is the case that)
+// Structures: Verb/Adj + よう + では/じゃ
 pub fn youdeha_u30fb_youja() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for よう (auxiliary verb stem)
+    #[derive(Debug)]
+    struct YouMatcher;
+    impl Matcher for YouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "よう"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(2).is_some_and(|p| p == "助動詞語幹")
+        }
+    }
+
+    // Matcher for で (copula in 連用形)
+    #[derive(Debug)]
+    struct DeCopulaMatcher;
+    impl Matcher for DeCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Matcher for は particle (係助詞)
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Matcher for じゃ particle (副助詞)
+    #[derive(Debug)]
+    struct JaParticleMatcher;
+    impl Matcher for JaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "じゃ"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    // Matcher for では or じゃ
+    #[derive(Debug)]
+    struct DehaOrJaMatcher;
+    impl Matcher for DehaOrJaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match で for では pattern
+            if token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+            {
+                return true;
+            }
+            // Match じゃ for ようじゃ pattern
+            token.surface == "じゃ"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Match any verb or adjective
+        TokenMatcher::Custom(Arc::new(YouMatcher)),
+        TokenMatcher::Custom(Arc::new(DehaOrJaMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(HaParticleMatcher)))), // は only after で, not after じゃ
+    ]
 }
 
 // Pattern: さすが (as expected of / that is just like)
