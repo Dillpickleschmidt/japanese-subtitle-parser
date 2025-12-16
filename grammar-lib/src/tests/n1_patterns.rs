@@ -8380,3 +8380,76 @@ mod bekarazu_tests {
         assert_pattern_range(&patterns, "べからず", 8, 15); // 欠くべからざる
     }
 }
+
+// ============================================================================
+// んばかりに Tests
+// ============================================================================
+
+mod nbakarini_tests {
+    use super::*;
+
+    // Pattern: んばかりに (as if about to, seeming that it will)
+    // Data source: grammar_points_data.json["んばかりに"]
+    // Testing: structure.standard[0] - "Verb[ない] + ん + ばかり + に"
+    // Testing: structure.standard[1] - "Verb[ない] + ん + ばかり + の + Noun"
+
+    #[test]
+    fn test_nbakarini_kuzure() {
+        // Testing: 崩れ + んばかりに (as if about to collapse)
+        // Example from grammar_points_data.json
+        let sentence = "台風の風で、隣の空き家が崩れんばかりにギシギシ音を立てていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んばかりに");
+        assert_pattern_range(&patterns, "んばかりに", 12, 19); // 崩れんばかりに
+    }
+
+    #[test]
+    fn test_nbakarini_iwa() {
+        // Testing: 言わ + んばかりに (as if to say)
+        // Example from grammar_points_data.json
+        let sentence = "先生は「こっちを見ろ」って言わんばかりに、机を叩いた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んばかりに");
+        assert_pattern_range(&patterns, "んばかりに", 13, 20); // 言わんばかりに
+    }
+
+    #[test]
+    fn test_nbakarini_afure() {
+        // Testing: 溢れ + んばかりの (as if about to overflow - with の)
+        // Example from grammar_points_data.json
+        let sentence = "このコンサート会場は溢れんばかりのファンで埋め尽くされている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んばかりに");
+        assert_pattern_range(&patterns, "んばかりに", 10, 17); // 溢れんばかりの
+    }
+
+    #[test]
+    fn test_nbakarini_harisake() {
+        // Testing: 張り裂け + んばかりの (as if about to tear apart)
+        // Example from grammar_points_data.json
+        let sentence = "私は胸が張り裂けんばかりの気持ちになって、その場から動くことができなくなった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んばかりに");
+        assert_pattern_range(&patterns, "んばかりに", 4, 13); // 張り裂けんばかりの
+    }
+
+    #[test]
+    fn test_nbakarini_tobikaka() {
+        // Testing: 飛びかか + んばかりに (as if about to jump at)
+        // Additional realistic example
+        let sentence = "犬が飛びかかんばかりに吠えている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "んばかりに");
+        assert_pattern_range(&patterns, "んばかりに", 2, 11); // 飛びかかんばかりに
+    }
+}

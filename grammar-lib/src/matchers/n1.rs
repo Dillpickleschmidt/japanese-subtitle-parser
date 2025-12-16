@@ -7297,9 +7297,69 @@ pub fn bekarazu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: んばかりに
+// Pattern: んばかりに (as if about to, seeming that it will)
+// Structures: Verb[未然形] + ん + ばかり + に/の
+//            Verb[体言接続特殊] + ばかり + に/の
 pub fn nbakarini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for verb in 未然形 or 体言接続特殊 form
+    #[derive(Debug)]
+    struct VerbMizenOrTaigenMatcher;
+    impl Matcher for VerbMizenOrTaigenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+
+            // Match 未然形 (before ん auxiliary) or 体言接続特殊 (verb ending with ん)
+            token.features.get(5).is_some_and(|f| f == "未然形" || f == "体言接続特殊")
+        }
+    }
+
+    // Matcher for ん auxiliary verb
+    #[derive(Debug)]
+    struct NAuxMatcher;
+    impl Matcher for NAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ん"
+        }
+    }
+
+    // Matcher for ばかり particle
+    #[derive(Debug)]
+    struct BakariMatcher;
+    impl Matcher for BakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ばかり"
+                && token.base_form == "ばかり"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Matcher for に or の particle (optional)
+    #[derive(Debug)]
+    struct NiOrNoMatcher;
+    impl Matcher for NiOrNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "の")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Two patterns:
+    // 1. Verb[体言接続特殊] (ends with ん) + ばかり + (に/の)?
+    // 2. Verb[未然形] + ん(助動詞) + ばかり + (に/の)?
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbMizenOrTaigenMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NAuxMatcher)))),
+        TokenMatcher::Custom(Arc::new(BakariMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NiOrNoMatcher)))),
+    ]
 }
 
 // Pattern: に則って・に則り
