@@ -6143,9 +6143,86 @@ pub fn ikan_u301c_zu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にも～ない
+// Pattern: にも～ない (can't do even if wanted to)
+// Structures: Verb[volitional] + にも + Verb[potential negative]
+// This is a more specific variant of 〜に〜ない requiring volitional + にも
 pub fn nimo_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for volitional う/よう
+    #[derive(Debug)]
+    struct VolitionalMatcher;
+    impl super::Matcher for VolitionalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Godan verbs: う auxiliary
+            if token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // Ichidan verbs: よう noun suffix
+            if token.surface == "よう"
+                && token.base_form == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Matcher for に particle
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for も particle (REQUIRED for this pattern)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl super::Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for ない auxiliary
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        // Start with any verb (will be before volitional)
+        TokenMatcher::Any,
+        // Volitional form (う or よう)
+        TokenMatcher::Custom(Arc::new(VolitionalMatcher)),
+        // に particle
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        // も particle (required)
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        // Match tokens until ない (potential verb forms, auxiliary verbs, etc.)
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 5,
+            stop_conditions: vec![],
+        },
+        // End with ない
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: い-Adj[く] + もなんともない (not A at all, definitely not A)

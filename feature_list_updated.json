@@ -11665,13 +11665,13 @@
   {
     "pattern_name": "にも～ない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When combined with either of the auxiliary verbs of volition, う or よう, にも～ない conveys that 'despite wanting to (A), it... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

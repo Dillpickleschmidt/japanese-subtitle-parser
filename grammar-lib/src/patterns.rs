@@ -7285,7 +7285,7 @@ declare_patterns! {
     NimoUff5eNai {
         name: "にも～ない",
         matcher_fn: crate::matchers::n1::nimo_uff5e_nai,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

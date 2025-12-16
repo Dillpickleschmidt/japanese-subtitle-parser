@@ -7257,3 +7257,63 @@ mod ngatame_ni_tests {
         assert_pattern_range(&patterns, "んがため(に)", 12, 18); // せんがために
     }
 }
+
+// ============================================================================
+// にも～ない Tests
+// ============================================================================
+
+mod nimo_nai_tests {
+    use super::*;
+
+    // Pattern: にも～ない (can't do even if wanted to)
+    // Data source: grammar_points_data.json["にも～ない"]
+    // Testing: structure.standard[0] - "Verb[おう] + にも + Verb[できる][ない]"
+    //
+    // Structure variants:
+    //   - standard[0]: Verb[おう/よう] + にも + Same Verb[potential negative]
+    //   - standard[1]: Verb[おう/よう] + にも + (Reason) Phrase
+
+    // Testing: structure.standard[0] - Verb[おう] + にも + Verb[potential negative]
+    #[test]
+    fn test_nimo_nai_kaeru() {
+        let sentence = "もう夜遅いから電車もバスも走ってないし、全然タクシーも通らないし、帰ろうにも帰れない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にも～ない");
+        assert_pattern_range(&patterns, "にも～ない", 33, 42); // 帰ろうにも帰れない
+    }
+
+    // Testing: structure.standard[0] - Verb[よう] + にも + Verb[potential negative]
+    #[test]
+    fn test_nimo_nai_neru() {
+        let sentence = "色々と仕事のことで悩んでいるから、毎晩寝ようにも寝れない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にも～ない");
+        assert_pattern_range(&patterns, "にも～ない", 19, 28); // 寝ようにも寝れない
+    }
+
+    // Testing: structure.standard[0] - Verb[おう] + にも + Verb[potential negative]
+    #[test]
+    fn test_nimo_nai_kau() {
+        let sentence = "昨日出てきた釣竿を買いたいけど、高いから買おうにも買えない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にも～ない");
+        assert_pattern_range(&patterns, "にも～ない", 20, 29); // 買おうにも買えない
+    }
+
+    // Testing: structure.standard[1] - Verb[よう] + にも + できない
+    #[test]
+    fn test_nimo_nai_renraku() {
+        let sentence = "携帯を無くしてしまったから、上司に連絡しようにもできない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にも～ない");
+        assert_pattern_range(&patterns, "にも～ない", 17, 28); // 連絡しようにもできない
+    }
+}
