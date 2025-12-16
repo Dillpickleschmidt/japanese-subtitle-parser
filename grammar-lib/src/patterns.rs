@@ -7973,7 +7973,7 @@ declare_patterns! {
     TadaU301cNomi {
         name: "ただ〜のみ",
         matcher_fn: crate::matchers::n1::tada_u301c_nomi,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

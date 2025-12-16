@@ -8210,9 +8210,113 @@ pub fn uff5e_teyaru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ただ〜のみ
+// Pattern: ただ〜のみ (nothing but, all that remains)
+// Structures: Verb[る] + のみ + (だ/です/である)
+//            Noun[サ変] + ある + のみ + (だ/です/である)
 pub fn tada_u301c_nomi() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match verb in 基本形 or noun
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| form == "基本形"))
+                || token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match ある (動詞, for サ変 + ある construction)
+    #[derive(Debug)]
+    struct AruVerbMatcher;
+    impl Matcher for AruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ある"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|form| form == "基本形")
+        }
+    }
+
+    // Match のみ as 助詞/副助詞
+    #[derive(Debug)]
+    struct NomiMatcher;
+    impl Matcher for NomiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "のみ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match だ (助動詞/特殊・ダ/基本形)
+    #[derive(Debug)]
+    struct DaCopulaMatcher;
+    impl Matcher for DaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match です (助動詞/特殊・デス/基本形)
+    #[derive(Debug)]
+    struct DesuCopulaMatcher;
+    impl Matcher for DesuCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.base_form == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match で from である (助動詞/特殊・ダ/連用形, base=だ)
+    #[derive(Debug)]
+    struct DeCopulaMatcher;
+    impl Matcher for DeCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "連用形")
+        }
+    }
+
+    // Match ある from である (助動詞/五段・ラ行アル/基本形)
+    #[derive(Debug)]
+    struct AruCopulaMatcher;
+    impl Matcher for AruCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ある"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            AruVerbMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(NomiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DaCopulaMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DesuCopulaMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DeCopulaMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            AruCopulaMatcher,
+        )))),
+    ]
 }
 
 // Pattern: ものとする (shall / supposing that / on the assumption that)

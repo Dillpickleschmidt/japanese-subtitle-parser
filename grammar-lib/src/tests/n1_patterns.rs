@@ -8177,3 +8177,79 @@ mod wokanete_tests {
         assert_pattern_range(&patterns, "を兼ねて", 5, 11); // 節約をかねて
     }
 }
+
+// ============================================================================
+// ただ〜のみ Tests
+// ============================================================================
+
+mod tada_nomi_tests {
+    use super::*;
+
+    // Pattern: ただ〜のみ (nothing but, all that remains)
+    // Data source: grammar_points_data.json["ただ〜のみ"]
+    // Testing: structure.standard[0] - "(ただ) + Verb[る] + のみ + (だ)"
+    //
+    // Structure variants to test:
+    //   - standard[0]: (ただ) + Verb[る] + のみ + (だ)
+    //   - standard[1]: (ただ) + [する]Verb + ある + のみ + (だ)
+    //   - polite[0]: (ただ) + Verb[る] + のみ + (です)
+    //   - polite[1]: (ただ) + [する]Verb + ある + のみ + (です)
+
+    #[test]
+    fn test_tada_nomi_verb_with_tada() {
+        // Testing: ただ + Verb[る] + のみだ
+        // Example from grammar_points_data.json
+        let sentence = "私たちにはもう何もできない。ただ医者を信じて待つのみだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ただ〜のみ");
+        assert_pattern_range(&patterns, "ただ〜のみ", 22, 27); // 待つのみだ
+    }
+
+    #[test]
+    fn test_tada_nomi_verb_without_tada() {
+        // Testing: Verb[る] + のみです (without ただ)
+        // Example from grammar_points_data.json
+        let sentence = "僕にできることは祈るのみです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ただ〜のみ");
+        assert_pattern_range(&patterns, "ただ〜のみ", 8, 14); // 祈るのみです
+    }
+
+    #[test]
+    fn test_tada_nomi_suru_verb_aru() {
+        // Testing: ただ + [する]Verb + ある + のみだ
+        // Example from grammar_points_data.json
+        let sentence = "将来日本の大手企業に勤めたいので、ただ勉強あるのみだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ただ〜のみ");
+        assert_pattern_range(&patterns, "ただ〜のみ", 19, 26); // 勉強あるのみだ
+    }
+
+    #[test]
+    fn test_tada_nomi_verb_dearu() {
+        // Testing: Verb[る] + のみである (formal copula)
+        let sentence = "今の状況では、静かに見守るのみである。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ただ〜のみ");
+        assert_pattern_range(&patterns, "ただ〜のみ", 10, 18); // 見守るのみである
+    }
+
+    #[test]
+    fn test_tada_nomi_verb_simple() {
+        // Testing: Verb[る] + のみ (without copula)
+        let sentence = "この先は前に進むのみ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ただ〜のみ");
+        assert_pattern_range(&patterns, "ただ〜のみ", 6, 10); // 進むのみ
+    }
+}

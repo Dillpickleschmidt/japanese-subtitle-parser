@@ -12827,14 +12827,14 @@
   {
     "pattern_name": "ただ〜のみ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "ただ～のみ is an expression that is commonly interpreted as ‘(A) is all that is required’, or ‘(A) is all that remains’ [4 std, 4 pol]",
+    "passes": true,
+    "description": "ただ～のみ is an expression that is commonly interpreted as '(A) is all that is required', or '(A) is all that remains' [4 std, 4 pol]",
     "priority": 5,
     "skip_reason": null
   },
