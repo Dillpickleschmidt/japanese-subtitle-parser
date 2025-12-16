@@ -3458,3 +3458,56 @@ mod nokiwami_tests {
         assert_pattern_range(&patterns, "の極み", 7, 12); // 感動の極み
     }
 }
+
+// ============================================================================
+// にしてみれば Tests
+// ============================================================================
+
+mod nishitemireba_tests {
+    use super::*;
+
+    // Pattern: にしてみれば (from the point of view of)
+    // Data source: grammar_points_data.json["にしてみれば"]
+    // Testing: structure.standard[0] - "Noun + にしてみれば"
+    // Testing: structure.standard[1] - "Noun + にしてみたら" (variant)
+
+    #[test]
+    fn test_nishitemireba_beginner() {
+        let sentence = "上級者には簡単かもしれないが、初心者にしてみればかなり難しいと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしてみれば");
+        assert_pattern_range(&patterns, "にしてみれば", 15, 24); // 初心者にしてみれば
+    }
+
+    #[test]
+    fn test_nishitemireba_japanese_person() {
+        let sentence = "日本人の私にしてみれば、日本語は簡単だけど英語は難しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしてみれば");
+        assert_pattern_range(&patterns, "にしてみれば", 4, 11); // 私にしてみれば
+    }
+
+    #[test]
+    fn test_nishitemireba_anime_viewer() {
+        let sentence = "アニメをあまり知らない人にしてみれば、ポケモンもデジモンも同じアニメだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしてみれば");
+        assert_pattern_range(&patterns, "にしてみれば", 11, 18); // 人にしてみれば
+    }
+
+    #[test]
+    fn test_nishitemitara_variant() {
+        let sentence = "彼女にしてみたら、それは当然のことだったかもしれない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしてみれば");
+        assert_pattern_range(&patterns, "にしてみれば", 0, 8); // 彼女にしてみたら
+    }
+}

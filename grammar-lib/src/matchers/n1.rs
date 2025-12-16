@@ -2702,9 +2702,91 @@ pub fn nokiwami() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にしてみれば
+// Pattern: にしてみれば (from the point of view of)
+// Structures: Noun + にしてみれば, Noun + にしてみたら
 pub fn nishitemireba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for し (する in 連用形)
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Matcher for て particle (接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for み or みれ (みる in 連用形 or 仮定形)
+    #[derive(Debug)]
+    struct MiMatcher;
+    impl Matcher for MiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "み" || token.surface == "みれ")
+                && token.base_form == "みる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Matcher for れば or たら (conditional endings)
+    #[derive(Debug)]
+    struct ConditionalEndingMatcher;
+    impl Matcher for ConditionalEndingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ば particle (接続助詞) for みれば
+            if token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+
+            // たら (た in 仮定形, 助動詞) for みたら
+            if token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MiMatcher)),
+        TokenMatcher::Custom(Arc::new(ConditionalEndingMatcher)),
+    ]
 }
 
 // Pattern: だの
