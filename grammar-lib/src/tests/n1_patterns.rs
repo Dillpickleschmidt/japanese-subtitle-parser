@@ -1257,3 +1257,77 @@ mod niatte_tests {
         assert_pattern_range(&patterns, "にあって", 6, 13); // 状況にあっても
     }
 }
+
+// ============================================================================
+// １～たりとも～ない Tests
+// ============================================================================
+
+mod ichi_taritomo_nai_tests {
+    use super::*;
+
+    // Pattern: １～たりとも～ない (not even one, not a single)
+    // Data source: grammar_points_data.json["１～たりとも～ない"]
+    // Testing: structure.standard[0] - "1 + Counter + たりとも + Phrase［ない］"
+    //
+    // Structure:
+    // - Number + Counter word (一秒, 一分, 一ミリ) OR quantifier (少し)
+    // - たりとも (particle combination)
+    // - Negative phrase (verb with ない)
+    //
+    // Special expression: 何人たりとも (no matter who, no exceptions)
+
+    // Testing: One second + たりとも + negative verb
+    #[test]
+    fn test_taritomo_one_second() {
+        let sentence = "消防士などは一秒たりとも気を抜くことができない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "１～たりとも～ない");
+        assert_pattern_range(&patterns, "１～たりとも～ない", 7, 12); // 秒たりとも
+    }
+
+    // Testing: One minute + たりとも + negative verb
+    #[test]
+    fn test_taritomo_one_minute() {
+        let sentence = "私は一分たりとも残業をしたくないので毎日定時に帰っています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "１～たりとも～ない");
+        assert_pattern_range(&patterns, "１～たりとも～ない", 3, 8); // 分たりとも
+    }
+
+    // Testing: One millimeter + たりとも + negative verb
+    #[test]
+    fn test_taritomo_one_millimeter() {
+        let sentence = "みんなで押し入れようとしたが、一ミリたりとも動かなかったから、ユンボで押し込みました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "１～たりとも～ない");
+        assert_pattern_range(&patterns, "１～たりとも～ない", 16, 22); // ミリたりとも
+    }
+
+    // Testing: 少し (a little) + たりとも + negative
+    #[test]
+    fn test_taritomo_sukoshi() {
+        let sentence = "少したりとも油断をすると、ミスをして命を落とす恐れがあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "１～たりとも～ない");
+        assert_pattern_range(&patterns, "１～たりとも～ない", 0, 6); // 少したりとも
+    }
+
+    // Testing: 何人たりとも (special set expression - no matter who)
+    #[test]
+    fn test_taritomo_nanbito() {
+        let sentence = "この洞窟へは２０年前に起きた事故以来、何人たりとも立ち入ることが許されない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "１～たりとも～ない");
+        assert_pattern_range(&patterns, "１～たりとも～ない", 20, 25); // 人たりとも
+    }
+}

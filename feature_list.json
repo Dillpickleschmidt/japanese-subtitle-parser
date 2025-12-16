@@ -12141,13 +12141,13 @@
   {
     "pattern_name": "１～たりとも～ない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "たりとも is a grammar pattern that is most often used in negative sentences, in order to indicate that (A) is not an exce... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

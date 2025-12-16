@@ -1915,9 +1915,72 @@ pub fn toiutokoro() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: １～たりとも～ない
+// Pattern: １～たりとも～ない (not even one, not a single)
+// Structures: Counter/Quantifier + たりとも + Negative phrase
+//
+// Examples:
+// - 一秒たりとも気を抜くことができない (can't lose focus even for a second)
+// - 何人たりとも立ち入ることが許されない (no one is allowed to enter)
+// - 少したりとも油断をすると (if you let your guard down even a little)
+//
+// Tokenization:
+// - Any word (counter, quantifier, noun)
+// - たり: 助動詞 (文語・ナリ, 基本形) OR 助詞/並立助詞
+// - と: 助詞/格助詞/引用
+// - も: 助詞/係助詞
 pub fn ichi_uff5e_taritomo_uff5e_nai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match たり particle/auxiliary
+    // Can be 助動詞 (文語・ナリ, 基本形) or 助詞/並立助詞
+    #[derive(Debug)]
+    struct TariMatcher;
+    impl Matcher for TariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たり"
+                && token.base_form == "たり"
+                && (
+                    // Case 1: たり as auxiliary verb (with counter words)
+                    (token.pos.first().is_some_and(|p| p == "助動詞")
+                        && token.features.get(4).is_some_and(|f| f == "文語・ナリ")
+                        && token.features.get(5).is_some_and(|f| f == "基本形"))
+                    ||
+                    // Case 2: たり as parallel particle (with adverbs like 少し)
+                    (token.pos.first().is_some_and(|p| p == "助詞")
+                        && token.pos.get(1).is_some_and(|p| p == "並立助詞"))
+                )
+        }
+    }
+
+    // Match と particle (quotation/comparison)
+    #[derive(Debug)]
+    struct ToQuoteMatcher;
+    impl Matcher for ToQuoteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "引用")
+        }
+    }
+
+    // Match も particle (binding particle)
+    #[derive(Debug)]
+    struct MoBindingMatcher;
+    impl Matcher for MoBindingMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Any word (counter, quantifier, noun, etc.)
+        TokenMatcher::Custom(Arc::new(TariMatcher)),
+        TokenMatcher::Custom(Arc::new(ToQuoteMatcher)),
+        TokenMatcher::Custom(Arc::new(MoBindingMatcher)),
+    ]
 }
 
 // Pattern: ったらない・といったらない
