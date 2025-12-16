@@ -11707,13 +11707,13 @@
   {
     "pattern_name": "～なり～なり",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the classical adverbial particle なり is used in lists, it expresses that each item within that list is a possibil... [6 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11721,13 +11721,13 @@
   {
     "pattern_name": "ないでもない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ないでもない , and なくもない are structures that have the literal meaning of 'to not not be (A)', and are used to express that ... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11735,13 +11735,13 @@
   {
     "pattern_name": "もさることながら",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "もさることながら is a construction in Japanese that is often translated as 'it goes without saying that (A), but (B)', or 'no... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11749,13 +11749,13 @@
   {
     "pattern_name": "ものと思っていた",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "物（もの）と思（おも）う is made up of the noun 物（もの） 'thing', the case marking particle と, and the う-Verb 思（おも）う 'to think' [4 std, 4 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11763,13 +11763,13 @@
   {
     "pattern_name": "でなくてなんだろう",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "でなくてなんだろう is a formal pattern that appears following nouns that the speaker is certain is something which is true [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11777,13 +11777,13 @@
   {
     "pattern_name": "はさておき・はさておいて",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "はさておき is an expression which is often translated as 'leaving aside (A)', or 'apart from (A)' [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11791,13 +11791,13 @@
   {
     "pattern_name": "折には",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the noun 折（おり） 'fold' or 'pleat' is used adverbially with the case marking particle に, it indicates a time which... [5 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11805,13 +11805,13 @@
   {
     "pattern_name": "とばかり（に）",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "とばかり is a construction that is often used to show that something is being done 'as if to say (A)', or 'seeming that (A)' [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -12071,13 +12071,13 @@
   {
     "pattern_name": "わ〜わ（で）",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned in the わ grammar point, わ is an adverbial particle that is commonly used in cases of stress of emphasis ... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -12841,13 +12841,13 @@
   {
     "pattern_name": "ものとする",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like many grammar expressions that use もの, this noun will imply that the word or phrase that comes before it is a str... [1 std, 1 pol]",
     "priority": 5,
     "skip_reason": null

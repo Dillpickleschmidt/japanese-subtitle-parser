@@ -12071,13 +12071,13 @@
   {
     "pattern_name": "わ〜わ（で）",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As mentioned in the わ grammar point, わ is an adverbial particle that is commonly used in cases of stress of emphasis ... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

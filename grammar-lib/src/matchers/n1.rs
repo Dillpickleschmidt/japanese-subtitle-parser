@@ -7155,9 +7155,67 @@ pub fn makuru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: わ〜わ（で）
+// Pattern: わ〜わ（で） (with A and B, C)
+// Structures: (A)わ + (B)わ + (で)
 pub fn wa_u301c_wa_uff08_de_uff09() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match わ particle (助詞/終助詞)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わ"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "終助詞")
+        }
+    }
+
+    // Match second わ (can be particle OR noun)
+    #[derive(Debug)]
+    struct WaSecondMatcher;
+    impl Matcher for WaSecondMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わ"
+                && (
+                    // As particle
+                    (token.pos.first().is_some_and(|p| p == "助詞")
+                        && token.pos.get(1).is_some_and(|p| p == "終助詞"))
+                    // As noun (sometimes tokenized this way)
+                    || token.pos.first().is_some_and(|p| p == "名詞")
+                )
+        }
+    }
+
+    // Match で after わ (can be auxiliary verb OR particle)
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && (
+                    // As auxiliary verb (with base だ)
+                    (token.base_form == "だ" && token.pos.first().is_some_and(|p| p == "助動詞"))
+                    // As particle
+                    || (token.pos.first().is_some_and(|p| p == "助詞")
+                        && token.pos.get(1).is_some_and(|p| p == "格助詞"))
+                )
+        }
+    }
+
+    // Note: This pattern may not detect cases where punctuation (commas, etc.)
+    // appears between the two わ, because Wildcards stop at punctuation by default.
+    // This is a limitation of the current TokenMatcher architecture.
+    vec![
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 30,
+            stop_conditions: vec![],
+        },
+        TokenMatcher::Custom(Arc::new(WaSecondMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeMatcher)))),
+    ]
 }
 
 // Pattern: どうにか
