@@ -10103,3 +10103,80 @@ mod wokagirini_tests {
         assert_pattern_range(&patterns, "を限りに", 3, 9); // 声をかぎりに
     }
 }
+
+// ============================================================================
+// には及ばない① Tests
+// ============================================================================
+
+mod niwaoyobanai_tests {
+    use super::*;
+
+    // Pattern: には及ばない① (no need to / unnecessary)
+    // Data source: grammar_points_data.json["には及ばない①"]
+    // Testing: structure.standard[0] - "Verb + には及（およ）ばない"
+    //
+    // Meaning: "There is no need to (A)" / "(A) is unnecessary"
+    // Components: に (case-marking) + は (topic) + 及ばない (negated form of 及ぶ "to reach")
+    // Used after nouns or verbs in dictionary form
+    // Often preceded by お or ご for politeness
+
+    #[test]
+    fn test_niwaoyobanai_noun_basic() {
+        // Testing: Noun + には及ばない
+        // Based on structure.standard[0]
+        let sentence = "心配には及ばない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない①");
+        assert_pattern_range(&patterns, "には及ばない①", 0, 8); // 心配には及ばない
+    }
+
+    #[test]
+    fn test_niwaoyobanai_verb_dictionary() {
+        // Testing: Verb[dictionary] + には及ばない
+        // Based on structure.standard[0]: "Verb + には及ばない"
+        let sentence = "こちらまでお越しいただくには及びません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない①");
+        assert_pattern_range(&patterns, "には及ばない①", 8, 19); // いただくには及びません
+    }
+
+    #[test]
+    fn test_niwaoyobanai_go_prefix() {
+        // Testing: ご + Noun + には及ばない
+        // Based on structure.standard[3]: "（ご）+ 心配（しんぱい） + には及（およ）ばない"
+        let sentence = "ご心配には及びません。これぐらいの怪我なら全然我慢できます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない①");
+        assert_pattern_range(&patterns, "には及ばない①", 1, 10); // 心配には及びません
+    }
+
+    #[test]
+    fn test_niwaoyobanai_o_prefix() {
+        // Testing: お + Noun + には及ばない
+        // Based on structure.standard[2]: "（お）+ 礼（れい） + には及（およ）ばない"
+        let sentence = "お礼には及びません。当然のことをしたまでです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない①");
+        assert_pattern_range(&patterns, "には及ばない①", 0, 9); // お礼には及びません
+    }
+
+    #[test]
+    fn test_niwaoyobanai_explanation() {
+        // Testing: する-Verb + には及ばない
+        // Based on structure.standard[1]: "［する］Verb + （する）+ には及（およ）ばない"
+        let sentence = "既にご存じだと思いますので、ご説明には及びません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "には及ばない①");
+        assert_pattern_range(&patterns, "には及ばない①", 15, 24); // 説明には及びません
+    }
+}

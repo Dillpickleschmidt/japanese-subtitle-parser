@@ -12281,13 +12281,13 @@
   {
     "pattern_name": "には及ばない①",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "には及（およ）ばない is a polite expression in Japanese used in order to indicate that there is 'no need to (A)', or that '(A) ... [5 std, 5 pol]",
     "priority": 5,
     "skip_reason": null
