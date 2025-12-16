@@ -1,3 +1,88 @@
+## Session 496 - 2025-12-15
+
+### Session Summary - N1 Pattern Complete ✓
+**Status**: Successfully implemented かたわら pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3302 passing, 1 ignored (added 4 new tests)
+**Progress**: Ninth N1 pattern completed!
+
+**Session highlights**:
+- Implemented かたわら (besides, in addition to, while) - 4 tests covering both structure variants
+- Handles both Verb[る] + かたわら and Noun + の + かたわら patterns
+- Uses VerbOrNounMatcher to handle both verbs in dictionary form and nouns
+- Optional の particle handled correctly for noun phrases
+- All tests use realistic, subtitle-quality sentences from actual grammar examples
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: かたわら (besides, in addition to, while)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Verb[る] + かたわら
+- Noun + の + かたわら
+
+**Implementation details**:
+3 custom matchers for precise token matching:
+1. `VerbOrNounMatcher` - Matches verbs in 基本形 (dictionary form) OR any noun
+2. `NoParticleMatcher` - Optional の particle (助詞/連体化)
+3. `KatawaraMatcher` - かたわら (名詞/副詞可能)
+
+**Key implementation insight**:
+The pattern uses an Optional matcher for the の particle, allowing it to match both:
+- Verb + かたわら (no の)
+- Noun + の + かたわら (with の)
+
+The VerbOrNounMatcher checks if a token is a verb in 基本形 OR a noun, making the pattern flexible.
+
+**Tokenization patterns**:
+1. **Verb + かたわら**: いる (動詞/非自立, 一段, 基本形) + かたわら (名詞/副詞可能)
+2. **Noun + の + かたわら**: 本業 (名詞/一般) + の (助詞/連体化) + かたわら (名詞/副詞可能)
+
+**Tests created**: 4 tests
+1. `test_katawara_verb` - 経営しているかたわら (Verb + かたわら, range 10-16)
+2. `test_katawara_verb_professor` - しているかたわら (Verb + かたわら, range 17-23)
+3. `test_katawara_noun` - 本業のかたわら (Noun + の + かたわら, range 4-11)
+4. `test_katawara_noun_childcare` - 子育てのかたわら (Noun + の + かたわら, range 2-10)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented katawara() function (52 lines with 3 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 comprehensive tests in katawara_tests module
+- `feature_list.json` - Updated かたわら to complete status
+
+**Grammar meaning**:
+傍（かたわら）, seen primarily in hiragana, is a noun in Japanese that means 'bystander', in regard to something that is alongside or in the same place as the main focus. As a grammatical structure, it translates as 'while (A)', 'in addition to (A)', or 'besides (A)'.
+
+かたわら may come after nouns followed by の, or after the dictionary form of verbs.
+
+Common translations:
+- "besides (A)"
+- "in addition to (A)"
+- "while (A)"
+
+Something to remember from the 'bystander' meaning is that かたわら always comes after the primary action or state of (A), while (B) is considered to just be there incidentally to (A), or as being done secondarily to it. This usually takes the form of something like a side job or a hobby.
+
+**Important distinction**:
+Unlike ながら, かたわら does not necessarily indicate two actions happening at the exact same time, just actions happening independently of each other with one being the focus, and the other happening to a lesser extent within the same subject's life, day to day activities, etc.
+
+**Pattern range note**:
+The pattern captures the full grammatical construction:
+- Verb + かたわら: Full phrase from verb to かたわら
+- Noun + の + かたわら: Full phrase from noun to かたわら
+
+Examples:
+- いるかたわら (while being/doing)
+- 本業のかたわら (in addition to main work)
+
+---
+
 ## Session 495 - 2025-12-15
 
 ### Session Summary - Two More N1 Patterns Complete ✓
