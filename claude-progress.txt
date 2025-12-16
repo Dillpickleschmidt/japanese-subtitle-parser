@@ -1,3 +1,92 @@
+## Session 493 - 2025-12-15
+
+### Session Summary - Fifth N1 Pattern Complete ✓
+**Status**: Successfully implemented １～たりとも～ない pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3278 passing, 1 ignored (added 5 new tests)
+**Progress**: Fifth N1 pattern completed!
+
+**Session highlights**:
+- Implemented １～たりとも～ない (not even one, not a single) - 5 tests covering all variants
+- Handles multiple tokenization cases: たり as 助動詞 (with counters) or 助詞/並立助詞 (with adverbs)
+- Pattern structure: Counter/Quantifier + たりとも (combination of たり + と + も)
+- Special expression 何人たりとも (no matter who, no exceptions) works correctly
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: １～たりとも～ない (not even one, not a single)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Number + Counter + たりとも + Negative phrase
+- Quantifier + たりとも + Negative phrase
+- Special expression: 何人たりとも (no matter who)
+
+**Implementation details**:
+3 custom matchers for precise token matching:
+1. `TariMatcher` - たり (助動詞/文語・ナリ OR 助詞/並立助詞)
+2. `ToQuoteMatcher` - と (助詞/格助詞/引用)
+3. `MoBindingMatcher` - も (助詞/係助詞)
+
+**Key implementation insight**:
+たり can be tokenized two different ways:
+1. As 助動詞 (文語・ナリ, 基本形) - when following counter words like 一秒, 何人
+2. As 助詞/並立助詞 - when following adverbs like 少し
+
+The matcher handles both cases by checking POS and features.
+
+**Tokenization patterns**:
+1. **With counters**: 一 (名詞/数) + 秒 (名詞/接尾/助数詞) + たり (助動詞/文語・ナリ) + と + も
+2. **With quantifiers**: 少し (副詞/助詞類接続) + たり (助詞/並立助詞) + と + も
+3. **Special case**: 何 (名詞/数) + 人 (名詞/接尾/助数詞) + たり (助動詞/文語・ナリ) + と + も
+
+**Tests created**: 5 tests
+1. `test_taritomo_one_second` - 一秒たりとも気を抜くことができない (one second, range 7-12)
+2. `test_taritomo_one_minute` - 一分たりとも残業をしたくない (one minute, range 3-8)
+3. `test_taritomo_one_millimeter` - 一ミリたりとも動かなかった (one millimeter, range 16-22)
+4. `test_taritomo_sukoshi` - 少したりとも油断をすると (a little, range 0-6)
+5. `test_taritomo_nanbito` - 何人たりとも立ち入ることが許されない (no matter who, range 20-25)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented ichi_uff5e_taritomo_uff5e_nai() function (68 lines with 3 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 comprehensive tests
+- `feature_list.json` - Updated １～たりとも～ない to complete status
+
+**Grammar meaning**:
+たりとも is a combination of:
+- たり: auxiliary verb presenting examples
+- とも: conjunction particle presenting approximate limitations
+
+Literal translation: "even limited to (A) as an example, not (B)"
+
+Common translations:
+- "not even one (A)"
+- "not a single (A)"
+- "not even (A)"
+
+Almost always used in negative sentences to indicate that (A) is not an exception to something. Very formal expression, not used in daily conversation.
+
+**Special set expression**:
+何人（なんびと）たりとも - "no matter who it is, no exceptions"
+This is the most frequently used たりとも structure.
+
+**Pattern range note**:
+The pattern captures the counter/quantifier + たりとも portion:
+- 秒たりとも (not 一秒たりとも) - captures the grammatical construction
+- 少したりとも - captures the full quantifier phrase
+- 人たりとも (not 何人たりとも) - captures the grammatical construction
+
+The preceding number is part of the phrase context but the core grammatical pattern is the counter/quantifier + たりとも combination.
+
+---
+
 ## Session 492 - 2025-12-15
 
 ### Session Summary - Two More N1 Patterns Complete ✓
