@@ -7965,7 +7965,7 @@ declare_patterns! {
     Uff5eTeyaru {
         name: "～てやる",
         matcher_fn: crate::matchers::n1::uff5e_teyaru,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

@@ -8363,9 +8363,38 @@ pub fn woyoginakusaseru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ～てやる
+// Pattern: ～てやる (do for someone / I'll do it!)
+// Structures: Verb[て] + やる/やります
 pub fn uff5e_teyaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て particle
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match やる as auxiliary verb (動詞/非自立, base=やる)
+    #[derive(Debug)]
+    struct YaruMatcher;
+    impl Matcher for YaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "やる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeMatcher)),
+        TokenMatcher::Custom(Arc::new(YaruMatcher)),
+    ]
 }
 
 // Pattern: ただ〜のみ (nothing but, all that remains)

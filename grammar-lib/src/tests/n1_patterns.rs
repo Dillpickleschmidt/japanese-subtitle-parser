@@ -8453,3 +8453,68 @@ mod nbakarini_tests {
         assert_pattern_range(&patterns, "んばかりに", 2, 11); // 飛びかかんばかりに
     }
 }
+
+// ～てやる tests
+mod teyaru_tests {
+    use super::*;
+
+    #[test]
+    fn test_teyaru_benefit_standard() {
+        // Testing: Verb[て] + やる (doing for someone - benefit)
+        // Example from grammar_points_data.json
+        let sentence = "いいよいいよ、俺がやってやるからお前は見とけ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～てやる");
+        assert_pattern_range(&patterns, "～てやる", 9, 14); // やってやる
+    }
+
+    #[test]
+    fn test_teyaru_benefit_polite() {
+        // Testing: Verb[て] + やる (doing for someone)
+        // Example from grammar_points_data.json
+        let sentence = "今夜は俺が奢ってやるから、どんどん好きなもん頼めばいいからな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～てやる");
+        assert_pattern_range(&patterns, "～てやる", 5, 10); // 奢ってやる
+    }
+
+    #[test]
+    fn test_teyaru_determination() {
+        // Testing: Verb[て] + やる (strong will/determination)
+        // Example from grammar_points_data.json
+        let sentence = "絶対綺麗になって見返してやる！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～てやる");
+        assert_pattern_range(&patterns, "～てやる", 8, 14); // 見返してやる
+    }
+
+    #[test]
+    fn test_teyaru_resolve() {
+        // Testing: Verb[て] + やる (determination - another example)
+        // Example from grammar_points_data.json
+        let sentence = "こうなったら勝ってやるしかないだろ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～てやる");
+        assert_pattern_range(&patterns, "～てやる", 6, 11); // 勝ってやる
+    }
+
+    #[test]
+    fn test_teyaru_polite_masu() {
+        // Testing: Verb[て] + やります (polite form - determination)
+        // Additional realistic example
+        let sentence = "約束は必ず守ってやります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～てやる");
+        assert_pattern_range(&patterns, "～てやる", 5, 12); // 守ってやります
+    }
+}

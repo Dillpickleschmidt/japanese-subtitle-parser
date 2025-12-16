@@ -12813,14 +12813,14 @@
   {
     "pattern_name": "～てやる",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "The う-Verb やる, occasionally seen in the kanji form 遣（や）る, primarily means ‘to do’, but can also mean ‘to give’ as the... [1 std, 1 pol]",
+    "passes": true,
+    "description": "The う-Verb やる, occasionally seen in the kanji form 遣（や）る, primarily means 'to do', but can also mean 'to give' as the... [1 std, 1 pol]",
     "priority": 5,
     "skip_reason": null
   },
