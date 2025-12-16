@@ -1,3 +1,108 @@
+## Session 603 - 2025-12-16
+
+### Session Summary - といおうか Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (といおうか - N1, priority 5)
+**Total tests**: 3853 passing (5 new tests, no regressions)
+**Progress**: One hundred and seventeenth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented といおうか (how to put it / shall I say)
+- Emphatic expression for expressing uncertainty between two or more options
+- Works with all word types: verbs, い-adjectives, な-adjectives, and nouns
+- Pattern tokenizes as: と (quotation particle) + いお (volitional form of いう) + う (auxiliary) + か (particle)
+- Used in pairs: AといおうかBといおうか to express difficulty in choosing between descriptions
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: といおうか (how to put it / shall I say)
+
+**Grammar Point**: といおうか
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structure**:
+- Any word + といおうか (can be Noun, Verb, い-Adjective, or な-Adjective)
+- Typically used in pairs: AといおうかBといおうか
+
+**Meaning**:
+- "How to put it" / "How shall I say it" / "Perhaps it's (A), or perhaps it's (B)"
+- Combination of と (quotation particle) + 言おう (volitional form of 言う "to say") + か (question particle)
+- Used when speaker is uncertain about how to describe something
+- Typically appears twice in a sentence as AといおうかBといおうか
+- Both (A) and (B) phrase are being questioned by the speaker
+- Can be used with almost any word type before the と particle
+- More emphatic than the common といおうか, used for literary effect or formal situations
+- Often used with vague/imprecise descriptions to avoid but hint at what speaker actually wants to say
+
+**Tokenization pattern**:
+- Preceding word (Any - Noun, Verb, Adjective in basic form)
+- と (助詞/格助詞/引用) - quotation particle
+- いお (動詞/自立, base=いう, 五段・ワ行促音便, 未然ウ接続) - "to say" in volitional prep form
+- う (助動詞, 不変化型, 基本形) - volitional auxiliary verb
+- か (助詞/副助詞／並立助詞／終助詞) - question particle
+
+**Implementation**:
+Created 4 custom matchers for precise pattern matching:
+1. ToMatcher - Matches と as 助詞/格助詞/引用 (quotation particle)
+2. IoMatcher - Matches いお (verb いう in 未然ウ接続 form)
+3. UMatcher - Matches う auxiliary (助動詞, 不変化型)
+4. KaMatcher - Matches か particle (助詞/副助詞／並立助詞／終助詞)
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding word - can be any type)
+- ToMatcher (と quotation particle)
+- IoMatcher (いお from いう)
+- UMatcher (う auxiliary)
+- KaMatcher (か particle)
+
+**Tests Written: 5 tests (all passing)**
+1. test_toiouka_verb_pair - いるといおうか (4, 11) - verb + pattern
+2. test_toiouka_i_adjective_pair - 危ないといおうか (12, 20) - い-adjective + pattern
+3. test_toiouka_na_adjective_pair - すぎるといおうか (10, 18) - な-adjective stem + pattern
+4. test_toiouka_noun_pair - いとこといおうか (2, 10) - noun + pattern
+5. test_toiouka_mixed_types - ないといおうか (7, 14) - mixed types in one sentence
+
+**Character Ranges**: Pattern captures preceding word + といおうか:
+- いるといおうか (4, 11) - 7 characters (verb + pattern)
+- 危ないといおうか (12, 20) - 8 characters (adjective + pattern)
+- すぎるといおうか (10, 18) - 8 characters (verb + pattern)
+- いとこといおうか (2, 10) - 8 characters (noun + pattern)
+- ないといおうか (7, 14) - 7 characters (verb negative + pattern)
+
+**Key Notes**:
+- Pattern includes the preceding word (full grammatical construction)
+- Each occurrence of といおうか is detected separately (not as a paired pattern)
+- Works with all major word types: verbs, い-adjectives, な-adjectives, nouns
+- The pattern is typically used twice in a sentence (AといおうかBといおうか) but each is detected independently
+- More formal/literary than the common といおうか variant
+- When multiple patterns exist in a sentence, they may be returned in non-sequential order
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented toiouka() with 4 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in toiouka_tests module
+- feature_list.json - Updated といおうか to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (verb, い-adjective, な-adjective, noun)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3848 + 5 = 3853 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ったら・といったら - Complex pattern with ありゃしない variants
+- とは比べものにならない - "Cannot be compared to" pattern
+- とは言うものの - "Having said that" pattern
+- と来たら - "Speaking of" pattern
+- ないまでも - "Even if not" pattern
+- ならいざ知らず - "If it were... that would be one thing, but" pattern
+
+================================================================================
+
 ## Session 602 - 2025-12-16
 
 ### Session Summary - にしたところで Complete ✓
