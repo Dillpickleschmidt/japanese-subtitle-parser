@@ -1,3 +1,102 @@
+## Session 589 - 2025-12-16
+
+### Session Summary - ～てやる Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (～てやる - N1, priority 5)
+**Total tests**: 3762 passing (5 new tests, no regressions)
+**Progress**: One hundred and third N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented ～てやる (do for someone / I'll do it!)
+- Covers two main meanings: benefit to others (patronizing) and strong determination
+- Handles both plain and polite forms (やる, やります)
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: ～てやる (do for someone / I'll do it!)
+
+**Grammar Point**: ～てやる
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb[て] + やる (やってやる, 奢ってやる, 見返してやる)
+2. Verb[て] + やります (守ってやります - polite form)
+
+**Meaning**:
+- Two main usages:
+  1. "Do for someone" - Casual/patronizing form of あげる (to give/do for someone)
+     - Often sounds patronizing or implies the speaker is doing it because the recipient can't
+     - Example: 俺がやってやる (I'll do it for you)
+  2. "I'll do it!" - Expresses strong will/determination (similar to みせる)
+     - Shows speaker's determination to accomplish something
+     - Example: 絶対に見返してやる！(I'll definitely prove them wrong!)
+- Underlying meaning emphasizes the doer being in power/control over the result
+
+**Tokenization pattern**:
+- Verb (動詞/自立/連用タ接続 or 連用形, e.g., やっ, 奢っ, 守っ, 見返し, 勝っ)
+- て (助詞/接続助詞)
+- やる (動詞/非自立, base=やる, 基本形 or 連用形)
+- Optional: ます (助動詞) for polite form
+
+**Implementation**:
+Created custom matchers for precise matching:
+1. TeMatcher - Matches て as 助詞/接続助詞
+2. YaruMatcher - Matches やる as 動詞/非自立 (non-self-standing verb)
+
+Pattern matcher sequence:
+- flexible_verb_form() + て + やる (動詞/非自立)
+- Captures full construction including main verb in て-form
+
+**Tests Written: 5 tests (all passing)**
+1. test_teyaru_benefit_standard - やってやる (9, 14) - casual benefit form
+2. test_teyaru_benefit_polite - 奢ってやる (5, 10) - doing for someone
+3. test_teyaru_determination - 見返してやる (8, 14) - strong will/determination
+4. test_teyaru_resolve - 勝ってやる (6, 11) - determination/resolve
+5. test_teyaru_polite_masu - 守ってやります (5, 12) - polite form
+
+**Character Ranges**: Pattern captures Verb[て] + やる/やります:
+- やってやる (9, 14) - 5 characters
+- 奢ってやる (5, 10) - 5 characters
+- 見返してやる (8, 14) - 6 characters
+- 勝ってやる (6, 11) - 5 characters
+- 守ってやります (5, 12) - 7 characters
+
+**Key Notes**:
+- Pattern includes the main verb before やる (full grammatical construction)
+- やる acts as auxiliary verb (動詞/非自立) in this construction
+- Distinguished from standalone やる by POS tag (非自立 vs 自立)
+- Handles all conjugations of やる (やる, やり+ます, etc.)
+- Both meanings (benefit and determination) share same grammatical structure
+- Context determines which meaning applies
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented uff5e_teyaru() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in teyaru_tests module
+- feature_list.json - Updated ～てやる to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (plain and polite forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3762 total, +5 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- を余儀なくさせる - "Force/compel to" pattern
+- てはかなわない - "Can't stand" pattern
+- を限りに - "Starting from/as of" pattern
+- といおうか - "How should I put it" pattern
+- それまでだ - "That's the end" pattern
+- にひきかえ - "In contrast to" pattern
+- ものなら② - "If only" pattern
+- 始末だ - "End up in a situation" pattern
+
+================================================================================
+
 ## Session 588 - 2025-12-16
 
 ### Session Summary - んばかりに Complete ✓
