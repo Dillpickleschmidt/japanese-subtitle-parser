@@ -1,3 +1,84 @@
+## Session 575 - 2025-12-16
+
+### Session Summary - ～なり～なり Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (～なり～なり - N1, priority 5)
+**Total tests**: 3689 passing (4 new tests, no regressions)
+**Progress**: Eighty-eighth N1 pattern completed!
+
+**Session highlights**:
+- Implemented ～なり～なり (either...or...)
+- Classical adverbial particle なり used in non-exhaustive lists
+- Handles multiple variants: Verb + なり, Noun + なり, complex phrases
+- Pattern detects "Item1 + なり + Item2 + なり" constructions
+- 2 structure variants undetectable due to tokenization ambiguities
+- All detectable structure variants tested with realistic subtitle sentences
+
+### ✓ Completed: ～なり～なり (either...or...)
+
+**Grammar Point**: ～なり～なり
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Polite
+
+**Pattern structures**:
+1. Verb(A) + なり + Verb(B) + なり + する (吸うなり食べるなり, 売るなり捨てるなり)
+2. Noun(A) + なり + Noun(B) + なり (電話なりメールなり)
+3. Verb + なり + WH-Word + Particle + Verb + なり (行くなり何をするなり)
+
+**Undetectable structures**:
+- Noun + なり + Noun + なり + に: Second なり tokenized as noun (名詞), not particle
+- Noun + に + なり: The なり tokenized as verb なる (become), not particle
+
+**Meaning**:
+- "Either (A) or (B)" / "(A) or (B), whichever"
+- Presents non-exhaustive list of options from which one will be chosen
+- Implies other similar options in the category are also acceptable
+- Different from など/や because なり emphasizes choice rather than examples
+- Polite construction, formal register
+- Cannot follow particles が or を
+
+**Tokenization variants**:
+- After verbs: なり is 助詞/接続助詞
+- After nouns: なり is 助詞/並立助詞 or 助詞/副助詞
+- Pattern must distinguish from verb なる (become)
+
+**Implementation**:
+Created custom matchers to handle:
+1. NariParticleMatcher - Matches なり as particle (not verb)
+   - Checks surface == "なり"
+   - Checks pos[0] == "助詞"
+   - Checks pos[1] is one of: "接続助詞", "並立助詞", "副助詞"
+2. VerbOrNounMatcher - Matches verbs or nouns before なり
+3. Pattern: VerbOrNoun + なり + Wildcard(1-8) + なり
+
+**Tests Written: 4 tests (all passing)**
+1. test_nari_nari_verb_verb_suru - 吸うなり弁当食べるなり (4, 15)
+2. test_nari_nari_uru_suteru - 売るなり捨てるなり (6, 15)
+3. test_nari_nari_noun_simple - 電話なりメールなり (5, 14)
+4. test_nari_nari_verb_wh - 行くなり何をするなり (0, 10)
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented uff5e_nari_uff5e_nari() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added uff5e_nari_uff5e_nari_tests module with 4 tests
+- feature_list.json - Updated ～なり～なり to complete status
+
+**Quality Checks**:
+✓ All detectable structure variants tested (4 of 6 structures)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed code
+✓ All existing tests still pass (3689 total, +4 new)
+✓ Undetectable variants documented with TODO comments
+
+**Next Priorities** (N1 patterns without tests, Priority 5):
+- ないでもない - "Not that...not" pattern
+- もさることながら - "Not only...but also" pattern
+- ものと思っていた - "Thought that..." pattern
+
+================================================================================
+
 ## Session 574 - 2025-12-16
 
 ### Session Summary - んがため(に) + にも～ない Complete ✓
