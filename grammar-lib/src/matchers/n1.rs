@@ -2189,9 +2189,53 @@ pub fn womotte_2() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とはいえ
+// Pattern: とはいえ (although, be that as it may)
+// Structures: Verb/Adj/Noun + と + は + いえ
 pub fn tohaie() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と as quotation particle (格助詞/引用)
+    #[derive(Debug)]
+    struct ToQuoteMatcher;
+    impl super::Matcher for ToQuoteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match は as topic particle (係助詞)
+    #[derive(Debug)]
+    struct HaTopicMatcher;
+    impl super::Matcher for HaTopicMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    // Match いえ as verb いう in imperative form (命令ｅ)
+    #[derive(Debug)]
+    struct IeMatcher;
+    impl super::Matcher for IeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いえ"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f.contains("命令"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToQuoteMatcher)),
+        TokenMatcher::Custom(Arc::new(HaTopicMatcher)),
+        TokenMatcher::Custom(Arc::new(IeMatcher)),
+    ]
 }
 
 // Pattern: ならでは

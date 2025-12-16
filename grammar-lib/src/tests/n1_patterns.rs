@@ -2564,3 +2564,71 @@ mod womotte2_tests {
         assert_pattern_range(&patterns, "をもって", 22, 30); // 本日をもちまして
     }
 }
+
+// ============================================================================
+// とはいえ Tests
+// ============================================================================
+
+mod tohaie_tests {
+    use super::*;
+
+    // Pattern: とはいえ (although, be that as it may)
+    // Data source: grammar_points_data.json["とはいえ"]
+    // Testing: structure.standard[0] - "Verb + とはいえ + Phrase"
+    //
+    // Other structures to test:
+    //   - standard[1]: ［い］Adjective + とはいえ + Phrase
+    //   - standard[2]: Noun + （だ）+ とはいえ + Phrase
+    //   - standard[3]: ［な］Adjective + （だ）+ とはいえ + Phrase
+    //   - standard[4]: Phrase (A)。とはいえ + Phrase (B) - sentence-initial
+
+    #[test]
+    fn test_tohaie_verb() {
+        let sentence = "この事件の犯人が分かったとはいえ、まだ捕まっていない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とはいえ");
+        assert_pattern_range(&patterns, "とはいえ", 12, 16); // とはいえ
+    }
+
+    #[test]
+    fn test_tohaie_i_adjective() {
+        let sentence = "このパソコンは新しいとはいえ、性能がいいわけではない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とはいえ");
+        assert_pattern_range(&patterns, "とはいえ", 10, 14); // とはいえ
+    }
+
+    #[test]
+    fn test_tohaie_noun_with_da() {
+        let sentence = "日本人だとはいえ、日本語があまり話せないんだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とはいえ");
+        assert_pattern_range(&patterns, "とはいえ", 4, 8); // とはいえ
+    }
+
+    #[test]
+    fn test_tohaie_na_adjective() {
+        let sentence = "この国は安全だとはいえ、日本ではないので注意してください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とはいえ");
+        assert_pattern_range(&patterns, "とはいえ", 7, 11); // とはいえ
+    }
+
+    #[test]
+    fn test_tohaie_sentence_initial() {
+        let sentence = "彼は有名な俳優だ。とはいえ、私はあまり知らない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とはいえ");
+        assert_pattern_range(&patterns, "とはいえ", 9, 13); // とはいえ
+    }
+}
