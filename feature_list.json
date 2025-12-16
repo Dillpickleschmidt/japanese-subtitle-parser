@@ -10769,13 +10769,13 @@
   {
     "pattern_name": "ものを",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ものを is a grammar point that functions in a similar way to のに in that it will express that (A) is something that was d... [6 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

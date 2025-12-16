@@ -2239,3 +2239,86 @@ mod nishite_tests {
         assert_pattern_range(&patterns, "にして①", 2, 8); // ６０歳にして
     }
 }
+
+// ============================================================================
+// ものを Tests
+// ============================================================================
+
+mod monowo_tests {
+    use super::*;
+
+    // Pattern: ものを (if only... but)
+    // Data source: grammar_points_data.json["ものを"]
+    // Structure variants to test:
+    //   - standard[0]: Verb[ば] + Verb + ものを
+    //   - standard[1]: Verb[ば] + い-Adjective + ものを
+    //   - standard[2]: Verb[ば] + な-Adjective + な + ものを
+    //   - standard[3]: Verb[ば] + Noun + の + ものを
+    //   - Note: ば can also be たら or と
+
+    #[test]
+    fn test_monowo_ba_verb() {
+        // Testing: structure.standard[0] - "Verb[ば] + Verb + ものを"
+        let sentence = "目を合わせなかったら止められなかったものを、なんで警察なんかと目を合わせちゃうんだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものを");
+        assert_pattern_range(&patterns, "ものを", 17, 21); // たものを
+    }
+
+    #[test]
+    fn test_monowo_ba_i_adjective() {
+        // Testing: structure.standard[1] - "Verb[ば] + い-Adjective + ものを"
+        let sentence = "もっと早くに歯医者に行けば歯を抜かずに済んだものを...";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものを");
+        assert_pattern_range(&patterns, "ものを", 21, 25); // だものを
+    }
+
+    #[test]
+    fn test_monowo_ba_na_adjective() {
+        // Testing: structure.standard[2] - "Verb[ば] + な-Adjective + な + ものを"
+        let sentence = "道具を使えば楽なものを、わざわざ自分の力でやろうとするから怪我をするんだよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものを");
+        assert_pattern_range(&patterns, "ものを", 7, 11); // なものを
+    }
+
+    #[test]
+    fn test_monowo_ba_verb_simple() {
+        // Testing: structure.standard[0] - "Verb[ば] + Verb + ものを" (simpler example)
+        let sentence = "「手伝って」って言えばいいものを、一人でやるからこう言う目に遭うんだよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものを");
+        assert_pattern_range(&patterns, "ものを", 11, 16); // いいものを
+    }
+
+    #[test]
+    fn test_monowo_tara_conditional() {
+        // Testing: structure.standard[0] with たら instead of ば
+        let sentence = "アレルギーなどがあったなら、さきに言ってくれればいいものを...";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものを");
+        assert_pattern_range(&patterns, "ものを", 24, 29); // いいものを
+    }
+
+    #[test]
+    fn test_monowo_na_adjective_simple() {
+        // Testing: structure.standard[2] - simpler な-Adjective example
+        let sentence = "みんなでやれば簡単なものを...";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものを");
+        assert_pattern_range(&patterns, "ものを", 9, 13); // なものを
+    }
+}

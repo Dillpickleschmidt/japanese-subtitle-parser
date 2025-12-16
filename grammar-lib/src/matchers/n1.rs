@@ -2023,9 +2023,38 @@ pub fn nishite_u2460() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ものを
+// Pattern: ものを (if only... but)
+// Structures: Verb/Adjective + ものを
 pub fn monowo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match もの as a non-independent noun
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl super::Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match を particle
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl super::Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Could be verb, adjective, or auxiliary (な)
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+    ]
 }
 
 // Pattern: であれ
