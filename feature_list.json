@@ -12869,14 +12869,14 @@
   {
     "pattern_name": "以前",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "When used as a suffix, the noun 以前（いぜん） ‘preceding’, or ‘prior to’ will indicate that a topic is being brought forwar... [4 std, 0 pol]",
+    "passes": true,
+    "description": "When used as a suffix, the noun 以前（いぜん） 'preceding', or 'prior to' will indicate that a topic is being brought forwar... [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
   },

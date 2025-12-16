@@ -3018,3 +3018,77 @@ mod tomoarou_tests {
         assert_pattern_range(&patterns, "ともあろう", 2, 12); // さんともあろうお方が
     }
 }
+
+// ============================================================================
+// 以前 Tests
+// ============================================================================
+
+mod izen_tests {
+    use super::*;
+
+    // Pattern: 以前 (before even, prior to - emphatic criticism)
+    // Data source: grammar_points_data.json["以前"]
+    // Testing: structure.standard[0] - "Noun + 以前 + に"
+    //
+    // Structures to test:
+    //   - standard[0]: Noun + 以前 + に
+    //   - standard[1]: Noun (A) + 以前 + の + Noun (B)
+    //   - Verb + 以前 + に/の
+    //   - い-Adjective + 以前 + に/の
+    //   - な-Adjective + 以前 + に/の
+
+    // Test Noun + 以前 + に
+    #[test]
+    fn test_izen_noun_ni() {
+        let sentence = "人のことを心配する以前に自分の心配をしろ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以前");
+        assert_pattern_range(&patterns, "以前", 9, 12); // 以前に
+    }
+
+    // Test Noun + 以前 + の + Noun
+    #[test]
+    fn test_izen_noun_no_noun() {
+        let sentence = "それは古いか新しいか以前の問題だと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以前");
+        assert_pattern_range(&patterns, "以前", 10, 13); // 以前の
+    }
+
+    // Test Verb + 以前 + に
+    #[test]
+    fn test_izen_verb_ni() {
+        let sentence = "安全か危険か以前に、それは法律で禁じられているので試すこともできません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以前");
+        assert_pattern_range(&patterns, "以前", 6, 9); // 以前に
+    }
+
+    // Test な-Adjective/Noun + 以前 + の
+    #[test]
+    fn test_izen_adjective_no() {
+        let sentence = "お前が結婚できないのは顔以前の問題だよ。お前は性格が悪すぎる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以前");
+        assert_pattern_range(&patterns, "以前", 12, 15); // 以前の
+    }
+
+    // Test with verb dictionary form
+    #[test]
+    fn test_izen_verb_dictionary() {
+        let sentence = "できるかできないか以前に、まず挑戦してみるべきだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "以前");
+        assert_pattern_range(&patterns, "以前", 9, 12); // 以前に
+    }
+}

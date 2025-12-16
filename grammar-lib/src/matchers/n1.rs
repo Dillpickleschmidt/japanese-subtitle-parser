@@ -3381,8 +3381,37 @@ pub fn tono() -> Vec<TokenMatcher> {
 }
 
 // Pattern: 以前
+// Pattern: 以前 (before even, prior to - emphatic criticism)
+// Structures: 以前 + に/の
 pub fn izen() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 以前 as 名詞/副詞可能
+    #[derive(Debug)]
+    struct IzenMatcher;
+    impl super::Matcher for IzenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "以前"
+                && token.base_form == "以前"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Match に or の particle after 以前
+    #[derive(Debug)]
+    struct NiNoParticleMatcher;
+    impl super::Matcher for NiNoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "の")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IzenMatcher)),
+        TokenMatcher::Custom(Arc::new(NiNoParticleMatcher)),
+    ]
 }
 
 // Pattern: ともあろう (of all people, such as)
