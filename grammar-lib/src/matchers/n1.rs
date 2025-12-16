@@ -1855,9 +1855,81 @@ pub fn ninottotte_u30fb_ninottori() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Adj限りだ
+// Pattern: Adj限りだ (extremely, as ~ as can be)
+// Structures: Adjective + (な) + 限り + だ/です
+//
+// Examples:
+// - 羨ましい限りだ (very enviable)
+// - 残念な限りだ (very disappointing)
+// - 嬉しい限りです (very happy - polite)
+//
+// Meaning: "extremely (A)", "as (A) as can be" - the limit of (A)
+// Formal expression highlighting intensity of traits/emotions
+//
+// Tokenization:
+// - い-Adj (形容詞/自立, 基本形) + 限り + だ/です
+// - な-Adj (名詞/形容動詞語幹) + な (助動詞/体言接続) + 限り + だ/です
 pub fn adjkagirida() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match い-adjective or な-adjective
+    #[derive(Debug)]
+    struct AdjectiveMatcher;
+    impl Matcher for AdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // い-adjective: 形容詞/自立, in 基本形
+            (token.pos.first().is_some_and(|p| p == "形容詞")
+                && token.pos.get(1).is_some_and(|p| p == "自立")
+                && token.features.get(5).is_some_and(|f| f == "基本形"))
+            ||
+            // な-adjective: 名詞/形容動詞語幹
+            (token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹"))
+        }
+    }
+
+    // Match な copula (for な-adjectives)
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match 限り noun
+    #[derive(Debug)]
+    struct KagiriMatcher;
+    impl Matcher for KagiriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "限り"
+                && token.base_form == "限り"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // Match だ or です auxiliary
+    #[derive(Debug)]
+    struct DaDesuMatcher;
+    impl Matcher for DaDesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+                && ((token.surface == "だ" && token.base_form == "だ")
+                    || (token.surface == "です" && token.base_form == "です"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AdjectiveMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaCopulaMatcher)))),
+        TokenMatcher::Custom(Arc::new(KagiriMatcher)),
+        TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
+    ]
 }
 
 // Pattern: はおろか

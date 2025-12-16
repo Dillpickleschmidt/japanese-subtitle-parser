@@ -1331,3 +1331,66 @@ mod ichi_taritomo_nai_tests {
         assert_pattern_range(&patterns, "１～たりとも～ない", 20, 25); // 人たりとも
     }
 }
+
+// ============================================================================
+// Adj限りだ Tests
+// ============================================================================
+
+mod adj_kagirida_tests {
+    use super::*;
+
+    // Pattern: Adj限りだ (extremely, as ~ as can be)
+    // Data source: grammar_points_data.json["Adj限りだ"]
+    // Testing: structure.standard[0-1] and polite[0-1]
+    //
+    // Structure:
+    // - い-Adjective + 限り + だ/です
+    // - な-Adjective + な + 限り + だ/です
+    //
+    // Meaning: "extremely (A)", "as (A) as can be" - the limit of (A)
+    // Formal expression highlighting the intensity of traits/emotions
+
+    // Testing: い-Adjective + 限り + だ (standard form)
+    #[test]
+    fn test_kagirida_i_adj_standard() {
+        let sentence = "宝くじで一等が当たったなんて、羨ましい限りだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adj限りだ");
+        assert_pattern_range(&patterns, "Adj限りだ", 15, 22); // 羨ましい限りだ
+    }
+
+    // Testing: な-Adjective + な + 限り + だ (standard form)
+    #[test]
+    fn test_kagirida_na_adj_standard() {
+        let sentence = "一分遅れただけで不合格にされるなんて、残念な限りだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adj限りだ");
+        assert_pattern_range(&patterns, "Adj限りだ", 19, 25); // 残念な限りだ
+    }
+
+    // Testing: い-Adjective + 限り + です (polite form)
+    #[test]
+    fn test_kagirida_i_adj_polite() {
+        let sentence = "私のためにこんな素晴らしい送別会を開いてくれるなんて、嬉しい限りです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adj限りだ");
+        assert_pattern_range(&patterns, "Adj限りだ", 27, 34); // 嬉しい限りです
+    }
+
+    // Testing: な-Adjective + な + 限り + です (polite form)
+    #[test]
+    fn test_kagirida_na_adj_polite() {
+        let sentence = "同僚にあんなことを言われて、不快な限りです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Adj限りだ");
+        assert_pattern_range(&patterns, "Adj限りだ", 14, 21); // 不快な限りです
+    }
+}
