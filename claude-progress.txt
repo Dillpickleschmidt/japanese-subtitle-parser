@@ -1,3 +1,87 @@
+## Session 572 - 2025-12-16
+
+### Session Summary - に至って・に至り Complete ✓
+**Status**: Implemented に至って・に至り pattern successfully
+**Patterns completed**: 1 (に至って・に至り - N1, priority 5)
+**Total tests**: 3672 passing (5 new tests, no regressions)
+**Progress**: Eighty-fourth N1 pattern completed!
+
+**Session highlights**:
+- Implemented に至って・に至り (only when/going as far as to)
+- Formal pattern expressing extreme extent leading to result
+- Handles verb + に至って, noun + に至って, and formal conjunctive に至り
+- Clean implementation with custom matchers for 至って/至り forms
+- All structure variants tested with realistic subtitle sentences
+
+### ✓ Completed: に至って・に至り (only when/going as far as)
+
+**Grammar Point**: に至って・に至り
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb + に至って (されるに至って - passive verb example)
+2. Noun + に至って (糖尿病に至って - noun example)
+3. に至り (formal conjunctive form - ここに至り)
+
+**Meaning**:
+- "Only when (A), did (B)"
+- "Going as far as to (A), (B)"
+- Indicates (A) as an extreme extent from which (B) results
+- Often used in criticism of lack of action (things left too long)
+- Emphasizes that action only happened when situation reached extreme
+
+**Tokenization patterns**:
+Verb + に至って:
+- Verb (動詞/基本形 or 一段/基本形)
+- に (助詞/格助詞/一般)
+- 至っ (動詞/五段・ラ行/連用タ接続, base=至る)
+- て (助詞/接続助詞)
+
+Noun + に至って:
+- Noun (名詞/一般 or other noun types)
+- に (助詞/格助詞/一般)
+- 至っ (動詞/五段・ラ行/連用タ接続, base=至る)
+- て (助詞/接続助詞)
+
+に至り (formal):
+- Noun/Pronoun (ここ, etc.)
+- に (助詞/格助詞/一般)
+- 至り (動詞/五段・ラ行/連用形, base=至る)
+
+**Implementation Notes**:
+- Uses TokenMatcher::Any to match either verb or noun before に
+- Custom ItatteMatcher checks base_form=至る and surface=至っ/至り
+- Optional te particle matcher allows both 至って (standard) and 至り (formal)
+- Simple and clean implementation - pattern naturally accepts both forms
+
+**Tests Written: 5 tests (all passing)**
+1. test_niitatte_verb - されるに至って (6, 12) - passive verb
+2. test_niitatte_verb_accident - 発生するに至って (9, 17) - する verb
+3. test_niitatte_noun - 病に至って (2, 7) - noun
+4. test_niitatte_noun_age - 年に至って (2, 7) - noun (age)
+5. test_niitari_formal - ここに至り (3, 8) - formal conjunctive
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented niitatte_u30fb_niitari() matcher
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 comprehensive tests
+- feature_list.json - Updated に至って・に至り to complete status
+
+**Quality Checks**:
+✓ All structure variants tested (verb, noun, formal conjunctive)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed code
+✓ All existing tests still pass (3672 total, +5 new)
+
+**Next Priorities** (N1 patterns without tests, Priority 5):
+- だに + しない - "Even" pattern (classical)
+- んがため(に) - "In order to" pattern (formal/literary)
+- にも～ない - "Not even" pattern
+
+================================================================================
+
 ## Session 571 - 2025-12-16
 
 ### Session Summary - たら〜で Complete ✓
