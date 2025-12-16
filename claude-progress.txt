@@ -1,3 +1,71 @@
+## Session 489 - 2025-12-15
+
+### Session Summary - ものですから・もので Pattern Complete ✓
+**Status**: Successfully implemented ものですから・もので pattern
+**Patterns completed**: 1 (N2, priority 4)
+**Total tests**: 3235 passing, 1 ignored (added 5 new tests)
+
+**Session highlights**:
+- Implemented ものですから・もので (because, the reason is - polite version) - 5 tests
+- Pattern is the polite/formal version of ものだから (uses です instead of だ)
+- Only matches polite です forms: ものですから, もんですから
+- Abbreviated forms もので/もんで (with で base=だ) are handled by ものだから pattern
+- All structure variants tested (verb, い-adj, な-adj, noun)
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: ものですから・もので (because, the reason is - polite version)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb + ものですから
+- い-Adjective + ものですから
+- な-Adjective + な + ものですから
+- Noun + な + ものですから
+- Casual variant: もんですから
+
+**Implementation details**:
+Pattern uses 4 token matchers with optional components:
+1. Optional な (copula, 体言接続) for な-adjectives/nouns
+2. もの or もん (名詞/非自立/一般) - casual abbreviation
+3. です (助動詞, base=です, 基本形) - ONLY polite です form
+4. Optional から (助詞/接続助詞)
+
+**Key distinguishing features**:
+- This pattern ONLY matches です forms (ものですから, もんですから)
+- The で forms (もので, もんで) have base_form=だ and are matched by ものだから
+- Despite the pattern name including "もので", the actual detection is limited to です versions
+- The grammar explains: "ものだから and ものですから can be thought of as a single interchangeable grammar structure in most situations"
+
+**Tests created**: 5 tests
+1. `test_monodesukara_verb` - 昔大工として働いていたものですから (verb, range 11-17)
+2. `test_monodesukara_i_adj` - この道路は狭いものですから (い-adj, range 7-13)
+3. `test_monodesukara_na_adj` - 苦いものが苦手なものですから (な-adj + な, range 7-14)
+4. `test_monodesukara_noun` - この車は中古なものですから (noun + な, range 6-13)
+5. `test_mondesukara_casual` - 私はその場にいたもんですから (casual もん, range 8-14)
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented monodesukara_u30fb_monode() function (67 lines with 4 custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 5 comprehensive tests with explanatory notes
+- `feature_list.json` - Updated ものですから・もので to complete status
+
+**Grammar meaning**:
+Strong explanatory phrase used when giving an excuse or explaining reasoning, more polite/formal than ものだから. Common translations:
+- "because (A)" (polite)
+- "the reason is (A)" (polite)
+- "it's that (A)" (polite)
+
+Emphasizes that situation (A) led to speaker doing (B), similar to ものだから but with polite です auxiliary.
+
+---
+
 ## Session 488 - 2025-12-15
 
 ### Session Summary - Three N2 Patterns Complete ✓
