@@ -7639,3 +7639,69 @@ mod denakutenandarou_tests {
         assert_pattern_range(&patterns, "でなくてなんだろう", 34, 47); // 詐欺でなくてなんであろうか
     }
 }
+
+// ============================================================================
+// はさておき・はさておいて Tests
+// ============================================================================
+
+mod hasateoki_tests {
+    use super::*;
+
+    // Pattern: はさておき・はさておいて (leaving aside, apart from)
+    // Data source: grammar_points_data.json["はさておき・はさておいて"]
+    // Testing: structure.standard[0] - "Noun + はさておき"
+
+    #[test]
+    fn test_hasateoki_noun_kansou() {
+        let sentence = "みんなの感想はさておき、私は美味しいと思ったよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はさておき・はさておいて");
+        assert_pattern_range(&patterns, "はさておき・はさておいて", 6, 11); // 感想はさておき
+    }
+
+    #[test]
+    fn test_hasateoki_noun_sonna() {
+        let sentence = "そんなことはさておき、仕事をちゃちゃっと終わらせて早く帰りましょうよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はさておき・はさておいて");
+        assert_pattern_range(&patterns, "はさておき・はさておいて", 5, 10); // ことはさておき
+    }
+
+    // Testing: structure.standard[1] - "Phrase + かどうか + はさておき"
+
+    #[test]
+    fn test_hasateoki_kadouka_jishin() {
+        let sentence = "日本語に自信があるかどうかはさておき、一人で行ったことのない国へ行くのには勇気がいる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はさておき・はさておいて");
+        assert_pattern_range(&patterns, "はさておき・はさておいて", 13, 18); // かどうかはさておき
+    }
+
+    #[test]
+    fn test_hasateoki_kadouka_kanojo() {
+        let sentence = "彼女がいるかいないかはさておき、普段から清潔にしていたほうがいいと思うよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はさておき・はさておいて");
+        assert_pattern_range(&patterns, "はさておき・はさておいて", 10, 15); // かはさておき
+    }
+
+    // Testing: structure.standard[2] - "はさておいて" (conjunctive form)
+
+    #[test]
+    fn test_hasateoite_joudan() {
+        let sentence = "冗談はさておいて、そろそろ会議を始めよう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はさておき・はさておいて");
+        assert_pattern_range(&patterns, "はさておき・はさておいて", 2, 8); // 冗談はさておいて
+    }
+}

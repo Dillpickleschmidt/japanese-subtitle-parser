@@ -7357,7 +7357,7 @@ declare_patterns! {
     HasateokiU30fbHasateoite {
         name: "はさておき・はさておいて",
         matcher_fn: crate::matchers::n1::hasateoki_u30fb_hasateoite,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

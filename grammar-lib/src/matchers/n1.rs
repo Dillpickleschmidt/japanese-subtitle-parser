@@ -6724,9 +6724,53 @@ pub fn denakutenandarou() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: はさておき・はさておいて
+// Pattern: はさておき・はさておいて (leaving aside, apart from)
+// Structures: Noun/Phrase + は + さておき/さておいて
 pub fn hasateoki_u30fb_hasateoite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for は particle (係助詞)
+    #[derive(Debug)]
+    struct HaKakariMatcher;
+    impl Matcher for HaKakariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matcher for さておき (連用形) or さておい (連用タ接続)
+    #[derive(Debug)]
+    struct SateokiMatcher;
+    impl Matcher for SateokiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "さておく"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.surface == "さておき" || token.surface == "さておい")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f == "連用形" || f == "連用タ接続")
+        }
+    }
+
+    // Matcher for optional て particle
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(HaKakariMatcher)),
+        TokenMatcher::Custom(Arc::new(SateokiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeMatcher)))),
+    ]
 }
 
 // Pattern: 折には
