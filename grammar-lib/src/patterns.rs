@@ -7365,7 +7365,7 @@ declare_patterns! {
     Oriniha {
         name: "折には",
         matcher_fn: crate::matchers::n1::oriniha,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

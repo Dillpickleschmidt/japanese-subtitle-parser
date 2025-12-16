@@ -7705,3 +7705,71 @@ mod hasateoki_tests {
         assert_pattern_range(&patterns, "はさておき・はさておいて", 2, 8); // 冗談はさておいて
     }
 }
+
+// ============================================================================
+// 折には Tests
+// ============================================================================
+
+mod oriniha_tests {
+    use super::*;
+
+    // Pattern: 折には (on occasions when, when the chance comes up)
+    // Data source: grammar_points_data.json["折には"]
+    // Testing: structure.standard[0] - "Verb + 折（に）"
+
+    #[test]
+    fn test_oriniha_verb() {
+        let sentence = "こちらの旅館にいらっしゃるおりには、事前の予約をお願いいたします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "折には");
+        assert_pattern_range(&patterns, "折には", 13, 17); // おりには
+    }
+
+    #[test]
+    fn test_orini_verb_past() {
+        let sentence = "今度お会いしたおりに、旅行へ行った時のお土産をお渡しします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "折には");
+        assert_pattern_range(&patterns, "折には", 7, 10); // おりに
+    }
+
+    // Testing: structure.standard[3] - "Noun + の + 折（に）"
+
+    #[test]
+    fn test_orini_noun() {
+        let sentence = "卒業のおりに担任の先生に手紙を渡そうと思っている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "折には");
+        assert_pattern_range(&patterns, "折には", 3, 6); // おりに
+    }
+
+    // Testing: structure.standard[1] - "い-Adj + 折（に）"
+
+    #[test]
+    fn test_orini_i_adj() {
+        let sentence = "お忙しい折に恐れ入りますが、ご協力をお願いします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "折には");
+        assert_pattern_range(&patterns, "折には", 4, 6); // 折に
+    }
+
+    // Testing: structure.standard[2] - "な-Adj + な + 折（に）"
+
+    #[test]
+    fn test_orini_na_adj() {
+        let sentence = "お暇な折にぜひお立ち寄りください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "折には");
+        assert_pattern_range(&patterns, "折には", 3, 5); // 折に
+    }
+}

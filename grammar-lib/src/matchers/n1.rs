@@ -6773,9 +6773,49 @@ pub fn hasateoki_u30fb_hasateoite() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 折には
+// Pattern: 折には (on occasions when, when the chance comes up)
+// Structures: Verb/Adj/Noun + おり/折 + に + (は)
 pub fn oriniha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for おり or 折 as noun
+    #[derive(Debug)]
+    struct OriMatcher;
+    impl Matcher for OriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.surface == "おり" || token.surface == "折")
+                && (token.base_form == "おり" || token.base_form == "折")
+        }
+    }
+
+    // Matcher for に particle
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matcher for optional は particle
+    #[derive(Debug)]
+    struct HaMatcher;
+    impl Matcher for HaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(OriMatcher)),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(HaMatcher)))),
+    ]
 }
 
 // Pattern: とばかり（に）
