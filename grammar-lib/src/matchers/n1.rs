@@ -3646,9 +3646,61 @@ pub fn ngatame_ni() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: いかん〜ず
+// Pattern: いかん〜ず (regardless of, irrespective of)
+// Structures: Noun + の + いかん + に/を + かかわら/よら/とわ + ず
 pub fn ikan_u301c_zu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match いかん as noun
+    #[derive(Debug)]
+    struct IkanNounMatcher;
+    impl super::Matcher for IkanNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いかん"
+                && token.base_form == "いかん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match に or を particle
+    #[derive(Debug)]
+    struct NiOrWoParticleMatcher;
+    impl super::Matcher for NiOrWoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "を")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match かかわら/よら/とわ verbs in 未然形
+    #[derive(Debug)]
+    struct IkanVerbMatcher;
+    impl super::Matcher for IkanVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form == "かかわる" || token.base_form == "よる" || token.base_form == "とう")
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ず (classical negative auxiliary)
+    #[derive(Debug)]
+    struct ZuMatcher;
+    impl super::Matcher for ZuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.base_form == "ぬ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IkanNounMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrWoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(IkanVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuMatcher)),
+    ]
 }
 
 // Pattern: にも～ない

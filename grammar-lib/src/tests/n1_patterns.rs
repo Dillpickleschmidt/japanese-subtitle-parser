@@ -4382,3 +4382,64 @@ mod wakeari_yakuatte_tests {
         assert_pattern_range(&patterns, "訳あり(訳あって)", 3, 7); // 訳ありで
     }
 }
+
+// ============================================================================
+// いかん〜ず Tests
+// ============================================================================
+
+mod ikan_u301c_zu_tests {
+    use super::*;
+
+    // Pattern: いかん〜ず (regardless of, irrespective of)
+    // Data source: grammar_points_data.json["いかん〜ず"]
+    // Testing: structure.standard[0] - "Noun + (の) + いかん + にかかわらず"
+    // Testing: structure.standard[1] - "によらず、をとわず"
+    //
+    // Meaning: "Regardless of (A), (B)" / "Irrespective of (A), (B)"
+    // Formal pattern using いかん (how/what) + classical ず negation
+    // Used with: にかかわらず, によらず, をとわず
+
+    #[test]
+    fn test_ikan_ni_kakawarazu() {
+        // Testing: いかん + にかかわらず (without relation)
+        let sentence = "天候のいかんにかかわらず、明日のコンサートは予定通りに開催されます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いかん〜ず");
+        assert_pattern_range(&patterns, "いかん〜ず", 3, 12); // いかんにかかわらず
+    }
+
+    #[test]
+    fn test_ikan_ni_yorazu() {
+        // Testing: いかん + によらず (without approaching)
+        let sentence = "予約日の２４時間前であれば、理由のいかんによらず、キャンセル料を取られずにキャンセルをすることができます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いかん〜ず");
+        assert_pattern_range(&patterns, "いかん〜ず", 17, 24); // いかんによらず
+    }
+
+    #[test]
+    fn test_ikan_wo_towazu() {
+        // Testing: いかん + をとわず (without questioning)
+        let sentence = "未経験者や経験者のいかんをとわず、ここで働く前には新規研修を受けてもらいます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いかん〜ず");
+        assert_pattern_range(&patterns, "いかん〜ず", 9, 16); // いかんをとわず
+    }
+
+    #[test]
+    fn test_ikan_ni_kakawarazu_short() {
+        // Testing: いかん + にかかわらず (shorter sentence)
+        let sentence = "年齢のいかんにかかわらず、誰でも応募できます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いかん〜ず");
+        assert_pattern_range(&patterns, "いかん〜ず", 3, 12); // いかんにかかわらず
+    }
+}

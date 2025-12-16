@@ -7149,7 +7149,7 @@ declare_patterns! {
     IkanU301cZu {
         name: "いかん〜ず",
         matcher_fn: crate::matchers::n1::ikan_u301c_zu,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
