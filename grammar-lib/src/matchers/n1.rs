@@ -952,9 +952,108 @@ pub fn woiikotoni() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 如何
+// Pattern: 如何 (いかん - depending on)
+// Structures: Noun + (の) + いかん + で/だ/によって/である
 pub fn ika_2() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の particle (助詞/連体化)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match いかん (名詞/一般 or 名詞/接尾)
+    #[derive(Debug)]
+    struct IkanMatcher;
+    impl Matcher for IkanMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いかん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "一般")
+                    || token.pos.get(1).is_some_and(|pos| pos == "接尾"))
+        }
+    }
+
+    // Match で (助詞/格助詞/一般 OR 助動詞/特殊・ダ/連用形)
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && ((token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                    || (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                        && token.base_form == "だ"))
+        }
+    }
+
+    // Match だ (助動詞/特殊・ダ/基本形)
+    #[derive(Debug)]
+    struct DaMatcher;
+    impl Matcher for DaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match によって (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct NiyotteMatcher;
+    impl Matcher for NiyotteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "によって"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    // Match ある auxiliary (助動詞/五段・ラ行アル/基本形)
+    #[derive(Debug)]
+    struct AruAuxMatcher;
+    impl Matcher for AruAuxMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ある"
+        }
+    }
+
+    // Match は particle (助詞/係助詞) - optional after で or によって
+    #[derive(Debug)]
+    struct HaParticleMatcher;
+    impl Matcher for HaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(IkanMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NiyotteMatcher,
+        )))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(AruAuxMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            HaParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: ～るまでだ

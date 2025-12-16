@@ -1020,3 +1020,86 @@ mod woiikotoni_tests {
         assert_pattern_range(&patterns, "をいいことに", 6, 15); // あるのをいいことに
     }
 }
+
+// ============================================================================
+// 如何 Tests
+// ============================================================================
+
+mod ika_tests {
+    use super::*;
+
+    // Pattern: 如何 (いかん - depending on)
+    // Data source: grammar_points_data.json["如何"]
+    //
+    // Structure variants to test:
+    //   - standard[0]: Noun + （の）+ いかん + で（は）
+    //   - standard[1]: Noun + （の）+ いかん + だ
+    //   - standard[2]: によって（は） (continuation of structure[0])
+    //   - standard[3]: である (continuation of structure[1])
+
+    // Testing: Noun + の + いかん + で
+    #[test]
+    fn test_ikan_de_with_no() {
+        let sentence = "嵐の状況のいかんで、来週のイベントが中止されるかされないかが決まる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如何");
+        assert_pattern_range(&patterns, "如何", 4, 9); // のいかんで
+    }
+
+    // Testing: Noun + いかん + で (without の)
+    #[test]
+    fn test_ikan_de_without_no() {
+        let sentence = "前回の試験の結果いかんでどの大学に入れるかが決まる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如何");
+        assert_pattern_range(&patterns, "如何", 8, 12); // いかんで
+    }
+
+    // Testing: Noun + の + いかん + だ
+    #[test]
+    fn test_ikan_da_with_no() {
+        let sentence = "東大に入学できるかは、君たちの努力のいかんだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如何");
+        assert_pattern_range(&patterns, "如何", 17, 22); // のいかんだ
+    }
+
+    // Testing: Noun + いかん + だ (without の)
+    #[test]
+    fn test_ikan_da_without_no() {
+        let sentence = "来月昇進できるかは自分の業績いかんだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如何");
+        assert_pattern_range(&patterns, "如何", 14, 18); // いかんだ
+    }
+
+    // Testing: Noun + いかん + によって（は）
+    #[test]
+    fn test_ikan_niyotte() {
+        let sentence = "実験の結果いかんによっては、最初からやり直さないといけなくなる可能性もあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如何");
+        assert_pattern_range(&patterns, "如何", 5, 13); // いかんによっては
+    }
+
+    // Testing: Noun + の + いかん + である
+    #[test]
+    fn test_ikan_dearu() {
+        let sentence = "合格できるかは、努力のいかんである。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "如何");
+        assert_pattern_range(&patterns, "如何", 10, 17); // のいかんである
+    }
+}
