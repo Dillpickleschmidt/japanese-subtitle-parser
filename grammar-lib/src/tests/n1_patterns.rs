@@ -7404,3 +7404,48 @@ mod uff5e_nari_uff5e_nari_tests {
     //     assert_pattern_range(&patterns, "～なり～なり", 0, 9); // 家になりどこになり
     // }
 }
+
+// ============================================================================
+// ものとする Tests
+// ============================================================================
+
+mod monotosuru_tests {
+    use super::*;
+
+    // Pattern: ものとする (shall / supposing that / on the assumption that)
+    // Data source: grammar_points_data.json["ものとする"]
+    // Testing: structure.standard[0] - "Verb + ものとする"
+    //
+    // Other structures to test:
+    //   - polite[0]: Verb + ものとします
+
+    #[test]
+    fn test_monotosuru_standard_form() {
+        let sentence = "住民税は世帯主が払うものとする。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものとする");
+        assert_pattern_range(&patterns, "ものとする", 8, 15); // 払うものとする
+    }
+
+    #[test]
+    fn test_monotosuru_contract_example() {
+        let sentence = "契約者の都合で解約をした場合、契約者に解約金を請求するものとする。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものとする");
+        assert_pattern_range(&patterns, "ものとする", 23, 32); // 請求するものとする
+    }
+
+    #[test]
+    fn test_monotosuru_polite_form() {
+        let sentence = "ダム建設を取り下げるものとします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものとする");
+        assert_pattern_range(&patterns, "ものとする", 5, 16); // 取り下げるものとします
+    }
+}

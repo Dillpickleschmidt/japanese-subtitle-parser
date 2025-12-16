@@ -7538,9 +7538,43 @@ pub fn tada_u301c_nomi() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ものとする
+// Pattern: ものとする (shall / supposing that / on the assumption that)
+// Meaning: Presents a determination that (A) is true for the sake of discussion
+// Structures: Verb + もの + と + する/します
 pub fn monotosuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match もの as non-autonomous noun
+    #[derive(Debug)]
+    struct MonoNounMatcher;
+    impl Matcher for MonoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match と as case particle
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Verb {
+            conjugation_form: None,
+            base_form: None,
+        },
+        TokenMatcher::Custom(Arc::new(MonoNounMatcher)),
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+        TokenMatcher::specific_verb("する"),
+    ]
 }
 
 // Pattern: との (quotation particle + nominalizer)
