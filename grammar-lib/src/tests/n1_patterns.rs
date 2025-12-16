@@ -2241,6 +2241,64 @@ mod nishite_tests {
 }
 
 // ============================================================================
+// にして② Tests
+// ============================================================================
+
+mod nishite_u2461_tests {
+    use super::*;
+
+    // Pattern: にして② (both (A) and (B))
+    // Data source: grammar_points_data.json["にして②"]
+    // Testing all structure variants
+
+    #[test]
+    fn test_nishite2_noun_kyouju() {
+        // Testing: structure.standard[0] - "Noun + にして"
+        // Example: 彼女は大学の教授にして会社の経営者でもある (She is both a university professor and a CEO)
+        let sentence = "彼女は大学の教授にして会社の経営者でもある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にして②");
+        assert_pattern_range(&patterns, "にして②", 6, 11); // 教授にして
+    }
+
+    #[test]
+    fn test_nishite2_na_adjective() {
+        // Testing: structure.standard[1] - "［な］Adjective + にして"
+        // Example: この足場は安全にしてかつ組み立てるのが簡単だ
+        let sentence = "この足場は安全にしてかつ組み立てるのが簡単だから、注文が殺到している。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にして②");
+        assert_pattern_range(&patterns, "にして②", 5, 10); // 安全にして
+    }
+
+    #[test]
+    fn test_nishite2_saiwai() {
+        // Testing: Set expression 幸いにして (fortunately)
+        let sentence = "携帯を駅で落としてしまったが、幸いにして交番に届いていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にして②");
+        assert_pattern_range(&patterns, "にして②", 15, 20); // 幸いにして
+    }
+
+    #[test]
+    fn test_nishite2_fukou() {
+        // Testing: Set expression 不幸にして (unfortunately)
+        let sentence = "彼は不幸にして、幼い頃に両親を亡くした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にして②");
+        assert_pattern_range(&patterns, "にして②", 2, 7); // 不幸にして
+    }
+}
+
+// ============================================================================
 // ものを Tests
 // ============================================================================
 

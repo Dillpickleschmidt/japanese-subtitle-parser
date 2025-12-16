@@ -6805,7 +6805,7 @@ declare_patterns! {
     NishiteU2461 {
         name: "にして②",
         matcher_fn: crate::matchers::n1::nishite_u2461,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

@@ -2984,8 +2984,79 @@ pub fn karaaru() -> Vec<TokenMatcher> {
 }
 
 // Pattern: にして②
+// Pattern: にして② (both (A) and (B))
+// Structures: Noun + にして, な-Adjective + にして
 pub fn nishite_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match regular noun or な-adjective (excluding number-like nouns)
+    // This pattern is for "both A and B" meaning, typically with:
+    // - Regular nouns (教授, 経営者, etc.)
+    // - な-adjectives (安全, 丁寧, etc.)
+    // - Set expressions (幸い, 不幸, etc.)
+    #[derive(Debug)]
+    struct NounOrNaAdjectiveMatcher;
+    impl super::Matcher for NounOrNaAdjectiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match 名詞 (noun), preferably 形容動詞語幹 (na-adjective stem) or 一般/代名詞/サ変接続
+            token.pos.first().is_some_and(|p| p == "名詞")
+                && !is_number_or_counter(token)
+        }
+    }
+
+    // Helper to exclude numbers/counters (which are for にして①)
+    fn is_number_or_counter(token: &crate::KagomeToken) -> bool {
+        // Exclude 数 (numbers) and typical counter-like nouns
+        if let Some(subtype) = token.pos.get(1) {
+            if subtype == "数" {
+                return true;
+            }
+        }
+        // Also exclude words that end with typical counters
+        // But this is tricky - for now just rely on POS tag
+        false
+    }
+
+    // Match に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl super::Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match し (する in 連用形)
+    #[derive(Debug)]
+    struct ShiVerbMatcher;
+    impl super::Matcher for ShiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match て particle (接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NounOrNaAdjectiveMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: つ〜つ
