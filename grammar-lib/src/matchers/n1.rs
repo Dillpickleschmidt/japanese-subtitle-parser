@@ -8408,9 +8408,100 @@ pub fn nishitatokorode() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～ばこそ
+// Pattern: ～ばこそ (precisely because)
+// Structures: Verb[ば] + こそ
+//            い-Adjective[ば] + こそ
+//            Noun/な-Adjective + であれば + こそ
 pub fn uff5e_bakoso() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches ば (助詞/接続助詞)
+    #[derive(Debug)]
+    struct BaMatcher;
+    impl Matcher for BaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matches こそ (助詞/係助詞)
+    #[derive(Debug)]
+    struct KosoMatcher;
+    impl Matcher for KosoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こそ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Matches noun or な-adjective (for であればこそ pattern only)
+    // This should NOT match particles, verbs, or i-adjectives
+    #[derive(Debug)]
+    struct NounOrNaAdjMatcher;
+    impl Matcher for NounOrNaAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match nouns (including 形容動詞語幹 for な-adjectives)
+            // but NOT particles or other POS
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Matches Verb or い-Adjective in 仮定形 (hypothetical form)
+    // OR で (助動詞) for the であれば pattern
+    #[derive(Debug)]
+    struct BakosoFirstTokenMatcher;
+    impl Matcher for BakosoFirstTokenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match Verb or い-Adj in 仮定形
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞");
+            let is_i_adj = token.pos.first().is_some_and(|pos| pos == "形容詞");
+            let is_katei = token.features.get(5).is_some_and(|f| f == "仮定形");
+
+            if (is_verb || is_i_adj) && is_katei {
+                return true;
+            }
+
+            // Match で (助動詞, base=だ) for であれば pattern
+            if token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Matches あれ (助動詞, base=ある, 仮定形) - optional for であれば pattern
+    #[derive(Debug)]
+    struct AreMatcher;
+    impl Matcher for AreMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あれ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ある"
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Pattern matcher:
+    // Optional: Noun/な-Adj (only for であればこそ pattern, not for verb/i-adj)
+    // Main token: Verb/i-Adj in 仮定形 OR で
+    // Optional: あれ (only present in であればこそ pattern)
+    // Then: ば + こそ
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NounOrNaAdjMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(BakosoFirstTokenMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(AreMatcher)))),
+        TokenMatcher::Custom(Arc::new(BaMatcher)),
+        TokenMatcher::Custom(Arc::new(KosoMatcher)),
+    ]
 }
 
 // Pattern: ても差し支えない (it's not a hindrance if, may I)

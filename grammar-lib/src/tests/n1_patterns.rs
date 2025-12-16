@@ -9975,3 +9975,56 @@ mod toiouka_tests {
         assert_pattern_range(&patterns, "といおうか", 7, 14); // ないといおうか (first occurrence)
     }
 }
+
+// ～ばこそ pattern tests
+mod bakoso_tests {
+    use super::*;
+
+    #[test]
+    fn test_bakoso_verb_conditional() {
+        // Testing: Verb[ば] + こそ + Phrase
+        // Based on example: "娘の将来を思えばこそ、塾に通わせます。"
+        let sentence = "娘の将来を思えばこそ、塾に通わせているんです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ばこそ");
+        assert_pattern_range(&patterns, "～ばこそ", 5, 10); // 思えばこそ
+    }
+
+    #[test]
+    fn test_bakoso_i_adjective() {
+        // Testing: い-Adjective[ば] + こそ + Phrase
+        // Based on example: "忙しければこそ時間を効率的に使うことができるようになる。"
+        let sentence = "忙しければこそ時間を有効に使える。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ばこそ");
+        assert_pattern_range(&patterns, "～ばこそ", 0, 7); // 忙しければこそ
+    }
+
+    #[test]
+    fn test_bakoso_na_adjective() {
+        // Testing: な-Adjective + であれば + こそ + Phrase
+        // Based on example: "健康であればこそ、年をとっても楽しい人生を過ごせる。"
+        let sentence = "健康であればこそ、人生を楽しめるのです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ばこそ");
+        assert_pattern_range(&patterns, "～ばこそ", 0, 8); // 健康であればこそ
+    }
+
+    #[test]
+    fn test_bakoso_noun() {
+        // Testing: Noun + であれば + こそ + Phrase
+        // Based on example: "小さな会社であればこそ、優秀な人材が必要だ。"
+        let sentence = "小さな会社であればこそ、人材が大切だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～ばこそ");
+        assert_pattern_range(&patterns, "～ばこそ", 3, 11); // 会社であればこそ
+    }
+}
