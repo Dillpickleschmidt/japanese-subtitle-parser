@@ -7245,7 +7245,15 @@ declare_patterns! {
     DaniShinai {
         name: "だに + しない",
         matcher_fn: crate::matchers::n1::dani_shinai,
-        priority: 1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    DaniShinaiParticle {
+        name: "だに + しない",
+        matcher_fn: crate::matchers::n1::dani_shinai_particle,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

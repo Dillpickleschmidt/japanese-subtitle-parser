@@ -7122,3 +7122,66 @@ mod niitatte_niitari_tests {
         assert_pattern_range(&patterns, "に至って・に至り", 3, 8); // ここに至り
     }
 }
+
+// ============================================================================
+// だに + しない Tests
+// ============================================================================
+
+mod dani_shinai_tests {
+    use super::*;
+
+    // Pattern: だに + しない (not even, cannot even)
+    // Data source: grammar_points_data.json["だに + しない"]
+    // Testing: structure.standard[0] - "Noun + だに + しない"
+    //          structure.standard[2] - "夢にだに思わない" (exception)
+    //
+    // Note: だに is a classical adverbial particle similar to さえ/すら (even)
+    // It marks a minimum example to which (A) does not apply, so obviously doesn't apply to anything greater
+    // Used only in very limited set of expressions in modern Japanese
+    // Common expressions: 想像だに, 考えるだに, 夢にだに, 聞くだに, 微動だに
+
+    // Testing: structure.standard[0] - Noun + だに + しない (予想だに)
+    #[test]
+    fn test_dani_shinai_yosou() {
+        let sentence = "アメリカでこんな大きい地震が来るとは誰も予想だにしなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だに + しない");
+        assert_pattern_range(&patterns, "だに + しない", 20, 29); // 予想だにしなかった
+    }
+
+    // Testing: structure.standard[0] - Noun + だに + しない (想像だに)
+    #[test]
+    fn test_dani_shinai_souzou() {
+        let sentence = "彼が彼女と別れるなんて想像だにしなかったよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だに + しない");
+        assert_pattern_range(&patterns, "だに + しない", 11, 20); // 想像だにしなかった
+    }
+
+    // Testing: structure.standard[0] - Noun + だに + しない (思いだに)
+    #[test]
+    fn test_dani_shinai_omoi() {
+        let sentence = "まさかこの年になって子供を授かるなんて思いだにしていなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だに + しない");
+        assert_pattern_range(&patterns, "だに + しない", 19, 30); // 思いだにしていなかった
+    }
+
+    // Testing: structure.standard[2] - Exception: 夢にだに思わない
+    // Note: Pattern matches 夢に + だに + 思わない as a unit (に is part of the idiom)
+    #[test]
+    fn test_dani_shinai_yume_ni_dani() {
+        let sentence = "自分がこんな立場になるなんて、夢にだに思わなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "だに + しない");
+        assert_pattern_range(&patterns, "だに + しない", 16, 25); // にだに思わなかった (includes に before だに)
+    }
+}

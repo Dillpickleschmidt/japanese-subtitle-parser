@@ -5870,8 +5870,111 @@ pub fn niitatte_u30fb_niitari() -> Vec<TokenMatcher> {
 }
 
 // Pattern: だに + しない
+// Pattern: だに + しない (not even, cannot even)
+// Structures: Noun + だ + に + し + ない, Noun + だに + Verb + ない
+//
+// Two tokenization patterns:
+// 1. Noun(サ変接続) + だ(助動詞) + に(助詞/格助詞) + し(動詞) + ない
+//    e.g., 予想だにしない, 想像だにしない
+// 2. Noun + だに(助詞/副助詞) + Verb + ない
+//    e.g., 思いだにしない, 夢にだに思わない
 pub fn dani_shinai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches だ auxiliary (特殊・ダ/基本形)
+    #[derive(Debug)]
+    struct DaAuxiliaryMatcher;
+    impl Matcher for DaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token
+                    .features
+                    .get(4)
+                    .is_some_and(|f| f.as_str() == "特殊・ダ")
+        }
+    }
+
+    // Matches に particle (格助詞)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matches し (from する) in 未然形 or 連用形
+    #[derive(Debug)]
+    struct ShiVerbMatcher;
+    impl Matcher for ShiVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Matches ない auxiliary
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern for サ変接続 nouns: Noun + だ + に + し + ない
+    vec![
+        TokenMatcher::Any, // Noun (usually サ変接続 like 予想, 想像)
+        TokenMatcher::Custom(Arc::new(DaAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+    ]
+}
+
+// Pattern: Noun + だに (as single particle) + Verb + ない
+// This handles cases where だに tokenizes as 助詞/副助詞
+pub fn dani_shinai_particle() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matches だに as a single particle (助詞/副助詞)
+    #[derive(Debug)]
+    struct DaniParticleMatcher;
+    impl Matcher for DaniParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だに"
+                && token.base_form == "だに"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Matches ない auxiliary
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun (like 思い, 夢)
+        TokenMatcher::Custom(Arc::new(DaniParticleMatcher)),
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 3,
+            stop_conditions: vec![],
+        }, // Verb phrase (may include て, いる, etc.)
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: がてら (while doing, on the occasion of)
