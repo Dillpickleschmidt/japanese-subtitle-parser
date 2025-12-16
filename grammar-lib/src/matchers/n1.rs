@@ -2325,9 +2325,64 @@ pub fn sura() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: あっての
+// Pattern: あっての (B exists only because of A)
+// Structures: Noun (A) + (が) + あっての + Noun (B)
 pub fn atteno() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match が particle (optional)
+    #[derive(Debug)]
+    struct GaParticleMatcher;
+    impl Matcher for GaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ある verb in 連用タ接続 form (あっ)
+    #[derive(Debug)]
+    struct AruVerbMatcher;
+    impl Matcher for AruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match て as conjunctive particle
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match の as nominalizing particle
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaParticleMatcher)))),
+        TokenMatcher::Custom(Arc::new(AruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: ～たまでだ

@@ -6701,7 +6701,7 @@ declare_patterns! {
     Atteno {
         name: "あっての",
         matcher_fn: crate::matchers::n1::atteno,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

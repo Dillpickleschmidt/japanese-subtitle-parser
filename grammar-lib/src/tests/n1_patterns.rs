@@ -2787,3 +2787,45 @@ mod kososure_nai_tests {
         assert_pattern_range(&patterns, "こそすれ〜ない", 4, 8); // こそすれ
     }
 }
+
+// ============================================================================
+// あっての Tests
+// ============================================================================
+
+mod atteno_tests {
+    use super::*;
+
+    // Pattern: あっての (B exists only because of A)
+    // Data source: grammar_points_data.json["あっての"]
+    // Testing: structure.standard[0] - "Noun (A) + （が）+ あっての + Noun (B)"
+
+    #[test]
+    fn test_atteno_without_ga() {
+        let sentence = "お客様あっての仕事だと思うのですが、理不尽なクレームを言われるとちょっとイラっときます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あっての");
+        assert_pattern_range(&patterns, "あっての", 0, 10); // お客様あっての仕事だ
+    }
+
+    #[test]
+    fn test_atteno_efforts() {
+        let sentence = "今回は皆様の努力あっての結果です。皆様本当にありがとうございました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あっての");
+        assert_pattern_range(&patterns, "あっての", 6, 16); // 努力あっての結果です
+    }
+
+    #[test]
+    fn test_atteno_with_ga() {
+        let sentence = "私はお金がなかったら愛もない、お金があっての幸せだと思います。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あっての");
+        assert_pattern_range(&patterns, "あっての", 15, 25); // お金があっての幸せだ
+    }
+}
