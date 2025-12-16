@@ -8947,3 +8947,59 @@ mod ttaranai_toittaranai_tests {
     //     assert_pattern_range(&patterns, "ったらない・といったらない", 21, 35);
     // }
 }
+
+// ============================================================================
+// を余儀なくさせる Tests
+// ============================================================================
+
+mod woyoginakusaseru_tests {
+    use super::*;
+
+    // Pattern: を余儀なくさせる (force/compel to)
+    // Data source: grammar_points_data.json["を余儀なくさせる"]
+    // Testing structure variants
+
+    #[test]
+    fn test_woyoginakusaseru_noun_standard() {
+        // Testing: structure.standard[0] - "Noun + を余儀なくさせる"
+        let sentence = "運転手の不注意が、入院を余儀なくさせた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を余儀なくさせる");
+        assert_pattern_range(&patterns, "を余儀なくさせる", 9, 19); // 入院を余儀なくさせた
+    }
+
+    #[test]
+    fn test_woyoginakusaseru_heiten() {
+        // Testing: structure.standard[0] - "Noun + を余儀なくさせる"
+        let sentence = "外出自粛要請が、飲食店の閉店を余儀なくさせた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を余儀なくさせる");
+        assert_pattern_range(&patterns, "を余儀なくさせる", 12, 22); // 閉店を余儀なくさせた
+    }
+
+    #[test]
+    fn test_woyoginakusaseru_verb_koto() {
+        // Testing: structure.standard[1] - "Verb + こと + を余儀なくさせる"
+        let sentence = "予算不足が、計画を中止することを余儀なくさせた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を余儀なくさせる");
+        assert_pattern_range(&patterns, "を余儀なくさせる", 13, 23); // ことを余儀なくさせた
+    }
+
+    #[test]
+    fn test_woyoginakusaseru_polite() {
+        // Testing: structure.polite[0] - "Noun + を余儀なくさせます"
+        let sentence = "経済危機が企業の倒産を余儀なくさせます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を余儀なくさせる");
+        assert_pattern_range(&patterns, "を余儀なくさせる", 8, 19); // 倒産を余儀なくさせます
+    }
+}

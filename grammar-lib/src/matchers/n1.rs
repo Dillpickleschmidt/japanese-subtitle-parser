@@ -8718,9 +8718,74 @@ pub fn katagata() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: を余儀なくさせる
+// Pattern: を余儀なくさせる (force/compel to)
+// Structures: Noun/Verb[こと] + を + 余儀なく + させる/させます
 pub fn woyoginakusaseru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を as case particle
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 余儀なく (adjective, base=余儀ない, 連用テ接続)
+    #[derive(Debug)]
+    struct YoginakuMatcher;
+    impl Matcher for YoginakuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "余儀なく"
+                && token.base_form == "余儀ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    // Match さ (from する, 未然レル接続)
+    #[derive(Debug)]
+    struct SaMatcher;
+    impl Matcher for SaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "さ"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match せ (auxiliary verb せる, 一段, 連用形)
+    #[derive(Debug)]
+    struct SeMatcher;
+    impl Matcher for SeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "せ"
+                && token.base_form == "せる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match る from させる (連用形 continuation)
+    #[derive(Debug)]
+    struct RuMatcher;
+    impl Matcher for RuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "る"
+                && token.base_form == "せる"
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(WoMatcher)),
+        TokenMatcher::Custom(Arc::new(YoginakuMatcher)),
+        TokenMatcher::Custom(Arc::new(SaMatcher)),
+        TokenMatcher::Custom(Arc::new(SeMatcher)),
+        TokenMatcher::Any, // た, ます, る, etc.
+    ]
 }
 
 // Pattern: ～てやる (do for someone / I'll do it!)

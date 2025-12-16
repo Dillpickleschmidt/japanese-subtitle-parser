@@ -7957,7 +7957,7 @@ declare_patterns! {
     Woyoginakusaseru {
         name: "を余儀なくさせる",
         matcher_fn: crate::matchers::n1::woyoginakusaseru,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
