@@ -5943,3 +5943,83 @@ All tests use realistic subtitle-quality sentences from grammar_points_data.json
 **Total Test Count**: 3701 passing
 
 ================================================================================
+
+================================================================================
+Session 578: でなくてなんだろう Pattern Implementation
+Date: 2025-12-16
+Status: ✓ COMPLETE
+================================================================================
+
+**Pattern Implemented**: でなくてなんだろう (N1)
+
+**Grammar Pattern**: でなくてなんだろう (if not A, then what is it?)
+
+**Pattern Meaning**:
+Formal rhetorical construction expressing strong assertion/certainty about something.
+Used to emphasize that something is definitely true by asking "if not X, then what?"
+Common in assertive or argumentative contexts.
+
+**Implementation Details:**
+
+Created denakutenandarou() matcher with 7 custom matchers:
+1. DeMatcher - matches で (助動詞, 特殊・ダ, 連用形)
+2. NakuMatcher - matches なく (助動詞, 特殊・ナイ, 連用テ接続)
+3. NanMatcher - matches なん (名詞, 代名詞)
+4. DaroOrDeMatcher - matches だろ (未然形) OR で (連用形) for both forms
+5. AroMatcher - optional, matches あろ (助動詞, 五段・ラ行アル) for であろう
+6. UMatcher - matches う (助動詞, 不変化型)
+7. KaMatcher - optional, matches か (助詞) sentence-ending particle
+
+**Structure Pattern**:
+Noun + で + なく + て + なん + (だろ/で) + (あろ) + う + (か)
+
+**Tests Added**: 4 tests in denakutenandarou_tests module
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures full Noun + でなくてなん + ending:
+
+- パワハラでなくてなんだろう (24, 37) - 13 characters (だろう form)
+- 奇跡でなくてなんだろうか (16, 28) - 12 characters (だろうか with か)
+- 社畜でなくてなんであろう (23, 35) - 12 characters (であろう form)
+- 詐欺でなくてなんであろうか (34, 47) - 13 characters (であろうか with か)
+
+**Structure Coverage:**
+
+✓ standard[0]: Noun + でなくてなん + だろう
+✓ standard[0] variant: Noun + でなくてなん + だろうか (with か)
+✓ standard[1]: Noun + でなくてなん + であろう (formal)
+✓ standard[1] variant: Noun + でなくてなん + であろうか (formal with か)
+
+**Key Notes:**
+
+- Formal/written style pattern (register: formal)
+- Rhetorical question structure (not expecting an answer)
+- Strongly asserts speaker's certainty about something
+- でなくて = "if not", なん = "what", だろう/であろう = volitional "is/be"
+- である form is more formal than だ form
+- Optional か adds emphasis without changing meaning
+- Common in arguments, complaints, strong opinions
+- Pattern works exclusively with nouns (not verbs/adjectives)
+
+**Files Modified:**
+
+- grammar-lib/src/matchers/n1.rs - Implemented denakutenandarou() at line 6631
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in denakutenandarou_tests module
+- feature_list.json - Updated でなくてなんだろう to complete status
+
+**Quality Checks:**
+
+✓ Tests exist with proper assertions
+✓ All structure variants tested (2 base forms × 2 variants each = 4 tests)
+✓ Realistic subtitle-quality sentences used (from grammar_points_data.json)
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3705 total, +4 new)
+✓ Clean git history
+
+**Session Update**: 1 N1 pattern completed (でなくてなんだろう)
+**Session Tests**: 4 new tests added
+**Total Test Count**: 3705 passing
+
+================================================================================
