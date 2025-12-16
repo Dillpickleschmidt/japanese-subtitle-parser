@@ -5166,9 +5166,41 @@ pub fn demonandemonai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ぐるみで
+// Pattern: ぐるみで (including / all over)
+// Structures: Noun + ぐるみで / Noun + ぐるみの
 pub fn gurumide() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ぐるみ as noun suffix
+    #[derive(Debug)]
+    struct GurumiMatcher;
+    impl super::Matcher for GurumiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ぐるみ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    // Match で (case particle) or の (nominalizer)
+    #[derive(Debug)]
+    struct DeNoMatcher;
+    impl super::Matcher for DeNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+            || (token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding noun
+        TokenMatcher::Custom(Arc::new(GurumiMatcher)),
+        TokenMatcher::Custom(Arc::new(DeNoMatcher)),
+    ]
 }
 
 // Pattern: そばから

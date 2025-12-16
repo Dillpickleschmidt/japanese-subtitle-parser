@@ -6312,3 +6312,60 @@ mod tteba_ttara_tests {
     //     assert_pattern_range(&patterns, "ってば・ったら", 0, 6); // あなたったら
     // }
 }
+
+// ============================================================================
+// ぐるみで Tests
+// ============================================================================
+
+mod gurumide_tests {
+    use super::*;
+
+    // Pattern: ぐるみで (including / all over / whole)
+    // Data source: grammar_points_data.json["ぐるみで"]
+    // Testing: structure.standard[0] - "Noun + ぐるみで"
+    // Testing: structure.standard[1] - "Noun + ぐるみ + の + Noun"
+    //
+    // Meaning: "including (A)", "all over (A)", or "(A) wide"
+    // Etymology: From 包（くる）む "to wrap/encompass"
+    // Structures: Noun + ぐるみで / Noun + ぐるみの + Noun
+
+    #[test]
+    fn test_gurumide_family_with_de() {
+        let sentence = "毎年家族ぐるみで初詣に行きます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぐるみで");
+        assert_pattern_range(&patterns, "ぐるみで", 2, 8); // 家族ぐるみで
+    }
+
+    #[test]
+    fn test_gurumide_company_with_de() {
+        let sentence = "会社ぐるみで違法な取引をしていたので、社員全員逮捕された。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぐるみで");
+        assert_pattern_range(&patterns, "ぐるみで", 0, 6); // 会社ぐるみで
+    }
+
+    #[test]
+    fn test_gurumide_family_with_no() {
+        let sentence = "彼とは家族ぐるみの付き合いです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぐるみで");
+        assert_pattern_range(&patterns, "ぐるみで", 3, 9); // 家族ぐるみの
+    }
+
+    #[test]
+    fn test_gurumide_town_with_no() {
+        let sentence = "街ぐるみの治安をよくするために、町内会の人たちが毎晩パトロールをしています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぐるみで");
+        assert_pattern_range(&patterns, "ぐるみで", 0, 5); // 街ぐるみの
+    }
+}
