@@ -10895,13 +10895,13 @@
   {
     "pattern_name": "を経て",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を経（へ）て is a fairly formal grammar point used when highlighting a passage of time, or an event that took a certain amo... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

@@ -3215,3 +3215,55 @@ mod akumademo_tests {
         assert_pattern_range(&patterns, "あくまでも", 3, 8); // あくまでも
     }
 }
+
+// ============================================================================
+// を経て Tests
+// ============================================================================
+
+mod wohete_tests {
+    use super::*;
+
+    // Pattern: を経て (through, via, after undergoing)
+    // Data source: grammar_points_data.json["を経て"]
+    // Testing: structure.standard[0] - "Noun + を経（へ）て"
+
+    #[test]
+    fn test_wohete_time_period() {
+        let sentence = "私たちは２０１９年に出会って、約２年間の交際を経て結婚しました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を経て");
+        assert_pattern_range(&patterns, "を経て", 20, 25); // 交際を経て
+    }
+
+    #[test]
+    fn test_wohete_experience() {
+        let sentence = "日本への留学を経て、日本の文化などを学ぶことができました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を経て");
+        assert_pattern_range(&patterns, "を経て", 4, 9); // 留学を経て
+    }
+
+    #[test]
+    fn test_wohete_various_experiences() {
+        let sentence = "人は色々な経験を経て、成長していく。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を経て");
+        assert_pattern_range(&patterns, "を経て", 5, 10); // 経験を経て
+    }
+
+    #[test]
+    fn test_wohete_long_period() {
+        let sentence = "長い試験期間を経て、ようやく合格の知らせが届いた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を経て");
+        assert_pattern_range(&patterns, "を経て", 4, 9); // 期間を経て
+    }
+}

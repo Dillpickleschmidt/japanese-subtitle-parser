@@ -2454,9 +2454,50 @@ pub fn uff5e_tamadeda() -> Vec<TokenMatcher> {
     ])
 }
 
-// Pattern: を経て
+// Pattern: を経て (through, via, after undergoing)
+// Structures: Noun + を + 経（へ）て
 pub fn wohete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を particle (格助詞)
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl super::Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 経る verb in 連用形
+    #[derive(Debug)]
+    struct HeruVerbMatcher;
+    impl super::Matcher for HeruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "経る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match て particle (接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl super::Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(HeruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: ながらに
