@@ -3997,3 +3997,78 @@ mod yueni_tests {
     //     assert_has_pattern(&patterns, "ゆえに_conjunction");
     // }
 }
+
+// ============================================================================
+// つ〜つ Tests
+// ============================================================================
+
+mod tsu_u301c_tsu_tests {
+    use super::*;
+
+    // Pattern: つ〜つ (doing A and B repeatedly/alternately)
+    // Data source: grammar_points_data.json["つ〜つ"]
+    // Testing: Classical conjunction particle with verb stems
+    //
+    // Structure variants from grammar_points_data.json:
+    // - standard[0]: Verb[stem] + つ + (Antonym) Verb[stem] + つ
+    // - standard[1]: Verb[stem] + つ + (Antonym) Verb[stem] + つ + の + Noun
+    // - standard[2]: Verb[stem] + つ + Verb[られる]ーる + つ (passive variant)
+    // - standard[3]: Verb[stem] + つ + Verb[られる]ーる + つ + の + Noun
+    // - standard[4-14]: Set expressions (行きつ戻りつ, 持ちつ持たれつ, etc.)
+
+    #[test]
+    fn test_tsu_tsu_yukitsu_modoritsu() {
+        // Testing: standard[4] - 行きつ戻りつ (going back and forth)
+        let sentence = "新しく発売されたゲーム機を買おうか悩みながら、お店の前を行きつ戻りつした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つ〜つ");
+        assert_pattern_range(&patterns, "つ〜つ", 28, 34); // 行きつ戻りつ
+    }
+
+    #[test]
+    fn test_tsu_tsu_ukitsu_shizumitsu() {
+        // Testing: standard[5] - 浮きつ沈みつ (rising and falling, bobbing)
+        let sentence = "川で脱げた靴が浮きつ沈みつ流れていった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つ〜つ");
+        assert_pattern_range(&patterns, "つ〜つ", 7, 13); // 浮きつ沈みつ
+    }
+
+    #[test]
+    fn test_tsu_tsu_mochitsu_motaretsu() {
+        // Testing: standard[11] - 持ちつ持たれつ (give-and-take)
+        // This is the same verb in active and passive forms
+        let sentence = "僕たちは持ちつ持たれつの関係で、保育園の頃から今に至るまでお互い助け合ってきた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つ〜つ");
+        assert_pattern_range(&patterns, "つ〜つ", 4, 11); // 持ちつ持たれつ
+    }
+
+    #[test]
+    fn test_tsu_tsu_oshitsu_osaretsu() {
+        // Testing: standard[12] - 押しつ押されつ (push and be pushed)
+        let sentence = "コンサート会場には大勢の人が集まっていて、ゲートが開かれても押しつ押されつで全然会場に入れなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つ〜つ");
+        assert_pattern_range(&patterns, "つ〜つ", 30, 37); // 押しつ押されつ
+    }
+
+    #[test]
+    fn test_tsu_tsu_with_no_noun() {
+        // Testing: standard[1] - Verb[stem] + つ + Verb[stem] + つ + の + Noun
+        let sentence = "行きつ戻りつの生活に疲れてしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "つ〜つ");
+        assert_pattern_range(&patterns, "つ〜つ", 0, 6); // 行きつ戻りつ
+    }
+}

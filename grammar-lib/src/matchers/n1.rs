@@ -3059,9 +3059,45 @@ pub fn nishite_u2461() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: つ〜つ
+// Pattern: つ〜つ (doing A and B repeatedly/alternately)
+// Structures: Verb[stem] + つ + Verb[stem] + つ
 pub fn tsu_u301c_tsu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match つ as auxiliary verb (助動詞, 下二・タ行, 基本形)
+    #[derive(Debug)]
+    struct TsuAuxiliaryMatcher;
+    impl super::Matcher for TsuAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "つ"
+                && token.base_form == "つ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match れる/られる auxiliary (for passive forms like 持たれつ)
+    #[derive(Debug)]
+    struct ReruAuxiliaryMatcher;
+    impl super::Matcher for ReruAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "れる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        // First verb in 連用形 (conjunctive form)
+        TokenMatcher::verb_with_form("連用形"),
+        // First つ
+        TokenMatcher::Custom(Arc::new(TsuAuxiliaryMatcher)),
+        // Second verb (can be any form - 連用形 for regular, 未然形+れ連用形 for passive)
+        TokenMatcher::Any,
+        // Allow optional れる/られる auxiliary (for passive forms)
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ReruAuxiliaryMatcher)))),
+        // Second つ
+        TokenMatcher::Custom(Arc::new(TsuAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: 飽くまで(も)

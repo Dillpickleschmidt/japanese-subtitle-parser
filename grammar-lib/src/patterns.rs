@@ -6813,7 +6813,7 @@ declare_patterns! {
     TsuU301cTsu {
         name: "つ〜つ",
         matcher_fn: crate::matchers::n1::tsu_u301c_tsu,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
