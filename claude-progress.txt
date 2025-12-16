@@ -2583,3 +2583,76 @@ All tests use realistic subtitle-quality sentences and include proper range asse
 - を踏まえて - "Based on/taking into account" pattern
 - という1 - Identical noun pairing pattern
 - にとどまらず - "Not limited to" pattern
+
+================================================================================
+SESSION 546 - か否か Pattern Implementation (COMPLETE)
+Date: 2025
+Status: Complete - All tests passing, no regressions
+================================================================================
+
+Pattern Completed: か否か (whether or not)
+
+Grammar Point Details:
+- Meaning: "Whether or not (A)" - formal expression for stating alternatives
+- Register: Formal (mainly written)
+- JLPT Level: N1
+- Priority: 5 (standard construction pattern)
+
+Structures Tested:
+1. Verb + か否か (楽しむかいなか)
+2. い-Adjective + か否か (怖いかいなか)
+3. な-Adjective + である + か否か (貧乏であるかいなか)
+4. Noun + か否か (父親かいなか)
+5. Noun + である + か否か (候補であるかいなか)
+
+Implementation Challenge:
+The pattern "かいなか" has two different tokenization patterns:
+1. かいな (noun) + か (particle) - Most common variant
+2. か (particle) + いなか (noun) - Used with である and some contexts
+
+Solution:
+- Created two separate matcher functions:
+  * kainaka() - Matches [Word] + かいな(noun) + か(particle)
+  * kainaka_ka_inaka() - Matches [Word] + か(particle) + いなか(noun)
+- Both registered with the same name "か否か" and priority 5
+- This ensures detection regardless of tokenization variant
+
+Technical Implementation:
+- Matcher functions: kainaka() and kainaka_ka_inaka() in grammar-lib/src/matchers/n1.rs
+- Custom matchers for precise matching
+- Pattern type: Construction pattern
+- Priority: 5 (standard for N1 formal constructions)
+
+Test Details:
+- Module: kainaka_tests in grammar-lib/src/tests/n1_patterns.rs
+- Test count: 5 comprehensive tests
+- All tests include proper assertions and character range verification
+- No print_debug() in final committed code
+
+Files Modified:
+- grammar-lib/src/matchers/n1.rs - Added kainaka() and kainaka_ka_inaka()
+- grammar-lib/src/patterns.rs - Registered both pattern variants
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests
+- feature_list.json - Updated か否か to complete status
+
+Quality Checks:
+- Tests exist with proper assertions
+- All structure variants covered
+- Realistic subtitle-quality sentences used
+- Correct character ranges verified
+- No print_debug() in final code
+- All existing tests still pass (3551 total, no regressions)
+- Clean git history
+
+Test Results:
+Total: 3551 tests passing (no regressions)
+All 5 kainaka tests pass
+
+Next Priorities (N1 - Priority 5, no tests yet):
+- かれ〜かれ - "Whether... or..." pattern
+- がてら - "While/on the occasion of" pattern
+- ぐらいなら - "Rather than" pattern
+- ことだし - "Since/because" pattern
+- さぞ - "Surely/certainly" pattern
+
+================================================================================
