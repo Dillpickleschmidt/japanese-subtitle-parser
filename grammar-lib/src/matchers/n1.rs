@@ -6372,9 +6372,118 @@ pub fn uff5e_nari_uff5e_nari() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ないでもない
+// Pattern: ないでもない (kind of / might / not not)
+// Meaning: "Kind of (A)" / "Might (A)" - neither confirming nor denying
+// Structures: Verb[ない] + (もの) + で + も + ない
 pub fn naidemonai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ない as auxiliary (negative form after verb)
+    #[derive(Debug)]
+    struct NaiAuxiliaryMatcher;
+    impl Matcher for NaiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+        }
+    }
+
+    // Match で as auxiliary copula or conjunctive particle
+    #[derive(Debug)]
+    struct DeCopulaMatcher;
+    impl Matcher for DeCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && (token.base_form == "だ" || token.base_form == "で")
+        }
+    }
+
+    // Match も as binding particle
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match final ない (adjective or auxiliary)
+    #[derive(Debug)]
+    struct NaiFinalMatcher;
+    impl Matcher for NaiFinalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                    || token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    // Match もの as non-autonomous noun (optional)
+    #[derive(Debug)]
+    struct MonoNounMatcher;
+    impl Matcher for MonoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MonoNounMatcher)))),
+        TokenMatcher::Custom(Arc::new(DeCopulaMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiFinalMatcher)),
+    ]
+}
+
+// Pattern: ないではない (kind of / might / not not) - では variant
+// Meaning: "Kind of (A)" / "Might (A)" - neither confirming nor denying
+// Structures: ない + で + は + ない
+pub fn naidewanai() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match ない as auxiliary or adjective
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                    || token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    // Match で as auxiliary copula
+    #[derive(Debug)]
+    struct DeCopulaMatcher;
+    impl Matcher for DeCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で" && token.base_form == "だ"
+        }
+    }
+
+    // Match は as binding particle
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+        TokenMatcher::Custom(Arc::new(DeCopulaMatcher)),
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: もさることながら

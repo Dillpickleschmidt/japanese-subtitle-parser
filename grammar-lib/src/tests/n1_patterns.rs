@@ -7449,3 +7449,50 @@ mod monotosuru_tests {
         assert_pattern_range(&patterns, "ものとする", 5, 16); // 取り下げるものとします
     }
 }
+
+// ============================================================================
+// ないでもない Tests
+// ============================================================================
+
+mod naidemonai_tests {
+    use super::*;
+
+    // Pattern: ないでもない (kind of / might / not not)
+    // Data source: grammar_points_data.json["ないでもない"]
+    // Testing: structure.standard[0] - "Verb[ない] + でも + ない"
+    //
+    // Other structures to test:
+    //   - standard[1]: Verb[ない] + では + ない (では variant)
+    //   - Also covers: Verb[ない] + もの + でも + ない (ないものでもない variant)
+    //   - Related pattern: なくもない (not implemented separately)
+
+    #[test]
+    fn test_naidemonai_verb_negative() {
+        let sentence = "あいつが悪いとは思わないでもないけど、お前にも少しは非があると思うよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないでもない");
+        assert_pattern_range(&patterns, "ないでもない", 10, 16); // ないでもない
+    }
+
+    #[test]
+    fn test_naidemonai_dewa_variant() {
+        let sentence = "彼女が謝ってきたら、彼女がしたことを許す気がないではない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないでもない");
+        assert_pattern_range(&patterns, "ないでもない", 22, 28); // ないではない
+    }
+
+    #[test]
+    fn test_naidemonai_mono_variant() {
+        let sentence = "あなたの考えが分からないものでもないけど、そういうことはあまり口に出さないほうがいいと思うよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ないでもない");
+        assert_pattern_range(&patterns, "ないでもない", 10, 18); // ないものでもない
+    }
+}
