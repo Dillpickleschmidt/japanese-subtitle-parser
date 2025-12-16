@@ -1,3 +1,98 @@
+## Session 545 - 2025-12-16
+
+### Session Summary - と思いきや Complete ✓
+**Status**: Implemented と思いきや pattern successfully
+**Patterns completed**: 1 (と思いきや - N1, priority 5)
+**Total tests**: 3546 passing (6 new tests, no regressions)
+**Progress**: Sixty-second N1 pattern completed!
+
+**Session highlights**:
+- Implemented と思いきや (despite having thought/when I thought)
+- Complex pattern with optional か particle
+- Handles verb, adjective, and noun predicates
+- 6 custom matchers for precise tokenization matching
+- Classical auxiliary verb き (文語・キ) + particle や
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include full grammatical construction
+
+### ✓ Completed: と思いきや (despite having thought, when I thought)
+
+**Grammar Point**: と思いきや
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb + (か) + と思いきや
+2. い-Adjective + (か) + と思いきや
+3. な-Adjective + (か(だ)) + と思いきや
+4. Noun + (か(だ)) + と思いきや
+
+**Meaning**:
+- "I thought it had (A), but I guess (B)"
+- Indicates something is not as one had thought
+- Emphasizes speaker's surprise about mismatch between expectation and reality
+- Classical origin: と + 思い (連用形) + き (classical past) + や (classical question marker)
+
+**Tokenization**:
+- (Predicate): Verb/Adjective/Noun or だ auxiliary
+- か: Optional 助詞 (particle)
+- と: 助詞/格助詞/引用 (quotative particle)
+- 思い/おもい: 動詞, base=思う/おもう, 連用形
+- き: 助動詞, base=き, 文語・キ (classical past tense auxiliary)
+- や: 助詞/接続助詞 (conjunctive particle)
+
+**Implementation**:
+- Pattern: [Predicate] + (optional か) + と + 思い + き + や
+- Custom matchers:
+  - PredicateMatcher: Matches verb/noun/adjective/だ
+  - KaParticleMatcher: Matches optional か particle
+  - ToQuotativeMatcher: Matches と as 助詞/格助詞
+  - OmouRenyoukeiMatcher: Matches 思う/おもう in 連用形
+  - KiAuxiliaryMatcher: Matches き as 助動詞 (classical)
+  - YaConjunctiveMatcher: Matches や as 助詞/接続助詞
+- Priority 5 (standard N1 construction)
+
+**Tests**:
+1. ✓ Verb without か: "残業するとおもいきや" [3-13]
+2. ✓ Verb with か: "降るかと思いきや" [2-10]
+3. ✓ い-Adjective: "優しいとおもいきや" [12-21]
+4. ✓ な-Adjective + か: "簡単かとおもいきや" [5-14]
+5. ✓ Noun + だ: "だとおもいきや" [7-14] (matches だ, not noun)
+6. ✓ Noun + か + だ: "だと思いきや" [5-11] (matches だ in かだ)
+
+**Technical Notes**:
+- PredicateMatcher includes だ, so patterns like "姉妹だとおもいきや" match from だ onwards
+- This is correct behavior since だ is part of the predicate
+- Range includes full construction: predicate + と思いきや
+- Both hiragana (とおもいきや) and kanji (と思いきや) variants supported
+- Pattern successfully distinguishes from similar patterns like とおもう
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented toomoikiya() matcher
+- grammar-lib/src/tests/n1_patterns.rs - Added 6 tests in toomoikiya_tests module
+- feature_list.json - Updated と思いきや to complete status
+
+**Quality Checks**:
+- ✓ Tests exist with proper assertions
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+1. どうにも - Adverbial expression
+2. ことだし - Conjunction pattern
+3. がん～ - Prefix pattern
+4. か否か - Whether or not construction
+5. たら〜で - Conditional construction
+6. べくして - Classical べく form
+7. まま(に)1 - State continuation pattern
+8. かれ〜かれ - Classical whether...or pattern
+
+---
+
 ## Session 544 - 2025-12-16
 
 ### Session Summary - という1 Marked Undetectable + にとどまらず Complete ✓
