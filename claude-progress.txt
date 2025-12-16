@@ -1,3 +1,113 @@
+## Session 559 - 2025-12-16
+
+### Session Summary - ずとも Complete ✓
+**Status**: Implemented ずとも pattern successfully
+**Patterns completed**: 1 (ずとも - N1, priority 5)
+**Total tests**: 3608 passing (6 new tests, no regressions)
+**Progress**: Seventy-second N1 pattern completed!
+
+**Session highlights**:
+- Implemented ずとも (even if not / don't have to)
+- Structure: Verb[ない] + ず + とも / Noun + ならずとも
+- Handles two tokenization variants (とも as single token OR と + も split)
+- Created two pattern matchers to handle both cases
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include full verb phrase (e.g., 練習せずとも for する verbs)
+
+### ✓ Completed: ずとも (even if not / don't have to)
+
+**Grammar Point**: ずとも
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb[ない] + ず + とも (standard verb form)
+2. Noun + ならずとも (from なる[ない] + ず + とも)
+3. Exception: する → せずとも
+4. Optional: + 良い (せずとも良い = "okay even without")
+
+**Meaning**:
+- "Even if not (A), (B)" / "Don't have to (A) to (B)"
+- Classical negative ず + conjunction particle とも
+- Formal/literary expression
+- Can be used sarcastically
+
+**Tokenization (Two variants)**:
+1. **Merged とも** (single token):
+   - Verb: 動詞/自立, 未然形 or 未然ヌ接続
+   - ず: 助動詞, base=ぬ, 特殊・ヌ, 連用ニ接続
+   - とも: 助詞/接続助詞
+
+2. **Split と + も** (two tokens):
+   - Verb: 動詞/自立, 未然形 or 未然ヌ接続
+   - ず: 助動詞, base=ぬ
+   - と: 助詞/格助詞
+   - も: 助詞/係助詞
+
+**Implementation**:
+- Two patterns to handle tokenization variants:
+  1. `zutomo()`: Verb + ず + とも (single token)
+  2. `zutomo_split()`: Verb + ず + と + も (split tokens)
+- Custom matchers:
+  - NaiStemVerbMatcher: Matches verbs in 未然形 or 未然ヌ接続
+  - ZuMatcher: Matches ず (助動詞, base=ぬ)
+  - TomoMatcher: Matches とも as single token
+  - ToParticleMatcher + MoParticleMatcher: For split tokenization
+- Priority 1 for both patterns (N1 construction)
+- Both patterns registered in patterns.rs with same name "ずとも"
+
+**Tests Written: 6 tests (all passing)**
+1. `test_zutomo_verb_regular` - 練習せずとも (2, 8) - without practicing (する verb)
+2. `test_zutomo_verb_kiku` - 聞かずとも (23, 28) - without hearing (u-verb)
+3. `test_zutomo_verb_study` - 留学せずとも (3, 9) - without studying abroad (する verb)
+4. `test_zutomo_narazu_noun` - ならずとも (3, 8) - without being (noun + なる)
+5. `test_zutomo_narazu_parent` - ならずとも (1, 6) - without being parent (noun + なる)
+6. `test_zutomo_with_yoi` - せずとも良い (24, 30) - okay without practicing
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures full verb phrase:
+- 練習せずとも (2, 8) - includes サ変 noun for する verbs
+- 聞かずとも (23, 28) - just the verb + ず + とも
+- 留学せずとも (3, 9) - includes サ変 noun
+- ならずとも (3, 8) - なる verb negated
+- ならずとも (1, 6) - shorter position
+
+**Key Notes**:
+- Classical negative auxiliary ず (not modern ない)
+- とも can tokenize two ways depending on context
+- For する verbs, range includes the noun (練習せずとも)
+- ならずとも used after nouns meaning "without being X"
+- More formal/literary than modern ないでも
+- Often followed by 良い (良かろう in classical form)
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented zutomo() and zutomo_split()
+- `grammar-lib/src/patterns.rs` - Added ZutomoSplit pattern declaration
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 6 tests in zutomo_tests module
+- `feature_list.json` - Updated ずとも to complete status
+
+**Quality Checks**:
+✓ All structure variants tested (verb + ず + とも, noun + ならずとも)
+✓ Both tokenization variants handled (merged とも and split と+も)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3608 total, +6 new)
+
+**Next Priorities** (N1 patterns without tests, Priority 5):
+- たら〜で - Conditional construction (requires repeated word matching)
+- ってば・ったら - Emphasis pattern
+- とあって - "Because of/due to" pattern
+- でもなんでもない - "Not at all" pattern
+- ぐるみで - "Including/involving" pattern
+
+================================================================================
+
+
+================================================================================
+
 ## Session 558 - 2025-12-16
 
 ### Session Summary - にかかっている Complete ✓
