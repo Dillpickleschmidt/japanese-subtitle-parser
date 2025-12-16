@@ -1,3 +1,99 @@
+## Session 599 - 2025-12-16
+
+### Session Summary - とあれば Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (とあれば - N1, priority 5)
+**Total tests**: 3830 passing (4 new tests, no regressions)
+**Progress**: One hundred and thirteenth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented とあれば (if/when it comes to)
+- Emphatic version of なら 'if' for formal situations
+- Handles both noun + とあれば and verb/adjective + とあれば (quotation form)
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: とあれば (if/when it comes to)
+
+**Grammar Point**: とあれば
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Noun + とあれば (basic case)
+2. Verb + とあれば (quotation form)
+3. Adjective + とあれば (quotation form)
+
+**Meaning**:
+- "If (A) is the case, then (B)" / "Should (A) be true, then (B)"
+- Emphatic version of なら 'if' used in formal situations or for literary effect
+- Combination of と (case-marking particle/quotation) + あれば (hypothetical form of ある)
+- Used when (A) is a special circumstance leading to (B)
+- (B) usually indicates something unavoidable (with structures like しかない, なければならない, ざるを得ない)
+- The と particle can be a case marker (after nouns) or quotation marker (after verbs/adjectives)
+
+**Tokenization pattern**:
+- Preceding word (Noun, Verb, or Adjective in basic form)
+- と (助詞/格助詞/一般 or 助詞/格助詞/引用)
+- あれ (動詞/自立, base=ある, 仮定形)
+- ば (助詞/接続助詞)
+
+**Implementation**:
+Created 3 custom matchers for precise pattern matching:
+1. ToMatcher - Matches と as 助詞/格助詞 (handles both 一般 and 引用)
+2. AreMatcher - Matches あれ as 仮定形 of ある (五段・ラ行)
+3. BaMatcher - Matches ば as 助詞/接続助詞
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding noun/verb/adjective) + ToMatcher + AreMatcher + BaMatcher
+- Captures full grammatical construction from preceding word through ば
+
+**Tests Written: 4 tests (all passing)**
+1. test_toareba_noun_direct - 頼みとあれば (3, 9) - noun + pattern
+2. test_toareba_senpai_orders - 指示とあれば (3, 9) - noun + pattern
+3. test_toareba_verb_quotation - できるとあれば (6, 13) - verb + pattern (quotation)
+4. test_toareba_adjective_quotation - いいとあれば (3, 9) - adjective + pattern (quotation)
+
+**Character Ranges**: Pattern captures preceding word + とあれば:
+- 頼みとあれば (3, 9) - 6 characters (noun + pattern)
+- 指示とあれば (3, 9) - 6 characters (noun + pattern)
+- できるとあれば (6, 13) - 7 characters (verb + pattern)
+- いいとあれば (3, 9) - 6 characters (adjective + pattern)
+
+**Key Notes**:
+- Pattern includes the preceding word (full grammatical construction)
+- The と particle has dual function: case marker for nouns, quotation marker for verbs/adjectives
+- Works with all word types when preceding word is in basic/dictionary form
+- Formal expression typically used in novels, formal writing, or emphatic speech
+- (B) clause typically expresses obligation or inevitability
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented toareba() with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in toareba_tests module
+- feature_list.json - Updated とあれば to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (noun, verb quotation, adjective quotation)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3826 + 4 = 3830 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ときたら - "Speaking of/when it comes to" pattern
+- びる - Suffix pattern
+- にしたところで - "Even if" pattern
+- ～ばこそ - "Precisely because" pattern
+- ても差し支えない - "It's okay even if" pattern
+- には及ばない① - "There's no need to" pattern
+- に即して - "In accordance with" pattern
+- ないまでも - "Even if not" pattern
+
+================================================================================
+
 ## Session 598 - 2025-12-16
 
 ### Session Summary - 2 N1 Patterns Complete ✓
