@@ -7677,7 +7677,7 @@ declare_patterns! {
     Kototote {
         name: "こととて",
         matcher_fn: crate::matchers::n1::kototote,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

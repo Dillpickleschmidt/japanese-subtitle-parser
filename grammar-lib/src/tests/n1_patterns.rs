@@ -6421,3 +6421,58 @@ mod ga_hayai_ka_tests {
         assert_pattern_range(&patterns, "が早いか", 10, 15); // たが早いか
     }
 }
+
+// ============================================================================
+// こととて Tests
+// ============================================================================
+
+mod kototote_tests {
+    use super::*;
+
+    // Pattern: こととて (due to / because of)
+    // Data source: grammar_points_data.json["こととて"]
+    // Testing structure variants:
+    //   - standard[0]: Verb + こととて
+    //   - standard[1]: Verb[ない] + ぬ + こととて (classical negative)
+    //   - standard[2]: Noun + の + こととて
+
+    #[test]
+    fn test_kototote_verb_past() {
+        let sentence = "あの事件は２０年前に起こったこととて、世間からは忘れられているだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こととて");
+        assert_pattern_range(&patterns, "こととて", 10, 18); // 起こったこととて
+    }
+
+    #[test]
+    fn test_kototote_verb_nu_negative() {
+        let sentence = "商品についてあまり知らぬこととて、お客様の信頼を失ってしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こととて");
+        assert_pattern_range(&patterns, "こととて", 9, 16); // 知らぬこととて
+    }
+
+    #[test]
+    fn test_kototote_noun_no_newbie() {
+        let sentence = "新人のこととて、まだ分からないことがたくさんありますが、これからよろしくお願いいたします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こととて");
+        assert_pattern_range(&patterns, "こととて", 0, 7); // 新人のこととて
+    }
+
+    #[test]
+    fn test_kototote_noun_no_sudden() {
+        let sentence = "突然のこととて、前の車を避けきれませんでした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "こととて");
+        assert_pattern_range(&patterns, "こととて", 0, 7); // 突然のこととて
+    }
+}

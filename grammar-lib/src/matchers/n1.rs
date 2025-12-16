@@ -6044,9 +6044,77 @@ pub fn ttara_u30fb_toittara() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: こととて
+// Pattern: こととて (due to / because of)
+// Structures: Verb + こととて, Verb[ぬ] + こととて, Noun + の + こととて
 pub fn kototote() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match こと (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct KotoMatcher;
+    impl Matcher for KotoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "こと"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match と (助詞/格助詞/引用)
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match て (助詞/接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Stop conditions to prevent capturing sentence-boundary particles
+    // But allow の (for noun patterns) and don't stop at adverbs/nouns
+    #[derive(Debug)]
+    struct StopAtSentenceBoundary;
+    impl Matcher for StopAtSentenceBoundary {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Stop if we hit case particles like に, を, で, etc. (but NOT の)
+            if token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.surface != "の"
+            {
+                return true; // This IS a stop condition
+            }
+            // Stop if we hit topic/binding particles は, も
+            if token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+            {
+                return true; // This IS a stop condition
+            }
+            false // Not a stop condition, continue
+        }
+    }
+
+    vec![
+        TokenMatcher::Wildcard {
+            min: 1,
+            max: 2,
+            stop_conditions: vec![TokenMatcher::Custom(Arc::new(StopAtSentenceBoundary))],
+        },
+        TokenMatcher::Custom(Arc::new(KotoMatcher)),
+        TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+    ]
 }
 
 // Pattern: ずくめ

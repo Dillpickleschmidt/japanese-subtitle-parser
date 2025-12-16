@@ -12449,13 +12449,13 @@
   {
     "pattern_name": "こととて",
     "jlpt_level": "n1",
-    "category": "complete",
+    "category": "needs_implementation",
     "tests": {
-      "exists": true,
-      "has_range_assertion": true,
+      "exists": false,
+      "has_range_assertion": false,
       "has_print_debug": false
     },
-    "passes": true,
+    "passes": false,
     "description": "こととて is a combination of the noun こと 'thing', and the binding (adverbial) particle とて, which is used for presenting r... [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
