@@ -10601,13 +10601,13 @@
   {
     "pattern_name": "とは",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "とは is an emphatic structure that is regularly seen at the end of sentences, and will imply that the statement before ... [5 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

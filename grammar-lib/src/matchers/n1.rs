@@ -1263,9 +1263,43 @@ pub fn woyoginakusareru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: とは
+// Pattern: とは (emphatic exclamation expressing shock/surprise)
+// Structures: Verb/Noun/Adj + (など) + とは
+// Note: Structurally identical to というのは_abbreviated (N3), but used for emphatic exclamation
+// rather than definition/explanation. Both patterns will be detected when と+は appears.
 pub fn toha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と as quotation particle
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match は (topic particle)
+    #[derive(Debug)]
+    struct HaTopicMatcher;
+    impl Matcher for HaTopicMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match any preceding token (verb/noun/adjective)
+    // Optional など can appear before とは but we'll keep the matcher simple
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(HaTopicMatcher)),
+    ]
 }
 
 // Pattern: じゃあるまいし

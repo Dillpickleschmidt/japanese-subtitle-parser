@@ -1394,3 +1394,76 @@ mod adj_kagirida_tests {
         assert_pattern_range(&patterns, "Adj限りだ", 14, 21); // 不快な限りです
     }
 }
+
+// ============================================================================
+// とは Tests
+// ============================================================================
+
+mod toha_tests {
+    use super::*;
+
+    // Pattern: とは (emphatic particle expressing surprise/shock)
+    // Data source: grammar_points_data.json["とは"]
+    // Testing: structure.standard[0] - "Verb + (など) + とは"
+    //
+    // Structures to test:
+    //   - standard[0]: Verb + (など) + とは
+    //   - standard[1]: Noun + (だ) + (など) + とは
+    //   - standard[2]: い-Adjective + (など) + とは
+    //   - standard[3]: な-Adjective + (だ) + (など) + とは
+
+    // Testing: Verb + とは (basic form, sentence-final)
+    #[test]
+    fn test_toha_verb_basic() {
+        let sentence = "まさかこんな場所でなつみちゃんに会うとは！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは");
+        assert_pattern_range(&patterns, "とは", 16, 20); // 会うとは
+    }
+
+    // Testing: Verb + とは + continuation (with explicit emotion word)
+    #[test]
+    fn test_toha_verb_with_emotion() {
+        let sentence = "高橋さんがもう結婚していたとは驚いた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは");
+        assert_pattern_range(&patterns, "とは", 12, 15); // たとは
+    }
+
+    // Testing: い-Adjective + とは
+    #[test]
+    fn test_toha_i_adjective() {
+        let sentence = "君があんなに速く走れるとは...なんで今まで黙っていたんだい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは");
+        assert_pattern_range(&patterns, "とは", 8, 13); // 走れるとは
+    }
+
+    // Testing: Verb + など + とは (with など)
+    #[test]
+    fn test_toha_verb_nado() {
+        let sentence = "こんな簡単なことで失敗するなどとは思っていなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは");
+        assert_pattern_range(&patterns, "とは", 13, 17); // などとは
+    }
+
+    // Testing: Noun + とは (without だ)
+    #[test]
+    fn test_toha_noun_basic() {
+        let sentence = "こんな安く家が買えるとは思わなかったよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とは");
+        assert_pattern_range(&patterns, "とは", 7, 12); // 買えるとは
+    }
+}
