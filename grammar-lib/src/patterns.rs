@@ -7165,7 +7165,7 @@ declare_patterns! {
     IAdjKuMonantomonai {
         name: "い-Adj[く] + もなんともない",
         matcher_fn: crate::matchers::n1::i_adj_ku_monantomonai,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

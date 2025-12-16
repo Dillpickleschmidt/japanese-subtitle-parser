@@ -3531,9 +3531,71 @@ pub fn nimo_uff5e_nai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: い-Adj[く] + もなんともない
+// Pattern: い-Adj[く] + もなんともない (not A at all, definitely not A)
+// Structures: い-Adjective[く] + もなんともない, Verb[stem] + たく + もなんともない
 pub fn i_adj_ku_monantomonai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match い-adjectives in く form (連用テ接続/連用形)
+    // OR たい auxiliary in たく form (連用テ接続)
+    #[derive(Debug)]
+    struct IAdjKuOrTaiKuMatcher;
+    impl Matcher for IAdjKuOrTaiKuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match い-adjectives ending in く (連用テ接続 or 連用形)
+            let is_i_adj_ku = token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.surface.ends_with("く")
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続" || f == "連用形");
+
+            // Match たい auxiliary in たく form (連用テ接続)
+            let is_tai_ku = token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "たい"
+                && token.surface == "たく"
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続");
+
+            is_i_adj_ku || is_tai_ku
+        }
+    }
+
+    // Match も particle (係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match なんとも adverb
+    #[derive(Debug)]
+    struct NantomoMatcher;
+    impl Matcher for NantomoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なんとも"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.base_form == "なんとも"
+        }
+    }
+
+    // Match ない adjective (基本形)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.base_form == "ない"
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjKuOrTaiKuMatcher)),
+        TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NantomoMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: Verb + だに (just, merely, even)

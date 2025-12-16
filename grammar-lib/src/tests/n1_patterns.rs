@@ -4125,3 +4125,70 @@ mod deare_u301c_deare_tests {
         assert_pattern_range(&patterns, "であれ〜であれ", 0, 10); // 簡単であれ複雑であれ
     }
 }
+
+// ============================================================================
+// い-Adj[く] + もなんともない Tests
+// ============================================================================
+
+mod i_adj_ku_monantomonai_tests {
+    use super::*;
+
+    // Pattern: い-Adj[く] + もなんともない (not A at all, definitely not A)
+    // Data source: grammar_points_data.json["い-Adj[く] + もなんともない"]
+    // Testing: structure.standard[0] - "い-Adjective[く] + もなんともない"
+
+    #[test]
+    fn test_kayuku_monantomonai() {
+        // Testing: standard[0] - い-Adj[く] + もなんともない (not itchy at all)
+        let sentence = "お前のパンチを喰らっても痒くもなんともないぞ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adj[く] + もなんともない");
+        assert_pattern_range(&patterns, "い-Adj[く] + もなんともない", 12, 21); // 痒くもなんともない
+    }
+
+    #[test]
+    fn test_mezurashiku_monantomonai() {
+        // Testing: standard[0] - い-Adj[く] + もなんともない (not rare at all)
+        let sentence = "実は珍しくもなんともないんだよ、他の店だと五千円以下で売ってる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adj[く] + もなんともない");
+        assert_pattern_range(&patterns, "い-Adj[く] + もなんともない", 2, 12); // 珍しくもなんともない
+    }
+
+    #[test]
+    fn test_kowaku_monantomonai() {
+        // Testing: standard[0] - い-Adj[く] + もなんともない (not scary at all)
+        let sentence = "ホラー映画にしたら怖くもなんともない、むしろちょっとコメディーっぽい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adj[く] + もなんともない");
+        assert_pattern_range(&patterns, "い-Adj[く] + もなんともない", 9, 18); // 怖くもなんともない
+    }
+
+    #[test]
+    fn test_ikitaku_monantomonai() {
+        // Testing: たい form - Verb[stem] + たくもなんともない (don't want to go at all)
+        let sentence = "ジェットコースターが苦手だから遊園地に行きたくもなんともない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adj[く] + もなんともない");
+        assert_pattern_range(&patterns, "い-Adj[く] + もなんともない", 21, 30); // たくもなんともない
+    }
+
+    #[test]
+    fn test_kikitaku_monantomonai() {
+        // Testing: たい form - Verb[stem] + たくもなんともない (don't want to hear at all)
+        let sentence = "彼のことは聞きたくもなんともない、もう二度と連絡してこないでほしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い-Adj[く] + もなんともない");
+        assert_pattern_range(&patterns, "い-Adj[く] + もなんともない", 7, 16); // たくもなんともない
+    }
+}
