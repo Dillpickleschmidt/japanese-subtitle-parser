@@ -1187,3 +1187,73 @@ mod rumadeda_tests {
         assert_pattern_range(&patterns, "～るまでだ", 3, 9); // 辞めるまでだ
     }
 }
+
+// ============================================================================
+// にあって Tests
+// ============================================================================
+
+mod niatte_tests {
+    use super::*;
+
+    // Pattern: にあって (in, at, under the conditions of)
+    // Data source: grammar_points_data.json["にあって"]
+    // Testing: structure.standard[0] - "Noun + にあって"
+    //
+    // Other structures to test:
+    //   - With も: Noun + にあっても (even under conditions)
+
+    // Testing: Noun + にあって (basic form)
+    #[test]
+    fn test_niatte_position() {
+        let sentence = "彼女は校長先生という立場にあって、いつも生徒たちのために一生懸命働いている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にあって");
+        assert_pattern_range(&patterns, "にあって", 10, 16); // 立場にあって
+    }
+
+    // Testing: Noun + にあって (situation)
+    #[test]
+    fn test_niatte_situation() {
+        let sentence = "インフルエンザが流行っているという状況にあって、外にいる人はみんなマスクをしている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にあって");
+        assert_pattern_range(&patterns, "にあって", 17, 23); // 状況にあって
+    }
+
+    // Testing: Noun + にあって (state of emergency)
+    #[test]
+    fn test_niatte_emergency() {
+        let sentence = "緊急事態宣言にあって、県を跨ぐ移動が制限された。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にあって");
+        assert_pattern_range(&patterns, "にあって", 4, 10); // 宣言にあって
+    }
+
+    // Testing: Noun + にあっても (even under conditions)
+    #[test]
+    fn test_niattemo_emergency() {
+        let sentence = "緊急時にあっても、常に冷静を保つようにしてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にあって");
+        assert_pattern_range(&patterns, "にあって", 2, 8); // 時にあっても
+    }
+
+    // Testing: Noun + にあっても (difficult circumstances)
+    #[test]
+    fn test_niattemo_difficult() {
+        let sentence = "こんな厳しい状況にあっても、諦めずに営業を続けていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にあって");
+        assert_pattern_range(&patterns, "にあって", 6, 13); // 状況にあっても
+    }
+}

@@ -1129,9 +1129,66 @@ pub fn uff5e_rumadeda() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にあって
+// Pattern: にあって (in, at, under the conditions of)
+// Structures: Noun + に + あって + (も)?
 pub fn niatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に particle (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct NiParticleMatcher;
+    impl Matcher for NiParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match あっ (動詞, base=ある, 連用タ接続)
+    // Important: This is ある (to be), NOT 遭う (to meet/encounter)
+    #[derive(Debug)]
+    struct AtteMatcher;
+    impl Matcher for AtteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あっ"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.base_form == "ある"
+                && token.features.get(5).is_some_and(|form| form == "連用タ接続")
+        }
+    }
+
+    // Match て particle (助詞/接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match も particle (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoParticleMatcher;
+    impl Matcher for MoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(AtteMatcher)),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            MoParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: を余儀なくされる (to be forced to)
