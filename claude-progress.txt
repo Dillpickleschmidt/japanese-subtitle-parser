@@ -1,13 +1,25 @@
 ## Session 500 - 2025-12-15
 
-### Session Summary - からする Pattern Complete ✓
-**Status**: Successfully implemented からする (about X, X or more, starting at X)
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3336 passing, 1 ignored (added 6 new tests)
-**Progress**: Seventeenth N1 pattern completed!
+### Session Summary - Two N1 Patterns Complete ✓
+**Status**: Successfully implemented からする and にして① patterns
+**Patterns completed**: 2 (both N1, priority 5)
+**Total tests**: 3341 passing, 1 ignored (added 11 new tests)
+**Progress**: Seventeenth and eighteenth N1 patterns completed!
 
 **Session highlights**:
 - Implemented からする pattern with two structural variants (からする and からの)
+- Implemented にして① pattern (at A, over A, only when A)
+- からする uses Wildcard matcher for multi-token numbers
+- にして① uses Optional matchers to avoid matching across sentence boundaries
+- Both patterns handle complex tokenization (multi-token numbers, counters, suffixes)
+- All 11 tests passing with proper range assertions
+- No regressions in test suite
+
+**Session achievements**:
+- Two complete N1 patterns in one session
+- Learned to use Optional matchers instead of Wildcard to prevent false matches
+- Handled ordinal counters (五回目 = number + counter + suffix)
+- Successfully implemented patterns with て-form constructions
 - Created two matcher functions: karasuru() for する variant, karano() for の variant
 - Pattern matches Number + Counter + からする/からします/からの
 - Uses Wildcard matcher to handle multi-token numbers (e.g., 三百万円 = 3 tokens)
@@ -80,6 +92,79 @@ Common with:
 - Money amounts (most frequent)
 - People counts (with からの)
 - Size/weight/distance use からある instead (separate pattern)
+
+---
+
+### ✓ Completed: にして① (at (A), over (A), only when (A))
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Number + Counter + にして
+- Noun + にして
+
+**Implementation details**:
+Created matcher function nishite_u2460() that matches:
+(Noun/Number/Counter) + に + し + て
+
+Custom matchers:
+1. **NumberCounterOrNounMatcher**: Matches any 名詞 (noun)
+2. **NiParticleMatcher**: Matches に (助詞/格助詞)
+3. **ShiVerbMatcher**: Matches し (する in 連用形, base=する)
+4. **TeParticleMatcher**: Matches て (助詞/接続助詞)
+
+**Key implementation insight**:
+にして combines the particle に with the te-form of する (して). It marks (A) as a particular exemplar or milestone point, typically used with significant achievements, ages, or moments.
+
+Initial implementation used Wildcard matcher (0-5 tokens) but this caused false matches across sentence boundaries. For example, in "犯人たちは一瞬にして消えた", it incorrectly matched "犯人たちは一瞬にして" instead of just "一瞬にして".
+
+**Solution**: Replaced Wildcard with up to 3 Optional noun matchers. This allows:
+- Multi-token numbers: ３０ (2 tokens) + 歳 (1 token) = "３０歳にして"
+- Ordinal counters: 五 + 回 + 目 = "五回目にして"
+- Single nouns: 一瞬 = "一瞬にして"
+
+But stops at particles (は, を, etc.), preventing matches across grammatical boundaries.
+
+**Tokenization patterns**:
+Examples showing noun/number tokenization:
+- ３０歳にして: ３(名詞/数) + ０(名詞/数) + 歳(名詞/接尾/助数詞) + に + し + て
+- 五回目にして: 五(名詞/数) + 回(名詞/接尾/助数詞) + 目(名詞/接尾/一般) + に + し + て
+- 一瞬にして: 一瞬(名詞/副詞可能) + に + し + て
+
+**Tests created**: 5 tests covering all structure variants
+1. test_nishite_age_counter - "３０歳にして" (multi-token age counter)
+2. test_nishite_ordinal_counter - "五回目にして" (ordinal with suffix 目)
+3. test_nishite_noun - "一瞬にして" (single noun, tests boundary detection)
+4. test_nishite_with_youyaku - "５０歳にしてようやく" (followed by ようやく "finally")
+5. test_nishite_with_hajimete - "６０歳にして初めて" (followed by 初めて "for the first time")
+
+All tests use realistic, subtitle-quality sentences from grammar_points_data.json examples.
+
+**Pattern ranges**:
+Full grammatical construction from first noun/number to て:
+- 0-6: "３０歳にして"
+- 0-6: "五回目にして"
+- 5-10: "一瞬にして" (starts mid-sentence, not from beginning)
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented nishite_u2460() (64 lines with 4 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 comprehensive tests in nishite_tests module
+- `feature_list.json` - Updated にして① to complete status
+
+**Grammar meaning**:
+にして marks (A) as a particular exemplar or milestone, often indicating that something is achieved or happens "at" or "only when" reaching that high level or significant point. What follows (B) describes something that either does or doesn't fulfill expectations of (A).
+
+Common usage patterns:
+- Age milestones: "30歳にして初めて" (for the first time at age 30)
+- Attempts/trials: "五回目にしてやっと" (finally on the fifth try)
+- Time periods: "一瞬にして" (in an instant)
+
+Often followed by adverbs like:
+- ようやく (finally)
+- 初めて (for the first time)
+- やっと (at last)
 
 ---
 
