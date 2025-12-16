@@ -4919,9 +4919,40 @@ pub fn monotosuru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: との
+// Pattern: との (quotation particle + nominalizer)
+// Meaning: "that" (marks a statement as quoted information)
+// Structures: Verb/Adj/Noun + (だ) + との + Noun
 pub fn tono() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と as quotation particle
+    #[derive(Debug)]
+    struct ToQuotationMatcher;
+    impl Matcher for ToQuotationMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match の as nominalizer/connector particle (助詞/連体化)
+    #[derive(Debug)]
+    struct NoNominalizerMatcher;
+    impl Matcher for NoNominalizerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ToQuotationMatcher)),
+        TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: 以前

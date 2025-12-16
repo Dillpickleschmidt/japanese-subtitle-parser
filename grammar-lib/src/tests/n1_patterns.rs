@@ -4903,3 +4903,61 @@ mod nihaataranai_tests {
     //     assert_pattern_range(&patterns, "には当たらない", 11, 20); // するにあたりません
     // }
 }
+
+// ============================================================================
+// との Tests
+// ============================================================================
+
+mod tono_tests {
+    use super::*;
+
+    // Pattern: との (quotation particle + の)
+    // Data source: grammar_points_data.json["との"]
+    // Testing: structure.standard - All variants
+    //
+    // Structures to test:
+    //   - standard[0]: Verb + との + Noun
+    //   - standard[1]: い-Adjective + との + Noun
+    //   - standard[2]: な-Adjective + (だ) + との + Noun
+    //   - standard[3]: Noun + (だ) + との + Noun
+
+    #[test]
+    fn test_tono_verb_quote() {
+        let sentence = "この周辺で誘拐事件が起きたとの放送があったが、犯人の特徴については放送されなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "との");
+        assert_pattern_range(&patterns, "との", 13, 17); // との放送
+    }
+
+    #[test]
+    fn test_tono_i_adjective_quote() {
+        let sentence = "この店はほかの店舗に比べてきたないとのクレームが何件も寄せられているがどうなってるんだい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "との");
+        assert_pattern_range(&patterns, "との", 17, 23); // とのクレーム
+    }
+
+    #[test]
+    fn test_tono_na_adjective_with_da() {
+        let sentence = "本部からこの喫茶店の接客は雑だとの報告を受けました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "との");
+        assert_pattern_range(&patterns, "との", 15, 19); // との報告
+    }
+
+    #[test]
+    fn test_tono_noun_with_da() {
+        let sentence = "あの客はクレーマーだとの指摘を先輩から受けたので、あのお客さんを接客するときはいつもより丁寧に接客するつもりだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "との");
+        assert_pattern_range(&patterns, "との", 10, 14); // との指摘
+    }
+}
