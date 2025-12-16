@@ -2632,3 +2632,59 @@ mod tohaie_tests {
         assert_pattern_range(&patterns, "とはいえ", 9, 13); // とはいえ
     }
 }
+
+// ============================================================================
+// ならでは Tests
+// ============================================================================
+
+mod naradeha_tests {
+    use super::*;
+
+    // Pattern: ならでは (unique to, impossible if not)
+    // Data source: grammar_points_data.json["ならでは"]
+    // Testing: structure.standard[1] - "Noun + ならでは + の + Noun"
+    //
+    // Other structures to test:
+    //   - standard[2]: Noun + ならでは + だ/です
+    //   - standard[4]: Noun + ならでは + Verb (less common)
+
+    #[test]
+    fn test_naradeha_no_noun() {
+        let sentence = "味噌カツは名古屋ならではの食べ物です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならでは");
+        assert_pattern_range(&patterns, "ならでは", 5, 12); // 名古屋ならでは
+    }
+
+    #[test]
+    fn test_naradeha_da() {
+        let sentence = "こんな綺麗な作品を作れるのは、藤田さんならではだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならでは");
+        assert_pattern_range(&patterns, "ならでは", 17, 23); // さんならでは
+    }
+
+    #[test]
+    fn test_naradeha_desu() {
+        let sentence = "この祭りはこの地域ならではです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならでは");
+        assert_pattern_range(&patterns, "ならでは", 7, 13); // 地域ならでは
+    }
+
+    #[test]
+    fn test_naradeha_verb() {
+        let sentence = "車なしで生活できるのは都会ならではだと思う";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならでは");
+        assert_pattern_range(&patterns, "ならでは", 11, 17); // 都会ならでは
+    }
+}

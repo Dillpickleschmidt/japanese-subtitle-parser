@@ -2238,9 +2238,27 @@ pub fn tohaie() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ならでは
+// Pattern: ならでは (unique to, impossible if not)
+// Structures: Noun + ならでは + (の/だ/です/Verb)
 pub fn naradeha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ならでは as noun suffix
+    #[derive(Debug)]
+    struct NaradehaMatcher;
+    impl super::Matcher for NaradehaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ならでは"
+                && token.base_form == "ならでは"
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "接尾")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NaradehaMatcher)),
+    ]
 }
 
 // Pattern: すら
