@@ -1,18 +1,18 @@
 ## Session 574 - 2025-12-16
 
-### Session Summary - んがため(に) Complete ✓
-**Status**: Implemented んがため(に) pattern successfully
-**Patterns completed**: 1 (んがため(に) - N1, priority 5)
-**Total tests**: 3681 passing (5 new tests, no regressions)
-**Progress**: Eighty-sixth N1 pattern completed!
+### Session Summary - んがため(に) + にも～ない Complete ✓
+**Status**: Implemented 2 N1 patterns successfully
+**Patterns completed**: 2 (んがため(に), にも～ない - both N1, priority 5)
+**Total tests**: 3685 passing (9 new tests, no regressions)
+**Progress**: Eighty-seventh N1 pattern completed!
 
 **Session highlights**:
 - Implemented んがため(に) (for the purpose of, in order to)
-- Classical auxiliary verb ん (from む) expressing intent/strong will
-- Handles both 助動詞 and 名詞 forms of ん depending on context
-- Matches verbs in 未然形 (regular verbs) and 連用形 (causative constructions)
-- Supports both んがために and んがための variants
-- All structure variants tested including する → せんがため exception
+- Implemented にも～ない (can't do even if wanted to)
+- んがため(に): Classical auxiliary verb ん (from む) expressing intent
+- にも～ない: Volitional + も variant expressing inability despite desire
+- Both patterns handle complex tokenization (助動詞/名詞 variants, volitional forms)
+- All structure variants tested with realistic subtitle sentences
 
 ### ✓ Completed: んがため(に) (for the purpose of, in order to)
 
@@ -77,10 +77,70 @@ Created custom matchers to handle:
 ✓ All existing tests still pass (3681 total, +5 new)
 
 **Next Priorities** (N1 patterns without tests, Priority 5):
-- にも～ない - "Not even" pattern
 - ～なり～なり - "Whether...or..." pattern
 - ないでもない - "Not that...not" pattern
 - もさることながら - "Not only...but also" pattern
+
+================================================================================
+
+### ✓ Completed: にも～ない (can't do even if wanted to)
+
+**Grammar Point**: にも～ない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb[おう] + にも + Same Verb[potential negative] (帰ろうにも帰れない)
+2. Verb[よう] + にも + Same Verb[potential negative] (寝ようにも寝れない)
+3. Verb[よう] + にも + できない (連絡しようにもできない)
+
+**Meaning**:
+- "Can't (A) even if I wanted to" / "Despite wanting to (A), cannot do it"
+- More specific variant of 〜に〜ない
+- Volitional form (う/よう) + にも (も is required)
+- Followed by potential negative form of same verb
+- Tends to highlight physical/concrete reasons (vs mental limitations)
+
+**Tokenization variants**:
+**Godan verbs** (like 帰る, 買う):
+- Verb (未然ウ接続, e.g., 帰ろ)
+- う (助動詞)
+- に (助詞/格助詞)
+- も (助詞/係助詞)
+- Verb potential (未然形) + ない
+
+**Ichidan verbs** (like 寝る):
+- Verb (連用形, e.g., 寝)
+- よう (名詞/接尾)
+- に (助詞/格助詞)
+- も (助詞/係助詞)
+- Verb potential (未然形) + ない
+
+**Implementation**:
+- VolitionalMatcher handles both う (godan) and よう (ichidan) forms
+- Requires も particle (key distinguishing feature from general 〜に〜ない)
+- Uses wildcard + NaiMatcher to capture full construction
+- Pattern ends with ない to ensure complete matching
+
+**Tests Written: 4 tests (all passing)**
+1. test_nimo_nai_kaeru - 帰ろうにも帰れない (33, 42)
+2. test_nimo_nai_neru - 寝ようにも寝れない (19, 28)
+3. test_nimo_nai_kau - 買おうにも買えない (20, 29)
+4. test_nimo_nai_renraku - 連絡しようにもできない (17, 28)
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented nimo_uff5e_nai() with 5 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added nimo_nai_tests module with 4 tests
+- feature_list.json - Updated にも～ない to complete status
+
+**Quality Checks**:
+✓ All structure variants tested (おう, よう, できない)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed code
+✓ All existing tests still pass (3685 total, +4 new from this pattern)
 
 ================================================================================
 
