@@ -1,13 +1,14 @@
 ## Session 495 - 2025-12-15
 
-### Session Summary - じゃあるまいし Pattern Complete ✓
-**Status**: Successfully implemented じゃあるまいし pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3293 passing, 1 ignored (added 6 new tests)
-**Progress**: Seventh N1 pattern completed!
+### Session Summary - Two More N1 Patterns Complete ✓
+**Status**: Successfully implemented じゃあるまいし and てからというもの patterns
+**Patterns completed**: 2 (both N1, priority 5)
+**Total tests**: 3298 passing, 1 ignored (added 11 new tests)
+**Progress**: Seventh and eighth N1 patterns completed!
 
 **Session highlights**:
 - Implemented じゃあるまいし (it's not like, you're not) - 6 tests covering all structure variants
+- Implemented てからというもの (ever since) - 5 tests for both verb + て and それから variants
 - Handles both じゃ and では variants with optional は particle
 - Tests cover all three main structures: Noun + じゃあるまいし, Verb + ん + じゃあるまいし, Verb + わけ + じゃあるまいし
 - Both standard forms (じゃあるまいし, ではあるまいし) work correctly
@@ -88,6 +89,68 @@ The pattern captures the full grammatical construction including:
 Examples:
 - 子供じゃあるまいし (child is not, so...)
 - わけではあるまいし (it's not the case that...)
+
+---
+
+### ✓ Completed: てからというもの (ever since)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Verb[て] + から + というもの (ever since doing ~)
+- それから + というもの (ever since then)
+
+**Implementation details**:
+4 custom matchers for precise token matching:
+1. `TeOrSorekaraMatcher` - て (助詞/接続助詞) OR それから (接続詞)
+2. `KaraParticleMatcher` - Optional から (助詞/格助詞/一般) - only after て
+3. `ToiuMatcher` - という (助詞/格助詞/連語)
+4. `MonoMatcher` - もの (名詞/非自立/一般)
+
+**Key implementation insight**:
+The pattern has two variants:
+1. **Verb + てからというもの**: て + から + という + もの (4 tokens)
+2. **それからというもの**: それから + という + もの (3 tokens - から is included in それから)
+
+The `TeOrSorekaraMatcher` handles both て and それから, and から is made optional to accommodate the それから variant.
+
+**Tokenization patterns**:
+1. **て + から**: て (助詞/接続助詞) + から (助詞/格助詞/一般) + という + もの
+2. **それから**: それから (接続詞) + という + もの
+
+**Tests created**: 5 tests
+1. `test_tekaratoiumono_verb_te` - 入社してからというもの (verb + て, range 8-16)
+2. `test_tekaratoiumono_walking` - してからというもの (verb + て, range 16-24)
+3. `test_tekaratoiumono_movie` - 見てからというもの (verb + て, range 21-29)
+4. `test_tekaratoiumono_sorekara` - それからというもの (conjunction, range 21-30)
+5. `test_tekaratoiumono_sorekara_train` - それからというもの (conjunction, range 12-21)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented tekaratoiumono() function (66 lines with 4 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 comprehensive tests
+- `feature_list.json` - Updated てからというもの to complete status
+
+**Grammar meaning**:
+てからというもの is an extension of てから meaning 'after (A)', partnering と言う 'that which is' with もの 'thing'. Translates as 'ever since (A)' and expresses a new state of (B) that has been ongoing since (A). The literal translation is 'with that which was from (A)', with the ongoing nature of (B) implied.
+
+Common translations:
+- "ever since (A)"
+- "since (A)" (emphasizing ongoing state)
+
+The pattern highlights something that has remained ongoing ever since event (A), so it's not used when (A) happened very recently. The それから variant links to a previous sentence, with それ referring to the prior statement.
+
+**Pattern range note**:
+The pattern captures the full grammatical construction:
+- てからというもの: Full phrase from て to もの
+- それからというもの: Full phrase from それから to もの
+
+Examples:
+- 入社してからというもの (ever since joining the company)
+- それからというもの (ever since then)
 
 ---
 
