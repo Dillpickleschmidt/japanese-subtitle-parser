@@ -1,16 +1,17 @@
 ## Session 489 - 2025-12-15
 
-### Session Summary - ものですから・もので Pattern Complete ✓
-**Status**: Successfully implemented ものですから・もので pattern
-**Patterns completed**: 1 (N2, priority 4)
-**Total tests**: 3235 passing, 1 ignored (added 5 new tests)
+### Session Summary - Two N2 Patterns Complete ✓
+**Status**: Successfully implemented ものですから・もので and ものがある patterns
+**Patterns completed**: 2 (both N2, priority 4)
+**Total tests**: 3241 passing, 1 ignored (added 11 new tests)
 
 **Session highlights**:
 - Implemented ものですから・もので (because, the reason is - polite version) - 5 tests
-- Pattern is the polite/formal version of ものだから (uses です instead of だ)
-- Only matches polite です forms: ものですから, もんですから
-- Abbreviated forms もので/もんで (with で base=だ) are handled by ものだから pattern
-- All structure variants tested (verb, い-adj, な-adj, noun)
+- Implemented ものがある (I feel strongly that, there is something ~ about) - 6 tests
+- Both patterns involve もの (thing) expressing subjective opinions/feelings
+- ものですから: Polite/formal version of ものだから (uses です instead of だ)
+- ものがある: Expresses speaker's subjective feeling about a trait
+- All structure variants tested for both patterns
 - All tests passing with proper range assertions
 - No regressions in test suite
 
@@ -63,6 +64,58 @@ Strong explanatory phrase used when giving an excuse or explaining reasoning, mo
 - "it's that (A)" (polite)
 
 Emphasizes that situation (A) led to speaker doing (B), similar to ものだから but with polite です auxiliary.
+
+---
+
+### ✓ Completed: ものがある (I feel strongly that, there is something ~ about)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb + ものがある/あります
+- い-Adjective + ものがある/あります
+- な-Adjective + な + ものがある/あります
+
+**Implementation details**:
+Pattern uses 5 token matchers with optional components:
+1. Optional な (copula, 体言接続) for な-adjectives
+2. もの (名詞/非自立/一般) - "thing"
+3. が (助詞/格助詞)
+4. ある (動詞/自立/五段・ラ行, base=ある) - can be 基本形 (ある) or 連用形 (あり)
+5. Optional ます (助動詞, base=ます) for polite forms
+
+**Key features**:
+- Declares that something has a particular trait according to speaker's subjective opinion
+- Often translated as "I feel strongly that (A)" or "there is something (A) about (B)"
+- Speaker strongly senses the presence of (A) within (B), even if they can't explain why
+- Can describe very strong OR very weak feelings - what matters is the speaker's conviction
+
+**Tests created**: 6 tests
+1. `test_monogaaru_verb` - この映画は人の心を動かすものがある (verb, range 12-17)
+2. `test_monogaaru_verb_negative` - 彼の話には納得いかないものがある (verb negative, range 11-16)
+3. `test_monogaaru_i_adj` - 自分が好きなことを仕事にできるのは、嬉しいものがある (い-adj, range 21-26)
+4. `test_monogaaru_na_adj` - 子供だけで川で遊ばせるのは、危険なものがある (な-adj + な, range 16-22)
+5. `test_monogaaru_polite` - 彼の運動神経の良さは目を見張るものがあります (polite, range 15-22)
+6. `test_monogaaru_i_adj_polite` - 彼女の努力には感心するものがあります (polite, range 11-18)
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented monogaaru() function (74 lines with 5 custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 6 comprehensive tests
+- `feature_list.json` - Updated ものがある to complete status
+
+**Grammar meaning**:
+Used to express speaker's subjective feeling that something has a particular trait. Common translations:
+- "I feel strongly that (A)"
+- "there is something (A) about (B)"
+- "(B) has something (A)"
+
+The literal translation "there is a thing" (もの = thing, がある = there is) implies the speaker senses the presence of quality (A) within (B), whether obvious or subtle.
+
+**Set phrase**: 目を見張るものがある (combination of 目を見張る "to be astonished" + ものがある) means something is extremely surprising or impressive/remarkable.
 
 ---
 
