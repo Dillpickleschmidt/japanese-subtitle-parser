@@ -1,13 +1,18 @@
 ## Session 496 - 2025-12-15
 
-### Session Summary - N1 Pattern Complete ✓
-**Status**: Successfully implemented かたわら pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3302 passing, 1 ignored (added 4 new tests)
-**Progress**: Ninth N1 pattern completed!
+### Session Summary - Two N1 Patterns Complete ✓
+**Status**: Successfully implemented かたわら and を皮切りに patterns
+**Patterns completed**: 2 (both N1, priority 5)
+**Total tests**: 3307 passing, 1 ignored (added 9 new tests)
+**Progress**: Ninth and tenth N1 patterns completed!
 
 **Session highlights**:
 - Implemented かたわら (besides, in addition to, while) - 4 tests covering both structure variants
+- Implemented を皮切りに (starting with, beginning with) - 5 tests covering all structure variants
+- かたわら: Handles Verb[る] + かたわら and Noun + の + かたわら
+- を皮切りに: Handles を + 皮切り + に/として patterns
+- Both patterns support nominal and verbal forms
+- NiOrToshiteMatcher handles both に and として particles efficiently
 - Handles both Verb[る] + かたわら and Noun + の + かたわら patterns
 - Uses VerbOrNounMatcher to handle both verbs in dictionary form and nouns
 - Optional の particle handled correctly for noun phrases
@@ -80,6 +85,86 @@ The pattern captures the full grammatical construction:
 Examples:
 - いるかたわら (while being/doing)
 - 本業のかたわら (in addition to main work)
+
+---
+
+### ✓ Completed: を皮切りに (starting with, beginning with)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Noun + を皮切りに
+- Verb + の + を皮切りに
+- を皮切りとして (alternative form)
+
+**Implementation details**:
+3 custom matchers for precise token matching:
+1. `WoParticleMatcher` - を particle (助詞/格助詞/一般)
+2. `KawakiriMatcher` - 皮切り (名詞/一般)
+3. `NiOrToshiteMatcher` - に particle OR として (助詞/格助詞)
+
+**Key implementation insight**:
+The pattern uses NiOrToshiteMatcher to handle both に and として endings efficiently. The として variant is tokenized as a single particle (助詞/格助詞/連語), while に is a standard particle (助詞/格助詞/一般).
+
+**Tokenization patterns**:
+1. **を皮切りに**: を (助詞/格助詞/一般) + 皮切り (名詞/一般) + に (助詞/格助詞/一般)
+2. **を皮切りとして**: を (助詞/格助詞/一般) + 皮切り (名詞/一般) + として (助詞/格助詞/連語)
+3. **の + を皮切りに**: の (名詞/非自立/一般) + を + 皮切り + に
+
+**Tests created**: 5 tests
+1. `test_wokawakirini_noun_nishite` - を皮切りに (Noun + を皮切りに, range 11-16)
+2. `test_wokawakirini_verb_ru_nishite` - のを皮切りに (Verb + の + を皮切りに, range 9-14)
+3. `test_wokawakirini_verb_ta_nishite` - のを皮切りに (Verb + の + を皮切りに, range 16-21)
+4. `test_wokawakirini_noun_toshite` - を皮切りとして (Noun + を皮切りとして, range 10-17)
+5. `test_wokawakirini_noun_short` - を皮切りに (Noun + を皮切りに, range 8-13)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented wokawakirini() function (55 lines with 3 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 comprehensive tests in wokawakirini_tests module
+- `feature_list.json` - Updated を皮切りに to complete status
+
+**Grammar meaning**:
+を皮切（かわき）りに is a grammar structure utilized with nouns to show the starting point for something, from which it then expanded or something kept happening after. Usually translates as 'starting with (A)' or 'beginning with (A)'.
+
+This structure is a combination of:
+- を: adverbial particle
+- 皮切り: noun meaning 'beginning' or 'outset'
+- に: case-marking particle
+
+It appears after nouns or nominalized phrases (using の), before explaining how something continued to expand afterwards.
+
+Common translations:
+- "starting with (A)"
+- "beginning with (A)"
+- "started by (A)"
+
+**Common variations**:
+- を皮切りに - Basic form
+- を皮切りにして - Extended form with して
+- を皮切りとして - Alternative form with として
+
+All variations have the same meaning and usage.
+
+**Important notes**:
+- Rare for を皮切りに to be used with natural phenomena or negative results
+- What happens as a result of (A) is usually something positive
+- Requires a specific 'doer' or agent
+
+**Etymology fun fact**:
+Although 皮切り is only used to mean 'beginning', the kanji combination of 'to cut a hide' can be used as a helpful memory tool for the nuance of creating a starting point from which something expanded outwards over a large area, like skinning an animal.
+
+**Pattern range note**:
+The pattern captures the full grammatical construction:
+- を皮切りに: Full phrase from を to に
+- を皮切りとして: Full phrase from を to として
+
+Examples:
+- を皮切りに (starting with)
+- を皮切りとして (starting with, alternative)
 
 ---
 
