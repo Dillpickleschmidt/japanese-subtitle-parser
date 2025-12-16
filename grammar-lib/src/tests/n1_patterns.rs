@@ -4598,3 +4598,58 @@ mod katagata_tests {
         assert_pattern_range(&patterns, "かたがた", 0, 6); // お礼かたがた
     }
 }
+
+// ============================================================================
+// たる Tests
+// ============================================================================
+
+mod taru_tests {
+    use super::*;
+
+    // Pattern: たる (classical copula - position/role)
+    // Data source: grammar_points_data.json["たる"]
+    // Testing: structure.standard[0] - "Noun + たるに"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun + たる + Noun (especially たるもの - "person in position of")
+
+    #[test]
+    fn test_taru_taruni_employee() {
+        let sentence = "あなたは従業員たるに相応しい対応ができたと思っているのかい？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たる");
+        assert_pattern_range(&patterns, "たる", 6, 10); // 員たるに
+    }
+
+    #[test]
+    fn test_taru_taruni_team_member() {
+        let sentence = "あの選手に負けるぐらいなら、うちのチームの一員たるにふさわしくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たる");
+        assert_pattern_range(&patterns, "たる", 21, 26); // 一員たるに
+    }
+
+    #[test]
+    fn test_taru_tarumono_teacher() {
+        let sentence = "先生たるもの、生徒の将来を優先するべきだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たる");
+        assert_pattern_range(&patterns, "たる", 0, 6); // 先生たるもの
+    }
+
+    #[test]
+    fn test_taru_tarumono_police() {
+        let sentence = "警察たるもの、国民の平和を守るべきだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たる");
+        assert_pattern_range(&patterns, "たる", 0, 6); // 警察たるもの
+    }
+}

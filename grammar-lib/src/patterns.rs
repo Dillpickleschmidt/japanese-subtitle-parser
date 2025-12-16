@@ -6885,7 +6885,7 @@ declare_patterns! {
     Taru {
         name: "たる",
         matcher_fn: crate::matchers::n1::taru,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

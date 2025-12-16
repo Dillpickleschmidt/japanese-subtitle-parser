@@ -11161,13 +11161,13 @@
   {
     "pattern_name": "たる",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "たるに is a structure that indicates something that 'is (A)' in the same way as である, and will often be translated as '(B... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

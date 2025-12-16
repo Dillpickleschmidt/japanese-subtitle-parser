@@ -3400,9 +3400,49 @@ pub fn nimatsuwaru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: たる
+// Pattern: たる (classical copula - position/role)
+// Structures: Noun + たるに, Noun + たる + Noun
 pub fn taru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // たる can be tokenized in two ways:
+    // 1. As 名詞/一般 (in "たるに")
+    // 2. As 助動詞 with base たり (in "たるもの")
+    #[derive(Debug)]
+    struct TaruMatcher;
+    impl Matcher for TaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たる"
+                && ((token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.base_form == "たる")
+                    || (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                        && token.base_form == "たり"))
+        }
+    }
+
+    // Optional に particle (for たるに) or もの noun (for たるもの)
+    #[derive(Debug)]
+    struct TaruFollowMatcher;
+    impl Matcher for TaruFollowMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match に (格助詞) for たるに
+            (token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                // Or match もの (名詞) for たるもの
+                || (token.surface == "もの"
+                    && token.pos.first().is_some_and(|pos| pos == "名詞")
+                    && token.base_form == "もの")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(TaruMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            TaruFollowMatcher,
+        )))),
+    ]
 }
 
 // Pattern: なら〜で
