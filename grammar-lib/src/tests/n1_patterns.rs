@@ -3723,3 +3723,98 @@ mod tokorowo_tests {
         assert_pattern_range(&patterns, "ところを", 3, 8); // のところを
     }
 }
+
+// ============================================================================
+// なりに Tests
+// ============================================================================
+
+mod narini_tests {
+    use super::*;
+
+    // Pattern: なりに (in one's own way, for what it is)
+    // Data source: grammar_points_data.json["なりに"]
+    // Structures:
+    //   - standard[0]: Noun + なりに
+    //   - standard[1]: それ + なりに
+    //   - standard[2]: い-Adjective + なりに
+    //   - standard[3]: な-Adjective + なりに
+    //   - standard[4]: Noun (A) + なり + の + Noun (B)
+    //   - standard[5]: それ + なりの + Noun
+
+    // Test standard[0]: Noun + なりに
+    #[test]
+    fn test_narini_noun() {
+        let sentence = "自分なりに頑張ってみたが、やっぱりダメだった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なりに");
+        assert_pattern_range(&patterns, "なりに", 0, 5); // 自分なりに
+    }
+
+    // Test standard[1]: それ + なりに
+    #[test]
+    fn test_narini_sore() {
+        let sentence = "安い部屋だけど、それなりに快適だよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なりに");
+        assert_pattern_range(&patterns, "なりに", 8, 13); // それなりに
+    }
+
+    // Test standard[2]: い-Adjective + なりに
+    #[test]
+    fn test_narini_i_adjective() {
+        let sentence = "彼は仕事が下手なりに、他の社員のモチベーションをあげてくれたりしている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なりに");
+        assert_pattern_range(&patterns, "なりに", 5, 10); // 下手なりに
+    }
+
+    // Test standard[3]: な-Adjective + なりに
+    #[test]
+    fn test_narini_na_adjective() {
+        let sentence = "初心者は初心者なりに楽しめるコースがあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なりに");
+        assert_pattern_range(&patterns, "なりに", 4, 10); // 初心者なりに
+    }
+
+    // Test standard[4]: Noun (A) + なり + の + Noun (B)
+    #[test]
+    fn test_narino_noun_noun() {
+        let sentence = "広い部屋は広いなりのデメリットがあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なりに");
+        assert_pattern_range(&patterns, "なりに", 5, 10); // 広いなりの
+    }
+
+    // Test standard[5]: それ + なりの + Noun
+    #[test]
+    fn test_narino_sore_noun() {
+        let sentence = "安い商品にはそれなりの理由がある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なりに");
+        assert_pattern_range(&patterns, "なりに", 6, 11); // それなりの
+    }
+
+    // Additional test: Verb + なりに (past tense verb)
+    #[test]
+    fn test_narini_verb_past() {
+        let sentence = "自由時間が増えたなりに有効に使いたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なりに");
+        assert_pattern_range(&patterns, "なりに", 7, 11); // たなりに
+    }
+}

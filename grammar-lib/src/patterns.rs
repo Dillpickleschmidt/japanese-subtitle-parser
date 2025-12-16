@@ -6858,6 +6858,14 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    NariniSorenari {
+        name: "なりに",
+        matcher_fn: crate::matchers::n1::narini_sorenari,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     ReruU30fbRareruMamani {
         name: "れる・られる + ままに",
         matcher_fn: crate::matchers::n1::reru_u30fb_rareru_mamani,

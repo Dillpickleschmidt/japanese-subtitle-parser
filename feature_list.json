@@ -11119,13 +11119,13 @@
   {
     "pattern_name": "なりに",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used as a noun, なり often presents an example group from which something exhibits traits of, regardless of whethe... [6 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

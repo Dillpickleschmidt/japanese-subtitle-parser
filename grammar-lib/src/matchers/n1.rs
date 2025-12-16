@@ -3013,9 +3013,89 @@ pub fn ikanaru() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: なりに
+// Pattern: なりに (in one's own way, for what it is)
+// Structures: Noun/Adjective/Verb + なり + に/の
 pub fn narini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match noun, adjective, verb, or auxiliary verb (for past tense た)
+    #[derive(Debug)]
+    struct NounAdjVerbMatcher;
+    impl Matcher for NounAdjVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| {
+                pos == "名詞" || pos == "形容詞" || pos == "動詞" || pos == "助動詞"
+            })
+        }
+    }
+
+    // Match なり as 副助詞 (adverbial particle)
+    #[derive(Debug)]
+    struct NariParticleMatcher;
+    impl Matcher for NariParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なり"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match に as 格助詞 or の as 連体化
+    #[derive(Debug)]
+    struct NiOrNoMatcher;
+    impl Matcher for NiOrNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                || (token.surface == "の"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "連体化"))
+        }
+    }
+
+    // Pattern: (Noun/Adj/Verb/AuxVerb) + なり(副助詞) + (に OR の)
+    // Note: そ れなり is a special case that's tokenized as a single noun "それなり",
+    // so it won't be caught by this pattern. We handle it separately below.
+    vec![
+        TokenMatcher::Custom(Arc::new(NounAdjVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NariParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrNoMatcher)),
+    ]
+}
+
+// Pattern: それなり + に/の (variant of なりに for fixed expression)
+// When "それなり" is tokenized as a single noun
+pub fn narini_sorenari() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match "それなり" as a single noun
+    #[derive(Debug)]
+    struct SorenariMatcher;
+    impl Matcher for SorenariMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "それなり" && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match に as 格助詞 or の as 連体化
+    #[derive(Debug)]
+    struct NiOrNoMatcher;
+    impl Matcher for NiOrNoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                || (token.surface == "の"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "連体化"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(SorenariMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrNoMatcher)),
+    ]
 }
 
 // Pattern: れる・られる + ままに
