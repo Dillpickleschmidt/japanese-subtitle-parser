@@ -10895,13 +10895,13 @@
   {
     "pattern_name": "を経て",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を経（へ）て is a fairly formal grammar point used when highlighting a passage of time, or an event that took a certain amo... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10909,13 +10909,13 @@
   {
     "pattern_name": "ながらに",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When combined with the case-marking particle に, ながら 'while' as a suffix will indicate that something remains in the s... [12 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10923,13 +10923,13 @@
   {
     "pattern_name": "たなり・なり",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When following the た, past-tense form of a verb, the conjunction particle なり 'shape' indicates something existing in ... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10937,13 +10937,13 @@
   {
     "pattern_name": "の極み",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When paired with a noun followed by the case-marking particle の, 極（きわ）み 'extremity' will indicate something that is '... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10979,13 +10979,13 @@
   {
     "pattern_name": "あくまでも",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "飽（あ）く is the old-fashioned and somewhat poetic version of 飽（あ）きる the る-Verb meaning 'to tire of (A)', or 'to get sick... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11021,13 +11021,13 @@
   {
     "pattern_name": "からある",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Like からする, a structure showing that something 'goes from (A)', からある works in a similar way, but simply shows that som... [4 std, 4 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11875,13 +11875,13 @@
   {
     "pattern_name": "Verb[ない]もの(だろう)か",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When paired with negative expressions, the noun 物（もの） and either the sentence-ending particle か or a combination of だ... [1 std, 1 pol]",
     "priority": 5,
     "skip_reason": null
@@ -12869,27 +12869,27 @@
   {
     "pattern_name": "以前",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "When used as a suffix, the noun 以前（いぜん） ‘preceding’, or ‘prior to’ will indicate that a topic is being brought forwar... [4 std, 0 pol]",
+    "passes": true,
+    "description": "When used as a suffix, the noun 以前（いぜん） 'preceding', or 'prior to' will indicate that a topic is being brought forwar... [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
   },
   {
     "pattern_name": "ともあろう",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ともあろう is a grammatical structure in Japanese which highlights either the skill or responsibility that a particular pe... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

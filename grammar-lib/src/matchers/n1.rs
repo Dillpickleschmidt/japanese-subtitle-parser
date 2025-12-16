@@ -2667,9 +2667,39 @@ pub fn tanari_u30fb_nari() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: の極み
+// Pattern: の極み (the ultimate/extreme/epitome of)
+// Structures: Noun + の + 極（きわ）み
 pub fn nokiwami() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match の as rentaika particle (連体化)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    // Match 極み as noun
+    #[derive(Debug)]
+    struct KiwamiMatcher;
+    impl super::Matcher for KiwamiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "極み"
+                && token.base_form == "極み"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(KiwamiMatcher)),
+    ]
 }
 
 // Pattern: にしてみれば

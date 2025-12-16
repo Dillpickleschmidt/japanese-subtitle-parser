@@ -3403,3 +3403,58 @@ mod tanari_nari_tests {
         assert_pattern_range(&patterns, "たなり・なり", 2, 7); // 座ったなり
     }
 }
+
+// ============================================================================
+// の極み Tests
+// ============================================================================
+
+mod nokiwami_tests {
+    use super::*;
+
+    // Pattern: の極み (the ultimate/extreme/epitome of)
+    // Data source: grammar_points_data.json["の極み"]
+    // Testing: structure.standard[0] - "Noun + の + 極（きわ）み"
+    //
+    // 極み is a noun meaning "extremity", used formally to express "the epitome of A"
+    // Often followed by だ or conjunctive で
+
+    #[test]
+    fn test_nokiwami_basic_da() {
+        let sentence = "あと５分待って居れば私が大好きなアイドルに会えていたとは...痛恨の極みだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の極み");
+        assert_pattern_range(&patterns, "の極み", 31, 36); // 痛恨の極み
+    }
+
+    #[test]
+    fn test_nokiwami_polite_desu() {
+        let sentence = "今までこんなに良くしてくれて、感激の極みです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の極み");
+        assert_pattern_range(&patterns, "の極み", 15, 20); // 感激の極み
+    }
+
+    #[test]
+    fn test_nokiwami_negative_context() {
+        let sentence = "有給は取るなとか鬼畜の極みだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の極み");
+        assert_pattern_range(&patterns, "の極み", 8, 13); // 鬼畜の極み
+    }
+
+    #[test]
+    fn test_nokiwami_conjunctive_de() {
+        let sentence = "この曲の歌詞は感動の極みで、聞くたびに涙が溢れ出てくる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "の極み");
+        assert_pattern_range(&patterns, "の極み", 7, 12); // 感動の極み
+    }
+}
