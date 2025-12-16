@@ -1,3 +1,100 @@
+## Session 561 - 2025-12-16
+
+### Session Summary - ぐるみで Complete ✓
+**Status**: Implemented ぐるみで pattern successfully
+**Patterns completed**: 1 (ぐるみで - N1, priority 5)
+**Total tests**: 3617 passing (4 new tests, no regressions)
+**Progress**: Seventy-fourth N1 pattern completed!
+
+**Session highlights**:
+- Implemented ぐるみで (including / all over / whole)
+- Simple 3-token pattern: Noun + ぐるみ + (で/の)
+- Handles both で (case particle) and の (nominalizer) variants
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include full construction (Noun + ぐるみで/の)
+
+### ✓ Completed: ぐるみで (including / all over / whole)
+
+**Grammar Point**: ぐるみで
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + ぐるみで (家族ぐるみで - "with the entire family")
+2. Noun + ぐるみの + Noun (家族ぐるみの付き合い - "family-wide friendship")
+
+**Meaning**:
+- "Including (A)", "all over (A)", or "(A) wide"
+- Expresses that something encompasses absolutely all of (A)
+- Etymology: From 包（くる）む "to wrap/encompass"
+- Often used with group/collective nouns (family, company, town, etc.)
+- Emphasizes that the group shares a common trait, not individual parts
+
+**Tokenization**:
+- Noun: 名詞/一般
+- ぐるみ: 名詞/接尾/一般 (noun suffix)
+- で: 助詞/格助詞/一般 (case particle "with/by")
+- の: 助詞/連体化 (nominalizer - when connecting to another noun)
+
+**Implementation**:
+- Pattern: [Any] + ぐるみ + (で/の)
+- Custom matchers:
+  1. GurumiMatcher: Matches ぐるみ (名詞/接尾/一般)
+  2. DeNoMatcher: Matches で (助詞/格助詞) OR の (助詞/連体化)
+- Priority 5 for N1 standard construction
+- Pattern includes the preceding noun
+- Range: Noun + ぐるみで/の (e.g., 家族ぐるみで, 街ぐるみの)
+
+**Tests Written: 4 tests (all passing)**
+1. test_gurumide_family_with_de - 家族ぐるみで (2, 8) - with entire family
+2. test_gurumide_company_with_de - 会社ぐるみで (0, 6) - entire company
+3. test_gurumide_family_with_no - 家族ぐるみの (3, 9) - family-wide (+ noun)
+4. test_gurumide_town_with_no - 街ぐるみの (0, 5) - town-wide (+ noun)
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures Noun + ぐるみで/の:
+- 家族ぐるみで (2, 8) - 6 characters
+- 会社ぐるみで (0, 6) - 6 characters
+- 家族ぐるみの (3, 9) - 6 characters
+- 街ぐるみの (0, 5) - 5 characters
+
+**Key Notes**:
+- ぐるみ tokenizes as noun suffix (名詞/接尾), not as a standalone verb
+- で marks the method/means ("with/by means of the whole group")
+- の connects to following nouns to form noun phrases
+- Both particles handled by single DeNoMatcher for simplicity
+- Commonly used with collective nouns: 家族 (family), 会社 (company), 街 (town), etc.
+- Standard register - used in both formal and informal contexts
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented gurumide() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated Gurumide priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in gurumide_tests module
+- feature_list.json - Updated ぐるみで to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (で and の forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3617 total, +4 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- が早いか - "As soon as" pattern
+- こととて - Classical reason pattern
+- さぞ - Emphatic adverb pattern
+- ずくめ - "Completely/solely" pattern
+- ずじまい - "End up not doing" pattern
+- ずにはおかない - "Cannot help but" pattern
+- そばから - "As soon as" pattern
+- それまでだ - "That's the end" pattern
+
+================================================================================
+
 ## Session 560 - 2025-12-16
 
 ### Session Summary - ってば・ったら Complete ✓
