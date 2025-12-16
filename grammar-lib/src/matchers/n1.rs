@@ -4358,9 +4358,285 @@ pub fn kainaka_ka_inaka() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: たら〜で
+// Pattern: たら〜で (even if, if...then with repeating words)
+// Structures: Word[conditional/たら/ば/なら] + Same_Word[plain/た] + で
+//
+// NOTE: This pattern ideally requires matching the same word twice (different conjugations).
+// Due to the constraint that matchers only see one token at a time, we match the structural
+// pattern without verifying word repetition. This may produce false positives but captures
+// the most common usage patterns.
+//
+// Structure variants:
+// 1. Verb[連用タ接続] + たら + Verb[連用タ接続] + た + で
+// 2. Verb[仮定形] + ば + Verb[連用タ接続] + た + で
+// 3. い-Adj[連用タ接続] + たら + い-Adj[基本形] + で
+// 4. い-Adj[仮定形] + ば + い-Adj[基本形] + で
+// 5. な-Adj + なら + な-Adj + で
 pub fn tara_u301c_de() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match たら (conditional auxiliary)
+    #[derive(Debug)]
+    struct TaraConditionalMatcher;
+    impl Matcher for TaraConditionalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match た (past auxiliary, 基本形)
+    #[derive(Debug)]
+    struct TaPastBasicMatcher;
+    impl Matcher for TaPastBasicMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match で (conjunction particle after た)
+    #[derive(Debug)]
+    struct DeConjunctionMatcher;
+    impl Matcher for DeConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Verb[連用タ接続] + たら + Verb[連用タ接続] + た + で
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TaraConditionalMatcher)),
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TaPastBasicMatcher)),
+        TokenMatcher::Custom(Arc::new(DeConjunctionMatcher)),
+    ]
+}
+
+// Pattern: たら〜で - ば variant (verb)
+// Structures: Verb[仮定形] + ば + Verb[連用タ接続] + た + で
+pub fn tara_u301c_de_ba_verb() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match verb in 仮定形 (hypothetical form)
+    #[derive(Debug)]
+    struct VerbKateiMatcher;
+    impl Matcher for VerbKateiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match ば (conditional particle)
+    #[derive(Debug)]
+    struct BaMatcher;
+    impl Matcher for BaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match た (past auxiliary, 基本形)
+    #[derive(Debug)]
+    struct TaPastBasicMatcher;
+    impl Matcher for TaPastBasicMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match で (conjunction particle after た)
+    #[derive(Debug)]
+    struct DeConjunctionMatcher;
+    impl Matcher for DeConjunctionMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbKateiMatcher)),
+        TokenMatcher::Custom(Arc::new(BaMatcher)),
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TaPastBasicMatcher)),
+        TokenMatcher::Custom(Arc::new(DeConjunctionMatcher)),
+    ]
+}
+
+// Pattern: たら〜で - たら variant (い-adjective)
+// Structures: い-Adj[連用タ接続] + たら + い-Adj[基本形] + で
+pub fn tara_u301c_de_i_adj() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match い-adjective in 連用タ接続
+    #[derive(Debug)]
+    struct IAdjRenyouMatcher;
+    impl Matcher for IAdjRenyouMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Match たら (conditional auxiliary)
+    #[derive(Debug)]
+    struct TaraConditionalMatcher;
+    impl Matcher for TaraConditionalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match い-adjective in 基本形
+    #[derive(Debug)]
+    struct IAdjBasicMatcher;
+    impl Matcher for IAdjBasicMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match で (conjunction particle or だ auxiliary in 連用形)
+    #[derive(Debug)]
+    struct DeAfterAdjMatcher;
+    impl Matcher for DeAfterAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && ((token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+                    || (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                        && token.base_form == "だ"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjRenyouMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraConditionalMatcher)),
+        TokenMatcher::Custom(Arc::new(IAdjBasicMatcher)),
+        TokenMatcher::Custom(Arc::new(DeAfterAdjMatcher)),
+    ]
+}
+
+// Pattern: たら〜で - ば variant (い-adjective)
+// Structures: い-Adj[仮定形] + ば + い-Adj[基本形] + で
+pub fn tara_u301c_de_ba_i_adj() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match い-adjective in 仮定形
+    #[derive(Debug)]
+    struct IAdjKateiMatcher;
+    impl Matcher for IAdjKateiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match ば (conditional particle)
+    #[derive(Debug)]
+    struct BaMatcher;
+    impl Matcher for BaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match い-adjective in 基本形
+    #[derive(Debug)]
+    struct IAdjBasicMatcher;
+    impl Matcher for IAdjBasicMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+        }
+    }
+
+    // Match で (auxiliary だ in 連用形 after adjective)
+    #[derive(Debug)]
+    struct DeAuxiliaryMatcher;
+    impl Matcher for DeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IAdjKateiMatcher)),
+        TokenMatcher::Custom(Arc::new(BaMatcher)),
+        TokenMatcher::Custom(Arc::new(IAdjBasicMatcher)),
+        TokenMatcher::Custom(Arc::new(DeAuxiliaryMatcher)),
+    ]
+}
+
+// Pattern: たら〜で - なら variant (な-adjective)
+// Structures: な-Adj[名詞/形容動詞語幹] + なら + な-Adj[名詞/形容動詞語幹] + で
+pub fn tara_u301c_de_nara_na_adj() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match な-adjective (名詞/形容動詞語幹)
+    #[derive(Debug)]
+    struct NaAdjMatcher;
+    impl Matcher for NaAdjMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")
+        }
+    }
+
+    // Match なら (conditional auxiliary, 仮定形 of だ)
+    #[derive(Debug)]
+    struct NaraConditionalMatcher;
+    impl Matcher for NaraConditionalMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Match で (auxiliary だ in 連用形)
+    #[derive(Debug)]
+    struct DeAuxiliaryMatcher;
+    impl Matcher for DeAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(NaAdjMatcher)),
+        TokenMatcher::Custom(Arc::new(NaraConditionalMatcher)),
+        TokenMatcher::Custom(Arc::new(NaAdjMatcher)),
+        TokenMatcher::Custom(Arc::new(DeAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: べくして (as expected, destined to)

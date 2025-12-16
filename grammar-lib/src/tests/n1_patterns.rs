@@ -6972,3 +6972,81 @@ mod zunihasumanai_tests {
         assert_pattern_range(&patterns, "ないではすまない", 3, 13); // 払わないではすまない
     }
 }
+
+// ============================================================================
+// たら〜で Tests
+// ============================================================================
+
+mod tara_u301c_de_tests {
+    use super::*;
+
+    // Pattern: たら〜で (even if, if...then with)
+    // Data source: grammar_points_data.json["たら〜で"]
+    // Testing all structure variants with print_debug
+
+    // Testing: structure.standard[0] - Verb[たら] + Verb[た] + で
+    #[test]
+    fn test_tarade_verb_tara_form() {
+        let sentence = "ニートになったらなったで大変だと思うよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら〜で");
+        assert_pattern_range(&patterns, "たら〜で", 4, 12); // なったらなったで
+    }
+
+    // Testing: structure.standard[3] - Verb[ば] + Verb[た] + で
+    #[test]
+    fn test_tarade_verb_ba_form() {
+        let sentence = "明日雨が降れば降ったでなんとかすればいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら〜で");
+        assert_pattern_range(&patterns, "たら〜で", 4, 11); // 降れば降ったで
+    }
+
+    // Testing: structure.standard[1] - い-Adj[たら] + い-Adj[い] + で
+    #[test]
+    fn test_tarade_i_adj_tara_form() {
+        let sentence = "大きい方が荷物とかいっぱい積めるけど、大きかったら大きいでデメリットがある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら〜で");
+        assert_pattern_range(&patterns, "たら〜で", 19, 29); // 大きかったら大きいで
+    }
+
+    // Testing: structure.standard[4] - い-Adj[ば] + い-Adj[い] + で
+    #[test]
+    fn test_tarade_i_adj_ba_form() {
+        let sentence = "力がなくてもできる仕事は沢山あるから、弱ければ弱いでいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら〜で");
+        assert_pattern_range(&patterns, "たら〜で", 19, 26); // 弱ければ弱いで
+    }
+
+    // Testing: structure.standard[2] - な-Adj + なら + な-Adj + で
+    #[test]
+    fn test_tarade_na_adj_nara_form() {
+        let sentence = "嫌なら嫌で大丈夫！田中くんに頼むこともできるし。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら〜で");
+        assert_pattern_range(&patterns, "たら〜で", 0, 5); // 嫌なら嫌で
+    }
+
+    // Testing: structure.standard[2] - な-Adj + なら + な-Adj + で (different adjective)
+    #[test]
+    fn test_tarade_na_adj_kantan() {
+        let sentence = "難しい文法を見ると怯んでしまうけど、簡単なら簡単でやりがいはない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "たら〜で");
+        assert_pattern_range(&patterns, "たら〜で", 18, 25); // 簡単なら簡単で
+    }
+}

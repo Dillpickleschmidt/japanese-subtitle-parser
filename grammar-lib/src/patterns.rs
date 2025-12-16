@@ -7029,7 +7029,39 @@ declare_patterns! {
     TaraU301cDe {
         name: "たら〜で",
         matcher_fn: crate::matchers::n1::tara_u301c_de,
-        priority: 1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TaraU301cDeBaVerb {
+        name: "たら〜で",
+        matcher_fn: crate::matchers::n1::tara_u301c_de_ba_verb,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TaraU301cDeIAdj {
+        name: "たら〜で",
+        matcher_fn: crate::matchers::n1::tara_u301c_de_i_adj,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TaraU301cDeBaIAdj {
+        name: "たら〜で",
+        matcher_fn: crate::matchers::n1::tara_u301c_de_ba_i_adj,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TaraU301cDeNaraNaAdj {
+        name: "たら〜で",
+        matcher_fn: crate::matchers::n1::tara_u301c_de_nara_na_adj,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
