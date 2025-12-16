@@ -1,3 +1,86 @@
+## Session 492 - 2025-12-15
+
+### Session Summary - Second N1 Pattern Complete ✓
+**Status**: Successfully implemented ～るまでだ (merely, simply, one can only but) pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3268 passing, 1 ignored (added 6 new tests)
+**Major milestone**: Second N1 pattern completed!
+
+**Session highlights**:
+- Implemented ～るまでだ (merely, simply, one can only but) - 6 tests covering all structure variants
+- Handles multiple conditional forms: ば, たら, ても conditionals
+- Supports both simple form (るまでだ) and extended form (るまでのことだ)
+- Works with both standard (だ) and polite (です) forms
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: ～るまでだ (merely, simply, one can only but)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Verb[る] + まで + だ - "one can only but (do)"
+- Verb[る] + までのこと + だ - "simply (do)" (extended form)
+- Verb[る] + まで + です - polite form
+- Verb[る] + までのこと + です - polite extended form
+
+**Implementation details**:
+5 custom matchers for precise token matching:
+1. `DictionaryFormVerbMatcher` - Verb in 基本形 (dictionary form)
+2. `MadeParticleMatcher` - まで (助詞/副助詞)
+3. `NoRentaikaMatcher` - Optional の particle (助詞/連体化)
+4. `KotoNounMatcher` - Optional こと (名詞/非自立/一般)
+5. `DaDesuAuxMatcher` - だ or です (助動詞, 基本形)
+
+**Key implementation insight**:
+Pattern uses Optional matchers for the の + こと sequence, allowing it to match both:
+- Simple form: Verb + まで + だ
+- Extended form: Verb + まで + の + こと + だ
+
+The matcher automatically finds the longest available form.
+
+**Tokenization patterns**:
+1. **るまでだ**: Verb (基本形) + まで (助詞/副助詞) + だ (助動詞/特殊・ダ/基本形)
+2. **るまでのことだ**: Verb (基本形) + まで + の (助詞/連体化) + こと (名詞/非自立) + だ
+3. **るまでです**: Same as #1 but with です (助動詞/特殊・デス/基本形)
+4. **るまでのことです**: Same as #2 but with です
+
+**Tests created**: 6 tests
+1. `test_rumadeda_ba_conditional` - 調べてみるまでだ (ば conditional, range 21-26)
+2. `test_rumadeda_tara_conditional` - 挑戦するまでだ (たら conditional, range 14-21)
+3. `test_rumadeda_madenokoto` - 帰るまでのことだ (までのこと form, range 18-26)
+4. `test_rumadeda_temo_conditional` - 頑張るまでだ (ても conditional, range 17-23)
+5. `test_rumadeda_polite` - 探すまでのことです (polite form, range 20-29)
+6. `test_rumadeda_simple_negative` - 辞めるまでだ (simple negative, range 3-9)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented uff5e_rumadeda() function (72 lines with 5 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 6 comprehensive tests (one per structure variant)
+- `feature_list.json` - Updated ～るまでだ to complete status
+
+**Grammar meaning**:
+Usually translated as 'merely (B)' or 'simply (B)', but more accurately means 'one can only but (B)'. Almost always used in hypothetical sentences following conditionals (ば, たら, ても, なら). Indicates resignation or understanding that the speaker has no options beyond (B).
+
+Common translations:
+- "one can only but (B)"
+- "simply (B)"
+- "merely (B)"
+- "all that can be done is (B)"
+
+The (A) clause is almost always a negative situation, and (B) represents the only available option given those circumstances. The particle まで indicates extent - the speaker is expressing that (B) is the extent of what is possible.
+
+Related patterns:
+- までのこと - Extended/formal version with same meaning
+- までのことだ - Full formal version emphasizing resignation
+
+---
+
 ## Session 491 - 2025-12-15
 
 ### Session Summary - First N1 Pattern Complete ✓
