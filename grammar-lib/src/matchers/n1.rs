@@ -2904,9 +2904,38 @@ pub fn beku() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ところを
+// Pattern: ところを (at a time when, in spite of)
+// Structures: Verb/Adjective/Noun + ところを
 pub fn tokorowo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ところ as 名詞
+    #[derive(Debug)]
+    struct TokoroMatcher;
+    impl super::Matcher for TokoroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ところ"
+                && token.base_form == "ところ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match を as 格助詞
+    #[derive(Debug)]
+    struct WoParticleMatcher;
+    impl super::Matcher for WoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, Adjective, Noun, or particle (な, の)
+        TokenMatcher::Custom(Arc::new(TokoroMatcher)),
+        TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
+    ]
 }
 
 // Pattern: からある (as much as, as many as)

@@ -3657,3 +3657,69 @@ mod beku_tests {
         assert_pattern_range(&patterns, "べく", 5, 11); // 優勝するべく (する+べく modern)
     }
 }
+
+// ============================================================================
+// ところを Tests
+// ============================================================================
+
+mod tokorowo_tests {
+    use super::*;
+
+    // Pattern: ところを (at a time when, in spite of)
+    // Data source: grammar_points_data.json["ところを"]
+    // Testing all structure variants from standard array:
+    //   standard[0]: Verb + ところを
+    //   standard[1]: い-Adjective + ところを
+    //   standard[2]: な-Adjective + ところを
+    //   standard[3]: Noun + の + ところを
+
+    #[test]
+    fn test_tokorowo_verb_teiru() {
+        let sentence = "休んでいるところを申し訳ないんですけど、教えてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところを");
+        assert_pattern_range(&patterns, "ところを", 3, 9); // いるところを
+    }
+
+    #[test]
+    fn test_tokorowo_verb_caught() {
+        let sentence = "悪戯をしているところを母に見られてしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところを");
+        assert_pattern_range(&patterns, "ところを", 5, 11); // いるところを
+    }
+
+    #[test]
+    fn test_tokorowo_i_adjective() {
+        let sentence = "お忙しいところをすみませんが、相談したいことがあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところを");
+        assert_pattern_range(&patterns, "ところを", 0, 8); // お忙しいところを
+    }
+
+    #[test]
+    fn test_tokorowo_na_adjective() {
+        let sentence = "ご多忙なところをご対応いただきありがとうございました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところを");
+        assert_pattern_range(&patterns, "ところを", 3, 8); // なところを
+    }
+
+    #[test]
+    fn test_tokorowo_noun() {
+        let sentence = "お急ぎのところを恐縮ですが、何時ぐらいに着くか教えてください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ところを");
+        assert_pattern_range(&patterns, "ところを", 3, 8); // のところを
+    }
+}
