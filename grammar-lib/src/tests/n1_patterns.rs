@@ -10180,3 +10180,71 @@ mod niwaoyobanai_tests {
         assert_pattern_range(&patterns, "には及ばない①", 15, 24); // 説明には及びません
     }
 }
+
+// Pattern: に即して (in accordance with / based on)
+// Data source: grammar_points_data.json["に即して"]
+// Testing structure variants from grammar_points_data.json
+mod nisokushite_tests {
+    use super::*;
+
+    #[test]
+    fn test_nisokushite_te_form_rules() {
+        // Testing: structure.standard[0] - "Noun + に即（そく）して"
+        // Formal expression meaning "in accordance with"
+        let sentence = "会社のルールに即して、副業をしてはいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に即して");
+        assert_pattern_range(&patterns, "に即して", 3, 10); // ルールに即して
+    }
+
+    #[test]
+    fn test_nisokushite_te_form_facts() {
+        // Testing: structure.standard[0] - "Noun + に即（そく）して"
+        // Used when doing something in line with facts/circumstances
+        let sentence = "あの監督はちゃんと事実に即して映画を作るから、映画を見るだけでいろいろなことが学べる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に即して");
+        assert_pattern_range(&patterns, "に即して", 9, 15); // 事実に即して
+    }
+
+    #[test]
+    fn test_nisokushita_modifying_noun_work_hours() {
+        // Testing: structure.standard[1] - "Noun + に即（そく）した + Noun"
+        // Modifying noun form (した instead of して)
+        let sentence = "法律に即した勤務時間は週４０時間にも関わらず、あの会社は社員に週７０時間働かせている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に即して");
+        assert_pattern_range(&patterns, "に即して", 0, 6); // 法律に即した
+    }
+
+    #[test]
+    fn test_nisokushita_modifying_noun_punishment() {
+        // Testing: structure.standard[1] - "Noun + に即（そく）した + Noun"
+        // Modifying noun form with different noun
+        let sentence = "外国人であろうと、日本にいる限り、日本の法律に即した罰が与えられます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に即して");
+        assert_pattern_range(&patterns, "に即して", 20, 26); // 法律に即した
+    }
+
+    #[test]
+    fn test_nisokushite_alternative_kanji() {
+        // Testing: structure.standard[2] note - "(1) に則（そく）した"
+        // Alternative kanji 則 instead of 即 (same reading, similar meaning)
+        // Note: The data shows this as a variant of に即した, so testing した form
+        let sentence = "現実に則した計画を立てることが重要だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に即して");
+        assert_pattern_range(&patterns, "に即して", 0, 6); // 現実に則した
+    }
+}

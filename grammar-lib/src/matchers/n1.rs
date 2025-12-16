@@ -8666,9 +8666,57 @@ pub fn nihaoyobanai_u2460() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に即して
+// Pattern: に即して (in accordance with / based on)
+// Structures: Noun + に即（そく）して, Noun + に即（そく）した + Noun
+// Alternative: に則（そく）して/に則（そく）した (same pronunciation, similar meaning)
 pub fn nisokushite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as 助詞/格助詞/一般
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 即し or 則し (both base forms: 即す or 則す)
+    // Both verbs: 動詞/自立, 五段・サ行, 連用形
+    #[derive(Debug)]
+    struct SokushiMatcher;
+    impl Matcher for SokushiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "即し" || token.surface == "則し")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && (token.base_form == "即す" || token.base_form == "則す")
+        }
+    }
+
+    // Match て (助詞/接続助詞) or た (助動詞)
+    // て-form for に即して, た-form for に即した
+    #[derive(Debug)]
+    struct TeOrTaMatcher;
+    impl Matcher for TeOrTaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+                || (token.surface == "た"
+                    && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    && token.base_form == "た")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(SokushiMatcher)),
+        TokenMatcher::Custom(Arc::new(TeOrTaMatcher)),
+    ]
 }
 
 // Pattern: ないまでも

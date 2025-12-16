@@ -12295,13 +12295,13 @@
   {
     "pattern_name": "に即して",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に即（そく）して is a formal grammar structure which is used to express that something is being done for the purpose of handl... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
