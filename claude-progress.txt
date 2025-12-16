@@ -1,3 +1,105 @@
+## Session 511 - 2025-12-15
+
+### Session Summary - ともあろう Pattern Complete ✓
+**Status**: Successfully implemented ともあろう pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3397 passing, 1 ignored (added 4 new tests)
+**Progress**: Thirtieth N1 pattern completed!
+
+**Session highlights**:
+- Implemented ともあろう pattern (of all people, such as)
+- Pattern structure: Noun + と + も + あろう + もの/方/人 + が
+- Highlights contradiction between expected responsibility/skill and actual behavior
+- Custom matchers for each component: と, も, あろ, う, noun, が
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3397 tests total)
+
+### ✓ Completed: ともあろう (of all people, such as)
+
+**Grammar Point**: ともあろう
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+- Noun + ともあろう + もの + が
+- Noun + ともあろう + 方 + が
+- Noun + ともあろう + 人 + が
+
+**Implementation**:
+- Matcher: `Noun + と(格助詞) + も(係助詞) + あろ(助動詞,ある) + う(助動詞) + Noun + が(格助詞)`
+- Custom matchers for each particle and auxiliary:
+  - ToParticleMatcher: と as 助詞/格助詞
+  - MoParticleMatcher: も as 助詞/係助詞
+  - AroMatcher: あろ (ある in 未然ウ接続 form) as 助動詞
+  - UMatcher: う (volitional auxiliary) as 助動詞
+  - NounAfterMatcher: もの/方/人 etc. as 名詞
+  - GaParticleMatcher: が as 助詞/格助詞
+- Pattern captures full grammatical construction: Noun + ともあろう + Noun + が
+
+**Tests Written: 4 tests**
+1. `test_tomoarou_mono` - 警察ともあろうものが (with もの)
+2. `test_tomoarou_kata` - 牧師さんともあろうお方が (with 方)
+3. `test_tomoarou_hito` - 教授ともあろう人が (with 人)
+4. `test_tomoarou_sarcastic` - 高橋さんともあろうお方が (sarcastic usage)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures Noun + ともあろう + Noun + が:
+- `警察ともあろうものが` (0, 10) - police + pattern + もの + が
+- `さんともあろうお方が` (5, 15) - honorific + pattern + 方 + が
+- `教授ともあろう人が` (6, 15) - professor + pattern + 人 + が
+- `さんともあろうお方が` (2, 12) - name + honorific + pattern + 方 + が
+
+**Key Notes**:
+- Pattern emphasizes contradiction between status/skill and unexpected behavior
+- Literal meaning: "even a (B) such as (A), (C)" with (C) being unexpected
+- Often followed by speaker's criticism about how (A) is being ignorant
+- Can be used sarcastically towards same position or lower
+- Combines と (case-marking particle) + も (adverbial particle) + あろう (volitional ある)
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented tomoarou() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in tomoarou_tests module
+- `feature_list.json` - Updated ともあろう status to complete
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (ともあろう from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found tomoarou() stub in n1.rs)
+7. ✓ Wrote all tests first with print_debug()
+8. ✓ Analyzed tokenization output
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Verified all tests pass
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Verified no regressions (3397 tests passing)
+13. ✓ Updated feature_list.json
+14. ✓ Committed changes
+15. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (もの, 方, 人)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- 以前 - "Before, prior to" pattern, temporal expression
+- との - Quotation/reporting pattern, clear structure
+- ものとする - "Assume/treat as" pattern, detectable
+- ただ〜のみ - "Only" pattern, emphatic construction
+- ～てやる - "Do for (someone)" pattern, verb-based
+- を余儀なくさせる - "Force/compel" pattern, detectable
+- かたがた - "While, on the occasion of" pattern, detectable
+- てはかなわない - "Can't stand" pattern, clear structure
+
+---
+
 ## Session 510 - 2025-12-15
 
 ### Session Summary - からある Pattern Complete ✓
