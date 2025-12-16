@@ -4503,3 +4503,48 @@ mod reru_rareru_mamani_tests {
         assert_pattern_range(&patterns, "れる・られる + ままに", 12, 20); // 言われるがままに
     }
 }
+
+// ============================================================================
+// にまつわる Tests
+// ============================================================================
+
+mod nimatsuwaru_tests {
+    use super::*;
+
+    // Pattern: にまつわる (related to, connected to, surrounding)
+    // Data source: grammar_points_data.json["にまつわる"]
+    // Testing: structure.standard[0] - "Noun (A) + にまつわる + Noun (B)"
+
+    #[test]
+    fn test_nimatsuwaru_scary_story() {
+        // Testing: この地域 + にまつわる + 怖い話 (scary stories connected to this area)
+        let sentence = "僕が小さい頃は、おじいちゃんにこの地域にまつわる怖い話をよくしてもらってた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にまつわる");
+        assert_pattern_range(&patterns, "にまつわる", 17, 27); // 地域にまつわる怖い話
+    }
+
+    #[test]
+    fn test_nimatsuwaru_war_movie() {
+        // Testing: 戦争 + にまつわる + 映画 (movies related to war)
+        let sentence = "この監督の映画は戦争にまつわる映画が多い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にまつわる");
+        assert_pattern_range(&patterns, "にまつわる", 8, 17); // 戦争にまつわる映画
+    }
+
+    #[test]
+    fn test_nimatsuwaru_shrine_myth() {
+        // Testing: この神社 + にまつわる + 神話 (myths connected to this shrine)
+        let sentence = "彼はこの神社にまつわる神話には詳しい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にまつわる");
+        assert_pattern_range(&patterns, "にまつわる", 4, 13); // 神社にまつわる神話
+    }
+}

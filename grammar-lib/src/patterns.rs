@@ -6877,7 +6877,7 @@ declare_patterns! {
     Nimatsuwaru {
         name: "にまつわる",
         matcher_fn: crate::matchers::n1::nimatsuwaru,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

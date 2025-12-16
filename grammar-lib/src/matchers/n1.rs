@@ -3369,9 +3369,35 @@ pub fn reru_u30fb_rareru_mamani() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にまつわる
+// Pattern: にまつわる (related to, connected to, surrounding)
+// Structures: Noun (A) + にまつわる + (Adjective) + Noun (B)
 pub fn nimatsuwaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match にまつわる as a compound particle
+    #[derive(Debug)]
+    struct NimatsuwaruMatcher;
+    impl Matcher for NimatsuwaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "にまつわる"
+                && token.base_form == "にまつわる"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(NimatsuwaruMatcher)),
+        // Allow 0-2 tokens between にまつわる and the noun (for adjectives)
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 2,
+            stop_conditions: vec![],
+        },
+        super::noun_matcher(),
+    ]
 }
 
 // Pattern: たる
