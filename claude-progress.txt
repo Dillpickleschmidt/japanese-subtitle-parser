@@ -1,3 +1,101 @@
+## Session 593 - 2025-12-16
+
+### Session Summary - ったらない・といったらない Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (ったらない・といったらない - N1, priority 5)
+**Total tests**: 3788 passing (4 new tests, no regressions)
+**Progress**: One hundred and sixth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented ったらない・といったらない (too X for words / indescribably X)
+- Casual expression: "there are no words to express (A)" / "too (A) for words"
+- Handles Noun/Adj/Verb + (と)いったら + ない pattern
+- Optional と particle makes pattern flexible: といったらない or just いったらない
+- All core structure variants tested with realistic subtitle sentences
+- Note: Polite forms (ありません, ありゃしない) commented out for future implementation
+
+### ✓ Completed: ったらない・といったらない (too X for words / indescribably X)
+
+**Grammar Point**: ったらない・といったらない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+- Noun/Adj/Verb + (と)いったら + ない
+- Note: The "ったらない" in the pattern name refers to dropping the と particle, NOT a different verb
+
+**Meaning**:
+- "There are no words to express (A)" / "Too (A) for words"
+- Used when something is at such an extreme level that even (A) is insufficient to describe it
+- Emphasizes that the degree or intensity is beyond description
+- Can be used in both positive contexts (praise) or negative contexts (complaints)
+- Literally: と (quotation) + いう (to say) + たら (conditional) + ない (not exist)
+- Underlying meaning: "if one were to say (A), it's not (enough)" → "indescribably (A)"
+
+**Tokenization pattern**:
+- Preceding word (Noun, Adjective, or Verb in basic form)
+- と (助詞/格助詞/引用) - OPTIONAL
+- いっ (動詞/自立/五段・ワ行促音便/連用タ接続, base=いう)
+- たら (助動詞/特殊・タ/仮定形, base=た)
+- ない (形容詞/自立 or 助動詞/特殊・ナイ)
+
+**Implementation**:
+Created 4 custom matchers for precise POS checking:
+1. ToParticleMatcher - Matches と as 助詞/格助詞/引用 (optional)
+2. IttaMatcher - Matches いっ (連用タ接続 of いう)
+3. TaraMatcher - Matches たら (仮定形 of た auxiliary)
+4. NaiEndingMatcher - Matches ない (adjective or auxiliary)
+
+Pattern matcher sequence:
+- Any (preceding word) + Optional(と) + いっ + たら + ない
+- Captures full grammatical construction including the preceding noun/adj/verb
+
+**Tests Written: 4 tests (all passing)**
+1. test_toittaranai_noun - 達成感といったらない (12, 20) - noun + pattern
+2. test_toittaranai_i_adj - うるさいといったらない (9, 20) - い-adjective + pattern
+3. test_toittaranai_i_adj_sa - 優しさといったらない (6, 14) - い-adj with さ suffix
+4. test_toittaranai_na_adj - 心配といったらない (13, 22) - な-adjective + pattern
+
+**Character Ranges**: Pattern captures preceding word + (と) + いったら + ない:
+- 感といったらない (12, 20) - 8 characters (noun ending + pattern)
+- うるさいといったらない (9, 20) - 11 characters (full い-adj + pattern)
+- さといったらない (6, 14) - 8 characters (さ suffix + pattern)
+- 心配といったらない (13, 22) - 9 characters (な-adj + pattern)
+
+**Key Notes**:
+- Pattern includes the preceding word (full grammatical construction)
+- Optional と particle allows matching both といったらない and いったらない forms
+- The っ in "ったらない" is from dropping と, not from a different verb (っく)
+- い-adjectives often use さ suffix to emphasize the quality/amount being described
+- Polite variants (ありません, ありゃしない) not yet implemented but can be added later
+- Pattern creates duplicate matches at different confidence levels (with/without preceding word)
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented ttaranai_u30fb_toittaranai() with 4 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in ttaranai_toittaranai_tests module
+- feature_list.json - Updated ったらない・といったらない to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All core structure variants tested (noun, い-adj, い-adj+さ, な-adj)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3784 + 4 = 3788 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- てはかなわない - "Can't stand" pattern
+- ても差し支えない - "It's okay even if" pattern
+- とあれば - "If/when it comes to" pattern
+- というところ - "Approximately" pattern
+- といおうか - "How should I put it" pattern
+- どうにか - "Somehow or other" adverb
+- ときたら - "Speaking of/when it comes to" pattern
+
+================================================================================
+
 ## Session 592 - 2025-12-16
 
 ### Session Summary - といわず Complete ✓
