@@ -1,3 +1,96 @@
+## Session 495 - 2025-12-15
+
+### Session Summary - じゃあるまいし Pattern Complete ✓
+**Status**: Successfully implemented じゃあるまいし pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3293 passing, 1 ignored (added 6 new tests)
+**Progress**: Seventh N1 pattern completed!
+
+**Session highlights**:
+- Implemented じゃあるまいし (it's not like, you're not) - 6 tests covering all structure variants
+- Handles both じゃ and では variants with optional は particle
+- Tests cover all three main structures: Noun + じゃあるまいし, Verb + ん + じゃあるまいし, Verb + わけ + じゃあるまいし
+- Both standard forms (じゃあるまいし, ではあるまいし) work correctly
+- Pattern uses composite matcher (JaOrDeMatcher) to handle multiple particle forms
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: じゃあるまいし (it's not like, you're not)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Noun + じゃあるまいし / ではあるまいし
+- Verb + ん + じゃあるまいし / ではあるまいし
+- Verb + わけ + じゃあるまいし / ではあるまいし
+
+**Implementation details**:
+5 custom matchers for precise token matching:
+1. `JaOrDeMatcher` - じゃ (助詞/副助詞) OR で (助詞/格助詞 OR 助動詞)
+2. `HaTopicParticleMatcher` - Optional は (助詞/係助詞)
+3. `AruAuxiliaryMatcher` - ある (助動詞, 五段・ラ行アル)
+4. `MaiAuxiliaryMatcher` - まい (助動詞, 不変化型)
+5. `ShiConjunctionMatcher` - し (助詞/接続助詞)
+
+**Key implementation insight**:
+The pattern has two main variants that need to be handled:
+1. じゃあるまいし - じゃ is a single particle (助詞/副助詞)
+2. ではあるまいし - で + は (で can be 助詞/格助詞 or 助動詞, は is optional)
+
+The `JaOrDeMatcher` handles both cases by checking the surface form and appropriate POS tags.
+
+**Tokenization patterns**:
+1. **Noun + じゃあるまいし**: 子供 (名詞) + じゃ (助詞/副助詞) + ある + まい + し
+2. **Noun + ではあるまいし**: 子供 (名詞) + で (助詞/格助詞) + は (助詞/係助詞) + ある + まい + し
+3. **ん + じゃあるまいし**: ん (名詞/非自立) + じゃ (助詞/副助詞) + ある + まい + し
+4. **ん + ではあるまいし**: ん (名詞/非自立) + で (助動詞, base=だ) + は (助詞/係助詞) + ある + まい + し
+5. **わけ + じゃあるまいし**: わけ (名詞/非自立) + じゃ (助詞/副助詞) + ある + まい + し
+6. **わけ + ではあるまいし**: わけ (名詞/非自立) + で (助詞/格助詞) + は (助詞/係助詞) + ある + まい + し
+
+**Tests created**: 6 tests
+1. `test_jaarumaishi_noun_ja` - 子供じゃあるまいし (Noun + じゃ, range 2-11)
+2. `test_jaarumaishi_noun_deha` - 子供ではあるまいし (Noun + では, range 0-9)
+3. `test_jaarumaishi_verb_n_ja` - んじゃあるまいし (ん + じゃ, range 9-17)
+4. `test_jaarumaishi_verb_n_deha` - んではあるまいし (ん + では, range 8-16)
+5. `test_jaarumaishi_verb_wake_ja` - わけじゃあるまいし (わけ + じゃ, range 2-11)
+6. `test_jaarumaishi_verb_wake_deha` - わけではあるまいし (わけ + では, range 3-12)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented jaarumaishi() function (80 lines with 5 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 6 comprehensive tests
+- `feature_list.json` - Updated じゃあるまいし to complete status
+
+**Grammar meaning**:
+じゃあるまいし (or ではあるまいし) is an expression which can be translated as 'it is not (A), so it is not (B)', or 'you are not (A), so you can't (B)'. Often used for criticism of something acting in a way that is not befitting of it.
+
+まい is an auxiliary verb which highlights negative-volitional statements (similar to ないだろう). The combination of じゃ/では, the う-Verb ある 'to be', まい 'not as if', and し (particle highlighting reasons) has a literal meaning of 'it is not as if it's (A), so therefore (B)'.
+
+Common translations:
+- "it's not like (A)"
+- "you're not (A), so..."
+- "it's not as if (A)"
+
+Almost always followed by a negative or critical statement about what should or shouldn't be done given that (A) is not the case. Very formal expression, primarily used in written or formal contexts.
+
+**Pattern range note**:
+The pattern captures the full grammatical construction including:
+- The preceding element (Noun/ん/わけ)
+- The particle sequence (じゃ or では with optional は)
+- The auxiliary verbs (ある + まい)
+- The conjunction particle (し)
+
+Examples:
+- 子供じゃあるまいし (child is not, so...)
+- わけではあるまいし (it's not the case that...)
+
+---
+
 ## Session 493 - 2025-12-15
 
 ### Session Summary - Two More N1 Patterns Complete ✓
