@@ -1862,3 +1862,59 @@ mod tomonaku_tomonashini_tests {
         assert_pattern_range(&patterns, "ともなく・ともなしに", 4, 10); // 見るともなく
     }
 }
+
+// ============================================================================
+// 塗れ (まみれ) Tests
+// ============================================================================
+
+mod mamire_tests {
+    use super::*;
+
+    // Pattern: まみれ (completely covered in, smeared all over with)
+    // Data source: grammar_points_data.json["塗れ"]
+    // Testing: structure.standard[0] - "Noun + まみれ"
+    //
+    // Other structures to test:
+    //   - standard[1]: Noun + まみれ + の + Noun
+    //   - standard[2]: Noun + まみれ + になって + Phrase
+
+    #[test]
+    fn test_mamire_basic() {
+        let sentence = "服泥まみれじゃん！どうしたの？！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "塗れ");
+        assert_pattern_range(&patterns, "塗れ", 1, 5); // 泥まみれ
+    }
+
+    #[test]
+    fn test_mamire_blood() {
+        let sentence = "家に帰ったら犬が血まみれになっていたと思ったら、どうやらいちごジャムを食べて寝たみたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "塗れ");
+        assert_pattern_range(&patterns, "塗れ", 8, 12); // 血まみれ
+    }
+
+    #[test]
+    fn test_mamire_no_noun() {
+        let sentence = "そんな泥まみれの服を洗濯機に入れないで！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "塗れ");
+        assert_pattern_range(&patterns, "塗れ", 3, 7); // 泥まみれ
+    }
+
+    #[test]
+    fn test_mamire_debt() {
+        let sentence = "あんな借金まみれの男とは付き合わない方がいいよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "塗れ");
+        assert_pattern_range(&patterns, "塗れ", 3, 8); // 借金まみれ
+    }
+}

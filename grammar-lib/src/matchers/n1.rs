@@ -1735,9 +1735,50 @@ pub fn tomonaku_u30fb_tomonashini() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: 塗れ
+// Pattern: 塗れ (まみれ - completely covered in, smeared all over with)
+// Structures: Noun + まみれ
+//
+// Kagome tokenization varies:
+// 1. Compound forms: 泥まみれ (名詞/一般), 血まみれ (名詞/形容動詞語幹) - single token
+// 2. Split form: 借金 (名詞) + まみれ (名詞/接尾/一般) - two tokens
+//
+// We need TWO patterns to handle both cases:
+// - nure_compound: Nouns with base_form ending in まみれ (compound words)
+// - nure: Noun + まみれ suffix (split form)
+
+// Match compound まみれ words (泥まみれ, 血まみれ, etc.)
+pub fn nure_compound() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct MamireCompoundMatcher;
+    impl Matcher for MamireCompoundMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.base_form.ends_with("まみれ")
+                && token.base_form != "まみれ"
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(MamireCompoundMatcher))]
+}
+
+// Match split まみれ forms (Noun + まみれ suffix)
 pub fn nure() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match まみれ as a noun suffix (名詞/接尾/一般)
+    #[derive(Debug)]
+    struct MamireSuffixMatcher;
+    impl Matcher for MamireSuffixMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まみれ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![super::noun_matcher(), TokenMatcher::Custom(Arc::new(MamireSuffixMatcher))]
 }
 
 // Pattern: ようが～まいが

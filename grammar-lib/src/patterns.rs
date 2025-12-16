@@ -6594,6 +6594,14 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    NureCompound {
+        name: "塗れ",
+        matcher_fn: crate::matchers::n1::nure_compound,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     Nure {
         name: "塗れ",
         matcher_fn: crate::matchers::n1::nure,
