@@ -1,3 +1,61 @@
+## Session 505 - 2025-12-15
+
+### Session Summary - をおいてほかに〜ない Pattern Complete ✓
+**Status**: Successfully implemented をおいてほかに〜ない pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3360 passing, 1 ignored (added 4 new tests)
+**Progress**: Twenty-first N1 pattern completed!
+
+**Session highlights**:
+- Implemented をおいてほかに〜ない pattern (none other than, nothing else but)
+- Pattern uses the verb をおく (to set aside) in て-form + ほかに + ない
+- Handles both variations: に and には (with optional は particle)
+- Custom matchers for verb おく in 連用タ接続, て particle, ほか noun, and ない (助動詞/形容詞)
+- Uses wildcard matcher (0-10 tokens) to capture the full construction
+- All 4 tests passing with proper range assertions
+- No regressions in test suite
+
+### ✓ Completed: をおいてほかに〜ない (none other than, nothing else but)
+
+**Grammar Point**: をおいてほかに〜ない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+- Noun + をおいて + ほか + に + ... + ない
+- Noun + をおいて + ほか + には + ... + ない (with は)
+
+**Implementation**:
+- Matcher: `Noun + を + おく(連用タ接続) + て(接続助詞) + ほか + に + Optional(は) + Wildcard(0-10) + ない`
+- Custom matcher for おく verb in 連用タ接続 form (base_form="おく")
+- Custom matcher for て as conjunctive particle (接続助詞)
+- Custom matcher for ほか as noun
+- Custom matcher for ない (either 助動詞 or 形容詞)
+- Optional matcher for は particle (係助詞)
+- Wildcard allows 0-10 tokens between には and ない
+
+**Tests Written: 4 tests**
+1. `test_wooitehokani_nai_person` - 高橋教授をおいてほかにいない (person context, いない)
+2. `test_wooitehokani_nai_place` - 大阪をおいてほかにない (place context, ない as adjective)
+3. `test_wooitehokani_nai_bunpro` - 文プロをおいてほかにない (service context, ない as adjective)
+4. `test_wooitehokani_niwa_nai` - 先生をおいてほかにはいない (expert context, には variant)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures full construction:
+- `教授をおいてほかにいない` (11, 23) - noun + を + verb + て + ほか + に + verb + ない
+- `大阪をおいてほかにない` (8, 19) - noun + を + verb + て + ほか + に + ない
+- `プロをおいてほかにない` (15, 26) - noun + を + verb + て + ほか + に + ない
+- `先生をおいてほかにはいない` (11, 24) - noun + を + verb + て + ほか + には + verb + ない
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented wooitehokani_u301c_nai() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in wooitehokani_nai_tests module
+- `feature_list.json` - Updated をおいてほかに〜ない status to complete
+
+---
+
 ## Session 504 - 2025-12-15
 
 ### Session Summary - に先駆けて Pattern Complete ✓
