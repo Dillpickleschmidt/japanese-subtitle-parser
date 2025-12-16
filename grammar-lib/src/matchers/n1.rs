@@ -9492,8 +9492,62 @@ pub fn nihaoyobanai_u2461() -> Vec<TokenMatcher> {
 }
 
 // Pattern: とは言うものの
+// Pattern: とは言うものの (although it is said that)
+// Structures: Verb/Adj/Noun + (だ) + と + (は) + いう + ものの
+// Note: は is optional
 pub fn tohaiumonono() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "引用")
+        }
+    }
+
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+        }
+    }
+
+    #[derive(Debug)]
+    struct IuMatcher;
+    impl Matcher for IuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いう"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.get(1).is_some_and(|p| p == "自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct MononoMatcher;
+    impl Matcher for MononoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ものの"
+                && token.base_form == "ものの"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaMatcher)))),
+        TokenMatcher::Custom(Arc::new(IuMatcher)),
+        TokenMatcher::Custom(Arc::new(MononoMatcher)),
+    ]
 }
 
 // Pattern: が早いか (as soon as, no sooner than)

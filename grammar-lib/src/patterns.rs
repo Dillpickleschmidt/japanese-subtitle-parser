@@ -7773,7 +7773,7 @@ declare_patterns! {
     Tohaiumonono {
         name: "とは言うものの",
         matcher_fn: crate::matchers::n1::tohaiumonono,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
