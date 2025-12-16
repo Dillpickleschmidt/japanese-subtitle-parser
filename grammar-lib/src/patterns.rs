@@ -7629,7 +7629,7 @@ declare_patterns! {
     Nishitatokorode {
         name: "にしたところで",
         matcher_fn: crate::matchers::n1::nishitatokorode,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

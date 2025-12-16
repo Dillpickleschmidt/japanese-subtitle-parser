@@ -8329,9 +8329,83 @@ pub fn biru() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にしたところで
+// Pattern: にしたところで (even if / even though)
+// Structures: Noun + にしたところで / としたところで
+//            Noun + にしたって / としたって (casual)
 pub fn nishitatokorode() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に or と (case-marking particle)
+    #[derive(Debug)]
+    struct NiToMatcher;
+    impl super::Matcher for NiToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "に" || token.surface == "と")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match し (from する, 連用形)
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl super::Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match た (auxiliary, base=た)
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl super::Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+        }
+    }
+
+    // Match ところで or たって (particle)
+    #[derive(Debug)]
+    struct TokorodeTatteMatcher;
+    impl super::Matcher for TokorodeTatteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // ところで: ところ (名詞/非自立/副詞可能) followed by で (助詞/格助詞)
+            // たって: って (助詞/格助詞/連語)
+            (token.surface == "って"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞"))
+                || (token.surface == "ところ"
+                    && token.pos.first().is_some_and(|p| p == "名詞")
+                    && token.pos.get(1).is_some_and(|p| p == "非自立"))
+        }
+    }
+
+    // Match で (particle, for ところで)
+    #[derive(Debug)]
+    struct DeMatcher;
+    impl super::Matcher for DeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "で"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding noun/verb/adjective
+        TokenMatcher::Custom(Arc::new(NiToMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiMatcher)),
+        TokenMatcher::Custom(Arc::new(TaMatcher)),
+        TokenMatcher::Custom(Arc::new(TokorodeTatteMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            DeMatcher,
+        )))), // で is only needed for ところで
+    ]
 }
 
 // Pattern: ～ばこそ

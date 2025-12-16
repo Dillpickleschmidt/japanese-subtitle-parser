@@ -9820,3 +9820,79 @@ mod biru_tests {
         assert_pattern_range(&patterns, "びる", 4, 7); // 田舎び (verb only, て is separate)
     }
 }
+
+// ============================================================================
+// にしたところで Tests
+// ============================================================================
+
+mod nishitatokorode_tests {
+    use super::*;
+
+    // Pattern: にしたところで (even if / even though)
+    // Data source: grammar_points_data.json["にしたところで"]
+    // Testing structure variants:
+    //   - standard[0]: Noun + にしたところで
+    //   - standard[2]: Noun + にしたって (less formal)
+    //   - standard[3]: としたところで (alternative with と)
+    //   - standard[4]: としたって (alternative casual with と)
+
+    #[test]
+    fn test_nishitatokorode_noun_basic() {
+        // Testing: Noun + にしたところで
+        // Based on: "先輩の青木さんにしたところで、上達しなければいけない箇所はある。"
+        let sentence = "先輩の青木さんにしたところで、上達しなければいけない箇所はある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたところで");
+        assert_pattern_range(&patterns, "にしたところで", 5, 14); // さんにしたところで
+    }
+
+    #[test]
+    fn test_nishitatokorode_laptop() {
+        // Testing: Noun + にしたところで
+        // Based on: "ノートパソコンにしたところで、Ｗｉ－Ｆｉがないと仕事ができない。"
+        let sentence = "ノートパソコンにしたところで、Ｗｉ－Ｆｉがないと仕事ができない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたところで");
+        assert_pattern_range(&patterns, "にしたところで", 3, 14); // パソコンにしたところで
+    }
+
+    #[test]
+    fn test_nishitatte_casual() {
+        // Testing: Noun + にしたって (less formal)
+        // Based on: "私にしたってそんなことはしたくないけど、上司に言われたからにはするしかない。"
+        let sentence = "私にしたってそんなことはしたくないけど、上司に言われたからにはするしかない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたところで");
+        assert_pattern_range(&patterns, "にしたところで", 0, 6); // 私にしたって
+    }
+
+    #[test]
+    fn test_toshitatokorode_verb_phrase() {
+        // Testing: Verb phrase + としたところで
+        // Based on: "いくら急いだとしたところで、間に合うわけがない。"
+        let sentence = "いくら急いだとしたところで、間に合うわけがない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたところで");
+        assert_pattern_range(&patterns, "にしたところで", 5, 13); // だとしたところで
+    }
+
+    #[test]
+    fn test_toshitatte_casual() {
+        // Testing: Verb phrase + としたって (less formal)
+        // Based on: "謝ったとしたって、社長は彼のことを許さないだろう。"
+        let sentence = "謝ったとしたって、社長は彼のことを許さないだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にしたところで");
+        assert_pattern_range(&patterns, "にしたところで", 2, 8); // たとしたって
+    }
+}
