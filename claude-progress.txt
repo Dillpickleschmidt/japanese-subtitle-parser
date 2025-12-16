@@ -1,18 +1,18 @@
 ## Session 579 - 2025-12-16
 
-### Session Summary - はさておき・はさておいて Complete ✓
-**Status**: Implemented 1 N1 pattern successfully
-**Patterns completed**: 1 (はさておき・はさておいて - N1, priority 5)
-**Total tests**: 3710 passing (5 new tests, no regressions)
-**Progress**: Ninety-fifth N1 pattern completed!
+### Session Summary - はさておき・はさておいて + 折には Complete ✓
+**Status**: Implemented 2 N1 patterns successfully
+**Patterns completed**: 2 (はさておき・はさておいて, 折には - both N1, priority 5)
+**Total tests**: 3715 passing (10 new tests, no regressions)
+**Progress**: Ninety-fifth and ninety-sixth N1 patterns completed!
 
 **Session highlights**:
 - Implemented はさておき・はさておいて (leaving aside, apart from)
-- Formal pattern for moving away from topic (A) to discuss something more important (B)
-- Handles both はさておき (連用形) and はさておいて (連用タ接続 + て) forms
-- Works with nouns (感想はさておき) and phrases (かどうかはさておき)
+- Implemented 折には (on occasions when, when the chance comes up)
+- はさておき: Formal pattern for moving away from topic (A) to discuss something more important (B)
+- 折には: Formal alternative to 時に for indicating opportune occasions
+- Both patterns handle multiple grammatical forms (verb, adjective, noun)
 - All structure variants tested with realistic subtitle sentences
-- Pattern correctly captures は + さておく construction
 
 ### ✓ Completed: はさておき・はさておいて (leaving aside, apart from)
 
@@ -82,7 +82,6 @@ Pattern matcher sequence:
 ✓ Clean git history
 
 **Next Priorities** (N1 patterns with priority 5, needs_implementation):
-- 折には - "On occasions when" pattern
 - とばかり（に） - "As if to say" pattern
 - わ〜わ - Repeated particle pattern for contrast
 - なりとも - "Even if just" pattern (classical)
@@ -90,6 +89,74 @@ Pattern matcher sequence:
 - を兼ねて - "Serving also as" pattern
 - に足りない - "Not worth" pattern
 - べからず - Classical prohibition pattern
+
+================================================================================
+
+### ✓ Completed: 折には (on occasions when, when the chance comes up)
+
+**Grammar Point**: 折には
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb + おり/折 + に + (は) (いらっしゃるおりには, したおりに)
+2. い-Adj + 折 + に (忙しい折に)
+3. な-Adj + な + 折 + に (暇な折に)
+4. Noun + の + おり/折 + に (卒業のおりに)
+
+**Meaning**:
+- "On the occasion of (A)" / "When the chance of (A) comes up"
+- Formal, positive alternative for 時に
+- 折 means "fold" or "pleat" - used adverbially with に to indicate an opportune time
+- Primarily used for things that happen "from time to time" rather than one-off events
+- Can occasionally appear with additional は (おりには)
+
+**Tokenization patterns**:
+All variants:
+- おり or 折 (名詞/一般, base=おり or 折)
+- に (助詞/格助詞)
+- (optional) は (助詞/係助詞)
+
+Note: After verbs, adjectives, or nouns, おり/折 is always tokenized as a noun.
+
+**Implementation**:
+Created custom matchers:
+1. OriMatcher - Matches おり or 折 as noun (名詞/一般)
+2. NiMatcher - Matches に as 助詞/格助詞
+3. HaMatcher - Optional は as 助詞/係助詞
+
+Pattern matcher sequence:
+- おり/折 + に + (optional は)
+- Works after verbs, adjectives, and nouns (with の)
+
+**Tests Written: 5 tests (all passing)**
+1. test_oriniha_verb - いらっしゃるおりには (13, 17)
+2. test_orini_verb_past - したおりに (7, 10)
+3. test_orini_noun - 卒業のおりに (3, 6)
+4. test_orini_i_adj - 忙しい折に (4, 6)
+5. test_orini_na_adj - 暇な折に (3, 5)
+
+**Character Ranges**: Pattern captures おり/折 + に + (optional は):
+- いらっしゃるおりには (13, 17) - 4 characters (おりには)
+- したおりに (7, 10) - 3 characters (おりに)
+- 卒業のおりに (3, 6) - 3 characters (おりに)
+- 忙しい折に (4, 6) - 2 characters (折に)
+- 暇な折に (3, 5) - 2 characters (折に)
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented oriniha() with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in oriniha_tests module
+- feature_list.json - Updated 折には to complete status
+
+**Quality Checks**:
+✓ All structure variants tested (verb, adjective, noun)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed code
+✓ All existing tests still pass (3715 total, +5 new)
+✓ Clean git history
 
 ================================================================================
 
