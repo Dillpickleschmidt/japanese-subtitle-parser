@@ -9264,3 +9264,64 @@ mod makuru_tests {
         assert_pattern_range(&patterns, "まくる_compound", 8, 14); // 歌いまくった
     }
 }
+
+// ============================================================================
+// どうにか Tests
+// ============================================================================
+
+mod dounika_tests {
+    use super::*;
+
+    // Pattern: どうにか (somehow, one way or another, barely)
+    // Data source: grammar_points_data.json["どうにか"]
+    // Meaning: Something happens "somehow or other", often with effort or against odds
+    // Structure: どうにか + Phrase
+
+    #[test]
+    fn test_dounika_persuade() {
+        // Testing: structure.standard[0] - "どうにか + Phrase"
+        // Example from grammar_points_data.json: "どうにか説得することができた"
+        let sentence = "条件に不安はあったみたいだけど、どうにか説得することができた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうにか");
+        assert_pattern_range(&patterns, "どうにか", 16, 20); // どうにか
+    }
+
+    #[test]
+    fn test_dounika_solve() {
+        // Testing: structure.standard[0] - "どうにか + Phrase"
+        // Example from grammar_points_data.json: "どうにか明日までに解決しなくてはならない"
+        let sentence = "どうにか明日までに解決しなくてはならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうにか");
+        assert_pattern_range(&patterns, "どうにか", 0, 4); // どうにか
+    }
+
+    #[test]
+    fn test_dounika_naru() {
+        // Testing: どうにかなる pattern (things will work out on their own)
+        // Example from grammar_points_data.json: "時間が経てばどうにかなるよ"
+        let sentence = "そんな落ち込むなって、時間が経てばどうにかなるよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうにか");
+        assert_pattern_range(&patterns, "どうにか", 17, 21); // どうにか
+    }
+
+    #[test]
+    fn test_dounika_suru() {
+        // Testing: どうにかする pattern (will somehow manage to do)
+        // Example from grammar_points_data.json: "どうにかする"
+        let sentence = "こっちはこっちでどうにかするから、今は家族との時間を大切にしろ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "どうにか");
+        assert_pattern_range(&patterns, "どうにか", 8, 12); // どうにか
+    }
+}

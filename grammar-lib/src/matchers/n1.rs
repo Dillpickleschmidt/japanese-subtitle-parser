@@ -7832,8 +7832,23 @@ pub fn wa_u301c_wa_uff08_de_uff09() -> Vec<TokenMatcher> {
 }
 
 // Pattern: どうにか
+// Pattern: どうにか (somehow, one way or another, barely)
+// Structure: どうにか + Phrase
 pub fn dounika() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match どうにか as 副詞/一般
+    #[derive(Debug)]
+    struct DounikaMatcher;
+    impl Matcher for DounikaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "どうにか"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(DounikaMatcher))]
 }
 
 // Pattern: や否や
