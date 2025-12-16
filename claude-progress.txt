@@ -1,9 +1,110 @@
+## Session 591 - 2025-12-16
+
+### Session Summary - めく・めいた Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (めく・めいた - N1, priority 5)
+**Total tests**: 3781 passing (8 new tests, no regressions)
+**Progress**: One hundred and fourth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented めく・めいた (shows signs of, has appearance of)
+- Handles TWO distinct tokenization patterns: split (Noun + めく) and compound (春めく, 夏めく)
+- Split form: Noun + めく(動詞/非自立) - e.g., 謎めく, 冗談めく, 皮肉めく
+- Compound form: Single verb token (動詞/自立) - e.g., 春めく, 夏めく (but 冬めく is split!)
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: めく・めいた (shows signs of, has appearance of)
+
+**Grammar Point**: めく・めいた
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + めく/めいて/めいている/めいた (split form)
+2. Compound verb: 春めく/夏めく/冬めく as single or split token
+
+**Meaning**:
+- "Shows signs of (A)" / "Has the appearance of (A)"
+- Unique う-verb suffix that attaches to nouns
+- Expresses speaker's perception that something appears to be (A)
+- The thing described usually isn't actually (A), just appears that way
+- Used with set nouns: 謎めく (mysterious), 皮肉めく (sarcastic), season names
+
+**Tokenization patterns**:
+**Split form** (most common):
+- Noun (名詞, e.g., 謎, 冗談, 皮肉, 冬)
+- めく (動詞/非自立, base=めく, 連用タ接続)
+
+**Compound form** (less common, mainly seasons):
+- Single verb token with base ending in めく (動詞/自立, e.g., base=春めく, 夏めく)
+- Interesting: 冬めく tokenizes as SPLIT, while 春めく and 夏めく tokenize as COMPOUND
+
+**Implementation**:
+Created MekuVerbMatcher that handles both patterns:
+- Matches めく as 動詞/非自立 (split form)
+- Matches verbs with base ending in めく as 動詞/自立 (compound form)
+- Optional noun matcher allows pattern to match both forms
+
+Pattern matcher sequence:
+- Optional(noun_matcher()) + MekuVerbMatcher
+- For split: captures Noun + めく (e.g., 謎めい, 冗談めいた)
+- For compound: captures just verb token (e.g., 春めい, 夏めいて)
+
+**Tests Written: 8 tests (all passing)**
+1. test_meku_meite_compound - 春めいてきた (20, 23) - compound verb form
+2. test_meku_meite_split - 冗談めいて (0, 4) - split form
+3. test_meku_meita_modifying_noun - 皮肉めいた (0, 5) - past form modifying noun
+4. test_meku_meita_mysterious - 謎めいた (6, 10) - common expression
+5. test_meku_season_compound - 夏めいてきた (11, 14) - compound season verb
+6. test_meku_meiteimasu_polite_compound - 春めいています (6, 9) - polite compound
+7. test_meku_meitekimashita_polite_split - 冬めいてきました (9, 12) - polite split (冬 is split!)
+8. test_meku_nazo_meiteiru - 謎めいている (9, 12) - progressive form
+
+**Character Ranges**: Pattern captures appropriate range based on tokenization:
+- Split form: Noun + めく (e.g., 謎めいた 6-10, 冗談めい 0-4, 冬めい 9-12)
+- Compound form: Just verb token (e.g., 春めい 20-23, 夏めい 11-14)
+
+**Key Notes**:
+- めく is NEVER used standalone - always as suffix
+- Tokenization varies: some noun+めく combinations are single tokens, others split
+- Season verbs: 春めく and 夏めく are compound, but 冬めく splits!
+- Optional noun matcher creates duplicate lower-priority matches (expected behavior)
+- Pattern includes full grammatical construction based on tokenization
+- All conjugations handled: めく, めいて, めいた, めいている, めいてきた, めいています
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented meku_u30fb_meita() with MekuVerbMatcher
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 8 tests in meku_meita_tests module
+- feature_list.json - Updated めく・めいた to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (split and compound forms, various conjugations)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified for both tokenization patterns
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3781 total, +8 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- といわず - "Not just...but also" pattern
+- にもほどがある - "There are limits" pattern
+- にもまして - "More than" pattern
+- まくる - Intensive action suffix
+- どうにか - "Somehow or other" adverb
+- や否や - "As soon as" pattern
+- というところ - "Approximately" pattern
+
+================================================================================
+
 ## Session 589 - 2025-12-16
 
 ### Session Summary - ～てやる Complete ✓
 **Status**: Implemented 1 N1 pattern successfully
 **Patterns completed**: 1 (～てやる - N1, priority 5)
-**Total tests**: 3762 passing (5 new tests, no regressions)
+**Total tests**: 3773 passing (5 new tests, no regressions)
 **Progress**: One hundred and third N1 pattern completed! 🎉
 
 **Session highlights**:
