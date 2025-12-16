@@ -1,3 +1,101 @@
+## Session 558 - 2025-12-16
+
+### Session Summary - にかかっている Complete ✓
+**Status**: Implemented にかかっている pattern successfully
+**Patterns completed**: 1 (にかかっている - N1, priority 5)
+**Total tests**: 3602 passing (4 new tests, no regressions)
+**Progress**: Seventy-first N1 pattern completed!
+
+**Session highlights**:
+- Implemented にかかっている (depends on)
+- Structure: に + かかる(te-form) + て + いる/います
+- Handles both standard (いる) and polite (います) forms
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include full grammatical construction (にかかっている)
+
+### ✓ Completed: にかかっている (depends on)
+
+**Grammar Point**: にかかっている
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + に + かかっている
+2. Phrase + かどうか + に + かかっている
+3. WH-Word + Phrase + か + に + かかっている
+4. Polite forms: Same structures with にかかっています
+
+**Meaning**:
+- "To depend on (A)" / "To rest on (A)"
+- Shows that something is contingent upon or determined by something else
+- Literally: かかる = "to hang on", so "hanging on" = "depending on"
+- May optionally include 如何（いかん）before に for emphasis
+
+**Tokenization**:
+- に: 助詞/格助詞/一般 (case particle)
+- かかっ: 動詞/自立, base=かかる, 五段・ラ行, 連用タ接続
+- て: 助詞/接続助詞
+- いる: 動詞/非自立, base=いる, 一段 (auxiliary verb)
+- ます (polite): 助動詞, base=ます, 特殊・マス
+
+**Implementation**:
+- Pattern: に + かかっ + て + いる
+- Three custom matchers:
+  1. NiParticleMatcher: Matches に (助詞/格助詞)
+  2. KakaruVerbMatcher: Matches かかる in 連用タ接続 form
+  3. TeParticleMatcher: Matches て (助詞/接続助詞)
+- Plus specific_verb("いる") for the auxiliary
+- Priority 5 for N1 construction
+- Handles both いる and います naturally (ます attaches to いる)
+
+**Tests Written: 4 tests (all passing)**
+1. `test_nikakatteiru_noun_basic` - 若者にかかっている (8, 15) - depends on young people
+2. `test_nikakatteiru_kadouka` - 努力にかかっている (25, 32) - depends on effort
+3. `test_nikakatteiru_question_word` - かにかかっている (23, 30) - depends on whether
+4. `test_nikakatteiru_polite` - にかかっています (26, 34) - depends on (polite)
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures the full construction:
+- にかかっている (8, 15) - 7 characters
+- にかかっている (25, 32) - 7 characters
+- にかかっている (23, 30) - 7 characters
+- にかかっています (26, 34) - 8 characters
+
+**Key Notes**:
+- Pattern starts from the に particle (case marker)
+- The に indicates what something depends on
+- かかる is the verb "to hang/depend"
+- Standard continuous form (かかっている) most common
+- Polite form (かかっています) handled automatically
+- Often preceded by かどうか or question word + か
+- Formal/written register - common in formal explanations
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented nikakatteiru() with 3 custom matchers
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in nikakatteiru_tests module
+- `feature_list.json` - Updated にかかっている to complete status
+
+**Quality Checks**:
+✓ All structure variants tested (noun, かどうか, か forms, polite)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3602 total, +4 new)
+
+**Next Priorities** (N1 patterns without tests, Priority 5):
+- たら〜で - Conditional construction
+- ってば・ったら - Emphasis pattern
+- ずとも - "Even without" pattern
+- とあって - "Because of/due to" pattern
+- でもなんでもない - "Not at all" pattern
+
+================================================================================
+
+
+================================================================================
+
 ## Session 556 - 2025-12-16
 
 ### Session Summary - なくして(は) Complete ✓
