@@ -1,3 +1,105 @@
+## Session 588 - 2025-12-16
+
+### Session Summary - んばかりに Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (んばかりに - N1, priority 5)
+**Total tests**: 3757 passing (5 new tests, no regressions)
+**Progress**: One hundred and second N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented んばかりに (as if about to, seeming that it will)
+- Handles two tokenization variants: Verb[未然形] + ん(助動詞) and Verb[体言接続特殊]
+- Supports both に and の particle endings
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: んばかりに (as if about to, seeming that it will)
+
+**Grammar Point**: んばかりに
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb[未然形] + ん + ばかり + に (言わんばかりに, 溢れんばかりの)
+2. Verb[体言接続特殊] + ばかり + に/の (崩れんばかりに, 張り裂けんばかりの)
+
+**Meaning**:
+- "As if about to (A)" / "Seeming that it will (A)"
+- Combination of ん (abbreviation of む, classical auxiliary verb showing intent/will) + ばかり (adverbial particle "basically exactly as described")
+- Indicates that volitional form of (A) appears to be about to happen
+- Similar to とばかりに but emphasizes imminent action or state
+- Can be followed by に (modifying verb/action) or の (modifying noun)
+
+**Tokenization patterns**:
+**Pattern 1 - Verb[未然形] + ん auxiliary**:
+- Verb (動詞/自立/未然形, e.g., 言わ, 溢れ)
+- ん (助動詞/不変化型/基本形)
+- ばかり (助詞/副助詞)
+- に or の (助詞)
+
+**Pattern 2 - Verb[体言接続特殊]**:
+- Verb (動詞/体言接続特殊, e.g., 崩れん, 張り裂けん)
+- ばかり (助詞/副助詞)
+- に or の (助詞)
+
+**Implementation**:
+Created custom matchers for flexible pattern matching:
+1. VerbMizenOrTaigenMatcher - Matches verbs in 未然形 or 体言接続特殊 form
+2. NAuxMatcher - Matches ん as auxiliary verb (optional for 体言接続特殊 case)
+3. BakariMatcher - Matches ばかり as 助詞/副助詞
+4. NiOrNoMatcher - Matches に or の particle (optional)
+
+Pattern matcher sequence:
+- Verb[未然形 or 体言接続特殊] + (optional ん) + ばかり + (optional に/の)
+- Captures full grammatical construction including the verb
+
+**Tests Written: 5 tests (all passing)**
+1. test_nbakarini_kuzure - 崩れんばかりに (12, 19) - as if about to collapse
+2. test_nbakarini_iwa - 言わんばかりに (13, 20) - as if to say
+3. test_nbakarini_afure - 溢れんばかりの (10, 17) - as if about to overflow (with の)
+4. test_nbakarini_harisake - 張り裂けんばかりの (4, 13) - as if about to tear apart (with の)
+5. test_nbakarini_tobikaka - 飛びかかんばかりに (2, 11) - as if about to jump at
+
+**Character Ranges**: Pattern captures Verb + ん + ばかり + に/の:
+- 崩れんばかりに (12, 19) - 7 characters (体言接続特殊 variant)
+- 言わんばかりに (13, 20) - 7 characters (未然形 + ん variant)
+- 溢れんばかりの (10, 17) - 7 characters (with の)
+- 張り裂けんばかりの (4, 13) - 9 characters (with の)
+- 飛びかかんばかりに (2, 11) - 9 characters
+
+**Key Notes**:
+- Two distinct tokenization patterns handled by same matcher
+- Pattern includes the verb before ん (full grammatical construction)
+- Both に and の endings supported (に for verb modification, の for noun modification)
+- Classical grammar element ん (from む) expressing intent/strong will
+- All test sentences from grammar_points_data.json examples
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nbakarini() with 4 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in nbakarini_tests module
+- feature_list.json - Updated んばかりに to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (both tokenization patterns, に and の endings)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3757 total, +5 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- に則って・に則り - "In accordance with" pattern
+- はおろか - "Let alone" pattern
+- めく・めいた - "Shows signs of" pattern
+- といわず - "Not just...but also" pattern
+- にもほどがある - "There are limits" pattern
+- にもまして - "More than" pattern
+- まくる - Intensive action suffix
+
+================================================================================
+
 ## Session 587 - 2025-12-16
 
 ### Session Summary - べからず Complete ✓
