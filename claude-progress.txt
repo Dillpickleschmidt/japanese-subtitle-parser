@@ -1,3 +1,85 @@
+## Session 497 - 2025-12-15
+
+### Session Summary - One N1 Pattern Complete ✓
+**Status**: Successfully implemented なり pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3311 passing, 1 ignored (added 4 new tests)
+**Progress**: Eleventh N1 pattern completed!
+
+**Session highlights**:
+- Implemented なり (as soon as, the moment) - 4 tests covering the structure variant
+- Pattern handles Verb[る] + なり (dictionary form + conjunction particle)
+- Uses DictionaryFormVerbMatcher to match verbs in 基本形
+- NariParticleMatcher ensures なり is 助詞/接続助詞
+- All tests use realistic, subtitle-quality sentences from actual grammar examples
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: なり (as soon as, the moment)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Verb[る] + なり
+
+**Implementation details**:
+2 custom matchers for precise token matching:
+1. `DictionaryFormVerbMatcher` - Matches verbs in 基本形 (dictionary form)
+2. `NariParticleMatcher` - Matches なり (助詞/接続助詞)
+
+**Key implementation insight**:
+The pattern is straightforward: a verb in dictionary form followed by the conjunction particle なり. The matcher checks both POS tag (動詞) and conjugation form (基本形) to ensure correct detection.
+
+**Tokenization patterns**:
+- **Verb + なり**: Verb (動詞/自立, 基本形) + なり (助詞/接続助詞)
+
+Examples from tests:
+1. 上がる (動詞, 五段・ラ行, 基本形) + なり
+2. 入る (動詞, 五段・ラ行, 基本形) + なり
+3. 座る (動詞, 五段・ラ行, 基本形) + なり
+4. 起きる (動詞, 一段, 基本形) + なり
+
+**Tests created**: 4 tests
+1. `test_nari_enter_house` - 上がるなり (range 5-10)
+2. `test_nari_enter_room` - 入るなり (range 8-12)
+3. `test_nari_sit_down` - 座るなり (range 4-8)
+4. `test_nari_wake_up` - 起きるなり (range 1-6)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented nari() function (33 lines with 2 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 comprehensive tests in nari_tests module
+- `feature_list.json` - Updated なり to complete status
+
+**Grammar meaning**:
+なり is an old-fashioned particle in Japanese that has several different uses. One of those uses is to convey the meaning of 'as soon as (A), (B)', or 'the moment of (A), (B)'. This structure will follow the dictionary form of verbs and is classified as a conjunction particle.
+
+(B) is usually something that is surprising, and brought about by a strong sense of will or emotion. Additionally, なり is almost always used in relation to other people, rather than oneself.
+
+Common translations:
+- "as soon as (A), (B)"
+- "the moment of (A), (B)"
+
+**Fun fact**:
+Despite appearing to be a conjugation of the う-Verb なる 'to become' at first glance, なり is actually one of the readings of 形（なり）, meaning 'shape', and refers to the overall situation of (A) in a similar way to ところ.
+
+**Pattern range note**:
+The pattern captures the full grammatical construction:
+- Verb + なり: Full phrase from verb to なり
+
+Examples:
+- 上がるなり (as soon as entering)
+- 入るなり (as soon as coming in)
+- 座るなり (as soon as sitting down)
+- 起きるなり (as soon as waking up)
+
+---
+
 ## Session 496 - 2025-12-15
 
 ### Session Summary - Two N1 Patterns Complete ✓
