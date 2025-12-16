@@ -11287,13 +11287,13 @@
   {
     "pattern_name": "と思いきや",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "と思（おも）いきや is an expression used in Japanese for indicating that something is not as one had thought, and will often b... [5 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

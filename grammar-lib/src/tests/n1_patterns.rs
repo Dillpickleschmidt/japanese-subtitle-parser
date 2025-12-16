@@ -5174,3 +5174,91 @@ mod nitodomarazu_tests {
         assert_pattern_selected(&patterns, "にとどまらず");
     }
 }
+
+// ============================================================================
+// と思いきや Tests
+// ============================================================================
+
+mod toomoikiya_tests {
+    use super::*;
+
+    // Pattern: と思いきや (despite having thought/when I thought)
+    // Data source: grammar_points_data.json["と思いきや"]
+    // Testing all structure variants from standard array:
+    //   - standard[0]: Verb + (か) + と思いきや
+    //   - standard[1]: い-Adjective + (か) + と思いきや
+    //   - standard[2]: な-Adjective + (か(だ)) + と思いきや
+    //   - standard[3]: Noun + (か(だ)) + と思いきや
+
+    #[test]
+    fn test_toomoikiya_verb_without_ka() {
+        // From grammar data: 残業すると思いきや
+        let sentence = "今日も残業するとおもいきや、４時になったと同時に上司が帰っていいと言った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と思いきや");
+        assert_pattern_range(&patterns, "と思いきや", 3, 13); // 残業するとおもいきや
+        assert_pattern_selected(&patterns, "と思いきや");
+    }
+
+    #[test]
+    fn test_toomoikiya_verb_with_ka() {
+        // Testing variant with optional か particle
+        let sentence = "雨が降るかと思いきや、すぐに晴れてしまった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と思いきや");
+        assert_pattern_range(&patterns, "と思いきや", 2, 10); // 降るかと思いきや
+        assert_pattern_selected(&patterns, "と思いきや");
+    }
+
+    #[test]
+    fn test_toomoikiya_i_adjective() {
+        // From grammar data: 優しいと思いきや
+        let sentence = "木村くんのピアノの先生は優しいとおもいきや、見学してみたらめちゃくちゃ怖かった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と思いきや");
+        assert_pattern_range(&patterns, "と思いきや", 12, 21); // 優しいとおもいきや
+        assert_pattern_selected(&patterns, "と思いきや");
+    }
+
+    #[test]
+    fn test_toomoikiya_na_adjective() {
+        // Testing な-adjective + か + と思いきや
+        let sentence = "建てるのは簡単かとおもいきや、色々な調査が必要で思ったより面倒だった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と思いきや");
+        assert_pattern_range(&patterns, "と思いきや", 5, 14); // 簡単かとおもいきや
+        assert_pattern_selected(&patterns, "と思いきや");
+    }
+
+    #[test]
+    fn test_toomoikiya_noun_with_da() {
+        // From grammar data: 姉妹だと思いきや
+        let sentence = "彼女たちは姉妹だとおもいきや、親子だった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と思いきや");
+        assert_pattern_range(&patterns, "と思いきや", 7, 14); // だとおもいきや
+        assert_pattern_selected(&patterns, "と思いきや");
+    }
+
+    #[test]
+    fn test_toomoikiya_noun_with_ka_da() {
+        // Testing noun + か(だ) + と思いきや variant
+        let sentence = "彼は学生かだと思いきや、実は先生だった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と思いきや");
+        assert_pattern_range(&patterns, "と思いきや", 5, 11); // だと思いきや
+        assert_pattern_selected(&patterns, "と思いきや");
+    }
+}

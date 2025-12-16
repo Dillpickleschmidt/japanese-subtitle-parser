@@ -3913,9 +3913,89 @@ pub fn nitodomarazu() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: と思いきや
+// Pattern: と思いきや (despite having thought, when I thought)
+// Structures: Verb/Adj/Noun + (か) + と + 思い + きや
 pub fn toomoikiya() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::concat;
+
+    // Match か particle (optional)
+    #[derive(Debug)]
+    struct KaParticleMatcher;
+    impl Matcher for KaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match と particle (格助詞/引用)
+    #[derive(Debug)]
+    struct ToQuotativeMatcher;
+    impl Matcher for ToQuotativeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match 思う/おもう verb in 連用形
+    #[derive(Debug)]
+    struct OmouRenyoukeiMatcher;
+    impl Matcher for OmouRenyoukeiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "思う" || token.base_form == "おもう")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match き auxiliary verb (classical past tense)
+    #[derive(Debug)]
+    struct KiAuxiliaryMatcher;
+    impl Matcher for KiAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "き"
+                && token.base_form == "き"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match や particle (接続助詞)
+    #[derive(Debug)]
+    struct YaConjunctiveMatcher;
+    impl Matcher for YaConjunctiveMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "や"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matches any word (verb, noun, adjective) or だ auxiliary
+    #[derive(Debug)]
+    struct PredicateMatcher;
+    impl Matcher for PredicateMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞");
+            let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
+            let is_adj = token.pos.first().is_some_and(|pos| pos == "形容詞");
+            let is_da = token.surface == "だ" && token.pos.first().is_some_and(|pos| pos == "助動詞");
+
+            is_verb || is_noun || is_adj || is_da
+        }
+    }
+
+    // Pattern: [Verb/Noun/Adj/だ] + (optional か) + と + 思い + き + や
+    concat(vec![
+        vec![TokenMatcher::Custom(Arc::new(PredicateMatcher))],
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KaParticleMatcher))))],
+        vec![TokenMatcher::Custom(Arc::new(ToQuotativeMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(OmouRenyoukeiMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(KiAuxiliaryMatcher))],
+        vec![TokenMatcher::Custom(Arc::new(YaConjunctiveMatcher))],
+    ])
 }
 
 // Pattern: どうにも
