@@ -4250,3 +4250,63 @@ mod tarasaigo_tests {
         assert_pattern_range(&patterns, "たら最後", 7, 13); // 始めたら最後
     }
 }
+
+#[cfg(test)]
+mod ikanaru_tests {
+    use super::*;
+
+    // Pattern: いかなる (no matter what, any kind of)
+    // Data source: grammar_points_data.json["いかなる"]
+    // Structures:
+    //   - standard[0]: いかなる + Noun
+    //   - Variant: いかな + Noun (less common)
+
+    #[test]
+    fn test_ikanaru_standard() {
+        // Testing: いかなる + Noun (no matter what happens)
+        let sentence = "いかなることがあっても、決して手を離してはいけません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いかなる");
+        assert_pattern_range(&patterns, "いかなる", 0, 6); // いかなること
+    }
+
+    #[test]
+    fn test_ikanaru_with_ni() {
+        // Testing: いかなる + Noun + に (no matter what situation)
+        let sentence = "いかなる状況に置かれても、諦めずに突き進むことを忘れないでください。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いかなる");
+        assert_pattern_range(&patterns, "いかなる", 0, 6); // いかなる状況
+    }
+
+    #[test]
+    fn test_ikanaru_request() {
+        // Testing: いかなる + Noun (any request)
+        let sentence = "彼らはいかなる要求にも応じなければならない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いかなる");
+        assert_pattern_range(&patterns, "いかなる", 3, 9); // いかなる要求
+    }
+
+    // TODO: Undetectable - いかな + Noun variant
+    // Kagome tokenizes いかな as いく(動詞/未然形) + ない(助動詞/ガル接続)
+    // rather than as the classical attributive form いかな.
+    // This makes it structurally indistinguishable from "does not go" constructions.
+    //
+    // #[test]
+    // fn test_ikana_variant() {
+    //     // Testing: いかな + Noun (less common variant)
+    //     let sentence = "いかな状況にも耐え得る人になりたい。";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //
+    //     assert_has_pattern(&patterns, "いかなる");
+    //     assert_pattern_range(&patterns, "いかなる", 0, 5); // いかな状況
+    // }
+}

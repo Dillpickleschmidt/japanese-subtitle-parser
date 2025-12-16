@@ -3203,9 +3203,25 @@ pub fn tarasaigo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: いかなる
+// Pattern: いかなる (no matter what, any kind of)
+// Structures: いかなる + Noun
 pub fn ikanaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    #[derive(Debug)]
+    struct IkanaruMatcher;
+    impl Matcher for IkanaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いかなる"
+                && token.base_form == "いかなる"
+                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IkanaruMatcher)),
+        TokenMatcher::Any, // Noun that follows
+    ]
 }
 
 // Pattern: なりに (in one's own way, for what it is)

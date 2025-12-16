@@ -10951,13 +10951,13 @@
   {
     "pattern_name": "にしてみれば",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "にしてみれば , usually written completely in hiragana, is an expression used when the speaker is making a hypothetical stat... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10965,13 +10965,13 @@
   {
     "pattern_name": "だの",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Although originally a combination of the auxiliary verb だ, and the case-marking particle の, だの is considered to be a ... [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -10993,13 +10993,13 @@
   {
     "pattern_name": "べく",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "As the conjunctive form of the classical auxiliary verb べし, べく will be attached to the dictionary form of verbs in or... [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11007,13 +11007,13 @@
   {
     "pattern_name": "ところを",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Being a combination of the noun ところ 'place' or 'situation', and the adverbial particle を, ところを is a grammar construct... [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11035,13 +11035,13 @@
   {
     "pattern_name": "にして②",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Occasionally, the combination of the case-marking particle に 'in', and the て-form of the special verb する, して will be ... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11049,13 +11049,13 @@
   {
     "pattern_name": "つ〜つ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "つ is a conjunction particle in Japanese that is used in constructions where it will appear twice, highlighting contra... [15 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11063,13 +11063,13 @@
   {
     "pattern_name": "飽くまで(も)",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "飽（あ）く is the old-fashioned and somewhat poetic version of 飽（あ）きる the る-Verb meaning 'to tire of (A)', or 'to get sick... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11077,13 +11077,13 @@
   {
     "pattern_name": "であれ〜であれ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Functioning as an extension of である, the formal copula that is a combination of the conjunctive form of the auxiliary ... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11091,13 +11091,13 @@
   {
     "pattern_name": "たら最後",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "たら最後（さいご） and たが最後（さいご） are grammar structures that both share the meaning of 'once (A), definitely (B)' [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11105,13 +11105,13 @@
   {
     "pattern_name": "いかなる",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "如何（いか）なる is a combination of 如何（いか）, and なる [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11119,13 +11119,13 @@
   {
     "pattern_name": "なりに",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When used as a noun, なり often presents an example group from which something exhibits traits of, regardless of whethe... [6 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11245,13 +11245,13 @@
   {
     "pattern_name": "ゆえに",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When the noun 故（ゆえ） 'consequence' is paired with the case marking particle に, it will be used in formal situations to... [11 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
@@ -11679,13 +11679,13 @@
   {
     "pattern_name": "い-Adj[く] + もなんともない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "When paired with the conjunctive form of い-Adjectives, く, もなんともない is often translated as 'not (A) or anything', or 'd... [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
