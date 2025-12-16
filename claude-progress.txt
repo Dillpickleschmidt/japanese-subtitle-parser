@@ -1,3 +1,112 @@
+## Session 529 - 2025-12-16
+
+### Session Summary - たら最後 Pattern Complete ✓
+**Status**: Successfully implemented たら最後 pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3484 passing, 1 ignored (added 4 new tests)
+**Progress**: Forty-seventh N1 pattern completed!
+
+**Session highlights**:
+- Implemented たら最後 pattern (once X happens, Y inevitably follows)
+- Handles both Verb[た] + が + 最後 and Verb[たら] + 最後 forms
+- Works with various verb types (失う, する, 始める, 噛む with passive れる)
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3484 tests total)
+
+### ✓ Completed: たら最後 (once X happens, Y inevitably follows)
+
+**Grammar Point**: たら最後
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+- Verb[た] + が + 最後 (e.g., 失ったが最後 - once trust is lost)
+- Verb[たら] + 最後 (e.g., 始めたら最後 - once he starts)
+
+**Meaning**:
+- "Once (A), definitely (B)" / "As soon as (A), (B)"
+- (B) is always something negative that inevitably occurs after (A)
+- Can be translated as "once", "now that", or "as soon as"
+- Strong implication of irreversibility or unavoidable consequences
+
+**Implementation**:
+- Pattern: Verb (連用形/連用タ接続) + た/たら(助動詞) + Optional(が接続助詞) + 最後(名詞)
+- Custom matchers:
+  - TaOrTaraMatcher: Matches た(基本形) or たら(仮定形) as 助動詞 with base た
+  - GaConjunctionMatcher: が as 助詞/接続助詞 (optional for たが最後 form)
+  - SaigoMatcher: 最後 as 名詞
+- Pattern detects both forms: たが最後 and たら最後
+- Priority 5 for this N1-specific construction
+
+**Tests Written: 4 tests**
+1. `test_tara_saigo_ta_ga` - 失ったが最後 (once trust is lost)
+2. `test_tara_saigo_ta_ga_contract` - したが最後 (once you sign a contract)
+3. `test_tara_saigo_tara` - れたら最後 (once you get bitten)
+4. `test_tara_saigo_tara_talking` - 始めたら最後 (once Tanaka starts talking)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures Verb + た/たら + が(optional) + 最後:
+- 失ったが最後 (9, 15) - 6 characters
+- したが最後 (8, 13) - 5 characters
+- れたら最後 (6, 11) - 5 characters (passive form)
+- 始めたら最後 (7, 13) - 6 characters (compound verb)
+
+**Key Notes**:
+- たら and が both function as conjunction particles here
+- たら = "if/when" (conditional)
+- が = "however/but" (contrast)
+- たが最後 literally means "(A), but it will end up as (B)"
+- たら最後 literally means "when (A), it will end up as (B)"
+- Both forms are used interchangeably with the same meaning
+- 最後 ("final state") is logically connected to the (B) clause, not the が/たら
+- Sometimes the (B) phrase is omitted when the negative result is obvious
+- The pattern emphasizes inevitability and lack of control
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented tarasaigo() matcher
+- `grammar-lib/src/patterns.rs` - Updated Tarasaigo priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in tarasaigo_tests module
+- `feature_list.json` - Updated たら最後 to complete status
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (たら最後 from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found tarasaigo() stub in n1.rs)
+7. ✓ Wrote all 4 tests first with print_debug()
+8. ✓ Analyzed tokenization output for both variants (たが最後 and たら最後)
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Verified all tests detect the pattern correctly
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Updated priority in patterns.rs to 5
+13. ✓ Verified no regressions (3484 tests passing)
+14. ✓ Updated feature_list.json
+15. ✓ Committed changes
+16. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (た + が + 最後, たら + 最後)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- いかなる - "What kind of, any" pattern
+- いかん〜ず - "Regardless of" pattern
+- かたがた - "Both...and, while" pattern
+- がてら - "While doing, on the occasion of" pattern
+- かれ〜かれ - "Whether...or" pattern
+- がん～ - Classical auxiliary pattern
+- か否か - "Whether or not" pattern
+
+---
+
 ## Session 528 - 2025-12-16
 
 ### Session Summary - い-Adj[く] + もなんともない Pattern Complete ✓
