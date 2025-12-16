@@ -11259,7 +11259,7 @@
   {
     "pattern_name": "という1",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "skip",
     "tests": {
       "exists": false,
       "has_range_assertion": false,
@@ -11268,7 +11268,7 @@
     "passes": false,
     "description": "One of the uses of the extremely common という structure in Japanese is the pairing of identical nouns in order to conve... [1 std, 0 pol]",
     "priority": 5,
-    "skip_reason": null
+    "skip_reason": "UNDETECTABLE: Requires cross-token validation (checking if first noun == third noun). Current TokenMatcher architecture only allows single-token matching. Basic という pattern detects the structure but cannot verify noun identity."
   },
   {
     "pattern_name": "にとどまらず",

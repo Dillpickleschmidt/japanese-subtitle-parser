@@ -5086,53 +5086,27 @@ mod wofumaete_tests {
 // という1 Tests (Noun + という + Noun - same noun repeated for emphasis)
 // ============================================================================
 
-mod toiu1_tests {
-    use super::*;
-
-    // Pattern: という1 (every single A)
-    // Data source: grammar_points_data.json["という1"]
-    // Testing: structure.standard[0] - "Noun (A) + という + Noun (A)"
-    //
-    // This pattern emphasizes "every single (A)" by repeating the same noun
-    // Example: 床という床 = "every single floor"
-
-    #[test]
-    fn test_toiu1_floor() {
-        // From grammar data: 床という床 = "every single floor"
-        let sentence = "空き家に入ったら床という床が全てゴミに覆われていたのでびっくりした。";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
-    }
-
-    #[test]
-    fn test_toiu1_pole() {
-        // From grammar data: 電柱という電柱 = "every single telephone pole"
-        let sentence = "この街の電柱という電柱に広告の張り紙が沢山貼られてあった。";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
-    }
-
-    #[test]
-    fn test_toiu1_road() {
-        // From grammar data: 道という道 = "every single road"
-        let sentence = "サミットの近くの道という道は閉鎖されている。";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
-    }
-
-    #[test]
-    fn test_toiu1_today() {
-        // Abstract expression: 今日という今日 = "today of all days"
-        let sentence = "今日という今日は絶対あいつを許さない！";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
-        // TODO: add assertions after implementation
-    }
-}
+// TODO: という1 pattern is UNDETECTABLE with current architecture
+//
+// Pattern: という1 (every single A)
+// Data source: grammar_points_data.json["という1"]
+// Structure: Noun (A) + という + Noun (A) - where BOTH nouns must be IDENTICAL
+//
+// UNDETECTABLE REASON:
+// This pattern requires cross-token validation (checking if token[0].surface == token[2].surface).
+// The current TokenMatcher architecture only allows matchers to examine one token at a time.
+// Implementing this would require:
+//   1. Adding a new TokenMatcher::MatchesPrevious variant
+//   2. Modifying match_pattern_at() to track previously matched tokens
+//   3. This is a significant architectural change beyond the scope of pattern implementation
+//
+// WORKAROUND:
+// The basic という pattern (priority 1) already matches "Noun + という + Noun" structures.
+// When users see という detected, they should check if the nouns are identical to determine
+// if it's という1 (every single A) or basic という (called/named A).
+//
+// Examples that CANNOT be distinguished from basic という:
+//   - 床という床 = "every single floor" (という detected, but not という1 specifically)
+//   - 電柱という電柱 = "every single telephone pole"
+//   - 道という道 = "every single road"
+//   - 今日という今日 = "today of all days"

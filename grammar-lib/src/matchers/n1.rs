@@ -26,8 +26,11 @@ pub fn toiu() -> Vec<TokenMatcher> {
 // Pattern: という1 (every single A)
 // Structures: Noun (A) + という + Noun (A) - same noun repeated
 // Meaning: "every single (A)" / "(A) of all (A)s"
+// という1 is UNDETECTABLE - requires cross-token validation not supported by current architecture
+// See tests/n1_patterns.rs toiu1 comment for full explanation
+// Users should rely on basic という pattern and manually check if nouns are identical
 pub fn toiu1() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement - needs custom logic to check if nouns are identical
+    vec![]  // Intentionally empty - pattern cannot be detected
 }
 
 // Match まま (unchanged state noun)
