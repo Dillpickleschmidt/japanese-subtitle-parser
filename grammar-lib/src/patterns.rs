@@ -6757,7 +6757,15 @@ declare_patterns! {
     Dano {
         name: "だの",
         matcher_fn: crate::matchers::n1::dano,
-        priority: 1,
+        priority: 5,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    DanoSplit {
+        name: "だの_split",
+        matcher_fn: crate::matchers::n1::dano_split,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

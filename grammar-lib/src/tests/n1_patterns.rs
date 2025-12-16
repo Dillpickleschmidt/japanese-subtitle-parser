@@ -3511,3 +3511,94 @@ mod nishitemireba_tests {
         assert_pattern_range(&patterns, "にしてみれば", 0, 8); // 彼女にしてみたら
     }
 }
+
+// ============================================================================
+// だの Tests
+// ============================================================================
+
+mod dano_tests {
+    use super::*;
+
+    // Pattern: だの (things like, and whatnot)
+    // Data source: grammar_points_data.json["だの"]
+    // Testing: structure.standard[0] - "A + だの + B + だの"
+    //
+    // Note: だの requires at least two occurrences to form the pattern
+    // Often lists opposites or things with the same negative trait
+    // Can follow verbs, adjectives, nouns, or quotations
+
+    #[test]
+    fn test_dano_verbs() {
+        let sentence = "彼は仕事はやめるだの家事を手伝わないだの、本当に自分以外のことは何も考えていない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // First だの after やめる
+        assert_has_pattern(&patterns, "だの");
+        assert_pattern_range(&patterns, "だの", 8, 10); // だの (single token)
+
+        // Check that both occurrences are detected (second one also single token)
+        let dano_matches: Vec<_> = patterns.iter().filter(|p| p.pattern_name == "だの").collect();
+        assert_eq!(dano_matches.len(), 2, "Should detect both だの occurrences");
+    }
+
+    #[test]
+    fn test_dano_i_adjectives() {
+        let sentence = "この建物は汚いだの危ないだのと近所の人に言われていたので解体されるらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // First だの after 汚い (single token)
+        assert_has_pattern(&patterns, "だの");
+        assert_pattern_range(&patterns, "だの", 7, 9); // だの
+
+        // Second だの after 危ない (split as だ + の)
+        assert_has_pattern(&patterns, "だの_split");
+        assert_pattern_range(&patterns, "だの_split", 12, 14); // だの (だ + の)
+    }
+
+    #[test]
+    fn test_dano_nouns() {
+        let sentence = "揚げ物だのコンビニ弁当だのばかり食べてると、また健康診断の時に先生に怒られるよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // First だの after 揚げ物 (single token)
+        assert_has_pattern(&patterns, "だの");
+        assert_pattern_range(&patterns, "だの", 3, 5); // だの
+
+        // Second だの after 弁当 (split as だ + の)
+        assert_has_pattern(&patterns, "だの_split");
+        assert_pattern_range(&patterns, "だの_split", 11, 13); // だの (だ + の)
+    }
+
+    #[test]
+    fn test_dano_nandano() {
+        let sentence = "妻は大嫌いだの嫌いだのと毎日言ってくるから悲しくなってきた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // First だの after 大嫌い (single token)
+        assert_has_pattern(&patterns, "だの");
+        assert_pattern_range(&patterns, "だの", 5, 7); // だの
+
+        // Second だの after 嫌い (split as だ + の)
+        assert_has_pattern(&patterns, "だの_split");
+        assert_pattern_range(&patterns, "だの_split", 9, 11); // だの (だ + の)
+    }
+
+    #[test]
+    fn test_dano_quotations() {
+        let sentence = "彼は「嫌」だの「大変」だの、何かをやる前から弱音を吐くから、一緒にいるとこっちまで仕事をしたくなくなる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // First だの after 「嫌」
+        assert_has_pattern(&patterns, "だの");
+        assert_pattern_range(&patterns, "だの", 5, 7); // だの (single token)
+
+        // Check that both occurrences are detected
+        let dano_matches: Vec<_> = patterns.iter().filter(|p| p.pattern_name == "だの").collect();
+        assert_eq!(dano_matches.len(), 2, "Should detect both だの occurrences");
+    }
+}

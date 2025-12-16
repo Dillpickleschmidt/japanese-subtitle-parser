@@ -2789,9 +2789,64 @@ pub fn nishitemireba() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: だの
+// Pattern: だの (things like, and whatnot)
+// Structures: A + だの + B + だの
+// Note: だの tokenizes as single token (助詞/並立助詞) in most cases
+// After い-adjectives and some contexts, it may tokenize as だ + の
 pub fn dano() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for だの as a single particle token
+    #[derive(Debug)]
+    struct DanoParticleMatcher;
+    impl Matcher for DanoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だの"
+                && token.base_form == "だの"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "並立助詞")
+        }
+    }
+
+    // Match just the だの particle itself
+    // This handles the common case where だの is a single token
+    vec![TokenMatcher::Custom(Arc::new(DanoParticleMatcher))]
+}
+
+// Pattern: だの (split tokenization variant)
+// Handles cases where だの is tokenized as だ (助動詞) + の (名詞/非自立)
+// This occurs after い-adjectives and some other contexts
+pub fn dano_split() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for だ (助動詞)
+    #[derive(Debug)]
+    struct DaAuxiliaryMatcher;
+    impl Matcher for DaAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Matcher for の (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct NoNounMatcher;
+    impl Matcher for NoNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.base_form == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match: だ + の sequence
+    vec![
+        TokenMatcher::Custom(Arc::new(DaAuxiliaryMatcher)),
+        TokenMatcher::Custom(Arc::new(NoNounMatcher)),
+    ]
 }
 
 // Pattern: あくまでも
