@@ -2391,3 +2391,59 @@ mod deare_tests {
         assert_pattern_range(&patterns, "であれ", 0, 5); // 上司であれ
     }
 }
+
+// ============================================================================
+// に先駆けて Tests
+// ============================================================================
+
+mod ni_sakigakete_tests {
+    use super::*;
+
+    // Pattern: に先駆けて (ahead of, in advance of)
+    // Data source: grammar_points_data.json["に先駆けて"]
+    // Testing: structure.standard[0] - "Noun + に先駆（さきが）け（て）"
+    //
+    // Two forms to test:
+    //   1. Noun + に先駆け (base form)
+    //   2. Noun + に先駆けて (with て)
+
+    #[test]
+    fn test_ni_sakigakete_world() {
+        let sentence = "世界に先駆けて、あの国は死刑を廃止した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に先駆けて");
+        assert_pattern_range(&patterns, "に先駆けて", 0, 7); // 世界に先駆けて
+    }
+
+    #[test]
+    fn test_ni_sakigake_nation() {
+        let sentence = "全国に先駆け、梅雨入りをした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に先駆けて");
+        assert_pattern_range(&patterns, "に先駆けて", 0, 6); // 全国に先駆け
+    }
+
+    #[test]
+    fn test_ni_sakigakete_companies() {
+        let sentence = "他社に先駆けて、自動運転が可能な車を開発した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に先駆けて");
+        assert_pattern_range(&patterns, "に先駆けて", 0, 7); // 他社に先駆けて
+    }
+
+    #[test]
+    fn test_ni_sakigake_industry() {
+        let sentence = "業界に先駆け、画期的な技術を発表した";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に先駆けて");
+        assert_pattern_range(&patterns, "に先駆けて", 0, 6); // 業界に先駆け
+    }
+}

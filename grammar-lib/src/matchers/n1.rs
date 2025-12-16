@@ -3092,9 +3092,40 @@ pub fn nami() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: に先駆けて
+// Pattern: に先駆けて (ahead of, in advance of)
+// Structures: Noun + に + 先駆け + (て)
 pub fn nisakigakete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 先駆ける verb in 連用形
+    #[derive(Debug)]
+    struct SakigakeMatcher;
+    impl Matcher for SakigakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "先駆ける"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "連用形")
+        }
+    }
+
+    // Match て as 接続助詞
+    #[derive(Debug)]
+    struct TeFormMatcher;
+    impl Matcher for TeFormMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Custom(Arc::new(SakigakeMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeFormMatcher)))),
+    ]
 }
 
 // Pattern: を機に (taking advantage of, on the occasion of)
