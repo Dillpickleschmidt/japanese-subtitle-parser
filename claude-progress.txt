@@ -1,3 +1,89 @@
+## Session 574 - 2025-12-16
+
+### Session Summary - んがため(に) Complete ✓
+**Status**: Implemented んがため(に) pattern successfully
+**Patterns completed**: 1 (んがため(に) - N1, priority 5)
+**Total tests**: 3681 passing (5 new tests, no regressions)
+**Progress**: Eighty-sixth N1 pattern completed!
+
+**Session highlights**:
+- Implemented んがため(に) (for the purpose of, in order to)
+- Classical auxiliary verb ん (from む) expressing intent/strong will
+- Handles both 助動詞 and 名詞 forms of ん depending on context
+- Matches verbs in 未然形 (regular verbs) and 連用形 (causative constructions)
+- Supports both んがために and んがための variants
+- All structure variants tested including する → せんがため exception
+
+### ✓ Completed: んがため(に) (for the purpose of, in order to)
+
+**Grammar Point**: んがため(に)
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal/Classical
+
+**Pattern structures**:
+1. Verb[未然形] + ん + が + ため + に (貯めんがために, 叶えんがために)
+2. Verb[未然形] + ん + が + ため + の + Noun (勝たんがための, 売らんがための)
+3. Exception: Causative forms use 連用形 (成功させんがために → さ+せ+ん)
+
+**Meaning**:
+- "For the purpose of (A)" / "In order to (A)" / "With (A) as the goal"
+- ん comes from classical む (intent/strong will, like modern う/よう)
+- Followed by が and the noun ため (sake/purpose)
+- Implies speaker's will to achieve the goal
+- Verb must be something controllable by the speaker
+
+**Tokenization variants**:
+**Variant 1 - Regular verbs**:
+- Verb (未然形)
+- ん (助動詞/不変化型/基本形)
+- が (助詞/接続助詞)
+- ため (名詞/非自立/副詞可能)
+- に/の (助詞)
+
+**Variant 2 - Causative forms**:
+- Verb (連用形, e.g., せ from せる)
+- ん (名詞/非自立/一般) **[Tokenized as noun!]**
+- が (助詞/格助詞)
+- ため (名詞/一般 or 非自立)
+- に/の (助詞)
+
+**Implementation**:
+Created custom matchers to handle:
+1. VerbBeforeNMatcher - Accepts 未然形 OR 連用形
+2. NMatcher - Accepts ん as 助動詞 OR 名詞
+3. GaMatcher - Accepts が as 接続助詞 OR 格助詞
+4. TameMatcher - Matches ため as noun
+5. NiOrNoParticleMatcher - Optional に or の
+
+**Tests Written: 5 tests (all passing)**
+1. test_ngatame_ni_basic - 貯めんがために (10, 17)
+2. test_ngatame_ni_kanae - 叶えんがために (13, 20)
+3. test_ngatame_no_noun_katsu - 勝たんがための (15, 22)
+4. test_ngatame_no_noun_uru - 売らんがための (8, 15)
+5. test_ngatame_ni_suru_exception - せんがために (12, 18)
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented ngatame_ni() with 5 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added ngatame_ni_tests module with 5 tests
+- feature_list.json - Updated んがため(に) to complete status
+
+**Quality Checks**:
+✓ All structure variants tested (んがために, んがための, causative exception)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed code
+✓ All existing tests still pass (3681 total, +5 new)
+
+**Next Priorities** (N1 patterns without tests, Priority 5):
+- にも～ない - "Not even" pattern
+- ～なり～なり - "Whether...or..." pattern
+- ないでもない - "Not that...not" pattern
+- もさることながら - "Not only...but also" pattern
+
+================================================================================
+
 ## Session 573 - 2025-12-16
 
 ### Session Summary - だに + しない Complete ✓
