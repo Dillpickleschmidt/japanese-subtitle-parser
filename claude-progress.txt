@@ -3019,3 +3019,89 @@ Next Priorities (N1 patterns without tests, Priority 5):
 - を余儀なくさせる - "Force/compel to" pattern
 
 ================================================================================
+
+================================================================================
+Pattern 2 Completed: 次第です (shidaidesu)
+================================================================================
+
+Pattern: 次第です
+JLPT Level: N1
+Priority: 5
+Status: COMPLETE ✓
+
+Summary:
+Implemented and tested the 次第です pattern, a polite N1 construction used to
+give explanations or reasons. This pattern follows a verb and provides formal
+context for why something happened or is happening.
+
+Pattern Details:
+- Structure: Verb + 次第 + です
+- Tokenization: 次第 appears as 名詞/副詞可能, です as 助動詞
+- Category: Construction pattern
+- Priority: 5
+- Register: Polite
+
+Grammar Usage:
+次第です is used in polite speech to give explanations or provide reasons.
+It follows a verb in standard form and expresses "the reason is that..." or
+"because...". More formal than simple explanations with です.
+
+Examples Tested:
+1. 遅れた次第です - I was late because...
+2. 挨拶しにきた次第です - I came to greet you because...
+3. 調整している次第です - We are adjusting because...
+
+Technical Implementation:
+- Matcher function: shidaidesu() in grammar-lib/src/matchers/n1.rs
+- Custom matchers:
+  * ShidaiMatcher - matches 次第 specifically as 名詞
+  * DesuMatcher - matches です as 助動詞
+- Pattern type: Construction pattern
+- Priority: 5
+
+Test Details:
+- Module: shidaidesu_tests in grammar-lib/src/tests/n1_patterns.rs
+- Test count: 3 comprehensive tests
+- Structure variants tested:
+  * Verb (past tense) + 次第です
+  * Verb (te-form compound) + 次第です
+  * Verb (te-iru progressive) + 次第です
+- All tests include proper assertions and character range verification
+- No print_debug() in final committed code
+
+Files Modified:
+- grammar-lib/src/matchers/n1.rs - Implemented shidaidesu()
+- grammar-lib/src/tests/n1_patterns.rs - Added 3 tests
+- feature_list.json - Updated 次第です to complete status
+
+Quality Checks:
+✓ Tests exist with proper assertions
+✓ All structure variants covered (different verb forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final code
+✓ All existing tests still pass (3570 total, no regressions)
+✓ Clean git history
+
+Test Results:
+Total: 3570 tests passing (up from 3567, +3 new tests for 次第です)
+All 3 shidaidesu tests pass with proper range assertions
+
+Session Summary:
+- Patterns completed: 2 (相まって and 次第です)
+- New tests added: 7 (4 + 3)
+- Total tests passing: 3570 (up from 3563)
+- No regressions
+- Both patterns properly documented and committed
+
+Next Priorities (N1 patterns without tests, Priority 5):
+- 折には - "On the occasion of" pattern
+- 始末だ - "End up in a situation" pattern
+- んばかりに - "As if about to" pattern
+- んがため(に) - "In order to" pattern
+- を限りに - "From/after (time limit)" pattern
+- を禁じ得ない - "Cannot help but" pattern
+- を前提に - "On the premise that" pattern
+- を兼ねて - "Serving as/combined with" pattern
+
+================================================================================
