@@ -3505,3 +3505,85 @@ Next Priorities (N1 patterns without tests, Priority 5):
 **Note**: たら〜で pattern was explored but is too complex for current matcher framework (requires comparing base_forms of repeating words across tokens).
 
 ================================================================================
+
+================================================================================
+
+## Session 555 - 2025-12-16
+
+### Session Summary - かれ〜かれ Complete ✓
+**Status**: Implemented かれ〜かれ pattern successfully
+**Patterns completed**: 1 (かれ〜かれ - N1, priority 5)
+**Total tests**: 3591 passing (4 new tests, no regressions)
+**Progress**: Sixty-ninth N1 pattern completed!
+
+**Session highlights**:
+- Implemented かれ〜かれ (whether A or B)
+- Classical imperative e-form pattern for い-adjectives
+- Fixed antonym pairs: 遅かれ早かれ, 多かれ少なかれ, 良かれ悪しかれ
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include both かれ adjectives (full construction)
+
+### ✓ Completed: かれ〜かれ (whether A or B)
+
+**Grammar Point**: かれ〜かれ
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. い-Adjective[かれ] + い-Adjective[かれ]
+
+**Meaning**:
+- Pairs opposite い-adjectives to express "whether (A) or (B), the result is the same"
+- Originally くあれ (conjunctive stem + imperative of ある) → contracted to かれ
+- Used with a very limited set of antonym pairs (set phrases)
+- Examples:
+  * 遅かれ早かれ - sooner or later
+  * 多かれ少なかれ - more or less
+  * 良かれ悪しかれ - for better or worse (悪し is archaic form)
+  * 暑かれ寒かれ - whether hot or cold
+
+**Tokenization**:
+- Each かれ adjective: 形容詞/自立 (independent adjective)
+- Conjugation form: 命令ｅ (imperative e-form)
+- Base forms: 遅い, 早い, 多い, 少ない, 良い, 悪しい (archaic), etc.
+- Surface: ends with かれ (e.g., 遅かれ, 早かれ)
+
+**Implementation**:
+- Pattern: い-Adjective[命令ｅ] + い-Adjective[命令ｅ]
+- Custom matcher: KareFormMatcher
+  * Checks surface ends with "かれ"
+  * POS: 形容詞/自立
+  * Conjugation form (features[5]): 命令ｅ
+- Priority 5 for N1 construction
+- Pattern includes both adjectives
+- Range examples: 遅かれ早かれ (0-6), 多かれ少なかれ (6-13)
+
+**Tests Written: 4 tests (all passing)**
+1. `test_kare_kare_osokare_hayakare` - 遅かれ早かれ (0, 6) - sooner or later
+2. `test_kare_kare_ookare_sukunakare` - 多かれ少なかれ (6, 13) - more or less
+3. `test_kare_kare_yokare_ashikare` - 良かれ悪しかれ (6, 13) - for better or worse
+4. `test_kare_kare_atsukare_samukare` - 暑かれ寒かれ (0, 6) - whether hot or cold
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented kare_u301c_kare()
+- grammar-lib/src/tests/n1_patterns.rs - Added kare_u301c_kare_tests module with 4 tests
+- feature_list.json - Updated かれ〜かれ to complete status
+
+**Quality Checks**:
+✓ All structure variants tested (4 common fixed expressions)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed code
+✓ All existing tests still pass (3591 total, +4 new)
+
+**Next Priorities** (N1 patterns without tests, Priority 5):
+- なくして(は) - "Without" pattern
+- のなんのって - "Extremely" pattern
+- にかかっている - "Depends on" pattern
+- ってば・ったら - Emphasis pattern
+- ずとも - "Even without" pattern
+- とあって - "Because of/due to" pattern
+- でもなんでもない - "Not at all" pattern
+
+================================================================================
