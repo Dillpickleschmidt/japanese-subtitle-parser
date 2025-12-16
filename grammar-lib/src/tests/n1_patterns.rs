@@ -7773,3 +7773,53 @@ mod oriniha_tests {
         assert_pattern_range(&patterns, "折には", 3, 5); // 折に
     }
 }
+
+// ============================================================================
+// とばかり（に） Tests
+// ============================================================================
+
+mod tobakarini_tests {
+    use super::*;
+
+    // Pattern: とばかり（に） (as if to say / seeming that)
+    // Data source: grammar_points_data.json["とばかり（に）"]
+    // Testing: structure.standard[0] - "Quote + とばかり（に）"
+    //
+    // Structures to test:
+    //   - standard[0]: Quote + とばかり（に）
+    //   - standard[1]: Noun +（だ）+ とばかり（に）
+
+    // Testing: structure.standard[0] - Quote + とばかり（に）
+
+    #[test]
+    fn test_tobakarini_quote() {
+        let sentence = "うちのわんちゃんが「待ってました」とばかりに尻尾を振って友達に飛びついた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とばかり（に）");
+        assert_pattern_range(&patterns, "とばかり（に）", 17, 22); // とばかりに
+    }
+
+    #[test]
+    fn test_tobakarini_quote_without_ni() {
+        let sentence = "先生が「俺の話聞いてるか」とばかり生徒たちを睨みつけた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とばかり（に）");
+        assert_pattern_range(&patterns, "とばかり（に）", 13, 17); // とばかり
+    }
+
+    // Testing: structure.standard[1] - Noun + とばかり（に）
+
+    #[test]
+    fn test_tobakarini_noun() {
+        let sentence = "中田選手のバランスが崩れたので、斉藤選手はチャンスとばかりに中田選手の太ももを蹴った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "とばかり（に）");
+        assert_pattern_range(&patterns, "とばかり（に）", 25, 30); // とばかりに
+    }
+}
