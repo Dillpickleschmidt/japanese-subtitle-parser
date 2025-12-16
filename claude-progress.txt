@@ -1,3 +1,109 @@
+## Session 571 - 2025-12-16
+
+### Session Summary - たら〜で Complete ✓
+**Status**: Implemented たら〜で pattern with 5 matcher variants successfully
+**Patterns completed**: 1 (たら〜で - N1, priority 5)
+**Total tests**: 3667 passing (6 new tests, no regressions)
+**Progress**: Eighty-third N1 pattern completed!
+
+**Session highlights**:
+- Implemented たら〜で (even if, if...then with repeating words)
+- Complex pattern requiring same word repeated with different conjugations
+- Created 5 separate matcher functions for all structure variants
+- Handles verb たら/ば forms, い-adj たら/ば forms, な-adj なら form
+- Matches structural pattern (cannot verify word repetition due to matcher constraints)
+- All 6 structure variants tested with realistic subtitle sentences
+
+### ✓ Completed: たら〜で (even if, if...then with repeating words)
+
+**Grammar Point**: たら〜で
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb[たら] + Same_Verb[た] + で (なったらなったで)
+2. Verb[ば] + Same_Verb[た] + で (降れば降ったで)
+3. い-Adj[たら] + Same_い-Adj[基本形] + で (大きかったら大きいで)
+4. い-Adj[ば] + Same_い-Adj[基本形] + で (弱ければ弱いで)
+5. な-Adj + なら + Same_な-Adj + で (嫌なら嫌で)
+
+**Meaning**:
+- "Even if (A), then with (A), (B)"
+- "If (A), (B)" (with contradictory result)
+- Shows contradiction: good situation leads to problem, or problem can still work
+- Uses repeating words to emphasize the conditional acceptance of a situation
+
+**Implementation Notes**:
+- Ideally requires matching the same word appearing twice (different conjugations)
+- Due to Matcher trait constraint (single token access), matches structural pattern only
+- Cannot verify base_form repetition without access to token stream
+- May produce false positives but captures the most common usage patterns
+- Each structure variant has its own matcher function
+
+**Tokenization patterns**:
+Verb たら form:
+- Verb (動詞/連用タ接続, base=X)
+- たら (助動詞/特殊・タ/仮定形, base=た)
+- Verb (動詞/連用タ接続, base=X) [same base ideally]
+- た (助動詞/特殊・タ/基本形, base=た)
+- で (助詞/接続助詞, base=で)
+
+Verb ば form:
+- Verb (動詞/仮定形, base=X)
+- ば (助詞/接続助詞, base=ば)
+- Verb (動詞/連用タ接続, base=X) [same base ideally]
+- た (助動詞/特殊・タ/基本形, base=た)
+- で (助詞/接続助詞, base=で)
+
+い-Adj たら form:
+- い-Adj (形容詞/連用タ接続, base=X)
+- たら (助動詞/特殊・タ/仮定形, base=た)
+- い-Adj (形容詞/基本形, base=X) [same base ideally]
+- で (助詞/接続助詞 OR 助動詞/特殊・ダ/連用形, base=で/だ)
+
+い-Adj ば form:
+- い-Adj (形容詞/仮定形, base=X)
+- ば (助詞/接続助詞, base=ば)
+- い-Adj (形容詞/基本形, base=X) [same base ideally]
+- で (助動詞/特殊・ダ/連用形, base=だ)
+
+な-Adj なら form:
+- な-Adj (名詞/形容動詞語幹, base=X)
+- なら (助動詞/特殊・ダ/仮定形, base=だ)
+- な-Adj (名詞/形容動詞語幹, base=X) [same base ideally]
+- で (助動詞/特殊・ダ/連用形, base=だ)
+
+**Tests Written: 6 tests (all passing)**
+1. test_tarade_verb_tara_form - なったらなったで (4, 12)
+2. test_tarade_verb_ba_form - 降れば降ったで (4, 11)
+3. test_tarade_i_adj_tara_form - 大きかったら大きいで (19, 29)
+4. test_tarade_i_adj_ba_form - 弱ければ弱いで (19, 26)
+5. test_tarade_na_adj_nara_form - 嫌なら嫌で (0, 5)
+6. test_tarade_na_adj_kantan - 簡単なら簡単で (18, 25)
+
+**Files Modified**:
+- grammar-lib/src/matchers/n1.rs - Implemented 5 matcher functions
+- grammar-lib/src/patterns.rs - Registered 5 pattern variants with priority 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 6 comprehensive tests
+- feature_list.json - Updated たら〜で to complete status
+
+**Quality Checks**:
+✓ All structure variants tested (verb たら, verb ば, い-adj たら, い-adj ば, な-adj なら)
+✓ Realistic subtitle-quality sentences
+✓ Correct character ranges verified
+✓ No print_debug() in final committed code
+✓ All existing tests still pass (3667 total, +6 new)
+
+**Next Priorities** (N1 patterns without tests, Priority 5):
+- に至って・に至り - "Reaching the point of" pattern
+- だに + しない - "Even" pattern (classical)
+- んがため(に) - "For the purpose of" pattern
+- にも～ない - "Despite wanting to" pattern
+- ～なり～なり - "Whether...or..." pattern
+
+================================================================================
+
 ## Session 570 - 2025-12-16
 
 ### Session Summary - ずにはすまない Complete ✓
