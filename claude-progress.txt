@@ -1,3 +1,95 @@
+## Session 560 - 2025-12-16
+
+### Session Summary - ってば・ったら Complete ✓
+**Status**: Implemented ってば・ったら pattern successfully
+**Patterns completed**: 1 (ってば・ったら - N1, priority 5)
+**Total tests**: 3613 passing (5 new tests, no regressions)
+**Progress**: Seventy-third N1 pattern completed!
+
+**Session highlights**:
+- Implemented ってば・ったら (insisting on viewpoint / expressing frustration)
+- Handles THREE tokenization variants with separate matcher functions
+- All detectable structure variants tested with realistic subtitle sentences
+- Documented undetectable cases (い-Adj + ったら, あなたったら)
+
+### ✓ Completed: ってば・ったら (insisting viewpoint / addressing person)
+
+**Grammar Point**: ってば・ったら
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Casual
+
+**Pattern structures**:
+1. Verb + ってば (分かったってば - "I said I understand!")
+2. い-Adjective + ってば (痛いってば - "I said it hurts!")
+3. な-Adjective/Noun + だ + ってば (嫌いだってば - "I said I hate it!")
+4. Noun + だ + ったら (大人だったら - "I said I'm an adult!")
+5. Person name + ってば (金太郎ってば - "That darn Kintaro!")
+
+**Meaning**:
+- "I said (A)!" / "I told you (A)!" - Insisting on one's viewpoint
+- "That darn (A)" / "Oh that (A)" - Expressing frustration about someone
+- Contraction of といえば/といったら "if it were said"
+- Very casual register, common in conversation
+
+**Tokenization (Three variants)**:
+1. って + ば: [Any] + って (助詞/格助詞/連語) + ば (助詞/接続助詞)
+2. だって + ば: [Any] + だって (助詞/副助詞) + ば (助詞/接続助詞)
+3. だっ + たら: [Any] + だっ (助動詞 だ, 連用タ接続) + たら (助動詞 た, 仮定形)
+
+**Implementation**:
+- Three separate matcher functions to handle tokenization variants:
+  1. tteba_u30fb_ttara(): [Any] + って + ば
+  2. tteba_u30fb_ttara_datte(): [Any] + だって + ば
+  3. tteba_u30fb_ttara_dattara(): [Any] + だっ + たら
+- All three patterns registered with same name "ってば・ったら"
+- Priority 1 for all variants (N1 construction)
+- Uses 6 custom matchers for precise POS tag matching
+
+**Tests Written: 5 tests (all passing)**
+1. test_tteba_verb_past - たってば (3, 7) - "I said I understand!"
+2. test_tteba_i_adjective - 痛いってば (0, 5) - "I said it hurts!"
+3. test_tteba_noun_with_da - 嫌いだってば (0, 6) - "I said I hate it!"
+4. test_ttara_noun_with_da - 大人だったら (6, 12) - "I said I'm an adult!"
+5. test_tteba_person_name_addressing - 金太郎ってば (0, 6) - "That darn Kintaro!"
+
+**Undetectable cases (documented with TODO comments)**:
+1. **い-Adj + ったら** (e.g., 痛いったら):
+   - Tokenizes as: 痛 (adj stem) + いっ (verb いう) + たら (conditional)
+   - Cannot distinguish from actual verb いう + たら
+   - Kagome treats いったら as verb "to say" in conditional form
+
+2. **あなたったら** (pronoun "you" + ったら):
+   - Tokenizes as: あな (noun "hole") + たっ (verb たつ "to stand") + たら
+   - Should be: あなた (pronoun "you") + ったら
+   - Kagome tokenization error
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented 3 matcher functions with 6 custom matchers
+- grammar-lib/src/patterns.rs - Added 2 additional pattern declarations (3 total)
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in tteba_ttara_tests module
+- feature_list.json - Updated ってば・ったら to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All detectable structure variants tested (verb, adj, noun forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3613 total, +5 new)
+✓ Undetectable cases documented with TODO comments
+
+**Next Priorities** (N1 patterns without tests, Priority 5):
+- とあって - "Because of/due to" pattern
+- でもなんでもない - "Not at all" pattern
+- ぐるみで - "Including/involving" pattern
+- そばから - "As soon as" pattern
+- に至って・に至り - "Now that/at last" pattern
+- だに + しない - Classical negative pattern
+- んがため(に) - Classical purpose pattern
+
+================================================================================
+
 ## Session 559 - 2025-12-16
 
 ### Session Summary - ずとも Complete ✓
