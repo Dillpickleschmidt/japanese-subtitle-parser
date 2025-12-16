@@ -1,3 +1,108 @@
+## Session 513 - 2025-12-15
+
+### Session Summary - Verb[ない]もの(だろう)か Pattern Complete ✓
+**Status**: Successfully implemented Verb[ない]もの(だろう)か pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3407 passing, 1 ignored (added 5 new tests)
+**Progress**: Thirty-second N1 pattern completed!
+
+**Session highlights**:
+- Implemented Verb[ない]もの(だろう)か pattern (if only, isn't there a way to)
+- Pattern structure: ない + もの + Optional(だろう/でしょう) + か
+- Handles both auxiliary verb ない (after verbs) and adjective ない (existence negation)
+- Optional だろう/でしょう component for standard and polite forms
+- All 5 tests passing with proper range assertions
+- No regressions in test suite (3407 tests total)
+
+### ✓ Completed: Verb[ない]もの(だろう)か (if only, isn't there a way to)
+
+**Grammar Point**: Verb[ない]もの(だろう)か
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+- Verb[ない] + もの + か (basic form)
+- Verb[ない] + もの + だろう + か (with speculation)
+- Verb[ない] + もの + でしょう + か (polite form)
+- Existence: は + ない + もの + (だろう) + か
+
+**Implementation**:
+- Matcher: `ない + もの + Optional(だろ/でしょ) + Optional(う) + か`
+- Custom matchers for each component:
+  - NaiMatcher: ない as 助動詞 or 形容詞 (handles both verb negation and existence)
+  - MonoMatcher: もの as 名詞/非自立/一般
+  - DarouDeshouMatcher: だろ or でしょ as 助動詞 (未然形)
+  - UMatcher: う as 助動詞 (volitional)
+  - KaMatcher: か as 助詞 (sentence-ending particle)
+- Pattern uses Optional matchers for だろう/でしょう components
+- Detects full grammatical construction from ない to か
+
+**Tests Written: 5 tests**
+1. `test_nai_mono_ka` - できないものか (basic ないものか)
+2. `test_nai_mono_darou_ka` - 貰えないものだろうか (with だろうか)
+3. `test_nai_mono_deshou_ka_polite` - できないものでしょうか (polite form)
+4. `test_nai_mono_ka_existence` - はないものか (lack of existence)
+5. `test_nai_mono_darou_ka_existence` - はないものだろうか (existence + だろうか)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures ない + もの + (だろう/でしょう) + か:
+- `ないものか` (13, 18) - 5 characters (basic form)
+- `ないものだろうか` (15, 23) - 8 characters (with だろう)
+- `ないものでしょうか` (30, 39) - 9 characters (polite form)
+- `ないものか` (14, 19) - 5 characters (existence)
+- `ないものだろうか` (14, 22) - 8 characters (existence + だろう)
+
+**Key Notes**:
+- Pattern expresses wish that something were possible but seems beyond capacity
+- Literal meaning: "I wonder if it really is a thing that can't (A)"
+- ない can be助動詞 (after verb stems) or 形容詞 (for existence negation)
+- だろう/でしょう is optional - both forms are grammatically correct
+- Used to express hope/wish for a solution: "if only (A)", "isn't there a way to (A)"
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented verb_nai_mono_darou_ka() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 tests in verb_nai_mono_darou_ka_tests module
+- `feature_list.json` - Updated Verb[ない]もの(だろう)か status to complete
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (Verb[ない]もの(だろう)か from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found verb_nai_mono_darou_ka() stub in n1.rs)
+7. ✓ Wrote all tests first with print_debug()
+8. ✓ Analyzed tokenization output
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Verified all tests pass
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Verified no regressions (3407 tests passing)
+13. ✓ Updated feature_list.json
+14. ✓ Committed changes
+15. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (basic, だろう, でしょう, existence forms)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- あくまでも - "To the end, persistently" pattern
+- い-Adj[く] + もなんともない - "Not (A) or anything" pattern
+- いかなる - "What kind of, any" pattern
+- いかん〜ず - "How, what" + negative pattern
+- かたがた - "While, on the occasion of" pattern
+- がてら - "While doing" pattern
+- かれ〜かれ - "Whether A or B" pattern
+- がん～ - "Staring fixedly" pattern
+
+---
+
 ## Session 512 - 2025-12-15
 
 ### Session Summary - 以前 Pattern Complete ✓
