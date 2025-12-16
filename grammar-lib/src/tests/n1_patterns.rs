@@ -2037,3 +2037,60 @@ mod verb_dani_tests {
         assert_pattern_range(&patterns, "Verb + だに", 10, 16); // 想像するだに
     }
 }
+
+// ============================================================================
+// Verb[て] + みせる Tests
+// ============================================================================
+
+mod verb_te_miseru_tests {
+    use super::*;
+
+    // Pattern: Verb[て] + みせる (I will definitely do, I swear I will do)
+    // Data source: grammar_points_data.json["Verb[て] + みせる"]
+    // Testing: structure.standard[0] - "Verb[て] + みせる"
+    //          structure.polite[0] - "Verb[て] + みせます"
+    //
+    // Note: Emphatic structure indicating speaker will do (A) in a way clear to listener
+    // Literal translation: "I will show you that I'll do (A)"
+    // Often used when there is a target audience being shown the action
+
+    #[test]
+    fn test_te_miseru_win() {
+        let sentence = "お前のために、次の試合では勝ってみせる！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て] + みせる");
+        assert_pattern_range(&patterns, "Verb[て] + みせる", 13, 19); // 勝ってみせる
+    }
+
+    #[test]
+    fn test_te_miseru_pass() {
+        let sentence = "来週のテストで合格してみせる！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て] + みせる");
+        assert_pattern_range(&patterns, "Verb[て] + みせる", 7, 14); // 合格してみせる
+    }
+
+    #[test]
+    fn test_te_miseru_finish() {
+        let sentence = "足が痛いけど、完走してみせる！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て] + みせる");
+        assert_pattern_range(&patterns, "Verb[て] + みせる", 7, 14); // 完走してみせる
+    }
+
+    #[test]
+    fn test_te_miseru_polite() {
+        let sentence = "必ず期限までに終わらせてみせます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb[て] + みせる");
+        assert_pattern_range(&patterns, "Verb[て] + みせる", 10, 16); // せてみせます
+    }
+}

@@ -2327,9 +2327,38 @@ pub fn verb_nai_mono_darou_ka() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: Verb[て] + みせる
+// Pattern: Verb[て] + みせる (I will definitely do, I swear I will do)
+// Structures: Verb[て] + みせる/みせます
 pub fn verb_te_miseru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て or で particle (接続助詞)
+    #[derive(Debug)]
+    struct TeParticleMatcher;
+    impl Matcher for TeParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Match みせる as auxiliary verb (動詞/非自立)
+    #[derive(Debug)]
+    struct MiseruAuxiliaryMatcher;
+    impl Matcher for MiseruAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "みせる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    vec![
+        super::flexible_verb_form(),
+        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(MiseruAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: 相まって
