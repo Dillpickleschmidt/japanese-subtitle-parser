@@ -5129,9 +5129,35 @@ pub fn yainaya() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 次第です
+// Pattern: 次第です (because, the reason is)
+// Structures: Verb + 次第 + です
 pub fn shidaidesu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match 次第 as noun
+    #[derive(Debug)]
+    struct ShidaiMatcher;
+    impl super::Matcher for ShidaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "次第"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match です auxiliary
+    #[derive(Debug)]
+    struct DesuMatcher;
+    impl super::Matcher for DesuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "です"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(ShidaiMatcher)),
+        TokenMatcher::Custom(Arc::new(DesuMatcher)),
+    ]
 }
 
 // Pattern: というところ

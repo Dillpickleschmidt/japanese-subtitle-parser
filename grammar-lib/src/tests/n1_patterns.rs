@@ -5580,3 +5580,54 @@ mod aimatte_tests {
         assert_pattern_range(&patterns, "相まって", 16, 23); // 努力が相まって
     }
 }
+
+// ============================================================================
+// 次第です Tests
+// ============================================================================
+
+mod shidaidesu_tests {
+    use super::*;
+
+    // Pattern: 次第です (because, the reason is)
+    // Data source: grammar_points_data.json["次第です"]
+    // Testing structure: Verb + 次第 + です
+    //
+    // Usage: Polite explanation or reason for something
+    // Similar to: "the reason is that...", "because..."
+
+    #[test]
+    fn test_shidaidesu_late_explanation() {
+        // Testing structure: Verb[past] + 次第です
+        // From example: 遅れた次第です (I was late because...)
+        let sentence = "高速で玉突き事故があったので、遅れた次第です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第です");
+        assert_pattern_range(&patterns, "次第です", 18, 22); // 次第です
+    }
+
+    #[test]
+    fn test_shidaidesu_introduction() {
+        // Testing structure: Verb[past] + 次第です
+        // From example: 挨拶しにきた次第です
+        let sentence = "来月から、向かいの家に引っ越すことになったので、挨拶しにきた次第です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第です");
+        assert_pattern_range(&patterns, "次第です", 30, 34); // 次第です
+    }
+
+    #[test]
+    fn test_shidaidesu_ongoing_adjustment() {
+        // Testing structure: Verb[te-iru] + 次第です
+        // From example: 色々と調整している次第です
+        let sentence = "先輩が提案してくださったプランでは予算オーバーしそうだったので、今クライアントと相談しつつ色々と調整している次第です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "次第です");
+        assert_pattern_range(&patterns, "次第です", 54, 58); // 次第です
+    }
+}
