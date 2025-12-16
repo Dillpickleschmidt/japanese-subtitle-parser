@@ -7941,7 +7941,7 @@ declare_patterns! {
     Tehakanawanai {
         name: "てはかなわない",
         matcher_fn: crate::matchers::n1::tehakanawanai,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

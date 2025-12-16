@@ -8692,9 +8692,73 @@ pub fn wokagirini() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: てはかなわない
+// Pattern: てはかなわない (can't stand, unbearable)
+// Structures: Verb[て]/Adj[くて]/Noun[で] + は + かなわない
 pub fn tehakanawanai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match て or で (conjunctive particle or copula)
+    #[derive(Debug)]
+    struct TeOrDeMatcher;
+    impl Matcher for TeOrDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // て as 助詞/接続助詞 (after verb or い-adj)
+            if token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            // で as 助動詞 from だ (after な-adj or noun)
+            if token.surface == "で"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match は as 係助詞
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match かなわ (未然形 of かなう)
+    #[derive(Debug)]
+    struct KanawaMatcher;
+    impl Matcher for KanawaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かなわ"
+                && token.base_form == "かなう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ない (auxiliary)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb, Adjective, or Noun before て/で
+        TokenMatcher::Custom(Arc::new(TeOrDeMatcher)),
+        TokenMatcher::Custom(Arc::new(WaMatcher)),
+        TokenMatcher::Custom(Arc::new(KanawaMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+    ]
 }
 
 // Pattern: かたがた (in addition to, along with, while doing)

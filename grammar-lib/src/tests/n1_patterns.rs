@@ -9003,3 +9003,70 @@ mod woyoginakusaseru_tests {
         assert_pattern_range(&patterns, "を余儀なくさせる", 8, 19); // 倒産を余儀なくさせます
     }
 }
+
+// ============================================================================
+// てはかなわない Tests
+// ============================================================================
+
+mod tehakanawanai_tests {
+    use super::*;
+
+    // Pattern: てはかなわない (can't stand, unbearable)
+    // Data source: grammar_points_data.json["てはかなわない"]
+    // Testing structure variants
+
+    #[test]
+    fn test_tehakanawanai_verb_te() {
+        // Testing: structure.standard[0] - "Verb[て] + は + かなわない"
+        let sentence = "明日充電器を忘れてはかなわないから、今のうちに鞄に入れておこう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはかなわない");
+        assert_pattern_range(&patterns, "てはかなわない", 6, 15); // 忘れてはかなわない
+    }
+
+    #[test]
+    fn test_tehakanawanai_passive() {
+        // Testing: structure.standard[0] - "Verb[られる][て] + は + かなわない" (passive)
+        let sentence = "息子に竿を折られてはかなわないから、手が届かないところに置いておこう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはかなわない");
+        assert_pattern_range(&patterns, "てはかなわない", 7, 15); // れてはかなわない
+    }
+
+    #[test]
+    fn test_tehakanawanai_i_adj() {
+        // Testing: structure.standard[1] - "い-Adj[く] + ては + かなわない"
+        let sentence = "こう頭が痛くてはかなわない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはかなわない");
+        assert_pattern_range(&patterns, "てはかなわない", 4, 13); // 痛くてはかなわない
+    }
+
+    #[test]
+    fn test_tehakanawanai_na_adj() {
+        // Testing: structure.standard[2] - "な-Adj + では + かなわない"
+        let sentence = "そうあやふやではかなわない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはかなわない");
+        assert_pattern_range(&patterns, "てはかなわない", 2, 13); // あやふやではかなわない
+    }
+
+    #[test]
+    fn test_tehakanawanai_verb_passive_quit() {
+        // Testing: structure.standard[0] - "Verb[られる][て] + は + かなわない" (passive)
+        let sentence = "今繁忙期だしこんな時にやめられてはかなわない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "てはかなわない");
+        assert_pattern_range(&patterns, "てはかなわない", 13, 22); // られてはかなわない
+    }
+}
