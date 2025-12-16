@@ -1,16 +1,17 @@
 ## Session 492 - 2025-12-15
 
-### Session Summary - Second N1 Pattern Complete ✓
-**Status**: Successfully implemented ～るまでだ (merely, simply, one can only but) pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3268 passing, 1 ignored (added 6 new tests)
-**Major milestone**: Second N1 pattern completed!
+### Session Summary - Two More N1 Patterns Complete ✓
+**Status**: Successfully implemented ～るまでだ and にあって patterns
+**Patterns completed**: 2 (both N1, priority 5)
+**Total tests**: 3273 passing, 1 ignored (added 11 new tests total)
+**Major milestone**: Third and fourth N1 patterns completed!
 
 **Session highlights**:
 - Implemented ～るまでだ (merely, simply, one can only but) - 6 tests covering all structure variants
-- Handles multiple conditional forms: ば, たら, ても conditionals
-- Supports both simple form (るまでだ) and extended form (るまでのことだ)
-- Works with both standard (だ) and polite (です) forms
+- Implemented にあって (in, at, under the conditions of) - 5 tests for both basic and も forms
+- ～るまでだ: Handles multiple conditional forms (ば, たら, ても), both simple and extended forms
+- にあって: Distinguishes ある (to be) from 遭う (to meet/encounter) using base_form check
+- Both patterns work seamlessly with optional components (の + こと for ～るまでだ, も for にあって)
 - All tests passing with proper range assertions
 - No regressions in test suite
 
@@ -78,6 +79,77 @@ The (A) clause is almost always a negative situation, and (B) represents the onl
 Related patterns:
 - までのこと - Extended/formal version with same meaning
 - までのことだ - Full formal version emphasizing resignation
+
+---
+
+### ✓ Completed: にあって (in, at, under the conditions of)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Noun + にあって - "in the situation of (A)", "under the conditions of (A)"
+- Noun + にあっても - "even under the conditions of (A)"
+
+**Implementation details**:
+4 custom matchers for precise token matching:
+1. `NiParticleMatcher` - に particle (助詞/格助詞/一般)
+2. `AtteMatcher` - あっ (動詞/自立, base=ある, 連用タ接続)
+3. `TeParticleMatcher` - て particle (助詞/接続助詞)
+4. `MoParticleMatcher` - Optional も particle (助詞/係助詞)
+
+**Key implementation insight**:
+The pattern checks `base_form == "ある"` to distinguish this ある (to be) from 遭う (to meet/encounter), which is used in expressions like 事故にあって (to meet with an accident). This is crucial as both verbs can appear in similar contexts but have different meanings.
+
+**Tokenization patterns**:
+1. **にあって**: Noun + に (助詞/格助詞/一般) + あっ (動詞, base=ある, 連用タ接続) + て (助詞/接続助詞)
+2. **にあっても**: Same as above + も (助詞/係助詞)
+
+The pattern matches:
+- Basic form (にあって): Used to mark a noteworthy situation or condition
+- With も (にあっても): Indicates that despite being in the situation, something unexpected occurs
+
+**Tests created**: 5 tests
+1. `test_niatte_position` - 立場にあって (position/role, range 10-16)
+2. `test_niatte_situation` - 状況にあって (situation, range 17-23)
+3. `test_niatte_emergency` - 宣言にあって (state of emergency, range 4-10)
+4. `test_niattemo_emergency` - 時にあっても (even in emergency, range 2-8)
+5. `test_niattemo_difficult` - 状況にあっても (even in difficult circumstances, range 6-13)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented niatte() function (60 lines with 4 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 comprehensive tests
+- `feature_list.json` - Updated にあって to complete status
+
+**Grammar meaning**:
+Fairly formal construction meaning "in the situation of (A)" or "under the conditions of (A)". Combines に (location particle) + あって (て-form of ある "to be"). Used after a noun marking a condition, with the second clause explaining something remarkable or noteworthy about that situation.
+
+Common translations:
+- "in the situation of (A)"
+- "under the conditions of (A)"
+- "in the position of (A)"
+- "given (A)"
+
+When followed by も (にあっても):
+- "even under the conditions of (A)"
+- "even in the situation of (A)"
+- Indicates that despite being in noteworthy situation (A), result (B) is not what one would expect
+
+Component breakdown:
+- に: Location/situation particle
+- ある: To be, to exist (NOT 遭う "to meet/encounter")
+- て: Conjunctive form marker
+- も (optional): Even, also (emphasis particle)
+
+**Important distinction**:
+This pattern uses ある (to be), not 遭う (to meet/encounter). Compare:
+- ✓ 緊急時にあって (using ある - in an emergency)
+- ✗ 事故にあって (using 遭う - to meet with an accident - different grammar!)
+
+The implementation ensures correct detection by checking `base_form == "ある"`.
 
 ---
 
