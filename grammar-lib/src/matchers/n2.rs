@@ -7459,9 +7459,63 @@ pub fn kotodakara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ものだから
+// Pattern: ものだから (because, the reason is)
+// Structures: Verb/Adj + (な) + もの/もん + だ/で + (から)
 pub fn monodakara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Optional な (copula, 体言接続) for な-adjectives/nouns
+    #[derive(Debug)]
+    struct NaCopulaMatcher;
+    impl super::Matcher for NaCopulaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "な"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // もの or もん (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl super::Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "もの" || token.surface == "もん")
+                && token.pos.first().is_some_and(|p| p == "名詞")
+                && token.pos.get(1).is_some_and(|p| p == "非自立")
+        }
+    }
+
+    // だ (基本形) or で (連用形) - both 助動詞, base=だ
+    #[derive(Debug)]
+    struct DaOrDeMatcher;
+    impl super::Matcher for DaOrDeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.base_form == "だ"
+                && ((token.surface == "だ" && token.features.get(5).is_some_and(|f| f == "基本形"))
+                    || (token.surface == "で" && token.features.get(5).is_some_and(|f| f == "連用形")))
+        }
+    }
+
+    // Optional から (助詞/接続助詞) - only after だ
+    #[derive(Debug)]
+    struct KaraMatcher;
+    impl super::Matcher for KaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaCopulaMatcher)))),
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(DaOrDeMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KaraMatcher)))),
+    ]
 }
 
 // Pattern: ものですから・もので

@@ -12541,3 +12541,57 @@ mod ki_tests {
         assert_pattern_range(&patterns, "気", 3, 7); // 頑張る気
     }
 }
+
+// Pattern: ものだから (because, the reason is)
+// Data source: grammar_points_data.json["ものだから"]
+// Testing: structure.standard[0-3]
+//
+// Structure variants:
+//   - Verb + ものだから/もので/もんで/もんだから
+//   - い-Adjective + ものだから/もので/もんで/もんだから
+//   - な-Adjective + な + ものだから/もので/もんで/もんだから
+//   - Noun + な + ものだから/もので/もんで/もんだから
+
+mod monodakara_tests {
+    use super::*;
+
+    #[test]
+    fn test_monodakara_verb() {
+        let sentence = "今仕事をしているものだから、また後でかけ直します";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものだから");
+        assert_pattern_range(&patterns, "ものだから", 8, 13); // ものだから
+    }
+
+    #[test]
+    fn test_monode_verb() {
+        let sentence = "娘の発表会があるもので、そろそろ帰りますね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものだから");
+        assert_pattern_range(&patterns, "ものだから", 8, 11); // もので
+    }
+
+    #[test]
+    fn test_monde_i_adj() {
+        let sentence = "最近は日本語を話す機会が減ってきているもんで、忘れてきた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものだから");
+        assert_pattern_range(&patterns, "ものだから", 19, 22); // もんで
+    }
+
+    #[test]
+    fn test_monodakara_na_adj() {
+        let sentence = "生の魚は苦手なものだから、寿司は食べられない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものだから");
+        assert_pattern_range(&patterns, "ものだから", 6, 12); // なものだから
+    }
+}
