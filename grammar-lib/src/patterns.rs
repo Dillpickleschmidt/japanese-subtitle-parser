@@ -7109,7 +7109,7 @@ declare_patterns! {
     WakeariYakuatte {
         name: "訳あり(訳あって)",
         matcher_fn: crate::matchers::n1::wakeari_yakuatte,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

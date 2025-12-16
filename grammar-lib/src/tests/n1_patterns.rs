@@ -4310,3 +4310,75 @@ mod ikanaru_tests {
     //     assert_pattern_range(&patterns, "いかなる", 0, 5); // いかな状況
     // }
 }
+
+// ============================================================================
+// 訳あり(訳あって) Tests
+// ============================================================================
+
+mod wakeari_yakuatte_tests {
+    use super::*;
+
+    // Pattern: 訳あり(訳あって) (for a reason, defective)
+    // Data source: grammar_points_data.json["訳あり(訳あって)"]
+    // Testing all structure variants:
+    //   - standard[0]: 訳あり + Noun
+    //   - standard[1]: 訳あり + な + Noun
+    //   - standard[2]: 訳あり + の + Noun
+    //   - standard[3]: 訳あって + Phrase
+    //   - standard[4]: 訳あり + で + Phrase
+
+    #[test]
+    fn test_wakeari_direct_noun() {
+        // Testing: 訳あり + Noun (standard[0])
+        let sentence = "わけあり商品は欠陥があっても、安いからすぐ売れることが多い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "訳あり(訳あって)");
+        assert_pattern_range(&patterns, "訳あり(訳あって)", 0, 4); // わけあり
+    }
+
+    #[test]
+    fn test_wakeari_na_noun() {
+        // Testing: 訳あり + な + Noun (standard[1])
+        let sentence = "この会社ってなんかみんな訳ありな人だよね。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "訳あり(訳あって)");
+        assert_pattern_range(&patterns, "訳あり(訳あって)", 12, 16); // 訳ありな
+    }
+
+    #[test]
+    fn test_wakeari_no_noun() {
+        // Testing: 訳あり + の + Noun (standard[2])
+        let sentence = "わけありの商品は普通よりかなり安いことが多いから、いらなくてもつい買っちゃう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "訳あり(訳あって)");
+        assert_pattern_range(&patterns, "訳あり(訳あって)", 0, 5); // わけありの
+    }
+
+    #[test]
+    fn test_wakeatte_phrase() {
+        // Testing: 訳あって + Phrase (standard[3])
+        let sentence = "わけあって、明日から数日間出勤できません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "訳あり(訳あって)");
+        assert_pattern_range(&patterns, "訳あり(訳あって)", 0, 5); // わけあって
+    }
+
+    #[test]
+    fn test_wakeari_de_phrase() {
+        // Testing: 訳あり + で + Phrase (standard[4])
+        let sentence = "色々と訳ありで、来年から日本で生活することが決まりました。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "訳あり(訳あって)");
+        assert_pattern_range(&patterns, "訳あり(訳あって)", 3, 7); // 訳ありで
+    }
+}

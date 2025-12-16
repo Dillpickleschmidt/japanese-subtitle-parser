@@ -3554,9 +3554,76 @@ pub fn sobakara() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 訳あり(訳あって)
+// Pattern: 訳あり(訳あって) (for a reason, defective)
+// Structures: わけ/訳 + あり + [な/の/で/て/Noun]
 pub fn wakeari_yakuatte() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match わけ (hiragana) or 訳 (kanji)
+    #[derive(Debug)]
+    struct WakeMatcher;
+    impl super::Matcher for WakeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // わけ as 名詞/一般 or 動詞/自立/連用形
+            // 訳 as 名詞/一般 or 名詞/接尾/一般
+            (token.surface == "わけ" || token.surface == "訳")
+                && (token.pos.first().is_some_and(|pos| pos == "名詞")
+                    || (token.pos.first().is_some_and(|pos| pos == "動詞")
+                        && token.features.get(5).is_some_and(|f| f == "連用形")))
+        }
+    }
+
+    // Match あり (ある verb in various forms)
+    #[derive(Debug)]
+    struct AriMatcher;
+    impl super::Matcher for AriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // あり as 動詞 with base ある or あり (classical ラ変)
+            token.surface == "あり"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form == "ある" || token.base_form == "あり")
+        }
+    }
+
+    // Match あっ (ある verb in 連用タ接続 for あって form)
+    #[derive(Debug)]
+    struct AtteMatcher;
+    impl super::Matcher for AtteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // あっ as 動詞/連用タ接続 with base あう (misanalyzed) or ある
+            (token.surface == "あっ" || token.surface == "あり")
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| {
+                    f == "連用タ接続" || f == "連用形" || f == "基本形"
+                })
+        }
+    }
+
+    // Match particles/auxiliaries that can follow: な, の, で, て
+    #[derive(Debug)]
+    struct FollowingParticleMatcher;
+    impl super::Matcher for FollowingParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // な (助詞/終助詞)
+            // の (助詞/連体化)
+            // で (助動詞/連用形 with base だ)
+            // て (助詞/接続助詞)
+            (token.surface == "な" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+                || (token.surface == "の" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+                || (token.surface == "で"
+                    && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                        || token.pos.first().is_some_and(|pos| pos == "助詞")))
+                || (token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(WakeMatcher)),
+        TokenMatcher::Custom(Arc::new(AtteMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            FollowingParticleMatcher,
+        )))),
+    ]
 }
 
 // Pattern: に至って・に至り
