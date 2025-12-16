@@ -7464,9 +7464,28 @@ pub fn adjkagirida() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: はおろか
+// Pattern: はおろか (let alone, not to mention)
+// Structures: Noun + は + おろか (+ comma + Noun + さえ/も/すら/まで)
 pub fn haoroka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use super::Matcher;
+    use std::sync::Arc;
+
+    // Match "おろか" as a noun
+    #[derive(Debug)]
+    struct OrokaMatcher;
+    impl Matcher for OrokaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "おろか"
+                && token.base_form == "おろか"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("は"),
+        TokenMatcher::Custom(Arc::new(OrokaMatcher)),
+    ]
 }
 
 // Pattern: めく・めいた

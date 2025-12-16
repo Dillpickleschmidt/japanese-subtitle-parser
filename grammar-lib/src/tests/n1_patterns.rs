@@ -8582,3 +8582,69 @@ mod ninottotte_tests {
         assert_pattern_range(&patterns, "に則って・に則り", 0, 5); // 伝統に則っ
     }
 }
+
+// ============================================================================
+// はおろか Tests
+// ============================================================================
+
+mod haoroka_tests {
+    use super::*;
+
+    // Pattern: はおろか (let alone, not to mention)
+    // Data source: grammar_points_data.json["はおろか"]
+    // Testing: structure.standard[0] - "Noun (A) + はおろか + Noun (B) + さえ/も/まで/すら"
+    //
+    // Structure variants:
+    // - standard[0]: Noun (A) + はおろか + Noun (B) + さえ
+    // - standard[0]: Noun (A) + はおろか + Noun (B) + も
+    // - standard[0]: Noun (A) + はおろか + Noun (B) + まで
+    // - standard[0]: Noun (A) + はおろか + Noun (B) + すら
+
+    #[test]
+    fn test_haoroka_with_sae() {
+        // Testing: Noun + はおろか + Noun + さえ
+        // Realistic example: can't even X, let alone Y
+        let sentence = "彼は掃除はおろか、料理さえできない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はおろか");
+        assert_pattern_range(&patterns, "はおろか", 2, 8); // 掃除はおろか
+    }
+
+    #[test]
+    fn test_haoroka_with_mo() {
+        // Testing: Noun + はおろか + Noun + も
+        // Realistic example with も instead of さえ
+        let sentence = "私はスーパーはおろか、コンビニもないど田舎に住んでいる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はおろか");
+        assert_pattern_range(&patterns, "はおろか", 2, 10); // スーパーはおろか
+    }
+
+    #[test]
+    fn test_haoroka_with_sura() {
+        // Testing: Noun + はおろか + Noun + すら
+        // Realistic example with すら
+        let sentence = "彼女は挨拶はおろか、目すら合わせようとしない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はおろか");
+        assert_pattern_range(&patterns, "はおろか", 3, 9); // 挨拶はおろか
+    }
+
+    #[test]
+    fn test_haoroka_with_made() {
+        // Testing: Noun + はおろか + Noun + まで
+        // Realistic example with まで
+        let sentence = "父はパソコンはおろか、スマホまで使うことができない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "はおろか");
+        assert_pattern_range(&patterns, "はおろか", 2, 10); // パソコンはおろか
+    }
+}

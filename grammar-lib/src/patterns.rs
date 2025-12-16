@@ -7477,7 +7477,7 @@ declare_patterns! {
     Haoroka {
         name: "はおろか",
         matcher_fn: crate::matchers::n1::haoroka,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
