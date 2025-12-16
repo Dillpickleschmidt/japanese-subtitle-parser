@@ -5798,3 +5798,54 @@ mod teyamanai_tests {
         assert_pattern_range(&patterns, "てやまない", 16, 24); // 祈ってやみません
     }
 }
+
+// ============================================================================
+// ぐらいなら Tests (Would rather / Better off)
+// ============================================================================
+
+mod gurainara_tests {
+    use super::*;
+
+    // Pattern: ぐらいなら (would rather B than A, better off B than A)
+    // Data source: grammar_points_data.json["ぐらいなら"]
+    // Structure variants:
+    //   1. Verb[る] + ぐらいなら + Phrase
+    //   2. Verb[る] + くらいなら + Phrase (alternative)
+    // Meaning: "If it gets to the extent of A, then B" where B is preferable
+
+    #[test]
+    fn test_gurainara_with_gurai() {
+        // Testing structure: Verb[dictionary] + ぐらいなら
+        // From example: 引っ越すぐらいなら、死んだ方がマシだ
+        let sentence = "あの地域に引っ越すぐらいなら、死んだ方がマシだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぐらいなら");
+        assert_pattern_range(&patterns, "ぐらいなら", 5, 14); // 引っ越すぐらいなら
+    }
+
+    #[test]
+    fn test_kurainara_with_kurai() {
+        // Testing structure: Verb[dictionary] + くらいなら
+        // From example: 働くくらいなら、一人で働いた方がいい
+        let sentence = "あの先輩の下で働くくらいなら、一人で働いた方がいいと思うよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぐらいなら");
+        assert_pattern_range(&patterns, "ぐらいなら", 7, 14); // 働くくらいなら
+    }
+
+    #[test]
+    fn test_gurainara_buy_new() {
+        // Testing structure: Verb[dictionary] + くらいなら
+        // From example: 直すくらいなら、買った方がいい
+        let sentence = "何十万もかけて直すくらいなら、もう少し出して新しい車を買った方がいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぐらいなら");
+        assert_pattern_range(&patterns, "ぐらいなら", 7, 14); // 直すくらいなら
+    }
+}

@@ -7085,7 +7085,7 @@ declare_patterns! {
     Gurainara {
         name: "ぐらいなら",
         matcher_fn: crate::matchers::n1::gurainara,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

@@ -4597,9 +4597,42 @@ pub fn teyamanai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ぐらいなら
+// Pattern: ぐらいなら (would rather B than A, better off B than A)
+// Structures: Verb[dictionary] + ぐらいなら/くらいなら
 pub fn gurainara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match ぐらい or くらい as 助詞/副助詞
+    #[derive(Debug)]
+    struct GuraiKuraiMatcher;
+    impl super::Matcher for GuraiKuraiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ぐらい" || token.surface == "くらい")
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+        }
+    }
+
+    // Match なら (助動詞 with base だ in 仮定形)
+    #[derive(Debug)]
+    struct NaraMatcher;
+    impl super::Matcher for NaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("基本形"), // Dictionary form verb
+        TokenMatcher::Custom(Arc::new(GuraiKuraiMatcher)),
+        TokenMatcher::Custom(Arc::new(NaraMatcher)),
+    ]
 }
 
 // Pattern: ってば・ったら
