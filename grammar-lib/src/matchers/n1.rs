@@ -4914,9 +4914,125 @@ pub fn gurainara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ってば・ったら
+// Pattern: ってば・ったら (insisting viewpoint / addressing person with frustration)
+// Structures: Verb/Adj/Noun + ってば OR Noun/な-Adj + だ + ってば (same for ったら)
+//
+// Tokenization patterns:
+// 1. [Any] + って (助詞/格助詞/連語) + ば (助詞/接続助詞)
+//    - Verb: 分かったってば
+//    - Noun (person): 金太郎ってば
+// 2. [Any] + だって (助詞/副助詞) + ば (助詞/接続助詞)
+//    - な-Adj/Noun: 嫌いだってば
+// 3. [Noun/な-Adj] + だっ (助動詞 だ, 連用タ接続) + たら (助動詞 た, 仮定形)
+//    - Noun + だったら: 大人だったら
+//
+// Note: い-Adj + ったら tokenizes as いう (verb) + たら - undetectable structurally
+//
+// This function handles Pattern 1: って + ば
 pub fn tteba_u30fb_ttara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for って (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct TteMatcher;
+    impl Matcher for TteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "って"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "連語")
+        }
+    }
+
+    // Matcher for ば (助詞/接続助詞)
+    #[derive(Debug)]
+    struct BaMatcher;
+    impl Matcher for BaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Pattern: [Any] + って + ば
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(TteMatcher)),
+        TokenMatcher::Custom(Arc::new(BaMatcher)),
+    ]
+}
+
+// Pattern: ってば・ったら - だってば variant
+// Handles Pattern 2: だって + ば (e.g., 嫌いだってば)
+pub fn tteba_u30fb_ttara_datte() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for だって (助詞/副助詞)
+    #[derive(Debug)]
+    struct DatteMatcher;
+    impl Matcher for DatteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だって"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+        }
+    }
+
+    // Matcher for ば (助詞/接続助詞)
+    #[derive(Debug)]
+    struct BaMatcher;
+    impl Matcher for BaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ば"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+        }
+    }
+
+    // Pattern: [Any] + だって + ば
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(DatteMatcher)),
+        TokenMatcher::Custom(Arc::new(BaMatcher)),
+    ]
+}
+
+// Pattern: ってば・ったら - だったら variant
+// Handles Pattern 3: だっ + たら (e.g., 大人だったら)
+pub fn tteba_u30fb_ttara_dattara() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Matcher for だっ (助動詞 だ in 連用タ接続)
+    #[derive(Debug)]
+    struct DatMatcher;
+    impl Matcher for DatMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だっ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+        }
+    }
+
+    // Matcher for たら (助動詞 た in 仮定形)
+    #[derive(Debug)]
+    struct TaraMatcher;
+    impl Matcher for TaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    // Pattern: [Any] + だっ + たら
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(DatMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraMatcher)),
+    ]
 }
 
 // Pattern: ずとも (even if not / don't have to)

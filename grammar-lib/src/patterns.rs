@@ -7114,6 +7114,22 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    TtebaU30fbTtaraDatte {
+        name: "ってば・ったら",
+        matcher_fn: crate::matchers::n1::tteba_u30fb_ttara_datte,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
+    TtebaU30fbTtaraDattara {
+        name: "ってば・ったら",
+        matcher_fn: crate::matchers::n1::tteba_u30fb_ttara_dattara,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     Zutomo {
         name: "ずとも",
         matcher_fn: crate::matchers::n1::zutomo,

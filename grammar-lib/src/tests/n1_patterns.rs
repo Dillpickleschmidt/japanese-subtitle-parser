@@ -6216,3 +6216,99 @@ mod zutomo_tests {
         assert_pattern_range(&patterns, "ずとも", 24, 30); // 練習せずとも
     }
 }
+
+// ============================================================================
+// ってば・ったら Tests
+// ============================================================================
+
+mod tteba_ttara_tests {
+    use super::*;
+
+    // Pattern: ってば・ったら (insisting on viewpoint, expressing frustration)
+    // Data source: grammar_points_data.json["ってば・ったら"]
+    // Testing structures:
+    //   - standard[0]: Verb + ってば
+    //   - standard[1]: い-Adj + ってば
+    //   - standard[2]: な-Adj + (だ) + ってば
+    //   - standard[3]: Noun + (だ) + ってば
+    //   - (1) Can use ったら instead of ってば
+    //
+    // Two uses:
+    // 1. With だ: Insisting viewpoint (translated as "I said X!", "I told you X!")
+    // 2. Without だ (after noun/name): Addressing person ("that darn X", "oh that X")
+
+    #[test]
+    fn test_tteba_verb_past() {
+        let sentence = "分かったってば！何回も言われると本当むかつくからちょっと黙ってて。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ってば・ったら");
+        assert_pattern_range(&patterns, "ってば・ったら", 3, 7); // たってば
+    }
+
+    // TODO: UNDETECTABLE - い-Adj + ったら tokenizes as verb いう + たら
+    // Tokenization: 痛 (Adj stem) + いっ (verb いう) + たら (conditional)
+    // Cannot distinguish from actual verb いう + たら structurally
+    // #[test]
+    // fn test_ttara_i_adjective() {
+    //     let sentence = "痛いったら！なんでずっと痛いって言ってるのに何回も何回もフォークでつついてくるの？";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //     assert_has_pattern(&patterns, "ってば・ったら");
+    //     assert_pattern_range(&patterns, "ってば・ったら", 0, 5); // 痛いったら
+    // }
+
+    #[test]
+    fn test_tteba_i_adjective() {
+        let sentence = "痛いってば！なんで信じてくれないの？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ってば・ったら");
+        assert_pattern_range(&patterns, "ってば・ったら", 0, 5); // 痛いってば
+    }
+
+    #[test]
+    fn test_tteba_noun_with_da() {
+        let sentence = "嫌いだってば！あんな奴なんて大嫌いだ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ってば・ったら");
+        assert_pattern_range(&patterns, "ってば・ったら", 0, 6); // 嫌いだってば
+    }
+
+    #[test]
+    fn test_ttara_noun_with_da() {
+        let sentence = "だから、俺は大人だったら！背が低いからってひどいぞ本当に。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ってば・ったら");
+        assert_pattern_range(&patterns, "ってば・ったら", 6, 12); // 大人だったら
+    }
+
+    #[test]
+    fn test_tteba_person_name_addressing() {
+        let sentence = "金太郎ってば、またエアコンつけっぱなしで家出てったよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ってば・ったら");
+        assert_pattern_range(&patterns, "ってば・ったら", 0, 6); // 金太郎ってば
+    }
+
+    // TODO: UNDETECTABLE - あなたったら tokenizes incorrectly
+    // Tokenization: あな (noun "hole") + たっ (verb たつ "to stand") + たら
+    // Should be: あなた (pronoun "you") + ったら
+    // Kagome tokenization error - cannot detect this case
+    // #[test]
+    // fn test_ttara_pronoun_addressing() {
+    //     let sentence = "あなたったら本当におっちょこちょいね。";
+    //     let tokens = tokenize_sentence(sentence);
+    //     let patterns = detect_patterns(&tokens);
+    //     assert_has_pattern(&patterns, "ってば・ったら");
+    //     assert_pattern_range(&patterns, "ってば・ったら", 0, 6); // あなたったら
+    // }
+}
