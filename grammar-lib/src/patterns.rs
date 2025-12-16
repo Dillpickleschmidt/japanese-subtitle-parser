@@ -7917,7 +7917,7 @@ declare_patterns! {
     Toiouka {
         name: "といおうか",
         matcher_fn: crate::matchers::n1::toiouka,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

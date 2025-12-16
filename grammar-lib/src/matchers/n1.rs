@@ -9112,9 +9112,64 @@ pub fn soremadeda() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: といおうか
+// Pattern: といおうか (how to put it / shall I say)
+// Structures: Any + といおうか
 pub fn toiouka() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と as quotation particle (助詞/格助詞/引用)
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+        }
+    }
+
+    // Match いお (verb いう in 未然ウ接続 form)
+    #[derive(Debug)]
+    struct IoMatcher;
+    impl Matcher for IoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いお"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然ウ接続")
+        }
+    }
+
+    // Match う auxiliary (助動詞, 不変化型)
+    #[derive(Debug)]
+    struct UMatcher;
+    impl Matcher for UMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match か particle (助詞/副助詞／並立助詞／終助詞)
+    #[derive(Debug)]
+    struct KaMatcher;
+    impl Matcher for KaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+        TokenMatcher::Custom(Arc::new(IoMatcher)),
+        TokenMatcher::Custom(Arc::new(UMatcher)),
+        TokenMatcher::Custom(Arc::new(KaMatcher)),
+    ]
 }
 
 // Pattern: ずにはおかない (will certainly do / will not fail to do)

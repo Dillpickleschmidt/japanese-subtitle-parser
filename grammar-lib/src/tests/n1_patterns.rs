@@ -9896,3 +9896,82 @@ mod nishitatokorode_tests {
         assert_pattern_range(&patterns, "にしたところで", 2, 8); // たとしたって
     }
 }
+
+// ============================================================================
+// といおうか Tests
+// ============================================================================
+
+mod toiouka_tests {
+    use super::*;
+
+    // Pattern: といおうか (how to put it / shall I say)
+    // Data source: grammar_points_data.json["といおうか"]
+    // Testing: structure.standard[0] - "AといおうかBといおうか + (Phrase)"
+    // where A and B can be Noun, い-Adjective, な-Adjective or Verb
+    //
+    // Structure variants to test:
+    //   - Verb といおうか Verb といおうか
+    //   - い-Adjective といおうか い-Adjective といおうか
+    //   - な-Adjective といおうか な-Adjective といおうか
+    //   - Noun といおうか Noun といおうか
+
+    #[test]
+    fn test_toiouka_verb_pair() {
+        // Testing: Verb といおうか Verb といおうか pattern
+        // Based on: "また彼女に誕生日を忘れられたんだ。あきれているといおうか、傷ついたといおうか、よくわからない。"
+        let sentence = "あきれているといおうか傷ついたといおうか、よくわからない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といおうか");
+        assert_pattern_range(&patterns, "といおうか", 4, 11); // いるといおうか (first occurrence)
+    }
+
+    #[test]
+    fn test_toiouka_i_adjective_pair() {
+        // Testing: い-Adjective といおうか い-Adjective といおうか pattern
+        // Based on: "あいつの運転は荒いといおうか、危ないといおうか、とにかくあいつが運転する車には乗りたくない。"
+        let sentence = "彼の運転は荒いといおうか危ないといおうか、とにかく乗りたくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といおうか");
+        assert_pattern_range(&patterns, "といおうか", 12, 20); // 危ないといおうか
+    }
+
+    #[test]
+    fn test_toiouka_na_adjective_pair() {
+        // Testing: な-Adjective といおうか な-Adjective といおうか pattern
+        // Based on: "自分の体を使ってお客さんの車を守ろうとするなんて、バカといおうか、真面目すぎるといおうか分からない。"
+        let sentence = "バカといおうか真面目すぎるといおうか分からない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といおうか");
+        assert_pattern_range(&patterns, "といおうか", 10, 18); // すぎるといおうか
+    }
+
+    #[test]
+    fn test_toiouka_noun_pair() {
+        // Testing: Noun といおうか Noun といおうか pattern
+        // Based on: "彼はいとこといおうか、ハトコといおうか、私もどういう関係かはわからないけど親戚だということはわかっている。"
+        let sentence = "彼はいとこといおうかハトコといおうか、よくわからない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といおうか");
+        assert_pattern_range(&patterns, "といおうか", 2, 10); // いとこといおうか (first occurrence)
+    }
+
+    #[test]
+    fn test_toiouka_mixed_types() {
+        // Testing: Mixed word types (Verb といおうか Adjective といおうか)
+        // Using: "お前は努力が足りないといおうか、才能がないといおうか…。"
+        let sentence = "彼は努力が足りないといおうか才能がないといおうか、よくわからない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "といおうか");
+        assert_pattern_range(&patterns, "といおうか", 7, 14); // ないといおうか (first occurrence)
+    }
+}
