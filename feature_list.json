@@ -12197,13 +12197,13 @@
   {
     "pattern_name": "さぞ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "さぞ is a fairly formal adverb in Japanese that is used emphatically to highlight that the following statement is somet... [1 std, 2 pol]",
     "priority": 5,
     "skip_reason": null

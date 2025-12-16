@@ -6532,3 +6532,59 @@ mod toatte_tests {
         assert_pattern_range(&patterns, "とあって", 5, 10); // 日とあって
     }
 }
+
+// ============================================================================
+// さぞ Tests
+// ============================================================================
+
+mod sazo_tests {
+    use super::*;
+
+    // Pattern: さぞ (you must be very, how ~ you must be, I dare say that)
+    // Data source: grammar_points_data.json["さぞ"]
+    // Testing: structure.standard[0] - "さぞ + （かし）+ Phrase + （こと）+ だろう"
+    //
+    // Other structures to test:
+    //   - polite[0]: さぞ + （かし）+ Phrase + （こと）+ でしょう
+    //   - variants: さぞや and さぞかし (emphasized versions)
+
+    #[test]
+    fn test_sazo_basic_darou() {
+        let sentence = "あの一流企業で働いているなら、さぞいいところに住んでいるんでしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さぞ");
+        assert_pattern_range(&patterns, "さぞ", 15, 17); // さぞ
+    }
+
+    #[test]
+    fn test_sazo_polite_deshou() {
+        let sentence = "おばあさんが急に入院されて、さぞご心配でしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さぞ");
+        assert_pattern_range(&patterns, "さぞ", 14, 16); // さぞ
+    }
+
+    #[test]
+    fn test_sazo_kashi_variant() {
+        let sentence = "あの人が彼の父だなんて、さぞかし驚いただろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さぞ");
+        assert_pattern_range(&patterns, "さぞ", 12, 16); // さぞかし
+    }
+
+    #[test]
+    fn test_sazo_ya_variant() {
+        let sentence = "あんなに大切にしていた車を盗まれたなんて、さぞや悔しかっただろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "さぞ");
+        assert_pattern_range(&patterns, "さぞ", 21, 24); // さぞや
+    }
+}

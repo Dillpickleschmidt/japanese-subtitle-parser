@@ -5995,9 +5995,21 @@ pub fn toareba() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: さぞ
+// Pattern: さぞ (you must be very, I dare say that)
+// Structures: さぞ・さぞや・さぞかし + Phrase + だろう/でしょう
 pub fn sazo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    #[derive(Debug)]
+    struct SazoMatcher;
+    impl super::Matcher for SazoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "副詞")
+                && (token.base_form == "さぞ"
+                    || token.base_form == "さぞや"
+                    || token.base_form == "さぞかし")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(SazoMatcher))]
 }
 
 // Pattern: ときたら
