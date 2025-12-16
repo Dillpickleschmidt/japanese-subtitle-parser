@@ -1993,3 +1993,66 @@ All tests use realistic subtitle-quality sentences and include proper range asse
 - No regressions
 - Documentation updated
 - Ready for next pattern implementation
+
+## Session 523 - なりに Pattern Complete (N1)
+
+**Date**: Current session
+**Pattern Implemented**: なりに (in one's own way, for what it is)
+**JLPT Level**: N1
+**Status**: ✅ Complete - All tests passing
+
+### Pattern Implementation Summary
+
+**Pattern**: なりに - Expresses doing something "in one's own way" or "for what it is"
+
+**Structures Implemented**:
+- Noun + なり + に
+- それ + なり + に (special case: それなり as single noun)
+- い-Adjective + なり + に
+- な-Adjective + なり + に
+- Verb + なり + に (includes past tense た)
+- Noun + なり + の (with の instead of に)
+- それなり + の
+
+**Implementation**:
+- Main matcher: `narini()` - Matches (Noun/Adj/Verb/AuxVerb) + なり(副助詞) + (に OR の)
+- Secondary matcher: `narini_sorenari()` - Matches それなり(名詞) + (に OR の)
+- Two separate patterns needed because "それなり" can be tokenized as a single noun
+- Used custom matchers to distinguish なり as 副助詞 vs other particle types
+- Handles both に (格助詞) and の (連体化) particles
+
+**Tests Written: 7 tests**
+1. `test_narini_noun` - 自分なりに (noun + なり + に)
+2. `test_narini_sore` - それなりに (それなり as single noun + に)
+3. `test_narini_i_adjective` - 下手なりに (な-adjective + なり + に)
+4. `test_narini_na_adjective` - 初心者なりに (noun + なり + に)
+5. `test_narino_noun_noun` - 広いなりの (い-adjective + なり + の)
+6. `test_narino_sore_noun` - それなりの (それなり + の)
+7. `test_narini_verb_past` - たなりに (auxiliary verb た + なり + に)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented narini() and narini_sorenari() matchers
+- `grammar-lib/src/patterns.rs` - Added Narini and NariniSorenari pattern declarations
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 7 tests in narini_tests module
+- `feature_list.json` - Updated なりに status to complete
+
+### Project Status
+
+**Total Tests**: 3454 passing (up from 3447), 1 ignored
+**Patterns Complete**: Added 1 N1 pattern (なりに)
+
+### Session Notes
+
+**Workflow Followed**: All 16 steps completed successfully
+**Quality Checks Passed**: All checks passed
+**Time Investment**: Appropriate - one pattern completed properly
+
+### Codebase State
+
+**Status**: Clean and ready for next session
+- All tests passing (3454/3454, +7 new)
+- No uncommitted changes
+- No regressions
+- Ready for next pattern implementation
