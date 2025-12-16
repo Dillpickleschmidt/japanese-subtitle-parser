@@ -6626,6 +6626,14 @@ declare_patterns! {
         jlpt: "n1",
     },
 
+    Karano {
+        name: "からの",
+        matcher_fn: crate::matchers::n1::karano,
+        priority: 1,
+        category: PatternCategory::Construction,
+        jlpt: "n1",
+    },
+
     NishiteU2460 {
         name: "にして①",
         matcher_fn: crate::matchers::n1::nishite_u2460,

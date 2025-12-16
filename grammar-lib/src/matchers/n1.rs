@@ -1841,9 +1841,121 @@ pub fn youga_uff5e_maiga() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: からする
+// Pattern: からする (about X, X or more, starting at X)
+// Structures: Number + Counter + からする/からします
 pub fn karasuru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match number tokens (including counters)
+    #[derive(Debug)]
+    struct NumberOrCounterMatcher;
+    impl super::Matcher for NumberOrCounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match 名詞/数 or 名詞/接尾/助数詞
+            if let Some(pos1) = token.pos.first() {
+                if pos1 == "名詞" {
+                    if let Some(pos2) = token.pos.get(1) {
+                        return pos2 == "数" || (pos2 == "接尾" && token.pos.get(2).is_some_and(|p| p == "助数詞"));
+                    }
+                }
+            }
+            false
+        }
+    }
+
+    // Match から particle (格助詞)
+    #[derive(Debug)]
+    struct KaraParticleMatcher;
+    impl super::Matcher for KaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match する verb (for からする/からします)
+    #[derive(Debug)]
+    struct SuruVerbMatcher;
+    impl super::Matcher for SuruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "する"
+                && token.pos.first().is_some_and(|p| p == "動詞")
+        }
+    }
+
+    vec![
+        // Match 1+ number/counter tokens
+        TokenMatcher::Custom(Arc::new(NumberOrCounterMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 5,
+            stop_conditions: vec![],
+        },
+        // Match から
+        TokenMatcher::Custom(Arc::new(KaraParticleMatcher)),
+        // Match する verb
+        TokenMatcher::Custom(Arc::new(SuruVerbMatcher)),
+    ]
+}
+
+// Pattern: からの (about X, X or more, starting at X) - の variant
+// Structures: Number + Counter + からの + Noun
+pub fn karano() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+
+    // Match number tokens (including counters)
+    #[derive(Debug)]
+    struct NumberOrCounterMatcher;
+    impl super::Matcher for NumberOrCounterMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match 名詞/数 or 名詞/接尾/助数詞
+            if let Some(pos1) = token.pos.first() {
+                if pos1 == "名詞" {
+                    if let Some(pos2) = token.pos.get(1) {
+                        return pos2 == "数" || (pos2 == "接尾" && token.pos.get(2).is_some_and(|p| p == "助数詞"));
+                    }
+                }
+            }
+            false
+        }
+    }
+
+    // Match から particle (格助詞)
+    #[derive(Debug)]
+    struct KaraParticleMatcher;
+    impl super::Matcher for KaraParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "から"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+        }
+    }
+
+    // Match の particle (for からの)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl super::Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "連体化")
+        }
+    }
+
+    vec![
+        // Match 1+ number/counter tokens
+        TokenMatcher::Custom(Arc::new(NumberOrCounterMatcher)),
+        TokenMatcher::Wildcard {
+            min: 0,
+            max: 5,
+            stop_conditions: vec![],
+        },
+        // Match から
+        TokenMatcher::Custom(Arc::new(KaraParticleMatcher)),
+        // Match の particle
+        TokenMatcher::Custom(Arc::new(NoParticleMatcher)),
+    ]
 }
 
 // Pattern: にして①

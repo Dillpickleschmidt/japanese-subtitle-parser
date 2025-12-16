@@ -10741,13 +10741,13 @@
   {
     "pattern_name": "からする",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "からする is a slightly formal grammar pattern in Japanese that appears after some kind of number or counter in order to i... [3 std, 3 pol]",
     "priority": 5,
     "skip_reason": null

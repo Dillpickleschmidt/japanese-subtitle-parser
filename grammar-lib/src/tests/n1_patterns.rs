@@ -2094,3 +2094,81 @@ mod verb_te_miseru_tests {
         assert_pattern_range(&patterns, "Verb[て] + みせる", 10, 16); // せてみせます
     }
 }
+
+// ============================================================================
+// からする Tests
+// ============================================================================
+
+mod karasuru_tests {
+    use super::*;
+
+    // Pattern: からする (about X, X or more, starting at X)
+    // Data source: grammar_points_data.json["からする"]
+    // Testing all structure variants
+
+    #[test]
+    fn test_karasuru_basic() {
+        // Testing: structure.standard[0] - "Number + Counter + からする"
+        let sentence = "この辺だと家賃は１５万からする。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からする");
+        assert_pattern_range(&patterns, "からする", 8, 15); // １５万からする
+    }
+
+    #[test]
+    fn test_karasuru_with_noun() {
+        // Testing: structure.standard[1] - "Number + Counter + からする + Noun"
+        let sentence = "それって１５万からするやつでしょ？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からする");
+        assert_pattern_range(&patterns, "からする", 4, 11); // １５万からする
+    }
+
+    #[test]
+    fn test_karasuru_no_variant() {
+        // Testing: structure.standard[2] - "Number + Counter + からの + Noun"
+        let sentence = "この商品を製造するには、１億からのお金がかかる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からの");
+        assert_pattern_range(&patterns, "からの", 12, 17); // １億からの
+    }
+
+    #[test]
+    fn test_karasuru_polite() {
+        // Testing: structure.polite[0] - "Number + Counter + からします"
+        let sentence = "ここの駐車場代は一日３千円からします。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からする");
+        assert_pattern_range(&patterns, "からする", 8, 18); // 一日３千円からします
+    }
+
+    #[test]
+    fn test_karasuru_watch_example() {
+        // Testing: Another example with large amount
+        let sentence = "父から三百万円からする時計をもらった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からする");
+        assert_pattern_range(&patterns, "からする", 3, 11); // 三百万円からする
+    }
+
+    #[test]
+    fn test_karasuru_people_count() {
+        // Testing: からの with people counter
+        let sentence = "昨日の大地震で十人からの人が行方不明になった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "からの");
+        assert_pattern_range(&patterns, "からの", 7, 12); // 十人からの
+    }
+}
