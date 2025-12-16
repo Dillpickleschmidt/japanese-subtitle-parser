@@ -1,3 +1,116 @@
+## Session 548 - 2025-12-16
+
+### Session Summary - ことだし Complete ✓
+**Status**: Implemented ことだし pattern successfully (simple + compound forms)
+**Patterns completed**: 1 (ことだし - N1, priority 5)
+**Total tests**: 3560 passing (4 new tests, no regressions)
+**Progress**: Sixty-fifth N1 pattern completed!
+
+**Session highlights**:
+- Implemented ことだし (since/because - listing one of multiple reasons)
+- Created two pattern variants: simple (ことだし) and compound (ことだし_compound)
+- Simple form: Verb/い-Adj + ことだし
+- Compound form: Noun/な-Adj + の/な + ことだし
+- Priority 2 for compound form (higher specificity)
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include full grammatical construction
+
+### ✓ Completed: ことだし (since/because, listing one reason among others)
+
+**Grammar Point**: ことだし
+**JLPT Level**: N1
+**Priority**: 5 (simple form: 1, compound form: 2)
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb + ことだし
+2. い-Adjective + ことだし
+3. な-Adjective + な + ことだし
+4. Noun + の + ことだし
+
+**Meaning**:
+- "Since (A)" / "Because (A)"
+- Emphasizes that there are OTHER reasons besides what's stated
+- Used for listing reasons or justifications
+- Pattern: [Reason A] + ことだし, [Action/Conclusion]
+- Implies: "While there are other reasons, (A) is good enough reason to (B)"
+
+**Tokenization**:
+Simple form (Verb/い-Adj):
+- Verb/Adjective: 動詞 or 形容詞 (base form)
+- こと: 名詞/非自立/一般 (noun, non-autonomous)
+- だ: 助動詞, base=だ (auxiliary verb)
+- し: 助詞/接続助詞 (conjunctive particle)
+
+Compound form (Noun/な-Adj):
+- Noun or な-Adj stem: 名詞
+- の or な: 助詞/連体化 or 助動詞 (連体接続)
+- こと: 名詞/非自立/一般
+- だ: 助動詞
+- し: 助詞/接続助詞
+
+**Implementation**:
+Two separate patterns to handle different tokenization structures:
+
+1. **ことだし (simple)**: Priority 1
+   - Pattern: [Any token] + こと + だ + し
+   - Matches: Verb + ことだし, い-Adjective + ことだし
+   - Example ranges: 来ることだし (16-22), いいことだし (3-9)
+
+2. **ことだし_compound**: Priority 2 (higher - more specific)
+   - Pattern: [Any token] + の/な + こと + だ + し
+   - Matches: Noun + の + ことだし, な-Adj + な + ことだし
+   - Example ranges: 彼のことだし (0-6), 有名なことだし (10-17)
+   - Custom matcher for の (助詞/連体化) or な (助動詞/体言接続)
+
+Technical Implementation:
+- Matcher functions: kotodashi() and kotodashi_compound() in grammar-lib/src/matchers/n1.rs
+- Custom matchers for precise POS tag matching (KotoMatcher, DaMatcher, ShiMatcher, NoNaMatcher)
+- Pattern type: Construction pattern
+- Two-pattern approach handles different syntactic structures cleanly
+
+Test Details:
+- Module: kotodashi_tests in grammar-lib/src/tests/n1_patterns.rs
+- Test count: 4 comprehensive tests
+- Structure variants tested:
+  * Verb + ことだし (来ることだし)
+  * い-Adjective + ことだし (いいことだし)
+  * な-Adjective + な + ことだし (有名なことだし)
+  * Noun + の + ことだし (彼のことだし)
+- All tests include proper assertions and character range verification
+- No print_debug() in final committed code
+
+Files Modified:
+- grammar-lib/src/matchers/n1.rs - Added kotodashi() and kotodashi_compound()
+- grammar-lib/src/patterns.rs - Registered both pattern variants
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests
+- feature_list.json - Updated ことだし to complete status
+
+Quality Checks:
+✓ Tests exist with proper assertions
+✓ All structure variants covered
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final code
+✓ All existing tests still pass (3560 total, no regressions)
+✓ Clean git history
+
+Test Results:
+Total: 3560 tests passing (up from 3556, +4 new tests)
+All 4 kotodashi tests pass with proper range assertions
+
+Next Priorities (N1 patterns without tests, Priority 5):
+- がん～ - Pattern variant
+- たら〜で - Conditional with で
+- べくして - "Destined to" pattern
+- まま(に)1 - "As is/while" pattern
+- かれ〜かれ - "Whether... or..." pattern
+- なくして(は) - "Without" pattern
+- のなんのって - Emphasis pattern
+- にかかっている - "Depends on" pattern
+
+================================================================================
+
 ## Session 545 - 2025-12-16
 
 ### Session Summary - と思いきや Complete ✓
