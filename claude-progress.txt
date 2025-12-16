@@ -1,3 +1,82 @@
+## Session 491 - 2025-12-15
+
+### Session Summary - First N1 Pattern Complete ✓
+**Status**: Successfully implemented 如何 (いかん - depending on) pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3262 passing, 1 ignored (added 6 new tests)
+**Major milestone**: First N1 pattern completed!
+
+**Session highlights**:
+- Implemented 如何 (いかん - depending on) - 6 tests covering all structure variants
+- Handles multiple tokenization variants: いかん as 名詞/一般 or 名詞/接尾
+- Optional の particle before いかん
+- Multiple ending patterns: で/だ/によって/である
+- Pattern successfully matches longest available form automatically
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: 如何 (いかん - depending on)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Noun + (の) + いかん + で(は) - "depending on" (middle of sentence)
+- Noun + (の) + いかん + だ - "depends on" (end of sentence)
+- Noun + (の) + いかん + によって(は) - "depending on" (strengthened version)
+- Noun + (の) + いかん + である - formal version
+
+**Implementation details**:
+7 custom matchers for precise token matching:
+1. `NoParticleMatcher` - Optional の particle (助詞/連体化)
+2. `IkanMatcher` - いかん (名詞/一般 OR 名詞/接尾)
+3. `DeMatcher` - で (助詞/格助詞 OR 助動詞/連用形)
+4. `DaMatcher` - だ (助動詞/特殊・ダ/基本形)
+5. `NiyotteMatcher` - によって (助詞/格助詞/連語)
+6. `AruAuxMatcher` - ある auxiliary (助動詞/五段・ラ行アル)
+7. `HaParticleMatcher` - Optional は particle (助詞/係助詞)
+
+**Key implementation insight**:
+いかん can be tokenized as either 名詞/一般 or 名詞/接尾 depending on context. The matcher handles both cases.
+
+**Tokenization patterns**:
+1. **いかん + で**: いかん (名詞/一般) + で (助詞/格助詞/一般)
+2. **いかん + だ**: いかん (名詞/一般) + だ (助動詞/特殊・ダ/基本形)
+3. **いかん + によって**: いかん (名詞/接尾) + によって (助詞/格助詞/連語)
+4. **いかん + である**: いかん (名詞/一般) + で (助動詞/連用形) + ある (助動詞/基本形)
+
+**Tests created**: 6 tests
+1. `test_ikan_de_with_no` - 嵐の状況のいかんで (Noun + の + いかん + で, range 4-9)
+2. `test_ikan_de_without_no` - 前回の試験の結果いかんで (Noun + いかん + で, range 8-12)
+3. `test_ikan_da_with_no` - 君たちの努力のいかんだ (Noun + の + いかん + だ, range 17-22)
+4. `test_ikan_da_without_no` - 自分の業績いかんだ (Noun + いかん + だ, range 14-18)
+5. `test_ikan_niyotte` - 実験の結果いかんによっては (Noun + いかん + によって + は, range 5-13)
+6. `test_ikan_dearu` - 努力のいかんである (Noun + の + いかん + である, range 10-17)
+
+All tests use realistic, subtitle-quality sentences and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented ika_2() function (103 lines with 7 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 6 comprehensive tests
+- `feature_list.json` - Updated 如何 to complete status
+
+**Grammar meaning**:
+いかん is an abbreviation of 如何（いか）に, an adverb meaning "in what way". Almost always translates as "depending on".
+Used to indicate that the degree/state of (A) will be the factor that determines the overall result. Often followed by
+subclauses using verbs of decision making such as 決まる.
+
+Common translations:
+- "depending on (A)"
+- "according to (A)"
+- "based on how (A) is"
+
+Related to どう (how) and 如何である (in what way). Formal register, often used in written/business contexts.
+
+---
+
 ## Session 490 - 2025-12-15
 
 ### Session Summary - Four N2 Patterns Complete ✓ - ALL N2 PATTERNS DONE!
