@@ -1620,3 +1620,58 @@ mod tekaratoiumono_tests {
         assert_pattern_range(&patterns, "てからというもの", 12, 21); // それからというもの
     }
 }
+
+// ============================================================================
+// かたわら (besides, in addition to, while)
+// Data source: grammar_points_data.json["かたわら"]
+// ============================================================================
+#[cfg(test)]
+mod katawara_tests {
+    use super::*;
+
+    // Pattern: かたわら (besides, in addition to, while)
+    // Data source: grammar_points_data.json["かたわら"]
+    // Testing: structure.standard[0] - "Verb[る] + かたわら"
+    #[test]
+    fn test_katawara_verb() {
+        let sentence = "彼は飲食店を経営しているかたわら、鳶職人としても働いている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かたわら");
+        assert_pattern_range(&patterns, "かたわら", 10, 16); // いるかたわら
+    }
+
+    // Testing: structure.standard[0] - another verb example
+    #[test]
+    fn test_katawara_verb_professor() {
+        let sentence = "グレッグラフィンは大学の教授をしているかたわら、歌手として活動している。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かたわら");
+        assert_pattern_range(&patterns, "かたわら", 17, 23); // いるかたわら
+    }
+
+    // Testing: structure.standard[1] - "Noun + の + かたわら"
+    #[test]
+    fn test_katawara_noun() {
+        let sentence = "私の妹は本業のかたわら、英会話教室で英語を教えている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かたわら");
+        assert_pattern_range(&patterns, "かたわら", 4, 11); // 本業のかたわら
+    }
+
+    // Testing: structure.standard[1] - another noun example
+    #[test]
+    fn test_katawara_noun_childcare() {
+        let sentence = "妻は子育てのかたわら、近所の子供達にそろばんを教えている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かたわら");
+        assert_pattern_range(&patterns, "かたわら", 2, 10); // 子育てのかたわら
+    }
+}

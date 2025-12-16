@@ -1450,9 +1450,57 @@ pub fn tekaratoiumono() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: かたわら
+// Pattern: かたわら (besides, in addition to, while)
+// Structures: Verb[る] + かたわら / Noun + の + かたわら
 pub fn katawara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match かたわら (名詞/副詞可能)
+    #[derive(Debug)]
+    struct KatawaraMatcher;
+    impl Matcher for KatawaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かたわら"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+        }
+    }
+
+    // Match verb in dictionary form (基本形) OR noun
+    #[derive(Debug)]
+    struct VerbOrNounMatcher;
+    impl Matcher for VerbOrNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match verb in dictionary form
+            if token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "基本形");
+            }
+            // Or match any noun
+            token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match の particle (助詞/連体化)
+    #[derive(Debug)]
+    struct NoParticleMatcher;
+    impl Matcher for NoParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(VerbOrNounMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+            NoParticleMatcher,
+        )))),
+        TokenMatcher::Custom(Arc::new(KatawaraMatcher)),
+    ]
 }
 
 // Pattern: を皮切りに
