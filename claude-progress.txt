@@ -1,3 +1,111 @@
+## Session 537 - 2025-12-16
+
+### Session Summary - なら〜で Pattern Complete ✓
+**Status**: Successfully implemented なら〜で pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3514 passing, 1 ignored (added 4 new tests)
+**Progress**: Fifty-fifth N1 pattern completed!
+
+**Session highlights**:
+- Implemented なら〜で pattern (if X, should/must do X properly)
+- Works with verbs, い-adjectives, な-adjectives in repeated structure
+- Pattern detects "Word + なら + Same Word + で" constructions
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3514 tests total)
+
+### ✓ Completed: なら〜で (if X, should/must do X properly)
+
+**Grammar Point**: なら〜で
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+- Verb[る] + なら + Verb[る] + で (e.g., するならするで - if you do it, do it properly)
+- い-Adjective + なら + い-Adjective + で (e.g., 欲しいなら欲しいで - if you want it, say so)
+- な-Adjective + なら + な-Adjective + で (e.g., 嫌なら嫌で - if you dislike it, just quit)
+- Noun + なら + Noun + で (same pattern with nouns)
+
+**Meaning**:
+- "If (A), you should (B)" / "Before (A), you should (B)"
+- Structure where the same word repeats twice followed by an opinion/suggestion
+- Often exhibits speaker's dissatisfaction about something
+- Emphasizes "if you're going to X, then X properly/completely"
+- Both なら and で function as conjunction particles
+
+**Implementation**:
+- Pattern: Word + なら(助動詞/仮定形) + Same Word + で(接続助詞 or 格助詞)
+- Custom matchers:
+  - NaraMatcher: Matches なら as 助動詞 with base だ in 仮定形
+  - DeParticleMatcher: Matches で as 助詞/接続助詞 or 助詞/格助詞
+  - FirstWordMatcher: Matches 動詞, 形容詞, or 名詞/形容動詞語幹
+- Pattern detects the full 4-token construction
+- Priority 5 for this N1-level pattern
+
+**Tests Written: 4 tests**
+1. `test_nara_de_verb` - 仕事するならするで (0, 9) - if you work, work properly
+2. `test_nara_de_i_adjective` - 欲しいなら欲しいで (0, 9) - if you want it, say so
+3. `test_nara_de_na_adjective` - 嫌なら嫌で (0, 5) - if you dislike it, just quit
+4. `test_nara_de_verb_with_break` - 休むなら休むで (0, 7) - if you rest, rest properly
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures Word + なら + Same Word + で:
+- 仕事するならするで (0, 9) - 9 characters (verb する with noun 仕事)
+- 欲しいなら欲しいで (0, 9) - 9 characters (い-adjective)
+- 嫌なら嫌で (0, 5) - 5 characters (な-adjective)
+- 休むなら休むで (0, 7) - 7 characters (verb)
+
+**Key Notes**:
+- The same word must appear twice in the pattern
+- なら (助動詞) is the conditional form of だ (仮定形)
+- で can be either 接続助詞 (conjunction particle) or 格助詞 (case particle)
+- Different from similar patterns like ば〜で, たら〜たで which have different nuances
+- Often used to express dissatisfaction or to emphasize commitment
+- Common in casual/informal speech despite being N1 level
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented nara_u301c_de() matcher with three custom matchers
+- `grammar-lib/src/patterns.rs` - Updated NaraU301cDe priority to 5
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in nara_u301c_de_tests module
+- `feature_list.json` - Updated なら〜で to complete status
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (なら〜で from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found nara_u301c_de() stub in n1.rs)
+7. ✓ Wrote all 4 tests first with print_debug()
+8. ✓ Analyzed tokenization output for all variants
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Updated priority in patterns.rs to 5
+11. ✓ Verified all tests detect the pattern correctly
+12. ✓ Removed print_debug() and added assertions
+13. ✓ Verified no regressions (3514 tests passing)
+14. ✓ Updated feature_list.json
+15. ✓ Committed changes
+16. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (verb, い-adj, な-adj, noun)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- をものともせず - "Undaunted by" pattern
+- には当たらない - "Does not amount to" pattern
+- ものと思う - "I think/assume that" pattern
+- を踏まえて - "Based on, considering" pattern
+- という1 - "Called/named" pattern variant
+- にとどまらず - "Not limited to" pattern
+
+---
+
 ## Session 536 - 2025-12-16
 
 ### Session Summary - たる Pattern Complete ✓
