@@ -2165,9 +2165,28 @@ pub fn wooitehokani_u301c_nai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: をもって
+// Pattern: をもって (as of, effective from - time expressions)
+// Structures: Time expression + をもって/をもちまして
+// Note: Same structure as を以て but different semantic usage (time vs means)
 pub fn womotte_2() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match をもって or をもちまして as a compound particle
+    #[derive(Debug)]
+    struct WomotteTimeMatcher;
+    impl Matcher for WomotteTimeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "をもって" || token.surface == "をもちまして")
+                && token.pos.first().is_some_and(|p| p == "助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(2).is_some_and(|p| p == "連語")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Custom(Arc::new(WomotteTimeMatcher)),
+    ]
 }
 
 // Pattern: とはいえ

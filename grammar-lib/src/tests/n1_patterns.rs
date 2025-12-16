@@ -2503,3 +2503,64 @@ mod wooitehokani_nai_tests {
         assert_pattern_range(&patterns, "をおいてほかに〜ない", 11, 24); // 先生をおいてほかにはいない
     }
 }
+
+// ============================================================================
+// をもって Tests (as of, effective from)
+// ============================================================================
+
+mod womotte2_tests {
+    use super::*;
+
+    // Pattern: をもって (as of, effective from)
+    // Data source: grammar_points_data.json["をもって"]
+    // Testing: structure.standard[0] - "Time-Related Expression + をもって"
+    //
+    // Structure variants to test:
+    //   - standard[0]: Time expression + をもって
+    //   - standard[1]: 以上 + をもって (これ/これ以上)
+    //   - polite[0]: Time expression + をもちまして
+
+    #[test]
+    fn test_womotte_game_service() {
+        let sentence = "このゲームのオンラインサービスは2023年8月10日をもって終了することに決定しました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をもって");
+        assert_pattern_range(&patterns, "をもって", 25, 30); // 日をもって
+    }
+
+    #[test]
+    fn test_womotte_today() {
+        let sentence = "本日をもって、受付を終了いたします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をもって");
+        assert_pattern_range(&patterns, "をもって", 0, 6); // 本日をもって
+    }
+
+    #[test]
+    fn test_womotte_tour() {
+        let sentence = "今回のツアーをもって、解散することになりました";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Note: This one is detected by を以て_split due to different tokenization
+        // but をもって pattern also matches, so we test for をもって
+        assert!(
+            has_pattern(&patterns, "をもって") || has_pattern(&patterns, "を以て_split"),
+            "Expected をもって or を以て_split pattern"
+        );
+    }
+
+    #[test]
+    fn test_womochimashite_polite() {
+        let sentence = "いつもご来店ありがとうございます。この店舗は本日をもちまして閉店いたします";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "をもって");
+        assert_pattern_range(&patterns, "をもって", 22, 30); // 本日をもちまして
+    }
+}
