@@ -1,16 +1,18 @@
 ## Session 497 - 2025-12-15
 
-### Session Summary - One N1 Pattern Complete ✓
-**Status**: Successfully implemented なり pattern
-**Patterns completed**: 1 (N1, priority 5)
-**Total tests**: 3311 passing, 1 ignored (added 4 new tests)
-**Progress**: Eleventh N1 pattern completed!
+### Session Summary - Two N1 Patterns Complete ✓
+**Status**: Successfully implemented なり and ともなく・ともなしに patterns
+**Patterns completed**: 2 (both N1, priority 5)
+**Total tests**: 3316 passing, 1 ignored (added 9 new tests)
+**Progress**: Eleventh and twelfth N1 patterns completed!
 
 **Session highlights**:
 - Implemented なり (as soon as, the moment) - 4 tests covering the structure variant
-- Pattern handles Verb[る] + なり (dictionary form + conjunction particle)
-- Uses DictionaryFormVerbMatcher to match verbs in 基本形
-- NariParticleMatcher ensures なり is 助詞/接続助詞
+- Implemented ともなく・ともなしに (absentmindedly, without paying attention) - 5 tests for both variants
+- なり: Simple pattern with Verb[る] + なり (dictionary form + conjunction particle)
+- ともなく・ともなしに: Handles two variants using optional matchers (ともなく and ともなしに)
+- Uses flexible matching strategy with ToOrTomoMatcher to handle both variants
+- Optional matchers for も and に enable detection of both 3-token and 5-token patterns
 - All tests use realistic, subtitle-quality sentences from actual grammar examples
 - All tests passing with proper range assertions
 - No regressions in test suite
@@ -77,6 +79,80 @@ Examples:
 - 入るなり (as soon as coming in)
 - 座るなり (as soon as sitting down)
 - 起きるなり (as soon as waking up)
+
+---
+
+### ✓ Completed: ともなく・ともなしに (absentmindedly, without paying attention)
+
+**JLPT Level**: N1
+**Category**: Construction
+**Priority**: 5
+
+**Pattern structures implemented**:
+- Verb[る] + ともなく
+- Verb[る] + ともなしに
+
+**Implementation details**:
+5 custom matchers for precise token matching:
+1. `DictionaryFormVerbMatcher` - Matches verbs in 基本形 (dictionary form)
+2. `ToOrTomoMatcher` - Matches とも (助詞/接続助詞) OR と (助詞/格助詞/引用)
+3. `MoParticleMatcher` - Optional も (助詞/係助詞) for ともなしに
+4. `NakuOrNashiMatcher` - Matches なく OR なし (base=ない, 形容詞/自立)
+5. `NiParticleMatcher` - Optional に (助詞/格助詞) for ともなしに
+
+**Key implementation insight**:
+The pattern handles two distinct variants using optional matchers:
+- **ともなく**: 3 tokens (Verb + とも + なく)
+- **ともなしに**: 5 tokens (Verb + と + も + なし + に)
+
+The `ToOrTomoMatcher` accepts both とも (single token) and と (first part of ともなしに). Optional matchers for も and に allow the pattern to match both variants seamlessly.
+
+**Tokenization patterns**:
+1. **ともなく**: Verb (基本形) + とも (助詞/接続助詞) + なく (形容詞, 連用テ接続, base=ない)
+2. **ともなしに**: Verb (基本形) + と (助詞/格助詞/引用) + も (助詞/係助詞) + なし (形容詞, 文語基本形, base=ない) + に (助詞/格助詞)
+
+**Tests created**: 5 tests
+1. `test_tomonaku_watching_tv` - 見るともなく (range 6-12)
+2. `test_tomonaku_listening` - 聞くともなく (range 2-8)
+3. `test_tomonashini_listening_boss` - 聞くともなしに (range 9-16)
+4. `test_tomonashini_walking` - 歩くともなしに (range 9-16)
+5. `test_tomonaku_looking` - 見るともなく (range 4-10)
+
+All tests use realistic, subtitle-quality sentences from actual grammar examples and include proper range assertions.
+
+**Files modified**:
+- `grammar-lib/src/matchers/n1.rs` - Implemented tomonaku_u30fb_tomonashini() function (82 lines with 5 custom matchers)
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 5 comprehensive tests in tomonaku_tomonashini_tests module
+- `feature_list.json` - Updated ともなく・ともなしに to complete status
+
+**Grammar meaning**:
+ともなく and ともなしに are structures used to indicate that (A) was being done absentmindedly when (B) happened. Translates as "unconsciously (A) when (B)" or "without paying attention to (A), (B)".
+
+This pattern is a combination of the case-marking particle と, the adverbial particle も, and the conjunctive form of the い-Adjective ない. It follows the dictionary form of verbs and can be thought of as literally meaning "even while not intending to (B), while (A), (B)".
+
+ともなしに is similar, but pairs the noun なし 'without' with に, instead of using the conjunctive form of ない.
+
+Common translations:
+- "absentmindedly (A)"
+- "unconsciously (A)"
+- "without paying attention to (A)"
+
+**Important notes**:
+- The action before ともなく/ともなしに is intentional
+- The result/thing noticed is unintentional
+- Often used with たら to emphasize the specific timing of when something happened
+- Despite the absentminded nature, the action (A) itself is being performed, just not with full attention
+
+**Pattern range note**:
+The pattern captures the full grammatical construction:
+- Verb + ともなく: Full phrase from verb to なく
+- Verb + ともなしに: Full phrase from verb to に
+
+Examples:
+- 見るともなく (absentmindedly watching)
+- 聞くともなく (absentmindedly listening)
+- 歩くともなしに (mindlessly walking)
+- 聞くともなしに (absentmindedly listening)
 
 ---
 
