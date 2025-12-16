@@ -1,3 +1,101 @@
+## Session 567 - 2025-12-16
+
+### Session Summary - そばから Complete ✓
+**Status**: Implemented そばから pattern successfully
+**Patterns completed**: 1 (そばから - N1, priority 5)
+**Total tests**: 3642 passing (4 new tests, no regressions)
+**Progress**: Seventy-eighth N1 pattern completed!
+
+**Session highlights**:
+- Implemented そばから (as soon as / right after)
+- Handles both dictionary form and past tense verbs
+- Simple pattern with custom matchers for precise matching
+- All structure variants tested with realistic subtitle sentences
+- Pattern ranges include full verb phrase (verb + そばから)
+
+### ✓ Completed: そばから (as soon as / right after)
+
+**Grammar Point**: そばから
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Verb[る] + そばから (dictionary form: するそばから)
+2. Verb[た] + そばから (past form: 直したそばから)
+
+**Meaning**:
+- "As soon as (A), (B)" / "Right after (A), (B)"
+- Etymology: そば (side) + から (from) = "from right beside (A)"
+- Usually (B) is something annoying or unfavorable that nullifies (A)
+- Implies that (B) always happens upon (A), not a one-off situation
+- Cannot be used for once-off situations
+
+**Tokenization**:
+All variants tokenize consistently as:
+- **Dictionary form**: Verb (基本形) + そば + から
+  - する (動詞, 基本形) + そば (名詞) + から (助詞/格助詞)
+- **Past form**: Verb (連用形/連用タ接続) + た/だ + そば + から
+  - 直し (動詞, 連用形) + た (助動詞) + そば (名詞) + から (助詞/格助詞)
+
+**Implementation**:
+- Pattern: Verb + (optional た/だ) + そば + から
+- Custom matchers:
+  1. VerbBeforeSobaMatcher: Matches verbs in 基本形, 連用形, or 連用タ接続
+  2. SobaMatcher: Matches そば (名詞/一般)
+  3. KaraParticleMatcher: Matches から (助詞/格助詞)
+- Uses TokenMatcher::Optional for past auxiliary た/だ
+- Priority 5 for N1 formal construction
+- Range includes the verb + そばから
+
+**Tests Written: 4 tests (all passing)**
+1. test_sobakara_verb_dictionary_yaburu - するそばから (6, 12) - breaks promises as soon as made
+2. test_sobakara_verb_dictionary_shippai - 注意するそばから (2, 10) - makes mistakes right after warning
+3. test_sobakara_verb_past_kowareru - 直したそばから (5, 12) - breaks as soon as fixed
+4. test_sobakara_verb_past_wasureru - 読んだそばから (8, 15) - forgets right after reading
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures verb + そばから:
+- するそばから (6, 12) - 6 characters (する + そばから)
+- 注意するそばから (2, 10) - 8 characters (注意する + そばから)
+- 直したそばから (5, 12) - 7 characters (直した + そばから)
+- 読んだそばから (8, 15) - 7 characters (読んだ + そばから)
+
+**Key Notes**:
+- Pattern captures full verb phrase (including サ変 nouns for する verbs)
+- Works with both dictionary form (基本形) and past form (た/だ)
+- The pattern emphasizes immediate succession and recurring events
+- Very clean tokenization - just verb + そば + から
+- Formal register - common in explanations and narratives
+- Often describes frustrating situations where effort is immediately undone
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented sobakara() with 3 custom matchers
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in sobakara_tests module
+- feature_list.json - Updated そばから to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (dictionary and past forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3642 total, +4 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- たら〜で - Conditional construction (requires repeated word matching)
+- に至って・に至り - "Now that/at last" pattern
+- だに + しない - Classical negative pattern
+- んがため(に) - Classical purpose pattern
+- にも～ない - "Despite wanting to" pattern
+- ～なり～なり - Classical listing pattern
+- ないでもない - Double negative pattern
+- もさることながら - "Not only but also" pattern
+
+================================================================================
+
 ## Session 566 - 2025-12-16
 
 ### Session Summary - でもなんでもない Complete ✓
