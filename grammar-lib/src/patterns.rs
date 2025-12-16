@@ -7461,7 +7461,7 @@ declare_patterns! {
     NinottotteU30fbNinottori {
         name: "に則って・に則り",
         matcher_fn: crate::matchers::n1::ninottotte_u30fb_ninottori,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

@@ -7362,9 +7362,29 @@ pub fn nbakarini() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: に則って・に則り
+// Pattern: に則って・に則り (in accordance with, based on)
+// Structures: Noun + に則（のっと）って/に則（のっと）った/に則（のっと）り/に則（のっと）っての
+//
+// Matches: Noun + に + 則る/のっとる (in any conjugation)
+// The verb 則る/のっとる means "to follow" or "to conform to"
 pub fn ninottotte_u30fb_ninottori() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Custom matcher for the verb 則る/のっとる (to follow, to conform)
+    #[derive(Debug)]
+    struct NottoruVerbMatcher;
+    impl Matcher for NottoruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form == "則る" || token.base_form == "のっとる")
+        }
+    }
+
+    vec![
+        super::noun_matcher(),
+        TokenMatcher::Surface("に"),
+        TokenMatcher::Custom(Arc::new(NottoruVerbMatcher)),
+    ]
 }
 
 // Pattern: Adj限りだ (extremely, as ~ as can be)

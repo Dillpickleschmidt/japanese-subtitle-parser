@@ -11959,13 +11959,13 @@
   {
     "pattern_name": "に則って・に則り",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に則（のっと）って is a formal expression used when something is being done 'according to (A)', or 'in line with (A)' [4 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

@@ -8518,3 +8518,67 @@ mod teyaru_tests {
         assert_pattern_range(&patterns, "～てやる", 5, 12); // 守ってやります
     }
 }
+
+// ============================================================================
+// に則って・に則り Tests
+// ============================================================================
+
+mod ninottotte_tests {
+    use super::*;
+
+    // Pattern: に則って・に則り (in accordance with, based on)
+    // Data source: grammar_points_data.json["に則って・に則り"]
+    // Testing all structure variants:
+    //   standard[0]: Noun + に則（のっと）って
+    //   standard[1]: Noun (A) + に則（のっと）った + Noun (B)
+    //   standard[2]: に則（のっと）り
+    //   standard[3]: に則（のっと）っての
+
+    #[test]
+    fn test_ninottotte_te_form() {
+        // Testing: structure.standard[0] - Noun + に則（のっと）って
+        // Example from grammar_points_data.json
+        let sentence = "どの国に行こうと、その国の法律にのっとって、生活しなくてはいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に則って・に則り");
+        assert_pattern_range(&patterns, "に則って・に則り", 13, 20); // 法律にのっとっ
+    }
+
+    #[test]
+    fn test_ninottotte_ta_form_modifier() {
+        // Testing: structure.standard[1] - Noun (A) + に則（のっと）った + Noun (B)
+        // Example from grammar_points_data.json
+        let sentence = "私は無宗教なので、宗教にのっとった式はあげたくないです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に則って・に則り");
+        assert_pattern_range(&patterns, "に則って・に則り", 9, 17); // 宗教にのっとった (includes た)
+    }
+
+    #[test]
+    fn test_ninottori_continuative() {
+        // Testing: structure.standard[2] - に則（のっと）り (continuative form)
+        // Realistic example
+        let sentence = "この計画は国際法に則り、厳格に実施されています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に則って・に則り");
+        assert_pattern_range(&patterns, "に則って・に則り", 7, 11); // 法に則り
+    }
+
+    #[test]
+    fn test_ninottotte_no_form() {
+        // Testing: structure.standard[3] - に則（のっと）っての (noun modifier with の)
+        // Realistic example
+        let sentence = "伝統に則っての行事が毎年開催される。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に則って・に則り");
+        assert_pattern_range(&patterns, "に則って・に則り", 0, 5); // 伝統に則っ
+    }
+}
