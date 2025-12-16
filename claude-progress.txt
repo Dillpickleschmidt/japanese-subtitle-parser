@@ -1,3 +1,104 @@
+## Session 569 - 2025-12-16
+
+### Session Summary - ずにはおかない Complete ✓
+**Status**: Implemented 1 N1 pattern with 2 form variants successfully
+**Patterns completed**: 1 (ずにはおかない - N1, priority 5)
+**Total tests**: 3655 passing (5 new tests, no regressions)
+**Progress**: Eighty-first N1 pattern completed!
+
+**Session highlights**:
+- Implemented ずにはおかない (will certainly do / will not fail to do)
+- Two form variants: ずにはおかない and ないではおかない (both registered as separate patterns)
+- Classical auxiliary ず + には + おかない construction
+- Handles regular verbs (捕まえずには), する verbs (せずには), and causative verbs (感動させずには)
+- Token combiner extends ranges to include following だろう when present
+- All structure variants tested with realistic subtitle sentences
+
+### ✓ Completed: ずにはおかない (will certainly do / will not fail to do)
+
+**Grammar Point**: ずにはおかない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb [ない-stem] + ず + には + おかない (classical form)
+2. Verb [ない] + では + おかない (modern alternative)
+3. Exception: する→せずにはおかない
+
+**Meaning**:
+- "Will certainly do (A)" / "Will not fail to do (A)"
+- Literally: "cannot leave it as it is with (A) undone"
+- Formal expression showing strong will to complete the action
+- Often used with causative verbs (e.g., 感動させずにはおかない)
+- Expresses determination not to quit until the action is done
+
+**Tokenization**:
+ずにはおかない form:
+- Verb (動詞/未然形 or 未然ヌ接続 or 未然レル接続)
+- ず (助動詞/特殊・ヌ/連用ニ接続, base=ぬ)
+- に (助詞/格助詞)
+- は (助詞/係助詞)
+- おか (動詞/自立/未然形, base=おく)
+- ない (助動詞/特殊・ナイ)
+
+ないではおかない form:
+- Verb (動詞/未然形)
+- ない (助動詞/特殊・ナイ)
+- で (助動詞/特殊・ダ/連用形, base=だ)
+- は (助詞/係助詞)
+- おか (動詞/自立/未然形, base=おく)
+- ない (助動詞/特殊・ナイ)
+
+**Implementation**:
+- Two separate pattern registrations: zunihaokanai() and naidewaokanai()
+- Custom matcher MizenkeiVerbMatcher: Matches verbs in 未然形/未然ヌ接続/未然レル接続
+- Custom matchers for ず, ない, で, and おか with strict POS/feature checks
+- Both patterns have priority 5 for N1 construction
+- Range includes the full verb + auxiliary + おかない construction
+- Token combiner may extend range to include following だろう
+
+**Tests Written: 5 tests (all passing)**
+1. test_zunihaokanai_verb_tsukamaeru - 捕まえずにはおかない (19, 32) - with だろう
+2. test_zunihaokanai_causative_kandou - 感動させずにはおかない (16, 24) - causative
+3. test_zunihaokanai_suru_verb_chousa - せずにはおかない (22, 30) - する verb
+4. test_zunihaokanai_naidewa_uttaeru - 訴えないではおかない (19, 32) - ないでは form with だろう
+5. test_zunihaokanai_naidewa_chikara - 入れないではおかない (18, 28) - ないでは form
+
+All tests use realistic subtitle-quality sentences from grammar_points_data.json examples.
+
+**Character Ranges**: Pattern captures verb + full construction:
+- 捕まえずにはおかないだろう (19, 32) - 13 characters (includes だろう via token combiner)
+- 感動させずにはおかない (16, 24) - 8 characters (causative + construction)
+- せずにはおかない (22, 30) - 8 characters (する→せ exception)
+- 訴えないではおかないだろう (19, 32) - 13 characters (ないでは form with だろう)
+- 入れないではおかない (18, 28) - 10 characters (ないでは form)
+
+**Key Notes**:
+- Critical fix: Created custom MizenkeiVerbMatcher instead of using flexible_verb_form()
+- flexible_verb_form() only matches 連用形/連用タ接続, but ずには requires 未然形/未然ヌ接続
+- Two separate pattern declarations allow both forms to be detected independently
+- Both forms are the same grammar point, just different expression styles
+- Token combiner behavior causes some tests to include trailing だろう in ranges
+- Works seamlessly with various verb types (regular, する, causative)
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented zunihaokanai() and naidewaokanai()
+- grammar-lib/src/patterns.rs - Added both pattern declarations with priority 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in zunihaokanai_tests module
+- feature_list.json - Updated ずにはおかない to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (ずには and ないでは forms)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified (with token combiner extension noted)
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3655 total, +5 new)
+✓ Clean git history
+
+================================================================================
+
 ## Session 568 - 2025-12-16
 
 ### Session Summary - ずくめ & ずじまい Complete ✓
