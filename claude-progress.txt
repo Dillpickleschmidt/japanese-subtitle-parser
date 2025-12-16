@@ -1,3 +1,92 @@
+## Session 586 - 2025-12-16
+
+### Session Summary - に足りない Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (に足りない - N1, priority 5)
+**Total tests**: 3747 passing (4 new tests, no regressions)
+**Progress**: One-hundredth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented に足りない (not worth / not sufficient)
+- Formal grammar expression for indicating inadequacy or unworthiness
+- Simple, clean implementation with custom matchers for precise POS checking
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: に足りない (not worth / not sufficient)
+
+**Grammar Point**: に足りない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structure**:
+1. Verb[基本形] + に + 足りない (信じるにたりない, 売るにたりない, 取るにたりない)
+
+**Meaning**:
+- "Not worth (A)" / "Not sufficient for (A)"
+- Formal expression used in literature or formal speech settings
+- Combination of に (case particle) + 足りる (to be sufficient/enough)
+- Negative form expresses inadequacy or unworthiness of something
+- Common in set phrase 取るに足りない (worthless / not worth taking up for discussion)
+
+**Tokenization pattern**:
+- Verb (動詞/自立/基本形)
+- に (助詞/格助詞/一般)
+- たり (動詞/自立/一段/未然形, base=たりる)
+- ない (助動詞/特殊・ナイ/基本形)
+
+**Implementation**:
+Created custom matchers for precise POS checking:
+1. NiMatcher - Matches に as 助詞/格助詞
+2. TariMatcher - Matches たり (base=たりる) as verb in 未然形
+3. NaiMatcher - Matches ない as auxiliary
+
+Pattern matcher sequence:
+- Verb[基本形] + に + たり + ない
+- Captures full grammatical construction
+
+**Tests Written: 4 tests (all passing)**
+1. test_nitarinai_shinjiru - 信じるにたりない (19, 27) - conspiracy theorist example
+2. test_nitarinai_shinrai - 信頼するにたりない (2, 11) - trust example
+3. test_nitarinai_uru - 売るにたりない (6, 13) - sell example (insufficient price)
+4. test_nitarinai_toru - 取るにたりない (7, 14) - idiom (worthless, not worth discussing)
+
+**Character Ranges**: Pattern captures Verb + に + たり + ない:
+- 信じるにたりない (19, 27) - 8 characters
+- 信頼するにたりない (2, 11) - 9 characters
+- 売るにたりない (6, 13) - 7 characters
+- 取るにたりない (7, 14) - 7 characters
+
+**Key Notes**:
+- Pattern works with any verb in dictionary form (基本形)
+- "たりない" tokenizes as two separate tokens: たり (verb) + ない (auxiliary)
+- Related pattern に足る (positive form) uses う-verb 足る, not る-verb 足りる
+- Both 足りない and 足らない can appear in set phrase 取るに足りない/取るに足らない
+- All test sentences from grammar_points_data.json examples
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nitarinai() with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in nitarinai_tests module
+- feature_list.json - Updated に足りない to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3747 total, +4 new)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- べからず - Classical prohibition pattern
+- んばかりに - "As if about to" pattern
+- に則って・に則り - "In accordance with" pattern
+- はおろか - "Let alone" pattern
+
+================================================================================
+
 ## Session 585 - 2025-12-16
 
 ### Session Summary - ただ〜のみ Complete ✓
