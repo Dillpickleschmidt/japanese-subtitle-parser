@@ -7621,7 +7621,7 @@ declare_patterns! {
     Biru {
         name: "びる",
         matcher_fn: crate::matchers::n1::biru,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

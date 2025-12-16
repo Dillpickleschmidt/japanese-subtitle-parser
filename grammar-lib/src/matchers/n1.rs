@@ -8291,9 +8291,42 @@ pub fn tokitara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: びる
+// Pattern: びる (seeming/looking like)
+// Structures: Noun/Adjective stem + びる (e.g., 大人びる, 古びる, 田舎びる, ひなびる)
+//
+// Tokenization: Single compound verb token (動詞/自立, base ends with びる)
+// Examples: 大人びて (base=大人びる), 古びた (base=古びる), 田舎びている (base=田舎びる)
+//
+// Note: Unlike めく which can be split (Noun + めく), びる appears only as compound verbs
+// where Kagome recognizes the full word as a single verb token with base ending in びる.
 pub fn biru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matcher for びる verbs - compound form only
+    // Matches: 動詞/自立 with base_form ending in びる (e.g., 大人びる, 古びる, 田舎びる)
+    #[derive(Debug)]
+    struct BiruVerbMatcher;
+    impl Matcher for BiruVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Must be a verb
+            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                return false;
+            }
+
+            // Compound form: verb with base ending in びる as 動詞/自立
+            if token.base_form.ends_with("びる")
+                && token.base_form != "びる"  // Exclude bare びる (if it exists)
+                && token.pos.get(1).is_some_and(|pos| pos == "自立") {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(BiruVerbMatcher)),
+    ]
 }
 
 // Pattern: にしたところで

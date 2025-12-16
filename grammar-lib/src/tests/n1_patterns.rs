@@ -9732,3 +9732,91 @@ mod temosashitsukaenai_tests {
         assert_pattern_range(&patterns, "ても差し支えない", 15, 27); // でもさしつかえありません
     }
 }
+
+// ============================================================================
+// びる Tests
+// ============================================================================
+
+mod biru_tests {
+    use super::*;
+
+    // Pattern: びる (seeming/looking like)
+    // Data source: grammar_points_data.json["びる"]
+    // Testing: structure.standard[0] - "Noun + びる"
+    //
+    // Structure variants from grammar data:
+    //   - standard[0]: Noun + びる (e.g., 大人びる)
+    //   - standard[1]: い-Adjective stem + びる (e.g., 幼びる from 幼い)
+    //   - standard[2]: Noun + びた + Noun (modifying noun)
+    //   - standard[3]: い-Adjective stem + びた + Noun (modifying noun)
+    //
+    // Common expressions: 大人びる, 古びた, ひなびた, 田舎びた, 物寂びる
+    //
+    // Note: 幼びる (from 幼い) is grammatically valid but not recognized by Kagome.
+    // It tokenizes as 幼 (noun) + びて (noun) rather than as a verb.
+
+    #[test]
+    fn test_biru_otonaびる_て_form() {
+        // Testing: Noun + びる (て-form)
+        // Based on: "彼女は大人びて見えるが、まだ社会のことなんて分かってないただの学生だ"
+        // Note: て is a particle (助詞), not auxiliary, so pattern range is just the verb
+        let sentence = "彼女は大人びて見えるが、まだ社会のことなんて分かってない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "びる");
+        assert_pattern_range(&patterns, "びる", 3, 6); // 大人び (verb only, て is separate)
+    }
+
+    #[test]
+    fn test_biru_furuびた_modifying_noun() {
+        // Testing: Noun + びた + Noun (modifying noun)
+        // Based on: "実家で屋根裏部屋を掃除していたら、古びたアルバムが続々と出てきた"
+        // Note: た is an auxiliary (助動詞), so pattern range includes it
+        let sentence = "実家で掃除していたら、古びたアルバムが出てきた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "びる");
+        assert_pattern_range(&patterns, "びる", 11, 14); // 古びた (verb + auxiliary)
+    }
+
+    #[test]
+    fn test_biru_inakabita_modifying_noun() {
+        // Testing: Noun + びた + Noun (modifying noun)
+        // Based on: "私はどんなに治安が良くても、田舎びた町には住みたくない"
+        // Note: た is an auxiliary (助動詞), so pattern range includes it
+        let sentence = "どんなに治安が良くても、田舎びた町には住みたくない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "びる");
+        assert_pattern_range(&patterns, "びる", 12, 16); // 田舎びた (verb + auxiliary)
+    }
+
+    #[test]
+    fn test_biru_hinabita_modifying_noun() {
+        // Testing: Noun + びた (ひなびた - rustic/quaint)
+        // Based on common expression ひなびた温泉 (rustic hot spring)
+        // Note: た is an auxiliary (助動詞), so pattern range includes it
+        let sentence = "ひなびた温泉に行きたいな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "びる");
+        assert_pattern_range(&patterns, "びる", 0, 4); // ひなびた (verb + auxiliary)
+    }
+
+    #[test]
+    fn test_biru_inakaびて_いる() {
+        // Testing: Noun + びている (progressive form)
+        // Based on: "この町は田舎びているから好きだ"
+        // Note: て is a particle (助詞), not auxiliary, so pattern range is just the verb
+        let sentence = "この町は田舎びているから好きだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "びる");
+        assert_pattern_range(&patterns, "びる", 4, 7); // 田舎び (verb only, て is separate)
+    }
+}
