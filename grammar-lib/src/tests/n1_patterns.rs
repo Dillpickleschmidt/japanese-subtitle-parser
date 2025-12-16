@@ -1741,3 +1741,58 @@ mod wokawakirini_tests {
         assert_pattern_range(&patterns, "を皮切りに", 8, 13); // を皮切りに
     }
 }
+
+// ============================================================================
+// なり Tests
+// ============================================================================
+
+mod nari_tests {
+    use super::*;
+
+    // Pattern: なり (as soon as, the moment)
+    // Data source: grammar_points_data.json["なり"]
+    // Testing: structure.standard[0] - "Verb[る] + なり"
+    //
+    // Note: (B) is usually something surprising, brought about by strong emotion/will
+    // Almost always used in relation to other people, not oneself
+
+    #[test]
+    fn test_nari_enter_house() {
+        let sentence = "息子が家に上がるなりトイレへと駆け込んだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なり");
+        assert_pattern_range(&patterns, "なり", 5, 10); // 上がるなり
+    }
+
+    #[test]
+    fn test_nari_enter_room() {
+        let sentence = "ママ友が私の家に入るなり、冷蔵庫の中を物色し始めた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なり");
+        assert_pattern_range(&patterns, "なり", 8, 12); // 入るなり
+    }
+
+    #[test]
+    fn test_nari_sit_down() {
+        let sentence = "彼は机に座るなりすぐスマホをいじり始めたから注意した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なり");
+        assert_pattern_range(&patterns, "なり", 4, 8); // 座るなり
+    }
+
+    #[test]
+    fn test_nari_wake_up() {
+        let sentence = "朝起きるなり、大きな声で泣き出した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "なり");
+        assert_pattern_range(&patterns, "なり", 1, 6); // 起きるなり
+    }
+}

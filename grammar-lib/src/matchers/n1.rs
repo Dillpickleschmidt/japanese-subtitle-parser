@@ -1617,9 +1617,39 @@ pub fn niitatteha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: なり
+// Pattern: なり (as soon as, the moment)
+// Structures: Verb[る] + なり
 pub fn nari() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match dictionary form verb (基本形)
+    #[derive(Debug)]
+    struct DictionaryFormVerbMatcher;
+    impl super::Matcher for DictionaryFormVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token
+                    .features
+                    .get(5)
+                    .is_some_and(|form| form == "基本形")
+        }
+    }
+
+    // Match なり as conjunction particle (助詞/接続助詞)
+    #[derive(Debug)]
+    struct NariParticleMatcher;
+    impl super::Matcher for NariParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なり"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(DictionaryFormVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NariParticleMatcher)),
+    ]
 }
 
 // Pattern: ともなく・ともなしに
