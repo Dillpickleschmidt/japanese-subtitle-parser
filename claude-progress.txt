@@ -1,3 +1,139 @@
+## Session 490 - 2025-12-15
+
+### Session Summary - Three N2 Patterns Complete ✓
+**Status**: Successfully implemented といった, を込めて, and ～に値する patterns
+**Patterns completed**: 3 (all N2, priority 4)
+**Total tests**: 3252 passing, 1 ignored (added 11 new tests)
+
+**Session highlights**:
+- Implemented といった (such as, like) - 4 tests
+- Implemented を込めて (full of, filled with, with) - 3 tests
+- Implemented ～に値する (worthy of, deserves, is worth) - 4 tests
+- All patterns use custom matchers for precise token detection
+- All structure variants tested appropriately
+- All tests passing with proper range assertions
+- No regressions in test suite
+
+---
+
+### ✓ Completed: といった (such as, like)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Noun + といった + Noun (only one structure)
+
+**Implementation details**:
+- といった is tokenized as a single token (助詞/格助詞/連語)
+- Simple three-token pattern: Noun + といった + Noun
+- Used with nouns to indicate examples of a category
+- Can be used with や/とか when there are multiple examples
+
+**Tests created**: 4 tests
+1. `test_toitta_single_noun` - ゲートボールといったスポーツ (single example)
+2. `test_toitta_japanese_sweets` - 寿司といった料理 (food example)
+3. `test_toitta_multiple_examples` - 料理といった家事 (household chores, with や)
+4. `test_toitta_pot_herbs` - パクチーといった香味 (herbs, with とか)
+
+**Key implementation notes**:
+- といった appears as a single particle token in the tokenizer
+- Pattern matches: Noun (名詞) + といった (助詞/格助詞/連語) + Noun (名詞)
+- The pattern range includes the full Noun + といった + Noun construction
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented toitta() function (40 lines with 3 custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 4 comprehensive tests
+- `feature_list.json` - Updated といった to complete status
+
+**Grammar meaning**:
+Fairly casual expression indicating lists, similar to などの or のような. Translates as "(B) such as (A)" or "(B) like (A)". Literally means "(B) that can be called (A)".
+
+---
+
+### ✓ Completed: を込めて (full of, filled with, with)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Noun + を込めて (only one structure)
+
+**Implementation details**:
+- Four-token pattern: Noun + を + 込め + て
+- From the verb 込める (to pack into, to load with) in て-form
+- Used primarily with nouns expressing feelings or emotions
+
+**Tokenization pattern**:
+- Noun (名詞)
+- を (助詞/格助詞/一般)
+- 込め (動詞/自立, 連用形, base=込める)
+- て (助詞/接続助詞)
+
+**Tests created**: 3 tests
+1. `test_wokomete_gratitude` - 気持ちを込めて (feelings)
+2. `test_wokomete_love` - 愛を込めて (love)
+3. `test_wokomete_heart` - 心を込めて (heart)
+
+**Key implementation notes**:
+- Set phrase used when a particular feeling/emotion is being "packed into" something
+- Literal meaning "filled with" or "loaded with" aligns with standard translations
+- Custom matchers for each component ensure accurate detection
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented wokomete() function (54 lines with 4 custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 3 comprehensive tests
+- `feature_list.json` - Updated を込めて to complete status
+
+**Grammar meaning**:
+Expresses that something is "full of (A)" or "filled with (A)". From 込める (to pack into), indicating that a particular feeling or emotion is being loaded into an action.
+
+---
+
+### ✓ Completed: ～に値する (worthy of, deserves, is worth)
+
+**JLPT Level**: N2
+**Category**: Construction
+**Priority**: 4
+
+**Pattern structures implemented**:
+- Verb (dictionary form) + に値する
+- Noun + に値する
+- Both affirmative and negative forms (に値する/に値しない)
+
+**Implementation details**:
+- Three-token pattern: Verb/Noun + に + 値する/値し
+- Matches both affirmative (値する) and negative (値しない) forms
+- Verb must be in dictionary form (基本形)
+
+**Tokenization patterns**:
+- Affirmative: に + 値する (基本形, base=値する)
+- Negative: に + 値し (未然形, base=値する) + ない
+
+**Tests created**: 4 tests
+1. `test_niataisuru_noun_scam` - 詐欺に値する (fraud deserves)
+2. `test_niataisuru_verb_reading` - 読むに値する (worth reading)
+3. `test_niataisuru_negative_respect` - 尊敬に値しない (not worthy of respect)
+4. `test_niataisuru_negative_watching` - 見るに値しない (not worth watching)
+
+**Key implementation notes**:
+- 値する is a する verb meaning "to deserve" or "to be worth"
+- VerbOrNounMatcher checks for verbs in 基本形 or any noun
+- AtaisuruMatcher matches any conjugation of 値する (base_form check)
+- Works with both positive and negative forms automatically
+
+**Files modified**:
+- `grammar-lib/src/matchers/n2.rs` - Implemented uff5e_niataisuru() function (48 lines with 3 custom matchers)
+- `grammar-lib/src/tests/n2_patterns.rs` - Added 4 comprehensive tests
+- `feature_list.json` - Updated ～に値する to complete status
+
+**Grammar meaning**:
+Means something "deserves (A)" or "is worthy of (A)". Made up of the particle に and the する verb 値する. The thing marked by に is what is "worthy". Negative form に値しない means "is not worthy" or "does not deserve".
+
+---
+
 ## Session 489 - 2025-12-15
 
 ### Session Summary - Two N2 Patterns Complete ✓
