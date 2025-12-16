@@ -1,3 +1,105 @@
+## Session 509 - 2025-12-15
+
+### Session Summary - ～たまでだ Pattern Complete ✓
+**Status**: Successfully implemented ～たまでだ pattern
+**Patterns completed**: 1 (N1, priority 5)
+**Total tests**: 3387 passing, 1 ignored (added 4 new tests)
+**Progress**: Twenty-eighth N1 pattern completed!
+
+**Session highlights**:
+- Implemented ～たまでだ pattern (I simply/only did A)
+- Pattern structure: Verb[た] + まで + だ/です, Verb[た] + までのこと + だ/です
+- Uses Optional matchers for の + こと sequence
+- All 4 tests passing with proper range assertions
+- No regressions in test suite (3387 tests total)
+
+### ✓ Completed: ～たまでだ (I simply/only did A)
+
+**Grammar Point**: ～たまでだ
+**JLPT Level**: N1
+**Priority**: 1 (construction pattern)
+**Register**: Standard
+
+**Pattern structures**:
+- Verb[た] + まで + だ (standard)
+- Verb[た] + までのこと + だ (standard)
+- Verb[た] + まで + です (polite)
+- Verb[た] + までのこと + です (polite)
+
+**Implementation**:
+- Matcher: `Verb[連用形/連用タ接続] + た + まで + Optional(の + こと) + だ/です`
+- Custom matchers for each component:
+  - MadeParticleMatcher: まで as 助詞/副助詞
+  - NoParticleMatcher: の as 助詞/連体化
+  - KotoNounMatcher: こと as 名詞/非自立
+  - DaDesuMatcher: だ or です as 助動詞
+- Uses flexible_verb_form() and past_auxiliary() helpers
+- Optional matchers for の and こと to handle both simple and extended forms
+- Pattern detects full grammatical construction
+
+**Tests Written: 4 tests**
+1. `test_tamadeda_standard` - 言ったまでだ (standard form)
+2. `test_tamadeda_made_no_koto` - 聞いたまでのことだ (extended form with のこと)
+3. `test_tamadeda_polite` - したまでです (polite form)
+4. `test_tamadeda_made_no_koto_polite_context` - 助けたまでのことです (extended polite form)
+
+All tests use realistic subtitle-quality sentences and include proper range assertions.
+
+**Character Ranges**: Pattern captures Verb[た] + まで(のこと) + だ/です:
+- `言ったまでだ` (31, 37) - verb + た + まで + だ
+- `聞いたまでのことだ` (22, 31) - verb + た + までのこと + だ
+- `したまでです` (28, 34) - verb + た + まで + です
+- `助けたまでのことです` (17, 27) - verb + た + までのこと + です
+
+**Key Notes**:
+- Pattern expresses modesty: "I simply/only did A (it was no big deal)"
+- Used to downplay one's own actions
+- Often follows ただ (just) for extra emphasis on modesty
+- Cannot be used for other people's actions (only first person or group affiliated with speaker)
+- までのこと variant adds slight emphasis or formality
+
+**Files Modified:**
+- `grammar-lib/src/matchers/n1.rs` - Implemented uff5e_tamadeda() matcher
+- `grammar-lib/src/tests/n1_patterns.rs` - Added 4 tests in tamadeda_tests module
+- `feature_list.json` - Updated ～たまでだ status to complete
+
+**Workflow Followed**:
+1. ✓ Read project documentation and progress
+2. ✓ Verified environment with init.sh
+3. ✓ Checked for regressions (all tests passing)
+4. ✓ Selected highest priority incomplete pattern (～たまでだ from N1)
+5. ✓ Reviewed grammar_points_data.json for structures
+6. ✓ Checked for existing stubs (found uff5e_tamadeda() stub in n1.rs)
+7. ✓ Wrote all tests first with print_debug()
+8. ✓ Analyzed tokenization output
+9. ✓ Implemented matcher based on actual tokens
+10. ✓ Verified all tests pass
+11. ✓ Removed print_debug() and added assertions
+12. ✓ Verified no regressions (3387 tests passing)
+13. ✓ Updated feature_list.json
+14. ✓ Committed changes
+15. ✓ Updated claude-progress.txt
+
+**Quality Checks Passed**:
+- ✓ All structure variants tested (standard and polite, with and without のこと)
+- ✓ Realistic subtitle-quality sentences used
+- ✓ Correct character ranges verified
+- ✓ No print_debug() in final code
+- ✓ All existing tests still pass (no regressions)
+- ✓ Clean git history
+
+**Next Priorities** (N1 - no tests yet, priority 5):
+- を経て - "Through, via" pattern, clear structure
+- ながらに - "While being" pattern, detectable
+- たなり・なり - "Remain as is" pattern, clear structure
+- の極み - "The height of" pattern, detectable
+- にしてみれば - "From perspective of" pattern
+- だの - "Things like" pattern, listing
+- あくまでも - "To the end, persistently" pattern
+- べく - "In order to" pattern, classical auxiliary
+
+---
+
 ## Session 508 - 2025-12-15
 
 ### Session Summary - あっての Pattern Complete ✓
