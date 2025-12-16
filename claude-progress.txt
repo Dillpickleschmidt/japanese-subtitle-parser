@@ -1,3 +1,105 @@
+## Session 594 - 2025-12-16
+
+### Session Summary - を余儀なくさせる Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (を余儀なくさせる - N1, priority 5)
+**Total tests**: 3792 passing (4 new tests, no regressions)
+**Progress**: One hundred and seventh N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented を余儀なくさせる (force/compel to do)
+- Formal causative pattern combining を余儀ない (unavoidable/inevitable) + させる (causative)
+- Handles both Noun + を余儀なくさせる and Verb + こと + を余儀なくさせる
+- Works with both standard (させた) and polite (させます) forms
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: を余儀なくさせる (force/compel to)
+
+**Grammar Point**: を余儀なくさせる
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard (formal)
+
+**Pattern structures**:
+1. Noun + を余儀なくさせる (standard)
+2. Verb + こと + を余儀なくさせる (standard)
+3. Noun + を余儀なくさせます (polite)
+4. Verb + こと + を余儀なくさせます (polite)
+
+**Meaning**:
+- "To force/compel (someone) to do (A)" / "To make (A) unavoidable"
+- Formal grammar pattern with same base as を余儀なくされる (passive)
+- Uses causative させる instead of passive される
+- Component parts: を (particle) + 余儀 (another method) + なく (negative て-form of ない) + させる (causative of する)
+- Literally: "to not give another way than to (A)" = "to force (A)"
+- Subject is usually a non-human cause (circumstances, situations, events)
+- More formal than regular causative expressions
+
+**Tokenization pattern**:
+- Noun (名詞, can be followed by こと in verb nominalization)
+- を (助詞/格助詞/一般)
+- 余儀なく (形容詞/自立, base=余儀ない, 連用テ接続)
+- さ (動詞/自立, base=する, 未然レル接続)
+- せ (動詞/接尾, base=せる, 一段, 連用形)
+- た/ます/る (auxiliary or verb ending)
+
+**Implementation**:
+Created 5 custom matchers for precise pattern matching:
+1. WoMatcher - Matches を as 助詞/格助詞
+2. YoginakuMatcher - Matches 余儀なく (base=余儀ない)
+3. SaMatcher - Matches さ (from する, 未然レル接続)
+4. SeMatcher - Matches せ (auxiliary verb せる, 動詞/接尾)
+5. RuMatcher - Matches る from させる (unused but defined)
+
+Pattern matcher sequence:
+- noun_matcher() + を + 余儀なく + さ + せ + Any (for た/ます/る)
+- Captures full grammatical construction from noun/こと through conjugated form
+
+**Tests Written: 4 tests (all passing)**
+1. test_woyoginakusaseru_noun_standard - 入院を余儀なくさせた (9, 19) - noun + standard form
+2. test_woyoginakusaseru_heiten - 閉店を余儀なくさせた (12, 22) - noun + standard form
+3. test_woyoginakusaseru_verb_koto - ことを余儀なくさせた (13, 23) - verb + こと + standard
+4. test_woyoginakusaseru_polite - 倒産を余儀なくさせます (8, 19) - noun + polite form
+
+**Character Ranges**: Pattern captures Noun + を余儀なくさせる (full construction):
+- 入院を余儀なくさせた (9, 19) - 10 characters
+- 閉店を余儀なくさせた (12, 22) - 10 characters
+- ことを余儀なくさせた (13, 23) - 10 characters (starts from こと)
+- 倒産を余儀なくさせます (8, 19) - 11 characters
+
+**Key Notes**:
+- Pattern includes the noun/こと before を (full grammatical construction)
+- Works for both verb nominalizations (中止すること) and regular nouns (入院)
+- Subject is typically non-human cause: 不注意 (carelessness), 要請 (request), 不足 (shortage)
+- Causative construction: さ (未然形 of する) + せ (causative auxiliary せる)
+- Related to を余儀なくされる (passive version) - same base, different voice
+- 余儀ない is い-adjective meaning "unavoidable" or "inevitable"
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented woyoginakusaseru() with 5 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in woyoginakusaseru_tests module
+- feature_list.json - Updated を余儀なくさせる to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (noun standard, noun polite, verb+こと standard)
+✓ Realistic subtitle-quality sentences used
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3788 + 4 = 3792 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- てはかなわない - "Can't stand" pattern
+- を限りに - "Starting from/as of" pattern
+- といおうか - "How should I put it" pattern
+- にひきかえ - "In contrast to" pattern
+- ものなら② - "If only" pattern
+- 始末だ - "End up in a situation" pattern
+
+================================================================================
+
 ## Session 593 - 2025-12-16
 
 ### Session Summary - ったらない・といったらない Complete ✓
