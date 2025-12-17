@@ -11356,3 +11356,69 @@ mod youniyotteha_tests {
         assert_pattern_range(&patterns, "ようによっては", 4, 12); // 見ようによっては
     }
 }
+
+// ============================================================================
+// にひきかえ Tests
+// ============================================================================
+
+mod nihikikae_tests {
+    use super::*;
+
+    // Pattern: にひきかえ (in stark contrast to / in comparison to)
+    // Data source: grammar_points_data.json["にひきかえ"]
+
+    // Testing: structure.standard[0] - "Noun + にひきかえ"
+    #[test]
+    fn test_nihikikae_noun() {
+        let sentence = "去年の夏にひきかえ、今年の夏はえげつなく暑い。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にひきかえ");
+        assert_pattern_range(&patterns, "にひきかえ", 3, 9); // 夏にひきかえ
+    }
+
+    // Testing: structure.standard[1] - "な-Adjective + な + の + にひきかえ"
+    #[test]
+    fn test_nihikikae_na_adjective_na() {
+        let sentence = "親戚の全員が裕福なのにひきかえ、なぜか私の家族だけが貧乏。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にひきかえ");
+        assert_pattern_range(&patterns, "にひきかえ", 9, 15); // のにひきかえ
+    }
+
+    // Testing: structure.standard[2] - "い-Adjective + の + にひきかえ"
+    #[test]
+    fn test_nihikikae_i_adjective() {
+        let sentence = "うちの娘は頭がいいのにひきかえ、うちの長男はゲームばかりして全然勉強をしようともしない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にひきかえ");
+        assert_pattern_range(&patterns, "にひきかえ", 9, 15); // のにひきかえ
+    }
+
+    // Testing: structure.standard[3] - "Verb + の + にひきかえ"
+    #[test]
+    fn test_nihikikae_verb() {
+        let sentence = "周りの人たちはどんどん就職していっているのにひきかえ、俺はまだ面接さえしていない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にひきかえ");
+        assert_pattern_range(&patterns, "にひきかえ", 20, 26); // のにひきかえ
+    }
+
+    // Testing: structure.standard[4] - "それ + にひきかえ" (sentence-initial)
+    #[test]
+    fn test_nihikikae_sorenihikikae() {
+        let sentence = "周りの子たちを見てみなさいよ！みんな来年から大学よ！それにひきかえ、あんたったら。。。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にひきかえ");
+        assert_pattern_range(&patterns, "にひきかえ", 26, 33); // それにひきかえ
+    }
+}

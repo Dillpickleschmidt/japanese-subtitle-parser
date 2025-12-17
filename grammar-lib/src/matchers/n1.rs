@@ -10317,9 +10317,46 @@ pub fn mononara_u2461() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: にひきかえ
+// Pattern: にひきかえ (in stark contrast to / in comparison to)
+// Structures:
+//   - Noun + にひきかえ
+//   - な-Adjective + な/である + の + にひきかえ
+//   - い-Adjective + の + にひきかえ
+//   - Verb + の + にひきかえ
+//   - それ + にひきかえ
 pub fn nihikikae() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as 助詞/格助詞/一般
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match ひきかえ as 動詞/自立, base=ひきかえる, 連用形
+    #[derive(Debug)]
+    struct HikikaeruMatcher;
+    impl Matcher for HikikaeruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ひきかえ"
+                && token.base_form == "ひきかえる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding word (noun, の, それ, etc.)
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(HikikaeruMatcher)),
+    ]
 }
 
 // Pattern: それまでだ (if that happens, it's all over)

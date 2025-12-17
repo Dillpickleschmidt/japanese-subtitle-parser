@@ -7901,7 +7901,7 @@ declare_patterns! {
     Nihikikae {
         name: "にひきかえ",
         matcher_fn: crate::matchers::n1::nihikikae,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
