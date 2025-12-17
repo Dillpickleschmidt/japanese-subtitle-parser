@@ -1,3 +1,33 @@
+## Session 627 - 2025-12-16
+
+### Session Summary - に堪えない Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (に堪えない - N1, priority 6)
+**Total tests**: 3975 passing (4 new tests, no regressions)
+**Progress**: One hundred and thirty-ninth N1 pattern completed!
+
+**Session highlights**:
+- Implemented に堪えない (cannot bear to / cannot tolerate)
+- Formal expression for emotions that cannot be suppressed
+- Handles verb, noun, and adverb forms before に堪えない
+- All structure variants tested with realistic sentences
+- Priority set to 6 to override general 〜に〜ない pattern (priority 5)
+
+**Tests Written**: 4 tests (all passing)
+1. test_nikotaenai_verb_watch - 見るにたえなかった (27, 36)
+2. test_nikotaenai_verb_listen - 聞くにたえない (25, 32)
+3. test_nikotaenai_verb_read - 読むにたえない (19, 26)
+4. test_nikotaenai_noun_anger - 怒りにたえない (23, 30)
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nikotaenai() with 4 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority to 6
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in nikotaenai_tests module
+- feature_list.json - Updated to complete status
+
+**Next Priorities**: ものとして, を前提に, other N1 priority 5 patterns
+
+================================================================================
 ## Session 626 - 2025-12-16
 
 ### Session Summary - と来たら Complete ✓
