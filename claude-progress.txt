@@ -1,3 +1,116 @@
+## Session 630 - 2025-12-16
+
+### Session Summary - NT Patterns Complete ✓
+**Status**: Implemented 3 NT (not tested) patterns successfully
+**Patterns completed**: 3 (ぞ, ぜ, わ - all NT, priority 6)
+**Total tests**: 3996 passing (11 new tests, no regressions)
+**Progress**: First NT patterns implemented! Created new test file for NT level 🎉
+
+**Session highlights**:
+- Created grammar-lib/src/tests/nt_patterns.rs test module
+- Implemented three sentence-ending particles used in conversational Japanese
+- All patterns follow similar structure: Any + particle
+- Simple, consistent implementation with custom matchers for each particle
+- All tests pass with proper range assertions
+
+### ✓ Completed Patterns
+
+#### 1. ぞ (emphatic sentence-ending particle)
+**JLPT Level**: NT
+**Priority**: 6
+**Tests**: 4 passing
+
+**Pattern**: Phrase + ぞ
+
+**Meaning**:
+- Emphatic sentence-ending particle similar to よ but stronger
+- Primarily used by men
+- Used for forceful emphasis/highlighting
+- Can follow verbs, adjectives, auxiliary verbs
+
+**Tests Written**:
+1. test_zo_verb_present - 遅れるぞ (5, 9)
+2. test_zo_adjective - 熱いぞ (12, 15)
+3. test_zo_causative_passive - られるぞ (16, 20)
+4. test_zo_self_encouragement - だぞ (9, 11)
+
+#### 2. ぜ (friendly emphatic sentence-ending particle)
+**JLPT Level**: NT
+**Priority**: 6
+**Tests**: 3 passing
+
+**Pattern**: Phrase + ぜ
+
+**Meaning**:
+- Similar to ぞ but friendlier, less forceful
+- Used by men with familiar people/rivals
+- Cannot follow nouns directly (needs だ)
+- Historical origin: ぞ + え → ぜ
+
+**Tests Written**:
+1. test_ze_volitional - うぜ (13, 15) - volitional う + ぜ
+2. test_ze_volitional_short - うぜ (8, 10)
+3. test_ze_copula - だぜ (7, 9)
+
+#### 3. わ (emphasis/conviction sentence-ending particle)
+**JLPT Level**: NT
+**Priority**: 6
+**Tests**: 4 passing
+
+**Pattern**: Phrase + わ
+
+**Meaning**:
+- Primarily used by women for emphasis/conviction
+- Also used by men (especially west Japan) for light exasperation
+- Can follow verbs, adjectives, auxiliary verbs (plain forms)
+- Translates as "you know!", "oh?", "ever so (A)"
+
+**Tests Written**:
+1. test_wa_verb - 帰るわ (6, 9)
+2. test_wa_adjective - 嬉しいわ (13, 17)
+3. test_wa_copula_da - だわ (14, 16)
+4. test_wa_copula_desu - ですわ (8, 11)
+
+**Key Implementation Notes**:
+- All three patterns use identical structure: TokenMatcher::Any + Custom matcher for particle
+- Custom matchers check both surface ("ぞ"/"ぜ"/"わ") and POS (助詞/終助詞)
+- Priority set to 6 for all particles (sentence-ending particles are high priority)
+- Patterns match the immediately preceding token + particle
+- Works with verbs, adjectives, auxiliaries, copulas
+
+**Files Modified:**
+- grammar-lib/src/matchers/nt.rs - Implemented zo(), ze(), wa()
+- grammar-lib/src/patterns.rs - Updated priorities to 6
+- grammar-lib/src/tests/mod.rs - Added nt_patterns module
+- grammar-lib/src/tests/nt_patterns.rs - New file with 11 tests
+- feature_list.json - Updated all three patterns to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions for all patterns
+✓ Realistic conversational sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3985 + 11 = 3996 total)
+✓ Clean git history with 3 separate commits
+
+**Remaining NT Patterns** (needs_implementation):
+- い - Sentence-ending particle
+- ん (Slang) - Slang contraction
+- つ (Slang) - Slang particle
+- ～やがる - Derogatory verb suffix
+- がいい - Suggestion pattern
+- かろう - Classical auxiliary
+- やや - Adverb meaning "somewhat"
+- いずれも - "All/both" pattern
+- あわよくば - "If possible" pattern
+- むず - Slang contraction
+
+**Next Priorities**:
+- Continue implementing remaining NT patterns (all priority 6)
+- Focus on patterns with clear grammar data and structure
+- Maintain consistent testing approach for sentence-ending particles
+
+================================================================================
 ## Session 629 - 2025-12-16
 
 ### Session Summary - ものとして Complete ✓
