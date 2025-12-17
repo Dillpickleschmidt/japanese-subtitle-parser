@@ -1,3 +1,99 @@
+## Session 626 - 2025-12-16
+
+### Session Summary - と来たら Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (と来たら - N1, priority 5)
+**Total tests**: 3971 passing (3 new tests, no regressions)
+**Progress**: One hundred and thirty-eighth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented と来たら (when it comes to / concerning)
+- Kanji form of the pattern, different from ときたら (kana, casual frustration)
+- と来たら is more neutral, standard register, not necessarily negative
+- Used to present a topic (A) and explain speaker's instinctive thoughts (B)
+- All structure variants tested with realistic subtitle-quality sentences from grammar_points_data.json
+- Tokenization: と (particle) + 来 (来る verb) + たら (conditional)
+
+### ✓ Completed: と来たら (when it comes to / concerning)
+
+**Grammar Point**: と来たら
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structure**:
+- Phrase + ときたら (only 1 structure variant)
+
+**Meaning**:
+- "When it comes to (A), (B)" / "Concerning (A), (B)"
+- Literal translation: と (case-marking particle) + 来たら (conditional of 来る "to come")
+- Used to present a topic (A) and then explain speaker's instinctive thoughts about (B)
+- (A) is something that strongly makes the speaker think of (B)
+- The relationship between (A) and (B) may be obvious or go without saying
+- Often appears with やっぱり or やはり "sure enough" in the (B) phrase
+
+**Key difference from ときたら (kana)**:
+- ときたら (kana): Casual, expressing frustration "that darn (A)"
+- と来たら (kanji): Standard, neutral, "when it comes to (A)"
+
+**Tokenization pattern**:
+- Phrase (noun, adjective + noun, etc.)
+- と (助詞/格助詞/一般 or 引用)
+- 来 (動詞/自立, base=来る, カ変・来ル, 連用形)
+- たら (助動詞, base=た, 特殊・タ, 仮定形)
+
+**Implementation**:
+Created 3 custom matchers for precise pattern matching:
+1. ToMatcher - Matches と (助詞/格助詞)
+2. KiMatcher - Matches 来 (動詞/自立, base=来る, 連用形)
+3. TaraMatcher - Matches たら (助動詞, base=た, 仮定形)
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding phrase)
+- ToMatcher (と)
+- KiMatcher (来)
+- TaraMatcher (たら)
+
+**Tests Written: 3 tests (all passing)**
+1. test_tokitara2_summer_beer - 夏と来たら (0, 5) - noun + ときたら
+2. test_tokitara2_cold_day_hotpot - 日と来たら (2, 7) - adjective + noun + ときたら
+3. test_tokitara2_harassment_problem - パワハラと来たら (0, 8) - noun + ときたら
+
+**Character Ranges**: Pattern captures full construction (phrase + と来たら):
+- 夏と来たら (0, 5) - 5 characters
+- 日と来たら (2, 7) - 5 characters
+- パワハラと来たら (0, 8) - 8 characters
+
+**Key Notes**:
+- Pattern includes the preceding phrase (full grammatical construction)
+- Works with any type of phrase before と来たら
+- Different tokenization from ときたら (kana) which uses とき verb
+- More neutral and standard register than ときたら
+- Priority set to 5 for proper detection hierarchy
+- Example sentences directly from grammar_points_data.json
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented tokitara_2() (updated stub at line 10228) with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added tokitara_2_tests module (3 tests)
+- feature_list.json - Updated と来たら to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (1 variant: Phrase + ときたら)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3968 + 3 = 3971 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ったら・といったら - Emphasis pattern (9 structure variants)
+- ものとして - "Assuming that / treating as" pattern
+- を前提に - "On the premise that" pattern
+- に堪えない - "Cannot bear / unbearable" pattern
+
+================================================================================
 ## Session 625 - 2025-12-16
 
 ### Session Summary - 始末だ Complete ✓
