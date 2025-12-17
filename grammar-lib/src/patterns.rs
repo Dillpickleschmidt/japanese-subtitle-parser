@@ -8071,7 +8071,7 @@ declare_patterns! {
     Zo {
         name: "ぞ",
         matcher_fn: crate::matchers::nt::zo,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "nt",
     },
