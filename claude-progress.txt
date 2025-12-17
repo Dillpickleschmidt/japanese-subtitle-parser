@@ -1,3 +1,84 @@
+## Session 635 - 2025-12-16
+
+### Session Summary - あわよくば Pattern Complete ✓
+**Status**: Implemented 1 NT pattern successfully
+**Patterns completed**: 1 (あわよくば - NT, priority 6)
+**Total tests**: 4018 passing (3 new tests, no regressions)
+**Progress**: Seventh NT pattern completed! 🎉
+
+**Session highlights**:
+- Implemented あわよくば - old-fashioned adverb meaning "if possible / if luck is on my side"
+- Very simple pattern - single adverb token (副詞/一般)
+- Pattern comes before phrases expressing desirable outcomes
+- All structure variants tested with realistic sentences from grammar_points_data.json
+- All tests pass with proper range assertions
+- Clean implementation with just one custom matcher
+
+### ✓ Completed: あわよくば (if possible / if luck is on my side)
+
+**Grammar Point**: あわよくば
+**JLPT Level**: NT
+**Priority**: 6
+**Register**: Standard
+
+**Pattern structure**:
+- あわよくば + Phrase (only 1 structure variant)
+
+**Meaning**:
+- "If the time is right" / "If possible" / "If luck is on my side"
+- Combination of old-fashioned い-Adjective あわよい (convenient/timely) + conjunction particle ば (if)
+- Used as a single adverb in modern Japanese
+- Comes before phrases expressing desirable outcomes
+
+**Tokenization pattern**:
+- surface='あわよくば' base='あわよくば' pos=副詞/一般
+
+**Implementation**:
+Created 1 custom matcher:
+- AwayokubaMatcher - Matches あわよくば (surface, base, and POS check)
+
+Pattern matcher sequence:
+- TokenMatcher::Custom(AwayokubaMatcher) - matches standalone adverb
+
+**Tests Written: 3 tests (all passing)**
+1. test_awayokuba_pass_exam - あわよくば (12, 17) - midsentence
+2. test_awayokuba_date - あわよくば (0, 5) - sentence start
+3. test_awayokuba_relax - あわよくば (0, 5) - sentence start
+
+**Character Ranges**: Pattern captures just the adverb itself:
+- あわよくば (12, 17) - 5 characters
+- あわよくば (0, 5) - 5 characters
+
+**Key Notes**:
+- Simple standalone pattern - no preceding/following token matching needed
+- Checks surface, base_form, and POS (副詞) for precision
+- Priority set to 6 to match other NT adverbial patterns
+- Example sentences directly from grammar_points_data.json
+- Very straightforward implementation
+
+**Files Modified:**
+- grammar-lib/src/matchers/nt.rs - Implemented awayokuba() with AwayokubaMatcher
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 6
+- grammar-lib/src/tests/nt_patterns.rs - Added 3 tests in awayokuba_tests module
+- feature_list.json - Updated あわよくば to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (1 variant: あわよくば + Phrase)
+✓ Realistic sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (4015 + 3 = 4018 total)
+✓ Clean git history
+
+**Next Priorities** (NT patterns with priority 6, needs_implementation):
+- いずれも - "All/both" pattern (1 structure variant)
+- やや - Adverb meaning "somewhat" (1 structure variant)
+- かろう - Classical auxiliary (1 structure variant)
+- がいい - Suggestion pattern (1 structure variant)
+- ～やがる - Derogatory verb suffix (2 structure variants)
+
+================================================================================
 ## Session 634 - 2025-12-16
 
 ### Session Summary - むず Pattern Complete ✓
