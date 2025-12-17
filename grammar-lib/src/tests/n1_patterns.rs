@@ -11681,3 +11681,63 @@ mod tokitara_2_tests {
         assert_pattern_range(&patterns, "と来たら", 0, 8); // パワハラと来たら
     }
 }
+
+// ============================================================================
+// に堪えない Tests
+// ============================================================================
+
+mod nikotaenai_tests {
+    use super::*;
+
+    // Pattern: に堪えない (cannot bear to / cannot tolerate)
+    // Data source: grammar_points_data.json["に堪えない"]
+    // Testing: structure.standard[0] - "Verb + に堪えない"
+    //
+    // Structure variants to test:
+    //   - standard[0]: Verb + に堪えない
+    //   - standard[1]: Adverb + に堪えない
+
+    // Example 1: From grammar_points_data.json - 見るにたえなかった (modified to remove です)
+    #[test]
+    fn test_nikotaenai_verb_watch() {
+        let sentence = "あの映画に出ている役者さんみんなが大根役者だったので、見るにたえなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に堪えない");
+        assert_pattern_range(&patterns, "に堪えない", 27, 36); // 見るにたえなかった
+    }
+
+    // Example 2: From grammar_points_data.json - 聞くにたえない
+    #[test]
+    fn test_nikotaenai_verb_listen() {
+        let sentence = "田中さんの話はいつも人の悪口ばかり言っているので、聞くにたえない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に堪えない");
+        assert_pattern_range(&patterns, "に堪えない", 25, 32); // 聞くにたえない
+    }
+
+    // Example 3: From grammar_points_data.json - 読むにたえない
+    #[test]
+    fn test_nikotaenai_verb_read() {
+        let sentence = "この本には過激な表現がありすぎるので、読むにたえない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に堪えない");
+        assert_pattern_range(&patterns, "に堪えない", 19, 26); // 読むにたえない
+    }
+
+    // Example 4: From grammar_points_data.json - 怒りにたえない (noun, not adverb)
+    #[test]
+    fn test_nikotaenai_noun_anger() {
+        let sentence = "お客さんの所有物を壊してお客さんをだますなんて怒りにたえない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "に堪えない");
+        assert_pattern_range(&patterns, "に堪えない", 23, 30); // 怒りにたえない
+    }
+}

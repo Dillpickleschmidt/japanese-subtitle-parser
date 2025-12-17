@@ -7877,7 +7877,7 @@ declare_patterns! {
     Nikotaenai {
         name: "に堪えない",
         matcher_fn: crate::matchers::n1::nikotaenai,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

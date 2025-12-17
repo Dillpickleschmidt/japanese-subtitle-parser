@@ -10433,8 +10433,63 @@ pub fn naidewasumanai() -> Vec<TokenMatcher> {
 }
 
 // Pattern: に堪えない
+// Pattern: に堪えない (cannot bear to / cannot tolerate)
+// Structures: Verb + に堪えない, Adverb + に堪えない, Noun + に堪えない
 pub fn nikotaenai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl super::Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match たえ (動詞/自立, base=たえる, 未然形)
+    #[derive(Debug)]
+    struct TaeMatcher;
+    impl super::Matcher for TaeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たえ"
+                && token.base_form == "たえる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+        }
+    }
+
+    // Match ない/なかっ (助動詞, base=ない, 特殊・ナイ)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl super::Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "ない" || token.surface == "なかっ")
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match た (助動詞, base=た) - optional past tense marker
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl super::Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(TaeMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TaMatcher)))),
+    ]
 }
 
 // Pattern: 始末だ (wind up as / end up as / culminate in - negative outcome)
