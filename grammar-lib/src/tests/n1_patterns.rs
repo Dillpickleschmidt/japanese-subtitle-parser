@@ -11296,3 +11296,63 @@ mod nikakotsukete_tests {
         assert_pattern_range(&patterns, "にかこつけて", 6, 13); // のにかこつけて
     }
 }
+
+// ============================================================================
+// ようによっては Tests
+// ============================================================================
+
+mod youniyotteha_tests {
+    use super::*;
+
+    // Pattern: ようによっては (depending on the way that)
+    // Data source: grammar_points_data.json["ようによっては"]
+    // Testing: structure.standard[0] - "Verb[stem] + ようによっては + Phrase"
+    //
+    // Structure: Verb (連用形) + ようによっては
+    // Meaning: "depending on the way that (A), (B)" / "depending on how (A)"
+    // The 様(よう) 'manner/way' + に (particle) + よって (て-form of よる 'to depend on') + は (adverbial particle)
+
+    // Testing: Verb[stem] + ようによっては - movie example (volitional form)
+    #[test]
+    fn test_youniyotteha_verb_watch() {
+        let sentence = "この映画は見ようによってはコメディーだと感じる人もいるだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようによっては");
+        assert_pattern_range(&patterns, "ようによっては", 5, 13); // 見ようによっては
+    }
+
+    // Testing: Verb[stem] + ようによっては - congestion example (連用形 + よう suffix)
+    #[test]
+    fn test_youniyotteha_verb_congestion() {
+        let sentence = "45分で行けるはずだけど、混みようによっては1時間半かかることもあり得るから明日は少し早く家を出よう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようによっては");
+        assert_pattern_range(&patterns, "ようによっては", 13, 22); // 混みようによっては
+    }
+
+    // Testing: Verb[stem] + ようによっては - machine usage example (noun + よう suffix)
+    #[test]
+    fn test_youniyotteha_verb_use() {
+        let sentence = "どんなに安全な機械であっても使いようによってはとても危険になることもある。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようによっては");
+        assert_pattern_range(&patterns, "ようによっては", 14, 23); // 使いようによっては
+    }
+
+    // Testing: Verb[stem] + ようによっては - looking/viewing example (volitional form)
+    #[test]
+    fn test_youniyotteha_verb_look() {
+        let sentence = "この絵は見ようによっては奇麗な女性かウサギに見える。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ようによっては");
+        assert_pattern_range(&patterns, "ようによっては", 4, 12); // 見ようによっては
+    }
+}

@@ -7821,7 +7821,7 @@ declare_patterns! {
     Youniyotteha {
         name: "ようによっては",
         matcher_fn: crate::matchers::n1::youniyotteha,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

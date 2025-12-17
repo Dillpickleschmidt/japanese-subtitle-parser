@@ -10077,9 +10077,62 @@ pub fn nikakotsukete() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ようによっては
+// Pattern: ようによっては (depending on the way that)
+// Structures: Verb[stem] + ようによっては
+// Meaning: "depending on the way that (A), (B)" / "depending on how (A)"
+// Handles three tokenization patterns:
+// 1. Verb(未然ウ接続) + う(助動詞) + によって + は (volitional form like 見よう)
+// 2. Verb(連用形) + よう(名詞/接尾) + によって + は (よう as suffix like 混みよう)
+// 3. Noun + よう(名詞/接尾) + によって + は (noun from verb stem like 使いよう)
 pub fn youniyotteha() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    // Match よう as noun suffix (名詞/接尾/一般) OR う as volitional (助動詞)
+    // These are mutually exclusive - either よう suffix or volitional う
+    #[derive(Debug)]
+    struct YouOrUMatcher;
+    impl Matcher for YouOrUMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match よう as noun suffix
+            (token.surface == "よう"
+                && token.base_form == "よう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾"))
+            // OR match う as volitional auxiliary
+            || (token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        }
+    }
+
+    // Match によって as particle (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct NiyotteMatcher;
+    impl Matcher for NiyotteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "によって"
+                && token.base_form == "によって"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match は as adverbial particle (助詞/係助詞)
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.base_form == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb (未然ウ接続 or 連用形) or Noun
+        TokenMatcher::Custom(Arc::new(YouOrUMatcher)), // よう or う
+        TokenMatcher::Custom(Arc::new(NiyotteMatcher)), // によって
+        TokenMatcher::Custom(Arc::new(WaParticleMatcher)), // は
+    ]
 }
 
 // Pattern: べくもない
