@@ -1,3 +1,122 @@
+## Session 624 - 2025-12-16
+
+### Session Summary - べくもない Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (べくもない - N1, priority 5)
+**Total tests**: 3964 passing (6 new tests, no regressions)
+**Progress**: One hundred and thirty-sixth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented べくもない (impossible to / no way to)
+- Classical auxiliary verb べし in conjunctive form
+- Handles all conjugation variants: ない, なかった, ありません
+- Works with する-verbs using both する and す stems
+- All structure variants tested with realistic subtitle-quality sentences
+
+### ✓ Completed: べくもない (impossible to / no way to)
+
+**Grammar Point**: べくもない
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb + べくもない (standard negative)
+2. Verb + べくもなかった (past tense)
+3. する-Verb + す + べくもない (exception for する verbs)
+4. Verb + べくもありません (polite form)
+
+**Meaning**:
+- "It is impossible to (A)" / "There is no way to (A)" / "Cannot possibly (A)"
+- Classical auxiliary verb べし (shall) in conjunctive form べく
+- Combined with も (adverbial particle) + ない (adjective)
+- Used with verbs of thinking/emotion to express impossibility
+- The speaker expresses how an action is impossible or inconceivable for them
+
+**Tokenization pattern**:
+**Standard form (Verb + べくもない):**
+- Verb (基本形 or 文語基本形)
+- べく (助動詞, base=べし, 文語・ベシ, 連用形)
+- も (助詞/係助詞)
+- ない (形容詞/自立, 形容詞・アウオ段, 基本形)
+
+**Polite form (Verb + べくもありません):**
+- Verb (基本形)
+- べく (助動詞, base=べし, 文語・ベシ, 連用形)
+- も (助詞/係助詞)
+- あり (動詞/自立, base=ある, 五段・ラ行, 連用形)
+- ませ (助動詞, base=ます, 特殊・マス, 未然形)
+- ん (助動詞, base=ん, 不変化型, 基本形)
+
+**する exception:**
+- す (動詞/自立, base=する, サ変・スル, 文語基本形)
+
+**Implementation**:
+Created 6 custom matchers for precise pattern matching:
+1. BekuMatcher - Matches べく (助動詞, base=べし, 連用形)
+2. MoMatcher - Matches も (助詞/係助詞)
+3. NaiOrAriMatcher - Matches ない/なかっ (形容詞) OR あり (動詞, base=ある)
+4. MaseMatcher - Optional, matches ませ (助動詞, base=ます) for polite form
+5. NMatcher - Optional, matches ん (助動詞) for polite negative
+6. TaMatcher - Optional, matches た (助動詞) for past tense
+
+Pattern matcher sequence:
+- TokenMatcher::Any (verb including する-verbs with す stem)
+- BekuMatcher (べく)
+- MoMatcher (も)
+- NaiOrAriMatcher (ない/なかっ/あり)
+- Optional(MaseMatcher) (ませ)
+- Optional(NMatcher) (ん)
+- Optional(TaMatcher) (た)
+
+**Tests Written: 6 tests (all passing)**
+1. test_bekumonai_regular_verb - 比べるべくもない (24, 32) - regular verb
+2. test_bekumonai_doubt - 疑うべくもない (23, 30) - no doubt
+3. test_bekumonai_past_tense - 知るべくもなかった (21, 30) - past tense
+4. test_bekumonai_suru_verb_exception - 否定するべくもない (30, 39) - する verb
+5. test_bekumonai_suru_verb_su_stem - 解決すべくもない (11, 19) - す stem
+6. test_bekumonai_polite_form - 想像するべくもありません (13, 25) - polite form
+
+**Character Ranges**: Pattern captures verb + べくもない/ありません:
+- 比べるべくもない (24, 32) - 8 characters
+- 疑うべくもない (23, 30) - 7 characters
+- 知るべくもなかった (21, 30) - 9 characters (past)
+- 否定するべくもない (30, 39) - 9 characters (する verb)
+- 解決すべくもない (11, 19) - 8 characters (す stem)
+- 想像するべくもありません (13, 25) - 12 characters (polite)
+
+**Key Notes**:
+- Pattern includes the full grammatical construction (verb + べくもない/ありません)
+- NaiOrAriMatcher handles both casual (ない) and polite (あり) forms
+- Works with する-verbs using both する and す stems
+- Handles past tense (なかった) with optional TaMatcher
+- べく is the conjunctive form (連用形) of classical auxiliary verb べし
+- Usually appears with verbs of thinking/emotion
+- Priority set to 5 for proper detection hierarchy
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented bekumonai() (updated stub at line 10139) with 6 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 6 tests in bekumonai_tests module
+- feature_list.json - Updated べくもない to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (standard, past, polite, する exceptions)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3958 + 6 = 3964 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- と来たら - "When it comes to" pattern
+- ものとして - "Assuming that / treating as" pattern
+- を前提に - "On the premise that" pattern
+- に堪えない - "Cannot bear / unbearable" pattern
+- 始末だ - "End up / result in" pattern (negative outcome)
+
+================================================================================
 ## Session 623 - 2025-12-16
 
 ### Session Summary - ものなら② Complete ✓
