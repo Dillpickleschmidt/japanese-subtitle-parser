@@ -10275,9 +10275,36 @@ pub fn tokitara_2() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ものとして
+// Pattern: ものとして (supposing that / on the assumption that)
+// Structures: Verb/Adjective/Noun + もの + として
 pub fn monotoshite() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    #[derive(Debug)]
+    struct MonoMatcher;
+    impl Matcher for MonoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "もの"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    #[derive(Debug)]
+    struct ToshiteMatcher;
+    impl Matcher for ToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "として"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    vec![
+        // Match the token immediately before もの
+        // This will be: verb, adjective, な (for な-adj), or ある (for である)
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(MonoMatcher)),
+        TokenMatcher::Custom(Arc::new(ToshiteMatcher)),
+    ]
 }
 
 // Pattern: を前提に (on the premise of / on the assumption that)

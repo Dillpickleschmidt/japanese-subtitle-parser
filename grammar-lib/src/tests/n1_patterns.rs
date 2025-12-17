@@ -11808,3 +11808,75 @@ mod wozenteini_tests {
         assert_pattern_range(&patterns, "を前提に", 13, 23); // ことをぜんていとして
     }
 }
+
+// ============================================================================
+// ものとして Tests
+// ============================================================================
+
+mod monotoshite_tests {
+    use super::*;
+
+    // Pattern: ものとして (supposing that / on the assumption that)
+    // Data source: grammar_points_data.json["ものとして"]
+    // Testing all structure variants
+
+    // Structure 1: Verb + ものとして
+    // Example from grammar_points_data.json
+    #[test]
+    fn test_monotoshite_verb_not_attend() {
+        let sentence = "もう一時間もたつので、出席しないものとして会議を始めましょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものとして");
+        assert_pattern_range(&patterns, "ものとして", 14, 21); // ないものとして
+    }
+
+    // Structure 1: Verb + ものとして
+    // Example from grammar_points_data.json
+    #[test]
+    fn test_monotoshite_verb_can_participate() {
+        let sentence = "みんなが参加できるものとして計画を立てましょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものとして");
+        assert_pattern_range(&patterns, "ものとして", 6, 14); // できるものとして
+    }
+
+    // Structure 2: い-Adjective + ものとして
+    // Example from grammar_points_data.json
+    #[test]
+    fn test_monotoshite_i_adjective_difficult() {
+        let sentence = "昨日のテストは難しいものとして勉強したが、実際に受けてみたら全然余裕だった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものとして");
+        assert_pattern_range(&patterns, "ものとして", 7, 15); // 難しいものとして
+    }
+
+    // Structure 3: な-Adjective + な + ものとして
+    // Example from grammar_points_data.json
+    #[test]
+    fn test_monotoshite_na_adjective_impossible() {
+        let sentence = "彼のアイデアは不可能なものとして、誰も彼のアイデアを取り入れようとしなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものとして");
+        assert_pattern_range(&patterns, "ものとして", 10, 16); // なものとして
+    }
+
+    // Structure 4: Noun + である + ものとして
+    // Using a realistic subtitle-quality sentence
+    #[test]
+    fn test_monotoshite_noun_dearu() {
+        let sentence = "これは事実であるものとして報告書に記載します。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものとして");
+        assert_pattern_range(&patterns, "ものとして", 6, 13); // あるものとして
+    }
+}

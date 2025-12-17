@@ -7845,7 +7845,7 @@ declare_patterns! {
     Monotoshite {
         name: "ものとして",
         matcher_fn: crate::matchers::n1::monotoshite,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
