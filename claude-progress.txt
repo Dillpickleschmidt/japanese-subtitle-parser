@@ -1,3 +1,96 @@
+## Session 620 - 2025-12-16
+
+### Session Summary - にかこつけて Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (にかこつけて - N1, priority 5)
+**Total tests**: 3945 passing (6 new tests, no regressions)
+**Progress**: One hundred and thirty-second N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented にかこつけて (under the pretense of / using as an excuse)
+- Used for surface-level excuses to fulfill ulterior motives
+- Handles both Noun + にかこつけて and Verb + の + にかこつけて structures
+- Pattern includes full grammatical construction (preceding word + に + かこつけ + て)
+- All structure variants tested with realistic sentences from grammar_points_data.json
+
+### ✓ Completed: にかこつけて (under the pretense of / using as an excuse)
+
+**Grammar Point**: にかこつけて
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + にかこつけて (e.g., 風邪にかこつけて - using a cold as an excuse)
+2. Verb + の + にかこつけて (e.g., 行くというのにかこつけて - under the pretense of going)
+
+**Meaning**:
+- "Under the pretense of (A)" / "Using (A) as an excuse" / "Labeling it as (A)"
+- Based on case-marking particle に + る-Verb かこつける "to consign as"
+- Used primarily for criticism of surface-level excuses used to fulfill an ulterior motive
+- The original meaning of "to consign" works as "labeling it as (A)"
+
+**Tokenization pattern**:
+- [Noun or の] (preceding word)
+- に (助詞/格助詞/一般)
+- かこつけ (動詞/自立, base=かこつける, 一段, 連用形)
+- て (助詞/接続助詞)
+
+**Implementation**:
+Created 3 custom matchers for precise pattern matching:
+1. NiMatcher - Matches に (助詞/格助詞/一般)
+2. KakotsukeMatcher - Matches かこつけ (base=かこつける, 動詞/自立, 連用形)
+3. TeMatcher - Matches て (助詞/接続助詞)
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding noun or の)
+- NiMatcher (に)
+- KakotsukeMatcher (かこつけ)
+- TeMatcher (て)
+
+**Tests Written: 6 tests (all passing)**
+1. test_nikakotsukete_noun_cold - 風邪にかこつけて (0, 8)
+2. test_nikakotsukete_noun_business_trip - 出張にかこつけて (4, 12)
+3. test_nikakotsukete_verb_nominalized_no - のにかこつけて (8, 15)
+4. test_nikakotsukete_verb_nominalized_no_longer - かにかこつけて (7, 14)
+5. test_nikakotsukete_verb_nominalized_forgot_item - のにかこつけて (13, 20)
+6. test_nikakotsukete_verb_nominalized_tying_shoelace - のにかこつけて (6, 13)
+
+**Character Ranges**: Pattern captures full construction (Noun/の + に + かこつけ + て):
+- 風邪にかこつけて (0, 8) - 8 characters
+- 出張にかこつけて (4, 12) - 8 characters
+- のにかこつけて (various positions) - 7 characters
+
+**Key Notes**:
+- Pattern includes the preceding word (full grammatical construction)
+- Works with any noun or nominalized verb (の)
+- Used for criticizing surface-level excuses
+- Priority set to 5 for proper detection hierarchy
+- Example sentences from grammar_points_data.json
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nikakotsukete() with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 6 tests in nikakotsukete_tests module
+- feature_list.json - Updated にかこつけて to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (noun and の variants)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3939 + 6 = 3945 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ようによっては - "Depending on" pattern
+- べくもない - "No way to" pattern
+- と来たら - "Speaking of" pattern
+- ものとして - "Assuming that" pattern
+- を前提に - "On the premise that" pattern
+
+================================================================================
 ## Session 619 - 2025-12-16
 
 ### Session Summary - を禁じ得ない Complete ✓
