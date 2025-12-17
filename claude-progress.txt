@@ -1,3 +1,113 @@
+## Session 633 - 2025-12-16
+
+### Session Summary - つ (Slang) Pattern Complete ✓
+**Status**: Implemented 1 NT pattern successfully
+**Patterns completed**: 1 (つ (Slang) - NT, priority 6)
+**Total tests**: 4010 passing (5 new tests, no regressions)
+**Progress**: Fifth NT pattern completed! 🎉
+
+**Session highlights**:
+- Implemented つ (Slang) - という contraction pattern
+- Pattern detects all major variants: つ, つう, and conjugated forms (つった, つって)
+- Handles slang quotation particle used in casual speech
+- One variant (っつ merged with text) noted as undetectable
+- All detectable structure variants tested with realistic conversational sentences
+- All tests pass with proper range assertions
+
+### ✓ Completed: つ (Slang) (という contraction - "called/that was said")
+
+**Grammar Point**: つ (Slang)
+**JLPT Level**: NT
+**Priority**: 6
+**Register**: Casual
+
+**Pattern structures**:
+- という → つ (basic form)
+- という → つう (variant form)
+- という → つった (past form, conjugates like 言う)
+- という → つって (te-form)
+- という → つってん (progressive, covered by ん (Slang) pattern)
+
+**Meaning**:
+- Slang contraction of という (to say/called)
+- Means 'called (A)', 'that (A) that was said', or 'known as (A)'
+- Quotes something that was previously said
+- Can follow almost any statement or word type
+- Very common in casual/slang speech
+
+**Tokenization patterns**:
+**Basic つ form:**
+- つ (助動詞, base=つ, 下二・タ行, 基本形)
+
+**つう variant:**
+- つう (名詞/一般, base=つう)
+
+**Conjugated forms (つる verb base):**
+- つっ (動詞/自立, base=つる, 五段・ラ行, 連用タ接続)
+- た (助動詞) → つった (past)
+- て (助詞/接続助詞) → つって (te-form)
+
+**Implementation**:
+Created 1 comprehensive custom matcher:
+- TsuSlangMatcher - Matches all three tokenization patterns:
+  * つ as 助動詞 (basic auxiliary verb form)
+  * つう as 名詞 (noun variant)
+  * つる verb base (for conjugated forms like つった, つって)
+
+Pattern matcher sequence:
+- TokenMatcher::Custom(TsuSlangMatcher) - matches standalone つ forms
+
+**Tests Written: 5 tests (all passing)**
+1. test_tsu_slang_tsu_basic - つ (0, 1) - basic form at sentence start
+2. test_tsu_slang_tsuu_variant - つう (1, 3) - variant form
+3. test_tsu_slang_tsutta_past - つった (6, 9) - past conjugation
+4. test_tsu_slang_tsutteru_progressive - つっ (8, 10) - progressive stem
+5. test_tsu_slang_ttsu_annoyed - つ (13, 14) - from いっつ (言う + つ) construction
+
+**Undetectable variant**:
+- っつ in "わからんっつーの" - the っつ gets merged with preceding text ("ゃわからんっつ")
+  into a single token, making standalone detection impossible
+
+**Character Ranges**: Pattern captures the つ form itself:
+- つ (0, 1) - 1 character
+- つう (1, 3) - 2 characters
+- つった (6, 9) - 3 characters (includes た)
+- つっ (8, 10) - 2 characters
+- つ (13, 14) - 1 character
+
+**Key Notes**:
+- Pattern matches standalone - no preceding token required
+- Works anywhere という would naturally appear
+- Conjugated forms use つる as base form (like 言う)
+- Progressive form つってん is detected by ん (Slang) pattern
+- Priority 6 ensures proper detection among slang patterns
+- Realistic conversational examples from grammar_points_data.json
+
+**Files Modified:**
+- grammar-lib/src/matchers/nt.rs - Implemented tsu_slang() with TsuSlangMatcher
+- grammar-lib/src/patterns.rs - Updated priority to 6
+- grammar-lib/src/tests/nt_patterns.rs - Added 5 tests, imported print_debug
+- feature_list.json - Updated つ (Slang) to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All detectable structure variants tested (つ, つう, conjugated forms)
+✓ Realistic conversational sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (4005 + 5 = 4010 total)
+✓ Clean git history
+
+**Next Priorities** (NT patterns with priority 6, needs_implementation):
+- ～やがる - Derogatory verb suffix (2 structure variants)
+- がいい - Suggestion pattern (1 structure variant)
+- かろう - Classical auxiliary (1 structure variant)
+- やや - Adverb meaning "somewhat" (1 structure variant)
+- いずれも - "All/both" pattern (1 structure variant)
+- あわよくば - "If possible" pattern (1 structure variant)
+- むず - Slang contraction (2 structure variants)
+
+================================================================================
 ## Session 631 - 2025-12-16
 
 ### Session Summary - い Pattern Complete ✓
