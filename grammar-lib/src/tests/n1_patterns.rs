@@ -11422,3 +11422,63 @@ mod nihikikae_tests {
         assert_pattern_range(&patterns, "にひきかえ", 26, 33); // それにひきかえ
     }
 }
+
+// ============================================================================
+// ものなら② Tests
+// ============================================================================
+
+mod mononara_u2461_tests {
+    use super::*;
+
+    // Pattern: ものなら② (if you were to / if one happens to)
+    // Data source: grammar_points_data.json["ものなら②"]
+    // Testing: structure.standard[0] - "Verb[volitional] + ものなら/もんなら + Phrase"
+    //
+    // Meaning: If you were to (A), (B) [where B is a negative consequence]
+    // Uses volitional form to indicate reckless abandon / proceeding without considering outcome
+    // Different from ものなら① which uses potential form (できる) for impossible wishes
+
+    // Example 1: 忘れようものなら (if you were to forget)
+    #[test]
+    fn test_mononara_u2461_forget_birthday() {
+        let sentence = "彼女の誕生日を忘れようものなら、一日中機嫌が悪くなる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものなら②");
+        assert_pattern_range(&patterns, "ものなら②", 7, 15); // 忘れようものなら
+    }
+
+    // Example 2: 忘れようものなら (if I happen to forget)
+    #[test]
+    fn test_mononara_u2461_forget_report() {
+        let sentence = "このレポートを出し忘れようものなら、今までの努力が水の泡だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものなら②");
+        assert_pattern_range(&patterns, "ものなら②", 9, 17); // 忘れようものなら
+    }
+
+    // Example 3: しようものなら (if we happen to)
+    #[test]
+    fn test_mononara_u2461_go_under_fire() {
+        let sentence = "また似たようなことで炎上しようものならこの業界から干されるに違いない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものなら②");
+        assert_pattern_range(&patterns, "ものなら②", 10, 19); // 炎上しようものなら
+    }
+
+    // Example 4: Testing もんなら variant (casual contraction)
+    #[test]
+    fn test_mononara_u2461_monnara_variant() {
+        let sentence = "そんなこと言おうもんなら、みんなに嫌われるぞ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ものなら②");
+        assert_pattern_range(&patterns, "ものなら②", 5, 12); // 言おうもんなら
+    }
+}

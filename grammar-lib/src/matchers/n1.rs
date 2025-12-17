@@ -10312,9 +10312,52 @@ pub fn shimatsuda() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: ものなら②
+// Pattern: ものなら② (if you were to / if one happens to)
+// Structures: Verb[volitional] + ものなら/もんなら
 pub fn mononara_u2461() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match volitional auxiliary う (助動詞, 不変化型)
+    #[derive(Debug)]
+    struct VolitionalUMatcher;
+    impl Matcher for VolitionalUMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "不変化型")
+        }
+    }
+
+    // Match もの or もん (名詞/非自立/一般)
+    #[derive(Debug)]
+    struct MonoOrMonMatcher;
+    impl Matcher for MonoOrMonMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "もの" || token.surface == "もん")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Match なら (助動詞, base=だ, 仮定形)
+    #[derive(Debug)]
+    struct NaraMatcher;
+    impl Matcher for NaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なら"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("未然ウ接続"),
+        TokenMatcher::Custom(Arc::new(VolitionalUMatcher)),
+        TokenMatcher::Custom(Arc::new(MonoOrMonMatcher)),
+        TokenMatcher::Custom(Arc::new(NaraMatcher)),
+    ]
 }
 
 // Pattern: にひきかえ (in stark contrast to / in comparison to)

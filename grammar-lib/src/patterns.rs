@@ -7893,7 +7893,7 @@ declare_patterns! {
     MononaraU2461 {
         name: "ものなら②",
         matcher_fn: crate::matchers::n1::mononara_u2461,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
