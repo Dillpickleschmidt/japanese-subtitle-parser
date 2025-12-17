@@ -8087,7 +8087,7 @@ declare_patterns! {
     Wa {
         name: "わ",
         matcher_fn: crate::matchers::nt::wa,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "nt",
     },

@@ -46,9 +46,27 @@ pub fn ze() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: わ
+// Pattern: わ (sentence-ending particle for emphasis/conviction)
+// Structures: Phrase + わ
 pub fn wa() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match わ (助詞/終助詞)
+    #[derive(Debug)]
+    struct WaMatcher;
+    impl Matcher for WaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding word (verb, adjective, auxiliary verb)
+        TokenMatcher::Custom(Arc::new(WaMatcher)),
+    ]
 }
 
 // Pattern: い

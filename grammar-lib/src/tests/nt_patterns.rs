@@ -93,3 +93,55 @@ mod ze_tests {
         assert_pattern_range(&patterns, "ぜ", 7, 9); // だぜ
     }
 }
+
+// Pattern: わ (sentence-ending particle for emphasis/conviction)
+// Data source: grammar_points_data.json["わ"]
+// Testing: structure.standard[0] - "Phrase + わ"
+//
+// Note: わ is primarily used by women to emphasize or convince
+// Also used by men (particularly in west Japan) for light exasperation
+// Can follow verbs, adjectives, auxiliary verbs (plain forms)
+
+mod wa_tests {
+    use super::*;
+
+    #[test]
+    fn test_wa_verb() {
+        let sentence = "私もそろそろ帰るわ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わ");
+        assert_pattern_range(&patterns, "わ", 6, 9); // 帰るわ
+    }
+
+    #[test]
+    fn test_wa_adjective() {
+        let sentence = "誕生日覚えてくれていたの？嬉しいわ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わ");
+        assert_pattern_range(&patterns, "わ", 13, 17); // 嬉しいわ
+    }
+
+    #[test]
+    fn test_wa_copula_da() {
+        let sentence = "それはお母さんにもらった指輪だわ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わ");
+        assert_pattern_range(&patterns, "わ", 14, 16); // だわ
+    }
+
+    #[test]
+    fn test_wa_copula_desu() {
+        let sentence = "出かけるのは明日ですわ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "わ");
+        assert_pattern_range(&patterns, "わ", 8, 11); // ですわ
+    }
+}
