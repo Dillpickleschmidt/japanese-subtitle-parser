@@ -1,3 +1,100 @@
+## Session 621 - 2025-12-16
+
+### Session Summary - ようによっては Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (ようによっては - N1, priority 5)
+**Total tests**: 3949 passing (4 new tests, no regressions)
+**Progress**: One hundred and thirty-third N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented ようによっては (depending on the way that / depending on how)
+- Complex pattern with THREE different tokenization variants
+- Handles volitional form (見よう), verb stem + よう suffix (混みよう), and noun + よう (使いよう)
+- All structure variants tested with realistic subtitle-quality sentences from grammar_points_data.json
+- Created flexible matcher using YouOrUMatcher to handle both よう (noun suffix) and う (volitional auxiliary)
+
+### ✓ Completed: ようによっては (depending on the way that)
+
+**Grammar Point**: ようによっては
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb(volitional) + によって + は - e.g., 見ようによっては (depending on how you look at it)
+2. Verb(連用形) + よう + によって + は - e.g., 混みようによっては (depending on how crowded it is)
+3. Noun + よう + によって + は - e.g., 使いようによっては (depending on how you use it)
+
+**Meaning**:
+- "Depending on the way that (A), (B)" / "Depending on how (A)"
+- Combination of 様(よう) 'manner/way' + に (particle) + よって (て-form of よる 'to depend on') + は (adverbial particle)
+- Often highlights results that vary greatly from person to person or from one method to another
+- More formal version of 方(かた)によっては
+
+**Tokenization patterns**:
+**Pattern 1** (volitional form like 見よう):
+- Verb (未然ウ接続) + う (助動詞, 不変化型) + によって (助詞/格助詞/連語) + は (助詞/係助詞)
+
+**Pattern 2** (verb stem + suffix like 混みよう):
+- Verb (連用形) + よう (名詞/接尾/一般) + によって (助詞/格助詞/連語) + は (助詞/係助詞)
+
+**Pattern 3** (noun + suffix like 使いよう):
+- Noun + よう (名詞/接尾/一般) + によって (助詞/格助詞/連語) + は (助詞/係助詞)
+
+**Implementation**:
+Created 3 custom matchers for precise pattern matching:
+1. YouOrUMatcher - Matches EITHER よう (名詞/接尾/一般) OR う (助動詞) - mutually exclusive alternatives
+2. NiyotteMatcher - Matches によって (助詞/格助詞/連語)
+3. WaParticleMatcher - Matches は (助詞/係助詞)
+
+Pattern matcher sequence:
+- TokenMatcher::Any (verb or noun)
+- YouOrUMatcher (よう or う)
+- NiyotteMatcher (によって)
+- WaParticleMatcher (は)
+
+**Tests Written: 4 tests (all passing)**
+1. test_youniyotteha_verb_watch - 見ようによっては (5, 13) - volitional form
+2. test_youniyotteha_verb_congestion - 混みようによっては (13, 22) - verb stem + よう
+3. test_youniyotteha_verb_use - 使いようによっては (14, 23) - noun + よう
+4. test_youniyotteha_verb_look - 見ようによっては (4, 12) - volitional form
+
+**Character Ranges**: Pattern captures full construction (verb/noun + よう/う + によって + は):
+- 見ようによっては (5, 13) - 8 characters (volitional)
+- 混みようによっては (13, 22) - 9 characters (verb stem + よう)
+- 使いようによっては (14, 23) - 9 characters (noun + よう)
+
+**Key Notes**:
+- Most complex tokenization pattern implemented - handles 3 distinct structural variants
+- YouOrUMatcher is key innovation: matches EITHER よう suffix OR volitional う
+- Pattern includes the preceding word (full grammatical construction)
+- Works with verbs in volitional form AND with よう as a noun suffix
+- Priority set to 5 for proper detection hierarchy
+- Example sentences directly from grammar_points_data.json
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented youniyotteha() (updated stub at line 10081) with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in youniyotteha_tests module
+- feature_list.json - Updated ようによっては to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (volitional, verb stem + よう, noun + よう)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3945 + 4 = 3949 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- べくもない - "No way to" pattern
+- と来たら - "Speaking of" pattern
+- ものとして - "Assuming that" pattern
+- を前提に - "On the premise that" pattern
+- に堪えない - "Cannot bear" pattern
+
+================================================================================
 ## Session 620 - 2025-12-16
 
 ### Session Summary - にかこつけて Complete ✓
