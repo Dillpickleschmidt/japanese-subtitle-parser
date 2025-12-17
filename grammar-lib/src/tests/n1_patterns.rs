@@ -11626,3 +11626,58 @@ mod shimatsuda_tests {
         assert_pattern_range(&patterns, "始末だ", 6, 12); // このしまつだ
     }
 }
+
+// ============================================================================
+// と来たら Tests (kanji form)
+// ============================================================================
+
+mod tokitara_2_tests {
+    use super::*;
+
+    // Pattern: と来たら (when it comes to / concerning)
+    // Data source: grammar_points_data.json["と来たら"]
+    // Testing: structure.standard[0] - "Phrase + ときたら"
+    //
+    // Meaning: "When it comes to (A)" / "Concerning (A)"
+    // Literal translation: と (case-marking particle) + 来たら (conditional of 来る)
+    // Used to present a topic (A) and then explain speaker's instinctive thoughts (B)
+    // (A) is something that strongly makes the speaker think of (B)
+    // The relationship may be obvious or go without saying
+    // Often appears with やっぱり/やはり "sure enough" in the (B) phrase
+    //
+    // Note: Different from ときたら (kana, casual frustration/complaint)
+    // と来たら is more neutral, standard register, not necessarily negative
+
+    // Example 1: From grammar_points_data.json - 夏ときたらやっぱりキンキンに冷えたビールですよ
+    #[test]
+    fn test_tokitara2_summer_beer() {
+        let sentence = "夏と来たらやっぱりキンキンに冷えたビールですよ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と来たら");
+        assert_pattern_range(&patterns, "と来たら", 0, 5); // 夏と来たら
+    }
+
+    // Example 2: From grammar_points_data.json - 寒い日ときたら、鍋でしょう
+    #[test]
+    fn test_tokitara2_cold_day_hotpot() {
+        let sentence = "寒い日と来たら、鍋でしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と来たら");
+        assert_pattern_range(&patterns, "と来たら", 2, 7); // 日と来たら
+    }
+
+    // Example 3: From grammar_points_data.json - パワハラときたら大問題になるのは当然でしょう
+    #[test]
+    fn test_tokitara2_harassment_problem() {
+        let sentence = "パワハラと来たら大問題になるのは当然でしょう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "と来たら");
+        assert_pattern_range(&patterns, "と来たら", 0, 8); // パワハラと来たら
+    }
+}

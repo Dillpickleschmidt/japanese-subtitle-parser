@@ -10224,9 +10224,55 @@ pub fn bekumonai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: と来たら
+// Pattern: と来たら (when it comes to / concerning)
+// Structures: Phrase + と + 来 + たら
+// Note: Written in kanji (と来たら), unlike ときたら (kana form)
+// Kagome tokenizes as: と + 来 (来る verb) + たら
 pub fn tokitara_2() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Matches と (case-marking particle)
+    #[derive(Debug)]
+    struct ToMatcher;
+    impl super::Matcher for ToMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Matches 来 (来る in 連用形)
+    #[derive(Debug)]
+    struct KiMatcher;
+    impl super::Matcher for KiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "来"
+                && token.base_form == "来る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Matches たら (仮定形 of た auxiliary)
+    #[derive(Debug)]
+    struct TaraMatcher;
+    impl super::Matcher for TaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding phrase (noun, adjective + noun, etc.)
+        TokenMatcher::Custom(Arc::new(ToMatcher)),
+        TokenMatcher::Custom(Arc::new(KiMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraMatcher)),
+    ]
 }
 
 // Pattern: ものとして

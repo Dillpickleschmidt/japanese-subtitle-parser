@@ -7837,7 +7837,7 @@ declare_patterns! {
     Tokitara2 {
         name: "と来たら",
         matcher_fn: crate::matchers::n1::tokitara_2,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

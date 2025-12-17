@@ -12603,14 +12603,14 @@
   {
     "pattern_name": "と来たら",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "When used in the more literal sense, ときたら is a grammar pattern that means ‘when it comes to (A)’, or ‘concerning (A)’ [1 std, 0 pol]",
+    "passes": true,
+    "description": "When used in the more literal sense, ときたら is a grammar pattern that means 'when it comes to (A)', or 'concerning (A)' [1 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
   },
