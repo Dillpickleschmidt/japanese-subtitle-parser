@@ -431,3 +431,44 @@ mod muzu_tests {
     // Tokenization: 帰ら (verb 未然形) + ん (助動詞) + ず (助動詞)
     // Cannot distinguish from regular ん + ず negative construction
 }
+
+// Pattern: あわよくば (if possible / if luck is on my side)
+// Data source: grammar_points_data.json["あわよくば"]
+// Testing: structure.standard[0] - "あわよくば + Phrase"
+//
+// Meaning: Old-fashioned adverb meaning "if the time is right", "if possible", or "if luck is on my side"
+// Comes before a phrase expressing a desirable outcome
+
+mod awayokuba_tests {
+    use super::*;
+
+    #[test]
+    fn test_awayokuba_pass_exam() {
+        let sentence = "あまり勉強をしてないが、あわよくば合格するだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あわよくば");
+        assert_pattern_range(&patterns, "あわよくば", 12, 17); // あわよくば
+    }
+
+    #[test]
+    fn test_awayokuba_date() {
+        let sentence = "あわよくば推しの子とデートしたいと思っている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あわよくば");
+        assert_pattern_range(&patterns, "あわよくば", 0, 5); // あわよくば
+    }
+
+    #[test]
+    fn test_awayokuba_relax() {
+        let sentence = "あわよくば今週は家でゆっくりしたい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "あわよくば");
+        assert_pattern_range(&patterns, "あわよくば", 0, 5); // あわよくば
+    }
+}

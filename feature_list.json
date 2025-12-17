@@ -13107,13 +13107,13 @@
   {
     "pattern_name": "あわよくば",
     "jlpt_level": "nt",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "あわよくば is a combination of the old-fashioned い-Adjective あわよい 'convenient', 'timely', and the conjunction particle ば 'if' [1 std, 0 pol]",
     "priority": 6,
     "skip_reason": null

@@ -8159,7 +8159,7 @@ declare_patterns! {
     Awayokuba {
         name: "あわよくば",
         matcher_fn: crate::matchers::nt::awayokuba,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "nt",
     },

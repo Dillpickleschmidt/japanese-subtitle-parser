@@ -255,9 +255,22 @@ pub fn izuremo() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: あわよくば
+// Pattern: あわよくば (if possible / if luck is on my side)
+// Structures: あわよくば + Phrase
 pub fn awayokuba() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    #[derive(Debug)]
+    struct AwayokubaMatcher;
+    impl Matcher for AwayokubaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "あわよくば"
+                && token.base_form == "あわよくば"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(AwayokubaMatcher))]
 }
 
 // Pattern: むず
