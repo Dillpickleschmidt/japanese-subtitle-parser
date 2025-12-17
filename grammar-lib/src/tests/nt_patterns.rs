@@ -145,3 +145,53 @@ mod wa_tests {
         assert_pattern_range(&patterns, "わ", 8, 11); // ですわ
     }
 }
+
+// Pattern: い (sentence-ending particle for friendliness/familiarity)
+// Data source: grammar_points_data.json["い"]
+// Testing: structure.standard - "か + い", "だ + い", "わ + い"
+//
+// Note: い is a sentence-ending particle that adds familiarity and friendliness
+// Usually only used by men when speaking to someone of lower social position (age difference)
+// Most commonly paired with か or だ
+// Less commonly paired with わ, や, ぞ, or imperative verbs
+
+mod i_tests {
+    use super::*;
+
+    // Note: The い pattern covers sentence-ending particles ending in い
+    // かい is already covered by a separate N4 pattern
+    // This pattern focuses on だい and わい variants
+
+    #[test]
+    fn test_i_wai() {
+        // Test わい as single token (助詞/終助詞)
+        let sentence = "そんなこと言われんでもするわい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い");
+        assert_pattern_range(&patterns, "い", 11, 15); // するわい
+    }
+
+    #[test]
+    fn test_i_dai() {
+        // Test だい as single token (名詞/一般)
+        let sentence = "それは大変だい！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い");
+        assert_pattern_range(&patterns, "い", 3, 7); // 大変だい
+    }
+
+    #[test]
+    fn test_i_wai_variant() {
+        // Another example of わい
+        let sentence = "わしも行くわい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "い");
+        assert_pattern_range(&patterns, "い", 3, 7); // 行くわい
+    }
+}

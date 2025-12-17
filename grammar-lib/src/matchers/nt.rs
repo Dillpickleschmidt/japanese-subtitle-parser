@@ -69,9 +69,48 @@ pub fn wa() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: い
+// Pattern: い (sentence-ending particle for friendliness/familiarity)
+// Structures: Phrase + わい/だい
+// Note: かい is handled by a separate N4 pattern
 pub fn i() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match わい (助詞/終助詞)
+    #[derive(Debug)]
+    struct WaiMatcher;
+    impl Matcher for WaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "わい"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    // Match だい (名詞/一般)
+    #[derive(Debug)]
+    struct DaiMatcher;
+    impl Matcher for DaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Combined matcher for わい or だい
+    #[derive(Debug)]
+    struct IMatcher;
+    impl Matcher for IMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            WaiMatcher.matches(token) || DaiMatcher.matches(token)
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding word (verb, adjective, auxiliary verb)
+        TokenMatcher::Custom(Arc::new(IMatcher)),
+    ]
 }
 
 // Pattern: ん (Slang)

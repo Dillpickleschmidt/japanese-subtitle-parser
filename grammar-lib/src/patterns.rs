@@ -8095,7 +8095,7 @@ declare_patterns! {
     I {
         name: "い",
         matcher_fn: crate::matchers::nt::i,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "nt",
     },
