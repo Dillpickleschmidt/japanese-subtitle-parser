@@ -1,3 +1,95 @@
+## Session 629 - 2025-12-16
+
+### Session Summary - ものとして Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (ものとして - N1, priority 5)
+**Total tests**: 3985 passing (5 new tests, no regressions)
+**Progress**: One hundred and forty-first N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented ものとして (supposing that / on the assumption that)
+- Pattern follows verbs, adjectives (both い and な), and nouns (with である)
+- Handles all 5 structure variants from grammar_points_data.json
+- Uses TokenMatcher::Any to capture immediate predecessor before もの
+- All structure variants tested with realistic subtitle-quality sentences
+- Simple and elegant implementation with just 2 custom matchers
+
+### ✓ Completed: ものとして (supposing that / on the assumption that)
+
+**Grammar Point**: ものとして
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Verb + ものとして (e.g., できるものとして - on the assumption that [someone] can)
+2. い-Adjective + ものとして (e.g., 難しいものとして - on the assumption that it's difficult)
+3. な-Adjective + な + ものとして (e.g., 不可能なものとして - assuming it's impossible)
+4. Noun + である + ものとして (e.g., 事実であるものとして - assuming it's a fact)
+
+**Meaning**:
+- "Supposing that (A)" / "On the assumption that (A)" / "Treating (A) as true"
+- Combination of もの (thing/matter) + として (as/in capacity of)
+- The もの makes the preceding phrase into a strong determination
+- Used when determining (A) is true for the sake of discussion
+- More formal than just として - adds a sense of stiffness or formality
+
+**Tokenization pattern**:
+- [Verb/Adjective/Noun + modifiers]
+- もの (名詞/非自立/一般)
+- として (助詞/格助詞/連語)
+
+**Implementation**:
+Created 2 custom matchers for precise pattern matching:
+1. MonoMatcher - Matches もの (名詞/非自立/一般)
+2. ToshiteMatcher - Matches として (助詞/格助詞/連語)
+
+Pattern matcher sequence:
+- TokenMatcher::Any (matches the token immediately before もの)
+- MonoMatcher (もの)
+- ToshiteMatcher (として)
+
+**Tests Written: 5 tests (all passing)**
+1. test_monotoshite_verb_not_attend - ないものとして (14, 21) - verb + negative
+2. test_monotoshite_verb_can_participate - できるものとして (6, 14) - potential verb
+3. test_monotoshite_i_adjective_difficult - 難しいものとして (7, 15) - い-adjective
+4. test_monotoshite_na_adjective_impossible - なものとして (10, 16) - な-adjective + な
+5. test_monotoshite_noun_dearu - あるものとして (6, 13) - noun + である
+
+**Character Ranges**: Pattern captures token before もの + もの + として:
+- ないものとして (14, 21) - 7 characters
+- できるものとして (6, 14) - 8 characters
+- 難しいものとして (7, 15) - 8 characters
+- なものとして (10, 16) - 6 characters
+- あるものとして (6, 13) - 7 characters
+
+**Key Notes**:
+- Uses TokenMatcher::Any to match the immediate predecessor of もの
+- For single-token cases (verbs, い-adjectives), captures the full word
+- For multi-token phrases (verb compounds, な-adjective + な, noun + である), captures the last token
+- Priority set to 5 for proper detection hierarchy
+- Simple, elegant implementation - only 2 custom matchers needed
+- Example sentences directly from grammar_points_data.json
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented monotoshite() (updated stub at line 10279) with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in monotoshite_tests module
+- feature_list.json - Updated ものとして to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (verb, い-adj, な-adj, noun + である)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3980 + 5 = 3985 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ったら・といったら - Emphasis pattern (9 structure variants - complex)
+
+================================================================================
 ## Session 628 - 2025-12-16
 
 ### Session Summary - を前提に Complete ✓
