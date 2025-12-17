@@ -113,9 +113,74 @@ pub fn i() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ん (Slang)
+// Pattern: ん (Slang) - abbreviation for らない or ている
+// Structures: Verb[未然特殊] + ない (らない → んない)
+//             Verb[連用タ接続] + て + ん (ている → てん)
 pub fn n_slang() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match verb in 未然特殊 conjugation (わかん, なん) OR verb + て + ん
+    #[derive(Debug)]
+    struct NSlangVerbMatcher;
+    impl Matcher for NSlangVerbMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Variant 1: Verb in 未然特殊 (らない → んない)
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "未然特殊")
+            {
+                return true;
+            }
+            // Variant 2: Verb in 連用タ接続 (for ている → てん)
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Match either: ない/ねえ auxiliary OR て particle
+    #[derive(Debug)]
+    struct NSlangFollowerMatcher;
+    impl Matcher for NSlangFollowerMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Variant 1: ない/ねえ auxiliary
+            if (token.surface == "ない" || token.surface == "ねえ")
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+            // Variant 2: て particle
+            if token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // For variant 2 only: match ん (名詞/非自立) after て
+    #[derive(Debug)]
+    struct NNounMatcher;
+    impl Matcher for NNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+        }
+    }
+
+    // Use Optional to make the third token optional (needed for variant 2, not for variant 1)
+    vec![
+        TokenMatcher::Custom(Arc::new(NSlangVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(NSlangFollowerMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NNounMatcher)))),
+    ]
 }
 
 // Pattern: つ (Slang)

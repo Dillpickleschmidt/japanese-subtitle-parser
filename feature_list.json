@@ -13009,13 +13009,13 @@
   {
     "pattern_name": "ん (Slang)",
     "jlpt_level": "nt",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "Being the shortest sound in the Japanese language, ん is often used for abbreviation, especially in casual speech [2 std, 0 pol]",
     "priority": 6,
     "skip_reason": null
