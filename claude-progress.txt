@@ -1,3 +1,99 @@
+## Session 622 - 2025-12-16
+
+### Session Summary - にひきかえ Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (にひきかえ - N1, priority 5)
+**Total tests**: 3954 passing (5 new tests, no regressions)
+**Progress**: One hundred and thirty-fourth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented にひきかえ (in stark contrast to / in comparison to)
+- Pattern for making strong contrasts between opposite ends of a spectrum
+- Handles all structure variants: Noun, な-Adjective + な + の, い-Adjective + の, Verb + の, それ
+- All structure variants tested with realistic subtitle-quality sentences from grammar_points_data.json
+- Simple 3-matcher pattern: Any + に + ひきかえ
+
+### ✓ Completed: にひきかえ (in stark contrast to / in comparison to)
+
+**Grammar Point**: にひきかえ
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + にひきかえ (e.g., 去年の夏にひきかえ - in contrast to last year's summer)
+2. な-Adjective + な + の + にひきかえ (e.g., 裕福なのにひきかえ - in contrast to being wealthy)
+3. い-Adjective + の + にひきかえ (e.g., いいのにひきかえ - in contrast to being good)
+4. Verb + の + にひきかえ (e.g., 就職しているのにひきかえ - in contrast to getting employed)
+5. それ + にひきかえ (sentence-initial, e.g., それにひきかえ - in contrast to that)
+
+**Meaning**:
+- "In stark contrast to (A), (B)" / "In comparison to (A), (B)"
+- Literal translation: "pulling back and switching away from (A), (B)"
+- The 'switching away from' portion emphasizes the large size of the difference
+- Combination of に (case-marking particle) + 引く (to pull, conjunctive form) + 換える (to switch/interchange, conjunctive form)
+- Both (A) and (B) are opposite ends of some spectrum, where one is good and the other is bad (subjective)
+- Only used with plainly observable or measurable facts (not assumptions or guesses)
+
+**Tokenization pattern**:
+- [Any preceding word: Noun, の, それ, etc.]
+- に (助詞/格助詞/一般)
+- ひきかえ (動詞/自立, base=ひきかえる, 一段, 連用形)
+
+**Implementation**:
+Created 2 custom matchers for precise pattern matching:
+1. NiMatcher - Matches に (助詞/格助詞/一般)
+2. HikikaeruMatcher - Matches ひきかえ (動詞/自立, base=ひきかえる, 連用形)
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding word)
+- NiMatcher (に)
+- HikikaeruMatcher (ひきかえ)
+
+**Tests Written: 5 tests (all passing)**
+1. test_nihikikae_noun - 夏にひきかえ (3, 9) - noun form
+2. test_nihikikae_na_adjective_na - のにひきかえ (9, 15) - na-adjective + な + の
+3. test_nihikikae_i_adjective - のにひきかえ (9, 15) - i-adjective + の
+4. test_nihikikae_verb - のにひきかえ (20, 26) - verb + の
+5. test_nihikikae_sorenihikikae - それにひきかえ (26, 33) - それ variant
+
+**Character Ranges**: Pattern captures preceding word + にひきかえ:
+- 夏にひきかえ (3, 9) - 6 characters (noun)
+- のにひきかえ (9, 15) - 6 characters (の variant for adj/verb)
+- それにひきかえ (26, 33) - 7 characters (それ variant)
+
+**Key Notes**:
+- Pattern includes the preceding word (full grammatical construction)
+- Works with any word type before にひきかえ (verbs, adjectives, nouns)
+- の is used to nominalize verbs and adjectives before adding にひきかえ
+- それにひきかえ is used sentence-initially to refer to a previous statement
+- Used to emphasize strong contrasts between observable facts
+- The contrasted items are subjectively evaluated as opposite (good vs bad)
+- Priority set to 5 for proper detection hierarchy
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented nihikikae() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in nihikikae_tests module
+- feature_list.json - Updated にひきかえ to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (noun, な-adj, い-adj, verb, それ)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3949 + 5 = 3954 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ものなら② - "If one could" pattern (conditional with impossibility nuance)
+- 始末だ - "End up / result in" pattern (negative outcome)
+- に堪えない - "Cannot bear / unbearable" pattern
+- を前提に - "On the premise that" pattern
+- ものとして - "Assuming that / treating as" pattern
+
+================================================================================
 ## Session 621 - 2025-12-16
 
 ### Session Summary - ようによっては Complete ✓
