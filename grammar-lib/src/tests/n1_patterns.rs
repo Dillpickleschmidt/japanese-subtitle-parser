@@ -11482,3 +11482,90 @@ mod mononara_u2461_tests {
         assert_pattern_range(&patterns, "ものなら②", 5, 12); // 言おうもんなら
     }
 }
+
+// ============================================================================
+// べくもない Tests
+// ============================================================================
+
+mod bekumonai_tests {
+    use super::*;
+
+    // Pattern: べくもない (impossible to / no way to)
+    // Data source: grammar_points_data.json["べくもない"]
+    // Testing: structure.standard[0] - "Verb + べくもない"
+    //
+    // Structures to test:
+    //   - standard[0]: Verb + べくもない
+    //   - standard (exception): する-Verb + す + べくもない
+    //   - polite[0]: Verb + べくもありません
+    //   - polite (exception): する-Verb + す + べくもありません
+    //
+    // Meaning: "It is impossible to (A)" / "There is no way to (A)"
+    // Used with verbs of thinking/emotion to express impossibility
+
+    // Example 1: Regular verb (比べる) + べくもない
+    #[test]
+    fn test_bekumonai_regular_verb() {
+        let sentence = "自分が作ったパスタはあの有名シェフが作るパスタと比べるべくもないが、結構おいしいと思う。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べくもない");
+        assert_pattern_range(&patterns, "べくもない", 24, 32); // 比べるべくもない
+    }
+
+    // Example 2: Regular verb (疑う) + べくもない
+    #[test]
+    fn test_bekumonai_doubt() {
+        let sentence = "あの顔を見てみろ、あいつが彼を殺したという事は疑うべくもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べくもない");
+        assert_pattern_range(&patterns, "べくもない", 23, 30); // 疑うべくもない
+    }
+
+    // Example 3: Regular verb (知る) + べくもなかった (past tense)
+    #[test]
+    fn test_bekumonai_past_tense() {
+        let sentence = "私自身が先生になるまでは、先生の大変さなど知るべくもなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べくもない");
+        assert_pattern_range(&patterns, "べくもない", 21, 30); // 知るべくもなかった
+    }
+
+    // Example 4: する-Verb exception (否定する) + べくもない
+    #[test]
+    fn test_bekumonai_suru_verb_exception() {
+        let sentence = "あの中古車販売店が詐欺まがいなことをやっていたということは、否定するべくもない事実だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べくもない");
+        assert_pattern_range(&patterns, "べくもない", 30, 39); // 否定するべくもない
+    }
+
+    // Example 5: する-Verb with す stem (解決す) + べくもない
+    #[test]
+    fn test_bekumonai_suru_verb_su_stem() {
+        let sentence = "そんな解決策では問題が解決すべくもない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べくもない");
+        assert_pattern_range(&patterns, "べくもない", 11, 19); // 解決すべくもない
+    }
+
+    // Example 6: Polite form (想像する) + べくもありません
+    #[test]
+    fn test_bekumonai_polite_form() {
+        let sentence = "このような素晴らしい景色は想像するべくもありません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "べくもない");
+        assert_pattern_range(&patterns, "べくもない", 13, 25); // 想像するべくもありません
+    }
+}

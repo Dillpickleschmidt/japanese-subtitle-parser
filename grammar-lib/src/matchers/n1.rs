@@ -10135,9 +10135,93 @@ pub fn youniyotteha() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: べくもない
+// Pattern: べくもない (impossible to / no way to)
+// Structures: Verb + べく + も + ない/なかった/ありません
 pub fn bekumonai() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match べく (助動詞, base=べし, 文語・ベシ, 連用形)
+    #[derive(Debug)]
+    struct BekuMatcher;
+    impl Matcher for BekuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "べく"
+                && token.base_form == "べし"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match も (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoMatcher;
+    impl Matcher for MoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        }
+    }
+
+    // Match ない/なかっ (形容詞/自立, base=ない) OR あり (動詞/自立, base=ある)
+    #[derive(Debug)]
+    struct NaiOrAriMatcher;
+    impl Matcher for NaiOrAriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Match ない or なかっ (adjective)
+            if token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+            {
+                return true;
+            }
+            // Match あり (polite form: ありません)
+            if token.surface == "あり"
+                && token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Optional: Match ませ (助動詞, base=ます) for polite form
+    #[derive(Debug)]
+    struct MaseMatcher;
+    impl Matcher for MaseMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ませ"
+                && token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Optional: Match ん (助動詞, 不変化型) for polite negative
+    #[derive(Debug)]
+    struct NMatcher;
+    impl Matcher for NMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ん" && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Optional: Match た (助動詞, 特殊・タ) for past tense
+    #[derive(Debug)]
+    struct TaMatcher;
+    impl Matcher for TaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "た"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Verb (including する-verbs with す stem)
+        TokenMatcher::Custom(Arc::new(BekuMatcher)),
+        TokenMatcher::Custom(Arc::new(MoMatcher)),
+        TokenMatcher::Custom(Arc::new(NaiOrAriMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MaseMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TaMatcher)))),
+    ]
 }
 
 // Pattern: と来たら

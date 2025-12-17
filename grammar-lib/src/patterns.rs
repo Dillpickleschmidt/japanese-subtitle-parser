@@ -7829,7 +7829,7 @@ declare_patterns! {
     Bekumonai {
         name: "べくもない",
         matcher_fn: crate::matchers::n1::bekumonai,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
