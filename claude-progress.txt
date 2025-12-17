@@ -1,3 +1,104 @@
+## Session 628 - 2025-12-16
+
+### Session Summary - を前提に Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (を前提に - N1, priority 5)
+**Total tests**: 3980 passing (5 new tests, no regressions)
+**Progress**: One hundred and fortieth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented を前提に (on the premise of / on the assumption that)
+- Handles three structure variants: Noun + を前提に, Verb + こと + を前提に, and variants with にして/として
+- Created 6 custom matchers to handle all tokenization patterns
+- All structure variants tested with realistic subtitle-quality sentences from grammar_points_data.json
+- Tokenization: を + ぜん + てい + に/にして/として
+
+### ✓ Completed: を前提に (on the premise of / on the assumption that)
+
+**Grammar Point**: を前提に
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structures**:
+1. Noun + を前提に (e.g., 結婚をぜんていに - on the premise of marriage)
+2. Verb + こと + を前提に (e.g., 使われることをぜんていに - on the premise of being used)
+3. Noun/こと + をぜんていにして (e.g., ことをぜんていにして - toward the premise that)
+4. Noun/こと + をぜんていとして (e.g., ことをぜんていとして - with the premise that)
+
+**Meaning**:
+- "On the premise of (A), (B)" / "On the assumption that (A), (B)"
+- Combination of を (particle) + 前提 (premise/hypothesis) + に/にして/として
+- Marks something as the base thought/goal toward which another action is taken
+- Used with nouns or nominalized verbs (using こと)
+
+**Tokenization pattern**:
+- [Noun or こと]
+- を (助詞/格助詞/一般)
+- ぜん (名詞/一般)
+- てい (名詞/一般)
+- に (助詞/格助詞) OR として (助詞/格助詞/連語)
+- Optional: し (動詞/自立, base=する, 連用形) + て (助詞/接続助詞) for にして variant
+
+**Implementation**:
+Created 6 custom matchers for precise pattern matching:
+1. WoMatcher - Matches を (助詞/格助詞/一般)
+2. ZenMatcher - Matches ぜん (名詞/一般, base=ぜん)
+3. TeiMatcher - Matches てい (名詞/一般, base=てい)
+4. NiOrToshiteMatcher - Matches に OR として (both 助詞/格助詞)
+5. ShiMatcher - Optional, matches し (動詞/自立, base=する, 連用形) for にして variant
+6. TeMatcher - Optional, matches て (助詞/接続助詞) for にして variant
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding noun or こと)
+- WoMatcher (を)
+- ZenMatcher (ぜん)
+- TeiMatcher (てい)
+- NiOrToshiteMatcher (に or として)
+- Optional(ShiMatcher) (し)
+- Optional(TeMatcher) (て)
+
+**Tests Written: 5 tests (all passing)**
+1. test_wozenteini_noun_marriage - 結婚をぜんていに (5, 13) - noun form
+2. test_wozenteini_verb_koto_workplace - ことをぜんていに (15, 23) - verb + こと
+3. test_wozenteini_verb_koto_racing - ことをぜんていに (13, 21) - verb + こと
+4. test_wozenteini_nishite_variant - ことをぜんていにして (10, 20) - にして variant
+5. test_wozenteini_toshite_variant - ことをぜんていとして (13, 23) - として variant
+
+**Character Ranges**: Pattern captures full construction (noun/こと + を + ぜん + てい + に/にして/として):
+- 結婚をぜんていに (5, 13) - 8 characters
+- ことをぜんていに (15, 23) - 8 characters
+- ことをぜんていにして (10, 20) - 10 characters
+- ことをぜんていとして (13, 23) - 10 characters
+
+**Key Notes**:
+- Pattern includes the preceding word (full grammatical construction)
+- Works with any noun or nominalized verb (こと)
+- NiOrToshiteMatcher handles both に and として endings
+- Optional matchers allow にして variant to be detected
+- Priority set to 5 for proper detection hierarchy
+- Example sentences directly from grammar_points_data.json
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented wozenteini() (updated stub at line 10284) with 6 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 5 tests in wozenteini_tests module
+- feature_list.json - Updated を前提に to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (noun, verb + こと, にして, として)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3975 + 5 = 3980 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- ものとして - "Assuming that / treating as" pattern
+- ったら・といったら - Emphasis pattern (9 structure variants - complex)
+
+================================================================================
 ## Session 627 - 2025-12-16
 
 ### Session Summary - に堪えない Complete ✓
