@@ -1,3 +1,114 @@
+## Session 618 - 2025-12-16
+
+### Session Summary - ならいざ知らず Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (ならいざ知らず - N1, priority 5)
+**Total tests**: 3935 passing (8 new tests, no regressions)
+**Progress**: One hundred and thirtieth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented ならいざ知らず (I don't know about A, but B / maybe A, but B)
+- Formal expression emphasizing contrast: (A) may or may not be the case, but (B) is definite
+- Handles both なら (hypothetical) and は (topic) particle variants
+- Works with Nouns, Verbs, Adjectives, and nominalized forms (の)
+- All structure variants tested with realistic subtitle sentences from grammar_points_data.json
+
+### ✓ Completed: ならいざ知らず (I don't know about A, but B)
+
+**Grammar Point**: ならいざ知らず
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Formal
+
+**Pattern structures**:
+1. Noun + ならいざ知らず (most common)
+2. Verb + ならいざ知らず
+3. い-Adjective + の + ならいざ知らず (nominalized)
+4. な-Adjective + ならいざ知らず
+5. Noun + はいざ知らず (は variant)
+
+**Meaning**:
+- "I don't know about (A), but (B)" / "Maybe (A), but (B)"
+- Formal expression emphasizing that regardless of (A), (B) fits a specific description
+- Combination of なら (hypothetical form of だ) + いざ (adverb: "now"/"well then") + 知らず (classical negative of 知る "to know")
+- Literal translation: "if it's (A), well then I don't know"
+- Emphasizes that (A) may or may not be the case, but (B) is definite
+- Often (A) is an extreme example showing (B) is the opposite, making it surprising or irritating
+
+**Tokenization patterns**:
+**Core pattern (all variants):**
+- なら (助動詞, base=だ, 仮定形) OR は (助詞/係助詞)
+- いざ (副詞/一般)
+- しら (動詞/自立, base=しる, 未然形)
+- ず (助動詞, base=ぬ, 連用ニ接続)
+
+**Preceding word:** Any token (Noun, Verb, Adjective, or の)
+
+**Implementation**:
+Created 4 custom matchers for precise pattern matching:
+1. NaraOrWaMatcher - Matches なら (助動詞, base=だ, 仮定形) OR は (助詞/係助詞)
+2. IzaMatcher - Matches いざ (副詞/一般)
+3. ShiraMatcher - Matches しら (動詞/自立, base=しる, 未然形)
+4. ZuMatcher - Matches ず (助動詞, base=ぬ, 連用ニ接続)
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding word)
+- NaraOrWaMatcher (なら or は)
+- IzaMatcher (いざ)
+- ShiraMatcher (しら)
+- ZuMatcher (ず)
+
+**Tests Written: 8 tests (all passing)**
+1. test_naraizashirazu_noun_weekday - 平日ならいざしらず (0, 9) - noun + なら
+2. test_naraizashirazu_noun_wedding - 出席するならいざしらず (8, 19) - verb + なら
+3. test_naraizashirazu_verb_wait - 待つならいざしらず (3, 12) - verb + なら
+4. test_naraizashirazu_i_adjective_with_no - のならいざしらず (3, 11) - の + なら (nominalized)
+5. test_naraizashirazu_na_adjective - 上手ならいざしらず (8, 17) - な-adjective + なら
+6. test_naraizashirazu_wa_variant - 前はいざしらず (3, 10) - noun + は
+7. test_naraizashirazu_noun_past - 大昔ならいざしらず (0, 9) - noun + なら
+8. test_naraizashirazu_noun_god - 神ならいざしらず (0, 8) - noun + なら
+
+**Character Ranges**: Pattern captures preceding word + なら/は + いざしらず:
+- 平日ならいざしらず (0, 9) - 9 characters
+- 出席するならいざしらず (8, 19) - 11 characters
+- 待つならいざしらず (3, 12) - 9 characters
+- のならいざしらず (3, 11) - 8 characters
+- 上手ならいざしらず (8, 17) - 9 characters
+- 前はいざしらず (3, 10) - 7 characters (は variant)
+- 大昔ならいざしらず (0, 9) - 9 characters
+- 神ならいざしらず (0, 8) - 8 characters
+
+**Key Notes**:
+- Pattern includes the preceding word (full grammatical construction)
+- NaraOrWaMatcher handles both なら (most common) and は variants
+- Works with any word type before the pattern (verbs, adjectives, nouns, の)
+- の is used to nominalize verbs and adjectives before adding ならいざ知らず
+- Often used with extreme examples to show contrast (e.g., "gods maybe, but not regular people")
+- Priority set to 5 for proper detection hierarchy
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented naraizashirazu() with 4 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 8 tests in naraizashirazu_tests module
+- feature_list.json - Updated ならいざ知らず to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (noun, verb, adjective, の, は variant)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3927 + 8 = 3935 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- を禁じ得ない - "Cannot help but" pattern
+- にかこつけて - "Using as an excuse" pattern
+- ようによっては - "Depending on" pattern
+- べくもない - "No way to" pattern
+- と来たら - "Speaking of" pattern
+
+================================================================================
 ## Session 617 - 2025-12-16
 
 ### Session Summary - には及ばない② Complete ✓
