@@ -11163,3 +11163,54 @@ mod naraizashirazu_tests {
         assert_pattern_range(&patterns, "ならいざ知らず", 0, 8); // 神ならいざしらず
     }
 }
+
+// Pattern: を禁じ得ない (cannot help feeling / cannot hold back from)
+// Data source: grammar_points_data.json["を禁じ得ない"]
+// Testing all structure variants
+mod wokinjienai_tests {
+    use super::*;
+
+    // Testing: structure.standard[0] - "Noun + を禁じ得ない"
+    #[test]
+    fn test_wokinjienai_noun_standard() {
+        let sentence = "息子が生まれたが、いい父親になれるか不安をきんじえない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を禁じ得ない");
+        assert_pattern_range(&patterns, "を禁じ得ない", 18, 27); // 不安をきんじえない
+    }
+
+    // Testing: structure.standard[1] - "Verb + の + を禁じ得ない"
+    #[test]
+    fn test_wokinjienai_verb_nominalized_standard() {
+        let sentence = "初めて広島にある平和記念資料館に行ったとき、涙をこらえるのをきんじえなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を禁じ得ない");
+        assert_pattern_range(&patterns, "を禁じ得ない", 28, 38); // のをきんじえなかった
+    }
+
+    // Testing: structure.polite[0] - "Noun + を禁じ得ません"
+    #[test]
+    fn test_wokinjienai_noun_polite() {
+        let sentence = "税金を国民のためではなく自分たちのためだけに使う政治家に怒りをきんじえません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を禁じ得ない");
+        assert_pattern_range(&patterns, "を禁じ得ない", 28, 38); // 怒りをきんじえません
+    }
+
+    // Testing: structure.polite[1] - "Verb + の + を禁じ得ません"
+    #[test]
+    fn test_wokinjienai_verb_nominalized_polite() {
+        let sentence = "彼女の努力を見て感動するのをきんじえませんでした。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を禁じ得ない");
+        assert_pattern_range(&patterns, "を禁じ得ない", 12, 24); // のをきんじえませんでした
+    }
+}

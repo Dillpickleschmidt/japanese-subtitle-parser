@@ -12547,13 +12547,13 @@
   {
     "pattern_name": "を禁じ得ない",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "を禁（きん）じ得（え）ない is a formal grammar pattern used to express that one ‘cannot help feeling (A)’, or ‘cannot hold back fr... [2 std, 2 pol]",
     "priority": 5,
     "skip_reason": null

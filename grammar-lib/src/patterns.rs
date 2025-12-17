@@ -7805,7 +7805,7 @@ declare_patterns! {
     Wokinjienai {
         name: "を禁じ得ない",
         matcher_fn: crate::matchers::n1::wokinjienai,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
