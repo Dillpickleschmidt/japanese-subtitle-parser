@@ -10280,9 +10280,98 @@ pub fn monotoshite() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: を前提に
+// Pattern: を前提に (on the premise of / on the assumption that)
+// Structures: Noun/こと + を + 前提 + に/にして/として
 pub fn wozenteini() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match を (助詞/格助詞/一般)
+    #[derive(Debug)]
+    struct WoMatcher;
+    impl Matcher for WoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match ぜん (名詞/一般, base=ぜん)
+    #[derive(Debug)]
+    struct ZenMatcher;
+    impl Matcher for ZenMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ぜん"
+                && token.base_form == "ぜん"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match てい (名詞/一般, base=てい)
+    #[derive(Debug)]
+    struct TeiMatcher;
+    impl Matcher for TeiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "てい"
+                && token.base_form == "てい"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        }
+    }
+
+    // Match に (助詞/格助詞) OR として (助詞/格助詞/連語)
+    #[derive(Debug)]
+    struct NiOrToshiteMatcher;
+    impl Matcher for NiOrToshiteMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            if token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            {
+                return true;
+            }
+            if token.surface == "として"
+                && token.base_form == "として"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            {
+                return true;
+            }
+            false
+        }
+    }
+
+    // Optional: Match し (動詞/自立, base=する, 連用形) for にして variant
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Optional: Match て (助詞/接続助詞) for にして variant
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(WoMatcher)),
+        TokenMatcher::Custom(Arc::new(ZenMatcher)),
+        TokenMatcher::Custom(Arc::new(TeiMatcher)),
+        TokenMatcher::Custom(Arc::new(NiOrToshiteMatcher)),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ShiMatcher)))),
+        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TeMatcher)))),
+    ]
 }
 
 // Pattern: ずにはすまない (won't get away without doing / have no choice but to do)

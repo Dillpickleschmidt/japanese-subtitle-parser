@@ -11741,3 +11741,70 @@ mod nikotaenai_tests {
         assert_pattern_range(&patterns, "に堪えない", 23, 30); // 怒りにたえない
     }
 }
+
+// ============================================================================
+// を前提に Tests
+// ============================================================================
+
+mod wozenteini_tests {
+    use super::*;
+
+    // Pattern: を前提に (on the premise of / on the assumption that)
+    // Data source: grammar_points_data.json["を前提に"]
+    // Testing: structure.standard[0] - "Noun + を前提に"
+
+    // Example 1: From grammar_points_data.json - 結婚をぜんていに
+    #[test]
+    fn test_wozenteini_noun_marriage() {
+        let sentence = "娘さんとは結婚をぜんていにお付き合いをさせていただいています。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を前提に");
+        assert_pattern_range(&patterns, "を前提に", 5, 13); // 結婚をぜんていに
+    }
+
+    // Example 2: From grammar_points_data.json - Verb + こと + をぜんていに
+    #[test]
+    fn test_wozenteini_verb_koto_workplace() {
+        let sentence = "このパソコンは仕事場で使われることをぜんていに作られているので、ゲームなどには向いていないです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を前提に");
+        assert_pattern_range(&patterns, "を前提に", 15, 23); // ことをぜんていに
+    }
+
+    // Example 3: From grammar_points_data.json - Verb + こと + をぜんていに (racing)
+    #[test]
+    fn test_wozenteini_verb_koto_racing() {
+        let sentence = "この車はレースをするということをぜんていに改造されているため公道では運転できません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を前提に");
+        assert_pattern_range(&patterns, "を前提に", 13, 21); // ことをぜんていに
+    }
+
+    // Example 4: From grammar_points_data.json - をぜんていにして variant
+    #[test]
+    fn test_wozenteini_nishite_variant() {
+        let sentence = "名前を出さないということをぜんていにして、労基に上司のパワハラなどを通報した。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を前提に");
+        assert_pattern_range(&patterns, "を前提に", 10, 20); // ことをぜんていにして
+    }
+
+    // Example 5: From grammar_points_data.json - をぜんていとして variant
+    #[test]
+    fn test_wozenteini_toshite_variant() {
+        let sentence = "このアパートは、一人で住むことをぜんていとして作られているので、キッチンとお風呂場は小さいです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "を前提に");
+        assert_pattern_range(&patterns, "を前提に", 13, 23); // ことをぜんていとして
+    }
+}

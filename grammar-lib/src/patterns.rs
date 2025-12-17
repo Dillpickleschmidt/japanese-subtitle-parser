@@ -7853,7 +7853,7 @@ declare_patterns! {
     Wozenteini {
         name: "を前提に",
         matcher_fn: crate::matchers::n1::wozenteini,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },
