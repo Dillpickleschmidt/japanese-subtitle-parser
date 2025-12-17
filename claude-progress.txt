@@ -1,3 +1,101 @@
+## Session 631 - 2025-12-16
+
+### Session Summary - い Pattern Complete ✓
+**Status**: Implemented 1 NT pattern successfully
+**Patterns completed**: 1 (い - NT, priority 6)
+**Total tests**: 3999 passing (3 new tests, no regressions)
+**Progress**: Fourth NT pattern completed! 🎉
+
+**Session highlights**:
+- Implemented い sentence-ending particle pattern
+- Pattern matches だい and わい variants (かい already covered by N4 pattern)
+- Detects particles that add familiarity and friendliness to speech
+- All structure variants tested with realistic conversational sentences
+- All tests pass with proper range assertions
+
+### ✓ Completed: い (sentence-ending particle for friendliness/familiarity)
+
+**Grammar Point**: い
+**JLPT Level**: NT
+**Priority**: 6
+**Register**: Casual
+
+**Pattern structures**:
+- Phrase + わい (e.g., するわい - friendly/familiar emphasis)
+- Phrase + だい (e.g., 大変だい - friendly/familiar emphasis)
+- Note: かい is handled by a separate N4 pattern
+
+**Meaning**:
+- Sentence-ending particle that adds familiarity and friendliness
+- Usually only used by men when speaking to someone of lower social position (age difference)
+- Most commonly paired with か (→かい) or だ (→だい)
+- Less commonly paired with わ (→わい), や, ぞ, or imperative verbs
+- Softens the tone and makes speech more approachable
+
+**Tokenization pattern**:
+**わい variant:**
+- [Verb/Adjective/Auxiliary]
+- わい (助詞/終助詞)
+
+**だい variant:**
+- [Noun/な-Adjective]
+- だい (名詞/一般)
+
+**Implementation**:
+Created 3 custom matchers for precise pattern matching:
+1. WaiMatcher - Matches わい (助詞/終助詞)
+2. DaiMatcher - Matches だい (名詞/一般)
+3. IMatcher - Combined matcher for わい or だい
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding word - verb, adjective, auxiliary verb, noun)
+- IMatcher (わい or だい)
+
+**Tests Written: 3 tests (all passing)**
+1. test_i_wai - するわい (11, 15) - verb + わい
+2. test_i_dai - 大変だい (3, 7) - な-adjective + だい
+3. test_i_wai_variant - 行くわい (3, 7) - verb + わい
+
+**Character Ranges**: Pattern captures full construction (word + い-particle):
+- するわい (11, 15) - 4 characters
+- 大変だい (3, 7) - 4 characters
+- 行くわい (3, 7) - 4 characters
+
+**Key Notes**:
+- Pattern focuses on わい and だい variants
+- かい is already handled by a separate N4 pattern (higher specificity)
+- Tokenization varies: わい is 助詞/終助詞, だい is 名詞/一般
+- IMatcher combines both variants for comprehensive detection
+- Priority set to 6 (same as other sentence-ending particles)
+- Simple structure: Any + particle
+
+**Files Modified:**
+- grammar-lib/src/matchers/nt.rs - Implemented i() with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority to 6
+- grammar-lib/src/tests/nt_patterns.rs - Added 3 tests in i_tests module
+- feature_list.json - Updated い to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All detectable structure variants tested (わい, だい)
+✓ Realistic conversational sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3996 + 3 = 3999 total)
+✓ Clean git history
+
+**Next Priorities** (NT patterns with priority 6, needs_implementation):
+- ん (Slang) - Slang contraction
+- つ (Slang) - Slang particle
+- ～やがる - Derogatory verb suffix
+- がいい - Suggestion pattern
+- かろう - Classical auxiliary
+- やや - Adverb meaning "somewhat"
+- いずれも - "All/both" pattern
+- あわよくば - "If possible" pattern
+- むず - Slang contraction
+
+================================================================================
 ## Session 630 - 2025-12-16
 
 ### Session Summary - NT Patterns Complete ✓
