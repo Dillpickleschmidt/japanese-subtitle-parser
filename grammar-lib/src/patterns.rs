@@ -8111,7 +8111,7 @@ declare_patterns! {
     TsuSlang {
         name: "つ (Slang)",
         matcher_fn: crate::matchers::nt::tsu_slang,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "nt",
     },

@@ -13023,13 +13023,13 @@
   {
     "pattern_name": "つ (Slang)",
     "jlpt_level": "nt",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "つ is a slang grammar pattern that originates from という, with the meaning of 'called (A)', 'that (A) that was said', or... [1 std, 0 pol]",
     "priority": 6,
     "skip_reason": null

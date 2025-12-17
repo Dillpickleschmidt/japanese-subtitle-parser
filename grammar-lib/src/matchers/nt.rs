@@ -184,8 +184,50 @@ pub fn n_slang() -> Vec<TokenMatcher> {
 }
 
 // Pattern: つ (Slang)
+// Pattern: つ (Slang) - という contraction (called/that was said)
+// Structures: という → つ/っつ/つう + variants
 pub fn tsu_slang() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match all variants of つ slang:
+    // - つ (助動詞, base=つ) - basic form
+    // - つう (名詞, base=つう) - variant form
+    // - つる verb base (conjugated forms like つった, つって)
+    #[derive(Debug)]
+    struct TsuSlangMatcher;
+    impl Matcher for TsuSlangMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // つ as auxiliary verb (基本形)
+            if token.surface == "つ"
+                && token.base_form == "つ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+            {
+                return true;
+            }
+
+            // つう as noun
+            if token.surface == "つう"
+                && token.base_form == "つう"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+            {
+                return true;
+            }
+
+            // つる verb (conjugated forms: つった, つって, etc.)
+            if token.base_form == "つる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.surface.starts_with("つ")
+            {
+                return true;
+            }
+
+            false
+        }
+    }
+
+    // Just match the つ form itself - can appear anywhere という would
+    vec![TokenMatcher::Custom(Arc::new(TsuSlangMatcher))]
 }
 
 // Pattern: ～やがる
