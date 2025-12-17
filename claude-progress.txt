@@ -1,3 +1,111 @@
+## Session 634 - 2025-12-16
+
+### Session Summary - むず Pattern Complete ✓
+**Status**: Implemented 1 NT pattern successfully
+**Patterns completed**: 1 (むず - NT, priority 6)
+**Total tests**: 4015 passing (5 new tests, no regressions)
+**Progress**: Sixth NT pattern completed! 🎉
+
+**Session highlights**:
+- Implemented むず - classical auxiliary verb pattern (conjecture/strong will)
+- Pattern detects all major variants: むず, むずる, むずれ, なんず
+- Handles very old classical Japanese grammar forms
+- One variant (んず split into ん + ず) noted as undetectable due to tokenization
+- All detectable structure variants tested with classical Japanese sentences from grammar data
+- All tests pass with proper range assertions
+
+### ✓ Completed: むず (classical auxiliary verb - conjecture/strong will)
+
+**Grammar Point**: むず
+**JLPT Level**: NT
+**Priority**: 6
+**Register**: Standard (classical Japanese)
+
+**Pattern structures**:
+1. Verb[ない] + むず (basic form - e.g., 逃げれなむず)
+2. Verb[ない] + むずる (attributive form - e.g., せむずる)
+3. Verb[ない] + むずれ (realis/indeterminate form - e.g., 咲かむずれ)
+4. Verb[ない] + なんず (variant with なん instead of む - e.g., 住いなんず)
+
+**Meaning**:
+- Classical auxiliary verb (abbreviation of む + と + す)
+- Indicates conjecture or strong will: "I shall (A)" or "Isn't it (A)?"
+- Attaches to the negative stem (未然形) of verbs
+- Used almost exclusively in very old texts
+- Surrounding grammar typically also in classical forms
+
+**Tokenization patterns**:
+**むず, むずる, むずれ forms:**
+- surface='むず'/'むずる'/'むずれ' base='' pos=名詞/一般
+
+**なんず variant:**
+- surface='なんず' base='なんずる' pos=動詞/自立 (サ変・－ズル, 文語基本形)
+
+**Undetectable: んず split form:**
+- surface='ん' base='ん' pos=助動詞 + surface='ず' base='ぬ' pos=助動詞
+- Tokenized as two separate classical negative auxiliaries
+- Cannot distinguish from regular ん + ず negative construction
+
+**Implementation**:
+Created 2 custom matchers:
+1. MuzuNounMatcher - Matches むず, むずる, むずれ (名詞/一般 with empty base)
+2. NanzuMatcher - Matches なんず (動詞 with base なんずる)
+3. MuzuCombinedMatcher - Combines both matchers for comprehensive detection
+
+Pattern matcher sequence:
+- TokenMatcher::Any (preceding verb in negative stem form)
+- MuzuCombinedMatcher (matches all single-token forms)
+
+**Tests Written: 5 tests (all passing)**
+1. test_muzu_basic_form - なむず (7, 10) - basic form
+2. test_muzu_basic_form_2 - 来むず (8, 11) - basic form with 来る
+3. test_muzu_nanzu_variant - 住いなんず (9, 14) - なんず variant (single verb token)
+4. test_muzu_muzuru_attributive - がせむずる (7, 12) - attributive form
+5. test_muzu_muzure_realis - 咲かむずれ (6, 11) - realis/indeterminate form
+
+**Undetectable variant**:
+- んず when split into ん + ず - two separate auxiliary verb tokens
+- Indistinguishable from regular classical negative construction
+- Noted with TODO comment in test file
+
+**Character Ranges**: Pattern captures preceding word + むず form:
+- なむず (7, 10) - 3 characters
+- 来むず (8, 11) - 3 characters
+- 住いなんず (9, 14) - 5 characters
+- がせむずる (7, 12) - 5 characters
+- 咲かむずれ (6, 11) - 5 characters
+
+**Key Notes**:
+- Pattern uses TokenMatcher::Any to capture the preceding verb (in 未然形)
+- Handles both noun-tokenized forms (むず, むずる, むずれ) and verb form (なんず)
+- Classical Japanese pattern - very rare in modern text
+- Example sentences taken directly from grammar_points_data.json
+- Priority set to 6 for proper detection hierarchy
+
+**Files Modified:**
+- grammar-lib/src/matchers/nt.rs - Implemented muzu() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Pattern already declared with priority 6
+- grammar-lib/src/tests/nt_patterns.rs - Added 5 tests in muzu_tests module
+- feature_list.json - Updated むず to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All detectable structure variants tested (むず, むずる, むずれ, なんず)
+✓ Classical Japanese sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (4010 + 5 = 4015 total)
+✓ Clean git history
+
+**Next Priorities** (NT patterns with priority 6, needs_implementation):
+- あわよくば - "If possible" pattern (1 structure variant)
+- いずれも - "All/both" pattern (1 structure variant)
+- やや - Adverb meaning "somewhat" (1 structure variant)
+- かろう - Classical auxiliary (1 structure variant)
+- がいい - Suggestion pattern (1 structure variant)
+- ～やがる - Derogatory verb suffix (2 structure variants)
+
+================================================================================
 ## Session 633 - 2025-12-16
 
 ### Session Summary - つ (Slang) Pattern Complete ✓
