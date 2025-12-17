@@ -8079,7 +8079,7 @@ declare_patterns! {
     Ze {
         name: "ぜ",
         matcher_fn: crate::matchers::nt::ze,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "nt",
     },

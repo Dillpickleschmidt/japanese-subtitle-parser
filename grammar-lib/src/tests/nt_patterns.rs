@@ -51,3 +51,45 @@ mod zo_tests {
         assert_pattern_range(&patterns, "ぞ", 9, 11); // だぞ
     }
 }
+
+// Pattern: ぜ (friendly emphatic sentence-ending particle)
+// Data source: grammar_points_data.json["ぜ"]
+// Testing: structure.standard[0] - "Phrase + ぜ"
+//
+// Note: ぜ is similar to ぞ but friendlier, less forceful
+// Used primarily by men with familiar people
+// Cannot follow directly after nouns (needs だ)
+
+mod ze_tests {
+    use super::*;
+
+    #[test]
+    fn test_ze_volitional() {
+        let sentence = "今度暇なときランチでもしようぜ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぜ");
+        assert_pattern_range(&patterns, "ぜ", 13, 15); // うぜ (volitional う + ぜ)
+    }
+
+    #[test]
+    fn test_ze_volitional_short() {
+        let sentence = "もうそろそろ寝ようぜ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぜ");
+        assert_pattern_range(&patterns, "ぜ", 8, 10); // うぜ (volitional う + ぜ)
+    }
+
+    #[test]
+    fn test_ze_copula() {
+        let sentence = "ポケモンゲットだぜ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ぜ");
+        assert_pattern_range(&patterns, "ぜ", 7, 9); // だぜ
+    }
+}

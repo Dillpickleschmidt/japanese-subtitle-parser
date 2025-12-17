@@ -23,9 +23,27 @@ pub fn zo() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ぜ
+// Pattern: ぜ (friendly emphatic sentence-ending particle)
+// Structures: Phrase + ぜ
 pub fn ze() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match ぜ (助詞/終助詞)
+    #[derive(Debug)]
+    struct ZeMatcher;
+    impl Matcher for ZeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ぜ"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "終助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,  // Preceding word (verb, adjective, auxiliary verb)
+        TokenMatcher::Custom(Arc::new(ZeMatcher)),
+    ]
 }
 
 // Pattern: わ
