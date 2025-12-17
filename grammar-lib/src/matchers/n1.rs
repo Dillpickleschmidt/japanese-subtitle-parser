@@ -10391,9 +10391,54 @@ pub fn nikotaenai() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: 始末だ
+// Pattern: 始末だ (wind up as / end up as / culminate in - negative outcome)
+// Structures: Verb[る] + 始末だ, この + 始末だ
 pub fn shimatsuda() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match し (助動詞, base=き, 文語・キ, 体言接続)
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "き"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "文語・キ")
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+        }
+    }
+
+    // Match まつ (名詞/一般, base=まつ)
+    #[derive(Debug)]
+    struct MatsuMatcher;
+    impl Matcher for MatsuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "まつ"
+                && token.base_form == "まつ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match だ (助動詞, base=だ, 特殊・ダ)
+    #[derive(Debug)]
+    struct DaMatcher;
+    impl Matcher for DaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "だ"
+                && token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ダ")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any,
+        TokenMatcher::Custom(Arc::new(ShiMatcher)),
+        TokenMatcher::Custom(Arc::new(MatsuMatcher)),
+        TokenMatcher::Custom(Arc::new(DaMatcher)),
+    ]
 }
 
 // Pattern: ものなら② (if you were to / if one happens to)

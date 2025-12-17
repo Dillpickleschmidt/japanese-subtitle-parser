@@ -11569,3 +11569,60 @@ mod bekumonai_tests {
         assert_pattern_range(&patterns, "べくもない", 13, 25); // 想像するべくもありません
     }
 }
+
+// ============================================================================
+// 始末だ Tests
+// ============================================================================
+
+mod shimatsuda_tests {
+    use super::*;
+
+    // Pattern: 始末だ (wind up as / end up as / culminate in - negative outcome)
+    // Data source: grammar_points_data.json["始末だ"]
+    // Testing: structure.standard[0] - "Verb[る] + 始末（しまつ）だ"
+    // Testing: structure.standard[1] - "この始末（しまつ）だ"
+
+    // Example 1: この + 始末だ (double check example)
+    #[test]
+    fn test_shimatsuda_kono_doublecheck() {
+        let sentence = "あんだけダブルチェックをするように言ったのに、このしまつだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "始末だ");
+        assert_pattern_range(&patterns, "始末だ", 23, 29); // このしまつだ
+    }
+
+    // Example 2: Verb[る] + 始末だ (festival example)
+    #[test]
+    fn test_shimatsuda_verb_festival() {
+        let sentence = "みんなで祭りに行くつもりだったのに、みんながドタキャンするから、結局一人で行くしまつだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "始末だ");
+        assert_pattern_range(&patterns, "始末だ", 37, 43); // 行くしまつだ
+    }
+
+    // Example 3: Verb[る] + 始末だ (store example)
+    #[test]
+    fn test_shimatsuda_verb_store() {
+        let sentence = "その客は店中をぐちゃぐちゃにしたあげく、何も買わないで帰るしまつだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "始末だ");
+        assert_pattern_range(&patterns, "始末だ", 27, 33); // 帰るしまつだ
+    }
+
+    // Example 4: この + 始末だ (simple example)
+    #[test]
+    fn test_shimatsuda_kono_simple() {
+        let sentence = "準備不足で、このしまつだ。本当に恥ずかしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "始末だ");
+        assert_pattern_range(&patterns, "始末だ", 6, 12); // このしまつだ
+    }
+}

@@ -7885,7 +7885,7 @@ declare_patterns! {
     Shimatsuda {
         name: "始末だ",
         matcher_fn: crate::matchers::n1::shimatsuda,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

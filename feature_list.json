@@ -12673,14 +12673,14 @@
   {
     "pattern_name": "始末だ",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
-    "description": "始末（しまつ）, a noun meaning ‘settlement’, or ‘end result’ is commonly used in order to indicate a negative sequence of ev... [2 std, 0 pol]",
+    "passes": true,
+    "description": "始末（しまつ）, a noun meaning 'settlement', or 'end result' is commonly used in order to indicate a negative sequence of ev... [2 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
   },
