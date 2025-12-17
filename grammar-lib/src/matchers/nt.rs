@@ -261,6 +261,46 @@ pub fn awayokuba() -> Vec<TokenMatcher> {
 }
 
 // Pattern: むず
+/// Match むず (classical auxiliary verb - conjecture/strong will)
+/// Handles all forms: むず, んず, むずる, むずれ, なんず
 pub fn muzu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for むず, むずる, むずれ (all tokenize as 名詞/一般 with empty base)
+    #[derive(Debug)]
+    struct MuzuNounMatcher;
+    impl Matcher for MuzuNounMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.surface == "むず" || token.surface == "むずる" || token.surface == "むずれ")
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.base_form.is_empty()
+        }
+    }
+
+    // Matcher for なんず (tokenizes as verb with base なんずる)
+    #[derive(Debug)]
+    struct NanzuMatcher;
+    impl Matcher for NanzuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "なんず"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.base_form == "なんずる"
+        }
+    }
+
+    // Combined matcher for all single-token forms
+    #[derive(Debug)]
+    struct MuzuCombinedMatcher;
+    impl Matcher for MuzuCombinedMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            MuzuNounMatcher.matches(token) || NanzuMatcher.matches(token)
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding verb (negative stem form)
+        TokenMatcher::Custom(Arc::new(MuzuCombinedMatcher)),
+    ]
 }

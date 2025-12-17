@@ -352,3 +352,82 @@ mod tsu_slang_tests {
         assert_pattern_range(&patterns, "つ (Slang)", 13, 14); // つ (from いっつ = 言う + つ)
     }
 }
+
+// Pattern: むず (classical auxiliary verb)
+// Data source: grammar_points_data.json["むず"]
+// Testing: structure.standard[0] - "Verb[ない] + むず"
+//
+// むず is a classical auxiliary verb (mu + to + su abbreviation)
+// Indicates conjecture or strong will: 'I shall (A)' or 'Isn't it (A)?'
+// Attaches to the negative stem of verbs
+// Variants: むず, んず, むずる (attributive), むずれ (realis)
+//
+// Note: Very old classical Japanese - may be difficult to detect in modern text
+
+mod muzu_tests {
+    use super::*;
+
+    // Test むず basic form
+    #[test]
+    fn test_muzu_basic_form() {
+        let sentence = "歩くとも逃げれなむず。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "むず");
+        assert_pattern_range(&patterns, "むず", 7, 10); // なむず
+    }
+
+    // Test むず basic form 2
+    #[test]
+    fn test_muzu_basic_form_2() {
+        let sentence = "迎へに人々まうで来むず。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "むず");
+        assert_pattern_range(&patterns, "むず", 8, 11); // 来むず
+    }
+
+    // Test なんず variant (single verb token)
+    #[test]
+    fn test_muzu_nanzu_variant() {
+        let sentence = "足の向きたらむ方へ住いなんず。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "むず");
+        assert_pattern_range(&patterns, "むず", 9, 14); // 住いなんず
+    }
+
+    // Test むずる (attributive form)
+    #[test]
+    fn test_muzu_muzuru_attributive() {
+        let sentence = "宿は暗し、いかがせむずる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "むず");
+        assert_pattern_range(&patterns, "むず", 7, 12); // がせむずる
+    }
+
+    // Test むずれ (realis/indeterminate form)
+    #[test]
+    fn test_muzu_muzure_realis() {
+        let sentence = "桜は今週こそ咲かむずれ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "むず");
+        assert_pattern_range(&patterns, "むず", 6, 11); // 咲かむずれ
+    }
+
+    // TODO: Undetectable - んず split tokenization (ん + ず as separate auxiliaries)
+    // When んず is tokenized as ん (助動詞, base=ん) + ず (助動詞, base=ぬ),
+    // it's treated as two separate classical negative auxiliaries rather than
+    // the むず pattern. This is a tokenizer limitation for this specific variant.
+    //
+    // Example: 帰らんず
+    // Tokenization: 帰ら (verb 未然形) + ん (助動詞) + ず (助動詞)
+    // Cannot distinguish from regular ん + ず negative construction
+}
