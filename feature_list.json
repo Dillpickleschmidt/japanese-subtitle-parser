@@ -12533,13 +12533,13 @@
   {
     "pattern_name": "ならいざ知らず",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "ならいざ知（し）らず is a grammar expression which combines the hypothetical form of the auxiliary verb だ, なら, the adverb いざ ‘n... [8 std, 0 pol]",
     "priority": 5,
     "skip_reason": null

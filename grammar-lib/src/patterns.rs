@@ -7797,7 +7797,7 @@ declare_patterns! {
     Naraizashirazu {
         name: "ならいざ知らず",
         matcher_fn: crate::matchers::n1::naraizashirazu,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

@@ -11058,3 +11058,108 @@ mod nikatakunai_tests {
         assert_pattern_range(&patterns, "に難くない", 5, 19); // 予想にかたくありませんでした
     }
 }
+
+// ============================================================================
+// ならいざ知らず Tests
+// ============================================================================
+
+mod naraizashirazu_tests {
+    use super::*;
+
+    // Pattern: ならいざ知らず (I don't know about A, but B / maybe A, but B)
+    // Data source: grammar_points_data.json["ならいざ知らず"]
+    // Testing: structure.standard[0] - "Noun + ならいざ知らず"
+    //
+    // Other structures to test:
+    //   - standard[1]: Verb + (の) + ならいざ知らず
+    //   - standard[2]: い-Adjective + (の) + ならいざ知らず
+    //   - standard[3]: Noun + であればいざ知らず
+    //   - standard[4]: Noun + はいざ知らず
+
+    // Testing: structure.standard[0] - "Noun + ならいざ知らず" (most common)
+    #[test]
+    fn test_naraizashirazu_noun_weekday() {
+        let sentence = "平日ならいざしらず、連休中に遊園地などのようなところに行く人は多いだろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならいざ知らず");
+        assert_pattern_range(&patterns, "ならいざ知らず", 0, 9); // 平日ならいざしらず
+    }
+
+    // Testing: structure.standard[0] - "Noun + ならいざ知らず"
+    #[test]
+    fn test_naraizashirazu_noun_wedding() {
+        let sentence = "結婚式かなんかに出席するならいざしらず、友達の家に行くだけなんだからスーツなんて着ていかなくてもいいんじゃない？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならいざ知らず");
+        assert_pattern_range(&patterns, "ならいざ知らず", 8, 19); // 出席するならいざしらず
+    }
+
+    // Testing: structure.standard[1] - "Verb + ならいざ知らず" (verb without の)
+    #[test]
+    fn test_naraizashirazu_verb_wait() {
+        let sentence = "１５分待つならいざしらず、いくら友達でも３０分以上待つのは無理だ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならいざ知らず");
+        assert_pattern_range(&patterns, "ならいざ知らず", 3, 12); // 待つならいざしらず
+    }
+
+    // Testing: structure.standard[2] - "い-Adjective + の + ならいざ知らず"
+    #[test]
+    fn test_naraizashirazu_i_adjective_with_no() {
+        let sentence = "新しいのならいざしらず、前のモデルはよく勝手に電源が落ちたからあまり売れなかったらしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならいざ知らず");
+        assert_pattern_range(&patterns, "ならいざ知らず", 3, 11); // のならいざしらず
+    }
+
+    // Testing: structure.standard[2] - "な-Adjective + ならいざ知らず" (without の)
+    #[test]
+    fn test_naraizashirazu_na_adjective() {
+        let sentence = "経験豊富で仕事が上手ならいざしらず、まだ始めたばかりの子にこの仕事を任せるのはかわいそうすぎますよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならいざ知らず");
+        assert_pattern_range(&patterns, "ならいざ知らず", 8, 17); // 上手ならいざしらず
+    }
+
+    // Testing: structure.standard[4] - "Noun + はいざ知らず"
+    #[test]
+    fn test_naraizashirazu_wa_variant() {
+        let sentence = "６０年前はいざしらず、今では喫煙する人が減ってきている。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならいざ知らず");
+        assert_pattern_range(&patterns, "ならいざ知らず", 3, 10); // 前はいざしらず
+    }
+
+    // Testing: More examples with different nouns
+    #[test]
+    fn test_naraizashirazu_noun_past() {
+        let sentence = "大昔ならいざしらず、現代では詐欺についてよくテレビやインターネットで話題になっているから、詐欺の手口も年々と進化していってる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならいざ知らず");
+        assert_pattern_range(&patterns, "ならいざ知らず", 0, 9); // 大昔ならいざしらず
+    }
+
+    #[test]
+    fn test_naraizashirazu_noun_god() {
+        let sentence = "神ならいざしらず、俺みたいなやつにはああいうことをする奴たちを許すことなどできない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ならいざ知らず");
+        assert_pattern_range(&patterns, "ならいざ知らず", 0, 8); // 神ならいざしらず
+    }
+}

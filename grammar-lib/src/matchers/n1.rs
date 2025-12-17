@@ -9889,9 +9889,71 @@ pub fn nikatakunai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ならいざ知らず
+// Pattern: ならいざ知らず (I don't know about A, but B / maybe A, but B)
+// Structures: Any + なら/は + いざ + 知らず
 pub fn naraizashirazu() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match なら (助動詞, base=だ, 仮定形) OR は (助詞/係助詞)
+    #[derive(Debug)]
+    struct NaraOrWaMatcher;
+    impl Matcher for NaraOrWaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // なら as 助動詞/*/*/*, base=だ, 仮定形
+            (token.surface == "なら"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "仮定形"))
+                // は as 助詞/係助詞
+                || (token.surface == "は"
+                    && token.pos.first().is_some_and(|pos| pos == "助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "係助詞"))
+        }
+    }
+
+    // Match いざ (副詞/一般)
+    #[derive(Debug)]
+    struct IzaMatcher;
+    impl Matcher for IzaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いざ"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+        }
+    }
+
+    // Match しら (動詞/自立, base=しる, 未然形)
+    #[derive(Debug)]
+    struct ShiraMatcher;
+    impl Matcher for ShiraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "しら"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.base_form == "しる"
+                && token.features.get(5).is_some_and(|f| f == "未然形")
+        }
+    }
+
+    // Match ず (助動詞, base=ぬ, 連用ニ接続)
+    #[derive(Debug)]
+    struct ZuMatcher;
+    impl Matcher for ZuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ず"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "ぬ"
+                && token.features.get(5).is_some_and(|f| f == "連用ニ接続")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding word: Noun, Verb, Adjective, or の
+        TokenMatcher::Custom(Arc::new(NaraOrWaMatcher)),
+        TokenMatcher::Custom(Arc::new(IzaMatcher)),
+        TokenMatcher::Custom(Arc::new(ShiraMatcher)),
+        TokenMatcher::Custom(Arc::new(ZuMatcher)),
+    ]
 }
 
 // Pattern: を禁じ得ない
