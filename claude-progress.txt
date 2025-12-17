@@ -1,3 +1,96 @@
+## Session 623 - 2025-12-16
+
+### Session Summary - ものなら② Complete ✓
+**Status**: Implemented 1 N1 pattern successfully
+**Patterns completed**: 1 (ものなら② - N1, priority 5)
+**Total tests**: 3958 passing (4 new tests, no regressions)
+**Progress**: One hundred and thirty-fifth N1 pattern completed! 🎉
+
+**Session highlights**:
+- Implemented ものなら② (if you were to / if one happens to)
+- Pattern using volitional form to express negative consequences
+- Different from ものなら① which uses potential form
+- Handles both ものなら (standard) and もんなら (casual) variants
+- All structure variants tested with realistic subtitle-quality sentences
+
+### ✓ Completed: ものなら② (if you were to / if one happens to)
+
+**Grammar Point**: ものなら②
+**JLPT Level**: N1
+**Priority**: 5
+**Register**: Standard
+
+**Pattern structure**:
+- Verb[volitional] + ものなら/もんなら + Phrase
+
+**Meaning**:
+- "If you were to (A), (B)" / "If (A) happens, (B)"
+- (A) is in volitional form, (B) is a negative consequence
+- Volitional form implies reckless abandon / proceeding without considering outcome
+- Literal: "If the thing of (A) were"
+- Combination of もの/もん (noun: thing) + なら (hypothetical form of だ)
+
+**Key difference from ものなら①**:
+- ものなら①: Uses potential/できる form (if one could, but it's not thought possible)
+- ものなら②: Uses volitional form (if you were to recklessly do, negative consequence)
+
+**Tokenization pattern**:
+- Verb (未然ウ接続) - verb stem ready for volitional う
+- う (助動詞, 不変化型) - volitional auxiliary
+- もの/もん (名詞/非自立/一般) - "thing"
+- なら (助動詞, base=だ, 仮定形) - hypothetical "if"
+
+**Implementation**:
+Created 3 custom matchers for precise pattern matching:
+1. VolitionalUMatcher - Matches う (助動詞, 不変化型)
+2. MonoOrMonMatcher - Matches もの or もん (名詞/非自立/一般)
+3. NaraMatcher - Matches なら (助動詞, base=だ, 仮定形)
+
+Pattern matcher sequence:
+- TokenMatcher::verb_with_form("未然ウ接続") - verb in volitional form
+- VolitionalUMatcher (う)
+- MonoOrMonMatcher (もの/もん)
+- NaraMatcher (なら)
+
+**Tests Written: 4 tests (all passing)**
+1. test_mononara_u2461_forget_birthday - 忘れようものなら (7, 15) - if you forget
+2. test_mononara_u2461_forget_report - 忘れようものなら (9, 17) - if I happen to forget
+3. test_mononara_u2461_go_under_fire - しようものなら (10, 19) - if we happen to
+4. test_mononara_u2461_monnara_variant - 言おうもんなら (5, 12) - casual もんなら variant
+
+**Character Ranges**: Pattern captures verb + volitional + ものなら/もんなら:
+- 忘れようものなら (7, 15) - 8 characters
+- 言おうもんなら (5, 12) - 7 characters (もんなら is 1 character shorter)
+
+**Key Notes**:
+- Pattern includes the full grammatical construction (verb + う + もの/もん + なら)
+- MonoOrMonMatcher handles both standard もの and casual もん
+- VolitionalUMatcher specifically matches う auxiliary (not just surface "う")
+- Used when negative consequences follow from reckless action
+- Priority set to 5 for proper detection hierarchy
+
+**Files Modified:**
+- grammar-lib/src/matchers/n1.rs - Implemented mononara_u2461() with 3 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 5
+- grammar-lib/src/tests/n1_patterns.rs - Added 4 tests in mononara_u2461_tests module
+- feature_list.json - Updated ものなら② to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (standard and casual forms)
+✓ Realistic subtitle-quality sentences used from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (3954 + 4 = 3958 total)
+✓ Clean git history
+
+**Next Priorities** (N1 patterns with priority 5, needs_implementation):
+- 始末だ - "End up / result in" pattern (negative outcome)
+- に堪えない - "Cannot bear / unbearable" pattern
+- を前提に - "On the premise that" pattern
+- ものとして - "Assuming that / treating as" pattern
+
+================================================================================
 ## Session 622 - 2025-12-16
 
 ### Session Summary - にひきかえ Complete ✓
