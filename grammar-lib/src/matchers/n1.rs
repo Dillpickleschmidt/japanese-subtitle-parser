@@ -10030,9 +10030,51 @@ pub fn wokinjienai() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: にかこつけて
+// Pattern: にかこつけて (under the pretense of / using as an excuse)
+// Structures: Noun + にかこつけて, Verb + の + にかこつけて
 pub fn nikakotsukete() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match に as 助詞/格助詞/一般
+    #[derive(Debug)]
+    struct NiMatcher;
+    impl Matcher for NiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match かこつけ (動詞/自立, base=かこつける, 連用形)
+    #[derive(Debug)]
+    struct KakotsukeMatcher;
+    impl Matcher for KakotsukeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "かこつけ"
+                && token.base_form == "かこつける"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形")
+        }
+    }
+
+    // Match て as 助詞/接続助詞
+    #[derive(Debug)]
+    struct TeMatcher;
+    impl Matcher for TeMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "て"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Noun or の
+        TokenMatcher::Custom(Arc::new(NiMatcher)),
+        TokenMatcher::Custom(Arc::new(KakotsukeMatcher)),
+        TokenMatcher::Custom(Arc::new(TeMatcher)),
+    ]
 }
 
 // Pattern: ようによっては

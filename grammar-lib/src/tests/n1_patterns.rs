@@ -11214,3 +11214,85 @@ mod wokinjienai_tests {
         assert_pattern_range(&patterns, "を禁じ得ない", 12, 24); // のをきんじえませんでした
     }
 }
+
+// ============================================================================
+// にかこつけて Tests
+// ============================================================================
+
+mod nikakotsukete_tests {
+    use super::*;
+
+    // Pattern: にかこつけて (under the pretense of / using as an excuse)
+    // Data source: grammar_points_data.json["にかこつけて"]
+    // Testing: structure.standard[0] - "Noun + にかこつけて"
+    //
+    // Other structures to test:
+    //   - standard[1]: Verb + の + にかこつけて
+    //   - standard[1]: Verb + こと + にかこつけて (の can be こと)
+
+    // Testing: structure.standard[0] - "Noun + にかこつけて"
+    #[test]
+    fn test_nikakotsukete_noun_cold() {
+        let sentence = "風邪にかこつけて、授業を休んで一日中テレビを見ながらダラダラしていた。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかこつけて");
+        assert_pattern_range(&patterns, "にかこつけて", 0, 8); // 風邪にかこつけて
+    }
+
+    // Testing: structure.standard[0] - "Noun + にかこつけて"
+    #[test]
+    fn test_nikakotsukete_noun_business_trip() {
+        let sentence = "あいつは出張にかこつけて、また釣りに行っているに違いない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかこつけて");
+        assert_pattern_range(&patterns, "にかこつけて", 4, 12); // 出張にかこつけて
+    }
+
+    // Testing: structure.standard[1] - "Verb + の + にかこつけて"
+    #[test]
+    fn test_nikakotsukete_verb_nominalized_no() {
+        let sentence = "病院に行くというのにかこつけて仕事を休んだ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかこつけて");
+        assert_pattern_range(&patterns, "にかこつけて", 8, 15); // のにかこつけて
+    }
+
+    // Testing: structure.standard[1] - "Verb + の + にかこつけて"
+    #[test]
+    fn test_nikakotsukete_verb_nominalized_no_longer() {
+        let sentence = "彼女はいつも何かにかこつけて僕の家に来ようとする。本当にやめてほしい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかこつけて");
+        assert_pattern_range(&patterns, "にかこつけて", 7, 14); // かにかこつけて (か from 何か)
+    }
+
+    // Testing: structure.standard[1] - "Verb + の + にかこつけて" (longer example)
+    #[test]
+    fn test_nikakotsukete_verb_nominalized_forgot_item() {
+        let sentence = "彼の家に忘れ物をしたというのにかこつけて彼のところにもう一度行く。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかこつけて");
+        assert_pattern_range(&patterns, "にかこつけて", 13, 20); // のにかこつけて
+    }
+
+    // Testing: structure.standard[1] - "Verb + の + にかこつけて"
+    #[test]
+    fn test_nikakotsukete_verb_nominalized_tying_shoelace() {
+        let sentence = "靴ひもを結ぶのにかこつけて落ちていた財布をこっそりと拾った。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "にかこつけて");
+        assert_pattern_range(&patterns, "にかこつけて", 6, 13); // のにかこつけて
+    }
+}

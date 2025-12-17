@@ -7813,7 +7813,7 @@ declare_patterns! {
     Nikakotsukete {
         name: "にかこつけて",
         matcher_fn: crate::matchers::n1::nikakotsukete,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

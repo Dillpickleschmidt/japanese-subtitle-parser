@@ -12561,13 +12561,13 @@
   {
     "pattern_name": "にかこつけて",
     "jlpt_level": "n1",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "に託（かこつ）けて is a structure based on the case-marking particle に, and the る-Verb 託（かこつ）ける ‘to consign as’, or ‘to label as’ [3 std, 0 pol]",
     "priority": 5,
     "skip_reason": null
