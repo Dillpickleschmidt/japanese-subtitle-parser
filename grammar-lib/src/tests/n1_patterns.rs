@@ -11880,3 +11880,64 @@ mod monotoshite_tests {
         assert_pattern_range(&patterns, "ものとして", 6, 13); // あるものとして
     }
 }
+
+// ============================================================================
+// ったら・といったら Tests
+// ============================================================================
+
+// Pattern: ったら・といったら (emphasizing extreme degree - "when it comes to X")
+// Data source: grammar_points_data.json["ったら・といったら"]
+// Structures:
+//   More common:
+//   - Noun + (と)いったら + ありゃしない/ありはしない
+//   - い-Adjective(さ) + (と)いったら + ありゃしない/ありはしない
+//   Less common:
+//   - Verb + (と)いったら + ありゃしない/ありはしない
+//   - な-Adjective + (と)いったら + ありゃしない/ありはしない
+mod ttara_toittara_tests {
+    use super::*;
+
+    // Test 1: Noun + といったら + ありゃしない (most common)
+    #[test]
+    fn test_ttara_toittara_noun_full() {
+        let sentence = "この暑さといったらありゃしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ったら・といったら");
+        assert_pattern_range(&patterns, "ったら・といったら", 3, 15); // さといったらありゃしない
+    }
+
+    // Test 2: Noun + ったら + ありゃしない (と omitted)
+    #[test]
+    fn test_ttara_toittara_noun_short() {
+        let sentence = "彼の怠けっぷりったらありゃしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ったら・といったら");
+        assert_pattern_range(&patterns, "ったら・といったら", 4, 16); // っぷりったらありゃしない
+    }
+
+    // Test 3: い-Adjective(さ) + といったら + ありはしない
+    #[test]
+    fn test_ttara_toittara_i_adj() {
+        let sentence = "今日の寒さといったらありはしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ったら・といったら");
+        assert_pattern_range(&patterns, "ったら・といったら", 4, 16); // さといったらありはしない
+    }
+
+    // Test 4: Noun + といったら + ありはしない (variant)
+    #[test]
+    fn test_ttara_toittara_noun_arihasinai() {
+        let sentence = "彼の態度といったらありはしない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "ったら・といったら");
+        assert_pattern_range(&patterns, "ったら・といったら", 2, 15); // 態度といったらありはしない
+    }
+}

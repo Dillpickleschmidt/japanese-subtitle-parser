@@ -7741,7 +7741,7 @@ declare_patterns! {
     TtaraU30fbToittara {
         name: "ったら・といったら",
         matcher_fn: crate::matchers::n1::ttara_u30fb_toittara,
-        priority: 1,
+        priority: 5,
         category: PatternCategory::Construction,
         jlpt: "n1",
     },

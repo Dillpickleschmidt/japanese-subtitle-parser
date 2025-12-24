@@ -9464,9 +9464,104 @@ pub fn niiwasereba_u30fb_niiwaseruto_u30fb_niiwasetara() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ったら・といったら
+// Pattern: ったら・といったら (emphasizing extreme degree)
+// Structures: Noun/Adj + (と)いったら + ありゃしない/ありはしない
 pub fn ttara_u30fb_toittara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+
+    // Match と as quotation particle (optional)
+    #[derive(Debug)]
+    struct ToParticleMatcher;
+    impl Matcher for ToParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "と"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+        }
+    }
+
+    // Match いっ or っ (連用タ接続 of いう or く verb)
+    #[derive(Debug)]
+    struct IttaTsuMatcher;
+    impl Matcher for IttaTsuMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // いっ from いう verb
+            (token.surface == "いっ"
+                && token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+            // っ from く verb (as in ったら contraction)
+            || (token.surface == "っ"
+                && token.base_form == "く"
+                && token.pos.first().is_some_and(|pos| pos == "動詞"))
+        }
+    }
+
+    // Match たら (仮定形 of た auxiliary)
+    #[derive(Debug)]
+    struct TaraMatcher;
+    impl Matcher for TaraMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "たら"
+                && token.base_form == "た"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Match ありゃ (仮定縮約１ of ある) or あり (連用形 of ある)
+    #[derive(Debug)]
+    struct AriMatcher;
+    impl Matcher for AriMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.base_form == "ある"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.surface == "ありゃ" || token.surface == "あり")
+        }
+    }
+
+    // Match は (係助詞) - optional, only appears in ありはしない
+    #[derive(Debug)]
+    struct WaParticleMatcher;
+    impl Matcher for WaParticleMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "は"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    // Match し (未然形 of する)
+    #[derive(Debug)]
+    struct ShiMatcher;
+    impl Matcher for ShiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "し"
+                && token.base_form == "する"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        }
+    }
+
+    // Match ない (助動詞)
+    #[derive(Debug)]
+    struct NaiMatcher;
+    impl Matcher for NaiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "ない"
+                && token.base_form == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    // Pattern: [Word] + (と) + いっ/っ + たら + ありゃ/あり + (は) + し + ない
+    super::concat(vec![
+        vec![TokenMatcher::Any], // Preceding word (noun, adjective, etc.)
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(ToParticleMatcher))))],
+        vec![TokenMatcher::Custom(Arc::new(IttaTsuMatcher))], // いっ or っ
+        vec![TokenMatcher::Custom(Arc::new(TaraMatcher))],    // たら
+        vec![TokenMatcher::Custom(Arc::new(AriMatcher))],     // ありゃ or あり
+        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher))))], // は (optional)
+        vec![TokenMatcher::Custom(Arc::new(ShiMatcher))],     // し
+        vec![TokenMatcher::Custom(Arc::new(NaiMatcher))],     // ない
+    ])
 }
 
 // Pattern: こととて (due to / because of)
