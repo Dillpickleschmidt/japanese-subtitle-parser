@@ -1,18 +1,18 @@
 ## Session 636 - 2025-12-24
 
-### Session Summary - やや Pattern Complete ✓
-**Status**: Implemented 1 NT pattern successfully
-**Patterns completed**: 1 (やや - NT, priority 6)
-**Total tests**: 4021 passing (3 new tests, no regressions)
-**Progress**: Eighth NT pattern completed! 🎉
+### Session Summary - やや and いずれも Patterns Complete ✓
+**Status**: Implemented 2 NT patterns successfully
+**Patterns completed**: 2 (やや, いずれも - both NT, priority 6)
+**Total tests**: 4024 passing (6 new tests, no regressions)
+**Progress**: Eighth and ninth NT patterns completed! 🎉
 
 **Session highlights**:
 - Implemented やや - adverb meaning "a little bit" / "slightly"
-- Very simple pattern - single adverb token (副詞/一般)
-- More formal than 少し, similar to 僅か
+- Implemented いずれも - formal expression meaning "all/any/both"
+- Both patterns are straightforward adverbial expressions
 - All structure variants tested with realistic sentences from grammar_points_data.json
 - All tests pass with proper range assertions
-- Clean implementation with just one custom matcher
+- Clean implementations following established patterns
 
 ### ✓ Completed: やや (a little bit / slightly)
 
@@ -73,10 +73,70 @@ Pattern matcher sequence:
 ✓ Clean git history
 
 **Next Priorities** (NT patterns with priority 6, needs_implementation):
-- いずれも - "All/both" pattern (1 structure variant)
 - がいい - Suggestion pattern (1 structure variant)
 - かろう - Classical auxiliary (1 structure variant)
 - ～やがる - Derogatory verb suffix (2 structure variants)
+
+### ✓ Completed: いずれも (all / any / both)
+
+**Grammar Point**: いずれも
+**JLPT Level**: NT
+**Priority**: 6
+**Register**: Standard (formal/polite)
+
+**Pattern structure**:
+- いずれも + Phrase (only 1 structure variant)
+
+**Meaning**:
+- "All (A)" / "Any (A)" / "Both (A)"
+- Combination of いずれ (formal adverb like 何/どう/どちら) + も (adverbial particle)
+- More literal translation: "how even (A)" / "where even (A)" / "what even (A)"
+- Usually only used in polite/formal language
+- Can mean "both" when referring to two things, or "all" for multiple things
+
+**Tokenization pattern**:
+- いずれ (名詞/代名詞/一般) + も (助詞/係助詞)
+- Two separate tokens that form the complete expression
+
+**Implementation**:
+Created 2 custom matchers:
+- IzureMatcher - Matches いずれ (名詞/代名詞/一般)
+- MoMatcher - Matches も (助詞/係助詞)
+
+Pattern matcher sequence:
+- TokenMatcher::Custom(IzureMatcher) - いずれ
+- TokenMatcher::Custom(MoMatcher) - も
+
+**Tests Written: 3 tests (all passing)**
+1. test_izuremo_station_convenience - いずれも (7, 11) - "both" usage
+2. test_izuremo_plans_rejected - いずれも (7, 11) - "any" usage (negative context)
+3. test_izuremo_boots_sandals - いずれも (17, 21) - "both" usage
+
+**Character Ranges**: Pattern captures full いずれも:
+- いずれも (7, 11) - 4 characters
+- いずれも (17, 21) - 4 characters
+
+**Key Notes**:
+- Two-token pattern: いずれ + も
+- Priority 6 ensures it takes precedence over general も pattern (priority 3)
+- Formal/polite register - used in business and formal contexts
+- Example sentences directly from grammar_points_data.json
+- Checks both surface forms and POS tags for precision
+
+**Files Modified:**
+- grammar-lib/src/matchers/nt.rs - Implemented izuremo() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority to 6
+- grammar-lib/src/tests/nt_patterns.rs - Added 3 tests in izuremo_tests module
+- feature_list.json - Updated いずれも to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (1 variant: いずれも + Phrase)
+✓ Realistic sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (4021 + 3 = 4024 total)
+✓ Clean git history
 
 ================================================================================
 ## Session 635 - 2025-12-16
