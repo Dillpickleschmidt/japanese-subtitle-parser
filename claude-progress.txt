@@ -1,19 +1,20 @@
 ## Session 638 - 2025-12-24
 
-### Session Summary - がいい Pattern Complete ✓
-**Status**: Implemented 1 NT pattern successfully
-**Patterns completed**: 1 (がいい - NT, priority 6)
-**Total tests**: 4032 passing (4 new tests, no regressions)
-**Progress**: Eleventh NT pattern completed! 🎉
+### Session Summary - がいい and かろう Patterns Complete ✓
+**Status**: Implemented 2 NT patterns successfully
+**Patterns completed**: 2 (がいい, かろう - both NT, priority 6)
+**Total tests**: 4036 passing (8 new tests, no regressions)
+**Progress**: Eleventh and twelfth NT patterns completed! 🎉
 
 **Session highlights**:
 - Implemented がいい - pattern meaning "you shall (A)" / "you should (A)"
-- Pattern used by those in high positions (kings, emperors) to give commands
-- Sounds magnanimous or pompous; rarely used in real life
-- Handles both いい and よい (literary) variants
+- Implemented かろう - old-fashioned auxiliary verb expressing volition/agreement
+- Both patterns rarely used in modern Japanese; archaic/formal register
+- がいい used by those in high positions (kings, emperors)
+- かろう used in dramas/anime by elderly or high-authority characters
 - All structure variants tested with sentences from grammar_points_data.json
 - All tests pass with proper range assertions
-- Clean implementation with 2 custom matchers
+- Clean implementations with custom matchers
 
 ### ✓ Completed: がいい (you shall/should do)
 
@@ -84,8 +85,74 @@ Pattern matcher sequence:
 ✓ All existing tests still pass (4028 + 4 = 4032 total)
 ✓ Clean git history
 
-**Next Priorities** (NT patterns with priority 6, needs_implementation):
-- かろう - Classical auxiliary (1 structure variant)
+### ✓ Completed: かろう (old-fashioned auxiliary - volition/agreement)
+
+**Grammar Point**: かろう
+**JLPT Level**: NT
+**Priority**: 6
+**Register**: Archaic/formal (used by elderly or high-authority characters)
+
+**Pattern structure**:
+1. い-Adjective[未然ウ接続] + う (e.g., よかろう, 寒かろう, なかろう)
+
+**Meaning**:
+- Old-fashioned equivalent of modern だろう/でしょう
+- Expresses volition or agreement
+- Stems from indeterminate form of い-Adjective (かろ) + auxiliary verb う
+- Used only in dramas, anime, or literature
+- Tends to be used by elderly characters or those with high authority
+
+**Tokenization pattern**:
+- Adjective in 未然ウ接続 form (形容詞/自立 or 助動詞 for ない)
+- う (助動詞, base=う, 不変化型)
+- Two separate tokens forming the pattern
+
+**Implementation**:
+Created 2 custom matchers:
+1. AdjectiveKaroMatcher - Matches adjectives in 未然ウ接続 form (形容詞 or 助動詞)
+2. UAuxiliaryMatcher - Matches う auxiliary verb
+
+Pattern matcher sequence:
+- AdjectiveKaroMatcher - Adjective/auxiliary in 未然ウ接続 form
+- UAuxiliaryMatcher - う auxiliary
+
+**Tests Written: 4 tests (all passing)**
+1. test_karou_yoi - よかろう (10, 14) - "that's probably fine"
+2. test_karou_samui - 寒かろう (0, 4) - "isn't it cold?"
+3. test_karou_nai - なかろう (9, 13) - negative adjective form
+4. test_karou_nai_question - なかろう (7, 11) - "whether... or not"
+
+**Character Ranges**: Pattern captures Adjective[かろ] + う:
+- よかろう (10, 14) - 4 characters
+- 寒かろう (0, 4) - 4 characters
+- なかろう (9, 13) - 4 characters (auxiliary ない)
+- なかろう (7, 11) - 4 characters (adjective ない)
+
+**Key Notes**:
+- Matches both adjectives (形容詞/自立) and auxiliaries (助動詞) for ない
+- Requires 未然ウ接続 conjugation form
+- う must be 助動詞 with base form う
+- Priority set to 6 for proper detection hierarchy
+- Example sentences from grammar_points_data.json
+- Very archaic pattern; used for historical/formal flavor
+
+**Files Modified:**
+- grammar-lib/src/matchers/nt.rs - Implemented karou() with 2 custom matchers
+- grammar-lib/src/tests/nt_patterns.rs - Added 4 tests in karou_tests module
+- feature_list.json - Updated かろう to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (regular adjectives and ない forms)
+✓ Realistic sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (4032 + 4 = 4036 total)
+✓ Clean git history
+
+**Next Priorities** (higher priority incomplete patterns):
+- ったら・といったら (N1, priority 5) - 9 structure variants
+- 他動詞・自動詞 (N4, priority 2) - 18 structure variants
 
 ================================================================================
 ## Session 637 - 2025-12-24
