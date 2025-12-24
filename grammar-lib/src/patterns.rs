@@ -8119,7 +8119,7 @@ declare_patterns! {
     Uff5eYagaru {
         name: "～やがる",
         matcher_fn: crate::matchers::nt::uff5e_yagaru,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "nt",
     },

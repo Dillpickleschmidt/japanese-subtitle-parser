@@ -1,4 +1,4 @@
-use super::{assert_has_pattern, assert_pattern_range, detect_patterns, tokenize_sentence, print_debug};
+use super::{assert_has_pattern, assert_pattern_range, detect_patterns, tokenize_sentence};
 
 // Pattern: ぞ (emphatic sentence-ending particle)
 // Data source: grammar_points_data.json["ぞ"]
@@ -560,5 +560,59 @@ mod izuremo_tests {
 
         assert_has_pattern(&patterns, "いずれも");
         assert_pattern_range(&patterns, "いずれも", 17, 21); // いずれも
+    }
+}
+
+// Pattern: ～やがる (derogatory verb suffix - "have the nerve to")
+// Data source: grammar_points_data.json["～やがる"]
+// Testing: structure.standard[0-1]
+//
+// Structures to test:
+//   - standard[0]: Verb[stem] + やがる
+//   - standard[1]: Verb[て] + やがる (abbreviation of ている + やがる)
+
+mod yagaru_tests {
+    use super::*;
+
+    // Test structure.standard[0]: Verb[stem] + やがる
+    #[test]
+    fn test_yagaru_stem_form() {
+        let sentence = "あの黒の車はしょっちゅう俺の家の前に駐車しやがるから迷惑してる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～やがる");
+        assert_pattern_range(&patterns, "～やがる", 18, 24); // 駐車しやがる
+    }
+
+    #[test]
+    fn test_yagaru_stem_form_2() {
+        let sentence = "何を勝手なことをしやがる！頼んでもないことを勝手にやるな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～やがる");
+        assert_pattern_range(&patterns, "～やがる", 8, 12); // しやがる
+    }
+
+    // Test structure.standard[1]: Verb[て] + やがる
+    #[test]
+    fn test_yagaru_te_form() {
+        let sentence = "おいおい、また集金きてやがるじゃねーかよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～やがる");
+        assert_pattern_range(&patterns, "～やがる", 10, 16); // てやがるじゃ
+    }
+
+    #[test]
+    fn test_yagaru_te_form_2() {
+        let sentence = "あんなに注意したのに、また犬にちょっかいを出してやがる。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "～やがる");
+        assert_pattern_range(&patterns, "～やがる", 23, 27); // てやがる
     }
 }

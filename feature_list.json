@@ -13037,13 +13037,13 @@
   {
     "pattern_name": "～やがる",
     "jlpt_level": "nt",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "やがる is a colloquial usage of the auxiliary verb 上（あ）がる 'to go up' or 'to be complete' that can be attached to the con... [2 std, 0 pol]",
     "priority": 6,
     "skip_reason": null

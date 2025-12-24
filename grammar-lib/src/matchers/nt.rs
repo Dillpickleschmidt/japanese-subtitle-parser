@@ -230,9 +230,42 @@ pub fn tsu_slang() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(TsuSlangMatcher))]
 }
 
-// Pattern: ～やがる
+// Pattern: ～やがる (have the nerve to / have the gall to)
+// Structures: Verb[stem] + やがる, Verb[て] + やがる
+// Tokenization: や (助詞) + がる (動詞/接尾)
 pub fn uff5e_yagaru() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for や particle (can be 並立助詞 or 係助詞)
+    #[derive(Debug)]
+    struct YaMatcher;
+    impl Matcher for YaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "や"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && (token.pos.get(1).is_some_and(|pos| pos == "並立助詞")
+                    || token.pos.get(1).is_some_and(|pos| pos == "係助詞"))
+        }
+    }
+
+    // Matcher for がる suffix verb
+    #[derive(Debug)]
+    struct GaruMatcher;
+    impl Matcher for GaruMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "がる"
+                && token.base_form == "がる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        }
+    }
+
+    vec![
+        TokenMatcher::Any, // Preceding verb (stem or te-form) or て particle
+        TokenMatcher::Custom(Arc::new(YaMatcher)),
+        TokenMatcher::Custom(Arc::new(GaruMatcher)),
+    ]
 }
 
 // Pattern: がいい
