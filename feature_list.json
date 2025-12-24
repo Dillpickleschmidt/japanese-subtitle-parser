@@ -13079,13 +13079,13 @@
   {
     "pattern_name": "やや",
     "jlpt_level": "nt",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "やや is an adverb in Japanese that is similar to 僅（わず）か in that it means 'a little bit' [1 std, 0 pol]",
     "priority": 6,
     "skip_reason": null

@@ -472,3 +472,48 @@ mod awayokuba_tests {
         assert_pattern_range(&patterns, "あわよくば", 0, 5); // あわよくば
     }
 }
+
+// Pattern: やや (adverb meaning "a little bit" / "slightly")
+// Data source: grammar_points_data.json["やや"]
+// Testing: structure.standard[0] - "やや + Phrase"
+//
+// Meaning: An adverb expressing that something has a tendency or shows a sufficient degree
+// that cannot be denied. More formal than 少し, similar to 僅か.
+// Often appears at beginning of sentences or before adjectives/verbs.
+
+mod yaya_tests {
+    use super::*;
+
+    // Test やや with verb (from grammar data)
+    #[test]
+    fn test_yaya_late() {
+        let sentence = "明日は友達のお見舞いに行かないといけないので、やや遅れます。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やや");
+        assert_pattern_range(&patterns, "やや", 23, 25); // やや
+    }
+
+    // Test やや with verb (from grammar data)
+    #[test]
+    fn test_yaya_slanted() {
+        let sentence = "この家具は、やや傾いているので直さないといけません。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やや");
+        assert_pattern_range(&patterns, "やや", 6, 8); // やや
+    }
+
+    // Test やや with adjective (from grammar data)
+    #[test]
+    fn test_yaya_hotter() {
+        let sentence = "明日は今日よりもやや暑くなる見込みです。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "やや");
+        assert_pattern_range(&patterns, "やや", 8, 10); // やや
+    }
+}

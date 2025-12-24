@@ -245,9 +245,23 @@ pub fn karou() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: やや
+// Pattern: やや (adverb meaning "a little bit" / "slightly")
+// Structures: やや + Phrase
 pub fn yaya() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    #[derive(Debug)]
+    struct YayaMatcher;
+    impl Matcher for YayaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "やや"
+                && token.base_form == "やや"
+                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        }
+    }
+
+    vec![TokenMatcher::Custom(Arc::new(YayaMatcher))]
 }
 
 // Pattern: いずれも

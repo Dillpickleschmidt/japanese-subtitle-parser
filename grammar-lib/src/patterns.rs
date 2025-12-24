@@ -8143,7 +8143,7 @@ declare_patterns! {
     Yaya {
         name: "やや",
         matcher_fn: crate::matchers::nt::yaya,
-        priority: 1,
+        priority: 6,
         category: PatternCategory::Construction,
         jlpt: "nt",
     },
