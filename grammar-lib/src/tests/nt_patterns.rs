@@ -616,3 +616,57 @@ mod yagaru_tests {
         assert_pattern_range(&patterns, "～やがる", 23, 27); // てやがる
     }
 }
+
+// Pattern: がいい (you shall/should do)
+// Data source: grammar_points_data.json["がいい"]
+// Testing: structure.standard[0] - "Verb + がいい"
+//
+// Note: Used by those in high positions (kings, emperors, etc.) to give commands
+// More literal: "to (A) would be good", but implies "you shall (A)"
+// Sounds magnanimous or pompous; rarely used in real life
+
+mod ga_ii_tests {
+    use super::*;
+
+    // Test structure.standard[0]: Verb + がいい
+    #[test]
+    fn test_ga_ii_basic() {
+        let sentence = "そんなに私を疑うなら、自分で試してみるがいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がいい");
+        assert_pattern_range(&patterns, "がいい", 17, 22); // みるがいい
+    }
+
+    #[test]
+    fn test_ga_ii_treat() {
+        let sentence = "今日は私の奢りだ。好きなだけ食べるがいい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がいい");
+        assert_pattern_range(&patterns, "がいい", 14, 20); // 食べるがいい
+    }
+
+    #[test]
+    fn test_ga_ii_fly() {
+        let sentence = "さあ、行きたいとこまで飛ぶがいい！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がいい");
+        assert_pattern_range(&patterns, "がいい", 11, 16); // 飛ぶがいい
+    }
+
+    // Test with よい instead of いい (literary form)
+    #[test]
+    fn test_ga_yoi_literary() {
+        let sentence = "好きなように生きるがよい。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "がいい");
+        assert_pattern_range(&patterns, "がいい", 6, 12); // 生きるがよい
+    }
+}

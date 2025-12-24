@@ -394,3 +394,38 @@ pub fn muzu() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(MuzuCombinedMatcher)),
     ]
 }
+
+// Pattern: がいい (you shall/should do)
+/// Match Verb[基本形] + が + いい/よい
+/// Used by those in high positions to give commands
+pub fn ga_ii() -> Vec<TokenMatcher> {
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for が particle (接続助詞)
+    #[derive(Debug)]
+    struct GaMatcher;
+    impl Matcher for GaMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "が"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+        }
+    }
+
+    // Matcher for いい or よい adjective (can be 自立 or 非自立)
+    #[derive(Debug)]
+    struct IiYoiMatcher;
+    impl Matcher for IiYoiMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            (token.base_form == "いい" || token.base_form == "よい")
+                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::verb_with_form("基本形"), // Verb in dictionary form
+        TokenMatcher::Custom(Arc::new(GaMatcher)),
+        TokenMatcher::Custom(Arc::new(IiYoiMatcher)),
+    ]
+}

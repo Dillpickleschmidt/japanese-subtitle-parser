@@ -8171,6 +8171,14 @@ declare_patterns! {
         category: PatternCategory::Construction,
         jlpt: "nt",
     },
+
+    GaIi {
+        name: "がいい",
+        matcher_fn: crate::matchers::nt::ga_ii,
+        priority: 6,
+        category: PatternCategory::Construction,
+        jlpt: "nt",
+    },
 }
 
 pub fn create_pattern_matcher() -> PatternMatcher {
