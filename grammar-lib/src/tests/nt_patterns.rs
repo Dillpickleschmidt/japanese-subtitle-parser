@@ -670,3 +670,56 @@ mod ga_ii_tests {
         assert_pattern_range(&patterns, "がいい", 6, 12); // 生きるがよい
     }
 }
+
+// Pattern: かろう (old-fashioned auxiliary verb - volition/agreement)
+// Data source: grammar_points_data.json["かろう"]
+// Testing: structure.standard[0] - "い-Adjective[く] + かろう"
+//
+// Note: Old-fashioned pattern, used in dramas/anime by elderly or high-authority characters
+// Equivalent to modern だろう/でしょう but with archaic feel
+
+mod karou_tests {
+    use super::*;
+
+    // Test structure.standard[0]: い-Adjective[く] + かろう
+    #[test]
+    fn test_karou_yoi() {
+        let sentence = "ふむふむ...まあ、よかろう。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かろう");
+        assert_pattern_range(&patterns, "かろう", 10, 14); // よかろう
+    }
+
+    #[test]
+    fn test_karou_samui() {
+        let sentence = "寒かろう、とりあえず中に入れ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かろう");
+        assert_pattern_range(&patterns, "かろう", 0, 4); // 寒かろう
+    }
+
+    // Test with ない + かろう (negative adjective)
+    #[test]
+    fn test_karou_nai() {
+        let sentence = "証拠があるわけでもなかろうによくそんなことを言えるな。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かろう");
+        assert_pattern_range(&patterns, "かろう", 9, 13); // なかろう
+    }
+
+    #[test]
+    fn test_karou_nai_question() {
+        let sentence = "好きであろうとなかろうと、君はその作業をしなくてはいけない。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "かろう");
+        assert_pattern_range(&patterns, "かろう", 7, 11); // なかろう
+    }
+}

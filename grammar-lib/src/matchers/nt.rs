@@ -273,9 +273,43 @@ pub fn gaii() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
 }
 
-// Pattern: かろう
+// Pattern: かろう (old-fashioned auxiliary verb - volition/agreement)
+// Structures: い-Adjective[未然ウ接続] + う
 pub fn karou() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Matcher for adjective in 未然ウ接続 form (e.g., よかろ, 寒かろ, なかろ)
+    #[derive(Debug)]
+    struct AdjectiveKaroMatcher;
+    impl Matcher for AdjectiveKaroMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            // Can be 形容詞/自立 or 助動詞 (for ない)
+            let is_adjective = token.pos.first().is_some_and(|pos| pos == "形容詞");
+            let is_auxiliary = token.pos.first().is_some_and(|pos| pos == "助動詞");
+
+            // Must be in 未然ウ接続 conjugation form
+            let has_correct_form = token.features.get(5).is_some_and(|f| f == "未然ウ接続");
+
+            (is_adjective || is_auxiliary) && has_correct_form
+        }
+    }
+
+    // Matcher for う auxiliary verb
+    #[derive(Debug)]
+    struct UAuxiliaryMatcher;
+    impl Matcher for UAuxiliaryMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "う"
+                && token.base_form == "う"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(AdjectiveKaroMatcher)),
+        TokenMatcher::Custom(Arc::new(UAuxiliaryMatcher)),
+    ]
 }
 
 // Pattern: やや (adverb meaning "a little bit" / "slightly")

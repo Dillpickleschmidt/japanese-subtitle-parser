@@ -13065,13 +13065,13 @@
   {
     "pattern_name": "かろう",
     "jlpt_level": "nt",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "かろう is an old-fashioned grammar pattern that stems from the indeterminate form of the い-Adjective, かろ, and the additi... [1 std, 0 pol]",
     "priority": 6,
     "skip_reason": null
