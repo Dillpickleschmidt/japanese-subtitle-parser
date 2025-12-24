@@ -13093,13 +13093,13 @@
   {
     "pattern_name": "いずれも",
     "jlpt_level": "nt",
-    "category": "needs_implementation",
+    "category": "complete",
     "tests": {
-      "exists": false,
-      "has_range_assertion": false,
+      "exists": true,
+      "has_range_assertion": true,
       "has_print_debug": false
     },
-    "passes": false,
+    "passes": true,
     "description": "いずれ is a formal adverb commonly used as a part of polite language with the same meaning as words like 何（なに） 'what', ど... [1 std, 0 pol]",
     "priority": 6,
     "skip_reason": null

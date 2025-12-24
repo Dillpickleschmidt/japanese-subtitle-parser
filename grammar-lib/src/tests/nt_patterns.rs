@@ -517,3 +517,48 @@ mod yaya_tests {
         assert_pattern_range(&patterns, "やや", 8, 10); // やや
     }
 }
+
+// Pattern: いずれも (all / any / both)
+// Data source: grammar_points_data.json["いずれも"]
+// Testing: structure.standard[0] - "いずれも + Phrase"
+//
+// Meaning: Formal adverb meaning "all/any/both" - combination of いずれ (formal adverb
+// like 何/どう/どちら) + も (adverbial particle). More literal: "how even/where even/what even"
+// Usually only used in polite/formal language.
+
+mod izuremo_tests {
+    use super::*;
+
+    // Test いずれも with noun phrase (from grammar data)
+    #[test]
+    fn test_izuremo_station_convenience() {
+        let sentence = "駅とコンビニ、いずれもこの物件から徒歩2分の距離にあります。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いずれも");
+        assert_pattern_range(&patterns, "いずれも", 7, 11); // いずれも
+    }
+
+    // Test いずれも with negative (from grammar data)
+    #[test]
+    fn test_izuremo_plans_rejected() {
+        let sentence = "私のプランは、いずれも社長に気に入ってもらえなかった。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いずれも");
+        assert_pattern_range(&patterns, "いずれも", 7, 11); // いずれも
+    }
+
+    // Test いずれも with necessity (from grammar data)
+    #[test]
+    fn test_izuremo_boots_sandals() {
+        let sentence = "明日のキャンプには長靴とサンダル、いずれも必要です。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "いずれも");
+        assert_pattern_range(&patterns, "いずれも", 17, 21); // いずれも
+    }
+}

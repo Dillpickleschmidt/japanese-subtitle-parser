@@ -264,9 +264,39 @@ pub fn yaya() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(YayaMatcher))]
 }
 
-// Pattern: いずれも
+// Pattern: いずれも (all / any / both)
+// Structures: いずれも + Phrase
 pub fn izuremo() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
+    use std::sync::Arc;
+    use super::Matcher;
+
+    // Match いずれ (名詞/代名詞/一般)
+    #[derive(Debug)]
+    struct IzureMatcher;
+    impl Matcher for IzureMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "いずれ"
+                && token.base_form == "いずれ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "代名詞")
+        }
+    }
+
+    // Match も (助詞/係助詞)
+    #[derive(Debug)]
+    struct MoMatcher;
+    impl Matcher for MoMatcher {
+        fn matches(&self, token: &crate::KagomeToken) -> bool {
+            token.surface == "も"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+        }
+    }
+
+    vec![
+        TokenMatcher::Custom(Arc::new(IzureMatcher)),
+        TokenMatcher::Custom(Arc::new(MoMatcher)),
+    ]
 }
 
 // Pattern: あわよくば (if possible / if luck is on my side)
