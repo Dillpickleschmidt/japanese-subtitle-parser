@@ -1,3 +1,91 @@
+## Session 637 - 2025-12-24
+
+### Session Summary - ～やがる Pattern Complete ✓
+**Status**: Implemented 1 NT pattern successfully
+**Patterns completed**: 1 (～やがる - NT, priority 6)
+**Total tests**: 4028 passing (4 new tests, no regressions)
+**Progress**: Tenth NT pattern completed! 🎉
+
+**Session highlights**:
+- Implemented ～やがる - derogatory verb suffix meaning "have the nerve to" / "have the gall to"
+- Pattern detects both verb stem + やがる and verb te-form + やがる constructions
+- Tokenization: や (助詞) + がる (動詞/接尾) - two separate tokens
+- All structure variants tested with realistic conversational sentences from grammar_points_data.json
+- All tests pass with proper range assertions
+- Clean implementation with 2 custom matchers
+
+### ✓ Completed: ～やがる (have the nerve to / have the gall to)
+
+**Grammar Point**: ～やがる
+**JLPT Level**: NT
+**Priority**: 6
+**Register**: Casual (primarily used by men, expresses scorn/disdain)
+
+**Pattern structures**:
+1. Verb[stem] + やがる (e.g., しやがる - "have the nerve to do")
+2. Verb[て] + やがる (e.g., してやがる - abbreviation of ている + やがる)
+
+**Meaning**:
+- "To have the nerve to (A)" / "To have the gall to do (A)"
+- Colloquial usage of auxiliary verb 上がる (to go up/be complete)
+- Primarily used by men in response to actions that bring feelings of scorn or disdain
+- Expresses strong negative emotion toward someone else's actions
+
+**Tokenization pattern**:
+- や (助詞/並立助詞 OR 助詞/係助詞) - particle
+- がる (動詞/接尾, base=がる) - suffix verb
+- Two separate tokens forming the pattern
+
+**Implementation**:
+Created 2 custom matchers:
+1. YaMatcher - Matches や particle (can be 並立助詞 or 係助詞)
+2. GaruMatcher - Matches がる (動詞/接尾)
+
+Pattern matcher sequence:
+- TokenMatcher::Any - Preceding verb (stem or te-form) or て particle
+- YaMatcher - や particle
+- GaruMatcher - がる suffix verb
+
+**Tests Written: 4 tests (all passing)**
+1. test_yagaru_stem_form - 駐車しやがる (18, 24) - verb stem + やがる
+2. test_yagaru_stem_form_2 - しやがる (8, 12) - verb stem + やがる
+3. test_yagaru_te_form - てやがる (10, 16) - te-form + やがる
+4. test_yagaru_te_form_2 - てやがる (23, 27) - te-form + やがる
+
+**Character Ranges**: Pattern captures preceding token + や + がる:
+- 駐車しやがる (18, 24) - 6 characters (verb stem + やがる)
+- しやがる (8, 12) - 4 characters (verb stem + やがる)
+- てやがるじゃ (10, 16) - 6 characters (て + やがる + じゃ)
+- てやがる (23, 27) - 4 characters (て + やがる)
+
+**Key Notes**:
+- Pattern uses TokenMatcher::Any to capture the token immediately before や
+- Works with both verb stem forms and te-forms
+- や particle can have different POS subtypes (並立助詞 or 係助詞)
+- Priority set to 6 for proper detection hierarchy
+- Example sentences directly from grammar_points_data.json
+- Very conversational/slang pattern expressing strong negative emotion
+
+**Files Modified:**
+- grammar-lib/src/matchers/nt.rs - Implemented uff5e_yagaru() with 2 custom matchers
+- grammar-lib/src/patterns.rs - Updated priority from 1 to 6
+- grammar-lib/src/tests/nt_patterns.rs - Added 4 tests in yagaru_tests module
+- feature_list.json - Updated ～やがる to complete status
+
+**Quality Checks**:
+✓ Tests exist with proper assertions
+✓ All structure variants tested (verb stem + やがる, verb te-form + やがる)
+✓ Realistic conversational sentences from grammar_points_data.json
+✓ Correct character ranges verified
+✓ No print_debug() in final committed tests
+✓ All existing tests still pass (4024 + 4 = 4028 total)
+✓ Clean git history
+
+**Next Priorities** (NT patterns with priority 6, needs_implementation):
+- がいい - Suggestion pattern (1 structure variant)
+- かろう - Classical auxiliary (1 structure variant)
+
+================================================================================
 ## Session 636 - 2025-12-24
 
 ### Session Summary - やや and いずれも Patterns Complete ✓
