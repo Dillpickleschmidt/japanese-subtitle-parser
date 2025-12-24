@@ -1990,7 +1990,7 @@
   {
     "pattern_name": "他動詞・自動詞",
     "jlpt_level": "n4",
-    "category": "needs_implementation",
+    "category": "skip",
     "tests": {
       "exists": false,
       "has_range_assertion": false,
@@ -1999,7 +1999,7 @@
     "passes": false,
     "description": "The two most fundamental divisions that can be made with Japanese verbs are transitive verbs - the subject is moving/... [9 std, 9 pol]",
     "priority": 2,
-    "skip_reason": null
+    "skip_reason": "CONCEPTUAL: This is an educational entry explaining the concept of transitive (他動詞) vs intransitive (自動詞) verbs, not a specific grammatical pattern to detect. The 'structure' field lists example verb pairs (e.g., を落とす/が落ちる) for teaching purposes, not patterns to match."
   },
   {
     "pattern_name": "なおす",
