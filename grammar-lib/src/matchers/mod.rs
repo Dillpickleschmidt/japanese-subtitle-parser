@@ -269,21 +269,6 @@ pub fn particle() -> TokenMatcher {
     TokenMatcher::Custom(Arc::new(ParticleMatcher))
 }
 
-/// Match particle with specific surface (but verify it's actually a particle)
-pub fn particle_surface(s: &'static str) -> TokenMatcher {
-    #[derive(Debug)]
-    struct ParticleSurfaceMatcher(&'static str);
-    impl Matcher for ParticleSurfaceMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.surface == self.0 && t.pos.first().is_some_and(|p| p == "助詞") => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(ParticleSurfaceMatcher(s)))
-}
-
 /// Match any noun (名詞)
 pub fn noun() -> TokenMatcher {
     #[derive(Debug)]
