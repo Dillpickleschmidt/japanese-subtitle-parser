@@ -33,13 +33,6 @@ pub fn concat(parts: Vec<Vec<TokenMatcher>>) -> Vec<TokenMatcher> {
     parts.into_iter().flatten().collect()
 }
 
-pub fn optional_seq(tokens: Vec<TokenMatcher>) -> Vec<TokenMatcher> {
-    tokens
-        .into_iter()
-        .map(|t| TokenMatcher::Optional(Box::new(t)))
-        .collect()
-}
-
 // ========== Basic Matchers ==========
 
 pub fn surface(s: &'static str) -> TokenMatcher {
@@ -112,57 +105,6 @@ pub fn verb_base(base: &'static str) -> TokenMatcher {
     TokenMatcher::Custom(Arc::new(VerbBaseMatcher(base)))
 }
 
-/// Match verb with both base form and conjugation form
-pub fn verb_base_form(base: &'static str, form: &'static str) -> TokenMatcher {
-    #[derive(Debug)]
-    struct VerbBaseFormMatcher(&'static str, &'static str);
-    impl Matcher for VerbBaseFormMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.pos.first().is_some_and(|p| p == "動詞")
-                    && t.base_form == self.0
-                    && t.features.get(5).is_some_and(|f| f == self.1) => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(VerbBaseFormMatcher(base, form)))
-}
-
-/// Match 五段 verb with specific conjugation form
-pub fn godan_verb(form: &'static str) -> TokenMatcher {
-    #[derive(Debug)]
-    struct GodanVerbMatcher(&'static str);
-    impl Matcher for GodanVerbMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.pos.first().is_some_and(|p| p == "動詞")
-                    && t.features.get(4).is_some_and(|f| f.contains("五段"))
-                    && t.features.get(5).is_some_and(|f| f == self.0) => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(GodanVerbMatcher(form)))
-}
-
-/// Match 一段 verb with specific conjugation form
-pub fn ichidan_verb(form: &'static str) -> TokenMatcher {
-    #[derive(Debug)]
-    struct IchidanVerbMatcher(&'static str);
-    impl Matcher for IchidanVerbMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.pos.first().is_some_and(|p| p == "動詞")
-                    && t.features.get(4).is_some_and(|f| f.contains("一段"))
-                    && t.features.get(5).is_some_and(|f| f == self.0) => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(IchidanVerbMatcher(form)))
-}
-
 /// Match verb in 連用形 or 連用タ接続
 pub fn flexible_verb_form() -> TokenMatcher {
     #[derive(Debug)]
@@ -201,73 +143,7 @@ pub fn adjective() -> TokenMatcher {
     TokenMatcher::Custom(Arc::new(AdjectiveMatcher))
 }
 
-/// Match い-adjective
-pub fn i_adjective() -> TokenMatcher {
-    #[derive(Debug)]
-    struct IAdjMatcher;
-    impl Matcher for IAdjMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.pos.first().is_some_and(|p| p == "形容詞") => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(IAdjMatcher))
-}
-
-/// Match な-adjective (形容動詞語幹)
-pub fn na_adjective() -> TokenMatcher {
-    #[derive(Debug)]
-    struct NaAdjMatcher;
-    impl Matcher for NaAdjMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.pos.first().is_some_and(|p| p == "名詞")
-                    && t.pos.get(1).is_some_and(|s| s == "形容動詞語幹") => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(NaAdjMatcher))
-}
-
-/// Match adjective with specific base form
-pub fn adjective_base(base: &'static str) -> TokenMatcher {
-    #[derive(Debug)]
-    struct AdjBaseMatcher(&'static str);
-    impl Matcher for AdjBaseMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) => {
-                    let is_i = t.pos.first().is_some_and(|p| p == "形容詞");
-                    let is_na = t.pos.first().is_some_and(|p| p == "名詞")
-                        && t.pos.get(1).is_some_and(|s| s == "形容動詞語幹");
-                    if (is_i || is_na) && t.base_form == self.0 { (true, 1) } else { (false, 0) }
-                }
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(AdjBaseMatcher(base)))
-}
-
-// ========== Particle/Noun Matchers ==========
-
-/// Match any particle (助詞)
-pub fn particle() -> TokenMatcher {
-    #[derive(Debug)]
-    struct ParticleMatcher;
-    impl Matcher for ParticleMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.pos.first().is_some_and(|p| p == "助詞") => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(ParticleMatcher))
-}
+// ========== Noun Matcher ==========
 
 /// Match any noun (名詞)
 pub fn noun() -> TokenMatcher {
@@ -303,21 +179,6 @@ pub fn past_auxiliary() -> TokenMatcher {
     TokenMatcher::Custom(Arc::new(PastAuxMatcher))
 }
 
-/// Match ませ or ません
-pub fn masen_form() -> TokenMatcher {
-    #[derive(Debug)]
-    struct MasenMatcher;
-    impl Matcher for MasenMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if (t.surface == "ませ" && t.base_form == "ます") || t.surface == "ません" => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(MasenMatcher))
-}
-
 /// Match まし
 pub fn mashi_form() -> TokenMatcher {
     #[derive(Debug)]
@@ -331,36 +192,6 @@ pub fn mashi_form() -> TokenMatcher {
         }
     }
     TokenMatcher::Custom(Arc::new(MashiMatcher))
-}
-
-/// Match でし
-pub fn deshi_form() -> TokenMatcher {
-    #[derive(Debug)]
-    struct DeshiMatcher;
-    impl Matcher for DeshiMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.surface == "でし" && t.base_form == "です" => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(DeshiMatcher))
-}
-
-/// Match たかっ (past desiderative stem)
-pub fn takatta_form_matcher() -> TokenMatcher {
-    #[derive(Debug)]
-    struct TakattaMatcher;
-    impl Matcher for TakattaMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.surface == "たかっ" && t.base_form == "たい" => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(TakattaMatcher))
 }
 
 /// Match いい or 良い
@@ -379,21 +210,5 @@ pub fn ii_form() -> TokenMatcher {
     TokenMatcher::Custom(Arc::new(IiMatcher))
 }
 
-/// Match いけ, いけない, or いけません
-pub fn ikenai_form() -> TokenMatcher {
-    #[derive(Debug)]
-    struct IkenaiMatcher;
-    impl Matcher for IkenaiMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(t) if t.surface == "いけ" || t.surface == "いけない" || t.surface == "いけません" => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-    TokenMatcher::Custom(Arc::new(IkenaiMatcher))
-}
-
-// Legacy aliases for backwards compatibility during migration
-pub fn particle_matcher() -> TokenMatcher { particle() }
+// Legacy alias for backwards compatibility during migration
 pub fn noun_matcher() -> TokenMatcher { noun() }

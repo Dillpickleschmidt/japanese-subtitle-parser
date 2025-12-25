@@ -1973,9 +1973,6 @@ pub fn nara() -> Vec<TokenMatcher> {
 // 2. Split conjugated form: 欲しがります → 欲し (形容詞, ガル接続) + がり (動詞/接尾) + ます
 //
 // This pattern has two separate matchers to handle both tokenization cases.
-pub fn garu() -> Vec<TokenMatcher> {
-    vec![]  // Placeholder - pattern handled by garu_compound and garu_split
-}
 
 // Match dictionary form がる verbs (single token compounds like 強がる)
 pub fn garu_compound() -> Vec<TokenMatcher> {

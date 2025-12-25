@@ -273,12 +273,6 @@ pub fn taraii_u30fb_toii_na_dato() -> Vec<TokenMatcher> {
     ]
 }
 
-// Legacy function for backward compatibility (if patterns.rs uses it)
-pub fn taraii_u30fb_toii() -> Vec<TokenMatcher> {
-    // Return the most common variant (たら form)
-    taraii_u30fb_toii_tara_ta()
-}
-
 // Pattern: 中
 pub fn naka() -> Vec<TokenMatcher> {
     vec![]  // TODO: Implement
@@ -4127,9 +4121,6 @@ pub fn kankeigaaru() -> Vec<TokenMatcher> {
 // 4. Hiragana にかんして: に (助詞) + かん (名詞) + し (動詞 base='する') + て (助詞/接続助詞)
 //
 // Due to multiple tokenization patterns, we'll create separate matchers for each
-pub fn nikansuru_u30fb_nikanshite() -> Vec<TokenMatcher> {
-    vec![]  // Placeholder - actual matching done by specific variants below
-}
 
 // Variant 1: Single particle form (に関する / にかんする as one token)
 pub fn nikansuru_particle() -> Vec<TokenMatcher> {
@@ -6577,12 +6568,6 @@ pub fn haiumademonai_u2460_polite() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(MaseAuxiliaryMatcher)),
         TokenMatcher::Custom(Arc::new(NNegativeAuxiliaryMatcher)),
     ]
-}
-
-// Main pattern function (for backwards compatibility)
-pub fn haiumademonai_u2460() -> Vec<TokenMatcher> {
-    // Default to split form (most common)
-    haiumademonai_u2460_split()
 }
 
 // Pattern: 決して〜ない (never / under no circumstances / by no means)
@@ -9996,11 +9981,6 @@ pub fn furiwosuru() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(WoParticleMatcher)), // を
         verb_base("する"),          // する (any form)
     ]
-}
-
-// Pattern: できれば・できたら
-pub fn dekireba_u30fb_dekitara() -> Vec<TokenMatcher> {
-    vec![]  // TODO: Implement
 }
 
 // Pattern: でよければ (if...is okay)
