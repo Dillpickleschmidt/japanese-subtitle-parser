@@ -1,5 +1,5 @@
-use crate::pattern_matcher::TokenMatcher;
-use super::Matcher;
+use crate::pattern_matcher::{MatchContext, TokenMatcher};
+use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
 use std::sync::Arc;
 
 // Pattern: 得る・得る (to be possible, can do)
@@ -8,21 +8,27 @@ pub fn eru_u30fb_eru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbStemMatcher;
     impl Matcher for VerbStemMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct EruUruMatcher;
     impl Matcher for EruUruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match える (base_form="える", 一段) or うる (base_form="うる", 一段・得ル)
-            // Must be non-independent verb (非自立)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
+
             (token.base_form == "える" || token.base_form == "うる")
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -38,28 +44,35 @@ pub fn u301c_enai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbStemMatcher;
     impl Matcher for VerbStemMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct EruVerbMatcher;
     impl Matcher for EruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "え"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "え"
                 && token.base_form == "える"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NaiOrMasenMatcher;
     impl Matcher for NaiOrMasenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ない (助動詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match ない (助動詞)
             (token.surface == "ない"
                 && token.base_form == "ない"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞"))
@@ -67,6 +80,7 @@ pub fn u301c_enai() -> Vec<TokenMatcher> {
             || (token.surface == "ませ"
                 && token.base_form == "ます"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            })
         }
     }
 
@@ -88,11 +102,14 @@ pub fn zaruwoenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MizenVerbMatcher;
     impl Matcher for MizenVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(5).is_some_and(|f| {
                     f == "未然形" || f == "未然レル接続" || f == "未然ヌ接続"
-                })
+                }) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -100,10 +117,13 @@ pub fn zaruwoenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ZaruMatcher;
     impl Matcher for ZaruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ざる"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ざる"
                 && token.base_form == "ぬ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -111,9 +131,12 @@ pub fn zaruwoenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoParticleMatcher;
     impl Matcher for WoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -121,9 +144,12 @@ pub fn zaruwoenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct EruVerbMatcher;
     impl Matcher for EruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "得る"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "得る"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -131,10 +157,13 @@ pub fn zaruwoenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMaseMatcher;
     impl Matcher for NaiMaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "助動詞")
                 && ((token.surface == "ない" && token.base_form == "ない")
-                    || (token.surface == "ませ" && token.base_form == "ます"))
+                    || (token.surface == "ませ" && token.base_form == "ます")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -142,10 +171,13 @@ pub fn zaruwoenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NMatcher;
     impl Matcher for NMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ん"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ん"
                 && token.base_form == "ん"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -169,16 +201,19 @@ pub fn uff5e_zaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ZaruMatcher;
     impl super::Matcher for ZaruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ざる"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ざる"
                 && token.base_form == "ぬ"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "体言接続")
+                && token.features.get(5).is_some_and(|f| f == "体言接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
-        TokenMatcher::verb_with_form("未然形"),
+        verb_form("未然形"),
         TokenMatcher::Custom(Arc::new(ZaruMatcher)),
     ]
 }
@@ -192,10 +227,13 @@ pub fn tsumoride() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TsumoriMatcher;
     impl super::Matcher for TsumoriMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "つもり"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "つもり"
                 && token.base_form == "つもり"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -203,11 +241,14 @@ pub fn tsumoride() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeMatcher;
     impl super::Matcher for DeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "で"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "で"
                 && token.base_form == "で"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -225,10 +266,13 @@ pub fn douse() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DouseMatcher;
     impl super::Matcher for DouseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "どうせ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "どうせ"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(DouseMatcher))]
@@ -241,10 +285,13 @@ pub fn semete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SemeteMatcher;
     impl super::Matcher for SemeteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "せめて"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "せめて"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(SemeteMatcher))]
@@ -259,10 +306,13 @@ pub fn douyara() -> Vec<TokenMatcher> {
     struct DouyaraMatcher;
 
     impl super::Matcher for DouyaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "どうやら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "どうやら"
                 && token.base_form == "どうやら"
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -278,10 +328,13 @@ pub fn naniyara() -> Vec<TokenMatcher> {
     struct NaniyaraMatcher;
 
     impl super::Matcher for NaniyaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "何やら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "何やら"
                 && token.base_form == "何やら"
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -296,42 +349,54 @@ pub fn yorihokanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct YoriMatcher;
     impl Matcher for YoriMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "より"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "より"
                 && token.base_form == "より"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct HokaMatcher;
     impl Matcher for HokaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ほか"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ほか"
                 && token.base_form == "ほか"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct WaParticleMatcher;
     impl Matcher for WaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -339,15 +404,18 @@ pub fn yorihokanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMatcher;
     impl Matcher for NaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ない"
                 && (token.pos.first().is_some_and(|pos| pos == "形容詞")
-                    || token.pos.first().is_some_and(|pos| pos == "助動詞"))
+                    || token.pos.first().is_some_and(|pos| pos == "助動詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
-        TokenMatcher::verb_with_form("基本形"),
+        verb_form("基本形"),
         TokenMatcher::Custom(Arc::new(YoriMatcher)),
         TokenMatcher::Custom(Arc::new(HokaMatcher)),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))),
@@ -366,10 +434,13 @@ pub fn tashikani() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiAdverbialMatcher;
     impl super::Matcher for NiAdverbialMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -377,16 +448,19 @@ pub fn tashikani() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TashikaniCombinedMatcher;
     impl super::Matcher for TashikaniCombinedMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match たしかに as adverb
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "たしかに"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "一般"))
             ||
-            // Match 確か as na-adjective stem (will be followed by に)
+
             (token.surface == "確か"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹"))
+                && token.pos.get(1).is_some_and(|pos| pos == "形容動詞語幹")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -405,9 +479,12 @@ fn ichiou_matcher() -> TokenMatcher {
     #[derive(Debug)]
     struct IchiouMatcher;
     impl super::Matcher for IchiouMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "一応"
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "一応"
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     TokenMatcher::Custom(Arc::new(IchiouMatcher))
@@ -429,31 +506,40 @@ pub fn nisouinai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && (token.pos.get(1).is_some_and(|pos| pos == "格助詞")
-                    || token.pos.get(1).is_some_and(|pos| pos == "副詞化"))
+                    || token.pos.get(1).is_some_and(|pos| pos == "副詞化")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct SouiMatcher;
     impl Matcher for SouiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "相違"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "相違"
                 && token.base_form == "相違"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続")
+                && token.pos.get(1).is_some_and(|pos| pos == "サ変接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NaiAdjMatcher;
     impl Matcher for NaiAdjMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ない" && token.pos.first().is_some_and(|pos| pos == "形容詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ない" && token.pos.first().is_some_and(|pos| pos == "形容詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -472,10 +558,13 @@ pub fn mangaichi() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MangaichiMatcher;
     impl super::Matcher for MangaichiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match 万が一 as 名詞/一般 or 万一 as 副詞/助詞類接続
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "万が一" && token.pos.first().is_some_and(|pos| pos == "名詞"))
-                || (token.surface == "万一" && token.pos.first().is_some_and(|pos| pos == "副詞"))
+                || (token.surface == "万一" && token.pos.first().is_some_and(|pos| pos == "副詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(MangaichiMatcher))]
@@ -491,14 +580,17 @@ pub fn youganai_u30fb_youmonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct YouShiyouMatcher;
     impl Matcher for YouShiyouMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "名詞")
                 && ((token.surface == "よう"
                     && token.base_form == "よう"
                     && token.pos.get(1).is_some_and(|p| p == "接尾"))
                     || (token.surface == "しよう"
                         && token.base_form == "しよう"
-                        && token.pos.get(1).is_some_and(|p| p == "一般")))
+                        && token.pos.get(1).is_some_and(|p| p == "一般"))) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -506,9 +598,12 @@ pub fn youganai_u30fb_youmonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct GaMoParticleMatcher;
     impl Matcher for GaMoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "が" || token.surface == "も")
-                && token.pos.first().is_some_and(|p| p == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "が" || token.surface == "も")
+                && token.pos.first().is_some_and(|p| p == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -516,14 +611,16 @@ pub fn youganai_u30fb_youmonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiArimasenMatcher;
     impl Matcher for NaiArimasenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // ない as adjective or auxiliary
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // ない as adjective or auxiliary
             (token.base_form == "ない"
                 && (token.pos.first().is_some_and(|p| p == "形容詞")
                     || token.pos.first().is_some_and(|p| p == "助動詞")))
             // or ある verb (for ありません)
             || (token.base_form == "ある"
                 && token.pos.first().is_some_and(|p| p == "動詞"))
+            })
         }
     }
 
@@ -544,12 +641,15 @@ pub fn nihokanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
                 && (token.pos.get(1).is_some_and(|p| p == "格助詞")
-                    || token.pos.get(1).is_some_and(|p| p == "副詞化"))
+                    || token.pos.get(1).is_some_and(|p| p == "副詞化")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -557,8 +657,9 @@ pub fn nihokanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HokaMatcher;
     impl Matcher for HokaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Compound verb: ほかなら (base='ほかなる', 未然形)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Compound verb: ほかなら (base='ほかなる', 未然形)
             (token.surface == "ほかなら"
                 && token.base_form == "ほかなる"
                 && token.pos.first().is_some_and(|p| p == "動詞"))
@@ -567,6 +668,7 @@ pub fn nihokanaranai() -> Vec<TokenMatcher> {
             (token.surface == "ほか"
                 && token.base_form == "ほか"
                 && token.pos.first().is_some_and(|p| p == "名詞"))
+            })
         }
     }
 
@@ -574,8 +676,9 @@ pub fn nihokanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NegativeOrNaruMatcher;
     impl Matcher for NegativeOrNaruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // ない auxiliary (特殊・ナイ)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // ない auxiliary (特殊・ナイ)
             (token.surface == "ない"
                 && token.base_form == "ない"
                 && token.pos.first().is_some_and(|p| p == "助動詞"))
@@ -589,6 +692,7 @@ pub fn nihokanaranai() -> Vec<TokenMatcher> {
             (token.base_form == "なる"
                 && token.pos.first().is_some_and(|p| p == "動詞")
                 && token.features.get(5).is_some_and(|f| f == "連用形"))
+            })
         }
     }
 
@@ -600,7 +704,7 @@ pub fn nihokanaranai() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 0,
             max: 2,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         },
     ]
 }
@@ -614,15 +718,18 @@ pub fn kkonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbOrVerbWithKkoMatcher;
     impl Matcher for VerbOrVerbWithKkoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "動詞")
                 && (
-                    // Regular verb stem (連用形)
+
                     token.features.get(5).is_some_and(|f| f == "連用形")
                     ||
-                    // Verb+っ compound (連用タ接続, like きっ, てっ)
+
                     token.features.get(5).is_some_and(|f| f == "連用タ接続")
-                )
+                ) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -630,11 +737,14 @@ pub fn kkonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KkuMatcher;
     impl Matcher for KkuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "っ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "っ"
                 && token.base_form == "く"
                 && token.pos.first().is_some_and(|p| p == "動詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -642,12 +752,15 @@ pub fn kkonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KoMatcher;
     impl Matcher for KoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こ"
                 && token.base_form == "くる"
                 && token.pos.first().is_some_and(|p| p == "動詞")
                 && token.pos.get(1).is_some_and(|p| p == "非自立")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -655,9 +768,12 @@ pub fn kkonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiAuxMatcher;
     impl Matcher for NaiAuxMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ない"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ない"
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -676,10 +792,13 @@ pub fn sorenara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SorenaraMatcher;
     impl Matcher for SorenaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "それなら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "それなら"
                 && token.base_form == "それなら"
-                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+                && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(SorenaraMatcher))]
@@ -692,22 +811,28 @@ pub fn mononara_u2460() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MonoMatcher;
     impl Matcher for MonoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "もの"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "もの"
                 && token.base_form == "もの"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NaraMatcher;
     impl Matcher for NaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なら"
                 && token.base_form == "だ"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "仮定形")
+                && token.features.get(5).is_some_and(|f| f == "仮定形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -727,10 +852,13 @@ pub fn uff5e_wo_uff5e_nimakaseru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoMatcher;
     impl super::Matcher for WoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -738,10 +866,13 @@ pub fn uff5e_wo_uff5e_nimakaseru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiMatcher;
     impl super::Matcher for NiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -749,9 +880,12 @@ pub fn uff5e_wo_uff5e_nimakaseru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MakaseruMatcher;
     impl super::Matcher for MakaseruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "任せる"
-                && token.pos.first().is_some_and(|p| p == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "任せる"
+                && token.pos.first().is_some_and(|p| p == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -760,7 +894,7 @@ pub fn uff5e_wo_uff5e_nimakaseru() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 1,
             max: 1,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         },
         TokenMatcher::Custom(Arc::new(NiMatcher)),
         TokenMatcher::Custom(Arc::new(MakaseruMatcher)),
@@ -777,29 +911,38 @@ pub fn uff5e_wo_uff5e_nimakaseru_reverse() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoMatcher;
     impl super::Matcher for WoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NiMatcher;
     impl super::Matcher for NiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct MakaseruMatcher;
     impl super::Matcher for MakaseruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "任せる"
-                && token.pos.first().is_some_and(|p| p == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "任せる"
+                && token.pos.first().is_some_and(|p| p == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -808,7 +951,7 @@ pub fn uff5e_wo_uff5e_nimakaseru_reverse() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 4,
             max: 4,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         },
         TokenMatcher::Custom(Arc::new(WoMatcher)),
         TokenMatcher::Custom(Arc::new(MakaseruMatcher)),
@@ -822,9 +965,12 @@ pub fn ikasu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IkasuMatcher;
     impl Matcher for IkasuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
-                && (token.base_form == "活かす" || token.base_form == "生かす")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.base_form == "活かす" || token.base_form == "生かす") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(IkasuMatcher))]
@@ -838,12 +984,15 @@ pub fn ooyoso() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct OoyosoMatcher;
     impl super::Matcher for OoyosoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match both おおよそ (副詞) and およそ (接頭詞/副詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "おおよそ" && token.pos.first().is_some_and(|pos| pos == "副詞"))
                 || (token.surface == "およそ"
                     && (token.pos.first().is_some_and(|pos| pos == "接頭詞")
-                        || token.pos.first().is_some_and(|pos| pos == "副詞")))
+                        || token.pos.first().is_some_and(|pos| pos == "副詞"))) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -858,28 +1007,37 @@ pub fn mai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MaiMatcher;
     impl super::Matcher for MaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "まい"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "まい"
                 && token.base_form == "まい"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct VerbMatcher;
     impl super::Matcher for VerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct MasuMatcher;
     impl super::Matcher for MasuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ます"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ます"
                 && token.base_form == "ます"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -898,11 +1056,14 @@ pub fn ue() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct UeSuffixMatcher;
     impl super::Matcher for UeSuffixMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "上"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "上"
                 && token.base_form == "上"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -921,8 +1082,9 @@ pub fn ueni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct UePreMatcher;
     impl super::Matcher for UePreMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            if let Some(first_pos) = token.pos.first() {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                if let Some(first_pos) = token.pos.first() {
                 match first_pos.as_str() {
                     "動詞" => true, // Verbs in basic form
                     "形容詞" => true, // い-Adjectives in basic form
@@ -939,26 +1101,33 @@ pub fn ueni() -> Vec<TokenMatcher> {
             } else {
                 false
             }
+            })
         }
     }
 
     #[derive(Debug)]
     struct UeNounMatcher;
     impl super::Matcher for UeNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "うえ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "うえ"
                 && token.base_form == "うえ"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -978,8 +1147,9 @@ pub fn ijou_u2461() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IjouPreMatcher;
     impl super::Matcher for IjouPreMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            if let Some(first_pos) = token.pos.first() {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                if let Some(first_pos) = token.pos.first() {
                 match first_pos.as_str() {
                     "動詞" => true, // Any verb form
                     "形容詞" => true, // い-Adjectives
@@ -992,6 +1162,7 @@ pub fn ijou_u2461() -> Vec<TokenMatcher> {
             } else {
                 false
             }
+            })
         }
     }
 
@@ -999,11 +1170,14 @@ pub fn ijou_u2461() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IjouMatcher;
     impl super::Matcher for IjouMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "以上"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "以上"
                 && token.base_form == "以上"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1011,10 +1185,13 @@ pub fn ijou_u2461() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaMatcher;
     impl super::Matcher for WaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1034,8 +1211,9 @@ pub fn ijouni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IjouNiPreMatcher;
     impl super::Matcher for IjouNiPreMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            if let Some(first_pos) = token.pos.first() {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                if let Some(first_pos) = token.pos.first() {
                 match first_pos.as_str() {
                     "動詞" => true, // Any verb form
                     "形容詞" => true, // い-Adjectives
@@ -1049,6 +1227,7 @@ pub fn ijouni() -> Vec<TokenMatcher> {
             } else {
                 false
             }
+            })
         }
     }
 
@@ -1056,11 +1235,14 @@ pub fn ijouni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IjouMatcher;
     impl super::Matcher for IjouMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "以上"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "以上"
                 && token.base_form == "以上"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1068,8 +1250,9 @@ pub fn ijouni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiNoMatcher;
     impl super::Matcher for NiNoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            if token.pos.first().is_some_and(|p| p == "助詞") {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                if token.pos.first().is_some_and(|p| p == "助詞") {
                 if token.surface == "に" {
                     token.pos.get(1).is_some_and(|p| p == "格助詞")
                 } else if token.surface == "の" {
@@ -1080,6 +1263,7 @@ pub fn ijouni() -> Vec<TokenMatcher> {
             } else {
                 false
             }
+            })
         }
     }
 
@@ -1099,11 +1283,14 @@ pub fn tochuuni_u30fb_tochuude() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TochuuMatcher;
     impl super::Matcher for TochuuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "途中"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "途中"
                 && token.base_form == "途中"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1111,10 +1298,13 @@ pub fn tochuuni_u30fb_tochuude() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiDeMatcher;
     impl super::Matcher for NiDeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "に" || token.surface == "で")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "に" || token.surface == "で")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1122,10 +1312,13 @@ pub fn tochuuni_u30fb_tochuude() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoParticleMatcher;
     impl super::Matcher for NoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1145,30 +1338,39 @@ pub fn nakawo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NakaNounMatcher;
     impl super::Matcher for NakaNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "中"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "中"
                 && token.base_form == "中"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NoParticleMatcher;
     impl super::Matcher for NoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct WoParticleMatcher;
     impl super::Matcher for WoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1188,10 +1390,13 @@ pub fn wochuushinni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoMatcher;
     impl super::Matcher for WoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1199,10 +1404,13 @@ pub fn wochuushinni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ChuushinMatcher;
     impl super::Matcher for ChuushinMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "中心"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "中心"
                 && token.base_form == "中心"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1210,8 +1418,9 @@ pub fn wochuushinni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiToToshiteMatcher;
     impl super::Matcher for NiToToshiteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
             || (token.surface == "と"
@@ -1219,7 +1428,9 @@ pub fn wochuushinni() -> Vec<TokenMatcher> {
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
             || (token.surface == "として"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1229,7 +1440,7 @@ pub fn wochuushinni() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(ChuushinMatcher)),
         TokenMatcher::Custom(Arc::new(NiToToshiteMatcher)),
         // Optionally followed by する in various forms (する, した, して)
-        TokenMatcher::Optional(Box::new(TokenMatcher::specific_verb("する"))),
+        TokenMatcher::Optional(Box::new(verb_base("する"))),
     ]
 }
 
@@ -1242,10 +1453,13 @@ pub fn sonoue() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SonoMatcher;
     impl super::Matcher for SonoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "その"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "その"
                 && token.base_form == "その"
-                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+                && token.pos.first().is_some_and(|pos| pos == "連体詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1253,12 +1467,15 @@ pub fn sonoue() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct UeMatcher;
     impl super::Matcher for UeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "上"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "上"
                 && token.base_form == "上"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "非自立")
-                && token.pos.get(2).is_some_and(|pos| pos == "副詞可能")
+                && token.pos.get(2).is_some_and(|pos| pos == "副詞可能") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1274,21 +1491,27 @@ pub fn ueha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct UeMatcher;
     impl Matcher for UeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "上"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "上"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "非自立")
-                && token.pos.get(2).is_some_and(|pos| pos == "副詞可能")
+                && token.pos.get(2).is_some_and(|pos| pos == "副詞可能") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct WaParticleMatcher;
     impl Matcher for WaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1306,32 +1529,41 @@ pub fn noshitade() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoParticleMatcher;
     impl Matcher for NoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct MotoMatcher;
     impl Matcher for MotoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match もと as either 名詞/非自立/一般 or 名詞/一般
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             token.surface == "もと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
                 && (token.pos.get(1).is_some_and(|pos| pos == "非自立")
-                    || token.pos.get(1).is_some_and(|pos| pos == "一般"))
+                    || token.pos.get(1).is_some_and(|pos| pos == "一般")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct DeNiParticleMatcher;
     impl Matcher for DeNiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "で" || token.surface == "に")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "で" || token.surface == "に")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1352,19 +1584,22 @@ pub fn kou_no_noun() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct AtoMatcher;
     impl Matcher for AtoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "後"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "後"
                 && token.base_form == "後"
                 && (
-                    // Structure 1 & 2: 名詞/接尾/副詞可能
+
                     (token.pos.first().is_some_and(|pos| pos == "名詞")
                         && token.pos.get(1).is_some_and(|pos| pos == "接尾")
                         && token.pos.get(2).is_some_and(|pos| pos == "副詞可能"))
                     ||
-                    // Structure 3: 接頭詞/名詞接続
+
                     (token.pos.first().is_some_and(|pos| pos == "接頭詞")
                         && token.pos.get(1).is_some_and(|pos| pos == "名詞接続"))
-                )
+                ) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1372,10 +1607,13 @@ pub fn kou_no_noun() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoParticleMatcher;
     impl Matcher for NoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1383,10 +1621,13 @@ pub fn kou_no_noun() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct CounterMatcher;
     impl Matcher for CounterMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "名詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接尾")
-                && token.pos.get(2).is_some_and(|pos| pos == "助数詞")
+                && token.pos.get(2).is_some_and(|pos| pos == "助数詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1404,20 +1645,26 @@ pub fn temae() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoParticleMatcher;
     impl Matcher for NoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct TemaeMatcher;
     impl Matcher for TemaeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "手前"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "手前"
                 && token.base_form == "手前"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1440,18 +1687,21 @@ pub fn womegutte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WomegutteMatcher;
     impl Matcher for WomegutteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Case 1: Single token をめぐって
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "をめぐって"
                 && token.base_form == "をめぐって"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
                 && token.pos.get(2).is_some_and(|pos| pos == "連語"))
             ||
-            // Case 2: を particle (will be followed by めぐる)
+
             (token.surface == "を"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1460,9 +1710,12 @@ pub fn womegutte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MeguruVerbMatcher;
     impl Matcher for MeguruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "めぐる"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "めぐる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1484,8 +1737,9 @@ pub fn niwatatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiwatatteMatcher;
     impl super::Matcher for NiwatatteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Case 1: Compound particle
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Case 1: Compound particle
             if token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
                 && token.pos.get(2).is_some_and(|pos| pos == "連語")
@@ -1505,6 +1759,7 @@ pub fn niwatatte() -> Vec<TokenMatcher> {
             }
 
             false
+            })
         }
     }
 
@@ -1512,9 +1767,12 @@ pub fn niwatatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WataruVerbMatcher;
     impl super::Matcher for WataruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "わたる"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "わたる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1534,10 +1792,13 @@ pub fn nisotte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1545,9 +1806,12 @@ pub fn nisotte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SouVerbMatcher;
     impl super::Matcher for SouVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "そう"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "そう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1555,8 +1819,9 @@ pub fn nisotte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeOrTaMatcher;
     impl super::Matcher for TeOrTaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match て (接続助詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match て (接続助詞)
             if token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞") {
                 return true;
             }
@@ -1565,6 +1830,7 @@ pub fn nisotte() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -1585,10 +1851,13 @@ pub fn tasue_u30fb_nosue() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SueMatcher;
     impl super::Matcher for SueMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "すえ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "すえ"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1596,10 +1865,13 @@ pub fn tasue_u30fb_nosue() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoParticleMatcher;
     impl super::Matcher for NoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1607,10 +1879,13 @@ pub fn tasue_u30fb_nosue() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1619,8 +1894,9 @@ pub fn tasue_u30fb_nosue() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbTaOrNounNoMatcher;
     impl super::Matcher for VerbTaOrNounNoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match た (past auxiliary)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match た (past auxiliary)
             if token.surface == "た" && token.pos.first().is_some_and(|pos| pos == "助動詞") {
                 return true;
             }
@@ -1631,6 +1907,7 @@ pub fn tasue_u30fb_nosue() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -1651,10 +1928,13 @@ pub fn nishitagatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1662,9 +1942,12 @@ pub fn nishitagatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShitagauVerbMatcher;
     impl super::Matcher for ShitagauVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "したがう"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "したがう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1672,8 +1955,9 @@ pub fn nishitagatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeOrIMatcher;
     impl super::Matcher for TeOrIMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match て (助詞/接続助詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match て (助詞/接続助詞)
             if token.surface == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") {
@@ -1685,6 +1969,7 @@ pub fn nishitagatte() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -1705,8 +1990,9 @@ pub fn nitomonatte_u30fb_nitomonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NounOrVerbMatcher;
     impl super::Matcher for NounOrVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Accept nouns
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Accept nouns
             if token.pos.first().is_some_and(|pos| pos == "名詞") {
                 return true;
             }
@@ -1715,6 +2001,7 @@ pub fn nitomonatte_u30fb_nitomonai() -> Vec<TokenMatcher> {
                 return token.features.get(5).is_some_and(|f| f == "基本形");
             }
             false
+            })
         }
     }
 
@@ -1722,10 +2009,13 @@ pub fn nitomonatte_u30fb_nitomonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1733,9 +2023,12 @@ pub fn nitomonatte_u30fb_nitomonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TomonauVerbMatcher;
     impl super::Matcher for TomonauVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "伴う"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "伴う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1743,10 +2036,13 @@ pub fn nitomonatte_u30fb_nitomonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeParticleMatcher;
     impl super::Matcher for TeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1754,10 +2050,13 @@ pub fn nitomonatte_u30fb_nitomonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoNominalizerMatcher;
     impl super::Matcher for NoNominalizerMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1789,10 +2088,13 @@ pub fn nitsuki() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1800,11 +2102,14 @@ pub fn nitsuki() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TsukiVerbMatcher;
     impl super::Matcher for TsukiVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "つき"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "つき"
                 && token.base_form == "つく"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1825,10 +2130,13 @@ pub fn nitsuki_compound() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NitsukiParticleMatcher;
     impl super::Matcher for NitsukiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "につき"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "につき"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1848,11 +2156,14 @@ pub fn nitsuke() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NitsukeMatcher;
     impl super::Matcher for NitsukeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "につけ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "につけ"
                 && token.base_form == "につけ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1869,14 +2180,17 @@ pub fn nitsukete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TsukeVerbMatcher;
     impl super::Matcher for TsukeVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "つけ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "つけ"
                 && token.base_form == "つける"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token
                     .features
                     .get(5)
-                    .is_some_and(|form| form == "連用形")
+                    .is_some_and(|form| form == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1896,10 +2210,13 @@ pub fn nikakawaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1907,9 +2224,12 @@ pub fn nikakawaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KakawaruVerbMatcher;
     impl Matcher for KakawaruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "かかわる"
-                && token.pos.first().is_some_and(|p| p == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "かかわる"
+                && token.pos.first().is_some_and(|p| p == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1929,10 +2249,13 @@ pub fn nimukatte_u30fb_nimukete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1940,9 +2263,12 @@ pub fn nimukatte_u30fb_nimukete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MukauMukeruVerbMatcher;
     impl Matcher for MukauMukeruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.base_form == "むかう" || token.base_form == "むける")
-                && token.pos.first().is_some_and(|p| p == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.base_form == "むかう" || token.base_form == "むける")
+                && token.pos.first().is_some_and(|p| p == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1950,10 +2276,13 @@ pub fn nimukatte_u30fb_nimukete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeParticleMatcher;
     impl Matcher for TeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1974,8 +2303,11 @@ pub fn gakininaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NounLikeMatcher;
     impl Matcher for NounLikeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1983,10 +2315,13 @@ pub fn gakininaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct GaParticleMatcher;
     impl Matcher for GaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "が"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "が"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -1994,9 +2329,12 @@ pub fn gakininaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KiNounMatcher;
     impl Matcher for KiNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "気"
-                && token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "気"
+                && token.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2004,10 +2342,13 @@ pub fn gakininaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2015,9 +2356,12 @@ pub fn gakininaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MasuMatcher;
     impl Matcher for MasuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ます"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2026,7 +2370,7 @@ pub fn gakininaru() -> Vec<TokenMatcher> {
         vec![TokenMatcher::Custom(Arc::new(GaParticleMatcher))],
         vec![TokenMatcher::Custom(Arc::new(KiNounMatcher))],
         vec![TokenMatcher::Custom(Arc::new(NiParticleMatcher))],
-        vec![TokenMatcher::specific_verb("なる")],
+        vec![verb_base("なる")],
         vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher))))],
     ])
 }
@@ -2041,12 +2385,14 @@ pub fn nikiwotsukeru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NounOrVerbMatcher;
     impl Matcher for NounOrVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Exclude よう (nominalizer)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Exclude よう (nominalizer)
             if token.surface == "よう" && token.base_form == "よう" {
                 return false;
             }
             token.pos.first().is_some_and(|pos| pos == "名詞" || pos == "動詞")
+            })
         }
     }
 
@@ -2054,8 +2400,11 @@ pub fn nikiwotsukeru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2063,11 +2412,14 @@ pub fn nikiwotsukeru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KiVerbMatcher;
     impl Matcher for KiVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "き"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "き"
                 && token.base_form == "くる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2075,10 +2427,13 @@ pub fn nikiwotsukeru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoParticleMatcher;
     impl Matcher for WoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2086,9 +2441,12 @@ pub fn nikiwotsukeru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TsukeruVerbMatcher;
     impl Matcher for TsukeruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "つける"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "つける"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2110,10 +2468,13 @@ pub fn mokamawazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoNominalizerMatcher;
     impl Matcher for NoNominalizerMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2121,10 +2482,13 @@ pub fn mokamawazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2132,10 +2496,13 @@ pub fn mokamawazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MoParticleMatcher;
     impl Matcher for MoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "も"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "も"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2143,11 +2510,14 @@ pub fn mokamawazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KamawaMatcher;
     impl Matcher for KamawaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "かまわ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "かまわ"
                 && token.base_form == "かまう"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2155,10 +2525,13 @@ pub fn mokamawazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ZuAuxiliaryMatcher;
     impl Matcher for ZuAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ず"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ず"
                 && token.base_form == "ぬ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2179,28 +2552,35 @@ pub fn kaneru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbStemMatcher;
     impl Matcher for VerbStemMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct KaneruVerbMatcher;
     impl Matcher for KaneruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "かね" || token.surface == "兼ね")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "かね" || token.surface == "兼ね")
                 && token.base_form == "かねる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct MasuOrRuMatcher;
     impl Matcher for MasuOrRuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ます (助動詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match ます (助動詞)
             (token.surface == "ます"
                 && token.base_form == "ます"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞"))
@@ -2209,6 +2589,7 @@ pub fn kaneru() -> Vec<TokenMatcher> {
                 && token.base_form == "かねる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "非自立"))
+            })
         }
     }
 
@@ -2225,28 +2606,35 @@ pub fn kanenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbStemMatcher;
     impl Matcher for VerbStemMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct KaneruVerbMatcher;
     impl Matcher for KaneruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "かね" || token.surface == "兼ね")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "かね" || token.surface == "兼ね")
                 && token.base_form == "かねる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NaiOrMasenMatcher;
     impl Matcher for NaiOrMasenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ない (助動詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match ない (助動詞)
             (token.surface == "ない"
                 && token.base_form == "ない"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞"))
@@ -2254,6 +2642,7 @@ pub fn kanenai() -> Vec<TokenMatcher> {
             || (token.surface == "ませ"
                 && token.base_form == "ます"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            })
         }
     }
 
@@ -2275,9 +2664,12 @@ pub fn wonozoite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NozokuVerbMatcher;
     impl super::Matcher for NozokuVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "除く"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "除く"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2285,10 +2677,13 @@ pub fn wonozoite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeParticleMatcher;
     impl super::Matcher for TeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2313,10 +2708,13 @@ pub fn nikakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2324,11 +2722,14 @@ pub fn nikakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KakawaranaiMatcher;
     impl Matcher for KakawaranaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "かかわら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "かかわら"
                 && token.base_form == "かかわる"
                 && token.pos.first().is_some_and(|p| p == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2336,10 +2737,13 @@ pub fn nikakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ZuAuxiliaryMatcher;
     impl Matcher for ZuAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ず"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ず"
                 && token.base_form == "ぬ"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2347,10 +2751,13 @@ pub fn nikakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaParticleMatcher;
     impl Matcher for WaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2358,10 +2765,13 @@ pub fn nikakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct GaParticleMatcher;
     impl Matcher for GaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "が"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "が"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2392,10 +2802,13 @@ pub fn nimokakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoNominalizerMatcher;
     impl Matcher for NoNominalizerMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2403,10 +2816,13 @@ pub fn nimokakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeAruSequenceMatcher;
     impl Matcher for DeAruSequenceMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "で"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "で"
                 && token.base_form == "だ"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2414,10 +2830,13 @@ pub fn nimokakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2425,10 +2844,13 @@ pub fn nimokakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MoParticleMatcher;
     impl Matcher for MoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "も"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "も"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2436,10 +2858,13 @@ pub fn nimokakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KakawaruMatcher;
     impl Matcher for KakawaruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "かかわる"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "かかわる"
                 && token.pos.first().is_some_and(|p| p == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2447,10 +2872,13 @@ pub fn nimokakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct AruAuxiliaryMatcher;
     impl Matcher for AruAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ある"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ある"
                 && token.base_form == "ある"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2458,10 +2886,13 @@ pub fn nimokakawarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ZuAuxiliaryMatcher;
     impl Matcher for ZuAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ず"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ず"
                 && token.base_form == "ぬ"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2505,10 +2936,13 @@ pub fn nao_u2460() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaoConjunctionMatcher;
     impl super::Matcher for NaoConjunctionMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なお"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なお"
                 && token.base_form == "なお"
-                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+                && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2524,10 +2958,13 @@ pub fn nao_u2461() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaoConjunctionMatcher;
     impl super::Matcher for NaoConjunctionMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なお"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なお"
                 && token.base_form == "なお"
-                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+                && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2539,18 +2976,21 @@ pub fn nao_u2461() -> Vec<TokenMatcher> {
 //   - Verb[る/ない/た/ている] + 限り
 //   - Noun + である + 限り
 pub fn kagiri() -> Vec<TokenMatcher> {
-    use super::Matcher;
+    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
     use std::sync::Arc;
 
     // Match かぎり as noun (非自立/副詞可能)
     #[derive(Debug)]
     struct KagiriMatcher;
     impl Matcher for KagiriMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "かぎり" || token.surface == "限り")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "かぎり" || token.surface == "限り")
                 && token.base_form == "かぎり"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2568,10 +3008,13 @@ pub fn shidaida_u30fb_shidaide() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShidaiMatcher;
     impl Matcher for ShidaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "しだい"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "しだい"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2579,8 +3022,9 @@ pub fn shidaida_u30fb_shidaide() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaDesuDeMatcher;
     impl Matcher for DaDesuDeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // だ or です (auxiliary)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // だ or です (auxiliary)
             if (token.surface == "だ" || token.surface == "です")
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
             {
@@ -2593,6 +3037,7 @@ pub fn shidaida_u30fb_shidaide() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -2611,10 +3056,13 @@ pub fn shidaini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShidainiMatcher;
     impl super::Matcher for ShidainiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "次第に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "次第に"
                 && token.base_form == "次第に"
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2630,10 +3078,13 @@ pub fn uff5e_tekoso() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeParticleMatcher;
     impl super::Matcher for TeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2641,11 +3092,14 @@ pub fn uff5e_tekoso() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KosoParticleMatcher;
     impl super::Matcher for KosoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こそ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こそ"
                 && token.base_form == "こそ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2661,16 +3115,19 @@ pub fn uff5e_tekoso() -> Vec<TokenMatcher> {
 //   - [Content] + を/は + 問わ(未然形) + ず
 //   - Noun/か/かどうか + を/は + 問わず
 pub fn wotowazu() -> Vec<TokenMatcher> {
-    use super::Matcher;
+    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
     use std::sync::Arc;
 
     // Match を or は particle
     #[derive(Debug)]
     struct WoHaParticleMatcher;
     impl Matcher for WoHaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "を" || token.surface == "は")
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "を" || token.surface == "は")
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2678,14 +3135,17 @@ pub fn wotowazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TowaVerbMatcher;
     impl Matcher for TowaVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "とわ" || token.surface == "問わ")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "とわ" || token.surface == "問わ")
                 && token.base_form == "とう"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token
                     .features
                     .get(5)
-                    .is_some_and(|form| form == "未然形")
+                    .is_some_and(|form| form == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2693,10 +3153,13 @@ pub fn wotowazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ZuAuxiliaryMatcher;
     impl Matcher for ZuAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ず"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ず"
                 && token.base_form == "ぬ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2704,11 +3167,14 @@ pub fn wotowazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaGaStopMatcher;
     impl Matcher for HaGaStopMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "は" || token.surface == "が")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "は" || token.surface == "が")
                 && token.pos.first().is_some_and(|p| p == "助詞")
                 && (token.pos.get(1).is_some_and(|p| p == "係助詞")
-                    || token.pos.get(1).is_some_and(|p| p == "格助詞"))
+                    || token.pos.get(1).is_some_and(|p| p == "格助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2735,11 +3201,14 @@ pub fn yorishikataganai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct YoriParticleMatcher;
     impl super::Matcher for YoriParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "より"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "より"
                 && token.base_form == "より"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2747,11 +3216,14 @@ pub fn yorishikataganai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShikataMatcher;
     impl super::Matcher for ShikataMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "しかた"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "しかた"
                 && token.base_form == "しかた"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "ナイ形容詞語幹")
+                && token.pos.get(1).is_some_and(|p| p == "ナイ形容詞語幹") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2759,11 +3231,14 @@ pub fn yorishikataganai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct GaParticleMatcher;
     impl super::Matcher for GaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "が"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "が"
                 && token.base_form == "が"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2771,19 +3246,19 @@ pub fn yorishikataganai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMatcher;
     impl super::Matcher for NaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && token.base_form == "ない"
                 && (token.pos.first().is_some_and(|p| p == "形容詞")
-                    || token.pos.first().is_some_and(|p| p == "助動詞"))
+                    || token.pos.first().is_some_and(|p| p == "助動詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
-        TokenMatcher::Verb {
-            conjugation_form: Some("基本形"),
-            base_form: None,
-        },
+        verb_form("基本形"),
         TokenMatcher::Custom(Arc::new(YoriParticleMatcher)),
         TokenMatcher::Custom(Arc::new(ShikataMatcher)),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaParticleMatcher)))),
@@ -2800,13 +3275,16 @@ pub fn nikoshitakotohanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiKoshitaMatcher;
     impl Matcher for NiKoshitaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && (token
                     .pos
                     .get(1)
-                    .is_some_and(|pos| pos == "格助詞" || pos == "副詞化"))
+                    .is_some_and(|pos| pos == "格助詞" || pos == "副詞化")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2814,11 +3292,14 @@ pub fn nikoshitakotohanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KoshiMatcher;
     impl Matcher for KoshiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こし"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こし"
                 && token.base_form == "こす"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2826,11 +3307,14 @@ pub fn nikoshitakotohanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoNonIndependentMatcher;
     impl Matcher for KotoNonIndependentMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.base_form == "こと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2838,10 +3322,13 @@ pub fn nikoshitakotohanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaKakariMatcher;
     impl Matcher for WaKakariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2849,18 +3336,21 @@ pub fn nikoshitakotohanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiOrAriMatcher;
     impl Matcher for NaiOrAriMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // ない ending
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "ない"
                 && ((token.pos.first().is_some_and(|pos| pos == "形容詞")
                     && token.pos.get(1).is_some_and(|pos| pos == "自立"))
                     || (token.pos.first().is_some_and(|pos| pos == "助動詞")
                         && token.features.get(4).is_some_and(|f| f == "特殊・ナイ"))))
-                // あり from ありません
+
                 || (token.surface == "あり"
                     && token.base_form == "ある"
                     && token.pos.first().is_some_and(|pos| pos == "動詞")
-                    && token.features.get(5).is_some_and(|f| f == "連用形"))
+                    && token.features.get(5).is_some_and(|f| f == "連用形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2868,11 +3358,14 @@ pub fn nikoshitakotohanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MaseMatcher;
     impl Matcher for MaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ませ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ませ"
                 && token.base_form == "ます"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2880,11 +3373,14 @@ pub fn nikoshitakotohanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NNegativeMatcher;
     impl Matcher for NNegativeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ん"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ん"
                 && token.base_form == "ん"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.features.get(4).is_some_and(|f| f == "不変化型")
+                && token.features.get(4).is_some_and(|f| f == "不変化型") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2913,10 +3409,13 @@ pub fn yousuruni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct YousuruniMatcher;
     impl Matcher for YousuruniMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "要するに"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "要するに"
                 && token.base_form == "要するに"
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(YousuruniMatcher))]
@@ -2931,10 +3430,13 @@ pub fn tekaradenaito() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeParticleMatcher;
     impl Matcher for TeDeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2942,10 +3444,13 @@ pub fn tekaradenaito() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaraAfterMatcher;
     impl Matcher for KaraAfterMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2953,10 +3458,13 @@ pub fn tekaradenaito() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeAuxiliaryMatcher;
     impl Matcher for DeAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "で"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "で"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.base_form == "だ"
+                && token.base_form == "だ" => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2964,10 +3472,13 @@ pub fn tekaradenaito() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiNakerebaMatcher;
     impl Matcher for NaiNakerebaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "ない" || token.surface == "なけれ")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "ない" || token.surface == "なけれ")
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.base_form == "ない"
+                && token.base_form == "ない" => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -2975,10 +3486,13 @@ pub fn tekaradenaito() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToOrBaMatcher;
     impl Matcher for ToOrBaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "と" || token.surface == "ば")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "と" || token.surface == "ば")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3001,10 +3515,13 @@ pub fn nakuhanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NakuMatcher;
     impl Matcher for NakuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なく"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なく"
                 && (token.pos.first().is_some_and(|pos| pos == "助動詞")
-                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3012,8 +3529,11 @@ pub fn nakuhanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaMatcher;
     impl Matcher for WaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は" && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3021,10 +3541,13 @@ pub fn nakuhanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMatcher;
     impl Matcher for NaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && (token.pos.first().is_some_and(|pos| pos == "助動詞")
-                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3049,10 +3572,13 @@ pub fn naikotoniha_uff5e_nai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeAuxiliaryMatcher;
     impl Matcher for DeAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "で"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "で"
                 && token.base_form == "だ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3060,11 +3586,14 @@ pub fn naikotoniha_uff5e_nai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMatcher;
     impl Matcher for NaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && token.base_form == "ない"
                 && (token.pos.first().is_some_and(|pos| pos == "助動詞")
-                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3072,10 +3601,13 @@ pub fn naikotoniha_uff5e_nai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoMatcher;
     impl Matcher for KotoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3083,10 +3615,13 @@ pub fn naikotoniha_uff5e_nai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3094,10 +3629,13 @@ pub fn naikotoniha_uff5e_nai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaParticleMatcher;
     impl Matcher for WaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3123,11 +3661,14 @@ pub fn naidehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiAuxiliaryMatcher;
     impl Matcher for NaiAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && token.base_form == "ない"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3135,19 +3676,22 @@ pub fn naidehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeJyaMatcher;
     impl Matcher for DeJyaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // で as 助詞/接続助詞
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "で"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
-                // で as 助動詞/だ
+
                 || (token.surface == "で"
                     && token.base_form == "だ"
                     && token.pos.first().is_some_and(|pos| pos == "助動詞"))
-                // じゃ as 助詞/接続助詞
+
                 || (token.surface == "じゃ"
                     && token.pos.first().is_some_and(|pos| pos == "助詞")
-                    && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+                    && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3155,10 +3699,13 @@ pub fn naidehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaKakariParticleMatcher;
     impl Matcher for WaKakariParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3166,11 +3713,14 @@ pub fn naidehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IruMizenMatcher;
     impl Matcher for IruMizenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "い"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "い"
                 && token.base_form == "いる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3178,11 +3728,14 @@ pub fn naidehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct RareMatcher;
     impl Matcher for RareMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "られ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "られ"
                 && token.base_form == "られる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3210,16 +3763,19 @@ pub fn tamae() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TamaeMatcher;
     impl Matcher for TamaeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Correctly tokenized: たまえ as verb with base たまう in imperative form
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             token.surface == "たまえ"
                 && token.base_form == "たまう"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "命令ｅ")
+                && token.features.get(5).is_some_and(|f| f == "命令ｅ") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![
-        TokenMatcher::verb_with_form("連用形"),
+        verb_form("連用形"),
         TokenMatcher::Custom(Arc::new(TamaeMatcher)),
     ]
 }
@@ -3235,10 +3791,13 @@ pub fn uff5e_nouchi_de() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct UchiMatcher;
     impl Matcher for UchiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "うち"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "うち"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3246,10 +3805,13 @@ pub fn uff5e_nouchi_de() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoRentaikaMatcher;
     impl Matcher for NoRentaikaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3257,9 +3819,12 @@ pub fn uff5e_nouchi_de() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeNoKaraMatcher;
     impl Matcher for DeNoKaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "で" || token.surface == "の" || token.surface == "から")
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "で" || token.surface == "の" || token.surface == "から")
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3281,10 +3846,13 @@ pub fn uff5e_nouchi_de_kono() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct UchiMatcher;
     impl Matcher for UchiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "うち"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "うち"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3292,9 +3860,12 @@ pub fn uff5e_nouchi_de_kono() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KonoSonoMatcher;
     impl Matcher for KonoSonoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "この" || token.surface == "その" || token.surface == "あの")
-                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "この" || token.surface == "その" || token.surface == "あの")
+                && token.pos.first().is_some_and(|pos| pos == "連体詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3302,9 +3873,12 @@ pub fn uff5e_nouchi_de_kono() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeNoKaraMatcher;
     impl Matcher for DeNoKaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "で" || token.surface == "の" || token.surface == "から")
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "で" || token.surface == "の" || token.surface == "から")
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3324,16 +3898,19 @@ pub fn tsutsu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TsutsuParticleMatcher;
     impl super::Matcher for TsutsuParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "つつ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "つつ"
                 && token.base_form == "つつ"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
-        TokenMatcher::verb_with_form("連用形"),
+        verb_form("連用形"),
         TokenMatcher::Custom(Arc::new(TsutsuParticleMatcher)),
     ]
 }
@@ -3346,27 +3923,33 @@ pub fn tsutsu_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TsutsuParticleMatcher;
     impl super::Matcher for TsutsuParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "つつ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "つつ"
                 && token.base_form == "つつ"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct MoParticleMatcher;
     impl super::Matcher for MoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "も"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "も"
                 && token.base_form == "も"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
-        TokenMatcher::verb_with_form("連用形"),
+        verb_form("連用形"),
         TokenMatcher::Custom(Arc::new(TsutsuParticleMatcher)),
         TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
     ]
@@ -3381,10 +3964,13 @@ pub fn nisaishite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NisaishiteMatcher;
     impl Matcher for NisaishiteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に際して"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に際して"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3392,8 +3978,9 @@ pub fn nisaishite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbOrNounMatcher;
     impl Matcher for VerbOrNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match verb in dictionary form
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match verb in dictionary form
             let is_verb_kihonkei = token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(5).is_some_and(|f| f == "基本形");
 
@@ -3401,6 +3988,7 @@ pub fn nisaishite() -> Vec<TokenMatcher> {
             let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
 
             is_verb_kihonkei || is_noun
+            })
         }
     }
 
@@ -3408,10 +3996,13 @@ pub fn nisaishite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoRentaikaMatcher;
     impl Matcher for NoRentaikaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3437,10 +4028,13 @@ pub fn saini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SaiMatcher;
     impl Matcher for SaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "際"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "際"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3448,8 +4042,11 @@ pub fn saini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3457,10 +4054,13 @@ pub fn saini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoParticleMatcher;
     impl Matcher for NoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3492,10 +4092,13 @@ pub fn niatari_u30fb_niatatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiatariNiatatteMatcher;
     impl Matcher for NiatariNiatatteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "にあたり" || token.surface == "にあたって")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "にあたり" || token.surface == "にあたって")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3503,8 +4106,9 @@ pub fn niatari_u30fb_niatatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbOrNounMatcher;
     impl Matcher for VerbOrNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match verb in dictionary form
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match verb in dictionary form
             let is_verb_kihonkei = token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(5).is_some_and(|f| f == "基本形");
 
@@ -3512,6 +4116,7 @@ pub fn niatari_u30fb_niatatte() -> Vec<TokenMatcher> {
             let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
 
             is_verb_kihonkei || is_noun
+            })
         }
     }
 
@@ -3530,10 +4135,13 @@ pub fn wokeikini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoMatcher;
     impl Matcher for WoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3541,9 +4149,12 @@ pub fn wokeikini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KeikiMatcher;
     impl Matcher for KeikiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "契機"
-                && token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "契機"
+                && token.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3551,15 +4162,18 @@ pub fn wokeikini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiToshiteMatcher;
     impl Matcher for NiToshiteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // に (助詞/格助詞/一般)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
                 && token.pos.get(1).is_some_and(|p| p == "格助詞"))
-            // Or として (助詞/格助詞/連語)
+
             || (token.surface == "として"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞"))
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3567,10 +4181,13 @@ pub fn wokeikini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShiMatcher;
     impl Matcher for ShiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "し"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "し"
                 && token.base_form == "する"
-                && token.pos.first().is_some_and(|p| p == "動詞")
+                && token.pos.first().is_some_and(|p| p == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3578,10 +4195,13 @@ pub fn wokeikini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeMatcher;
     impl Matcher for TeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3603,18 +4223,21 @@ pub fn tsutsuaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TsutsuParticleMatcher;
     impl super::Matcher for TsutsuParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "つつ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "つつ"
                 && token.base_form == "つつ"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
-        TokenMatcher::verb_with_form("連用形"),
+        verb_form("連用形"),
         TokenMatcher::Custom(Arc::new(TsutsuParticleMatcher)),
-        TokenMatcher::specific_verb("ある"),
+        verb_base("ある"),
     ]
 }
 
@@ -3628,9 +4251,12 @@ pub fn uff5e_tokoroni_u30fb_uff5e_tokorohe() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeFormMatcher;
     impl Matcher for TeDeFormMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
-                && token.pos.first().is_some_and(|p| p == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|p| p == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3638,11 +4264,14 @@ pub fn uff5e_tokoroni_u30fb_uff5e_tokorohe() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IruMatcher;
     impl Matcher for IruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "いる"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "いる"
                 && token.pos.first().is_some_and(|p| p == "動詞")
                 && (token.features.get(5).is_some_and(|f| f == "基本形")
-                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+                    || token.features.get(5).is_some_and(|f| f == "連用形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3650,9 +4279,12 @@ pub fn uff5e_tokoroni_u30fb_uff5e_tokorohe() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TokoroMatcher;
     impl Matcher for TokoroMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ところ"
-                && token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ところ"
+                && token.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3660,10 +4292,13 @@ pub fn uff5e_tokoroni_u30fb_uff5e_tokorohe() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiHeParticleMatcher;
     impl Matcher for NiHeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "に" || token.surface == "へ")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "に" || token.surface == "へ")
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3689,13 +4324,16 @@ pub fn ka_u301c_naikanouchini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaParticleMatcher;
     impl Matcher for KaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "か"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "か"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token
                     .pos
                     .get(1)
-                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3703,10 +4341,13 @@ pub fn ka_u301c_naikanouchini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMatcher;
     impl Matcher for NaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && token.base_form == "ない"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3714,10 +4355,13 @@ pub fn ka_u301c_naikanouchini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoMatcher;
     impl Matcher for NoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3725,11 +4369,14 @@ pub fn ka_u301c_naikanouchini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct UchiMatcher;
     impl Matcher for UchiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "うち"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "うち"
                 && token.base_form == "うち"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3737,19 +4384,19 @@ pub fn ka_u301c_naikanouchini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiMatcher;
     impl Matcher for NiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
         // Verb in 基本形 (dictionary form)
-        TokenMatcher::Verb {
-            conjugation_form: Some("基本形"),
-            base_form: None,
-        },
+        verb_form("基本形"),
         // か particle
         TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
         // Optional wildcard for compound verbs (e.g., 飲み in 飲み終わる)
@@ -3757,14 +4404,11 @@ pub fn ka_u301c_naikanouchini() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 0,
             max: 1,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         },
         // Verb in 未然形 (negative stem)
         // TODO: Should verify same verb as first token, but TokenMatcher API doesn't support this
-        TokenMatcher::Verb {
-            conjugation_form: Some("未然形"),
-            base_form: None,
-        },
+        verb_form("未然形"),
         // ない auxiliary
         TokenMatcher::Custom(Arc::new(NaiMatcher)),
         // か particle (second occurrence)
@@ -3788,9 +4432,12 @@ pub fn gakeni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct GakeNounMatcher;
     impl Matcher for GakeNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface.ends_with("がけ")
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface.ends_with("がけ")
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3809,12 +4456,15 @@ pub fn teiteha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IRuyoukeiMatcher;
     impl super::Matcher for IRuyoukeiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "い"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "い"
                 && token.base_form == "いる"
                 && token.pos.first().is_some_and(|p| p == "動詞")
                 && token.pos.get(1).is_some_and(|p| p == "非自立")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3822,10 +4472,13 @@ pub fn teiteha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeParticleMatcher;
     impl super::Matcher for TeDeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3833,11 +4486,14 @@ pub fn teiteha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeParticleMatcher;
     impl super::Matcher for TeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.base_form == "て"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3845,11 +4501,14 @@ pub fn teiteha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaParticleMatcher;
     impl super::Matcher for HaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.base_form == "は"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3871,10 +4530,13 @@ pub fn tokorodatta_u2461() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TokoroMatcher;
     impl Matcher for TokoroMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ところ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ところ"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3883,10 +4545,13 @@ pub fn tokorodatta_u2461() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaDattaMatcher;
     impl Matcher for DaDattaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            ((token.surface == "だっ" && token.base_form == "だ")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if ((token.surface == "だっ" && token.base_form == "だ")
                 || (token.surface == "でし" && token.base_form == "です"))
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3909,10 +4574,13 @@ pub fn dokorodehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DokoroMatcher;
     impl Matcher for DokoroMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "どころ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "どころ"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3920,12 +4588,15 @@ pub fn dokorodehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeJaMatcher;
     impl Matcher for DeJaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // で (from だ): 助動詞/特殊・ダ/連用形
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "で" && token.base_form == "だ"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞"))
-            // じゃ: 助詞/副助詞
-            || (token.surface == "じゃ" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+
+            || (token.surface == "じゃ" && token.pos.first().is_some_and(|pos| pos == "助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3933,10 +4604,13 @@ pub fn dokorodehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaParticleMatcher;
     impl Matcher for HaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3944,14 +4618,16 @@ pub fn dokorodehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NegativeEndingMatcher;
     impl Matcher for NegativeEndingMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // ない (adjective or auxiliary verb)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // ない (adjective or auxiliary verb)
             (token.surface == "ない"
                 && (token.pos.first().is_some_and(|pos| pos == "形容詞")
                     || token.pos.first().is_some_and(|pos| pos == "助動詞")))
             // あり (ある in 連用形 for ありません)
             || (token.surface == "あり" && token.base_form == "ある"
                 && token.pos.first().is_some_and(|pos| pos == "動詞"))
+            })
         }
     }
 
@@ -3970,16 +4646,19 @@ pub fn dokorodehanai() -> Vec<TokenMatcher> {
 // Pattern: ぶりに (for the first time in [time period])
 // Structures: Noun + ぶり + だ/です/に/の
 pub fn burini() -> Vec<TokenMatcher> {
-    use super::Matcher;
+    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
 
     // Match ぶり as a suffix noun
     #[derive(Debug)]
     struct BuriMatcher;
     impl Matcher for BuriMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ぶり"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ぶり"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "接尾")
+                && token.pos.get(1).is_some_and(|p| p == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3987,8 +4666,11 @@ pub fn burini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TimeNounMatcher;
     impl Matcher for TimeNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -3996,15 +4678,18 @@ pub fn burini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct BuriFollowMatcher;
     impl Matcher for BuriFollowMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match に (格助詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "に" && token.pos.first().is_some_and(|p| p == "助詞"))
-            // Match の (連体化)
+
             || (token.surface == "の" && token.pos.first().is_some_and(|p| p == "助詞"))
-            // Match だ (助動詞)
+
             || (token.surface == "だ" && token.pos.first().is_some_and(|p| p == "助動詞"))
-            // Match です (助動詞)
-            || (token.surface == "です" && token.pos.first().is_some_and(|p| p == "助動詞"))
+
+            || (token.surface == "です" && token.pos.first().is_some_and(|p| p == "助動詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4027,10 +4712,13 @@ pub fn teha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaParticleMatcher;
     impl super::Matcher for HaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4038,10 +4726,13 @@ pub fn teha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct PrecedingElementMatcher;
     impl super::Matcher for PrecedingElementMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| {
                 pos == "動詞" || pos == "形容詞" || pos == "名詞" || pos == "助動詞"
-            })
+            }) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4049,8 +4740,9 @@ pub fn teha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeJaChaMatcher;
     impl super::Matcher for TeDeJaChaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match て or で as particles (after verb/adjective)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match て or で as particles (after verb/adjective)
             if (token.surface == "て" || token.surface == "で")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
             {
@@ -4072,6 +4764,7 @@ pub fn teha() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -4094,10 +4787,13 @@ pub fn teha_u301c_teha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeParticleMatcher;
     impl super::Matcher for TeDeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4105,10 +4801,13 @@ pub fn teha_u301c_teha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ChaJaParticleMatcher;
     impl super::Matcher for ChaJaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "ちゃ" || token.surface == "じゃ")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "ちゃ" || token.surface == "じゃ")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4116,10 +4815,13 @@ pub fn teha_u301c_teha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaKakariMatcher;
     impl super::Matcher for HaKakariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4127,8 +4829,9 @@ pub fn teha_u301c_teha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeOrCasualMatcher;
     impl super::Matcher for TeOrCasualMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            if !token.pos.first().is_some_and(|pos| pos == "助詞") {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                if !token.pos.first().is_some_and(|pos| pos == "助詞") {
                 return false;
             }
             if !token.pos.get(1).is_some_and(|pos| pos == "接続助詞") {
@@ -4138,6 +4841,7 @@ pub fn teha_u301c_teha() -> Vec<TokenMatcher> {
                 || token.surface == "で"
                 || token.surface == "ちゃ"
                 || token.surface == "じゃ"
+            })
         }
     }
 
@@ -4150,7 +4854,7 @@ pub fn teha_u301c_teha() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 0,
             max: 15,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         }, // Gap between patterns (0-15 tokens)
         super::flexible_verb_form(),                                                        // Second verb
         TokenMatcher::Custom(Arc::new(TeOrCasualMatcher)),                                  // て/で/ちゃ/じゃ
@@ -4164,19 +4868,25 @@ pub fn momata() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MoParticleMatcher;
     impl super::Matcher for MoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "も"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "も"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct MataMatcher;
     impl super::Matcher for MataMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "また"
-                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "また"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4213,10 +4923,13 @@ fn kekka_noun_matcher() -> TokenMatcher {
     #[derive(Debug)]
     struct KekkaMatcher;
     impl super::Matcher for KekkaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "結果"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "結果"
                 && token.base_form == "結果"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     TokenMatcher::Custom(Arc::new(KekkaMatcher))
@@ -4228,10 +4941,13 @@ fn no_particle_rentaika_matcher() -> TokenMatcher {
     #[derive(Debug)]
     struct NoParticleMatcher;
     impl super::Matcher for NoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     TokenMatcher::Custom(Arc::new(NoParticleMatcher))
@@ -4247,11 +4963,14 @@ pub fn irai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IraiMatcher;
     impl super::Matcher for IraiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "いらい" || token.surface == "以来")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "いらい" || token.surface == "以来")
                 && (token.base_form == "いらい" || token.base_form == "以来")
                 && (token.pos.first().is_some_and(|pos| pos == "副詞")
-                    || token.pos.first().is_some_and(|pos| pos == "名詞"))
+                    || token.pos.first().is_some_and(|pos| pos == "名詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4269,30 +4988,39 @@ pub fn nisakidachi() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiMatcher;
     impl Matcher for NiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct SakidatsuMatcher;
     impl Matcher for SakidatsuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "先立つ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "先立つ"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct TeMatcher;
     impl Matcher for TeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4311,10 +5039,13 @@ pub fn hatashite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HatashiteMatcher;
     impl super::Matcher for HatashiteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "はたして"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "はたして"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(HatashiteMatcher))]
@@ -4328,37 +5059,46 @@ pub fn kaigaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaiGaiMatcher;
     impl Matcher for KaiGaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // かい: 名詞/非自立/一般
-            // がい: 名詞/接尾/一般
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
+
             (token.surface == "かい" || token.surface == "がい")
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
                 && (token.pos.get(1).is_some_and(|pos| pos == "非自立")
-                    || token.pos.get(1).is_some_and(|pos| pos == "接尾"))
+                    || token.pos.get(1).is_some_and(|pos| pos == "接尾")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct GaMatcher;
     impl Matcher for GaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "が"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "が"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct AruNaiMatcher;
     impl Matcher for AruNaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // ある (動詞) or ない (形容詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.base_form == "ある"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "自立"))
                 || (token.surface == "ない"
                     && token.pos.first().is_some_and(|pos| pos == "形容詞")
-                    && token.pos.get(1).is_some_and(|pos| pos == "自立"))
+                    && token.pos.get(1).is_some_and(|pos| pos == "自立")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4379,11 +5119,14 @@ pub fn yagate() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct YagateMatcher;
     impl super::Matcher for YagateMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "やがて"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "やがて"
                 && token.base_form == "やがて"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4397,9 +5140,12 @@ pub fn shitagatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShitagatteMatcher;
     impl super::Matcher for ShitagatteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "したがって"
-                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "したがって"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(ShitagatteMatcher))]
@@ -4414,10 +5160,13 @@ pub fn ageku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct AgekuMatcher;
     impl super::Matcher for AgekuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "あげく"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "あげく"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞可能") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4425,8 +5174,11 @@ pub fn ageku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoParticleMatcher;
     impl super::Matcher for NoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の" && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4450,10 +5202,13 @@ pub fn kikkake() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoGaMatcher;
     impl Matcher for WoGaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "を" || token.surface == "が")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "を" || token.surface == "が")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4461,11 +5216,14 @@ pub fn kikkake() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KikkakeMatcher;
     impl Matcher for KikkakeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "きっかけ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "きっかけ"
                 && token.base_form == "きっかけ"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4473,10 +5231,13 @@ pub fn kikkake() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiDeMatcher;
     impl Matcher for NiDeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "に" || token.surface == "で")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "に" || token.surface == "で")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4495,22 +5256,28 @@ pub fn nikaketeha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NikaketeMatcher;
     impl Matcher for NikaketeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "にかけて"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "にかけて"
                 && token.base_form == "にかけて"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
-                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct WaKakariMatcher;
     impl Matcher for WaKakariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4529,11 +5296,14 @@ pub fn tokkuni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TokkuniMatcher;
     impl Matcher for TokkuniMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "とっくに"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "とっくに"
                 && token.base_form == "とっくに"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4556,10 +5326,13 @@ pub fn imadani() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ImadaOrImadaniMatcher;
     impl Matcher for ImadaOrImadaniMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "副詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "副詞")
                 && ((token.surface == "いまだに" && token.base_form == "いまだに")
-                    || (token.surface == "いまだ" && token.base_form == "いまだ"))
+                    || (token.surface == "いまだ" && token.base_form == "いまだ")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4567,10 +5340,13 @@ pub fn imadani() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiFukushikaMatcher;
     impl Matcher for NiFukushikaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副詞化")
+                && token.pos.get(1).is_some_and(|pos| pos == "副詞化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4596,10 +5372,13 @@ pub fn womotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoCaseMatcher;
     impl Matcher for WoCaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4607,10 +5386,13 @@ pub fn womotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MotoNounMatcher;
     impl Matcher for MotoNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "もと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "もと"
                 && token.base_form == "もと"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4618,10 +5400,13 @@ pub fn womotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiCaseMatcher;
     impl Matcher for NiCaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4643,11 +5428,14 @@ pub fn karaniha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaranihaMatcher;
     impl Matcher for KaranihaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "からには"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "からには"
                 && token.base_form == "からには"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4673,10 +5461,13 @@ pub fn itsunomanika() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ItsunomaniकaMatcher;
     impl super::Matcher for ItsunomaniकaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "いつのまにか"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "いつのまにか"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4689,10 +5480,13 @@ pub fn ittan() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IttanMatcher;
     impl Matcher for IttanMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "いったん"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "いったん"
                 && token.base_form == "いったん"
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(IttanMatcher))]
@@ -4704,21 +5498,27 @@ pub fn hamotoyori() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaKakariMatcher;
     impl Matcher for WaKakariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.base_form == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct MotoyoriMatcher;
     impl Matcher for MotoyoriMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "もとより"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "もとより"
                 && token.base_form == "もとより"
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4738,12 +5538,15 @@ pub fn souninai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SouAuxiliaryMatcher;
     impl Matcher for SouAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "そう"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "そう"
                 && token.base_form == "そう"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接尾")
-                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4751,12 +5554,15 @@ pub fn souninai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiMatcher;
     impl Matcher for NiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && (token.pos.get(1).is_some_and(|pos| pos == "副詞化")
-                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4764,11 +5570,14 @@ pub fn souninai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MoMatcher;
     impl Matcher for MoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "も"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "も"
                 && token.base_form == "も"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4776,11 +5585,14 @@ pub fn souninai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMatcher;
     impl Matcher for NaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && token.base_form == "ない"
                 && (token.pos.first().is_some_and(|pos| pos == "助動詞")
-                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4788,10 +5600,13 @@ pub fn souninai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ArimasenMatcher;
     impl Matcher for ArimasenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "あり"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "あり"
                 && token.base_form == "ある"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4813,11 +5628,14 @@ pub fn nihanshite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiCaseMatcher;
     impl Matcher for NiCaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4825,10 +5643,13 @@ pub fn nihanshite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HanshiOrHansuruMatcher;
     impl Matcher for HanshiOrHansuruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
                 && ((token.surface == "反し" && token.base_form == "反す")
-                    || (token.surface == "反する" && token.base_form == "反する"))
+                    || (token.surface == "反する" && token.base_form == "反する")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4836,11 +5657,14 @@ pub fn nihanshite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeMatcher;
     impl Matcher for TeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.base_form == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4858,22 +5682,28 @@ pub fn gyakuni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct GyakuNounMatcher;
     impl Matcher for GyakuNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "逆"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "逆"
                 && token.base_form == "逆"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NiCaseMatcher;
     impl Matcher for NiCaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4889,10 +5719,13 @@ pub fn hanmen() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HanmenMatcher;
     impl Matcher for HanmenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "反面"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "反面"
                 && token.base_form == "反面"
-                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+                && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4916,24 +5749,30 @@ pub fn nuku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NukuNonSelfStandingMatcher;
     impl super::Matcher for NukuNonSelfStandingMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ぬく as a non-self-standing verb (動詞/非自立)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             token.base_form == "ぬく"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct CompoundNukuVerbMatcher;
     impl super::Matcher for CompoundNukuVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match compound verbs ending in ぬく (like 知りぬく)
-            // These are tokenized as 動詞/自立 with base_form ending in ぬく
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
+
             token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "自立")
                 && token.base_form.ends_with("ぬく")
-                && token.base_form != "ぬく" // Exclude standalone ぬく
+                && token.base_form != "ぬく" => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4942,7 +5781,7 @@ pub fn nuku() -> Vec<TokenMatcher> {
     // 2. Compound verb ending in ぬく (single token)
     // We use TokenMatcher::Any for the first token to match verbs in 連用形
     vec![
-        TokenMatcher::verb_with_form("連用形"),
+        verb_form("連用形"),
         TokenMatcher::Custom(Arc::new(NukuNonSelfStandingMatcher)),
     ]
 }
@@ -4955,12 +5794,15 @@ pub fn nuku_compound() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct CompoundNukuVerbMatcher;
     impl super::Matcher for CompoundNukuVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match compound verbs ending in ぬく (like 知りぬく)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "自立")
                 && token.base_form.ends_with("ぬく")
-                && token.base_form != "ぬく" // Exclude standalone ぬく
+                && token.base_form != "ぬく" => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -4978,19 +5820,23 @@ pub fn nukide() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NukiNounMatcher;
     impl super::Matcher for NukiNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "抜き"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "抜き"
                 && token.base_form == "抜き"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NukideParticleMatcher;
     impl super::Matcher for NukideParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match で, に, または として
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match で, に, または として
             if token.surface == "で" || token.surface == "に" {
                 token.pos.first().is_some_and(|pos| pos == "助詞")
                     && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
@@ -5004,6 +5850,7 @@ pub fn nukide() -> Vec<TokenMatcher> {
             } else {
                 false
             }
+            })
         }
     }
 
@@ -5020,11 +5867,14 @@ pub fn iyoiyo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IyoiyoMatcher;
     impl Matcher for IyoiyoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "いよいよ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "いよいよ"
                 && token.base_form == "いよいよ"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(IyoiyoMatcher))]
@@ -5042,8 +5892,9 @@ pub fn zunisumu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NegativeAuxMatcher;
     impl super::Matcher for NegativeAuxMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            if !token.pos.first().is_some_and(|pos| pos == "助動詞") {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                if !token.pos.first().is_some_and(|pos| pos == "助動詞") {
                 return false;
             }
 
@@ -5067,6 +5918,7 @@ pub fn zunisumu() -> Vec<TokenMatcher> {
             }
 
             false
+            })
         }
     }
 
@@ -5074,9 +5926,12 @@ pub fn zunisumu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiTeDeParticleMatcher;
     impl super::Matcher for NiTeDeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "に" || token.surface == "て" || token.surface == "で")
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "に" || token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5084,9 +5939,12 @@ pub fn zunisumu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SumuMatcher;
     impl super::Matcher for SumuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "済む"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "済む"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5095,7 +5953,7 @@ pub fn zunisumu() -> Vec<TokenMatcher> {
     // 2. Verb[未然形] + なく + て + 済む
     // 3. Verb[未然形] + ない + で + 済む
     vec![
-        TokenMatcher::verb_with_form("未然形"),
+        verb_form("未然形"),
         TokenMatcher::Custom(Arc::new(NegativeAuxMatcher)),
         TokenMatcher::Custom(Arc::new(NiTeDeParticleMatcher)),
         TokenMatcher::Custom(Arc::new(SumuMatcher)),
@@ -5111,10 +5969,13 @@ pub fn nioujite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiCaseMatcher;
     impl Matcher for NiCaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5122,10 +5983,13 @@ pub fn nioujite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct OujiMatcher;
     impl Matcher for OujiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "応じる"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "応じる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5133,9 +5997,12 @@ pub fn nioujite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeTaMatcher;
     impl Matcher for TeTaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞"))
-                || (token.surface == "た" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+                || (token.surface == "た" && token.pos.first().is_some_and(|pos| pos == "助動詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5156,11 +6023,14 @@ pub fn wotsuujite_u30fb_wotooshite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WotsuujiteWotooshiteMatcher;
     impl Matcher for WotsuujiteWotooshiteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "を通じて" || token.surface == "を通して")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "を通じて" || token.surface == "を通して")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
-                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5179,9 +6049,12 @@ pub fn nikotaete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotaeruMatcher;
     impl super::Matcher for KotaeruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "こたえる"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "こたえる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5189,9 +6062,12 @@ pub fn nikotaete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeOrTaMatcher;
     impl super::Matcher for TeOrTaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞"))
-                || (token.surface == "た" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+                || (token.surface == "た" && token.pos.first().is_some_and(|pos| pos == "助動詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5220,10 +6096,13 @@ pub fn nishitara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiCaseMatcher;
     impl Matcher for NiCaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5231,11 +6110,14 @@ pub fn nishitara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SuruMatcher;
     impl Matcher for SuruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "する"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "する"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && (token.features.get(5).is_some_and(|form| form == "連用形")
-                    || token.features.get(5).is_some_and(|form| form == "仮定形"))
+                    || token.features.get(5).is_some_and(|form| form == "仮定形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5243,8 +6125,9 @@ pub fn nishitara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TaraBaMatcher;
     impl Matcher for TaraBaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match たら (助動詞, 仮定形, base=た)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match たら (助動詞, 仮定形, base=た)
             (token.surface == "たら"
                 && token.base_form == "た"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
@@ -5253,6 +6136,7 @@ pub fn nishitara() -> Vec<TokenMatcher> {
             || (token.surface == "ば"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
+            })
         }
     }
 
@@ -5275,20 +6159,26 @@ pub fn toshiteha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToshiteMatcher;
     impl Matcher for ToshiteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "として"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "として"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct HaParticleMatcher;
     impl Matcher for HaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5305,20 +6195,26 @@ pub fn toshitemo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToshiteMatcher;
     impl Matcher for ToshiteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "として"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "として"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct MoParticleMatcher;
     impl Matcher for MoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "も"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "も"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5335,9 +6231,12 @@ pub fn sorenishitemo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SorenishitemoMatcher;
     impl Matcher for SorenishitemoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "それにしても"
-                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "それにしても"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5353,11 +6252,14 @@ pub fn nu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ImperfectiveVerbMatcher;
     impl Matcher for ImperfectiveVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(5).is_some_and(|form| {
                     form == "未然形" || form == "未然ヌ接続"
-                })
+                }) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5365,10 +6267,13 @@ pub fn nu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NuAuxiliaryMatcher;
     impl Matcher for NuAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ぬ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ぬ"
                 && token.base_form == "ぬ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5388,9 +6293,12 @@ pub fn kotonaku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DictionaryVerbMatcher;
     impl Matcher for DictionaryVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "基本形")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5398,10 +6306,13 @@ pub fn kotonaku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoMatcher;
     impl Matcher for KotoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5409,10 +6320,13 @@ pub fn kotonaku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NakuMatcher;
     impl Matcher for NakuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なく"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なく"
                 && token.base_form == "ない"
-                && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.pos.first().is_some_and(|pos| pos == "形容詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5431,11 +6345,14 @@ pub fn nite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiteMatcher;
     impl Matcher for NiteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "にて"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "にて"
                 && token.base_form == "にて"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5453,22 +6370,28 @@ pub fn niha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiCaseMatcher;
     impl Matcher for NiCaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct HaParticleMatcher;
     impl Matcher for HaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.base_form == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5487,28 +6410,34 @@ pub fn omouyouni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct YouMatcher;
     impl Matcher for YouMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "よう"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "よう"
                 && token.base_form == "よう"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NiNaMatcher;
     impl Matcher for NiNaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "副詞化"))
                 || (token.surface == "な"
                     && token.base_form == "だ"
-                    && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+                    && token.pos.first().is_some_and(|pos| pos == "助動詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
-        TokenMatcher::specific_verb("思う"),
+        verb_base("思う"),
         TokenMatcher::Custom(Arc::new(YouMatcher)),
         TokenMatcher::Custom(Arc::new(NiNaMatcher)),
     ]
@@ -5525,9 +6454,12 @@ pub fn katoomottara_u30fb_katoomouto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaParticleMatcher;
     impl Matcher for KaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "か"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5535,10 +6467,13 @@ pub fn katoomottara_u30fb_katoomouto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToQuotativeMatcher;
     impl Matcher for ToQuotativeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "と"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "と"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5546,9 +6481,12 @@ pub fn katoomottara_u30fb_katoomouto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct OmouVerbMatcher;
     impl Matcher for OmouVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "思う"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "思う"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5556,8 +6494,9 @@ pub fn katoomottara_u30fb_katoomouto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ConditionalEndingMatcher;
     impl Matcher for ConditionalEndingMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // たら (助動詞 仮定形)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // たら (助動詞 仮定形)
             if token.surface == "たら" && token.base_form == "た"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞") {
                 return true;
@@ -5573,6 +6512,7 @@ pub fn katoomottara_u30fb_katoomouto() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -5580,9 +6520,12 @@ pub fn katoomottara_u30fb_katoomouto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoNominalizerMatcher;
     impl Matcher for NoNominalizerMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5590,13 +6533,15 @@ pub fn katoomottara_u30fb_katoomouto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct PredicateMatcher;
     impl Matcher for PredicateMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Verbs in base form, nouns, or adjectives
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Verbs in base form, nouns, or adjectives
             let is_verb = token.pos.first().is_some_and(|pos| pos == "動詞");
             let is_noun = token.pos.first().is_some_and(|pos| pos == "名詞");
             let is_adj = token.pos.first().is_some_and(|pos| pos == "形容詞");
 
             is_verb || is_noun || is_adj
+            })
         }
     }
 
@@ -5623,10 +6568,13 @@ pub fn toiumonodemonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToiuMatcher;
     impl Matcher for ToiuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "という"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "という"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5634,10 +6582,13 @@ pub fn toiumonodemonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MonoMatcher;
     impl Matcher for MonoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "もの"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "もの"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5645,15 +6596,18 @@ pub fn toiumonodemonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeJaMatcher;
     impl Matcher for DeJaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // で from だ (助動詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "で"
                 && token.base_form == "だ"
                 && token.pos.first().is_some_and(|p| p == "助動詞"))
-            // Or じゃ (助詞/副助詞)
+
             || (token.surface == "じゃ"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "副助詞"))
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5661,10 +6615,13 @@ pub fn toiumonodemonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MoHaParticleMatcher;
     impl Matcher for MoHaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "も" || token.surface == "は")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "も" || token.surface == "は")
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5672,8 +6629,9 @@ pub fn toiumonodemonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NegativeEndingMatcher;
     impl Matcher for NegativeEndingMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ない (either adjective after では/でも or auxiliary after じゃ)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match ない (either adjective after では/でも or auxiliary after じゃ)
             (token.surface == "ない"
                 && (token.pos.first().is_some_and(|p| p == "助動詞")
                     || token.pos.first().is_some_and(|p| p == "形容詞")))
@@ -5681,6 +6639,7 @@ pub fn toiumonodemonai() -> Vec<TokenMatcher> {
             || (token.base_form == "ある"
                 && (token.pos.first().is_some_and(|p| p == "動詞")
                     || token.pos.first().is_some_and(|p| p == "助動詞")))
+            })
         }
     }
 
@@ -5688,9 +6647,12 @@ pub fn toiumonodemonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MaseMatcher;
     impl Matcher for MaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ます"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ます"
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5698,9 +6660,12 @@ pub fn toiumonodemonai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NMatcher;
     impl Matcher for NMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ん"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ん"
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5728,10 +6693,13 @@ pub fn tokangaerareru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToQuotationMatcher;
     impl Matcher for ToQuotationMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "と"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "と"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5739,10 +6707,13 @@ pub fn tokangaerareru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KangaeMatcher;
     impl Matcher for KangaeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "考え"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "考え"
                 && token.base_form == "考える"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5750,11 +6721,14 @@ pub fn tokangaerareru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct RareruMatcher;
     impl Matcher for RareruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "られる" || token.surface == "られ")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "られる" || token.surface == "られ")
                 && token.base_form == "られる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5774,42 +6748,54 @@ pub fn toiutenkarakangaeruto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TenMatcher;
     impl Matcher for TenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "点"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "点"
                 && token.base_form == "点"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct KaraMatcher;
     impl Matcher for KaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.base_form == "から"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct KangaeruMatcher;
     impl Matcher for KangaeruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "考える"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "考える"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct ToMatcher;
     impl Matcher for ToMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "と"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "と"
                 && token.base_form == "と"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5820,7 +6806,7 @@ pub fn toiutenkarakangaeruto() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 1,
             max: 4,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         },
         TokenMatcher::Custom(Arc::new(TenMatcher)),
         TokenMatcher::Custom(Arc::new(KaraMatcher)),
@@ -5837,12 +6823,15 @@ pub fn toiukotoha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToiuMatcher;
     impl Matcher for ToiuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "という"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "という"
                 && token.base_form == "という"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
-                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5850,11 +6839,14 @@ pub fn toiukotoha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoMatcher;
     impl Matcher for KotoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.base_form == "こと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5862,11 +6854,14 @@ pub fn toiukotoha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaMatcher;
     impl Matcher for HaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.base_form == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5876,7 +6871,7 @@ pub fn toiukotoha() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 0,
             max: 5,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         },
         TokenMatcher::Custom(Arc::new(ToiuMatcher)),
         TokenMatcher::Custom(Arc::new(KotoMatcher)),
@@ -5893,10 +6888,13 @@ pub fn fuuni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct FuuMatcher;
     impl super::Matcher for FuuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ふう"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ふう"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5904,11 +6902,14 @@ pub fn fuuni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && (token.pos.get(1).is_some_and(|pos| pos == "副詞化")
-                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5928,11 +6929,14 @@ pub fn toiukazeni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToiuMatcher;
     impl super::Matcher for ToiuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "という"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "という"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
-                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+                && token.pos.get(2).is_some_and(|pos| pos == "連語") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5940,10 +6944,13 @@ pub fn toiukazeni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct FuuMatcher;
     impl super::Matcher for FuuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ふう"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ふう"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5951,11 +6958,14 @@ pub fn toiukazeni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && (token.pos.get(1).is_some_and(|pos| pos == "副詞化")
-                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
+                    || token.pos.get(1).is_some_and(|pos| pos == "格助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5963,7 +6973,7 @@ pub fn toiukazeni() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 1,
             max: 10,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         }, // Content being quoted (verb, clause, etc.) - at least 1 token for meaningful context
         TokenMatcher::Custom(Arc::new(ToiuMatcher)),
         TokenMatcher::Custom(Arc::new(FuuMatcher)),
@@ -5980,10 +6990,13 @@ pub fn monono() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MononoMatcher;
     impl super::Matcher for MononoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ものの"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ものの"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6002,10 +7015,13 @@ pub fn toiumonoda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToiuTteMatcher;
     impl super::Matcher for ToiuTteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "という" || token.surface == "って")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "という" || token.surface == "って")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6013,10 +7029,13 @@ pub fn toiumonoda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MonoMatcher;
     impl super::Matcher for MonoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "もの"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "もの"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6024,9 +7043,12 @@ pub fn toiumonoda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaDesuMatcher;
     impl super::Matcher for DaDesuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "だ" || token.surface == "です")
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6046,10 +7068,13 @@ pub fn karamiruto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaraMatcher;
     impl super::Matcher for KaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6057,10 +7082,13 @@ pub fn karamiruto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MiruVerbMatcher;
     impl super::Matcher for MiruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "みる"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "みる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6068,8 +7096,9 @@ pub fn karamiruto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct EndingMatcher;
     impl super::Matcher for EndingMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // と or ば or て (all connective particles)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // と or ば or て (all connective particles)
             if (token.surface == "と" || token.surface == "ば" || token.surface == "て")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
@@ -6084,6 +7113,7 @@ pub fn karamiruto() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -6104,10 +7134,13 @@ pub fn tokorowomiruto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TokoroMatcher;
     impl super::Matcher for TokoroMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ところ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ところ"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6115,10 +7148,13 @@ pub fn tokorowomiruto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoMatcher;
     impl super::Matcher for WoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6126,10 +7162,13 @@ pub fn tokorowomiruto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MiruMatcher;
     impl super::Matcher for MiruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "みる" || token.surface == "見る")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "みる" || token.surface == "見る")
                 && token.base_form == "みる"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6137,10 +7176,13 @@ pub fn tokorowomiruto() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToMatcher;
     impl super::Matcher for ToMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "と"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "と"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6162,10 +7204,13 @@ pub fn karasuruto_u30fb_karasureba() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaraMatcher;
     impl super::Matcher for KaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6173,12 +7218,15 @@ pub fn karasuruto_u30fb_karasureba() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SuruVerbMatcher;
     impl super::Matcher for SuruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "する"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "する"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "自立")
                 && (token.features.get(5).is_some_and(|f| f == "基本形")
-                    || token.features.get(5).is_some_and(|f| f == "仮定形"))
+                    || token.features.get(5).is_some_and(|f| f == "仮定形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6186,10 +7234,13 @@ pub fn karasuruto_u30fb_karasureba() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToOrBaMatcher;
     impl super::Matcher for ToOrBaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "と" || token.surface == "ば")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "と" || token.surface == "ば")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6210,11 +7261,14 @@ pub fn karashite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaraMatcher;
     impl Matcher for KaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.base_form == "から"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6222,11 +7276,14 @@ pub fn karashite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShiMatcher;
     impl Matcher for ShiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "し"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "し"
                 && token.base_form == "する"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6234,11 +7291,14 @@ pub fn karashite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeMatcher;
     impl Matcher for TeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.base_form == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6259,11 +7319,14 @@ pub fn karatoitte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaraConnectiveMatcher;
     impl Matcher for KaraConnectiveMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.base_form == "から"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6271,12 +7334,15 @@ pub fn karatoitte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToQuotationMatcher;
     impl Matcher for ToQuotationMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "と"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "と"
                 && token.base_form == "と"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
-                && token.pos.get(2).is_some_and(|pos| pos == "引用")
+                && token.pos.get(2).is_some_and(|pos| pos == "引用") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6284,9 +7350,12 @@ pub fn karatoitte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IuVerbMatcher;
     impl Matcher for IuVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "いう"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "いう"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6294,11 +7363,14 @@ pub fn karatoitte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeConnectiveMatcher;
     impl Matcher for TeConnectiveMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.base_form == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6320,9 +7392,12 @@ pub fn souieba() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SouAdverbMatcher;
     impl Matcher for SouAdverbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "そう"
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "そう"
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6330,11 +7405,14 @@ pub fn souieba() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IebaVerbMatcher;
     impl Matcher for IebaVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "いえ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "いえ"
                 && token.base_form == "いう"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "仮定形")
+                && token.features.get(5).is_some_and(|f| f == "仮定形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6342,10 +7420,13 @@ pub fn souieba() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct BaParticleMatcher;
     impl Matcher for BaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ば"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ば"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6368,10 +7449,13 @@ pub fn o_uff5e_negau() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct OGoMatcher;
     impl Matcher for OGoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "お" || token.surface == "ご")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "お" || token.surface == "ご")
                 && token.pos.first().is_some_and(|pos| pos == "接頭詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "名詞接続")
+                && token.pos.get(1).is_some_and(|pos| pos == "名詞接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6380,8 +7464,9 @@ pub fn o_uff5e_negau() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbOrNounMatcher;
     impl Matcher for VerbOrNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Verb in conjunctive form (連用形)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Verb in conjunctive form (連用形)
             let is_verb_stem = token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(5).is_some_and(|f| f == "連用形");
 
@@ -6390,6 +7475,7 @@ pub fn o_uff5e_negau() -> Vec<TokenMatcher> {
                 && token.pos.get(1).is_some_and(|pos| pos == "サ変接続");
 
             is_verb_stem || is_sahen_noun
+            })
         }
     }
 
@@ -6397,11 +7483,14 @@ pub fn o_uff5e_negau() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NegauVerbMatcher;
     impl Matcher for NegauVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "願う"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "願う"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && (token.pos.get(1).is_some_and(|pos| pos == "非自立")
-                    || token.pos.get(1).is_some_and(|pos| pos == "自立"))
+                    || token.pos.get(1).is_some_and(|pos| pos == "自立")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6409,9 +7498,12 @@ pub fn o_uff5e_negau() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MasuMatcher;
     impl Matcher for MasuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ます"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ます"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6426,17 +7518,20 @@ pub fn o_uff5e_negau() -> Vec<TokenMatcher> {
 // Pattern: ～て頂戴 (please do - casual/feminine request)
 // Structures: Verb[て/で] + 頂戴/ちょうだい
 pub fn uff5e_techoudai() -> Vec<TokenMatcher> {
-    use super::Matcher;
+    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
     use std::sync::Arc;
 
     // Match て or で (conjunction particle after verb)
     #[derive(Debug)]
     struct TeDeParticleMatcher;
     impl Matcher for TeDeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6444,10 +7539,13 @@ pub fn uff5e_techoudai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ChoudaiMatcher;
     impl Matcher for ChoudaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "ちょうだい" || token.surface == "頂戴")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "ちょうだい" || token.surface == "頂戴")
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "動詞非自立的")
+                && token.pos.get(1).is_some_and(|p| p == "動詞非自立的") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6467,11 +7565,14 @@ pub fn toka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToQuotationMatcher;
     impl Matcher for ToQuotationMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "と"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "と"
                 && token.pos.first().is_some_and(|p| p == "助詞")
                 && token.pos.get(1).is_some_and(|p| p == "格助詞")
-                && token.pos.get(2).is_some_and(|p| p == "引用")
+                && token.pos.get(2).is_some_and(|p| p == "引用") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6479,13 +7580,16 @@ pub fn toka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaParticleMatcher;
     impl Matcher for KaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "か"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "か"
                 && token.pos.first().is_some_and(|p| p == "助詞")
                 && token
                     .pos
                     .get(1)
-                    .is_some_and(|p| p == "副助詞／並立助詞／終助詞")
+                    .is_some_and(|p| p == "副助詞／並立助詞／終助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6508,10 +7612,13 @@ pub fn u301c_youdehanaika() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VolitionalVerbMatcher;
     impl Matcher for VolitionalVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
-                && (token.features.get(5).is_some_and(|f| f == "未然ウ接続") // Godan: 戦お
-                    || token.features.get(5).is_some_and(|f| f == "連用形"))  // Ichidan: 考え
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && (token.features.get(5).is_some_and(|f| f == "未然ウ接続")
+                    || token.features.get(5).is_some_and(|f| f == "連用形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6519,16 +7626,19 @@ pub fn u301c_youdehanaika() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VolitionalAuxiliaryMatcher;
     impl Matcher for VolitionalAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // う auxiliary (godan verbs: 戦おう)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "う"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
                 && token.base_form == "う")
             ||
-            // よう suffix (ichidan verbs: 考えよう)
+
             (token.surface == "よう"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接尾"))
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6536,21 +7646,24 @@ pub fn u301c_youdehanaika() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeOrJaMatcher;
     impl Matcher for DeOrJaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // で from だ (copula) - used after godan verbs
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "で"
                 && token.base_form == "だ"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞"))
             ||
-            // で as case particle - used after よう (noun suffix) in ichidan verbs
+
             (token.surface == "で"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞"))
             ||
-            // じゃ (abbreviated)
+
             (token.surface == "じゃ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6558,10 +7671,13 @@ pub fn u301c_youdehanaika() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaParticleMatcher;
     impl Matcher for HaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6569,10 +7685,13 @@ pub fn u301c_youdehanaika() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiAuxiliaryMatcher;
     impl Matcher for NaiAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.base_form == "ない"
+                && token.base_form == "ない" => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6580,9 +7699,12 @@ pub fn u301c_youdehanaika() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaParticleMatcher;
     impl Matcher for KaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "か"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "か"
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6605,13 +7727,16 @@ pub fn kanoyouda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaMatcher;
     impl Matcher for KaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "か"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "か"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token
                     .pos
                     .get(1)
-                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6619,10 +7744,13 @@ pub fn kanoyouda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoMatcher;
     impl Matcher for NoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6630,12 +7758,15 @@ pub fn kanoyouda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct YouMatcher;
     impl Matcher for YouMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "よう"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "よう"
                 && token.base_form == "よう"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "非自立")
-                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹")
+                && token.pos.get(2).is_some_and(|pos| pos == "助動詞語幹") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6643,8 +7774,9 @@ pub fn kanoyouda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct EndingMatcher;
     impl Matcher for EndingMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // だ or です (auxiliary verb)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // だ or です (auxiliary verb)
             if (token.surface == "だ" || token.surface == "です")
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
             {
@@ -6669,6 +7801,7 @@ pub fn kanoyouda() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -6692,11 +7825,14 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaCopulaMatcher;
     impl super::Matcher for NaCopulaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "な"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "な"
                 && token.pos.first().is_some_and(|f| f == "助動詞")
                 && token.base_form == "だ"
-                && token.features.get(5).is_some_and(|f| f == "体言接続")
+                && token.features.get(5).is_some_and(|f| f == "体言接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6704,10 +7840,13 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoOrNMatcher;
     impl super::Matcher for NoOrNMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "の" || token.surface == "ん")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "の" || token.surface == "ん")
                 && token.pos.first().is_some_and(|f| f == "名詞")
-                && token.pos.get(1).is_some_and(|f| f == "非自立")
+                && token.pos.get(1).is_some_and(|f| f == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6715,8 +7854,9 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeOrJaMatcher;
     impl super::Matcher for DeOrJaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            if token.surface == "で" {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                if token.surface == "で" {
                 token.pos.first().is_some_and(|f| f == "助動詞")
                     && token.base_form == "だ"
                     && token.features.get(5).is_some_and(|f| f == "連用形")
@@ -6726,6 +7866,7 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
             } else {
                 false
             }
+            })
         }
     }
 
@@ -6733,10 +7874,13 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaParticleMatcher;
     impl super::Matcher for WaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|f| f == "助詞")
-                && token.pos.get(1).is_some_and(|f| f == "係助詞")
+                && token.pos.get(1).is_some_and(|f| f == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6744,10 +7888,13 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiAuxMatcher;
     impl super::Matcher for NaiAuxMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && token.pos.first().is_some_and(|f| f == "助動詞")
-                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6755,11 +7902,14 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaroOrDeshoMatcher;
     impl super::Matcher for DaroOrDeshoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|f| f == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|f| f == "助動詞")
                 && token.features.get(5).is_some_and(|f| f == "未然形")
                 && ((token.surface == "だろ" && token.base_form == "だ")
-                    || (token.surface == "でしょ" && token.base_form == "です"))
+                    || (token.surface == "でしょ" && token.base_form == "です")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6767,10 +7917,13 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct UMatcher;
     impl super::Matcher for UMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "う"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "う"
                 && token.pos.first().is_some_and(|f| f == "助動詞")
-                && token.features.get(4).is_some_and(|f| f == "不変化型")
+                && token.features.get(4).is_some_and(|f| f == "不変化型") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6778,10 +7931,13 @@ pub fn nodehanaidarouka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaParticleMatcher;
     impl super::Matcher for KaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "か"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "か"
                 && token.pos.first().is_some_and(|f| f == "助詞")
-                && token.pos.get(1).is_some_and(|f| f == "副助詞／並立助詞／終助詞")
+                && token.pos.get(1).is_some_and(|f| f == "副助詞／並立助詞／終助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6804,8 +7960,9 @@ pub fn tetouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbOrAdjTeFormMatcher;
     impl Matcher for VerbOrAdjTeFormMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match verb in 連用形 or 連用タ接続 (て form precursor)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match verb in 連用形 or 連用タ接続 (て form precursor)
             let is_verb = token.pos.first().is_some_and(|p| p == "動詞")
                 && (token.features.get(5).is_some_and(|f| f == "連用形")
                     || token.features.get(5).is_some_and(|f| f == "連用タ接続"));
@@ -6819,6 +7976,7 @@ pub fn tetouzenda() -> Vec<TokenMatcher> {
                 && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹");
 
             is_verb || is_i_adj || is_na_adj
+            })
         }
     }
 
@@ -6826,8 +7984,9 @@ pub fn tetouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeMatcher;
     impl Matcher for TeDeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // て particle (used with verbs and い-Adjectives)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // て particle (used with verbs and い-Adjectives)
             let is_te = token.surface == "て"
                 && token.pos.first().is_some_and(|p| p == "助詞")
                 && token.pos.get(1).is_some_and(|p| p == "接続助詞");
@@ -6838,6 +7997,7 @@ pub fn tetouzenda() -> Vec<TokenMatcher> {
                 && token.base_form == "だ";
 
             is_te || is_de
+            })
         }
     }
 
@@ -6845,9 +8005,12 @@ pub fn tetouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TouzenMatcher;
     impl Matcher for TouzenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "当然"
-                && token.pos.first().is_some_and(|p| p == "副詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "当然"
+                && token.pos.first().is_some_and(|p| p == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6855,9 +8018,12 @@ pub fn tetouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaDesuMatcher;
     impl Matcher for DaDesuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "助動詞")
-                && (token.surface == "だ" || token.surface == "です")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "助動詞")
+                && (token.surface == "だ" || token.surface == "です") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6876,8 +8042,9 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbOrIAdjMatcher;
     impl Matcher for VerbOrIAdjMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match verb in 基本形 (dictionary form)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match verb in 基本形 (dictionary form)
             let is_verb = token.pos.first().is_some_and(|p| p == "動詞")
                 && token.features.get(5).is_some_and(|f| f == "基本形");
 
@@ -6886,6 +8053,7 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
                 && token.features.get(5).is_some_and(|f| f == "基本形");
 
             is_verb || is_i_adj
+            })
         }
     }
 
@@ -6893,8 +8061,9 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaAdjOrNounMatcher;
     impl Matcher for NaAdjOrNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match な-Adjective (名詞/形容動詞語幹)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match な-Adjective (名詞/形容動詞語幹)
             let is_na_adj = token.pos.first().is_some_and(|p| p == "名詞")
                 && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹");
 
@@ -6903,6 +8072,7 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
                 && !token.pos.get(1).is_some_and(|p| p == "非自立"); // Exclude non-independent nouns
 
             is_na_adj || is_noun
+            })
         }
     }
 
@@ -6910,10 +8080,13 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaCopulaMatcher;
     impl Matcher for NaCopulaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "な"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "な"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "体言接続")
+                && token.features.get(5).is_some_and(|f| f == "体言接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6921,10 +8094,13 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoNominalizerMatcher;
     impl Matcher for NoNominalizerMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6932,10 +8108,13 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaMoParticleMatcher;
     impl Matcher for HaMoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "は" || token.surface == "も")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "は" || token.surface == "も")
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6943,9 +8122,12 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TouzenMatcher;
     impl Matcher for TouzenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "当然"
-                && token.pos.first().is_some_and(|p| p == "副詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "当然"
+                && token.pos.first().is_some_and(|p| p == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6953,9 +8135,12 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaDesuMatcher;
     impl Matcher for DaDesuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "助動詞")
-                && (token.surface == "だ" || token.surface == "です")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "助動詞")
+                && (token.surface == "だ" || token.surface == "です") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -6963,8 +8148,9 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct FirstTokenMatcher;
     impl Matcher for FirstTokenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match verb in 基本形 (dictionary form)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match verb in 基本形 (dictionary form)
             let is_verb = token.pos.first().is_some_and(|p| p == "動詞")
                 && token.features.get(5).is_some_and(|f| f == "基本形");
 
@@ -6982,6 +8168,7 @@ pub fn nomotouzenda() -> Vec<TokenMatcher> {
                 && !token.pos.get(1).is_some_and(|p| p == "代名詞");
 
             is_verb || is_i_adj || is_na_adj || is_noun
+            })
         }
     }
 
@@ -7016,21 +8203,27 @@ pub fn tatta_no() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NumberMatcher;
     impl Matcher for NumberMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.features.first().is_some_and(|f| f == "名詞")
-                && token.features.get(1).is_some_and(|f| f == "数")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.features.first().is_some_and(|f| f == "名詞")
+                && token.features.get(1).is_some_and(|f| f == "数") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NumberOrCounterMatcher;
     impl Matcher for NumberOrCounterMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match additional numbers (like ０ in １０) or counters (like 人, 分, メートル)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             token.features.first().is_some_and(|f| f == "名詞")
                 && (token.features.get(1).is_some_and(|f| f == "数")
                     || (token.features.get(1).is_some_and(|f| f == "接尾")
-                        && token.features.get(2).is_some_and(|f| f == "助数詞")))
+                        && token.features.get(2).is_some_and(|f| f == "助数詞"))) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7053,17 +8246,20 @@ pub fn osoregaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct OsoreMatcher;
     impl Matcher for OsoreMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "恐れ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "恐れ"
                 && token.base_form == "恐れ"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
         TokenMatcher::Custom(Arc::new(OsoreMatcher)),
         TokenMatcher::Surface("が"),
-        TokenMatcher::specific_verb("ある"),
+        verb_base("ある"),
     ]
 }
 
@@ -7073,11 +8269,14 @@ pub fn osoraku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct OsorakuMatcher;
     impl Matcher for OsorakuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "おそらく"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "おそらく"
                 && token.base_form == "おそらく"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(OsorakuMatcher))]
@@ -7091,17 +8290,21 @@ pub fn monoka() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbOrAdjOrNounMatcher;
     impl Matcher for VerbOrAdjOrNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match Verb, い-Adj, な-Adj (形容動詞語幹), or Noun
-            token.features.first().is_some_and(|f| f == "動詞" || f == "形容詞" || f == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
+            token.features.first().is_some_and(|f| f == "動詞" || f == "形容詞" || f == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NaOrTaCopulaMatcher;
     impl Matcher for NaOrTaCopulaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match な (体言接続) or た (past auxiliary)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "な"
                 && token.base_form == "だ"
                 && token.features.first().is_some_and(|f| f == "助動詞")
@@ -7110,26 +8313,34 @@ pub fn monoka() -> Vec<TokenMatcher> {
             || (token.surface == "た"
                 && token.base_form == "た"
                 && token.features.first().is_some_and(|f| f == "助動詞")
-                && token.features.get(4).is_some_and(|f| f == "特殊・タ"))
+                && token.features.get(4).is_some_and(|f| f == "特殊・タ")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct MonoMatcher;
     impl Matcher for MonoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "もの" || token.surface == "もん")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "もの" || token.surface == "もん")
                 && token.features.first().is_some_and(|f| f == "名詞")
-                && token.features.get(1).is_some_and(|f| f == "非自立")
+                && token.features.get(1).is_some_and(|f| f == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct KaParticleMatcher;
     impl Matcher for KaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "か"
-                && token.features.first().is_some_and(|f| f == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "か"
+                && token.features.first().is_some_and(|f| f == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7150,19 +8361,25 @@ pub fn omakeni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct OmakeMatcher;
     impl super::Matcher for OmakeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "おまけ"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "おまけ"
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7181,10 +8398,13 @@ pub fn nikimatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "格助詞")
+                && token.features.get(1).is_some_and(|f| f == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7192,11 +8412,14 @@ pub fn nikimatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KimatsuMatcher;
     impl Matcher for KimatsuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "決まっ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "決まっ"
                 && token.base_form == "決まる"
                 && token.features.first().is_some_and(|f| f == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7204,16 +8427,19 @@ pub fn nikimatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeOrTeruMatcher;
     impl Matcher for TeOrTeruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // て particle
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "て"
                 && token.features.first().is_some_and(|f| f == "助詞")
                 && token.features.get(1).is_some_and(|f| f == "接続助詞"))
-            // OR てる casual form
+
             || (token.surface == "てる"
                 && token.base_form == "てる"
                 && token.features.first().is_some_and(|f| f == "動詞")
-                && token.features.get(1).is_some_and(|f| f == "非自立"))
+                && token.features.get(1).is_some_and(|f| f == "非自立")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7221,11 +8447,14 @@ pub fn nikimatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IruMatcher;
     impl Matcher for IruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "いる" || token.surface == "い")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "いる" || token.surface == "い")
                 && token.base_form == "いる"
                 && token.features.first().is_some_and(|f| f == "動詞")
-                && token.features.get(1).is_some_and(|f| f == "非自立")
+                && token.features.get(1).is_some_and(|f| f == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7233,11 +8462,14 @@ pub fn nikimatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MasuMatcher;
     impl Matcher for MasuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ます"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ます"
                 && token.base_form == "ます"
                 && token.features.first().is_some_and(|f| f == "助動詞")
-                && token.features.get(4).is_some_and(|f| f == "特殊・マス")
+                && token.features.get(4).is_some_and(|f| f == "特殊・マス") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7265,11 +8497,14 @@ pub fn kotoninatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoMatcher;
     impl Matcher for KotoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.base_form == "こと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7277,11 +8512,14 @@ pub fn kotoninatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiMatcher;
     impl Matcher for NiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7289,9 +8527,12 @@ pub fn kotoninatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaruMatcher;
     impl Matcher for NaruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "なる"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "なる"
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7299,11 +8540,14 @@ pub fn kotoninatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeMatcher;
     impl Matcher for TeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.base_form == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7312,10 +8556,13 @@ pub fn kotoninatteiru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IruMatcher;
     impl Matcher for IruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "いる"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "いる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7337,9 +8584,12 @@ pub fn ki() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbDictionaryFormMatcher;
     impl super::Matcher for VerbDictionaryFormMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "基本形")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7347,10 +8597,13 @@ pub fn ki() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KiMatcher;
     impl super::Matcher for KiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "気"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "気"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7369,12 +8622,15 @@ pub fn ge() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct GeMatcher;
     impl Matcher for GeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "げ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "げ"
                 && token.base_form == "げ"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接尾")
-                && token.pos.get(2).is_some_and(|pos| pos == "一般")
+                && token.pos.get(2).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7382,8 +8638,9 @@ pub fn ge() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiNaMatcher;
     impl Matcher for NiNaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // に (case particle)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // に (case particle)
             if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
@@ -7402,6 +8659,7 @@ pub fn ge() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -7421,11 +8679,14 @@ pub fn kotodakara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoMatcher;
     impl Matcher for KotoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.base_form == "こと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7433,10 +8694,13 @@ pub fn kotodakara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaDesuMatcher;
     impl Matcher for DaDesuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "だ" || token.surface == "です")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "だ" || token.surface == "です")
                 && (token.base_form == "だ" || token.base_form == "です")
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7444,11 +8708,14 @@ pub fn kotodakara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaraMatcher;
     impl Matcher for KaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.base_form == "から"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7468,11 +8735,14 @@ pub fn monodakara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaCopulaMatcher;
     impl super::Matcher for NaCopulaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "な"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "な"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
                 && token.base_form == "だ"
-                && token.features.get(5).is_some_and(|f| f == "体言接続")
+                && token.features.get(5).is_some_and(|f| f == "体言接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7480,10 +8750,13 @@ pub fn monodakara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MonoMatcher;
     impl super::Matcher for MonoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "もの" || token.surface == "もん")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "もの" || token.surface == "もん")
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7491,11 +8764,14 @@ pub fn monodakara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaOrDeMatcher;
     impl super::Matcher for DaOrDeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "助動詞")
                 && token.base_form == "だ"
                 && ((token.surface == "だ" && token.features.get(5).is_some_and(|f| f == "基本形"))
-                    || (token.surface == "で" && token.features.get(5).is_some_and(|f| f == "連用形")))
+                    || (token.surface == "で" && token.features.get(5).is_some_and(|f| f == "連用形"))) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7503,10 +8779,13 @@ pub fn monodakara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaraMatcher;
     impl super::Matcher for KaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7531,11 +8810,14 @@ pub fn monodesukara_u30fb_monode() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaCopulaMatcher;
     impl super::Matcher for NaCopulaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "な"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "な"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
                 && token.base_form == "だ"
-                && token.features.get(5).is_some_and(|f| f == "体言接続")
+                && token.features.get(5).is_some_and(|f| f == "体言接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7543,10 +8825,13 @@ pub fn monodesukara_u30fb_monode() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MonoMatcher;
     impl super::Matcher for MonoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "もの" || token.surface == "もん")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "もの" || token.surface == "もん")
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7556,11 +8841,14 @@ pub fn monodesukara_u30fb_monode() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DesuMatcher;
     impl super::Matcher for DesuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "です"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "です"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
                 && token.base_form == "です"
-                && token.features.get(5).is_some_and(|f| f == "基本形")
+                && token.features.get(5).is_some_and(|f| f == "基本形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7568,10 +8856,13 @@ pub fn monodesukara_u30fb_monode() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaraMatcher;
     impl super::Matcher for KaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7596,11 +8887,14 @@ pub fn monogaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaCopulaMatcher;
     impl super::Matcher for NaCopulaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "な"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "な"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
                 && token.base_form == "だ"
-                && token.features.get(5).is_some_and(|f| f == "体言接続")
+                && token.features.get(5).is_some_and(|f| f == "体言接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7608,10 +8902,13 @@ pub fn monogaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MonoMatcher;
     impl super::Matcher for MonoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "もの"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "もの"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7619,10 +8916,13 @@ pub fn monogaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct GaMatcher;
     impl super::Matcher for GaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "が"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "が"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7631,10 +8931,13 @@ pub fn monogaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct AruMatcher;
     impl super::Matcher for AruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ある"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ある"
                 && token.pos.first().is_some_and(|p| p == "動詞")
-                && token.pos.get(1).is_some_and(|p| p == "自立")
+                && token.pos.get(1).is_some_and(|p| p == "自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7642,10 +8945,13 @@ pub fn monogaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MasuMatcher;
     impl super::Matcher for MasuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ます"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ます"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
-                && token.base_form == "ます"
+                && token.base_form == "ます" => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7666,17 +8972,20 @@ pub fn keikougaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KeikouMatcher;
     impl Matcher for KeikouMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "傾向"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "傾向"
                 && token.base_form == "傾向"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     vec![
         TokenMatcher::Custom(Arc::new(KeikouMatcher)),
         TokenMatcher::Surface("が"),
-        TokenMatcher::specific_verb("ある"),
+        verb_base("ある"),
     ]
 }
 
@@ -7689,8 +8998,9 @@ pub fn uff5e_niataisuru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbOrNounMatcher;
     impl Matcher for VerbOrNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match verbs in dictionary form (基本形)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match verbs in dictionary form (基本形)
             if token.pos.first().is_some_and(|p| p == "動詞")
                 && token.features.get(5).is_some_and(|f| f == "基本形")
             {
@@ -7698,6 +9008,7 @@ pub fn uff5e_niataisuru() -> Vec<TokenMatcher> {
             }
             // Match nouns
             token.pos.first().is_some_and(|p| p == "名詞")
+            })
         }
     }
 
@@ -7705,10 +9016,13 @@ pub fn uff5e_niataisuru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7716,8 +9030,11 @@ pub fn uff5e_niataisuru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct AtaisuruMatcher;
     impl Matcher for AtaisuruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "値する" && token.pos.first().is_some_and(|p| p == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "値する" && token.pos.first().is_some_and(|p| p == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7737,10 +9054,13 @@ pub fn teshouganai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeMatcher;
     impl Matcher for TeDeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "接続助詞")
+                && token.features.get(1).is_some_and(|f| f == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7748,10 +9068,13 @@ pub fn teshouganai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShougaMatcher;
     impl Matcher for ShougaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "しょうが"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "しょうが"
                 && token.features.first().is_some_and(|f| f == "名詞")
-                && token.features.get(1).is_some_and(|f| f == "ナイ形容詞語幹")
+                && token.features.get(1).is_some_and(|f| f == "ナイ形容詞語幹") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7759,10 +9082,13 @@ pub fn teshouganai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiAuxMatcher;
     impl Matcher for NaiAuxMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && token.features.first().is_some_and(|f| f == "助動詞")
-                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ")
+                && token.features.get(4).is_some_and(|f| f == "特殊・ナイ") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7782,10 +9108,13 @@ pub fn dakemashida() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DakeParticleMatcher;
     impl Matcher for DakeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "だけ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "だけ"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "副助詞")
+                && token.features.get(1).is_some_and(|f| f == "副助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7793,11 +9122,14 @@ pub fn dakemashida() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MashiAuxMatcher;
     impl Matcher for MashiAuxMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "まし"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "まし"
                 && token.features.first().is_some_and(|f| f == "助動詞")
                 && token.base_form == "ます"
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7805,11 +9137,14 @@ pub fn dakemashida() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaDesuEndingMatcher;
     impl Matcher for DaDesuEndingMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.features.first().is_some_and(|f| f == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.features.first().is_some_and(|f| f == "助動詞")
                 && token.features.get(5).is_some_and(|f| f == "基本形")
                 && ((token.surface == "だ" && token.base_form == "だ")
-                    || (token.surface == "です" && token.base_form == "です"))
+                    || (token.surface == "です" && token.base_form == "です")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7830,10 +9165,13 @@ pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SaiwaiAdvMatcher;
     impl Matcher for SaiwaiAdvMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "幸い"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "幸い"
                 && token.features.first().is_some_and(|f| f == "副詞")
-                && token.features.get(1).is_some_and(|f| f == "助詞類接続")
+                && token.features.get(1).is_some_and(|f| f == "助詞類接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7841,10 +9179,13 @@ pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SaiwaiNounMatcher;
     impl Matcher for SaiwaiNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "幸い"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "幸い"
                 && token.features.first().is_some_and(|f| f == "名詞")
-                && token.features.get(1).is_some_and(|f| f == "形容動詞語幹")
+                && token.features.get(1).is_some_and(|f| f == "形容動詞語幹") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7852,10 +9193,13 @@ pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaCopulaMatcher;
     impl Matcher for NaCopulaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "な"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "な"
                 && token.features.first().is_some_and(|f| f == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "体言接続")
+                && token.features.get(5).is_some_and(|f| f == "体言接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7863,10 +9207,13 @@ pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoMatcher;
     impl Matcher for KotoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.features.first().is_some_and(|f| f == "名詞")
-                && token.features.get(1).is_some_and(|f| f == "非自立")
+                && token.features.get(1).is_some_and(|f| f == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7874,11 +9221,14 @@ pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.features.first().is_some_and(|f| f == "助詞")
                 && (token.features.get(1).is_some_and(|f| f == "副詞化")
-                    || token.features.get(1).is_some_and(|f| f == "格助詞"))
+                    || token.features.get(1).is_some_and(|f| f == "格助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7886,10 +9236,13 @@ pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MoParticleMatcher;
     impl Matcher for MoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "も"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "も"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "係助詞")
+                && token.features.get(1).is_some_and(|f| f == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7897,8 +9250,9 @@ pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SaiwaiEitherMatcher;
     impl Matcher for SaiwaiEitherMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            if token.surface != "幸い" {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                if token.surface != "幸い" {
                 return false;
             }
             // Match as adverb (副詞/助詞類接続) OR as na-adj stem (名詞/形容動詞語幹)
@@ -7906,6 +9260,7 @@ pub fn saiwai_u30fb_saiwainakotoni() -> Vec<TokenMatcher> {
                 && token.features.get(1).is_some_and(|f| f == "助詞類接続"))
                 || (token.features.first().is_some_and(|f| f == "名詞")
                     && token.features.get(1).is_some_and(|f| f == "形容動詞語幹"))
+            })
         }
     }
 
@@ -7942,11 +9297,14 @@ pub fn youdeha_u30fb_youja() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct YouMatcher;
     impl Matcher for YouMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "よう"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "よう"
                 && token.pos.first().is_some_and(|p| p == "名詞")
                 && token.pos.get(1).is_some_and(|p| p == "非自立")
-                && token.pos.get(2).is_some_and(|p| p == "助動詞語幹")
+                && token.pos.get(2).is_some_and(|p| p == "助動詞語幹") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7954,11 +9312,14 @@ pub fn youdeha_u30fb_youja() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeCopulaMatcher;
     impl Matcher for DeCopulaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "で"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "で"
                 && token.base_form == "だ"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7966,10 +9327,13 @@ pub fn youdeha_u30fb_youja() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaParticleMatcher;
     impl Matcher for HaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7977,10 +9341,13 @@ pub fn youdeha_u30fb_youja() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct JaParticleMatcher;
     impl Matcher for JaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "じゃ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "じゃ"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "副助詞")
+                && token.pos.get(1).is_some_and(|p| p == "副助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -7988,8 +9355,9 @@ pub fn youdeha_u30fb_youja() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DehaOrJaMatcher;
     impl Matcher for DehaOrJaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match で for では pattern
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match で for では pattern
             if token.surface == "で"
                 && token.base_form == "だ"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
@@ -8001,6 +9369,7 @@ pub fn youdeha_u30fb_youja() -> Vec<TokenMatcher> {
             token.surface == "じゃ"
                 && token.pos.first().is_some_and(|p| p == "助詞")
                 && token.pos.get(1).is_some_and(|p| p == "副助詞")
+            })
         }
     }
 
@@ -8020,18 +9389,24 @@ pub fn sasuga() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SasugaMatcher;
     impl Matcher for SasugaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "さすが"
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "さすが"
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NiNoParticleMatcher;
     impl Matcher for NiNoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞"))
-                || (token.surface == "の" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "に" && token.pos.first().is_some_and(|pos| pos == "助詞"))
+                || (token.surface == "の" && token.pos.first().is_some_and(|pos| pos == "助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8053,10 +9428,13 @@ pub fn kotoha_u301c_ga() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoNounMatcher;
     impl Matcher for KotoNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8064,10 +9442,13 @@ pub fn kotoha_u301c_ga() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaParticleMatcher;
     impl Matcher for WaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8075,11 +9456,14 @@ pub fn kotoha_u301c_ga() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct GaKedoMatcher;
     impl Matcher for GaKedoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "が" || token.surface == "けど"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "が" || token.surface == "けど"
                 || token.surface == "けれど" || token.surface == "けれども")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8090,7 +9474,7 @@ pub fn kotoha_u301c_ga() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 1,
             max: 3,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         },  // Repeated word - 1 token for verbs/い-adj, 2-3 tokens for な-adj/noun (である, だ, etc.)
         TokenMatcher::Custom(Arc::new(GaKedoMatcher)),
     ]
@@ -8116,10 +9500,13 @@ pub fn wazukani() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiAdverbializerMatcher;
     impl Matcher for NiAdverbializerMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "副詞化")
+                && token.features.get(1).is_some_and(|f| f == "副詞化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8140,8 +9527,9 @@ pub fn oyobi() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct OyobiMatcher;
     impl super::Matcher for OyobiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            if token.surface != "および" {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                if token.surface != "および" {
                 return false;
             }
             // Match either conjunction or connective particle
@@ -8149,6 +9537,7 @@ pub fn oyobi() -> Vec<TokenMatcher> {
             let is_particle = token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接続助詞");
             is_conjunction || is_particle
+            })
         }
     }
 
@@ -8156,9 +9545,12 @@ pub fn oyobi() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct PunctuationMatcher;
     impl super::Matcher for PunctuationMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "記号")
-                && token.pos.get(1).is_some_and(|pos| pos == "読点")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "記号")
+                && token.pos.get(1).is_some_and(|pos| pos == "読点") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8183,14 +9575,17 @@ pub fn ikinari() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IkinariMatcher;
     impl Matcher for IkinariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "いきなり"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "いきなり"
                 && token.base_form == "いきなり"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
                 && token
                     .pos
                     .get(1)
-                    .is_some_and(|pos| pos == "助詞類接続")
+                    .is_some_and(|pos| pos == "助詞類接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(IkinariMatcher))]
@@ -8205,8 +9600,11 @@ pub fn toitta() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct PrecedingNounMatcher;
     impl Matcher for PrecedingNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8214,11 +9612,14 @@ pub fn toitta() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToittaMatcher;
     impl Matcher for ToittaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "といった"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "といった"
                 && token.pos.first().is_some_and(|p| p == "助詞")
                 && token.pos.get(1).is_some_and(|p| p == "格助詞")
-                && token.pos.get(2).is_some_and(|p| p == "連語")
+                && token.pos.get(2).is_some_and(|p| p == "連語") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8226,8 +9627,11 @@ pub fn toitta() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct CategoryNounMatcher;
     impl Matcher for CategoryNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8247,8 +9651,11 @@ pub fn wokomete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NounMatcher;
     impl Matcher for NounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8256,10 +9663,13 @@ pub fn wokomete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WoParticleMatcher;
     impl Matcher for WoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "を"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "を"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8267,10 +9677,13 @@ pub fn wokomete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KomeMatcher;
     impl Matcher for KomeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "込める"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "込める"
                 && token.pos.first().is_some_and(|p| p == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8278,10 +9691,13 @@ pub fn wokomete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeParticleMatcher;
     impl Matcher for TeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8302,11 +9718,14 @@ pub fn nikuwaete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl super::Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "格助詞")
+                && token.features.get(1).is_some_and(|f| f == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8314,11 +9733,14 @@ pub fn nikuwaete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KuwaeMatcher;
     impl super::Matcher for KuwaeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "加え"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "加え"
                 && token.base_form == "加える"
                 && token.features.first().is_some_and(|f| f == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形")
+                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8326,11 +9748,14 @@ pub fn nikuwaete() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeParticleMatcher;
     impl super::Matcher for TeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.base_form == "て"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "接続助詞")
+                && token.features.get(1).is_some_and(|f| f == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8350,11 +9775,14 @@ pub fn nanikarananimade() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaniMatcher;
     impl super::Matcher for NaniMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "何"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "何"
                 && token.base_form == "何"
                 && token.features.first().is_some_and(|f| f == "名詞")
-                && token.features.get(1).is_some_and(|f| f == "代名詞")
+                && token.features.get(1).is_some_and(|f| f == "代名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8362,11 +9790,14 @@ pub fn nanikarananimade() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaraParticleMatcher;
     impl super::Matcher for KaraParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "から"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "から"
                 && token.base_form == "から"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "格助詞")
+                && token.features.get(1).is_some_and(|f| f == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8374,11 +9805,14 @@ pub fn nanikarananimade() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MadeParticleMatcher;
     impl super::Matcher for MadeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "まで"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "まで"
                 && token.base_form == "まで"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "副助詞")
+                && token.features.get(1).is_some_and(|f| f == "副助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8399,10 +9833,13 @@ pub fn habetsutoshite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaParticleMatcher;
     impl super::Matcher for HaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "係助詞")
+                && token.features.get(1).is_some_and(|f| f == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8410,10 +9847,13 @@ pub fn habetsutoshite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct BetsuMatcher;
     impl super::Matcher for BetsuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "別"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "別"
                 && token.base_form == "別"
-                && token.features.first().is_some_and(|f| f == "名詞")
+                && token.features.first().is_some_and(|f| f == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8421,11 +9861,14 @@ pub fn habetsutoshite() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToshiteMatcher;
     impl super::Matcher for ToshiteMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "として"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "として"
                 && token.base_form == "として"
                 && token.features.first().is_some_and(|f| f == "助詞")
-                && token.features.get(1).is_some_and(|f| f == "格助詞")
+                && token.features.get(1).is_some_and(|f| f == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8445,11 +9888,14 @@ pub fn dakeni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DakeMatcher;
     impl super::Matcher for DakeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "だけ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "だけ"
                 && token.base_form == "だけ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8457,11 +9903,14 @@ pub fn dakeni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiMatcher;
     impl super::Matcher for NiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8471,10 +9920,13 @@ pub fn dakeni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct PreDakeniMatcher;
     impl super::Matcher for PreDakeniMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| {
                 pos == "動詞" || pos == "形容詞" || pos == "助動詞"
-            })
+            }) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8494,11 +9946,14 @@ pub fn dakeha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DakeMatcher;
     impl super::Matcher for DakeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "だけ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "だけ"
                 && token.base_form == "だけ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8506,11 +9961,14 @@ pub fn dakeha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaMatcher;
     impl super::Matcher for HaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.base_form == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8518,8 +9976,11 @@ pub fn dakeha() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbOrNounMatcher;
     impl super::Matcher for VerbOrNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞" || pos == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞" || pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8539,11 +10000,14 @@ pub fn dakeatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DakeMatcher;
     impl super::Matcher for DakeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "だけ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "だけ"
                 && token.base_form == "だけ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8553,24 +10017,30 @@ pub fn dakeatte() -> Vec<TokenMatcher> {
         #[derive(Debug)]
         struct AruMatcher;
         impl super::Matcher for AruMatcher {
-            fn matches(&self, token: &crate::KagomeToken) -> bool {
-                token.base_form == "ある"
+            fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ある"
                     && token.pos.first().is_some_and(|pos| pos == "動詞")
                     && token
                         .features
                         .get(5)
-                        .is_some_and(|f| f == "連用タ接続" || f == "連用形")
+                        .is_some_and(|f| f == "連用タ接続" || f == "連用形") => (true, 1),
+                _ => (false, 0),
             }
+        }
         }
 
         #[derive(Debug)]
         struct TeMatcher;
         impl super::Matcher for TeMatcher {
-            fn matches(&self, token: &crate::KagomeToken) -> bool {
-                token.surface == "て"
+            fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                     && token.pos.first().is_some_and(|pos| pos == "助詞")
-                    && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                    && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
             }
+        }
         }
 
         vec![
@@ -8606,11 +10076,14 @@ pub fn nanitoittemo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaniMatcher;
     impl super::Matcher for NaniMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "何"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "何"
                 && token.base_form == "何"
                 && token.features.first().is_some_and(|f| f == "名詞")
-                && token.features.get(1).is_some_and(|f| f == "代名詞")
+                && token.features.get(1).is_some_and(|f| f == "代名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8618,10 +10091,13 @@ pub fn nanitoittemo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IuMatcher;
     impl super::Matcher for IuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "いう"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "いう"
                 && token.features.first().is_some_and(|f| f == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8643,13 +10119,16 @@ pub fn kananika() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KaMatcher;
     impl super::Matcher for KaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "か"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "か"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token
                     .pos
                     .get(1)
-                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞")
+                    .is_some_and(|pos| pos == "副助詞／並立助詞／終助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8657,8 +10136,9 @@ pub fn kananika() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaniOrNanikaMatcher;
     impl super::Matcher for NaniOrNanikaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // なに as pronoun
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // なに as pronoun
             if token.surface == "なに"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "代名詞")
@@ -8672,6 +10152,7 @@ pub fn kananika() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -8692,9 +10173,12 @@ pub fn tenaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeParticleMatcher;
     impl Matcher for TeDeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
-                && token.pos.first().is_some_and(|pos| pos == "助詞" || pos == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞" || pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8702,23 +10186,26 @@ pub fn tenaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaraNariMatcher;
     impl Matcher for NaraNariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Standard form: なら (verb, base=なる, 未然形)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "なら"
                 && token.base_form == "なる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(5).is_some_and(|f| f == "未然形"))
             ||
-            // Polite form (after な-adjective): なり (auxiliary)
+
             (token.surface == "なり"
                 && token.base_form == "なり"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞"))
             ||
-            // Polite form (after verb/i-adjective): なり (verb 連用形, base=なる)
+
             (token.surface == "なり"
                 && token.base_form == "なる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用形"))
+                && token.features.get(5).is_some_and(|f| f == "連用形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8726,15 +10213,18 @@ pub fn tenaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMaseMatcher;
     impl Matcher for NaiMaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Standard form: ない
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "ない"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞"))
             ||
-            // Polite form: ませ
+
             (token.surface == "ませ"
                 && token.base_form == "ます"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8742,9 +10232,12 @@ pub fn tenaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NMatcher;
     impl Matcher for NMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ん"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8769,10 +10262,13 @@ pub fn nominarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NomiMatcher;
     impl Matcher for NomiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "のみ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "のみ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8780,11 +10276,14 @@ pub fn nominarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaraMatcher;
     impl Matcher for NaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なら"
                 && token.base_form == "なる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8792,10 +10291,13 @@ pub fn nominarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ZuMatcher;
     impl Matcher for ZuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ず"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ず"
                 && token.base_form == "ぬ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8803,9 +10305,12 @@ pub fn nominarazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeAruMatcher;
     impl Matcher for DeAruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "で" && token.base_form == "だ" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
-            || (token.surface == "ある" && token.base_form == "ある" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "で" && token.base_form == "だ" && token.pos.first().is_some_and(|pos| pos == "助動詞"))
+            || (token.surface == "ある" && token.base_form == "ある" && token.pos.first().is_some_and(|pos| pos == "助動詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8828,9 +10333,12 @@ pub fn sorenanoni() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SorenaNoniMatcher;
     impl Matcher for SorenaNoniMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "それなのに"
-                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "それなのに"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8845,9 +10353,12 @@ pub fn iwayuru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IwayuruMatcher;
     impl super::Matcher for IwayuruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "いわゆる"
-                && token.pos.first().is_some_and(|pos| pos == "連体詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "いわゆる"
+                && token.pos.first().is_some_and(|pos| pos == "連体詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8863,10 +10374,13 @@ pub fn nisuginai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8874,11 +10388,14 @@ pub fn nisuginai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct SugiruMatcher;
     impl Matcher for SugiruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "すぎる"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "すぎる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && (token.features.get(5).is_some_and(|f| f == "未然形")
-                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+                    || token.features.get(5).is_some_and(|f| f == "連用形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8886,8 +10403,9 @@ pub fn nisuginai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NegativeMatcher;
     impl Matcher for NegativeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ない (negative auxiliary)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match ない (negative auxiliary)
             if token.base_form == "ない"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
             {
@@ -8900,6 +10418,7 @@ pub fn nisuginai() -> Vec<TokenMatcher> {
                 return true;
             }
             false
+            })
         }
     }
 
@@ -8907,9 +10426,12 @@ pub fn nisuginai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NMatcher;
     impl Matcher for NMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ん" && token.surface == "ん"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ん" && token.surface == "ん"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8935,10 +10457,13 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MoParticleMatcher;
     impl super::Matcher for MoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "も"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "も"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8946,10 +10471,13 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct BaParticleMatcher;
     impl super::Matcher for BaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ば"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ば"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8957,11 +10485,14 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaraAuxiliaryMatcher;
     impl super::Matcher for NaraAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なら"
                 && token.base_form == "だ"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "仮定形")
+                && token.features.get(5).is_some_and(|f| f == "仮定形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8969,9 +10500,12 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbKateiMatcher;
     impl super::Matcher for VerbKateiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8979,9 +10513,12 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IAdjKateiMatcher;
     impl super::Matcher for IAdjKateiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "形容詞")
-                && token.features.get(5).is_some_and(|f| f == "仮定形")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "仮定形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8989,17 +10526,20 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MiddleElementMatcher;
     impl super::Matcher for MiddleElementMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Verb in 仮定形
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(5).is_some_and(|f| f == "仮定形"))
             ||
-            // i-Adjective in 仮定形
+
             (token.pos.first().is_some_and(|pos| pos == "形容詞")
                 && token.features.get(5).is_some_and(|f| f == "仮定形"))
             ||
-            // na-Adjective stem or Noun (followed by なら)
-            token.pos.first().is_some_and(|pos| pos == "名詞")
+
+            token.pos.first().is_some_and(|pos| pos == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9007,17 +10547,20 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct BaOrNaraMatcher;
     impl super::Matcher for BaOrNaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // ば particle
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "ば"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "接続助詞"))
             ||
-            // なら auxiliary
+
             (token.surface == "なら"
                 && token.base_form == "だ"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "仮定形"))
+                && token.features.get(5).is_some_and(|f| f == "仮定形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9025,9 +10568,12 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NounSuffixMatcher;
     impl super::Matcher for NounSuffixMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "名詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9035,9 +10581,12 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct BaStopMatcher;
     impl super::Matcher for BaStopMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ば"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ば"
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9045,10 +10594,13 @@ pub fn mo_uff5e_ba_uff5e_mo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaraStopMatcher;
     impl super::Matcher for NaraStopMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なら"
                 && token.base_form == "だ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9074,10 +10626,13 @@ pub fn deshikanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShikaMatcher;
     impl super::Matcher for ShikaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "しか"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "しか"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9085,8 +10640,9 @@ pub fn deshikanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiOrAriMatcher;
     impl super::Matcher for NaiOrAriMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ない as adjective
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match ない as adjective
             (token.surface == "ない"
                 && token.base_form == "ない"
                 && token.pos.first().is_some_and(|pos| pos == "形容詞"))
@@ -9095,6 +10651,7 @@ pub fn deshikanai() -> Vec<TokenMatcher> {
             (token.surface == "あり"
                 && token.base_form == "ある"
                 && token.pos.first().is_some_and(|pos| pos == "動詞"))
+            })
         }
     }
 
@@ -9118,9 +10675,12 @@ pub fn tetamaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeFormMatcher;
     impl super::Matcher for TeDeFormMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
+                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9128,8 +10688,9 @@ pub fn tetamaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TamaranaiOrTamariMatcher;
     impl super::Matcher for TamaranaiOrTamariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match たまらない as adjective
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match たまらない as adjective
             (token.base_form == "たまらない"
                 && token.pos.first().is_some_and(|pos| pos == "形容詞"))
             ||
@@ -9137,12 +10698,13 @@ pub fn tetamaranai() -> Vec<TokenMatcher> {
             (token.surface == "たまり"
                 && token.base_form == "たまる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞"))
+            })
         }
     }
 
     vec![
         // Optional: verb stem (for たい construction)
-        TokenMatcher::Optional(Box::new(TokenMatcher::verb_with_form("連用形"))),
+        TokenMatcher::Optional(Box::new(verb_form("連用形"))),
         // Word before て/で: たい auxiliary, い-Adj in て-form, or Noun
         TokenMatcher::Any,
         TokenMatcher::Custom(Arc::new(TeDeFormMatcher)),
@@ -9168,11 +10730,14 @@ pub fn nanishiro() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NanishiroMatcher;
     impl Matcher for NanishiroMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なにしろ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なにしろ"
                 && token.base_form == "なにしろ"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9188,10 +10753,13 @@ pub fn nishiro_uff5e_nishiro() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiCaseMatcher;
     impl super::Matcher for NiCaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9199,13 +10767,16 @@ pub fn nishiro_uff5e_nishiro() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShiroSeyoMatcher;
     impl super::Matcher for ShiroSeyoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "しろ" || token.surface == "せよ")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "しろ" || token.surface == "せよ")
                 && token.base_form == "する"
                 && token.pos.first().is_some_and(|p| p == "動詞")
                 && token.features.get(4).is_some_and(|f| f == "サ変・スル")
                 && (token.features.get(5).is_some_and(|f| f == "命令ｒｏ")
-                    || token.features.get(5).is_some_and(|f| f == "命令ｙｏ"))
+                    || token.features.get(5).is_some_and(|f| f == "命令ｙｏ")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9225,10 +10796,13 @@ pub fn hatomokaku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaKakariMatcher;
     impl super::Matcher for WaKakariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9236,10 +10810,13 @@ pub fn hatomokaku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TomokakuMatcher;
     impl super::Matcher for TomokakuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ともかく"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ともかく"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9259,11 +10836,14 @@ pub fn naratomokaku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaraMatcher;
     impl super::Matcher for NaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なら"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
                 && token.base_form == "だ"
-                && token.features.get(5).is_some_and(|form| form == "仮定形")
+                && token.features.get(5).is_some_and(|form| form == "仮定形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9271,10 +10851,13 @@ pub fn naratomokaku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TomokakuMatcher;
     impl super::Matcher for TomokakuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ともかく"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ともかく"
                 && token.pos.first().is_some_and(|pos| pos == "副詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "一般")
+                && token.pos.get(1).is_some_and(|pos| pos == "一般") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9294,11 +10877,14 @@ pub fn yara_uff5e_yara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct YaraMatcher;
     impl super::Matcher for YaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "やら"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "やら"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && (token.pos.get(1).is_some_and(|pos| pos == "並立助詞")
-                    || token.pos.get(1).is_some_and(|pos| pos == "終助詞"))
+                    || token.pos.get(1).is_some_and(|pos| pos == "終助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9314,9 +10900,12 @@ pub fn shikashinagara() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShikashiNagaraMatcher;
     impl super::Matcher for ShikashiNagaraMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "しかしながら"
-                && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "しかしながら"
+                && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(ShikashiNagaraMatcher))]
@@ -9332,10 +10921,13 @@ pub fn kotonihanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoNounMatcher;
     impl Matcher for KotoNounMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9343,10 +10935,13 @@ pub fn kotonihanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NiParticleMatcher;
     impl Matcher for NiParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "に"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9354,10 +10949,13 @@ pub fn kotonihanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaParticleMatcher;
     impl Matcher for WaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9365,10 +10963,13 @@ pub fn kotonihanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToiuParticleMatcher;
     impl Matcher for ToiuParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "という"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "という"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9378,7 +10979,7 @@ pub fn kotonihanaranai() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(KotoNounMatcher)),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
         TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
-        TokenMatcher::specific_verb("なる"),  // Matches both なら (未然形) and なり (連用形)
+        verb_base("なる"),  // Matches both なら (未然形) and なり (連用形)
         TokenMatcher::Any,  // Matches ない (negative) OR ませ (polite continuation)
     ]
 }
@@ -9392,10 +10993,13 @@ pub fn dakenokotohaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DakeMatcher;
     impl super::Matcher for DakeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "だけ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "だけ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9403,10 +11007,13 @@ pub fn dakenokotohaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoRentaikaMatcher;
     impl super::Matcher for NoRentaikaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9414,10 +11021,13 @@ pub fn dakenokotohaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KotoMatcher;
     impl super::Matcher for KotoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "こと"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "こと"
                 && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9425,10 +11035,13 @@ pub fn dakenokotohaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaKakariMatcher;
     impl super::Matcher for WaKakariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9436,10 +11049,13 @@ pub fn dakenokotohaaru() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct AruVerbMatcher;
     impl super::Matcher for AruVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ある"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ある"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "自立")
+                && token.pos.get(1).is_some_and(|pos| pos == "自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9462,10 +11078,13 @@ pub fn tehanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeParticleMatcher;
     impl super::Matcher for TeDeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9473,10 +11092,13 @@ pub fn tehanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaKakariMatcher;
     impl super::Matcher for WaKakariMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9484,12 +11106,15 @@ pub fn tehanaranai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaruFormMatcher;
     impl super::Matcher for NaruFormMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "なる"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "なる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "非自立")
                 && (token.features.get(5).is_some_and(|f| f == "未然形")
-                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+                    || token.features.get(5).is_some_and(|f| f == "連用形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9511,15 +11136,18 @@ pub fn tehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeWaMatcher;
     impl super::Matcher for TeDeWaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // て/で as conjunction particle (from verb/adjective)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "て" || token.surface == "で")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 ||
-            // で as copula (from な-adjective/noun)
+
             (token.surface == "で"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.base_form == "だ")
+                && token.base_form == "だ") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9527,10 +11155,13 @@ pub fn tehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WaParticleMatcher;
     impl super::Matcher for WaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9538,11 +11169,14 @@ pub fn tehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IruMizenMatcher;
     impl super::Matcher for IruMizenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "い"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "い"
                 && token.base_form == "いる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9550,11 +11184,14 @@ pub fn tehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct RareMatcher;
     impl super::Matcher for RareMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "られ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "られ"
                 && token.base_form == "られる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9562,9 +11199,12 @@ pub fn tehairarenai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMatcher;
     impl super::Matcher for NaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9586,9 +11226,12 @@ pub fn rikuni_uff5e_nai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct RokuNiMatcher;
     impl super::Matcher for RokuNiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "ろくに" || token.surface == "陸に" || token.surface == "碌に")
-                && token.pos.first().is_some_and(|pos| pos == "副詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "ろくに" || token.surface == "陸に" || token.surface == "碌に")
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9596,9 +11239,12 @@ pub fn rikuni_uff5e_nai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMatcher;
     impl super::Matcher for NaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && (token.base_form == "ない" || token.surface == "ない" || token.surface == "なかった")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "ない" || token.surface == "ない" || token.surface == "なかった") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9607,7 +11253,7 @@ pub fn rikuni_uff5e_nai() -> Vec<TokenMatcher> {
         TokenMatcher::Wildcard {
             min: 0,
             max: 10,
-            stop_conditions: vec![],
+        stop_conditions: vec![],
         },
         TokenMatcher::Custom(Arc::new(NaiMatcher)),
     ]
@@ -9620,8 +11266,11 @@ pub fn shikamo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ShikamoMatcher;
     impl super::Matcher for ShikamoMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "しかも" && token.pos.first().is_some_and(|pos| pos == "接続詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "しかも" && token.pos.first().is_some_and(|pos| pos == "接続詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
     vec![TokenMatcher::Custom(Arc::new(ShikamoMatcher))]
@@ -9636,10 +11285,13 @@ pub fn tedemo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeDeConjunctionMatcher;
     impl super::Matcher for TeDeConjunctionMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "て" || token.surface == "で")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "て" || token.surface == "で")
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9647,10 +11299,13 @@ pub fn tedemo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DemoParticleMatcher;
     impl super::Matcher for DemoParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "でも"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "でも"
                 && (token.pos.first().is_some_and(|pos| pos == "助詞")
-                    || token.pos.first().is_some_and(|pos| pos == "接続詞"))
+                    || token.pos.first().is_some_and(|pos| pos == "接続詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9674,10 +11329,13 @@ pub fn tomo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TomoParticle;
     impl super::Matcher for TomoParticle {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "とも"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "とも"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "接続助詞")
+                && token.pos.get(1).is_some_and(|p| p == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9688,8 +11346,9 @@ pub fn tomo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TomoPatternMatcher;
     impl super::Matcher for TomoPatternMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Check if this token could be the start of any とも pattern:
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Check if this token could be the start of any とも pattern:
             // 1. Verb in 未然ウ接続 (for おう/よう + とも)
             // 2. い-Adjective in 連用テ接続 (for く + とも)
             // 3. い-Adjective in 未然ウ接続 (for かろう + とも)
@@ -9708,6 +11367,7 @@ pub fn tomo() -> Vec<TokenMatcher> {
                 && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹");
 
             is_verb_mizen || is_i_adj_conjunctive || is_i_adj_mizen || is_na_adj
+            })
         }
     }
 
@@ -9715,10 +11375,13 @@ pub fn tomo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VolitionalU;
     impl super::Matcher for VolitionalU {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "う"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "う"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
-                && token.base_form == "う"
+                && token.base_form == "う" => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9726,10 +11389,13 @@ pub fn tomo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeCopula;
     impl super::Matcher for DeCopula {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "で"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "で"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
-                && token.base_form == "だ"
+                && token.base_form == "だ" => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9737,10 +11403,13 @@ pub fn tomo() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct Aro;
     impl super::Matcher for Aro {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "あろ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "あろ"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
-                && token.base_form == "ある"
+                && token.base_form == "ある" => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9772,9 +11441,12 @@ pub fn naiwakenihaikanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiAuxiliary;
     impl super::Matcher for NaiAuxiliary {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9782,9 +11454,12 @@ pub fn naiwakenihaikanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WakeMatcher;
     impl super::Matcher for WakeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "わけ"
-                && token.pos.first().is_some_and(|p| p == "名詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "わけ"
+                && token.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9792,11 +11467,14 @@ pub fn naiwakenihaikanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct IkuVerb;
     impl super::Matcher for IkuVerb {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "いく"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "いく"
                 && token.pos.first().is_some_and(|p| p == "動詞")
                 && (token.features.get(5).is_some_and(|f| f == "未然形")
-                    || token.features.get(5).is_some_and(|f| f == "連用形"))
+                    || token.features.get(5).is_some_and(|f| f == "連用形")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9804,18 +11482,21 @@ pub fn naiwakenihaikanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct EndingMatcher;
     impl super::Matcher for EndingMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.pos.first().is_some_and(|p| p == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "助動詞")
                 && (token.surface == "ない"
                     || token.surface == "ませ"
-                    || token.surface == "ん")
+                    || token.surface == "ん") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     // Standard: Verb[未然形] + ない + わけ + に + は + いか + ない
     // Polite: Verb[未然形] + ない + わけ + に + は + いき + ませ + ん
     vec![
-        TokenMatcher::verb_with_form("未然形"),
+        verb_form("未然形"),
         TokenMatcher::Custom(Arc::new(NaiAuxiliary)),
         TokenMatcher::Custom(Arc::new(WakeMatcher)),
         TokenMatcher::Surface("に"),
@@ -9836,10 +11517,13 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ToiuMatcher;
     impl Matcher for ToiuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "という"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "という"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+                && token.pos.get(1).is_some_and(|p| p == "格助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9847,10 +11531,13 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct WakeMatcher;
     impl Matcher for WakeMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "わけ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "わけ"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9858,15 +11545,18 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DeJaMatcher;
     impl Matcher for DeJaMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // で from だ (助動詞)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             (token.surface == "で"
                 && token.base_form == "だ"
                 && token.pos.first().is_some_and(|p| p == "助動詞"))
-            // Or じゃ (助詞/副助詞)
+
             || (token.surface == "じゃ"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "副助詞"))
+                && token.pos.get(1).is_some_and(|p| p == "副助詞")) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9874,10 +11564,13 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct HaParticleMatcher;
     impl Matcher for HaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "は"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "は"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9885,14 +11578,17 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaiMatcher;
     impl Matcher for NaiMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ない"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ない"
                 && (
-                    // As auxiliary verb (after じゃ)
+
                     token.pos.first().is_some_and(|p| p == "助動詞")
-                    // As adjective (after では)
+
                     || token.pos.first().is_some_and(|p| p == "形容詞")
-                )
+                ) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9900,9 +11596,12 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct ArimasenMatcher;
     impl Matcher for ArimasenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ある"
-                && token.pos.first().is_some_and(|p| p == "動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ある"
+                && token.pos.first().is_some_and(|p| p == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9910,9 +11609,12 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MaseMatcher;
     impl Matcher for MaseMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "ます"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "ます"
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9920,9 +11622,12 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NMatcher;
     impl Matcher for NMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ん"
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ん"
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9935,14 +11640,16 @@ pub fn toiuwakedehanai() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NegativeEndingMatcher;
     impl Matcher for NegativeEndingMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ない (either adjective after では or auxiliary after じゃ)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match ない (either adjective after では or auxiliary after じゃ)
             (token.surface == "ない"
                 && (token.pos.first().is_some_and(|p| p == "助動詞")
                     || token.pos.first().is_some_and(|p| p == "形容詞")))
             // Or match あり (start of ありません)
             || (token.base_form == "ある"
                 && token.pos.first().is_some_and(|p| p == "動詞"))
+            })
         }
     }
 
@@ -9973,10 +11680,13 @@ pub fn nomomottomoda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NoNominalizer;
     impl Matcher for NoNominalizer {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "の"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "の"
                 && token.pos.first().is_some_and(|p| p == "名詞")
-                && token.pos.get(1).is_some_and(|p| p == "非自立")
+                && token.pos.get(1).is_some_and(|p| p == "非自立") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9984,10 +11694,13 @@ pub fn nomomottomoda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct MoHaParticle;
     impl Matcher for MoHaParticle {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "も" || token.surface == "は")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "も" || token.surface == "は")
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "係助詞")
+                && token.pos.get(1).is_some_and(|p| p == "係助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -9995,12 +11708,15 @@ pub fn nomomottomoda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct Mottomo;
     impl Matcher for Mottomo {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "もっとも"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "もっとも"
                 && ((token.pos.first().is_some_and(|p| p == "副詞")
                     && token.pos.get(1).is_some_and(|p| p == "一般"))
                     || (token.pos.first().is_some_and(|p| p == "名詞")
-                        && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹")))
+                        && token.pos.get(1).is_some_and(|p| p == "形容動詞語幹"))) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10008,9 +11724,12 @@ pub fn nomomottomoda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct DaDes;
     impl Matcher for DaDes {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            (token.surface == "だ" || token.surface == "です")
-                && token.pos.first().is_some_and(|p| p == "助動詞")
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if (token.surface == "だ" || token.surface == "です")
+                && token.pos.first().is_some_and(|p| p == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10018,11 +11737,14 @@ pub fn nomomottomoda() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NaAuxiliary;
     impl Matcher for NaAuxiliary {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "な"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "な"
                 && token.base_form == "だ"
                 && token.pos.first().is_some_and(|p| p == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "体言接続")
+                && token.features.get(5).is_some_and(|f| f == "体言接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10057,10 +11779,13 @@ pub fn tatte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TatteParticleMatcher;
     impl super::Matcher for TatteParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "たって"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "たって"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10080,10 +11805,13 @@ pub fn tatte_naku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TatteParticleMatcher;
     impl super::Matcher for TatteParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "たって"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "たって"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10091,10 +11819,13 @@ pub fn tatte_naku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct NakuMatcher;
     impl super::Matcher for NakuMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "なく"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "なく"
                 && token.base_form == "ない"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10102,10 +11833,13 @@ pub fn tatte_naku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct JyaParticleMatcher;
     impl super::Matcher for JyaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "じゃ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "じゃ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "副助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "副助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10130,10 +11864,13 @@ pub fn tatte_i_adj_ku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TatsuVerbMatcher;
     impl super::Matcher for TatsuVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "たっ"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "たっ"
                 && token.base_form == "たつ"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10141,16 +11878,19 @@ pub fn tatte_i_adj_ku() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct TeParticleMatcher;
     impl super::Matcher for TeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     // い-Adjective in 連用テ接続 + たっ + て
     vec![
-        TokenMatcher::Adjective { base_form: None }, // Any i-adjective in 連用テ接続
+        adjective(), // Any i-adjective in 連用テ接続
         TokenMatcher::Custom(Arc::new(TatsuVerbMatcher)),
         TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
     ]
@@ -10162,20 +11902,26 @@ pub fn ni_kagitte() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KagitteVerbMatcher;
     impl super::Matcher for KagitteVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "限る"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "限る"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
+                && token.features.get(5).is_some_and(|f| f == "連用タ接続") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct TeParticleMatcher;
     impl super::Matcher for TeParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "て"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "て"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10193,20 +11939,26 @@ pub fn ni_kagirazu() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct KagirazuVerbMatcher;
     impl super::Matcher for KagirazuVerbMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.base_form == "限る"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.base_form == "限る"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形")
+                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct ZuAuxiliaryMatcher;
     impl super::Matcher for ZuAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ず"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ず"
                 && token.base_form == "ぬ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
@@ -10225,56 +11977,69 @@ pub fn nebanaranaי() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct VerbMizenMatcher;
     impl super::Matcher for VerbMizenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match verb in 未然形 (including せ from する with 未然ヌ接続)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.features.get(5).is_some_and(|f| {
                     f == "未然形" || f == "未然ヌ接続"
-                })
+                }) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NeAuxiliaryMatcher;
     impl super::Matcher for NeAuxiliaryMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ね (助動詞, ぬ, 仮定形)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             token.surface == "ね"
                 && token.base_form == "ぬ"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token.features.get(5).is_some_and(|f| f == "仮定形")
+                && token.features.get(5).is_some_and(|f| f == "仮定形") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct BaParticleMatcher;
     impl super::Matcher for BaParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            token.surface == "ば"
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "ば"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NariNaruMatcher;
     impl super::Matcher for NariNaruMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match なら (未然形) or なり (連用形)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             token.base_form == "なる"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "非自立")
                 && token.features.get(5).is_some_and(|f| {
                     f == "未然形" || f == "連用形"
-                })
+                }) => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 
     #[derive(Debug)]
     struct NaiOrMasenMatcher;
     impl super::Matcher for NaiOrMasenMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ない (助動詞) OR ませ (助動詞, ます, 未然形)
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            check_token(ctx, |token| {
+                // Match ない (助動詞) OR ませ (助動詞, ます, 未然形)
             if token.surface == "ない"
                 && token.base_form == "ない"
                 && token.pos.first().is_some_and(|pos| pos == "助動詞")
@@ -10291,17 +12056,21 @@ pub fn nebanaranaי() -> Vec<TokenMatcher> {
             }
 
             false
+            })
         }
     }
 
     #[derive(Debug)]
     struct NParticleMatcher;
     impl super::Matcher for NParticleMatcher {
-        fn matches(&self, token: &crate::KagomeToken) -> bool {
-            // Match ん (助動詞, 不変化型) - negative marker
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if 
             token.surface == "ん"
                 && token.base_form == "ん"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                _ => (false, 0),
+            }
         }
     }
 

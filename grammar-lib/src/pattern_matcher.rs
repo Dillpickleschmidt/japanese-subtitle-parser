@@ -7,6 +7,22 @@ use serde::{Deserialize, Serialize};
 // PUBLIC TYPES
 // ============================================================================
 
+/// Context for pattern matching - provides access to token stream for lookahead
+pub struct MatchContext<'a> {
+    pub tokens: &'a [KagomeToken],
+    pub position: usize,
+}
+
+impl<'a> MatchContext<'a> {
+    pub fn current(&self) -> Option<&'a KagomeToken> {
+        self.tokens.get(self.position)
+    }
+
+    pub fn lookahead(&self, n: usize) -> Option<&'a KagomeToken> {
+        self.tokens.get(self.position + n)
+    }
+}
+
 #[derive(Debug)]
 pub struct PatternMatcher {
     patterns: Vec<GrammarPattern>,
@@ -18,10 +34,8 @@ pub struct PatternMatch {
     pub pattern_name: &'static str,
     pub category: PatternCategory,
     /// 0-indexed character position where pattern starts (NOT a byte offset)
-    /// To extract text in Rust, convert to byte position first using char_indices()
     pub start_char: u32,
     /// 0-indexed character position where pattern ends (NOT a byte offset)
-    /// To extract text in Rust, convert to byte position first using char_indices()
     pub end_char: u32,
 }
 
@@ -29,7 +43,7 @@ pub struct PatternMatch {
 pub struct GrammarPattern {
     pub name: &'static str,
     pub tokens: Vec<TokenMatcher>,
-    pub priority: u8, // Higher = more specific/important
+    pub priority: u8,
     pub category: PatternCategory,
     pub jlpt_level: &'static str,
 }
@@ -38,7 +52,6 @@ pub struct GrammarPattern {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PatternCategory {
     /// Basic conjugation forms - detected but not stored as grammar patterns
-    /// Used for vocabulary consolidation (skip auxiliary tokens)
     Conjugation,
     /// Actual grammatical constructions - stored as grammar patterns
     Construction,
@@ -46,28 +59,23 @@ pub enum PatternCategory {
 
 #[derive(Debug, Clone)]
 pub enum TokenMatcher {
-    Verb {
-        conjugation_form: Option<&'static str>,
-        base_form: Option<&'static str>,
-    },
-    Adjective {
-        base_form: Option<&'static str>,
-    },
+    /// Match exact surface form
     Surface(&'static str),
+    /// Match any token
     Any,
+    /// Custom matcher with full context access
     Custom(Arc<dyn crate::matchers::Matcher>),
-    /// Wildcard matcher - skips min to max tokens with optional stop conditions.
-    /// NOTE: Only one wildcard per pattern is currently supported.
-    /// When wildcard is encountered, remaining pattern is matched and result is returned immediately.
-    /// stop_conditions: matchers to check - if any match, stop advancing the wildcard
+    /// Skip min to max tokens (only one per pattern supported)
+    /// stop_conditions: matchers that when matched, stop the wildcard
     Wildcard {
         min: usize,
         max: usize,
         stop_conditions: Vec<TokenMatcher>,
     },
-    /// Optional matcher - inner matcher is tried, but pattern continues if it doesn't match.
-    /// If inner matcher succeeds, position advances. If it fails, position stays same (pattern skips it).
+    /// Optional - try to match, continue either way
     Optional(Box<TokenMatcher>),
+    /// Match first successful alternative
+    Or(Vec<TokenMatcher>),
 }
 
 // ============================================================================
@@ -182,12 +190,7 @@ impl PatternMatcher {
         tokens: &[KagomeToken],
         start: usize,
     ) -> Option<PatternMatch> {
-        // Reject empty patterns (unimplemented or invalid)
-        if pattern.tokens.is_empty() {
-            return None;
-        }
-
-        if start >= tokens.len() {
+        if pattern.tokens.is_empty() || start >= tokens.len() {
             return None;
         }
 
@@ -196,12 +199,7 @@ impl PatternMatcher {
 
         for (i, matcher) in pattern.tokens.iter().enumerate() {
             match matcher {
-                TokenMatcher::Wildcard {
-                    min,
-                    max,
-                    stop_conditions,
-                } => {
-                    // Wildcard handles its own bounds checking
+                TokenMatcher::Wildcard { min, max, stop_conditions } => {
                     return self.match_with_wildcard(
                         pattern,
                         tokens,
@@ -210,38 +208,36 @@ impl PatternMatcher {
                         specificity_score,
                         *min,
                         *max,
-                        stop_conditions.clone(),
+                        stop_conditions,
                         start,
                     );
                 }
 
                 TokenMatcher::Optional(inner) => {
-                    // Optional succeeds even at end of tokens (nothing to match = skip)
                     if current_pos < tokens.len() {
-                        let (matches, score) = Self::token_matches(inner, &tokens[current_pos]);
+                        let ctx = MatchContext { tokens, position: current_pos };
+                        let (matches, score, consumed) = Self::token_matches_ctx(inner, &ctx);
                         if matches {
                             specificity_score += score;
-                            current_pos += 1;
+                            current_pos += consumed;
                         }
                     }
-                    // At end of tokens or no match: continue without advancing
                 }
 
                 _ => {
-                    // Regular matchers require a token to exist
                     if current_pos >= tokens.len() {
                         return None;
                     }
 
-                    let token = &tokens[current_pos];
-                    let (matches, score) = Self::token_matches(matcher, token);
+                    let ctx = MatchContext { tokens, position: current_pos };
+                    let (matches, score, consumed) = Self::token_matches_ctx(matcher, &ctx);
 
                     if !matches {
                         return None;
                     }
 
                     specificity_score += score;
-                    current_pos += 1;
+                    current_pos += consumed;
                 }
             }
         }
@@ -279,7 +275,7 @@ impl PatternMatcher {
         })
     }
 
-    /// Handle wildcard matching - tries skipping min to max tokens with stop conditions
+    /// Handle wildcard matching - tries skipping min to max tokens
     /// Returns the finalized match if successful, or None if wildcard didn't match
     #[allow(clippy::too_many_arguments)]
     fn match_with_wildcard(
@@ -291,12 +287,10 @@ impl PatternMatcher {
         specificity_score: f32,
         min: usize,
         max: usize,
-        stop_conditions: Vec<TokenMatcher>,
+        stop_conditions: &[TokenMatcher],
         start: usize,
     ) -> Option<PatternMatch> {
-        let mut matched = false;
-        let mut final_pos = current_pos;
-        let mut updated_score = specificity_score;
+        let remaining_matchers: Vec<_> = pattern.tokens.iter().skip(wildcard_index + 1).collect();
 
         for skip_count in min..=max {
             let check_pos = current_pos + skip_count;
@@ -305,73 +299,53 @@ impl PatternMatcher {
                 break;
             }
 
-            // Check tokens in wildcard range for stop conditions
+            // Check for stop conditions and punctuation
             let mut should_stop = false;
             for offset in 0..skip_count {
-                let wildcard_token = &tokens[current_pos + offset];
-
-                // Always stop at punctuation (sentence/clause boundary)
-                if wildcard_token.pos.first().is_some_and(|pos| pos == "記号") {
+                let pos = current_pos + offset;
+                // Stop at punctuation
+                if tokens[pos].pos.first().is_some_and(|p| p == "記号") {
                     should_stop = true;
                     break;
                 }
-
-                // Check if any stop condition matches this token
-                for stop_condition in &stop_conditions {
-                    let (matches, _score) = Self::token_matches(stop_condition, wildcard_token);
+                // Stop if any stop_condition matches
+                let ctx = MatchContext { tokens, position: pos };
+                for stop_cond in stop_conditions {
+                    let (matches, _, _) = Self::token_matches_ctx(stop_cond, &ctx);
                     if matches {
                         should_stop = true;
                         break;
                     }
                 }
-
                 if should_stop {
                     break;
                 }
             }
-
             if should_stop {
                 break;
             }
 
-            // Collect remaining matchers after wildcard
-            let remaining_matchers: Vec<_> =
-                pattern.tokens.iter().skip(wildcard_index + 1).collect();
-
-            // Try matching rest of pattern from check_pos
-            if let Some(end_pos) =
-                self.match_remaining_pattern_with_pos(&remaining_matchers, tokens, check_pos)
-            {
-                final_pos = end_pos;
-                updated_score += 0.5 * skip_count as f32; // Lower score for more skips
-                matched = true;
-                break;
+            if let Some(end_pos) = self.match_remaining_pattern(tokens, &remaining_matchers, check_pos) {
+                let updated_score = specificity_score + 0.5 * skip_count as f32;
+                return self.finalize_match(pattern, tokens, start, end_pos, updated_score);
             }
         }
 
-        if !matched {
-            return None;
-        }
-
-        self.finalize_match(pattern, tokens, start, final_pos, updated_score)
+        None
     }
 
     /// Helper to match remaining tokens after wildcard and return the end position
-    fn match_remaining_pattern_with_pos(
+    fn match_remaining_pattern(
         &self,
-        remaining: &[&TokenMatcher],
         tokens: &[KagomeToken],
+        remaining: &[&TokenMatcher],
         start_pos: usize,
     ) -> Option<usize> {
         let mut pos = start_pos;
 
         for matcher in remaining {
             if pos >= tokens.len() {
-                return if remaining.is_empty() {
-                    Some(pos)
-                } else {
-                    None
-                };
+                return None;
             }
 
             // Don't support nested wildcards
@@ -379,96 +353,65 @@ impl PatternMatcher {
                 return None;
             }
 
-            let (matches, _) = Self::token_matches(matcher, &tokens[pos]);
+            let ctx = MatchContext { tokens, position: pos };
+            let (matches, _, consumed) = Self::token_matches_ctx(matcher, &ctx);
             if !matches {
                 return None;
             }
 
-            pos += 1;
+            pos += consumed;
         }
 
         Some(pos)
     }
 
-    /// Check if a token matcher matches a given token, returning match status and specificity score
-    fn token_matches(matcher: &TokenMatcher, token: &KagomeToken) -> (bool, f32) {
+    /// Check if a token matcher matches at current context position
+    /// Returns (matches, score, tokens_consumed)
+    fn token_matches_ctx(matcher: &TokenMatcher, ctx: &MatchContext) -> (bool, f32, usize) {
         match matcher {
-            TokenMatcher::Verb {
-                conjugation_form,
-                base_form,
-            } => {
-                if token.pos.first().is_none_or(|pos| pos != "動詞") {
-                    return (false, 0.0);
-                }
-
-                let mut score = 1.0; // Base score for matching POS
-
-                if let Some(expected_form) = conjugation_form {
-                    if token.features.get(5).is_none_or(|f| f != expected_form) {
-                        return (false, 0.0);
-                    }
-                    score += 2.0; // Higher score for specific conjugation
-                }
-
-                if let Some(expected_base) = base_form {
-                    if &token.base_form != expected_base {
-                        return (false, 0.0);
-                    }
-                    score += 3.0; // Highest score for specific verb
-                }
-
-                (true, score)
-            }
-
-            TokenMatcher::Adjective { base_form } => {
-                // Match both i-adjectives (形容詞) and na-adjectives (名詞/形容動詞語幹)
-                let is_i_adjective = token.pos.first().is_some_and(|pos| pos == "形容詞");
-                let is_na_adjective = token.pos.first().is_some_and(|pos| pos == "名詞")
-                    && token.pos.get(1).is_some_and(|sub| sub == "形容動詞語幹");
-
-                if !is_i_adjective && !is_na_adjective {
-                    return (false, 0.0);
-                }
-
-                let mut score = 1.0; // Base score for matching POS
-
-                if let Some(expected_base) = base_form {
-                    if &token.base_form != expected_base {
-                        return (false, 0.0);
-                    }
-                    score += 3.0; // High score for specific adjective
-                }
-
-                (true, score)
-            }
-
             TokenMatcher::Surface(expected) => {
-                if token.surface == *expected {
-                    (true, 3.0) // High score for exact surface match
-                } else {
-                    (false, 0.0)
+                if let Some(token) = ctx.current() {
+                    if token.surface == *expected {
+                        return (true, 3.0, 1);
+                    }
                 }
+                (false, 0.0, 0)
             }
 
-            TokenMatcher::Any => (true, 0.5), // Low score since it matches anything
+            TokenMatcher::Any => {
+                if ctx.current().is_some() {
+                    (true, 0.5, 1)
+                } else {
+                    (false, 0.0, 0)
+                }
+            }
 
             TokenMatcher::Custom(matcher) => {
-                let matches = matcher.matches(token);
+                let (matches, consumed) = matcher.matches(ctx);
                 if matches {
-                    (true, 2.0) // Medium-high score for custom logic
+                    (true, 2.0, consumed)
                 } else {
-                    (false, 0.0)
+                    (false, 0.0, 0)
                 }
             }
 
             TokenMatcher::Wildcard { .. } => {
-                // Wildcards don't match individual tokens, handled in match_pattern_at
-                (false, 0.0)
+                // Wildcards handled separately in match_pattern_at
+                (false, 0.0, 0)
             }
 
             TokenMatcher::Optional(inner) => {
-                // Optional delegates to the inner matcher
-                Self::token_matches(inner, token)
+                Self::token_matches_ctx(inner, ctx)
+            }
+
+            TokenMatcher::Or(alternatives) => {
+                for alt in alternatives {
+                    let (matches, score, consumed) = Self::token_matches_ctx(alt, ctx);
+                    if matches {
+                        return (matches, score, consumed);
+                    }
+                }
+                (false, 0.0, 0)
             }
         }
     }
@@ -481,29 +424,6 @@ impl PatternMatcher {
 impl Default for PatternMatcher {
     fn default() -> Self {
         Self::new()
-    }
-}
-
-impl TokenMatcher {
-    pub fn verb_with_form(form: &'static str) -> Self {
-        TokenMatcher::Verb {
-            conjugation_form: Some(form),
-            base_form: None,
-        }
-    }
-
-    pub fn specific_verb(base_form: &'static str) -> Self {
-        TokenMatcher::Verb {
-            conjugation_form: None,
-            base_form: Some(base_form),
-        }
-    }
-
-    pub fn specific_verb_with_form(base_form: &'static str, form: &'static str) -> Self {
-        TokenMatcher::Verb {
-            conjugation_form: Some(form),
-            base_form: Some(base_form),
-        }
     }
 }
 
