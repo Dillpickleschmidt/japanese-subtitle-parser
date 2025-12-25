@@ -1194,6 +1194,30 @@ declare_patterns! {
         jlpt: "n4",
     },
 
+    PassiveIchidan {
+        name: "passive_ichidan",
+        matcher_fn: crate::matchers::n4::passive_ichidan,
+        priority: 2,
+        category: PatternCategory::Conjugation,
+        jlpt: "n4",
+    },
+
+    PassiveGodan {
+        name: "passive_godan",
+        matcher_fn: crate::matchers::n4::passive_godan,
+        priority: 2,
+        category: PatternCategory::Conjugation,
+        jlpt: "n4",
+    },
+
+    PotentialGodan {
+        name: "potential_godan",
+        matcher_fn: crate::matchers::n4::potential_godan,
+        priority: 2,
+        category: PatternCategory::Conjugation,
+        jlpt: "n4",
+    },
+
     TadoushiU30fbJidoushi {
         name: "他動詞・自動詞",
         matcher_fn: crate::matchers::n4::tadoushi_u30fb_jidoushi,

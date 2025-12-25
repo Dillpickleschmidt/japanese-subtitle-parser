@@ -8123,7 +8123,7 @@ mod wokanete_tests {
     // 兼（か）ねる = to stretch across to / to do concurrently
 
     #[test]
-    fn test_wokanete_bokeBoushi() {
+    fn test_wokanete_boke_boushi() {
         // Testing: Noun + をかねて (防止をかねて)
         let sentence = "おばあちゃんはボケ防止をかねて、毎日クロスワードパズルをしています。";
         let tokens = tokenize_sentence(sentence);

@@ -1,6 +1,70 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
-use crate::matchers::{Matcher, noun, check_token, verb_form, verb_base, surface, any, optional, wildcard};
+use crate::matchers::{Matcher, noun, check_token, verb_form, verb_base, surface, any, optional, wildcard,
+    ichidan_mizen, godan_mizen, rareru_suffix, reru_suffix, eru_suffix};
 use std::sync::Arc;
+
+// ========== Natural れる Verbs (not potential forms) ==========
+// These verbs naturally end in れる and should not be treated as potential forms
+const NATURAL_RERU_VERBS: &[&str] = &[
+    "くれる", "入れる", "切れる", "晴れる", "慣れる", "汚れる",
+    "疲れる", "腫れる", "暮れる", "揺れる", "枯れる", "破れる", "触れる",
+];
+
+/// Match 未然形 verbs that are NOT potential forms (excludes れる/られる base forms)
+fn non_potential_mizen() -> TokenMatcher {
+    #[derive(Debug)]
+    struct NonPotentialMizenMatcher;
+    impl Matcher for NonPotentialMizenMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) => {
+                    // Must be verb in 未然形
+                    if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                        return (false, 0);
+                    }
+                    if !token.features.get(5).is_some_and(|f| f == "未然形") {
+                        return (false, 0);
+                    }
+
+                    // Always exclude られる endings (always potential for ichidan verbs)
+                    if token.base_form.ends_with("られる") {
+                        return (false, 0);
+                    }
+
+                    // For れる endings: allow if in whitelist, exclude otherwise
+                    if token.base_form.ends_with("れる") {
+                        return (NATURAL_RERU_VERBS.contains(&token.base_form.as_str()), 1);
+                    }
+
+                    // All other verbs are allowed
+                    (true, 1)
+                }
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(NonPotentialMizenMatcher))
+}
+
+// ========== Ichidan/Godan Specific Passive/Potential Patterns ==========
+
+/// Passive form for ichidan verbs: Verb(一段・未然形) + られる
+/// Example: 食べ + られる = 食べられる (to be eaten)
+pub fn passive_ichidan() -> Vec<TokenMatcher> {
+    vec![ichidan_mizen(), rareru_suffix()]
+}
+
+/// Passive form for godan verbs: Verb(五段・未然形) + れる
+/// Example: 書か + れる = 書かれる (to be written)
+pub fn passive_godan() -> Vec<TokenMatcher> {
+    vec![godan_mizen(), reru_suffix()]
+}
+
+/// Potential form for godan verbs: Verb(五段・未然形) + える
+/// Example: 書か + える = 書ける (can write)
+pub fn potential_godan() -> Vec<TokenMatcher> {
+    vec![godan_mizen(), eru_suffix()]
+}
 
 // Pattern: と (conditional - definite result)
 // Structures: Verb + と / い-Adjective + と / な-Adjective + だ + と / Noun + だ + と
@@ -512,23 +576,10 @@ pub fn nakute() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ないで
 // Pattern: ないで (without doing)
 // Structure: Verb[未然形] + ない + で
+// Note: Uses non_potential_mizen() to exclude potential forms (e.g., 食べられないで)
 pub fn naide() -> Vec<TokenMatcher> {
-    // Match verb in 未然形 (negative stem form)
-    #[derive(Debug)]
-    struct VerbMizenMatcher;
-    impl super::Matcher for VerbMizenMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-
     // Match ない auxiliary in 連用デ接続 form
     #[derive(Debug)]
     struct NaiAuxiliaryMatcher;
@@ -559,7 +610,7 @@ pub fn naide() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Custom(Arc::new(VerbMizenMatcher)),
+        non_potential_mizen(),
         TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
         TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
     ]
@@ -567,9 +618,10 @@ pub fn naide() -> Vec<TokenMatcher> {
 
 // Pattern: Verb［れる・られる］(Passive form - something happens to the subject)
 // Structures: Verb[未然形] + れる/られる
+// Note: For ichidan/godan-specific patterns, see passive_ichidan() and passive_godan()
 pub fn verb_uff3b_reru_u30fb_rareru_uff3d() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token};
+    use super::check_token;
 
     // Matcher for verbs in 未然形 (negative/passive stem)
     // This includes all verb types before passive auxiliary れる/られる
@@ -579,28 +631,13 @@ pub fn verb_uff3b_reru_u30fb_rareru_uff3d() -> Vec<TokenMatcher> {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             check_token(ctx, |token| {
                 if !token.pos.first().is_some_and(|pos| pos == "動詞") {
-                return false;
-            }
-            // Match 未然形 (negative/passive stem) or 未然レル接続 (for する verbs)
-            token.features.get(5).is_some_and(|form| {
-                form == "未然形" || form == "未然レル接続"
+                    return false;
+                }
+                // Match 未然形 (negative/passive stem) or 未然レル接続 (for する verbs)
+                token.features.get(5).is_some_and(|form| {
+                    form == "未然形" || form == "未然レル接続"
+                })
             })
-            })
-        }
-    }
-
-    // Matcher for passive auxiliary れる/られる as suffix verb
-    // Tokenized as 動詞/接尾 with base form れる or られる
-    #[derive(Debug)]
-    struct PassiveAuxiliaryMatcher;
-    impl Matcher for PassiveAuxiliaryMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接尾")
-                && (token.base_form == "れる" || token.base_form == "られる") => (true, 1),
-                _ => (false, 0),
-            }
         }
     }
 
@@ -620,7 +657,7 @@ pub fn verb_uff3b_reru_u30fb_rareru_uff3d() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(PassiveStemMatcher)),
-        TokenMatcher::Custom(Arc::new(PassiveAuxiliaryMatcher)),
+        rareru_suffix(),  // Uses shared helper for られる/れる suffix
         optional(TokenMatcher::Custom(Arc::new(MasuMatcher))),
     ]
 }
@@ -6554,7 +6591,8 @@ pub fn tatoeba() -> Vec<TokenMatcher> {
 // Pattern: れる・られる (Potential) - ability/possibility
 // Structures:
 //   - Godan potential verbs: Single token (歩ける, 話せる, 飛べる, etc.)
-//   - Ichidan + られる: Verb(未然形) + られる(動詞/接尾)
+//   - Godan potential 2-token: Verb(未然形・五段) + える(動詞/接尾)
+//   - Ichidan + られる: Verb(未然形・一段) + られる(動詞/接尾)
 //   - できる: Exception for する verbs (included here)
 //   - ら抜き: 見れる (casual, sometimes considered incorrect)
 //
@@ -6566,38 +6604,79 @@ pub fn reru_u30fb_rareru_potential() -> Vec<TokenMatcher> {
     // Matcher for potential verbs (both godan single-token and ら抜き forms)
     // These are single tokens with base_form ending in える/ける/せる/てる/ねる/べる/める/げる/れる
     // Examples: 歩ける (歩く → 歩ける), 話せる (話す → 話せる), 見れる (見る → 見れる - ら抜き), できる
+    // Note: Excludes natural れる verbs (くれる, 入れる, etc.) that aren't potential forms
     #[derive(Debug)]
     struct PotentialVerbMatcher;
     impl Matcher for PotentialVerbMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             check_token(ctx, |token| {
                 // Must be a verb
-            if !token.pos.first().is_some_and(|pos| pos == "動詞") {
-                return false;
-            }
-
-            // Check if base_form ends with potential suffix
-            // Godan potential verbs end in: える, ける, せる, てる, ねる, べる, める, げる, れる
-            let potential_endings = ["える", "ける", "せる", "てる", "ねる", "べる", "める", "げる", "れる"];
-
-            for ending in &potential_endings {
-                if token.base_form.ends_with(ending) {
-                    // Exclude the auxiliary れる/られる themselves
-                    if token.base_form == "れる" || token.base_form == "られる" {
-                        return false;
-                    }
-                    return true;
+                if !token.pos.first().is_some_and(|pos| pos == "動詞") {
+                    return false;
                 }
-            }
-            false
+
+                // Check if base_form ends with potential suffix
+                // Godan potential verbs end in: える, ける, せる, てる, ねる, べる, める, げる, れる
+                let potential_endings = ["える", "ける", "せる", "てる", "ねる", "べる", "める", "げる", "れる"];
+
+                for ending in &potential_endings {
+                    if token.base_form.ends_with(ending) {
+                        // Exclude the auxiliary れる/られる themselves
+                        if token.base_form == "れる" || token.base_form == "られる" {
+                            return false;
+                        }
+                        // Exclude natural れる verbs (not potential forms)
+                        if NATURAL_RERU_VERBS.contains(&token.base_form.as_str()) {
+                            return false;
+                        }
+                        return true;
+                    }
+                }
+                false
             })
         }
     }
 
-    // Pattern: Single-token potential verb
-    // This matches godan potential verbs (歩ける, 話せる, etc.) and できる
+    // 2-token godan potential: verb(五段・未然形) + える(接尾)
+    // This handles cases where the potential form is tokenized as two tokens
+    #[derive(Debug)]
+    struct GodanPotential2TokenMatcher;
+    impl Matcher for GodanPotential2TokenMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            // Check first token: godan verb in 未然形
+            let Some(token1) = ctx.current() else { return (false, 0); };
+            if !token1.pos.first().is_some_and(|p| p == "動詞") {
+                return (false, 0);
+            }
+            if !token1.features.get(4).is_some_and(|f| f.starts_with("五段")) {
+                return (false, 0);
+            }
+            if !token1.features.get(5).is_some_and(|f| f == "未然形") {
+                return (false, 0);
+            }
+
+            // Check second token: える suffix
+            let Some(token2) = ctx.lookahead(1) else { return (false, 0); };
+            if token2.base_form == "える"
+                && token2.pos.first().is_some_and(|p| p == "動詞")
+                && token2.pos.get(1).is_some_and(|p| p == "接尾")
+            {
+                return (true, 2);  // Consume 2 tokens
+            }
+            (false, 0)
+        }
+    }
+
+    // Pattern: Single-token potential verb OR 2-token godan potential
+    // Single-token: godan potential verbs (歩ける, 話せる, etc.) and できる
+    // 2-token: godan verb 未然形 + える suffix
     // Note: Ichidan + られる is handled by the passive pattern (ambiguous)
-    vec![TokenMatcher::Custom(Arc::new(PotentialVerbMatcher))]
+    vec![
+        TokenMatcher::Or(vec![
+            TokenMatcher::Custom(Arc::new(PotentialVerbMatcher)),
+            TokenMatcher::Custom(Arc::new(GodanPotential2TokenMatcher)),
+        ]),
+    ]
 }
 
 // Pattern: んだけど・んですが (explanatory + but/however)

@@ -121,6 +121,95 @@ pub fn flexible_verb_form() -> TokenMatcher {
     TokenMatcher::Custom(Arc::new(FlexibleVerbFormMatcher))
 }
 
+// ========== Ichidan/Godan Verb Matchers ==========
+
+/// Match ichidan (一段) verb in 未然形
+pub fn ichidan_mizen() -> TokenMatcher {
+    #[derive(Debug)]
+    struct IchidanMizenMatcher;
+    impl Matcher for IchidanMizenMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(t) if t.pos.first().is_some_and(|p| p == "動詞")
+                    && t.features.get(4).is_some_and(|f| f == "一段")
+                    && t.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(IchidanMizenMatcher))
+}
+
+/// Match godan (五段) verb in 未然形
+pub fn godan_mizen() -> TokenMatcher {
+    #[derive(Debug)]
+    struct GodanMizenMatcher;
+    impl Matcher for GodanMizenMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(t) if t.pos.first().is_some_and(|p| p == "動詞")
+                    && t.features.get(4).is_some_and(|f| f.starts_with("五段"))
+                    && t.features.get(5).is_some_and(|f| f == "未然形") => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(GodanMizenMatcher))
+}
+
+// ========== Verb Suffix Matchers ==========
+
+/// Match られる or れる as suffix verb (for potential/passive)
+pub fn rareru_suffix() -> TokenMatcher {
+    #[derive(Debug)]
+    struct RareruSuffixMatcher;
+    impl Matcher for RareruSuffixMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(t) if (t.base_form == "られる" || t.base_form == "れる")
+                    && t.pos.first().is_some_and(|p| p == "動詞")
+                    && t.pos.get(1).is_some_and(|p| p == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(RareruSuffixMatcher))
+}
+
+/// Match れる as suffix verb (godan passive)
+pub fn reru_suffix() -> TokenMatcher {
+    #[derive(Debug)]
+    struct ReruSuffixMatcher;
+    impl Matcher for ReruSuffixMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(t) if t.base_form == "れる"
+                    && t.pos.first().is_some_and(|p| p == "動詞")
+                    && t.pos.get(1).is_some_and(|p| p == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(ReruSuffixMatcher))
+}
+
+/// Match える as suffix verb (godan potential)
+pub fn eru_suffix() -> TokenMatcher {
+    #[derive(Debug)]
+    struct EruSuffixMatcher;
+    impl Matcher for EruSuffixMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(t) if t.base_form == "える"
+                    && t.pos.first().is_some_and(|p| p == "動詞")
+                    && t.pos.get(1).is_some_and(|p| p == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(EruSuffixMatcher))
+}
+
 // ========== Adjective Matchers ==========
 
 /// Match any adjective (い-adjective or な-adjective)
