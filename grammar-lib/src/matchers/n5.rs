@@ -1,6 +1,6 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
 use std::sync::Arc;
-use super::{Matcher, noun_matcher, check_token, verb_form, surface, any};
+use super::{Matcher, noun_matcher, check_token, verb_form, surface, any, optional};
 
 // ========== たい (Want to do) ==========
 
@@ -118,9 +118,9 @@ pub fn mo() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(NonQuestionNounMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             CaseParticleMatcher,
-        )))),
+        ))),
         TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
     ]
 }
@@ -651,7 +651,7 @@ pub fn ru_verb_negative() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(IchidanVerbNegativeMatcher)),
         TokenMatcher::Custom(Arc::new(NegativeEndingMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(OptionalEndingMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(OptionalEndingMatcher))),
     ]
 }
 
@@ -753,7 +753,7 @@ pub fn u_verb_negative() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(GodanVerbNegativeMatcher)),
         TokenMatcher::Custom(Arc::new(NegativeEndingMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(OptionalEndingMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(OptionalEndingMatcher))),
     ]
 }
 
@@ -946,7 +946,7 @@ pub fn darou() -> Vec<TokenMatcher> {
     vec![
         any(),  // Can follow noun, verb, or adjective
         TokenMatcher::Custom(Arc::new(DaroMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(UMatcher)))),  // う is optional for contracted form
+        optional(TokenMatcher::Custom(Arc::new(UMatcher))),  // う is optional for contracted form
     ]
 }
 
@@ -1156,7 +1156,7 @@ pub fn uff5e_ndesu_u30fb_nodesu() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(NonNaAuxMatcher)),  // Preceding word (not な aux)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaAuxMatcher)))),  // Optional な for nouns/な-adj
+        optional(TokenMatcher::Custom(Arc::new(NaAuxMatcher))),  // Optional な for nouns/な-adj
         TokenMatcher::Custom(Arc::new(NNoMatcher)),  // ん or の
         TokenMatcher::Custom(Arc::new(DaDesuMatcher)),  // だ or です
     ]
@@ -1401,7 +1401,7 @@ pub fn ru_verb_past() -> Vec<TokenMatcher> {
     // 2. Ichidan verb + ます + た (polite past: ました)
     vec![
         TokenMatcher::Custom(Arc::new(IchidanVerbMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(MasuMatcher))),
         TokenMatcher::Custom(Arc::new(TaMatcher)),
     ]
 }
@@ -1474,7 +1474,7 @@ pub fn u_verb_past() -> Vec<TokenMatcher> {
     // 2. Godan verb + ます + た (polite past: ました)
     vec![
         TokenMatcher::Custom(Arc::new(GodanVerbMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MasuMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(MasuMatcher))),
         TokenMatcher::Custom(Arc::new(TaDaMatcher)),
     ]
 }
@@ -1548,9 +1548,9 @@ pub fn kirai() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(GaParticleMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(GaParticleMatcher))),
         TokenMatcher::Custom(Arc::new(KiraiMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaParticleMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(NaParticleMatcher))),
     ]
 }
 
@@ -1642,12 +1642,12 @@ pub fn nogasuki() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
         TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher)),
         TokenMatcher::Custom(Arc::new(SukiMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             CopulaEndingMatcher,
-        )))),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        ))),
+        optional(TokenMatcher::Custom(Arc::new(
             CopulaEndingMatcher,
-        )))), // For た in だった or した in でした
+        ))), // For た in だった or した in でした
     ]
 }
 
@@ -1781,9 +1781,9 @@ pub fn node() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(VerbAdjNounMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             NaCopulaMatcher,
-        )))),
+        ))),
         TokenMatcher::Custom(Arc::new(NodeParticleMatcher)),
     ]
 }
@@ -1842,9 +1842,9 @@ pub fn kara() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(VerbAdjNounAuxMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             DaCopulaMatcher,
-        )))),
+        ))),
         TokenMatcher::Custom(Arc::new(KaraParticleMatcher)),
     ]
 }
@@ -1896,9 +1896,9 @@ pub fn kedo_u30fb_dakedo() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(VerbAdjNounMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             DaCopulaMatcher,
-        )))),
+        ))),
         TokenMatcher::Custom(Arc::new(KedoParticleMatcher)),
     ]
 }
@@ -1993,7 +1993,7 @@ pub fn ru_verb_negative_past() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NakattaMatcher)),
         TokenMatcher::Custom(Arc::new(TaMatcher)),
         // Optional です for semi-polite (なかった + です)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DesuMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(DesuMatcher))),
     ]
 }
 
@@ -2086,7 +2086,7 @@ pub fn u_verb_negative_past() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NakattaMatcher)),
         TokenMatcher::Custom(Arc::new(TaMatcher)),
         // Optional です for semi-polite (なかった + です)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DesuMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(DesuMatcher))),
     ]
 }
 
@@ -2166,9 +2166,9 @@ pub fn teiru_u2460() -> Vec<TokenMatcher> {
     concat(vec![
         vec![super::flexible_verb_form()],
         vec![TokenMatcher::Custom(Arc::new(TeOrTeruMatcher))],
-        vec![TokenMatcher::Optional(Box::new(TokenMatcher::Custom(
+        vec![optional(TokenMatcher::Custom(
             Arc::new(IruMatcher),
-        )))],
+        ))],
     ])
 }
 
@@ -2305,9 +2305,9 @@ pub fn i_adjective_predicate() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(IAdjPredicateMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             DesuCopulaMatcher,
-        )))),
+        ))),
     ]
 }
 
@@ -2347,7 +2347,7 @@ pub fn na_adjective_da() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(NaAdjPredicateMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(CopulaMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(CopulaMatcher))),
     ]
 }
 
@@ -2526,10 +2526,10 @@ pub fn janai() -> Vec<TokenMatcher> {
     vec![
         any(), // Noun or な-Adjective stem
         TokenMatcher::Custom(Arc::new(JaDeParticleMatcher)), // じゃ or で
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaTopicParticleMatcher)))), // は (optional)
+        optional(TokenMatcher::Custom(Arc::new(WaTopicParticleMatcher))), // は (optional)
         TokenMatcher::Custom(Arc::new(NaiOrAriMatcher)), // ない OR あり
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MaseMatcher)))), // ませ (optional, after あり)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NNegationMatcher)))), // ん (optional, after ませ)
+        optional(TokenMatcher::Custom(Arc::new(MaseMatcher))), // ませ (optional, after あり)
+        optional(TokenMatcher::Custom(Arc::new(NNegationMatcher))), // ん (optional, after ませ)
         // Auto-extension will handle です
     ]
 }
@@ -2665,12 +2665,12 @@ pub fn janakatta() -> Vec<TokenMatcher> {
     vec![
         any(), // Noun or な-Adjective stem
         TokenMatcher::Custom(Arc::new(JaDeParticleMatcher)), // じゃ or で
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaTopicParticleMatcher)))), // は (optional)
+        optional(TokenMatcher::Custom(Arc::new(WaTopicParticleMatcher))), // は (optional)
         TokenMatcher::Custom(Arc::new(NakattaOrAriMatcher)), // なかっ OR あり
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MaseMatcher)))), // ませ (optional, after あり)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NNegationMatcher)))), // ん (optional, after ませ)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DeshiMatcher)))), // でし (optional, after ん)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(TaMatcher)))), // た (optional if after なかっ/でし)
+        optional(TokenMatcher::Custom(Arc::new(MaseMatcher))), // ませ (optional, after あり)
+        optional(TokenMatcher::Custom(Arc::new(NNegationMatcher))), // ん (optional, after ませ)
+        optional(TokenMatcher::Custom(Arc::new(DeshiMatcher))), // でし (optional, after ん)
+        optional(TokenMatcher::Custom(Arc::new(TaMatcher))), // た (optional if after なかっ/でし)
         // Auto-extension will handle です
     ]
 }
@@ -2829,9 +2829,9 @@ pub fn dake() -> Vec<TokenMatcher> {
     // we'll use a more permissive approach: optionally match な-adj stem, then match
     // any token (which could be verb/adj/noun OR な), then だけ.
     vec![
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             NaAdjectiveStemMatcher,
-        )))),
+        ))),
         any(),
         TokenMatcher::Custom(Arc::new(DakeParticleMatcher)),
     ]
@@ -3154,9 +3154,9 @@ pub fn temoii() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(IAdjKuOrNounMatcher)),
         TokenMatcher::Custom(Arc::new(TeOrDemoMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             MoParticleMatcher,
-        )))), // も is only present after て (not after でも)
+        ))), // も is only present after て (not after でも)
         TokenMatcher::Custom(Arc::new(IiMatcher)),
     ]
 }
@@ -3326,7 +3326,7 @@ pub fn kurai_u2460() -> Vec<TokenMatcher> {
 
     // Match: [Optional Number] + [Counter OR Question Word] + くらい
     vec![
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NumberMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(NumberMatcher))),
         TokenMatcher::Custom(Arc::new(CounterOrQuestionMatcher)),
         TokenMatcher::Custom(Arc::new(KuraiParticleMatcher)),
     ]
@@ -3445,9 +3445,9 @@ pub fn sugiru() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(SugiruPrefixMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             SaSuffixMatcher,
-        )))),
+        ))),
         TokenMatcher::Custom(Arc::new(SugiruMatcher)),
     ]
 }
@@ -3558,19 +3558,19 @@ pub fn yori_uff5e_nohouga() -> Vec<TokenMatcher> {
         // より
         TokenMatcher::Custom(Arc::new(YoriParticleMatcher)),
         // Optional content between より and の/ほう (0-3 tokens, excluding の and ほう)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             AnyExceptNoOrHouMatcher,
-        )))),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        ))),
+        optional(TokenMatcher::Custom(Arc::new(
             AnyExceptNoOrHouMatcher,
-        )))),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        ))),
+        optional(TokenMatcher::Custom(Arc::new(
             AnyExceptNoOrHouMatcher,
-        )))),
+        ))),
         // Optional の
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             NoRentaikaMatcher,
-        )))),
+        ))),
         // ほう
         TokenMatcher::Custom(Arc::new(HouNounMatcher)),
         // が
@@ -3680,9 +3680,9 @@ pub fn dareka_u30fb_dokoka_u30fb_daremo_u30fb_dokomo() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(QuestionWordDareDoko)),
         TokenMatcher::Custom(Arc::new(KaOrCaseParticle)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             OptionalMoOrParticle,
-        )))),
+        ))),
     ]
 }
 
@@ -4070,10 +4070,10 @@ pub fn tehaikenai() -> Vec<TokenMatcher> {
     vec![
         super::flexible_verb_form(),
         TokenMatcher::Custom(Arc::new(TeWaIkenaiMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(WaParticleMatcher))),
         TokenMatcher::Custom(Arc::new(IkeMatcher)),
         // ない is optional because polite form uses ませ + ん instead (extension system handles this)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher))),
     ]
 }
 
@@ -4161,7 +4161,7 @@ pub fn nakutehaikenai() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NegativeVerbFormMatcher)),
         TokenMatcher::Custom(Arc::new(NakuFormMatcher)),
         TokenMatcher::Custom(Arc::new(TeChaMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaParticleMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(WaParticleMatcher))),
         TokenMatcher::Custom(Arc::new(IkeMatcher)),
         // ない extends automatically
     ]
@@ -4441,19 +4441,19 @@ pub fn nakucha_u30fb_nakya() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(MizenVerbMatcher)),
         TokenMatcher::Custom(Arc::new(NakuchaNakyaMatcher)),
         // Optional ちゃ (only after なく)
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             ChaParticleMatcher,
-        )))),
+        ))),
         // Optional ending: いけない/ならない/だめ
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(IkeMatcher)))),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaruMatcher)))),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DameMatcher)))),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(IkeMatcher))),
+        optional(TokenMatcher::Custom(Arc::new(NaruMatcher))),
+        optional(TokenMatcher::Custom(Arc::new(DameMatcher))),
+        optional(TokenMatcher::Custom(Arc::new(
             NegativeEndingMatcher,
-        )))),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        ))),
+        optional(TokenMatcher::Custom(Arc::new(
             NegativeEndingMatcher,
-        )))), // Second one for ん in ません
+        ))), // Second one for ん in ません
     ]
 }
 
@@ -4677,12 +4677,12 @@ pub fn nogaheta() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
         TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher)),
         TokenMatcher::Custom(Arc::new(HetaMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             CopulaEndingMatcher,
-        )))),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        ))),
+        optional(TokenMatcher::Custom(Arc::new(
             CopulaEndingMatcher,
-        )))), // For た in だった or した in でした
+        ))), // For た in だった or した in でした
     ]
 }
 
@@ -4768,12 +4768,12 @@ pub fn nogajouzu() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
         TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher)),
         TokenMatcher::Custom(Arc::new(JouzuMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             CopulaEndingMatcher,
-        )))),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        ))),
+        optional(TokenMatcher::Custom(Arc::new(
             CopulaEndingMatcher,
-        )))), // For た in だった or した in でした
+        ))), // For た in だった or した in でした
     ]
 }
 
@@ -4847,7 +4847,7 @@ pub fn adjective_no_ha() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(AdjectiveOrNaAdjectiveMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaCopulaMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(NaCopulaMatcher))),
         TokenMatcher::Custom(Arc::new(NoNominalizerMatcher)),
         TokenMatcher::Custom(Arc::new(WaGaMoParticleMatcher)),
     ]
@@ -5006,7 +5006,7 @@ pub fn tsumorida() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(VerbMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NaiAuxMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(NaiAuxMatcher))),
         TokenMatcher::Custom(Arc::new(TsumoriMatcher)),
         // だ/です extends automatically via auxiliary verb system
     ]
@@ -5069,9 +5069,9 @@ pub fn ni_naru_ku_naru() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(KuNaruOrNiNaruMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             NiParticleMatcher,
-        )))),
+        ))),
         TokenMatcher::Custom(Arc::new(NaruVerbMatcher)),
     ]
 }
@@ -5169,9 +5169,9 @@ pub fn mae_ni() -> Vec<TokenMatcher> {
 
     vec![
         any(), // Match verb or noun
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             NoParticleMatcher,
-        )))), // Optional の for noun phrases
+        ))), // Optional の for noun phrases
         TokenMatcher::Custom(Arc::new(MaeMatcher)),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
     ]
@@ -5252,9 +5252,9 @@ pub fn nanimo() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(NanimoOrNannimoMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             MoParticleMatcher,
-        )))), // Optional も for two-token pattern
+        ))), // Optional も for two-token pattern
     ]
 }
 
@@ -5369,14 +5369,14 @@ pub fn nakutewa_naranai() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(MizenVerbMatcher)), // Verb in 未然形
         TokenMatcher::Custom(Arc::new(NakuMatcher)),
         TokenMatcher::Custom(Arc::new(TeChaParticleMatcher)), // て or ちゃ
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             HaTopicMatcher,
-        )))), // Optional は (only in ては)
+        ))), // Optional は (only in ては)
         TokenMatcher::Custom(Arc::new(NaruMatcher)), // なら or なり
         TokenMatcher::Custom(Arc::new(NegativeEndingMatcher)), // ない or ませ
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
+        optional(TokenMatcher::Custom(Arc::new(
             NegativeEndingMatcher,
-        )))), // Optional ん (for ません)
+        ))), // Optional ん (for ません)
     ]
 }
 
@@ -5515,7 +5515,7 @@ pub fn nonakade_ga_ichiban() -> Vec<TokenMatcher> {
         // で
         vec![TokenMatcher::Custom(Arc::new(DeCaseParticleMatcher))],
         // Optional は (topic marker that can appear after で)
-        vec![TokenMatcher::Optional(Box::new({
+        vec![optional({
             #[derive(Debug)]
             struct HaTopicMarkerMatcher;
             impl super::Matcher for HaTopicMarkerMatcher {
@@ -5529,7 +5529,7 @@ pub fn nonakade_ga_ichiban() -> Vec<TokenMatcher> {
         }
             }
             TokenMatcher::Custom(Arc::new(HaTopicMarkerMatcher))
-        }))],
+        })],
         // Wildcard for the subject (0-3 tokens) - e.g., 寿司, どれ, クッキー
         vec![TokenMatcher::Wildcard {
             min: 0,

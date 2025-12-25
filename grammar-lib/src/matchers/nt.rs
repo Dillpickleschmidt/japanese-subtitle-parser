@@ -1,5 +1,5 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
-use super::any;
+use super::{any, optional};
 
 // Pattern: ぞ (emphatic sentence-ending particle)
 // Structures: Phrase + ぞ
@@ -206,7 +206,7 @@ pub fn n_slang() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(NSlangVerbMatcher)),
         TokenMatcher::Custom(Arc::new(NSlangFollowerMatcher)),
-        TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(NNounMatcher)))),
+        optional(TokenMatcher::Custom(Arc::new(NNounMatcher))),
     ]
 }
 
