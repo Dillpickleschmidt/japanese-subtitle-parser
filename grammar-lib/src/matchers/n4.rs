@@ -1,5 +1,5 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
-use crate::matchers::{Matcher, noun_matcher, check_token, verb_form, verb_base};
+use crate::matchers::{Matcher, noun_matcher, check_token, verb_form, verb_base, surface, any};
 use std::sync::Arc;
 
 // Pattern: と (conditional - definite result)
@@ -22,7 +22,7 @@ pub fn to() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Matches verb, adjective, or noun/な-adj + だ before と
+        any(), // Matches verb, adjective, or noun/な-adj + だ before と
         TokenMatcher::Custom(Arc::new(ToConditionalMatcher)),
     ]
 }
@@ -367,7 +367,7 @@ pub fn kata_shikata() -> Vec<TokenMatcher> {
     // Pattern: Suru-verb noun + の + しかた
     vec![
         TokenMatcher::Custom(Arc::new(SuruVerbNounMatcher)),
-        TokenMatcher::Surface("の"),
+        surface("の"),
         TokenMatcher::Custom(Arc::new(ShikataMatcher)),
     ]
 }
@@ -406,7 +406,7 @@ pub fn dakede() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Verb or Noun
+        any(), // Verb or Noun
         TokenMatcher::Custom(Arc::new(DakeParticleMatcher)),
         TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
     ]
@@ -685,7 +685,7 @@ pub fn toiukoto() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,
+        any(),
         TokenMatcher::Custom(Arc::new(ToiuTteMatcher)),
         TokenMatcher::Custom(Arc::new(KotoMatcher)),
     ]
@@ -714,7 +714,7 @@ pub fn toki() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,
+        any(),
         TokenMatcher::Custom(Arc::new(TokiMatcher)),
     ]
 }
@@ -804,7 +804,7 @@ pub fn madeni() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,  // Verb or Noun
+        any(),  // Verb or Noun
         TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
     ]
@@ -1192,7 +1192,7 @@ pub fn gotoni() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Verb or Noun
+        any(), // Verb or Noun
         TokenMatcher::Custom(Arc::new(GotoMatcher)), // ごと (名詞)
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)), // に (助詞/格助詞)
     ]
@@ -1298,7 +1298,7 @@ pub fn noni() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,
+        any(),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
             NaAuxiliaryMatcher,
         )))),
@@ -1403,7 +1403,7 @@ pub fn mitai() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Can follow any word (verb, adjective, noun)
+        any(), // Can follow any word (verb, adjective, noun)
         TokenMatcher::Custom(Arc::new(MitaiMatcher)),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaDesuMatcher)))),
     ]
@@ -1558,7 +1558,7 @@ pub fn toka_uff5e_toka() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Any word (verb, noun, adjective)
+        any(), // Any word (verb, noun, adjective)
         TokenMatcher::Custom(Arc::new(TokaParticleMatcher)),
     ]
 }
@@ -1717,7 +1717,7 @@ pub fn youda() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Can follow any word (verb, adjective, noun)
+        any(), // Can follow any word (verb, adjective, noun)
         TokenMatcher::Custom(Arc::new(YouMatcher)),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaDesuMatcher)))),
     ]
@@ -2190,7 +2190,7 @@ pub fn kamoshirenai() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Verb, Adjective, or Noun
+        any(), // Verb, Adjective, or Noun
         TokenMatcher::Custom(Arc::new(KamoMatcher)),
         TokenMatcher::Custom(Arc::new(ShireMatcher)),
         TokenMatcher::Custom(Arc::new(NaiOrMasenMatcher)),
@@ -3627,7 +3627,7 @@ pub fn igai() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Verb or Noun
+        any(), // Verb or Noun
         TokenMatcher::Custom(Arc::new(IgaiMatcher)), // 以外 (名詞/非自立/副詞可能)
     ]
 }
@@ -4107,7 +4107,7 @@ pub fn uff5e_ha_uff5e_nohitotsuda() -> Vec<TokenMatcher> {
         // Noun (category)
         super::noun_matcher(),
         // の particle
-        TokenMatcher::Surface("の"),
+        surface("の"),
         // Counter noun
         TokenMatcher::Custom(Arc::new(CounterNounMatcher)),
         // だ or です
@@ -5174,7 +5174,7 @@ pub fn nakutemoii() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Verb in 未然形 (before なく)
+        any(), // Verb in 未然形 (before なく)
         TokenMatcher::Custom(Arc::new(NakuAuxiliaryMatcher)),
         TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(MoParticleMatcher)))),
@@ -6347,7 +6347,7 @@ pub fn tara() -> Vec<TokenMatcher> {
     // 2. い-Adj (連用タ接続) + たら
     // 3. な-Adj/Noun + だっ + たら
     vec![
-        TokenMatcher::Any, // Verb, い-Adj, or な-Adj/Noun
+        any(), // Verb, い-Adj, or な-Adj/Noun
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DattaMatcher)))), // Optional だっ for pattern 3
         TokenMatcher::Custom(Arc::new(TaraAuxiliaryMatcher)),
     ]
@@ -6815,7 +6815,7 @@ pub fn kadouka() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Preceding element (verb/adjective/noun)
+        any(), // Preceding element (verb/adjective/noun)
         TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
         TokenMatcher::Custom(Arc::new(DouAdverbMatcher)),
         TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
@@ -7102,7 +7102,7 @@ pub fn dakedenaku() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Any word (verb/adjective/noun)
+        any(), // Any word (verb/adjective/noun)
         TokenMatcher::Custom(Arc::new(DakeMatcher)),
         TokenMatcher::Custom(Arc::new(DeJaMatcher)),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(WaMatcher)))),
@@ -7142,7 +7142,7 @@ pub fn kotogadekiru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,
+        any(),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(KotoMatcher)))),
         TokenMatcher::Custom(Arc::new(GaHaParticleMatcher)),
         verb_base("できる"),
@@ -7197,7 +7197,7 @@ pub fn kai() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,
+        any(),
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(
             NaAuxiliaryMatcher,
         )))),
@@ -9016,7 +9016,7 @@ pub fn shi_u301c_shi() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Verb, い-Adjective, な-Adjective (名詞/形容動詞語幹), or Noun
+        any(), // Verb, い-Adjective, な-Adjective (名詞/形容動詞語幹), or Noun
         TokenMatcher::Optional(Box::new(TokenMatcher::Custom(Arc::new(DaCopulaMatcher)))), // Optional だ (for na-adj/noun)
         TokenMatcher::Custom(Arc::new(ShiParticleMatcher)), // し (接続助詞)
     ]

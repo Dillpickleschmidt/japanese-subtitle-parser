@@ -1,4 +1,5 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
+use super::any;
 
 // Pattern: ぞ (emphatic sentence-ending particle)
 // Structures: Phrase + ぞ
@@ -21,7 +22,7 @@ pub fn zo() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,  // Preceding word (verb, adjective, auxiliary verb)
+        any(),  // Preceding word (verb, adjective, auxiliary verb)
         TokenMatcher::Custom(Arc::new(ZoMatcher)),
     ]
 }
@@ -47,7 +48,7 @@ pub fn ze() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,  // Preceding word (verb, adjective, auxiliary verb)
+        any(),  // Preceding word (verb, adjective, auxiliary verb)
         TokenMatcher::Custom(Arc::new(ZeMatcher)),
     ]
 }
@@ -73,7 +74,7 @@ pub fn wa() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,  // Preceding word (verb, adjective, auxiliary verb)
+        any(),  // Preceding word (verb, adjective, auxiliary verb)
         TokenMatcher::Custom(Arc::new(WaMatcher)),
     ]
 }
@@ -127,7 +128,7 @@ pub fn i() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any,  // Preceding word (verb, adjective, auxiliary verb)
+        any(),  // Preceding word (verb, adjective, auxiliary verb)
         TokenMatcher::Custom(Arc::new(IMatcher)),
     ]
 }
@@ -296,7 +297,7 @@ pub fn uff5e_yagaru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Preceding verb (stem or te-form) or て particle
+        any(), // Preceding verb (stem or te-form) or て particle
         TokenMatcher::Custom(Arc::new(YaMatcher)),
         TokenMatcher::Custom(Arc::new(GaruMatcher)),
     ]
@@ -485,7 +486,7 @@ pub fn muzu() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Any, // Preceding verb (negative stem form)
+        any(), // Preceding verb (negative stem form)
         TokenMatcher::Custom(Arc::new(MuzuCombinedMatcher)),
     ]
 }
