@@ -54,6 +54,7 @@ pub fn optional(m: TokenMatcher) -> TokenMatcher {
     TokenMatcher::Optional(Box::new(m))
 }
 
+#[allow(dead_code)]
 pub fn or(alts: Vec<TokenMatcher>) -> TokenMatcher {
     TokenMatcher::Or(alts)
 }

@@ -1,11 +1,10 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
 
-use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
 // Pattern: ぞ (emphatic sentence-ending particle)
 // Structures: Phrase + ぞ
 pub fn zo() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::Matcher;
 
     // Match ぞ (助詞/終助詞)
     #[derive(Debug)]
@@ -31,7 +30,7 @@ pub fn zo() -> Vec<TokenMatcher> {
 // Structures: Phrase + ぜ
 pub fn ze() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::Matcher;
 
     // Match ぜ (助詞/終助詞)
     #[derive(Debug)]
@@ -57,7 +56,7 @@ pub fn ze() -> Vec<TokenMatcher> {
 // Structures: Phrase + わ
 pub fn wa() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::Matcher;
 
     // Match わ (助詞/終助詞)
     #[derive(Debug)]
@@ -84,7 +83,7 @@ pub fn wa() -> Vec<TokenMatcher> {
 // Note: かい is handled by a separate N4 pattern
 pub fn i() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::Matcher;
 
     // Match わい (助詞/終助詞)
     #[derive(Debug)]
@@ -138,7 +137,7 @@ pub fn i() -> Vec<TokenMatcher> {
 //             Verb[連用タ接続] + て + ん (ている → てん)
 pub fn n_slang() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::{Matcher, check_token};
 
     // Match verb in 未然特殊 conjugation (わかん, なん) OR verb + て + ん
     #[derive(Debug)]
@@ -215,7 +214,7 @@ pub fn n_slang() -> Vec<TokenMatcher> {
 // Structures: という → つ/っつ/つう + variants
 pub fn tsu_slang() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::{Matcher, check_token};
 
     // Match all variants of つ slang:
     // - つ (助動詞, base=つ) - basic form
@@ -264,7 +263,7 @@ pub fn tsu_slang() -> Vec<TokenMatcher> {
 // Tokenization: や (助詞) + がる (動詞/接尾)
 pub fn uff5e_yagaru() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::Matcher;
 
     // Matcher for や particle (can be 並立助詞 or 係助詞)
     #[derive(Debug)]
@@ -312,7 +311,7 @@ pub fn gaii() -> Vec<TokenMatcher> {
 // Structures: い-Adjective[未然ウ接続] + う
 pub fn karou() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::{Matcher, check_token};
 
     // Matcher for adjective in 未然ウ接続 form (e.g., よかろ, 寒かろ, なかろ)
     #[derive(Debug)]
@@ -356,7 +355,7 @@ pub fn karou() -> Vec<TokenMatcher> {
 // Structures: やや + Phrase
 pub fn yaya() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::Matcher;
 
     #[derive(Debug)]
     struct YayaMatcher;
@@ -378,7 +377,7 @@ pub fn yaya() -> Vec<TokenMatcher> {
 // Structures: いずれも + Phrase
 pub fn izuremo() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::Matcher;
 
     // Match いずれ (名詞/代名詞/一般)
     #[derive(Debug)]
@@ -419,7 +418,7 @@ pub fn izuremo() -> Vec<TokenMatcher> {
 // Structures: あわよくば + Phrase
 pub fn awayokuba() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::Matcher;
 
     #[derive(Debug)]
     struct AwayokubaMatcher;
@@ -441,7 +440,7 @@ pub fn awayokuba() -> Vec<TokenMatcher> {
 /// Handles all forms: むず, んず, むずる, むずれ, なんず
 pub fn muzu() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::Matcher;
 
     // Matcher for むず, むずる, むずれ (all tokenize as 名詞/一般 with empty base)
     #[derive(Debug)]
@@ -496,7 +495,7 @@ pub fn muzu() -> Vec<TokenMatcher> {
 /// Used by those in high positions to give commands
 pub fn ga_ii() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token, verb, verb_form, verb_base, verb_base_form, adjective, adjective_base};
+    use super::{Matcher, verb_form};
 
     // Matcher for が particle (接続助詞)
     #[derive(Debug)]

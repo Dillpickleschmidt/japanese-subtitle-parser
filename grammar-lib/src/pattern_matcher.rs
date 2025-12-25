@@ -18,6 +18,7 @@ impl<'a> MatchContext<'a> {
         self.tokens.get(self.position)
     }
 
+    #[allow(dead_code)]
     pub fn lookahead(&self, n: usize) -> Option<&'a KagomeToken> {
         self.tokens.get(self.position + n)
     }

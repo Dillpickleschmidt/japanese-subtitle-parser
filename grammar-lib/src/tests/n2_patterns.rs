@@ -6463,7 +6463,7 @@ mod wotowazu_tests {
     //   - standard exception: する → せねばならない
     //   - polite[0]: Verb[ない] + ねばなりません
     //   - polite exception: する → せねばなりません
-    mod nebanaranaי_tests {
+    mod nebanaranu_tests {
         use super::*;
 
         #[test]
