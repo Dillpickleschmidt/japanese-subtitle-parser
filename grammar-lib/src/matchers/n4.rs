@@ -1,5 +1,5 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
-use crate::matchers::{Matcher, noun_matcher, check_token, verb_form, verb_base, surface, any, optional, wildcard};
+use crate::matchers::{Matcher, noun, check_token, verb_form, verb_base, surface, any, optional, wildcard};
 use std::sync::Arc;
 
 // Pattern: と (conditional - definite result)
@@ -65,7 +65,7 @@ pub fn demo() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(DemoMatcher)),
         optional(TokenMatcher::Custom(Arc::new(MoParticleMatcher))),
     ]
@@ -750,7 +750,7 @@ pub fn mazu() -> Vec<TokenMatcher> {
 // Tokenization: Noun + まで (助詞/副助詞)
 // Note: まで + も is matched as separate tokens, not a compound
 pub fn made() -> Vec<TokenMatcher> {
-    use super::noun_matcher;
+    use super::noun;
 
     #[derive(Debug)]
     struct MadeParticleMatcher;
@@ -766,7 +766,7 @@ pub fn made() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
     ]
 }
@@ -1362,7 +1362,7 @@ pub fn nado() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(NadoMatcher)),
     ]
 }
@@ -2066,7 +2066,7 @@ pub fn gasuru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(), // Sensory noun (匂い, 音, 味, 感じ, 気, etc.)
+        super::noun(), // Sensory noun (匂い, 音, 味, 感じ, 気, etc.)
         TokenMatcher::Custom(Arc::new(GaParticleMatcher)), // が (格助詞)
         TokenMatcher::Custom(Arc::new(SuruVerbMatcher)), // する (verb)
     ]
@@ -3184,7 +3184,7 @@ pub fn gahoshii() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),                               // Noun (犬, 車, 時間, etc.)
+        super::noun(),                               // Noun (犬, 車, 時間, etc.)
         TokenMatcher::Custom(Arc::new(GaParticleMatcher)),   // が (格助詞)
         TokenMatcher::Custom(Arc::new(HoshiiMatcher)),       // ほしい (形容詞/自立)
     ]
@@ -3291,7 +3291,7 @@ pub fn kikoeru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
         verb_base("聞こえる"),
     ]
@@ -3317,7 +3317,7 @@ pub fn mieru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
         verb_base("見える"),
     ]
@@ -3522,7 +3522,7 @@ pub fn kaku() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(KakuPrefixMatcher)),
-        super::noun_matcher(),
+        super::noun(),
     ]
 }
 
@@ -4090,7 +4090,7 @@ pub fn uff5e_ha_uff5e_nohitotsuda() -> Vec<TokenMatcher> {
 
     vec![
         // Noun (category)
-        super::noun_matcher(),
+        super::noun(),
         // の particle
         surface("の"),
         // Counter noun
@@ -4135,7 +4135,7 @@ pub fn uff5e_nai_uff5e_hanai() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(NaiMatcher)),        // First ない
-        super::noun_matcher(),                             // Noun
+        super::noun(),                             // Noun
         TokenMatcher::Custom(Arc::new(WaParticleMatcher)), // は
         wildcard(0, 2, vec![]), // Optional verb/adjective stem (0-2 tokens)
         TokenMatcher::Custom(Arc::new(NaiMatcher)),        // Second ない
@@ -5787,7 +5787,7 @@ pub fn o_uff5e_ninaru() -> Vec<TokenMatcher> {
 
     vec![
         optional(TokenMatcher::Custom(Arc::new(OGoPrefixMatcher))),
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
         TokenMatcher::Custom(Arc::new(NaruMatcher)),
         optional(TokenMatcher::Custom(Arc::new(MasuMatcher))),
@@ -6982,7 +6982,7 @@ pub fn shika_uff5e_nai() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(ShikaMatcher)),
         wildcard(0, 5, vec![]),
         TokenMatcher::Custom(Arc::new(NegativeAuxiliaryMatcher)),
@@ -7237,7 +7237,7 @@ pub fn dedekiru_u30fb_karadekiru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(DeKaraParticleMatcher)),
         TokenMatcher::Custom(Arc::new(DekiruVerbMatcher)),
     ]
@@ -7989,7 +7989,7 @@ pub fn kasuru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(KaSuffixMatcher)),
         verb_base("する"),
     ]
@@ -8256,7 +8256,7 @@ pub fn kaze() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(FuuSuffixMatcher)),
     ]
 }
@@ -8327,7 +8327,7 @@ pub fn gamirareru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(GaMoParticleMatcher)),
         TokenMatcher::Custom(Arc::new(MiruVerbMatcher)),
         TokenMatcher::Custom(Arc::new(RareruSuffixMatcher)),

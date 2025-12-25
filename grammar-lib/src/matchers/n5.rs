@@ -1,6 +1,6 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
 use std::sync::Arc;
-use super::{Matcher, noun_matcher, check_token, verb_form, surface, any, optional, wildcard};
+use super::{Matcher, noun, check_token, verb_form, surface, any, optional, wildcard};
 
 // ========== たい (Want to do) ==========
 
@@ -65,7 +65,7 @@ pub fn ha() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(HaParticleMatcher)),
     ]
 }
@@ -144,7 +144,7 @@ pub fn to() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(ToParticleMatcher)),
     ]
 }
@@ -522,7 +522,7 @@ pub fn wo() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
     ]
 }
@@ -839,7 +839,7 @@ pub fn de() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(DeParticleMatcher)),
     ]
 }
@@ -866,7 +866,7 @@ pub fn ni() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
     ]
 }
@@ -984,7 +984,7 @@ pub fn gaaru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
         TokenMatcher::Custom(Arc::new(AruVerbMatcher)),
     ]
@@ -1024,7 +1024,7 @@ pub fn gairu() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
         TokenMatcher::Custom(Arc::new(IruVerbMatcher)),
     ]
@@ -1201,7 +1201,7 @@ pub fn i_adjective_noun() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(IAdjMatcher)),
-        super::noun_matcher(),
+        super::noun(),
     ]
 }
 
@@ -1242,7 +1242,7 @@ pub fn na_adjective_noun() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(NaAdjStemMatcher)),
         TokenMatcher::Custom(Arc::new(NaCopulaMatcher)),
-        super::noun_matcher(),
+        super::noun(),
     ]
 }
 
@@ -1279,7 +1279,7 @@ pub fn heiku() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(HeNiParticleMatcher)),
         TokenMatcher::Custom(Arc::new(IkuMatcher)),
     ]
@@ -1684,10 +1684,10 @@ pub fn gaaru_noun() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(GaOrNoParticleMatcher)),
         TokenMatcher::Custom(Arc::new(AruVerbMatcher)),
-        super::noun_matcher(),
+        super::noun(),
     ]
 }
 
@@ -2189,7 +2189,7 @@ pub fn he() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(HeParticleMatcher)),
     ]
 }
@@ -2747,7 +2747,7 @@ pub fn verbs_non_past() -> Vec<TokenMatcher> {
 // Structures: Verb[た] + Noun, Verb[ている] + Noun
 // Matches verbs in past tense or continuous aspect directly modifying nouns
 pub fn verb_uff3b_ta_u30fb_teiru_uff3d_noun() -> Vec<TokenMatcher> {
-    use super::noun_matcher;
+    use super::noun;
 
     // We need to match variable-length verb phrases before a noun:
     // - Verb連用形 + た + Noun (e.g., 食べた人)
@@ -2776,7 +2776,7 @@ pub fn verb_uff3b_ta_u30fb_teiru_uff3d_noun() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(MainVerbMatcher)),
         wildcard(1, 2, vec![]),
-        noun_matcher(),
+        noun(),
     ]
 }
 
@@ -3319,7 +3319,7 @@ pub fn kurai_u2460() -> Vec<TokenMatcher> {
 // Pattern: まで (until/to - ending point)
 // Structures: Noun + まで
 pub fn noun_made() -> Vec<TokenMatcher> {
-    use super::noun_matcher;
+    use super::noun;
 
     #[derive(Debug)]
     struct MadeParticleMatcher;
@@ -3335,7 +3335,7 @@ pub fn noun_made() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(MadeParticleMatcher)),
     ]
 }
@@ -4458,9 +4458,9 @@ pub fn ya() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(YaParticleMatcher)),
-        super::noun_matcher(),
+        super::noun(),
     ]
 }
 
@@ -4840,7 +4840,7 @@ pub fn adjective_no_ha() -> Vec<TokenMatcher> {
 // Pattern: あげる (to give)
 // Structures: Object(Noun) + を + [optional recipient] + あげる/あげます
 pub fn ageru() -> Vec<TokenMatcher> {
-    use super::noun_matcher;
+    use super::noun;
     use std::sync::Arc;
 
     #[derive(Debug)]
@@ -4869,7 +4869,7 @@ pub fn ageru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        noun_matcher(),
+        noun(),
         TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
         wildcard(0, 3, vec![]),
         TokenMatcher::Custom(Arc::new(AgeruVerbMatcher)),
@@ -5092,7 +5092,7 @@ pub fn ni_suru() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun_matcher(),
+        super::noun(),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
         TokenMatcher::Custom(Arc::new(SuruVerbMatcher)),
     ]

@@ -209,6 +209,3 @@ pub fn ii_form() -> TokenMatcher {
     }
     TokenMatcher::Custom(Arc::new(IiMatcher))
 }
-
-// Legacy alias for backwards compatibility during migration
-pub fn noun_matcher() -> TokenMatcher { noun() }
