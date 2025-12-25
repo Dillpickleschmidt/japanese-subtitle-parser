@@ -1,4 +1,4 @@
-use crate::{pattern_text, select_best_patterns, KagomeToken, PatternMatch};
+use crate::{pattern_text, select_best_patterns, strip_parentheses, KagomeToken, PatternMatch};
 use kagome_client::KagomeServer;
 use std::sync::{LazyLock, Mutex};
 
@@ -29,6 +29,17 @@ pub fn detect_patterns(tokens: &[KagomeToken]) -> Vec<PatternMatch> {
     let text: String = tokens.iter().map(|t| t.surface.as_str()).collect();
     let result = crate::analyze(&text, tokens);
     result.grammar_matches
+}
+
+/// Detect patterns with parentheses handling.
+/// Strips parens before tokenizing, then remaps positions to original text.
+pub fn detect_patterns_with_parens(original_text: &str) -> Vec<PatternMatch> {
+    let (stripped, char_map) = strip_parentheses(original_text);
+    let tokens = tokenize_sentence(&stripped);
+    match char_map {
+        Some(map) => crate::analyze_and_remap(&stripped, &tokens, &map).grammar_matches,
+        None => crate::analyze(&stripped, &tokens).grammar_matches,
+    }
 }
 
 /// Check if a specific pattern was detected
@@ -117,3 +128,4 @@ mod n3_patterns;
 mod n4_patterns;
 mod n5_patterns;
 mod nt_patterns;
+mod parentheses;

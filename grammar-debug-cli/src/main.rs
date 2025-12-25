@@ -1,4 +1,4 @@
-use grammar_lib::{get_jlpt_level, pattern_text, PatternCategory};
+use grammar_lib::{get_jlpt_level, pattern_text, strip_parentheses, PatternCategory};
 use kagome_client::KagomeServer;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -124,15 +124,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut results: HashMap<String, SubtitleAnalysis> = HashMap::new();
 
     for (number, text) in subtitles {
-        // Tokenize
-        let kagome_tokens = server.tokenize(&text, "normal")?;
+        // Strip parentheses before tokenizing
+        let (stripped, char_map) = strip_parentheses(&text);
+
+        // Tokenize stripped text
+        let kagome_tokens = server.tokenize(&stripped, "normal")?;
 
         // Convert tokens
         let tokens: Vec<grammar_lib::KagomeToken> =
             kagome_tokens.into_iter().map(convert_token).collect();
 
-        // Analyze
-        let analysis = grammar_lib::analyze(&text, &tokens);
+        // Analyze, remapping positions if parentheses were stripped
+        let analysis = match &char_map {
+            Some(map) => grammar_lib::analyze_and_remap(&stripped, &tokens, map),
+            None => grammar_lib::analyze(&stripped, &tokens),
+        };
 
         // Collect pattern matches
         let patterns: Vec<PatternMatch> = analysis
