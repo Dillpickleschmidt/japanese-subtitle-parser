@@ -1,6 +1,6 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
 use std::sync::Arc;
-use super::{Matcher, noun_matcher, check_token, verb_form, surface, any, optional};
+use super::{Matcher, noun_matcher, check_token, verb_form, surface, any, optional, wildcard};
 
 // ========== たい (Want to do) ==========
 
@@ -2775,11 +2775,7 @@ pub fn verb_uff3b_ta_u30fb_teiru_uff3d_noun() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(MainVerbMatcher)),
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 2,
-        stop_conditions: vec![],
-        },
+        wildcard(1, 2),
         noun_matcher(),
     ]
 }
@@ -2972,11 +2968,7 @@ pub fn verb_te_b() -> Vec<TokenMatcher> {
             super::flexible_verb_form(),
             te_de_conjunction(),
         ],
-        vec![TokenMatcher::Wildcard {
-            min: 0,
-            max: 5,
-        stop_conditions: vec![],
-        }],
+        vec![wildcard(0, 5)],
         vec![TokenMatcher::Custom(Arc::new(SecondVerbMatcher))],
     ])
 }
@@ -3072,11 +3064,7 @@ pub fn mada_uff5e_teimasen() -> Vec<TokenMatcher> {
 
     concat(vec![
         vec![surface("まだ")],
-        vec![TokenMatcher::Wildcard {
-            min: 0,
-            max: 5,
-        stop_conditions: vec![],
-        }],
+        vec![wildcard(0, 5)],
         vec![super::flexible_verb_form()],
         vec![TokenMatcher::Custom(Arc::new(TeDeParticleMatcher))],
         vec![TokenMatcher::Custom(Arc::new(IruAuxMatcher))],
@@ -3221,11 +3209,7 @@ pub fn tari_uff5e_tarisuru() -> Vec<TokenMatcher> {
     concat(vec![
         vec![super::flexible_verb_form()],
         vec![TokenMatcher::Custom(Arc::new(TariDariMatcher))],
-        vec![TokenMatcher::Wildcard {
-            min: 0,
-            max: 15,
-        stop_conditions: vec![],
-        }],
+        vec![wildcard(0, 15)],
         vec![TokenMatcher::Custom(Arc::new(SuruMatcher))],
     ])
 }
@@ -4887,11 +4871,7 @@ pub fn ageru() -> Vec<TokenMatcher> {
     vec![
         noun_matcher(),
         TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 3,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 3),
         TokenMatcher::Custom(Arc::new(AgeruVerbMatcher)),
     ]
 }
@@ -5531,11 +5511,7 @@ pub fn nonakade_ga_ichiban() -> Vec<TokenMatcher> {
             TokenMatcher::Custom(Arc::new(HaTopicMarkerMatcher))
         })],
         // Wildcard for the subject (0-3 tokens) - e.g., 寿司, どれ, クッキー
-        vec![TokenMatcher::Wildcard {
-            min: 0,
-            max: 3,
-        stop_conditions: vec![],
-        }],
+        vec![wildcard(0, 3)],
         // が
         vec![TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher))],
         // 一番

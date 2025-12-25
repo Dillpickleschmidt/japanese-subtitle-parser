@@ -1,6 +1,6 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
 use std::sync::Arc;
-use super::{Matcher, check_token, verb, verb_form, verb_base, surface, any, optional};
+use super::{Matcher, check_token, verb, verb_form, verb_base, surface, any, optional, wildcard};
 
 // って: Casual topic marker (replacing は)
 // Structures: Sentence topic + って
@@ -641,11 +641,7 @@ pub fn nakanaka_uff5e_nai() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(NakanakaMatcher)),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 10, // Allow up to 10 tokens between なかなか and negative
-            stop_conditions: vec![],
-        },
+        wildcard(0, 10),
         TokenMatcher::Custom(Arc::new(NegativeMatcher)),
     ]
 }
@@ -782,11 +778,7 @@ pub fn mattaku_uff5e_nai() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(MattakuMatcher)),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 10,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 10),
         TokenMatcher::Custom(Arc::new(NaiMatcher)),
     ]
 }
@@ -1405,11 +1397,7 @@ pub fn ba_u301c_hodo() -> Vec<TokenMatcher> {
     vec![
         any(), // Match the token immediately before ば (verb, adj, or auxiliary)
         TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 10, // 1-10 tokens between ば and ほど
-            stop_conditions: vec![],
-        },
+        wildcard(1, 10),
         TokenMatcher::Custom(Arc::new(HodoParticleMatcher)),
     ]
 }
@@ -1452,11 +1440,7 @@ pub fn hodo_uff5e_nai() -> Vec<TokenMatcher> {
     vec![
         any(),
         TokenMatcher::Custom(Arc::new(HodoParticleMatcher)),
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 15,
-        stop_conditions: vec![],
-        },
+        wildcard(1, 15),
         TokenMatcher::Custom(Arc::new(NaiMatcher)),
     ]
 }
@@ -2474,11 +2458,7 @@ pub fn nazenara_u301c_kara() -> Vec<TokenMatcher> {
         // Optional comma
         optional(TokenMatcher::Custom(Arc::new(CommaMatcher))),
         // Wildcard for the reason phrase (1-20 tokens)
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 20,
-        stop_conditions: vec![],
-        },
+        wildcard(1, 20),
         // から (connective particle)
         TokenMatcher::Custom(Arc::new(KaraConnectiveMatcher)),
         // だ or です (copula)
@@ -3533,11 +3513,7 @@ pub fn donnani_u301c_temo() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(DonnaniMatcher)),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 3,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 3),
         TokenMatcher::Custom(Arc::new(PreTemoMatcher)),
         TokenMatcher::Custom(Arc::new(TemoOrDemoMatcher)),
         optional(TokenMatcher::Custom(Arc::new(MoParticleMatcher))),
@@ -3584,11 +3560,7 @@ pub fn ikura_u301c_demo() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(IkuraMatcher)),
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 5,
-        stop_conditions: vec![],
-        },
+        wildcard(1, 5),
         TokenMatcher::Custom(Arc::new(TemoOrDemoMatcher)),
     ]
 }
@@ -3666,11 +3638,7 @@ pub fn u301c_kaha_u301c_niyottechigau() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(KaParticleMatcher)),  // Second か (after どう or phrase)
         TokenMatcher::Custom(Arc::new(WaParticleMatcher)),  // は particle
         // Wildcard to match Noun (and possible modifiers like "の進み具合")
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 10,
-        stop_conditions: vec![],
-        },
+        wildcard(1, 10),
         // Match either によって or による
         TokenMatcher::Custom(Arc::new(NiyotteOrNiyoruMatcher)),
         // Optional 違う (may not be present in による variant)
@@ -5595,11 +5563,7 @@ pub fn sae_u301c_ba() -> Vec<TokenMatcher> {
     vec![
         any(), // Content word before さえ (verb, noun, adjective, etc.)
         TokenMatcher::Custom(Arc::new(SaeParticleMatcher)),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 6,
-        stop_conditions: vec![],
-        }, // 0-6 tokens between さえ and ば (e.g., すれ, いれ, あれ, verb in 仮定形, etc.)
+        wildcard(0, 6), // 0-6 tokens between さえ and ば (e.g., すれ, いれ, あれ, verb in 仮定形, etc.)
         TokenMatcher::Custom(Arc::new(BaParticleMatcher)),
     ]
 }
@@ -5796,11 +5760,7 @@ pub fn marude_u2026_youda() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(MarudeMatcher)),
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 20,
-        stop_conditions: vec![],
-        },
+        wildcard(1, 20),
         TokenMatcher::Custom(Arc::new(YouMitaiMatcher)),
         TokenMatcher::Custom(Arc::new(DaDesuMatcher)),
     ]
@@ -5873,11 +5833,7 @@ pub fn younakigasuru() -> Vec<TokenMatcher> {
     // The wildcard should stop before よう or 気
     // Note: ような is required - "気がする" alone is matched by the separate "がする" pattern
     vec![
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 20,
-        stop_conditions: vec![],
-        },
+        wildcard(1, 20),
         TokenMatcher::Custom(Arc::new(YouMatcher)),
         TokenMatcher::Custom(Arc::new(NaMatcher)),
         TokenMatcher::Custom(Arc::new(KiMatcher)),
@@ -5920,11 +5876,7 @@ pub fn totemo_uff5e_nai() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(TotemoMatcher)),
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 8,
-        stop_conditions: vec![],
-        },
+        wildcard(1, 8),
         TokenMatcher::Custom(Arc::new(NaiAuxiliaryMatcher)),
     ]
 }
@@ -5962,11 +5914,7 @@ pub fn betsuni_u301c_nai() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(BetsuniMatcher)),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 10,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 10),
         TokenMatcher::Custom(Arc::new(NaiFormMatcher)),
     ]
 }
@@ -6330,11 +6278,7 @@ pub fn dakedenaku_te_uff5e_mo() -> Vec<TokenMatcher> {
         // Wildcard for intermediate content until も (0-10 tokens)
         // This allows for nouns, particles between punctuation and も
         // Note: Wildcard with min=0 allows for cases like "だけでなく台風も" (no intermediate tokens)
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 10,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 10),
         // も (終点)
         TokenMatcher::Custom(Arc::new(MoMatcher)),
     ]
@@ -6395,11 +6339,7 @@ pub fn dakeshika() -> Vec<TokenMatcher> {
         super::noun_matcher(),
         TokenMatcher::Custom(Arc::new(DakeParticleMatcher)),
         TokenMatcher::Custom(Arc::new(ShikaParticleMatcher)),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 10,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 10),
         TokenMatcher::Custom(Arc::new(NegativeFormMatcher)),
     ]
 }
@@ -6678,11 +6618,7 @@ pub fn kesshite_u301c_nai() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(KesshiteMatcher)),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 20,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 20),
         TokenMatcher::Custom(Arc::new(NaiMatcher)),
     ]
 }
@@ -7144,11 +7080,7 @@ pub fn uff5e_katoiuto_u2461() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(QuestionWordMatcher)), // Question word
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 20,
-        stop_conditions: vec![],
-        }, // Phrase between question word and か
+        wildcard(0, 20), // Phrase between question word and か
         TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
         TokenMatcher::Custom(Arc::new(ToQuoteMatcher)),
         TokenMatcher::Custom(Arc::new(IuVerbMatcher)),
@@ -7866,11 +7798,7 @@ pub fn mettani_u301c_nai() -> Vec<TokenMatcher> {
         optional(TokenMatcher::Custom(Arc::new(
             NiAdverbializerMatcher,
         ))),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 20,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 20),
         TokenMatcher::Custom(Arc::new(NaiMatcher)),
     ]
 }
@@ -8613,11 +8541,7 @@ pub fn mata_u301c_mo() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(MataMatcher)),
         optional(TokenMatcher::Custom(Arc::new(CommaMatcher))),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 10,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 10),
         TokenMatcher::Custom(Arc::new(MoParticleMatcher)),
     ]
 }
@@ -9978,11 +9902,7 @@ pub fn tatoetemo() -> Vec<TokenMatcher> {
     // Note: でも can be either 1 token (副助詞 for na-adj) or 2 tokens (格助詞+係助詞 for nouns)
     vec![
         TokenMatcher::Custom(Arc::new(TatoeAdverbMatcher)),
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 5,  // Increase to allow more content words between たとえ and ending
-            stop_conditions: vec![],
-        },
+        wildcard(1, 5),
         TokenMatcher::Custom(Arc::new(TeMoOrDemoStartMatcher)), // Match て, で, or でも
         optional(TokenMatcher::Custom(Arc::new(
             MoParticleMatcher,
@@ -10378,11 +10298,7 @@ pub fn moshimo_uff5e_nara_u30fb_moshimo_uff5e_demo() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(MoshimoMatcher)),
-        TokenMatcher::Wildcard {
-            min: 0,
-            max: 20,
-        stop_conditions: vec![],
-        },
+        wildcard(0, 20),
         TokenMatcher::Custom(Arc::new(ConditionalMatcher)),
     ]
 }
