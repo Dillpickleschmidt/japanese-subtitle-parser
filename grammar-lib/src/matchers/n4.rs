@@ -1862,7 +1862,7 @@ pub fn amari_uff5e_nai() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(AmariMatcher)),
-        wildcard(0, 5),
+        wildcard(0, 5, vec![]),
         TokenMatcher::Custom(Arc::new(NaiMatcher)),
     ]
 }
@@ -3380,7 +3380,7 @@ pub fn uff5e_dai() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(NumberMatcher)),
-        wildcard(0, 3), // Allow 0-3 more number tokens (for multi-digit numbers)
+        wildcard(0, 3, vec![]), // Allow 0-3 more number tokens (for multi-digit numbers)
         TokenMatcher::Custom(Arc::new(DaiSuffixMatcher)),
     ]
 }
@@ -4044,7 +4044,7 @@ pub fn number_shika_u301c_nai() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(CounterMatcher)),
         TokenMatcher::Custom(Arc::new(ShikaMatcher)),
         // Wildcard to allow various verb forms before negative (0-10 tokens)
-        wildcard(0, 10),
+        wildcard(0, 10, vec![]),
         TokenMatcher::Custom(Arc::new(NegativeAuxiliaryMatcher)),
     ]
 }
@@ -4140,7 +4140,7 @@ pub fn uff5e_nai_uff5e_hanai() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NaiMatcher)),        // First ない
         super::noun_matcher(),                             // Noun
         TokenMatcher::Custom(Arc::new(WaParticleMatcher)), // は
-        wildcard(0, 2), // Optional verb/adjective stem (0-2 tokens)
+        wildcard(0, 2, vec![]), // Optional verb/adjective stem (0-2 tokens)
         TokenMatcher::Custom(Arc::new(NaiMatcher)),        // Second ない
     ]
 }
@@ -4775,7 +4775,7 @@ pub fn verb_te_b_2() -> Vec<TokenMatcher> {
             TokenMatcher::Custom(Arc::new(TeConjunctionMatcher)),
             optional(TokenMatcher::Custom(Arc::new(CommaMatcher))),
         ],
-        vec![wildcard(0, 3)],
+        vec![wildcard(0, 3, vec![])],
         vec![TokenMatcher::Custom(Arc::new(HaContrastMatcher))],
     ])
 }
@@ -5024,7 +5024,7 @@ pub fn youni_uff5e_tehoshii() -> Vec<TokenMatcher> {
     vec![
         TokenMatcher::Custom(Arc::new(YouMatcher)),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
-        wildcard(0, 10), // Allow up to 10 tokens between ように and Verb[て]
+        wildcard(0, 10, vec![]), // Allow up to 10 tokens between ように and Verb[て]
         super::flexible_verb_form(),
         TokenMatcher::Custom(Arc::new(TeDeFormMatcher)),
         TokenMatcher::Custom(Arc::new(HoshiiMatcher)),
@@ -6987,7 +6987,7 @@ pub fn shika_uff5e_nai() -> Vec<TokenMatcher> {
     vec![
         noun_matcher(),
         TokenMatcher::Custom(Arc::new(ShikaMatcher)),
-        wildcard(0, 5),
+        wildcard(0, 5, vec![]),
         TokenMatcher::Custom(Arc::new(NegativeAuxiliaryMatcher)),
     ]
 }

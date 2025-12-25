@@ -2775,7 +2775,7 @@ pub fn verb_uff3b_ta_u30fb_teiru_uff3d_noun() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(MainVerbMatcher)),
-        wildcard(1, 2),
+        wildcard(1, 2, vec![]),
         noun_matcher(),
     ]
 }
@@ -2968,7 +2968,7 @@ pub fn verb_te_b() -> Vec<TokenMatcher> {
             super::flexible_verb_form(),
             te_de_conjunction(),
         ],
-        vec![wildcard(0, 5)],
+        vec![wildcard(0, 5, vec![])],
         vec![TokenMatcher::Custom(Arc::new(SecondVerbMatcher))],
     ])
 }
@@ -3064,7 +3064,7 @@ pub fn mada_uff5e_teimasen() -> Vec<TokenMatcher> {
 
     concat(vec![
         vec![surface("まだ")],
-        vec![wildcard(0, 5)],
+        vec![wildcard(0, 5, vec![])],
         vec![super::flexible_verb_form()],
         vec![TokenMatcher::Custom(Arc::new(TeDeParticleMatcher))],
         vec![TokenMatcher::Custom(Arc::new(IruAuxMatcher))],
@@ -3209,7 +3209,7 @@ pub fn tari_uff5e_tarisuru() -> Vec<TokenMatcher> {
     concat(vec![
         vec![super::flexible_verb_form()],
         vec![TokenMatcher::Custom(Arc::new(TariDariMatcher))],
-        vec![wildcard(0, 15)],
+        vec![wildcard(0, 15, vec![])],
         vec![TokenMatcher::Custom(Arc::new(SuruMatcher))],
     ])
 }
@@ -4871,7 +4871,7 @@ pub fn ageru() -> Vec<TokenMatcher> {
     vec![
         noun_matcher(),
         TokenMatcher::Custom(Arc::new(WoParticleMatcher)),
-        wildcard(0, 3),
+        wildcard(0, 3, vec![]),
         TokenMatcher::Custom(Arc::new(AgeruVerbMatcher)),
     ]
 }
@@ -5511,7 +5511,7 @@ pub fn nonakade_ga_ichiban() -> Vec<TokenMatcher> {
             TokenMatcher::Custom(Arc::new(HaTopicMarkerMatcher))
         })],
         // Wildcard for the subject (0-3 tokens) - e.g., 寿司, どれ, クッキー
-        vec![wildcard(0, 3)],
+        vec![wildcard(0, 3, vec![])],
         // が
         vec![TokenMatcher::Custom(Arc::new(GaCaseParticleMatcher))],
         // 一番

@@ -687,7 +687,7 @@ pub fn nihokanaranai() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(HokaMatcher)),
         TokenMatcher::Custom(Arc::new(NegativeOrNaruMatcher)),
         // Optional polite auxiliaries: ませ + ん
-        wildcard(0, 2),
+        wildcard(0, 2, vec![]),
     ]
 }
 
@@ -873,7 +873,7 @@ pub fn uff5e_wo_uff5e_nimakaseru() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(WoMatcher)),
-        wildcard(1, 1),
+        wildcard(1, 1, vec![]),
         TokenMatcher::Custom(Arc::new(NiMatcher)),
         TokenMatcher::Custom(Arc::new(MakaseruMatcher)),
     ]
@@ -926,7 +926,7 @@ pub fn uff5e_wo_uff5e_nimakaseru_reverse() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(NiMatcher)),
-        wildcard(4, 4),
+        wildcard(4, 4, vec![]),
         TokenMatcher::Custom(Arc::new(WoMatcher)),
         TokenMatcher::Custom(Arc::new(MakaseruMatcher)),
     ]
@@ -2736,14 +2736,10 @@ pub fn nikakawarazu() -> Vec<TokenMatcher> {
     }
 
     vec![
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 10,
-            stop_conditions: vec![
-                TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
-                TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
-            ],
-        },
+        wildcard(1, 10, vec![
+            TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
+            TokenMatcher::Custom(Arc::new(GaParticleMatcher)),
+        ]),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
         TokenMatcher::Custom(Arc::new(KakawaranaiMatcher)),
         TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
@@ -3141,11 +3137,7 @@ pub fn wotowazu() -> Vec<TokenMatcher> {
     // Pattern: [Content] + を/は + とわ/問わ + ず
     // Use wildcard to capture preceding content with stop conditions
     vec![
-        TokenMatcher::Wildcard {
-            min: 1,
-            max: 10,
-            stop_conditions: vec![TokenMatcher::Custom(Arc::new(HaGaStopMatcher))],
-        },
+        wildcard(1, 10, vec![TokenMatcher::Custom(Arc::new(HaGaStopMatcher))]),
         TokenMatcher::Custom(Arc::new(WoHaParticleMatcher)),
         TokenMatcher::Custom(Arc::new(TowaVerbMatcher)),
         TokenMatcher::Custom(Arc::new(ZuAuxiliaryMatcher)),
@@ -4361,7 +4353,7 @@ pub fn ka_u301c_naikanouchini() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(KaParticleMatcher)),
         // Optional wildcard for compound verbs (e.g., 飲み in 飲み終わる)
         // Matches 0-1 verb tokens in 連用形 that precede the main verb
-        wildcard(0, 1),
+        wildcard(0, 1, vec![]),
         // Verb in 未然形 (negative stem)
         // TODO: Should verify same verb as first token, but TokenMatcher API doesn't support this
         verb_form("未然形"),
@@ -4779,7 +4771,7 @@ pub fn teha_u301c_teha() -> Vec<TokenMatcher> {
         super::flexible_verb_form(),                                                        // First verb
         TokenMatcher::Custom(Arc::new(TeOrCasualMatcher)),                                  // て/で/ちゃ/じゃ
         optional(TokenMatcher::Custom(Arc::new(HaKakariMatcher))), // Optional は
-        wildcard(0, 15), // Gap between patterns (0-15 tokens)
+        wildcard(0, 15, vec![]), // Gap between patterns (0-15 tokens)
         super::flexible_verb_form(),                                                        // Second verb
         TokenMatcher::Custom(Arc::new(TeOrCasualMatcher)),                                  // て/で/ちゃ/じゃ
         optional(TokenMatcher::Custom(Arc::new(HaKakariMatcher))), // Optional は
@@ -6697,7 +6689,7 @@ pub fn toiutenkarakangaeruto() -> Vec<TokenMatcher> {
     // followed by 点から考えると
     // The wildcard captures the viewpoint/aspect being discussed
     vec![
-        wildcard(1, 4),
+        wildcard(1, 4, vec![]),
         TokenMatcher::Custom(Arc::new(TenMatcher)),
         TokenMatcher::Custom(Arc::new(KaraMatcher)),
         TokenMatcher::Custom(Arc::new(KangaeruMatcher)),
@@ -6758,7 +6750,7 @@ pub fn toiukotoha() -> Vec<TokenMatcher> {
     vec![
         // Include preceding context (0-5 tokens before ということは)
         // This captures the phrase being clarified
-        wildcard(0, 5),
+        wildcard(0, 5, vec![]),
         TokenMatcher::Custom(Arc::new(ToiuMatcher)),
         TokenMatcher::Custom(Arc::new(KotoMatcher)),
         TokenMatcher::Custom(Arc::new(HaMatcher)),
@@ -6856,7 +6848,7 @@ pub fn toiukazeni() -> Vec<TokenMatcher> {
     }
 
     vec![
-        wildcard(1, 10), // Content being quoted (verb, clause, etc.) - at least 1 token for meaningful context
+        wildcard(1, 10, vec![]), // Content being quoted (verb, clause, etc.) - at least 1 token for meaningful context
         TokenMatcher::Custom(Arc::new(ToiuMatcher)),
         TokenMatcher::Custom(Arc::new(FuuMatcher)),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
@@ -9258,7 +9250,7 @@ pub fn kotoha_u301c_ga() -> Vec<TokenMatcher> {
         any(),  // Preceding word (verb, adjective, or noun)
         TokenMatcher::Custom(Arc::new(KotoNounMatcher)),
         TokenMatcher::Custom(Arc::new(WaParticleMatcher)),
-        wildcard(1, 3),  // Repeated word - 1 token for verbs/い-adj, 2-3 tokens for な-adj/noun (である, だ, etc.)
+        wildcard(1, 3, vec![]),  // Repeated word - 1 token for verbs/い-adj, 2-3 tokens for な-adj/noun (である, だ, etc.)
         TokenMatcher::Custom(Arc::new(GaKedoMatcher)),
     ]
 }
@@ -10951,7 +10943,7 @@ pub fn rikuni_uff5e_nai() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(RokuNiMatcher)),
-        wildcard(0, 10),
+        wildcard(0, 10, vec![]),
         TokenMatcher::Custom(Arc::new(NaiMatcher)),
     ]
 }
@@ -11078,7 +11070,7 @@ pub fn tomo() -> Vec<TokenMatcher> {
 
     vec![
         TokenMatcher::Custom(Arc::new(TomoPatternMatcher)),
-        wildcard(0, 4),
+        wildcard(0, 4, vec![]),
         TokenMatcher::Custom(Arc::new(TomoParticle)),
     ]
 }

@@ -59,11 +59,7 @@ pub fn or(alts: Vec<TokenMatcher>) -> TokenMatcher {
     TokenMatcher::Or(alts)
 }
 
-pub fn wildcard(min: usize, max: usize) -> TokenMatcher {
-    TokenMatcher::Wildcard { min, max, stop_conditions: vec![] }
-}
-
-pub fn wildcard_with_stops(min: usize, max: usize, stop_conditions: Vec<TokenMatcher>) -> TokenMatcher {
+pub fn wildcard(min: usize, max: usize, stop_conditions: Vec<TokenMatcher>) -> TokenMatcher {
     TokenMatcher::Wildcard { min, max, stop_conditions }
 }
 
