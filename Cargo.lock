@@ -1314,6 +1314,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "grammar-debug-cli"
+version = "0.1.0"
+dependencies = [
+ "grammar-lib",
+ "kagome-client",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "grammar-lib"
 version = "0.1.0"
 dependencies = [

@@ -5,6 +5,7 @@ members = [
     "grammar-lib",
     "kagome-client",
     "compound-extractor",
+    "grammar-debug-cli",
 ]
 resolver = "2"
 
