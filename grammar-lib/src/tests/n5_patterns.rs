@@ -6810,3 +6810,64 @@ mod to_tests {
     }
 }
 
+
+// ========== は (topic marker) ==========
+// Migrated from ha_tests.rs
+
+mod ha_tests {
+    use super::*;
+
+    #[test]
+    fn test_ha_noun_topic() {
+        let sentence = "田中さんは先生です";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    #[test]
+    fn test_ha_pronoun_topic() {
+        let sentence = "私はトムです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    #[test]
+    fn test_ha_noun_adjective() {
+        let sentence = "カレーは辛い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    #[test]
+    fn test_ha_contrast() {
+        let sentence = "私は、金曜日は好き";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    #[test]
+    fn test_ha_casual_negative() {
+        let sentence = "そんなこと、俺は知らないよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+
+    #[test]
+    fn test_ha_question() {
+        let sentence = "あなたは誰ですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+        // TODO: add assertions after implementation
+    }
+}
