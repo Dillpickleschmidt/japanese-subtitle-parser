@@ -13078,6 +13078,18 @@ mod iumademonai_sentence_initial_tests {
         assert_has_pattern(&patterns, "言うまでもない ②");
         assert_pattern_range(&patterns, "言うまでもない ②", 0, 11); // いうまでもないけれども
     }
+
+    // False positive test: どっちかいうと (if I had to say) is NOT 言うまでもない
+    #[test]
+    fn test_iumademonai_false_positive_docchika_iuto() {
+        let sentence = "どっちかいうと 花に１票";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT match 言うまでもない since いう is followed by と, not まで
+        assert!(!patterns.iter().any(|p| p.pattern_name == "言うまでもない ②"),
+                "Should not match 言うまでもない for どっちかいうと (which is followed by と, not まで)");
+    }
 }
 
 // ========== 又〜も (moreover/additionally) ==========
@@ -14087,4 +14099,16 @@ mod zenshaha_koushaha_tests {
     // Note: Pattern specifically matches 前者は and 後者は (with は particle)
     // While 前者 and 後者 can be used with other particles (に, を, etc.),
     // this pattern targets the common contrastive usage with は
+}
+
+mod wakeda_debug_tests {
+    use super::*;
+
+    #[test]
+    fn test_wakede_desune() {
+        let sentence = "振り出しに戻ったわけですね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+    }
 }

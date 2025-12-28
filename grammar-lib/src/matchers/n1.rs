@@ -5983,6 +5983,44 @@ pub fn tteba_u30fb_ttara_datte() -> Vec<TokenMatcher> {
 pub fn tteba_u30fb_ttara_dattara() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
+    // Matcher for nouns/な-adjectives that can take だ copula
+    // This pattern is for insisting/frustration, typically after nouns (especially people) or な-adjectives
+    // NOT for generic conditionals like "ままだったら" (if it stayed that way)
+    #[derive(Debug)]
+    struct NounOrNaAdjMatcher;
+    impl Matcher for NounOrNaAdjMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) => {
+                    // Accept nouns, but exclude non-independent nouns like まま, こと, の, etc.
+                    // These typically form conditionals, not the insistent ったら pattern
+                    if token.pos.first().is_some_and(|p| p == "名詞") {
+                        // Exclude 非自立 (non-independent) nouns - these are grammatical, not standalone
+                        if token.pos.get(1).is_some_and(|p| p == "非自立") {
+                            return (false, 0);
+                        }
+                        // Exclude 接尾 (suffix) nouns
+                        if token.pos.get(1).is_some_and(|p| p == "接尾") {
+                            return (false, 0);
+                        }
+                        // Exclude formal/literary nouns that form conditionals
+                        // まま (as is), こと (thing), もの (thing), ところ (place/point), はず (expected)
+                        if ["まま", "こと", "もの", "ところ", "はず", "わけ", "つもり"].contains(&token.base_form.as_str()) {
+                            return (false, 0);
+                        }
+                        return (true, 1);
+                    }
+                    // Accept な-adjectives (形容動詞)
+                    if token.pos.first().is_some_and(|p| p == "形容動詞") {
+                        return (true, 1);
+                    }
+                    (false, 0)
+                }
+                _ => (false, 0),
+            }
+        }
+    }
+
     // Matcher for だっ (助動詞 だ in 連用タ接続)
     #[derive(Debug)]
     struct DatMatcher;
@@ -6013,9 +6051,9 @@ pub fn tteba_u30fb_ttara_dattara() -> Vec<TokenMatcher> {
         }
     }
 
-    // Pattern: [Any] + だっ + たら
+    // Pattern: [Noun/な-Adj] + だっ + たら
     vec![
-        any(),
+        TokenMatcher::Custom(Arc::new(NounOrNaAdjMatcher)),
         TokenMatcher::Custom(Arc::new(DatMatcher)),
         TokenMatcher::Custom(Arc::new(TaraMatcher)),
     ]
@@ -9432,8 +9470,16 @@ pub fn tokitara() -> Vec<TokenMatcher> {
 //
 // Note: Unlike めく which can be split (Noun + めく), びる appears only as compound verbs
 // where Kagome recognizes the full word as a single verb token with base ending in びる.
+// We must exclude standalone verbs that happen to end in びる (like 延びる, 飛びる, etc.)
 pub fn biru() -> Vec<TokenMatcher> {
     use std::sync::Arc;
+
+    // Common standalone verbs ending in びる that are NOT using びる as a suffix
+    const EXCLUDED_VERBS: &[&str] = &[
+        "延びる",    // to extend/prolong (from 延びる, not X + びる)
+        "飛びる",    // variant of 飛ぶ (to fly)
+        "選びる",    // variant of 選ぶ (to choose) - not standard but possible
+    ];
 
     // Matcher for びる verbs - compound form only
     // Matches: 動詞/自立 with base_form ending in びる (e.g., 大人びる, 古びる, 田舎びる)
@@ -9450,6 +9496,7 @@ pub fn biru() -> Vec<TokenMatcher> {
             // Compound form: verb with base ending in びる as 動詞/自立
             if token.base_form.ends_with("びる")
                 && token.base_form != "びる"  // Exclude bare びる (if it exists)
+                && !EXCLUDED_VERBS.contains(&token.base_form.as_str())  // Exclude standalone verbs
                 && token.pos.get(1).is_some_and(|pos| pos == "自立") {
                 return true;
             }

@@ -241,7 +241,10 @@ pub fn noun() -> TokenMatcher {
     impl Matcher for NounMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
-                Some(t) if t.pos.first().is_some_and(|p| p == "名詞") => (true, 1),
+                Some(t) if t.pos.first().is_some_and(|p| p == "名詞")
+                    // Exclude tokens that are ONLY whitespace/control/format characters
+                    // (allows katakana loanwords with empty base_form like "ルームメイト")
+                    && !t.surface.chars().all(|c| c.is_whitespace() || c.is_control() || ('\u{2000}'..='\u{206F}').contains(&c)) => (true, 1),
                 _ => (false, 0),
             }
         }

@@ -161,7 +161,7 @@ mod teiru_u2461_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "ている②");
-        assert_pattern_range(&patterns, "ている②", 4, 12); // 死んでいるだろう (includes だろう)
+        assert_pattern_range(&patterns, "ている②", 4, 9); // 死んでいる (だろう is a separate pattern)
     }
 
     #[test]
@@ -954,6 +954,43 @@ mod ano_tests {
         assert_has_pattern(&patterns, "あの");
         assert_pattern_range(&patterns, "あの", 0, 2); // あの
     }
+
+    #[test]
+    fn test_ano_false_positive_filler() {
+        // Testing: Should NOT match あの when used as filler/interjection
+        let sentence = "あ… あの 他に人は？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT have あの pattern (it's a filler, not demonstrative)
+        assert!(!patterns.iter().any(|p| p.pattern_name == "あの"),
+                "Should not match あの when used as filler/interjection");
+    }
+
+    #[test]
+    fn test_ano_false_positive_filler_standalone() {
+        // Testing: Should NOT match あの when it's standalone trailing filler
+        let sentence = "あ… あの…";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT have あの pattern (it's a filler with trailing ellipsis, not demonstrative)
+        assert!(!patterns.iter().any(|p| p.pattern_name == "あの"),
+                "Should not match あの when used as standalone filler");
+    }
+
+    #[test]
+    fn test_ano_false_positive_with_unicode_control() {
+        // Testing: Should NOT match あの when it's standalone filler with Unicode control chars
+        // The \u{202a} is LEFT-TO-RIGHT EMBEDDING from subtitle files
+        let sentence = "\u{202a}あ… あの…";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT have あの pattern (it's a filler with trailing ellipsis, not demonstrative)
+        assert!(!patterns.iter().any(|p| p.pattern_name == "あの"),
+                "Should not match あの when used as standalone filler with Unicode control chars");
+    }
 }
 
 // ========== Adjective + の(は) ==========
@@ -1649,6 +1686,18 @@ mod yo_tests {
 
         assert_has_pattern(&patterns, "よ");
         assert_pattern_range(&patterns, "よ", 9, 10); // よ
+    }
+
+    #[test]
+    fn test_yo_not_in_yona_compound() {
+        // よ should NOT match when it's part of よな compound ending
+        let sentence = "バナナ… だよな";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!patterns.iter().any(|p| p.pattern_name == "よ"),
+            "よ should NOT match when part of よな compound");
+        assert_has_pattern(&patterns, "だ");
     }
 }
 
@@ -4253,6 +4302,32 @@ mod da_copula_tests {
         assert_has_pattern(&patterns, "だ");
         assert_pattern_range(&patterns, "だ", 2, 6); // 真面目だ
     }
+
+    // Interjection だぁ should NOT match
+    #[test]
+    fn test_da_interjection_no_match() {
+        let sentence = "んっ… うっ だぁ…";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT detect だ pattern - this is an interjection
+        assert!(!patterns.iter().any(|p| p.pattern_name == "だ"));
+    }
+
+    // んだ should NOT match だ pattern (it's part of んです construction)
+    #[test]
+    fn test_da_not_in_nda() {
+        let sentence = "あんた 何でいるんだ？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should detect んです pattern
+        assert_has_pattern(&patterns, "～んです・のです");
+
+        // Should NOT detect だ pattern - it's part of んだ
+        assert!(!patterns.iter().any(|p| p.pattern_name == "だ"),
+                "だ should not match when it's part of んだ");
+    }
 }
 
 // ========== です (Copula - polite is/are) ==========
@@ -4821,7 +4896,7 @@ mod nakucha_nakya_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "なくちゃ・なきゃ");
-        assert_pattern_range(&patterns, "なくちゃ・なきゃ", 3, 13); // やらなけりゃだめだろ
+        assert_pattern_range(&patterns, "なくちゃ・なきゃ", 3, 11); // やらなけりゃだめ (だろ is a separate pattern)
     }
 
     // Polite form: なきゃいけません
@@ -5032,6 +5107,18 @@ mod ni_particle_tests {
         assert_has_pattern(&patterns, "に");
         assert_pattern_range(&patterns, "に", 0, 3); // バスに
     }
+
+    #[test]
+    fn test_ni_false_positive_you_ni() {
+        // Should NOT match に when part of ように
+        let sentence = "二度と逆らえないようにしてやる！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // に should NOT match - this is part of ように pattern
+        assert!(!patterns.iter().any(|p| p.pattern_name == "に"),
+                "Should not match standalone に particle when part of ように");
+    }
 }
 
 // ========== ます (Polite auxiliary verb) ==========
@@ -5041,8 +5128,9 @@ mod ni_particle_tests {
 // Structure variants to test:
 //   polite[0]: Verb[stem] + ます
 //
-// Note: Testing various conjugations (ます, ました, ません, ませんでした)
-// and different verb types (godan, ichidan, irregular)
+// Note: Testing affirmative conjugations (ます, ました) and different verb types
+// (godan, ichidan, irregular). Negative forms (ません, ませんでした) are handled
+// by the separate negative verb patterns.
 
 mod masu_tests {
     use super::*;
@@ -5069,26 +5157,28 @@ mod masu_tests {
         assert_pattern_range(&patterns, "ます", 5, 9); // しました
     }
 
-    // Negative polite
+    // Negative polite - should be detected by う-Verb (Negative), not ます
     #[test]
     fn test_masu_negative() {
         let sentence = "今日は行きません";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "ます");
-        assert_pattern_range(&patterns, "ます", 3, 8); // 行きません
+        // Negative polite forms should be matched by the negative verb patterns
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 3, 8); // 行きません
     }
 
-    // Past negative polite
+    // Past negative polite - should be detected by う-Verb (Negative), not ます
     #[test]
     fn test_masu_past_negative() {
         let sentence = "先週は雨が降りませんでした";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "ます");
-        assert_pattern_range(&patterns, "ます", 5, 13); // 降りませんでした
+        // Negative polite forms should be matched by the negative verb patterns
+        assert_has_pattern(&patterns, "う-Verb (Negative)");
+        assert_pattern_range(&patterns, "う-Verb (Negative)", 5, 13); // 降りませんでした
     }
 
     // Ichidan verb (one-row verb)
@@ -5474,15 +5564,16 @@ mod na_adjective_da_tests {
         assert_pattern_range(&patterns, "な-Adjective だ", 3, 7); // 素敵です
     }
 
-    // Casual standalone (no だ): な-adjective alone
+    // Casual standalone (no だ): な-adjective alone - should match general な-Adjectives pattern
     #[test]
     fn test_na_adjective_da_standalone() {
         let sentence = "この料理、本当に美味しくて健康的";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "な-Adjective だ");
-        assert_pattern_range(&patterns, "な-Adjective だ", 13, 15); // 健康 (without 的 suffix or copula)
+        // Since there's no だ, this should match the general な-Adjectives pattern, not な-Adjective だ
+        assert_has_pattern(&patterns, "な-Adjectives");
+        assert_pattern_range(&patterns, "な-Adjectives", 13, 15); // 健康的 (without copula)
     }
 
     // Past form: な-adjective + だった
@@ -5505,6 +5596,51 @@ mod na_adjective_da_tests {
 
         assert_has_pattern(&patterns, "な-Adjective だ");
         assert_pattern_range(&patterns, "な-Adjective だ", 3, 8); // 重要でした
+    }
+
+    // Yojijukugo (4-character idiom) with だ: should NOT match な-Adjective patterns
+    #[test]
+    fn test_yojijukugo_not_na_adjective() {
+        let sentence = "自業自得だ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT match な-Adjective patterns (自業自得 is a noun/yojijukugo, not a な-adjective)
+        assert!(!patterns.iter().any(|p| p.pattern_name == "な-Adjective だ"),
+                "自業自得 should not match な-Adjective だ pattern");
+        assert!(!patterns.iter().any(|p| p.pattern_name == "な-Adjectives"),
+                "自業自得 should not match な-Adjectives pattern");
+        // Should match だ pattern (copula after noun)
+        assert_has_pattern(&patterns, "だ");
+    }
+
+    // Standalone na-adjective exclamation (no copula): should NOT match な-Adjective だ
+    #[test]
+    fn test_na_adjective_dame_exclamation() {
+        let sentence = "ダメ！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should match general な-Adjectives, not な-Adjective だ
+        assert_has_pattern(&patterns, "な-Adjectives");
+        // Should NOT match な-Adjective だ (no copula present)
+        assert!(!patterns.iter().any(|p| p.pattern_name == "な-Adjective だ"),
+            "な-Adjective だ should not match without copula");
+    }
+
+    // Na-adjective modifying noun (attributive): should NOT match な-Adjective だ
+    #[test]
+    fn test_na_adjective_attributive_mueki() {
+        let sentence = "無益な殺生はあかんし";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should match な-Adjectives and な-Adjective + Noun
+        assert_has_pattern(&patterns, "な-Adjectives");
+        assert_has_pattern(&patterns, "な-Adjective + Noun");
+        // Should NOT match な-Adjective だ (no copula, it's modifying a noun)
+        assert!(!patterns.iter().any(|p| p.pattern_name == "な-Adjective だ"),
+            "な-Adjective だ should not match attributive form (modifying noun)");
     }
 }
 
@@ -6869,5 +7005,183 @@ mod ha_tests {
         let patterns = detect_patterns(&tokens);
         print_debug(sentence, &tokens, &patterns);
         // TODO: add assertions after implementation
+    }
+
+    #[test]
+    fn test_ha_interjection_false_positive() {
+        // Test both with and without the special LTR override character
+        let sentence = "はあっ…";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        // Should NOT match は particle - this is just an interjection/sigh
+        assert!(!patterns.iter().any(|p| p.pattern_name == "は"),
+                "は particle should not match interjections like はあっ");
+
+        // Test with the actual subtitle text (with LTR override U+202A)
+        let sentence2 = "\u{202a}はあっ… あっ…";
+        let tokens2 = tokenize_sentence(sentence2);
+        let patterns2 = detect_patterns(&tokens2);
+        assert!(!patterns2.iter().any(|p| p.pattern_name == "は"),
+                "は particle should not match interjections with special chars");
+    }
+
+    #[test]
+    fn test_ha_interjection_subtitle_88() {
+        // Subtitle #88: "\u{202a}はあ？" - should not match は particle
+        // The LTR override character \u{202a} gets tokenized as a separate noun,
+        // but our noun() matcher should exclude it as a format character
+        let sentence = "\u{202a}はあ？";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+
+        // Verify the tokenization includes は as a particle
+        assert!(tokens.iter().any(|t| t.surface == "は" && t.pos.first().is_some_and(|p| p == "助詞")),
+                "Should tokenize は as a particle");
+
+        // But it should NOT match our は pattern because the preceding token is just a format character
+        assert!(!patterns.iter().any(|p| p.pattern_name == "は"),
+                "は particle should not match when preceded by format character");
+
+        // Also test without the LTR override - should tokenize as complete interjection
+        let sentence2 = "はあ？";
+        let tokens2 = tokenize_sentence(sentence2);
+        let patterns2 = detect_patterns(&tokens2);
+        print_debug(sentence2, &tokens2, &patterns2);
+        assert!(!patterns2.iter().any(|p| p.pattern_name == "は"),
+                "は particle should not match interjection はあ without LTR");
+    }
+
+    #[test]
+    fn test_subtitle_42_debug() {
+        let sentence = "大丈夫 しっかりつかまって！";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        print_debug(sentence, &tokens, &patterns);
+    }
+
+    #[test]
+    fn test_he_interjection_false_positive() {
+        // Test that "へッ" (interjection) does not match the へ particle pattern
+        let sentence = "\u{202a}へッ 俺はしねえ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT match へ particle - this is an interjection
+        assert!(!patterns.iter().any(|p| p.pattern_name == "へ"),
+                "へ particle should not match interjections like へッ");
+
+        // Should still match other patterns correctly
+        assert_has_pattern(&patterns, "は");
+        assert_has_pattern(&patterns, "する");
+    }
+
+    #[test]
+    fn test_ano_filler_false_positive() {
+        // Test that あの as a filler/hesitation does not match (subtitle #116)
+        let sentence = "\u{202a}あっ… ど… どうって… あの…";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // あの should NOT match here - it's a filler at the end, not a demonstrative
+        assert!(!patterns.iter().any(|p| p.pattern_name == "あの"),
+                "あの should not match when used as a filler at sentence end");
+    }
+}
+
+// ========== ている False Positive Tests ==========
+mod teiru_false_positive_tests {
+    use super::*;
+
+    #[test]
+    fn test_teiru_should_not_match_te_form_without_iru() {
+        // Test case from subtitle #190: "火をおこして"
+        // This is just て-form, NOT ている
+        let sentence = "火をおこして";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT match any ている patterns
+        let teiru_matches: Vec<_> = patterns.iter()
+            .filter(|p| p.pattern_name.contains("ている"))
+            .collect();
+
+        assert_eq!(teiru_matches.len(), 0,
+            "ている should not match '火をおこして' - no いる present. Found: {:?}",
+            teiru_matches.iter().map(|p| &p.pattern_name).collect::<Vec<_>>());
+    }
+
+    #[test]
+    fn test_teiru_should_not_match_sequential_te_forms() {
+        // Test case from subtitle #190: "まき集めて火をおこして"
+        // Both are て-forms connecting actions, NOT ている
+        let sentence = "まき集めて火をおこして";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT match any ている patterns
+        let teiru_matches: Vec<_> = patterns.iter()
+            .filter(|p| p.pattern_name.contains("ている"))
+            .collect();
+
+        assert_eq!(teiru_matches.len(), 0,
+            "ている should not match 'まき集めて火をおこして' - no いる present. Found: {:?}",
+            teiru_matches.iter().map(|p| &p.pattern_name).collect::<Vec<_>>());
+    }
+}
+#[cfg(test)]
+mod debug_jibun_de {
+    use super::*;
+
+    #[test]
+    fn test_jibun_de() {
+        let sentence = "自分で考えて";
+        let tokens = tokenize_sentence(sentence);
+
+        println!("\n=== Tokens ===");
+        for (i, token) in tokens.iter().enumerate() {
+            println!("{}: {:?}", i, token);
+        }
+
+        let patterns = detect_patterns(&tokens);
+        println!("\n=== Patterns ===");
+        for pattern in &patterns {
+            println!("{:?}", pattern);
+        }
+    }
+}
+mod debug_full_sentence {
+    use super::*;
+
+    #[test]
+    fn test_full_sentence() {
+        let sentence = "自分で考えて生きていくしかないの";
+        let tokens = tokenize_sentence(sentence);
+
+        println!("\n=== Tokens ===");
+        for (i, token) in tokens.iter().enumerate() {
+            println!("{}: {:?}", i, token);
+        }
+
+        let patterns = detect_patterns(&tokens);
+        println!("\n=== Patterns ===");
+        for pattern in &patterns {
+            println!("{:?}", pattern);
+        }
+    }
+
+    #[test]
+    fn test_subtitle_246_interjection() {
+        // Subtitle #246: Battle cries/interjections from characters
+        // "\u{202a}（花）ていっ！\n（角又）えいっ"
+        // The validation data showed false positive matches for て patterns,
+        // but these have been fixed - the matchers now correctly exclude parenthesized content
+        let sentence = "\u{202a}（花）ていっ！\n（角又）えいっ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // These are interjections/battle cries, not grammar patterns
+        // Should NOT match any て-form patterns
+        assert_eq!(patterns.len(), 0, "Interjections should not match grammar patterns");
     }
 }

@@ -1,5 +1,5 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
-use super::{any, optional};
+use super::any;
 
 // Pattern: ぞ (emphatic sentence-ending particle)
 // Structures: Phrase + ぞ
@@ -21,10 +21,8 @@ pub fn zo() -> Vec<TokenMatcher> {
         }
     }
 
-    vec![
-        any(),  // Preceding word (verb, adjective, auxiliary verb)
-        TokenMatcher::Custom(Arc::new(ZoMatcher)),
-    ]
+    // Just match the ぞ particle itself
+    vec![TokenMatcher::Custom(Arc::new(ZoMatcher))]
 }
 
 // Pattern: ぜ (friendly emphatic sentence-ending particle)
@@ -47,10 +45,8 @@ pub fn ze() -> Vec<TokenMatcher> {
         }
     }
 
-    vec![
-        any(),  // Preceding word (verb, adjective, auxiliary verb)
-        TokenMatcher::Custom(Arc::new(ZeMatcher)),
-    ]
+    // Just match the ぜ particle itself
+    vec![TokenMatcher::Custom(Arc::new(ZeMatcher))]
 }
 
 // Pattern: わ (sentence-ending particle for emphasis/conviction)
@@ -60,10 +56,16 @@ pub fn wa() -> Vec<TokenMatcher> {
     use super::Matcher;
 
     // Match わ (助詞/終助詞)
+    // Sentence-ending particles should not be at the very start of the sentence
     #[derive(Debug)]
     struct WaMatcher;
     impl Matcher for WaMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            // Don't match if we're at position 0 (start of sentence)
+            if ctx.position == 0 {
+                return (false, 0);
+            }
+
             match ctx.current() {
                 Some(token) if token.surface == "わ"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
@@ -73,10 +75,8 @@ pub fn wa() -> Vec<TokenMatcher> {
         }
     }
 
-    vec![
-        any(),  // Preceding word (verb, adjective, auxiliary verb)
-        TokenMatcher::Custom(Arc::new(WaMatcher)),
-    ]
+    // Just match the わ particle itself, like other sentence-ending particles (ね, よ, etc.)
+    vec![TokenMatcher::Custom(Arc::new(WaMatcher))]
 }
 
 // Pattern: い (sentence-ending particle for friendliness/familiarity)
@@ -138,76 +138,60 @@ pub fn i() -> Vec<TokenMatcher> {
 //             Verb[連用タ接続] + て + ん (ている → てん)
 pub fn n_slang() -> Vec<TokenMatcher> {
     use std::sync::Arc;
-    use super::{Matcher, check_token};
+    use super::Matcher;
 
-    // Match verb in 未然特殊 conjugation (わかん, なん) OR verb + て + ん
+    // Custom matcher that handles both ん slang variations:
+    // 1. Verb[未然特殊] + ない/ねえ (らない → んない)
+    // 2. Verb[連用タ接続] + て + ん (ている → てん)
     #[derive(Debug)]
-    struct NSlangVerbMatcher;
-    impl Matcher for NSlangVerbMatcher {
+    struct NSlangFullMatcher;
+    impl Matcher for NSlangFullMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                // Variant 1: Verb in 未然特殊 (らない → んない)
-            if token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "未然特殊")
-            {
-                return true;
+            // First token must be a verb
+            let first = match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "動詞") => token,
+                _ => return (false, 0),
+            };
+
+            let second = match ctx.lookahead(1) {
+                Some(token) => token,
+                None => return (false, 0),
+            };
+
+            // Variant 1: Verb[未然特殊] + ない/ねえ (らない → んない)
+            if first.features.get(5).is_some_and(|f| f == "未然特殊") {
+                if (second.surface == "ない" || second.surface == "ねえ")
+                    && second.base_form == "ない"
+                    && second.pos.first().is_some_and(|pos| pos == "助動詞")
+                {
+                    return (true, 2);
+                }
             }
-            // Variant 2: Verb in 連用タ接続 (for ている → てん)
-            if token.pos.first().is_some_and(|pos| pos == "動詞")
-                && token.features.get(5).is_some_and(|f| f == "連用タ接続")
-            {
-                return true;
+
+            // Variant 2: Verb[連用タ接続] + て + ん (ている → てん)
+            if first.features.get(5).is_some_and(|f| f == "連用タ接続") {
+                // Second token must be て particle
+                if second.surface == "て"
+                    && second.pos.first().is_some_and(|pos| pos == "助詞")
+                    && second.pos.get(1).is_some_and(|pos| pos == "接続助詞")
+                {
+                    // Third token must be ん
+                    if let Some(third) = ctx.lookahead(2) {
+                        if third.surface == "ん"
+                            && third.pos.first().is_some_and(|pos| pos == "名詞")
+                            && third.pos.get(1).is_some_and(|pos| pos == "非自立")
+                        {
+                            return (true, 3);
+                        }
+                    }
+                }
             }
-            false
-            })
+
+            (false, 0)
         }
     }
 
-    // Match either: ない/ねえ auxiliary OR て particle
-    #[derive(Debug)]
-    struct NSlangFollowerMatcher;
-    impl Matcher for NSlangFollowerMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                // Variant 1: ない/ねえ auxiliary
-            if (token.surface == "ない" || token.surface == "ねえ")
-                && token.base_form == "ない"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
-            {
-                return true;
-            }
-            // Variant 2: て particle
-            if token.surface == "て"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "接続助詞")
-            {
-                return true;
-            }
-            false
-            })
-        }
-    }
-
-    // For variant 2 only: match ん (名詞/非自立) after て
-    #[derive(Debug)]
-    struct NNounMatcher;
-    impl Matcher for NNounMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(token) if token.surface == "ん"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-
-    // Use Optional to make the third token optional (needed for variant 2, not for variant 1)
-    vec![
-        TokenMatcher::Custom(Arc::new(NSlangVerbMatcher)),
-        TokenMatcher::Custom(Arc::new(NSlangFollowerMatcher)),
-        optional(TokenMatcher::Custom(Arc::new(NNounMatcher))),
-    ]
+    vec![TokenMatcher::Custom(Arc::new(NSlangFullMatcher))]
 }
 
 // Pattern: つ (Slang)
@@ -320,14 +304,18 @@ pub fn karou() -> Vec<TokenMatcher> {
     impl Matcher for AdjectiveKaroMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             check_token(ctx, |token| {
-                // Can be 形容詞/自立 or 助動詞 (for ない)
+                // Can be 形容詞/自立 or 助動詞 (for ない/だ only, NOT ます)
             let is_adjective = token.pos.first().is_some_and(|pos| pos == "形容詞");
-            let is_auxiliary = token.pos.first().is_some_and(|pos| pos == "助動詞");
+            let is_nai_or_da_auxiliary = token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && (token.base_form == "ない" || token.base_form == "だ");
 
             // Must be in 未然ウ接続 conjugation form
             let has_correct_form = token.features.get(5).is_some_and(|f| f == "未然ウ接続");
 
-            (is_adjective || is_auxiliary) && has_correct_form
+            // Exclude ます - it doesn't have a true 未然ウ接続 form
+            let is_not_masu = token.base_form != "ます";
+
+            (is_adjective || is_nai_or_da_auxiliary) && has_correct_form && is_not_masu
             })
         }
     }

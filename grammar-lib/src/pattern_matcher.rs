@@ -22,6 +22,15 @@ impl<'a> MatchContext<'a> {
     pub fn lookahead(&self, n: usize) -> Option<&'a KagomeToken> {
         self.tokens.get(self.position + n)
     }
+
+    #[allow(dead_code)]
+    pub fn lookbehind(&self, n: usize) -> Option<&'a KagomeToken> {
+        if self.position >= n {
+            self.tokens.get(self.position - n)
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -173,6 +182,20 @@ impl PatternMatcher {
                         .first()
                         .is_some_and(|pos| pos == "助動詞")
                 {
+                    let aux_token = &tokens[current_idx];
+
+                    // Don't extend Conjugation patterns through だろう/でしょう
+                    // These are standalone patterns that apply to the whole verb, not part of the conjugation
+                    // BUT Construction patterns can include だろう as part of the expression (e.g., といえるだろう)
+                    if pattern.category == PatternCategory::Conjugation {
+                        if aux_token.base_form == "だ" && aux_token.surface == "だろ" {
+                            break;
+                        }
+                        if aux_token.base_form == "です" && aux_token.surface == "でしょ" {
+                            break;
+                        }
+                    }
+
                     extend_to = tokens[current_idx].end;
                     current_idx += 1;
                 }

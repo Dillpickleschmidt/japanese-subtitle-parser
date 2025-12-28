@@ -3275,6 +3275,17 @@ mod ue_tests {
         assert_has_pattern(&patterns, "上");
         assert_pattern_range(&patterns, "上", 0, 3); // 仕事上
     }
+
+    // Testing: Should NOT match when 上 is a regular noun (not suffix)
+    #[test]
+    fn test_ue_not_suffix() {
+        let sentence = "年は私が一番上よね";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!patterns.iter().any(|p| p.pattern_name == "上"),
+            "Should not match '上' when it's a regular noun in '一番上', not the suffix じょう");
+    }
 }
 
 // Pattern: 上に (in addition to / as well as)
@@ -3867,6 +3878,54 @@ mod sonoue_tests {
         assert_has_pattern(&patterns, "を巡って");
         assert_pattern_range(&patterns, "を巡って", 4, 12); // ルールをめぐって
     }
+
+    // Negative test: Should NOT match plain を particle
+    #[test]
+    fn test_womegutte_negative_plain_wo() {
+        let sentence = "助けを待っていてもらちがあかねえってことだ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT have を巡って pattern
+        assert!(!patterns.iter().any(|p| p.pattern_name == "を巡って"),
+                "を巡って should not match plain を particle in '助けを待って'");
+    }
+
+    // Negative test: Should NOT match suffix + を
+    #[test]
+    fn test_womegutte_negative_suffix_wo() {
+        let sentence = "俺たちを さっさと うちに帰してくれよ";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT have を巡って pattern (たち is a suffix, not a standalone noun)
+        assert!(!patterns.iter().any(|p| p.pattern_name == "を巡って"),
+                "を巡って should not match suffix + を particle in '俺たちを'");
+    }
+
+    // Negative test: Should NOT match demonstrative pronoun + を
+    #[test]
+    fn test_womegutte_negative_kokowo() {
+        let sentence = "ここを乗り切る時間くらい稼げるだろう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT have を巡って pattern (ここ is demonstrative, not followed by めぐる)
+        assert!(!patterns.iter().any(|p| p.pattern_name == "を巡って"),
+                "を巡って should not match demonstrative + を particle in 'ここを乗り切る'");
+    }
+
+    // Negative test: Should NOT match name suffix + を
+    #[test]
+    fn test_womegutte_negative_chan_wo() {
+        let sentence = "ひばりちゃんをお願い";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should NOT have を巡って pattern (ちゃん is a name suffix, を is just object particle)
+        assert!(!patterns.iter().any(|p| p.pattern_name == "を巡って"),
+                "を巡って should not match name + を particle in 'ちゃんを'");
+    }
 }
 
 // Pattern: にわたって (across, throughout, over the period of)
@@ -3915,6 +3974,215 @@ fn test_niwatatte_ta_form() {
 
     assert_has_pattern(&patterns, "にわたって");
     assert_pattern_range(&patterns, "にわたって", 1, 8); // 年間にわたった
+}
+
+#[test]
+fn test_niwatatte_false_positive_location_ni() {
+    // Testing: Should NOT match simple location に
+    let sentence = "地獄にいるかもしれない";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Should NOT have にわたって pattern
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for location particle に");
+}
+
+#[test]
+fn test_niwatatte_false_positive_purpose_ni() {
+    // Testing: Should NOT match purpose に (人助けに)
+    let sentence = "人助けに飛び込めるかね 普通";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Should NOT have にわたって pattern
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for purpose particle に");
+}
+
+#[test]
+fn test_niwatatte_false_positive_asokoni() {
+    // Testing: Should NOT match location に in "あそこにいた"
+    let sentence = "私もそうよ 目が覚めたら あそこにいたの";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Debug output
+    print_debug(sentence, &tokens, &patterns);
+
+    // Should NOT have にわたって pattern
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for location particle に in あそこにいた");
+}
+
+#[test]
+fn test_niwatatte_false_positive_tokoro_ni() {
+    // Testing: Should NOT match ところに (place + に location particle)
+    let sentence = "おおっ いいところに島だぜ！";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Should NOT have にわたって pattern - this is just ところ + に, not にわたって
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for simple ところに (place + location particle)");
+}
+
+#[test]
+fn test_niwatatte_false_positive_anna_tokoro_ni() {
+    // Testing: Should NOT match あんなところに (that kind of place + に)
+    let sentence = "あっ あんなところに…";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+    print_debug(sentence, &tokens, &patterns);
+
+    // Should NOT have にわたって pattern - this is just ところ + に, not にわたって
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for あんなところに (that kind of place + location particle)");
+}
+
+#[test]
+fn test_niwatatte_false_positive_furidashi_ni() {
+    // Testing: Should NOT match 振り出しに (back to the starting point)
+    let sentence = "振り出しに戻ったわけですね";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Should NOT have にわたって pattern - this is just 振り出し + に (location/direction particle)
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for 振り出しに (starting point + direction particle)");
+}
+
+#[test]
+fn test_niwatatte_false_positive_hokani() {
+    // Testing: Should NOT match 他に (besides, in addition)
+    let sentence = "あ… あの 他に人は？";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Should NOT have にわたって pattern
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for 他に (besides/in addition)");
+}
+
+#[test]
+fn test_niwatatte_false_positive_hokaniwa() {
+    // Testing: Should NOT match 他には (besides, other than)
+    let sentence = "他にはいないわ";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Should NOT have にわたって pattern
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for 他には (besides/other than)");
+}
+
+#[test]
+fn test_niwatatte_false_positive_funeni() {
+    // Testing: Should NOT match に particle with verb like 船に乗る
+    let sentence = "俺は船に乗った覚えどころか家から出た記憶すらない";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Should NOT have にわたって pattern
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for destination particle に (船に乗る)");
+}
+
+#[test]
+fn test_niwatatte_false_positive_subtitle_379() {
+    // Testing subtitle 379: Should NOT match 浜辺に (beach + direction particle)
+    let sentence = "戻ろうや 浜辺に";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+    print_debug(sentence, &tokens, &patterns);
+
+    // Should NOT have にわたって pattern - this is just 浜辺に (to the beach), not にわたって
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for location destination に (浜辺に)");
+}
+
+#[test]
+fn test_niwatatte_false_positive_konna_me_ni() {
+    // Testing: Should NOT match に particle in expressions like こんな目に
+    let sentence = "クソッ 何でこんな目に！";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Debug output to see what's happening
+    print_debug(sentence, &tokens, &patterns);
+
+    // Should NOT have にわたって pattern - this is just 目に (to such a situation)
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for idiomatic expression 目に");
+}
+
+#[test]
+fn test_niwatatte_false_positive_hana_ni_vote() {
+    // Testing: Should NOT match に particle for "花に１票" (one vote for flowers)
+    let sentence = "どっちかいうと 花に１票";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Debug output to see what's happening
+    print_debug(sentence, &tokens, &patterns);
+
+    // Should NOT have にわたって pattern - this is just 花に (to/for flowers), not にわたって
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for simple に particle marking recipient");
+}
+
+#[test]
+fn test_niwatatte_false_positive_subtitle_296() {
+    // Testing subtitle 296: Should NOT match には particle combination
+    let sentence = "命令には絶対服従だ";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Should NOT have にわたって pattern - this is には (に+は), not にわたって
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for には particle combination");
+}
+
+#[test]
+fn test_niwatatte_false_positive_subtitle_307() {
+    // Testing subtitle 307: Should NOT match pronoun + に (俺に逆らうな)
+    let sentence = "とにかく俺に逆らうな";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Should NOT have にわたって pattern - this is just 俺に (to me), not にわたって
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for pronoun + に particle");
+}
+
+#[test]
+fn test_niwatatte_false_positive_you_ni() {
+    // Testing subtitle 334: Should NOT match ように (purpose/so that)
+    let sentence = "二度と逆らえないようにしてやる！";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Debug output to see tokenization
+    print_debug(sentence, &tokens, &patterns);
+
+    // Should NOT have にわたって pattern - this is ように (so that), not にわたって
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for ように purpose pattern");
+}
+
+#[test]
+fn test_niwatatte_false_positive_gohan_ni() {
+    // Testing subtitle 390: Should NOT match ごはんに (meal + target particle)
+    let sentence = "とりあえず ごはんにしませんか？";
+    let tokens = tokenize_sentence(sentence);
+    let patterns = detect_patterns(&tokens);
+
+    // Debug output to see tokenization
+    print_debug(sentence, &tokens, &patterns);
+
+    // Should NOT have にわたって pattern - this is just ごはんにする (decide on a meal), not にわたって
+    assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
+            "Should not match にわたって for ごはんに (meal + target particle in にする construction)");
 }
 
 // Pattern: に沿って (along, in accordance with, in line with)
@@ -7209,6 +7477,46 @@ mod teha_tests {
         assert_has_pattern(&patterns, "ては");
         assert_pattern_range(&patterns, "ては", 7, 10); // 人じゃ
     }
+
+    #[test]
+    fn test_teha_false_positive_deshite() {
+        // "でして" = です(copula) in て-form
+        // This should NOT match ては pattern (which requires て/で particle + は)
+        let sentence = "吐くなら外でして";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // ては should NOT be matched
+        let teha_patterns: Vec<_> = patterns.iter()
+            .filter(|p| p.pattern_name == "ては")
+            .collect();
+
+        assert_eq!(teha_patterns.len(), 0, "ては should not match でして (です in て-form)");
+    }
+
+    #[test]
+    fn test_teha_false_positive_janee() {
+        // "じゃねえか" = negative copula (isn't it?) - NOT conditional ては
+        let sentence = "いい天気じゃねえか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // ては should NOT be matched - じゃねえ is negative copula, not conditional
+        assert!(!has_pattern(&patterns, "ては"), "ては should not match じゃねえか (negative copula)");
+    }
+
+    #[test]
+    fn test_teha_not_match_atode() {
+        // "あとで" = temporal expression - NOT conditional ては
+        let sentence = "大丈夫 あとで行くから";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        // Should have あとで pattern, but NOT ては pattern
+        assert_has_pattern(&patterns, "あとで");
+        assert!(!patterns.iter().any(|p| p.pattern_name == "ては"),
+            "ては should not match 'あとで' temporal expression");
+    }
 }
 
 // Pattern: ては〜ては (doing A and B repeatedly, alternating actions)
@@ -9114,7 +9422,7 @@ mod nishiro_uff5e_nishiro_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "にしろ～にしろ");
-        // Note: Pattern matches each instance separately
+        // Note: Pattern currently matches each instance separately (TODO: should match double form)
         // First: 参加するにせよ (参加 is token before に)
         assert_pattern_range(&patterns, "にしろ～にしろ", 7, 14); // 参加するにせよ
         // Second: ないにせよ (ない is the token before に, し is separate)
@@ -9130,7 +9438,7 @@ mod nishiro_uff5e_nishiro_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "にしろ～にしろ");
-        // Pattern matches each instance separately - testing first occurrence found
+        // Pattern currently matches each instance separately (TODO: should match double form)
         assert_pattern_range(&patterns, "にしろ～にしろ", 8, 14); // 少ないにしろ
     }
 
@@ -9143,7 +9451,7 @@ mod nishiro_uff5e_nishiro_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "にしろ～にしろ");
-        // Pattern matches each instance separately
+        // Pattern currently matches each instance separately (TODO: should match double form)
         assert_pattern_range(&patterns, "にしろ～にしろ", 3, 8); // 好きにせよ
     }
 
@@ -9156,7 +9464,7 @@ mod nishiro_uff5e_nishiro_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "にしろ～にしろ");
-        // Pattern matches each instance separately - testing first occurrence found
+        // Pattern currently matches each instance separately (TODO: should match double form)
         assert_pattern_range(&patterns, "にしろ～にしろ", 5, 13); // アルバイトにしろ
     }
 
@@ -9169,7 +9477,7 @@ mod nishiro_uff5e_nishiro_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "にしろ～にしろ");
-        // Pattern matches each instance separately
+        // Pattern currently matches each instance separately (TODO: should match double form)
         // Note: Pattern matches Noun + に + しろ, not the full い-Adj + Noun phrase
         assert_pattern_range(&patterns, "にしろ～にしろ", 2, 6); // 川にしろ
     }

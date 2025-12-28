@@ -1855,14 +1855,31 @@ pub fn mono_u30fb_mon() -> Vec<TokenMatcher> {
     }
 
     // Match だ as auxiliary (助動詞)
+    // For "な" form, we need to check that it's NOT just modifying a regular noun "もの/もん"
     #[derive(Debug)]
     struct DaAuxMatcher;
     impl super::Matcher for DaAuxMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
-                Some(token) if (token.surface == "だ" || token.surface == "な")
-                && token.base_form == "だ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞") => (true, 1),
+                Some(token) if token.base_form == "だ"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞") => {
+                    // For "な" form: check that the next token (もの/もん) is NOT a regular independent noun
+                    // The explanatory もの/もん should be 非自立 (dependent) or 終助詞 (sentence-ending particle)
+                    if token.surface == "な" {
+                        if let Some(next) = ctx.lookahead(1) {
+                            // Only match if next is もの/もん AND it's dependent or particle, NOT regular noun
+                            if next.surface == "もの" || next.surface == "もん" {
+                                // Accept if it's 非自立 (dependent noun) or 終助詞 (sentence-ending particle)
+                                // Reject if it's a regular independent noun that could be modified by な-adjective
+                                let is_explanatory = next.pos.get(1).is_some_and(|p| p == "非自立" || p == "終助詞");
+                                return (is_explanatory, 1);
+                            }
+                        }
+                        return (false, 0);
+                    }
+                    // For "だ" form, always accept
+                    (true, 1)
+                },
                 _ => (false, 0),
             }
         }
@@ -4439,14 +4456,9 @@ pub fn ha_uff5e_kuraidesu() -> Vec<TokenMatcher> {
 // Pattern: さ - Interjection (drawing attention, inviting action)
 // Structures: さあ (as 感動詞 interjection)
 //
-// Note: This pattern and "さ - Filler" both match さあ as 感動詞.
-// The distinction is semantic/contextual rather than structural:
-// - Interjection: Typically at sentence start, drawing attention ("ok then", "well")
-// - Filler: Typically mid-sentence, expressing hesitation ("um", "uh")
-//
-// Since they're structurally identical and "often used interchangeably"
-// (per grammar data), both patterns will match. Users can determine
-// meaning from context.
+// This pattern matches さあ at the START of a sentence/phrase, drawing attention.
+// Differentiated from "さ - Filler" by position: interjections are typically at
+// sentence start or after punctuation, while fillers appear mid-sentence.
 //
 // UNDETECTABLE: さー (with prolonged sound mark) tokenizes as two separate tokens
 // (さ + ー), making it impossible to detect as a single interjection pattern.
@@ -4459,11 +4471,30 @@ pub fn sa_interjection() -> Vec<TokenMatcher> {
     impl Matcher for SaInterjectionMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
-                Some(token) if 
-
+                Some(token) if
             token.surface == "さあ"
                 && token.base_form == "さあ"
-                && token.pos.first().is_some_and(|pos| pos == "感動詞") => (true, 1),
+                && token.pos.first().is_some_and(|pos| pos == "感動詞") => {
+                    // Only match at sentence start or after punctuation/interjections
+                    if ctx.position == 0 {
+                        return (true, 1);
+                    }
+
+                    // Check if previous token is sentence-ending or interjection
+                    if let Some(prev) = ctx.lookbehind(1) {
+                        let is_after_break = prev.surface == "。"
+                            || prev.surface == "、"
+                            || prev.surface == "！"
+                            || prev.surface == "？"
+                            || prev.pos.first().is_some_and(|pos| pos == "感動詞");
+
+                        if is_after_break {
+                            return (true, 1);
+                        }
+                    }
+
+                    (false, 0)
+                },
                 _ => (false, 0),
             }
         }
@@ -4474,19 +4505,46 @@ pub fn sa_interjection() -> Vec<TokenMatcher> {
 
 // Pattern: さ - Filler (hesitation/thinking filler word)
 // Structures: さあ/さー (as 感動詞 interjection)
+//
+// This pattern matches さあ/さー MID-SENTENCE as a filler/hesitation word.
+// Differentiated from "さ - Interjection" by position: fillers appear mid-sentence,
+// while interjections are typically at sentence start or after punctuation.
 pub fn sa_filler() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
-    // Matcher for さあ/さー as interjection (filler word)
+    // Matcher for さあ/さー as filler word (hesitation)
     #[derive(Debug)]
     struct SaFillerMatcher;
     impl Matcher for SaFillerMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
-                Some(token) if 
+                Some(token) if
             (token.surface == "さあ" || token.surface == "さー")
                 && token.base_form == "さあ"
-                && token.pos.first().is_some_and(|pos| pos == "感動詞") => (true, 1),
+                && token.pos.first().is_some_and(|pos| pos == "感動詞") => {
+                    // Only match mid-sentence (not at start or after punctuation)
+                    if ctx.position == 0 {
+                        return (false, 0);
+                    }
+
+                    // Check if previous token is NOT sentence-ending or interjection
+                    if let Some(prev) = ctx.lookbehind(1) {
+                        let is_after_break = prev.surface == "。"
+                            || prev.surface == "、"
+                            || prev.surface == "！"
+                            || prev.surface == "？"
+                            || prev.surface == "）"
+                            || prev.surface == "」"
+                            || prev.pos.first().is_some_and(|pos| pos == "感動詞");
+
+                        // Only match if NOT after a break (i.e., mid-sentence)
+                        if !is_after_break {
+                            return (true, 1);
+                        }
+                    }
+
+                    (false, 0)
+                },
                 _ => (false, 0),
             }
         }
@@ -7131,36 +7189,62 @@ pub fn uff5e_zutsu() -> Vec<TokenMatcher> {
 }
 
 // Pattern: ずっと ② (by far/much more - comparative)
-// NOTE: Tokenization is identical to ずっと ① (continuously).
-// Both patterns use 副詞/一般. The difference is semantic context:
+// Structures: ずっと + Phrase (in comparative context)
+//
+// The difference between ① and ②:
 // - ずっと ① = temporal continuity ("continuously", "the whole time")
 // - ずっと ② = comparative degree ("by far", "much more")
 //
-// According to the Fun Fact in grammar_points_data.json, both meanings
-// derive from the same core concept of "unwavering/unfaltering" and
-// "far more (A)" / "to the maximum amount possible".
-//
-// Since we cannot reliably distinguish these structurally, both patterns
-// will be detected when ずっと appears. The user should determine the
-// meaning from context.
+// The comparative use (②) typically appears with:
+// - より (than): AよりずっとB
+// - 方が (one is more): Aの方がずっとB
 pub fn zutto_u2461() -> Vec<TokenMatcher> {
     use super::Matcher;
 
-    // Match ずっと adverb (副詞/一般) - identical to ずっと ①
+    // Match ずっと adverb in comparative context
     #[derive(Debug)]
-    struct ZuttoMatcher;
-    impl Matcher for ZuttoMatcher {
+    struct ZuttoComparativeMatcher;
+    impl Matcher for ZuttoComparativeMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            // First check if current token is ずっと
             match ctx.current() {
                 Some(token) if token.surface == "ずっと"
                 && token.base_form == "ずっと"
-                && token.pos.first().is_some_and(|pos| pos == "副詞") => (true, 1),
+                && token.pos.first().is_some_and(|pos| pos == "副詞") => {
+                    // Check for comparative context:
+                    // 1. より before ずっと (within 3 tokens back)
+                    let has_yori_before = (1..=3).any(|i| {
+                        ctx.lookbehind(i).is_some_and(|t| t.surface == "より")
+                    });
+
+                    // 2. 方 + が before ずっと (within 5 tokens back)
+                    let has_hou_ga_before = (2..=5).any(|i| {
+                        ctx.lookbehind(i).is_some_and(|t| t.surface == "方")
+                        && ctx.lookbehind(i-1).is_some_and(|t| t.surface == "が")
+                    });
+
+                    // 3. より after ずっと (within 2 tokens ahead)
+                    let has_yori_after = (1..=2).any(|i| {
+                        ctx.lookahead(i).is_some_and(|t| t.surface == "より")
+                    });
+
+                    // 4. は particle immediately before ずっと (comparison topic marker)
+                    let has_wa_before = ctx.lookbehind(1).is_some_and(|t| {
+                        t.surface == "は" && t.pos.first().is_some_and(|p| p == "助詞")
+                    });
+
+                    if has_yori_before || has_hou_ga_before || has_yori_after || has_wa_before {
+                        return (true, 1);
+                    }
+
+                    (false, 0)
+                },
                 _ => (false, 0),
             }
         }
     }
 
-    vec![TokenMatcher::Custom(Arc::new(ZuttoMatcher))]
+    vec![TokenMatcher::Custom(Arc::new(ZuttoComparativeMatcher))]
 }
 
 // Pattern: だらけ (covered with/full of - scattered state)
@@ -8182,23 +8266,33 @@ pub fn iumademonai_u2461() -> Vec<TokenMatcher> {
     struct IumademonaiSentenceInitialMatcher;
     impl super::Matcher for IumademonaiSentenceInitialMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                // Form 1: Single token (言うまでもなく with base 言うまでもない)
-            if token.base_form == "言うまでもない"
-                && token.pos.first().is_some_and(|pos| pos == "形容詞")
-            {
-                return true;
-            }
+            match ctx.current() {
+                Some(token) => {
+                    // Form 1: Single token (言うまでもなく with base 言うまでもない)
+                    if token.base_form == "言うまでもない"
+                        && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                    {
+                        return (true, 1);
+                    }
 
-            // Form 2: Split tokenization - match いう (verb)
-            if token.base_form == "いう"
-                && token.pos.first().is_some_and(|pos| pos == "動詞")
-            {
-                return true;
-            }
+                    // Form 2: Split tokenization - match いう (verb)
+                    if token.base_form == "いう"
+                        && token.pos.first().is_some_and(|pos| pos == "動詞")
+                    {
+                        // Exclude "そういえば" pattern (そう + いう + ...)
+                        // Check if previous token is そう (adverb)
+                        if let Some(prev_token) = ctx.lookbehind(1) {
+                            if prev_token.surface == "そう" && prev_token.pos.first().is_some_and(|pos| pos == "副詞") {
+                                return (false, 0);
+                            }
+                        }
+                        return (true, 1);
+                    }
 
-            false
-            })
+                    (false, 0)
+                }
+                _ => (false, 0),
+            }
         }
     }
 
@@ -8285,13 +8379,72 @@ pub fn iumademonai_u2461() -> Vec<TokenMatcher> {
 
     // Pattern structure:
     // - First token: either 言うまでもなく (single) OR いう (verb, start of split form)
-    // - If split form (いう): followed by まで + も + ない
-    // - Optionally followed by こと, だ, が/けど/etc
+    // - If split form (いう): MUST be followed by まで + も + ない (these are NOT optional for the split form)
+    // - Optionally followed by こと, だ, が/けど/etc (these are truly optional)
+
+    // Use a custom matcher that handles both single-token and multi-token forms properly
+    #[derive(Debug)]
+    struct IumademonaiFullMatcher;
+    impl super::Matcher for IumademonaiFullMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) => {
+                    // Form 1: Single token (言うまでもなく/言うまでもない as adjective)
+                    if token.base_form == "言うまでもない"
+                        && token.pos.first().is_some_and(|pos| pos == "形容詞")
+                    {
+                        return (true, 1);
+                    }
+
+                    // Form 2: Split tokenization - MUST match full sequence いう + まで + も + ない
+                    if token.base_form == "いう"
+                        && token.pos.first().is_some_and(|pos| pos == "動詞")
+                    {
+                        // Exclude "そういえば" pattern
+                        if let Some(prev_token) = ctx.lookbehind(1) {
+                            if prev_token.surface == "そう" && prev_token.pos.first().is_some_and(|pos| pos == "副詞") {
+                                return (false, 0);
+                            }
+                        }
+
+                        // Verify the next 3 tokens are まで + も + ない
+                        if let Some(token2) = ctx.lookahead(1) {
+                            if token2.surface != "まで" || !token2.pos.first().is_some_and(|pos| pos == "助詞") {
+                                return (false, 0);
+                            }
+                        } else {
+                            return (false, 0);
+                        }
+
+                        if let Some(token3) = ctx.lookahead(2) {
+                            if token3.surface != "も" || !token3.pos.first().is_some_and(|pos| pos == "助詞") {
+                                return (false, 0);
+                            }
+                        } else {
+                            return (false, 0);
+                        }
+
+                        if let Some(token4) = ctx.lookahead(3) {
+                            if token4.surface != "ない" || !token4.pos.first().is_some_and(|pos| pos == "形容詞") {
+                                return (false, 0);
+                            }
+                        } else {
+                            return (false, 0);
+                        }
+
+                        // All 4 tokens match: いう + まで + も + ない
+                        return (true, 4);
+                    }
+
+                    (false, 0)
+                }
+                _ => (false, 0),
+            }
+        }
+    }
+
     vec![
-        TokenMatcher::Custom(Arc::new(IumademonaiSentenceInitialMatcher)),
-        optional(TokenMatcher::Custom(Arc::new(MadeParticleMatcher))),
-        optional(TokenMatcher::Custom(Arc::new(MoParticleMatcher))),
-        optional(TokenMatcher::Custom(Arc::new(NaiAdjectiveMatcher))),
+        TokenMatcher::Custom(Arc::new(IumademonaiFullMatcher)),
         optional(TokenMatcher::Custom(Arc::new(KotoMatcher))),
         optional(TokenMatcher::Custom(Arc::new(DaAuxiliaryMatcher))),
         optional(TokenMatcher::Custom(Arc::new(GaKedoMatcher))),

@@ -1,5 +1,5 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
-use super::{Matcher, check_token, verb_form, verb_base, adjective, surface, any, optional, wildcard};
+use super::{Matcher, check_token, verb_form, verb_base, adjective, noun, surface, any, optional, wildcard};
 use std::sync::Arc;
 
 // Pattern: 得る・得る (to be possible, can do)
@@ -1028,6 +1028,19 @@ pub fn ue() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
     #[derive(Debug)]
+    struct PrecedingNounMatcher;
+    impl super::Matcher for PrecedingNounMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                // Must be a noun, but NOT 副詞可能 (adverb-capable) which includes words like 一番
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "名詞")
+                && !token.pos.get(1).is_some_and(|pos| pos == "副詞可能") => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+
+    #[derive(Debug)]
     struct UeSuffixMatcher;
     impl super::Matcher for UeSuffixMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
@@ -1042,7 +1055,7 @@ pub fn ue() -> Vec<TokenMatcher> {
     }
 
     vec![
-        super::noun(),
+        TokenMatcher::Custom(Arc::new(PrecedingNounMatcher)),
         TokenMatcher::Custom(Arc::new(UeSuffixMatcher)),
     ]
 }
@@ -1655,48 +1668,56 @@ pub fn temae() -> Vec<TokenMatcher> {
 pub fn womegutte() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
-    // Match either:
-    // 1. をめぐって as single token (助詞/格助詞/連語)
-    // 2. を particle (when followed by めぐる verb)
+    // This pattern can appear as either:
+    // 1. Single compound particle token: をめぐって
+    // 2. Multi-token: を + めぐる verb (in various forms)
+    // We use a composite matcher to handle both cases
     #[derive(Debug)]
-    struct WomegutteMatcher;
-    impl Matcher for WomegutteMatcher {
+    struct WomegutteCompositeMatcher;
+    impl Matcher for WomegutteCompositeMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(token) if 
-            (token.surface == "をめぐって"
+            let Some(token) = ctx.current() else {
+                return (false, 0);
+            };
+
+            // Case 1: をめぐって as single compound particle
+            if token.surface == "をめぐって"
                 && token.base_form == "をめぐって"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
-                && token.pos.get(2).is_some_and(|pos| pos == "連語"))
-            ||
+                && token.pos.get(2).is_some_and(|pos| pos == "連語")
+            {
+                return (true, 1);
+            }
 
-            (token.surface == "を"
+            // Case 2: を + めぐる (multi-token form)
+            // Must have を followed by めぐる
+            if token.surface == "を"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")) => (true, 1),
-                _ => (false, 0),
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+            {
+                // Check if next token is めぐる verb
+                if let Some(next_token) = ctx.lookahead(1) {
+                    // MUST be めぐる specifically, not any other verb
+                    if next_token.base_form == "めぐる"
+                        && next_token.pos.first().is_some_and(|pos| pos == "動詞")
+                    {
+                        return (true, 2); // Consume both tokens
+                    }
+                }
+                // CRITICAL: を found but NOT followed by めぐる - this is NOT を巡って pattern
+                // Return false to prevent matching plain を particles
+                return (false, 0);
             }
+
+            (false, 0)
         }
     }
 
-    // Match めぐる verb (in various forms: めぐる, めぐって, めぐり)
-    // This is optional because sometimes it's a single token をめぐって
-    #[derive(Debug)]
-    struct MeguruVerbMatcher;
-    impl Matcher for MeguruVerbMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(token) if token.base_form == "めぐる"
-                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-
+    // Use noun() instead of any() to be more strict about what precedes を巡って
     vec![
-        any(), // Noun
-        TokenMatcher::Custom(Arc::new(WomegutteMatcher)),
-        optional(TokenMatcher::Custom(Arc::new(MeguruVerbMatcher))),
+        noun(), // Noun (strict check)
+        TokenMatcher::Custom(Arc::new(WomegutteCompositeMatcher)),
     ]
 }
 
@@ -1705,15 +1726,20 @@ pub fn womegutte() -> Vec<TokenMatcher> {
 pub fn niwatatte() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
-    // Match either:
-    // 1. Compound particle forms (にわたって/にわたる/にわたり) - single token
-    // 2. に + わたる verb - multi-token form (e.g., にわたった)
+    // This pattern can appear as either:
+    // 1. Single compound particle token: にわたって/にわたる/にわたり
+    // 2. Multi-token: に + わたる verb (in various conjugations like にわたった)
+    // We use a composite matcher to handle both cases
     #[derive(Debug)]
-    struct NiwatatteMatcher;
-    impl super::Matcher for NiwatatteMatcher {
+    struct NiwatatteCompositeMatcher;
+    impl super::Matcher for NiwatatteCompositeMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                // Case 1: Compound particle
+            let Some(token) = ctx.current() else {
+                return (false, 0);
+            };
+
+            // Case 1: Compound particle (single token)
+            // This is the full compound particle にわたって/にわたる/にわたり tokenized as one unit
             if token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
                 && token.pos.get(2).is_some_and(|pos| pos == "連語")
@@ -1721,39 +1747,86 @@ pub fn niwatatte() -> Vec<TokenMatcher> {
                     || token.base_form == "にわたる"
                     || token.base_form == "にわたり")
             {
-                return true;
+                return (true, 1);
             }
 
-            // Case 2: Particle に
+            // Case 2: に + わたる (multi-token form)
+            // MUST have に followed by わたる (the verb "to cross/span")
+            // This is NOT a simple に particle - it must be part of this specific construction
             if token.surface == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
             {
-                return true;
+                // Exclude other に-based patterns that aren't にわたって
+                if let Some(prev) = ctx.lookbehind(1) {
+                    // わりに (instead of)
+                    if prev.surface == "わり" && prev.base_form == "わり" {
+                        return (false, 0);
+                    }
+                    // 以外に (except for/besides)
+                    if prev.surface == "以外" && prev.base_form == "以外" {
+                        return (false, 0);
+                    }
+                    // 手に (手に入る = to obtain, not にわたって)
+                    if prev.surface == "手" && prev.base_form == "手" {
+                        return (false, 0);
+                    }
+                    // ように (so that/in order to) - handled by ように・ような pattern
+                    if prev.surface == "よう"
+                    && prev.pos.first().is_some_and(|pos| pos == "名詞")
+                    && prev.pos.get(1).is_some_and(|pos| pos == "非自立")
+                    && prev.pos.get(2).is_some_and(|pos| pos == "助動詞語幹") {
+                        return (false, 0);
+                    }
+                    // 流れに (flow/current + に) - this is not にわたって, just a regular locative に
+                    if prev.surface == "流れ" && prev.base_form == "流れ" {
+                        return (false, 0);
+                    }
+                }
+
+                // REQUIRED: next token must be わたる verb
+                if let Some(next_token) = ctx.lookahead(1) {
+                    if next_token.base_form == "わたる"
+                        && next_token.pos.first().is_some_and(|pos| pos == "動詞")
+                    {
+                        return (true, 2); // Consume both tokens
+                    }
+                }
+                // If に is NOT followed by わたる, this is not the pattern - return false
+                return (false, 0);
             }
 
-            false
-            })
+            (false, 0)
         }
     }
 
-    // Match わたる verb (for multi-token form like にわたった)
+    // Matcher for noun (but exclude question words like どこ, どっか which aren't spans)
     #[derive(Debug)]
-    struct WataruVerbMatcher;
-    impl super::Matcher for WataruVerbMatcher {
+    struct NounNotQuestionMatcher;
+    impl super::Matcher for NounNotQuestionMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
-                Some(token) if token.base_form == "わたる"
-                && token.pos.first().is_some_and(|pos| pos == "動詞") => (true, 1),
+                Some(token) if token.pos.first().is_some_and(|pos| pos == "名詞") => {
+                    // Exclude question/indefinite words (どこ, どっか, なに, etc.)
+                    // These are 名詞/代名詞 or have base forms starting with question markers
+                    if token.pos.get(1).is_some_and(|pos| pos == "代名詞") {
+                        return (false, 0);
+                    }
+                    // Also exclude non-詞 forms that are likely question words
+                    if token.surface.starts_with("どこ") || token.surface.starts_with("どっか")
+                        || token.surface == "どれ" || token.surface == "だれ" {
+                        return (false, 0);
+                    }
+                    (true, 1)
+                },
                 _ => (false, 0),
             }
         }
     }
 
     vec![
-        any(),  // Preceding noun
-        TokenMatcher::Custom(Arc::new(NiwatatteMatcher)),
-        optional(TokenMatcher::Custom(Arc::new(WataruVerbMatcher))),
+        TokenMatcher::Custom(Arc::new(NounNotQuestionMatcher)),  // Preceding noun (not question word)
+        TokenMatcher::Custom(Arc::new(NiwatatteCompositeMatcher)),
     ]
 }
 
@@ -4656,74 +4729,141 @@ pub fn burini() -> Vec<TokenMatcher> {
 pub fn teha() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
-    // Match は as topic/contrast particle
+    // Custom matcher that handles all ては/では variations
+    // Must match one of:
+    // - Verb/Adj/Aux + て + は (3 tokens)
+    // - Noun + で + は (3 tokens) or で(copula) + は
+    // - Verb + ちゃ (2 tokens, contraction of ては - no は needed)
+    // - Noun + じゃ (2 tokens, contraction of では - no は needed)
     #[derive(Debug)]
-    struct HaParticleMatcher;
-    impl super::Matcher for HaParticleMatcher {
+    struct TehaFullMatcher;
+    impl super::Matcher for TehaFullMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(token) if token.surface == "は"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
-                _ => (false, 0),
-            }
-        }
-    }
-
-    // Match any verb, adjective, noun, or auxiliary that can precede ては/では
-    #[derive(Debug)]
-    struct PrecedingElementMatcher;
-    impl super::Matcher for PrecedingElementMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
+            // First token: verb/adj/noun/aux
+            let first = match ctx.current() {
                 Some(token) if token.pos.first().is_some_and(|pos| {
-                pos == "動詞" || pos == "形容詞" || pos == "名詞" || pos == "助動詞"
-            }) => (true, 1),
-                _ => (false, 0),
+                    pos == "動詞" || pos == "形容詞" || pos == "名詞" || pos == "助動詞"
+                }) => {
+                    // Exclude て/で with base てる/でる - these are tokenizer artifacts from
+                    // continuous form repetitions like してて (not valid ては constructions)
+                    if token.pos.first().is_some_and(|pos| pos == "動詞")
+                        && (token.surface == "て" || token.surface == "で")
+                        && (token.base_form == "てる" || token.base_form == "でる") {
+                        return (false, 0);
+                    }
+                    token
+                },
+                _ => return (false, 0),
+            };
+
+            // Second token: て/で/ちゃ/じゃ
+            let second = match ctx.lookahead(1) {
+                Some(token) => token,
+                None => return (false, 0),
+            };
+
+            // Case 1: ちゃ contraction (ては → ちゃ) - only need 2 tokens
+            // BUT: exclude ちゃ + いない/いねえ/います (likely progressive ている, not conditional ては)
+            if second.surface == "ちゃ" && second.pos.first().is_some_and(|pos| pos == "助詞") {
+                // Check if followed by いる verb (いない, いねえ, いません, etc.)
+                if let Some(third) = ctx.lookahead(2) {
+                    // Exclude if next token is いる-based (likely progressive, not conditional)
+                    if (third.base_form == "いる" && third.pos.first().is_some_and(|pos| pos == "動詞"))
+                        || (third.surface == "い" && third.base_form == "いる" && third.pos.first().is_some_and(|pos| pos == "動詞"))
+                        || (third.surface == "いねえ" || third.surface == "いね" || third.surface == "いん") {
+                        return (false, 0);
+                    }
+                }
+                return (true, 2);
             }
+
+            // Case 2: じゃ contraction (では → じゃ) - only need 2 tokens
+            // BUT: exclude じゃん pattern and negative copula patterns
+            if second.surface == "じゃ" {
+                // じゃ can be either 助詞 or 助動詞 (copula)
+                let is_valid_ja = second.pos.first().is_some_and(|pos| pos == "助詞" || pos == "助動詞");
+
+                if is_valid_ja {
+                    // Exclude じゃん pattern and negative patterns
+                    if let Some(third_peek) = ctx.lookahead(2) {
+                        if third_peek.surface == "ん" {
+                            return (false, 0);
+                        }
+                        // Exclude negative copula patterns: じゃない、じゃねえ、じゃなかった, etc.
+                        if third_peek.base_form == "ない" || third_peek.surface == "ねえ" {
+                            return (false, 0);
+                        }
+                        // Exclude if followed only by punctuation/symbols (incomplete sentence)
+                        if third_peek.pos.first().is_some_and(|pos| pos == "記号") {
+                            return (false, 0);
+                        }
+                    } else {
+                        // No third token - this is sentence-final じゃ, likely incomplete
+                        // Exclude unless it's clearly a valid conditional (would need more context)
+                        return (false, 0);
+                    }
+                    return (true, 2);
+                }
+            }
+
+            // Case 3: て/で particle - must be followed by は
+            // IMPORTANT: Distinguish conditional では from location+topic では
+            // - Conditional: 格好では (if in that outfit), 几帳面では (if that meticulous)
+            // - Location+topic: 中では (in/among), 上では (on top of), etc.
+            // Strategy: Exclude location nouns (中,上,下,外,内,etc.) + で(格助詞) + は
+            let first_is_noun = first.pos.first().is_some_and(|pos| pos == "名詞");
+            let is_location_noun = first_is_noun && matches!(first.surface.as_str(),
+                "中" | "上" | "下" | "外" | "内" | "側" | "前" | "後" | "間" | "奥" | "隅" | "先"
+            );
+
+            let is_te_de = {
+                // て as particle (after verb/adjective)
+                if second.surface == "て" && second.pos.first().is_some_and(|pos| pos == "助詞") {
+                    true
+                }
+                // で as copula (after na-adj/noun in conditional sense)
+                else if second.surface == "で"
+                    && second.base_form == "だ"
+                    && second.pos.first().is_some_and(|pos| pos == "助動詞")
+                {
+                    true
+                }
+                // で as particle (格助詞)
+                // Allow after verbs/adjectives, and after nouns EXCEPT location nouns
+                else if second.surface == "で"
+                    && second.pos.first().is_some_and(|pos| pos == "助詞")
+                    && second.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                {
+                    // Reject location noun + で(格助詞) + は (that's location+topic, not conditional)
+                    !is_location_noun
+                }
+                else {
+                    false
+                }
+            };
+
+            if !is_te_de {
+                return (false, 0);
+            }
+
+            // Third token: must be は
+            let third = match ctx.lookahead(2) {
+                Some(token) => token,
+                None => return (false, 0),
+            };
+
+            if third.surface == "は"
+                && third.pos.first().is_some_and(|pos| pos == "助詞")
+                && third.pos.get(1).is_some_and(|pos| pos == "係助詞")
+            {
+                return (true, 3);
+            }
+
+            (false, 0)
         }
     }
 
-    // Match て/で/ちゃ/じゃ followed by は (or standalone ちゃ/じゃ)
-    #[derive(Debug)]
-    struct TeDeJaChaMatcher;
-    impl super::Matcher for TeDeJaChaMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                // Match て or で as particles (after verb/adjective)
-            if (token.surface == "て" || token.surface == "で")
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
-            {
-                return true;
-            }
-            // Match で as auxiliary/copula (after na-adj/noun)
-            if token.surface == "で"
-                && token.base_form == "だ"
-                && token.pos.first().is_some_and(|pos| pos == "助動詞")
-            {
-                return true;
-            }
-            // Match ちゃ (contraction of ては)
-            if token.surface == "ちゃ" && token.pos.first().is_some_and(|pos| pos == "助詞") {
-                return true;
-            }
-            // Match じゃ (contraction of では)
-            if token.surface == "じゃ" && token.pos.first().is_some_and(|pos| pos == "助詞") {
-                return true;
-            }
-            false
-            })
-        }
-    }
-
-    vec![
-        TokenMatcher::Custom(Arc::new(PrecedingElementMatcher)),
-        TokenMatcher::Custom(Arc::new(TeDeJaChaMatcher)),
-        // は is only required for て/で forms, not for ちゃ/じゃ contractions
-        optional(TokenMatcher::Custom(Arc::new(
-            HaParticleMatcher,
-        ))),
-    ]
+    vec![TokenMatcher::Custom(Arc::new(TehaFullMatcher))]
 }
 
 // Pattern: ては〜ては (doing A and B repeatedly)
@@ -6261,7 +6401,15 @@ pub fn niha() -> Vec<TokenMatcher> {
                 Some(token) if token.surface == "に"
                 && token.base_form == "に"
                 && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => (true, 1),
+                && token.pos.get(1).is_some_and(|pos| pos == "格助詞") => {
+                    // Check if previous token is "わり" - if so, this に is part of わりに pattern
+                    if let Some(prev) = ctx.lookbehind(1) {
+                        if prev.surface == "わり" && prev.base_form == "わり" {
+                            return (false, 0);
+                        }
+                    }
+                    (true, 1)
+                },
                 _ => (false, 0),
             }
         }
@@ -10473,8 +10621,26 @@ pub fn nishiro_uff5e_nishiro() -> Vec<TokenMatcher> {
         }
     }
 
+    // Matcher for the content word preceding に, excluding とおり/どおり
+    // とおり/どおり + にしろ is used in "do as X says" constructions, not "even if" constructions
+    #[derive(Debug)]
+    struct ContentWordNotTooriMatcher;
+    impl super::Matcher for ContentWordNotTooriMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == "とおり" || token.surface == "どおり" => (false, 0),
+                Some(_) => (true, 1),
+                None => (false, 0),
+            }
+        }
+    }
+
+    // Pattern matches single instances for now (e.g., X + に + しろ/せよ)
+    // TODO: This should really match the double form X にしろ Y にしろ,
+    // but implementing that correctly requires more complex lookahead logic
+    // For now, this matches individual instances
     vec![
-        any(),
+        TokenMatcher::Custom(Arc::new(ContentWordNotTooriMatcher)),
         TokenMatcher::Custom(Arc::new(NiCaseMatcher)),
         TokenMatcher::Custom(Arc::new(ShiroSeyoMatcher)),
     ]

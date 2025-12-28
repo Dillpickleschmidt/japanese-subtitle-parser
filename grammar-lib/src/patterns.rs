@@ -819,7 +819,7 @@ declare_patterns! {
     DarekaU30fbDokokaU30fbDaremoU30fbDokomo {
         name: "誰か・どこか・誰も・どこも",
         matcher_fn: crate::matchers::n5::dareka_u30fb_dokoka_u30fb_daremo_u30fb_dokomo,
-        priority: 1,
+        priority: 2,
         category: PatternCategory::Conjugation, // only to combine these tokens
         jlpt: "n5",
     },
