@@ -301,3 +301,76 @@ pub fn ii_form() -> TokenMatcher {
     }
     TokenMatcher::Custom(Arc::new(IiMatcher))
 }
+
+// ========== Particle Matchers ==========
+
+/// Match specific particle surface with exact subtype checking
+pub fn surface_particle(surface_text: &'static str, subtype: &'static str) -> TokenMatcher {
+    #[derive(Debug)]
+    struct SurfaceParticleMatcher(&'static str, &'static str);
+    impl Matcher for SurfaceParticleMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == self.0
+                    && token.base_form == self.0
+                    && token.pos.first().is_some_and(|p| p == "助詞")
+                    && token.pos.get(1).is_some_and(|p| p == self.1) => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(SurfaceParticleMatcher(surface_text, subtype)))
+}
+
+/// Match specific adjective surface with subtype checking
+pub fn surface_adjective_subtype(surface_text: &'static str, subtype: &'static str) -> TokenMatcher {
+    #[derive(Debug)]
+    struct SurfaceAdjectiveSubtypeMatcher(&'static str, &'static str);
+    impl Matcher for SurfaceAdjectiveSubtypeMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == self.0
+                    && token.pos.first().is_some_and(|p| p == "形容詞")
+                    && token.pos.get(1).is_some_and(|p| p == self.1) => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(SurfaceAdjectiveSubtypeMatcher(surface_text, subtype)))
+}
+
+// ========== Noun Subtype Matchers ==========
+
+/// Match noun with specific subtype checking (e.g., 代名詞, 接尾)
+pub fn noun_subtype(subtype: &'static str) -> TokenMatcher {
+    #[derive(Debug)]
+    struct NounSubtypeMatcher(&'static str);
+    impl Matcher for NounSubtypeMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.pos.first().is_some_and(|p| p == "名詞")
+                    && token.pos.get(1).is_some_and(|p| p == self.0) => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(NounSubtypeMatcher(subtype)))
+}
+
+/// Match specific noun suffix with exact surface checking
+pub fn surface_noun_suffix(surface_text: &'static str) -> TokenMatcher {
+    #[derive(Debug)]
+    struct SurfaceNounSuffixMatcher(&'static str);
+    impl Matcher for SurfaceNounSuffixMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            match ctx.current() {
+                Some(token) if token.surface == self.0
+                    && token.base_form == self.0
+                    && token.pos.first().is_some_and(|p| p == "名詞")
+                    && token.pos.get(1).is_some_and(|p| p == "接尾") => (true, 1),
+                _ => (false, 0),
+            }
+        }
+    }
+    TokenMatcher::Custom(Arc::new(SurfaceNounSuffixMatcher(surface_text)))
+}
