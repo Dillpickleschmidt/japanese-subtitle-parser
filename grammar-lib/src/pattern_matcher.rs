@@ -315,6 +315,7 @@ impl PatternMatcher {
         start: usize,
     ) -> Option<PatternMatch> {
         let remaining_matchers: Vec<_> = pattern.tokens.iter().skip(wildcard_index + 1).collect();
+        let mut partial_match: Option<PatternMatch> = None;
 
         for skip_count in min..=max {
             let check_pos = current_pos + skip_count;
@@ -349,32 +350,60 @@ impl PatternMatcher {
                 break;
             }
 
-            if let Some(end_pos) = self.match_remaining_pattern(tokens, &remaining_matchers, check_pos) {
+            if let Some((end_pos, all_optionals_matched)) = self.match_remaining_pattern(tokens, &remaining_matchers, check_pos) {
                 let updated_score = specificity_score + 0.5 * skip_count as f32;
-                return self.finalize_match(pattern, tokens, start, end_pos, updated_score);
+                if all_optionals_matched {
+                    // All Optionals matched - this is a complete match, return immediately
+                    return self.finalize_match(pattern, tokens, start, end_pos, updated_score);
+                }
+                // Some Optionals didn't match - save as fallback, keep looking
+                // for a match where they do
+                if partial_match.is_none() {
+                    partial_match = self.finalize_match(pattern, tokens, start, end_pos, updated_score);
+                }
             }
         }
 
-        None
+        partial_match
     }
 
     /// Helper to match remaining tokens after wildcard and return the end position
+    /// Returns (end_pos, all_optionals_matched) - the bool indicates if all Optional
+    /// matchers actually matched their inner content
     fn match_remaining_pattern(
         &self,
         tokens: &[KagomeToken],
         remaining: &[&TokenMatcher],
         start_pos: usize,
-    ) -> Option<usize> {
+    ) -> Option<(usize, bool)> {
         let mut pos = start_pos;
+        let mut all_optionals_matched = true;
 
         for matcher in remaining {
             if pos >= tokens.len() {
+                // Allow trailing Optional matchers at end of tokens
+                if matches!(matcher, TokenMatcher::Optional(_)) {
+                    all_optionals_matched = false;
+                    continue;
+                }
                 return None;
             }
 
             // Don't support nested wildcards
             if matches!(matcher, TokenMatcher::Wildcard { .. }) {
                 return None;
+            }
+
+            // Handle Optional matchers - don't fail if inner doesn't match
+            if let TokenMatcher::Optional(inner) = matcher {
+                let ctx = MatchContext { tokens, position: pos };
+                let (matches, _, consumed) = Self::token_matches_ctx(inner, &ctx);
+                if matches {
+                    pos += consumed;
+                } else {
+                    all_optionals_matched = false;
+                }
+                continue;
             }
 
             let ctx = MatchContext { tokens, position: pos };
@@ -386,7 +415,7 @@ impl PatternMatcher {
             pos += consumed;
         }
 
-        Some(pos)
+        Some((pos, all_optionals_matched))
     }
 
     /// Check if a token matcher matches at current context position

@@ -8760,18 +8760,7 @@ mod donnani_temo_tests {
     }
 
     // Testing: standard[2] - どんな + （に） + ［な］Adjective + でも
-    // TODO: This test case doesn't pass due to a wildcard matching limitation.
-    // When でも is tokenized as a single token (助詞/副助詞) AND there are no
-    // intermediate tokens between どんなに and the adjective, the wildcard matcher
-    // (even with min=0, max=3) fails to detect the pattern. This works fine when:
-    // - でも is two tokens (で + も)
-    // - OR there ARE intermediate tokens (wildcard skips over them)
-    //
-    // This appears to be a bug in the wildcard matching algorithm when min=0 && max>0.
-    // For now, we skip this test. Most real-world usage includes words between
-    // どんなに and the conjugation anyway.
     #[test]
-    #[ignore]
     fn test_donnani_na_adjective_demo() {
         let sentence = "自分の運転がどんなに上手でもシートベルトはしなくてはならない。";
         let tokens = tokenize_sentence(sentence);

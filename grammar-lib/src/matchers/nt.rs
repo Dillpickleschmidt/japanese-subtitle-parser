@@ -112,6 +112,21 @@ pub fn n_slang() -> Vec<TokenMatcher> {
                 }
             }
 
+            // Variant 1b: Godan-む verb misanalyzed as 連用タ接続 + ない/ねえ
+            // e.g. つまんねえ: tokenizer parses つまん as つまむ (連用タ接続)
+            // instead of recognizing つまら+ん contraction
+            if first.features.get(5).is_some_and(|f| f == "連用タ接続")
+                && first.base_form.ends_with('む')
+                && first.surface.ends_with('ん')
+            {
+                if (second.surface == "ない" || second.surface == "ねえ")
+                    && second.base_form == "ない"
+                    && second.pos.first().is_some_and(|pos| pos == "助動詞")
+                {
+                    return (true, 2);
+                }
+            }
+
             // Variant 2: Verb[連用タ接続] + て + ん (ている → てん)
             if first.features.get(5).is_some_and(|f| f == "連用タ接続") {
                 // Second token must be て particle

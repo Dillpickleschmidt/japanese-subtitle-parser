@@ -241,7 +241,6 @@ mod n_slang_tests {
     }
 
     #[test]
-    #[ignore] // Tokenizer issue: "つまん" is parsed as "つまむ" verb instead of "つまら" + ん
     fn test_n_slang_tsumaranai_to_tsumannai() {
         let sentence = "校長の話マジでつまんねえな。";
         let tokens = tokenize_sentence(sentence);
