@@ -1333,6 +1333,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "grammar-validator"
+version = "0.1.0"
+dependencies = [
+ "grammar-lib",
+ "kagome-client",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "grammar-wasm"
 version = "0.1.0"
 dependencies = [
