@@ -4520,8 +4520,8 @@ mod tte_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "って");
-        assert_pattern_range(&patterns, "って", 0, 3); // 私って
+        assert_has_pattern(&patterns, "って1");
+        assert_pattern_range(&patterns, "って1", 0, 3); // 私って
     }
 
     // Test: Noun + って (question about tomatoes - from grammar_points_data.json)
@@ -4531,8 +4531,8 @@ mod tte_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "って");
-        assert_pattern_range(&patterns, "って", 0, 5); // トマトって
+        assert_has_pattern(&patterns, "って1");
+        assert_pattern_range(&patterns, "って1", 0, 5); // トマトって
     }
 
     // Test: Noun + って in casual conversation
@@ -4542,8 +4542,8 @@ mod tte_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "って");
-        assert_pattern_range(&patterns, "って", 2, 5); // 人って
+        assert_has_pattern(&patterns, "って1");
+        assert_pattern_range(&patterns, "って1", 2, 5); // 人って
     }
 }
 
@@ -7545,8 +7545,8 @@ mod toiunoha_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "って");
-        assert_pattern_range(&patterns, "って", 0, 3); // 夢って
+        assert_has_pattern(&patterns, "って1");
+        assert_pattern_range(&patterns, "って1", 0, 3); // 夢って
     }
 }
 

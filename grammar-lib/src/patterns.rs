@@ -137,7 +137,7 @@ declare_patterns! {
     },
 
     Ka {
-        name: "か",
+        name: "か1",
         matcher_fn: crate::matchers::n5::ka,
         priority: 1,
         category: PatternCategory::Construction,
@@ -145,7 +145,7 @@ declare_patterns! {
     },
 
     Ga {
-        name: "が",
+        name: "が1",
         matcher_fn: crate::matchers::n5::ga,
         priority: 1,
         category: PatternCategory::Construction,
@@ -1051,7 +1051,7 @@ declare_patterns! {
     // ========== N4 PATTERNS ==========
 
     To {
-        name: "と",
+        name: "と3",
         matcher_fn: crate::matchers::n4::to,
         priority: 1,
         category: PatternCategory::Construction,
@@ -1931,7 +1931,7 @@ declare_patterns! {
     },
 
     VerbTeB2 {
-        name: "Verb[て] + B",
+        name: "Verb[て] + B1",
         matcher_fn: crate::matchers::n4::verb_te_b_2,
         priority: 1,
         category: PatternCategory::Construction,
@@ -2565,7 +2565,7 @@ declare_patterns! {
     // ========== N3 PATTERNS ==========
 
     Tte {
-        name: "って",
+        name: "って1",
         matcher_fn: crate::matchers::n3::tte,
         priority: 1,
         category: PatternCategory::Construction,

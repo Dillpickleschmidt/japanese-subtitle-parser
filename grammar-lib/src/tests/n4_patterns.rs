@@ -3552,8 +3552,8 @@ mod to_conditional_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "と");
-        assert_pattern_range(&patterns, "と", 9, 13); // 食べると
+        assert_has_pattern(&patterns, "と3");
+        assert_pattern_range(&patterns, "と3", 9, 13); // 食べると
     }
 
     // Structure: い-Adjective + と (standard[1])
@@ -3563,8 +3563,8 @@ mod to_conditional_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "と");
-        assert_pattern_range(&patterns, "と", 3, 6); // 汚いと
+        assert_has_pattern(&patterns, "と3");
+        assert_pattern_range(&patterns, "と3", 3, 6); // 汚いと
     }
 
     // Structure: な-Adjective + だ + と (standard[2])
@@ -3574,8 +3574,8 @@ mod to_conditional_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "と");
-        assert_pattern_range(&patterns, "と", 5, 7); // だと
+        assert_has_pattern(&patterns, "と3");
+        assert_pattern_range(&patterns, "と3", 5, 7); // だと
     }
 
     // Structure: Noun + だ + と (standard[3])
@@ -3585,8 +3585,8 @@ mod to_conditional_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "と");
-        assert_pattern_range(&patterns, "と", 3, 5); // だと
+        assert_has_pattern(&patterns, "と3");
+        assert_pattern_range(&patterns, "と3", 3, 5); // だと
     }
 }
 
@@ -6258,9 +6258,9 @@ mod question_phrase_ka_tests {
     }
 }
 
-// ========== Verb[て] + B (Contrastive conjunction) ==========
-// Pattern: Verb[て] + B
-// Data source: grammar_points_data.json["Verb[て] + B"]
+// ========== Verb[て] + B1 (Contrastive conjunction) ==========
+// Pattern: Verb[て] + B1
+// Data source: grammar_points_data.json["Verb[て] + B1"]
 //
 // Structure to test:
 //   - standard[0]: Verb［て］+ Phrase
@@ -6287,8 +6287,8 @@ mod verb_te_b_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "Verb[て] + B");
-        assert_pattern_range(&patterns, "Verb[て] + B", 10, 14); // して弟は
+        assert_has_pattern(&patterns, "Verb[て] + B1");
+        assert_pattern_range(&patterns, "Verb[て] + B1", 10, 14); // して弟は
     }
 
     // Test 2: Two contrasting destinations (wife vs I) - with comma
@@ -6298,8 +6298,8 @@ mod verb_te_b_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "Verb[て] + B");
-        assert_pattern_range(&patterns, "Verb[て] + B", 6, 12); // 行って、私は
+        assert_has_pattern(&patterns, "Verb[て] + B1");
+        assert_pattern_range(&patterns, "Verb[て] + B1", 6, 12); // 行って、私は
     }
 
     // Test 2b: Without comma to verify pattern works both ways
@@ -6309,8 +6309,8 @@ mod verb_te_b_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "Verb[て] + B");
-        assert_pattern_range(&patterns, "Verb[て] + B", 6, 11); // 行って私は
+        assert_has_pattern(&patterns, "Verb[て] + B1");
+        assert_pattern_range(&patterns, "Verb[て] + B1", 6, 11); // 行って私は
     }
 
     // Test 3: Two contrasting foods (Takeru vs Naomi)
@@ -6320,8 +6320,8 @@ mod verb_te_b_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "Verb[て] + B");
-        assert_pattern_range(&patterns, "Verb[て] + B", 7, 14); // 食べてナオミは
+        assert_has_pattern(&patterns, "Verb[て] + B1");
+        assert_pattern_range(&patterns, "Verb[て] + B1", 7, 14); // 食べてナオミは
     }
 
     // Test 4: Weather contrast (morning vs afternoon)
@@ -6331,8 +6331,8 @@ mod verb_te_b_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "Verb[て] + B");
-        assert_pattern_range(&patterns, "Verb[て] + B", 4, 10); // 降って夕方は
+        assert_has_pattern(&patterns, "Verb[て] + B1");
+        assert_pattern_range(&patterns, "Verb[て] + B1", 4, 10); // 降って夕方は
     }
 }
 
@@ -11392,7 +11392,7 @@ mod nisuru_u30fb_kusuru_tests {
 
             // Should NOT match ～にする・～くする for "出発する"
             // 出発する is a compound verb (出発 + する), not "make into departure"
-            for p in patterns.iter().filter(|p| p.pattern_name == "～にする・～くする") {
+            if let Some(p) = patterns.iter().find(|p| p.pattern_name == "～にする・～くする") {
                 let matched = sentence.chars().skip(p.start_char as usize).take((p.end_char - p.start_char) as usize).collect::<String>();
                 panic!("Should not match サ変 compound verb 出発する, but matched: {}", matched);
             }

@@ -64,3 +64,25 @@ cargo test test_name -- --nocapture
 7. Rebuild and deploy (see above)
 
 See `GRAMMAR_PATTERN_STANDARDS.md` for detailed guidelines.
+
+## Bunpro Mapping Notes
+
+### Patterns covering multiple Bunpro points
+
+These patterns detect multiple Bunpro grammar points because the morphological analyzer cannot distinguish between them at the token level:
+
+| Grammar-lib pattern | Bunpro points covered                   |
+| ------------------- | --------------------------------------- |
+| `から`              | から (because/since) + から1 (from)     |
+| `で`                | で (at/by) + で1 (with everyone)        |
+| `と`                | と (and) + と1 (with)                   |
+| `なくて`            | なくて (conjunction) + なくて1 (reason) |
+
+### Missing Bunpro points
+
+These Bunpro grammar points have no grammar-lib pattern yet:
+
+| Bunpro point   | Description                                                        |
+| -------------- | ------------------------------------------------------------------ |
+| `の2`          | Dropped/replaced noun (previously mentioned noun omitted after の) |
+| `Verb[て] + B` | Reason/cause beyond speaker's control ("since/due to")             |

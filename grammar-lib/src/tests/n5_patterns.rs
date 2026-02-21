@@ -1518,8 +1518,8 @@ mod ga_but_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "が");
-        assert_pattern_range(&patterns, "が", 2, 5); // 走るが
+        assert_has_pattern(&patterns, "が1");
+        assert_pattern_range(&patterns, "が1", 2, 5); // 走るが
     }
 
     #[test]
@@ -1528,8 +1528,8 @@ mod ga_but_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "が");
-        assert_pattern_range(&patterns, "が", 6, 9); // 辛いが
+        assert_has_pattern(&patterns, "が1");
+        assert_pattern_range(&patterns, "が1", 6, 9); // 辛いが
     }
 
     #[test]
@@ -1538,8 +1538,8 @@ mod ga_but_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "が");
-        assert_pattern_range(&patterns, "が", 4, 6); // だが
+        assert_has_pattern(&patterns, "が1");
+        assert_pattern_range(&patterns, "が1", 4, 6); // だが
     }
 
     #[test]
@@ -1548,8 +1548,8 @@ mod ga_but_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "が");
-        assert_pattern_range(&patterns, "が", 5, 7); // だが
+        assert_has_pattern(&patterns, "が1");
+        assert_pattern_range(&patterns, "が1", 5, 7); // だが
     }
 
     #[test]
@@ -1558,8 +1558,8 @@ mod ga_but_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "が");
-        assert_pattern_range(&patterns, "が", 2, 5); // ますが
+        assert_has_pattern(&patterns, "が1");
+        assert_pattern_range(&patterns, "が1", 2, 5); // ますが
     }
 
     #[test]
@@ -1568,8 +1568,8 @@ mod ga_but_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "が");
-        assert_pattern_range(&patterns, "が", 2, 5); // ですが
+        assert_has_pattern(&patterns, "が1");
+        assert_pattern_range(&patterns, "が1", 2, 5); // ですが
     }
 
     #[test]
@@ -1578,8 +1578,8 @@ mod ga_but_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "が");
-        assert_pattern_range(&patterns, "が", 2, 5); // ですが
+        assert_has_pattern(&patterns, "が1");
+        assert_pattern_range(&patterns, "が1", 2, 5); // ですが
     }
 
     #[test]
@@ -1588,8 +1588,8 @@ mod ga_but_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "が");
-        assert_pattern_range(&patterns, "が", 2, 5); // ですが
+        assert_has_pattern(&patterns, "が1");
+        assert_pattern_range(&patterns, "が1", 2, 5); // ですが
     }
 }
 
@@ -2324,8 +2324,8 @@ mod ka_or_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "か");
-        assert_pattern_range(&patterns, "か", 0, 6); // 行くか帰るか
+        assert_has_pattern(&patterns, "か1");
+        assert_pattern_range(&patterns, "か1", 0, 6); // 行くか帰るか
     }
 
     #[test]
@@ -2334,8 +2334,8 @@ mod ka_or_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "か");
-        assert_pattern_range(&patterns, "か", 0, 8); // コーヒーかお茶か
+        assert_has_pattern(&patterns, "か1");
+        assert_pattern_range(&patterns, "か1", 0, 8); // コーヒーかお茶か
     }
 
     #[test]
@@ -2344,8 +2344,8 @@ mod ka_or_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "か");
-        assert_pattern_range(&patterns, "か", 0, 6); // 寒いか暑いか
+        assert_has_pattern(&patterns, "か1");
+        assert_pattern_range(&patterns, "か1", 0, 6); // 寒いか暑いか
     }
 
     #[test]
@@ -2354,8 +2354,8 @@ mod ka_or_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "か");
-        assert_pattern_range(&patterns, "か", 0, 7); // 静かか賑やかか
+        assert_has_pattern(&patterns, "か1");
+        assert_pattern_range(&patterns, "か1", 0, 7); // 静かか賑やかか
     }
 }
 
