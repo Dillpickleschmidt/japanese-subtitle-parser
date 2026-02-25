@@ -1428,10 +1428,10 @@ pub fn souiu() -> Vec<TokenMatcher> {
 }
 
 // Pattern: Verb[よう]
-// Pattern: Verb[よう] (volitional form - let's, shall)
+// Pattern: Verb[よう] (volitional form - casual let's, shall)
 // Structures:
 //   Plain: Verb[未然ウ接続] + う (見よう, 歩こう, etc.)
-//   Polite: Verb + ます[未然ウ接続] + う (見ましょう, 歩きましょう, etc.)
+// Note: Polite ましょう is covered by separate N5 patterns (ましょう, ～ましょうか)
 pub fn verb_you() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
@@ -1466,49 +1466,8 @@ pub fn verb_you() -> Vec<TokenMatcher> {
         }
     }
 
-    // Polite volitional: Verb + ます[未然ウ接続] + う
-    // Example: 見 + ましょ + う = 見ましょう
-    #[derive(Debug)]
-    struct PoliteVolitionalMatcher;
-    impl Matcher for PoliteVolitionalMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            // First token: verb in 連用形
-            let Some(token1) = ctx.current() else { return (false, 0); };
-            if !token1.pos.first().is_some_and(|pos| pos == "動詞") {
-                return (false, 0);
-            }
-            if !token1.features.get(5).is_some_and(|form| form == "連用形") {
-                return (false, 0);
-            }
-
-            // Second token: ましょ (ます in 未然ウ接続)
-            let Some(token2) = ctx.lookahead(1) else { return (false, 0); };
-            if token2.surface != "ましょ" || token2.base_form != "ます" {
-                return (false, 0);
-            }
-            if !token2.pos.first().is_some_and(|pos| pos == "助動詞") {
-                return (false, 0);
-            }
-
-            // Third token: う (auxiliary verb for volitional)
-            let Some(token3) = ctx.lookahead(2) else { return (false, 0); };
-            if token3.surface == "う"
-                && token3.base_form == "う"
-                && token3.pos.first().is_some_and(|pos| pos == "助動詞")
-                && token3.features.get(4).is_some_and(|t| t == "不変化型")
-            {
-                return (true, 3);  // Consume 3 tokens
-            }
-
-            (false, 0)
-        }
-    }
-
     vec![
-        TokenMatcher::Or(vec![
-            TokenMatcher::Custom(Arc::new(PlainVolitionalMatcher)),
-            TokenMatcher::Custom(Arc::new(PoliteVolitionalMatcher)),
-        ]),
+        TokenMatcher::Custom(Arc::new(PlainVolitionalMatcher)),
     ]
 }
 

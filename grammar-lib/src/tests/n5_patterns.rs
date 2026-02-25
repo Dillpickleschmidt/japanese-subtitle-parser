@@ -2187,6 +2187,17 @@ mod verb_te_b_tests {
         // Should detect at least one of the sequences
         // The pattern matcher will find the first complete sequence
     }
+
+    #[test]
+    fn test_te_b_not_kudasai() {
+        // てください is a request form, not sequential actions
+        let sentence = "窓を開けてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "Verb + て+ B"));
+        assert_has_pattern(&patterns, "てください");
+    }
 }
 
 // ========== い-Adjective + Noun ==========

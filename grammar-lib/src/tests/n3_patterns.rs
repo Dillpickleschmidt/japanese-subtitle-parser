@@ -4545,6 +4545,16 @@ mod tte_tests {
         assert_has_pattern(&patterns, "って1");
         assert_pattern_range(&patterns, "って1", 2, 5); // 人って
     }
+
+    // Verb te-form って should not match as topic marker
+    #[test]
+    fn test_tte_not_verb_te_form() {
+        let sentence = "今日、早く帰ってもいいですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "って1"));
+    }
 }
 
 // ========== なかなか～ない (hardly/not easily/far from) ==========

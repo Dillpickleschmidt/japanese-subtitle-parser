@@ -9,15 +9,24 @@ pub fn tte() -> Vec<TokenMatcher> {
     struct TteParticleMatcher;
     impl Matcher for TteParticleMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(token) if
-            token.surface == "って"
-                && token.base_form == "って"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "格助詞")
-                && token.pos.get(2).is_some_and(|pos| pos == "連語") => (true, 1),
-                _ => (false, 0),
+            let Some(token) = ctx.current() else { return (false, 0) };
+            if token.surface != "って"
+                || token.base_form != "って"
+                || !token.pos.first().is_some_and(|pos| pos == "助詞")
+                || !token.pos.get(1).is_some_and(|pos| pos == "格助詞")
+                || !token.pos.get(2).is_some_and(|pos| pos == "連語")
+            {
+                return (false, 0);
             }
+            // Reject if preceded by verb in 連用タ接続 (verb te-form, not topic marker)
+            if let Some(prev) = ctx.lookbehind(1) {
+                if prev.pos.first().is_some_and(|p| p == "動詞")
+                    && prev.features.get(5).is_some_and(|f| f == "連用タ接続")
+                {
+                    return (false, 0);
+                }
+            }
+            (true, 1)
         }
     }
 

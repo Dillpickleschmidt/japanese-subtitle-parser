@@ -5484,37 +5484,15 @@ mod verb_you_tests {
         assert_pattern_range(&patterns, "Verb[よう]", 4, 7); // 来よう
     }
 
-    // Testing: structure.polite - Ichidan verb + ましょう
+    // ましょう should NOT match Verb[よう] — it has its own N5 pattern
     #[test]
-    fn test_verb_you_polite_ichidan() {
-        let sentence = "一緒に見ましょう";
+    fn test_verb_you_not_mashou() {
+        let sentence = "一緒に昼ご飯を食べましょうか";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "Verb[よう]");
-        assert_pattern_range(&patterns, "Verb[よう]", 3, 8); // 見ましょう
-    }
-
-    // Testing: structure.polite - Godan verb + ましょう
-    #[test]
-    fn test_verb_you_polite_godan() {
-        let sentence = "ここで休みましょう";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "Verb[よう]");
-        assert_pattern_range(&patterns, "Verb[よう]", 3, 9); // 休みましょう
-    }
-
-    // Testing: structure.polite - Exception する → しましょう
-    #[test]
-    fn test_verb_you_polite_suru() {
-        let sentence = "頑張りましょう";
-        let tokens = tokenize_sentence(sentence);
-        let patterns = detect_patterns(&tokens);
-
-        assert_has_pattern(&patterns, "Verb[よう]");
-        assert_pattern_range(&patterns, "Verb[よう]", 0, 7); // 頑張りましょう
+        assert!(!has_pattern(&patterns, "Verb[よう]"));
+        assert_has_pattern(&patterns, "ましょう");
     }
 }
 
