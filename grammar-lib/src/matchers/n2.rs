@@ -4055,13 +4055,14 @@ pub fn teha() -> Vec<TokenMatcher> {
             }
 
             // Case 3: て/で particle - must be followed by は
-            // IMPORTANT: Distinguish conditional では from location+topic では
-            // - Conditional: 格好では (if in that outfit), 几帳面では (if that meticulous)
-            // - Location+topic: 中では (in/among), 上では (on top of), etc.
-            // Strategy: Exclude location nouns (中,上,下,外,内,etc.) + で(格助詞) + は
+            // For で(格助詞), exclude location nouns (中, 上, etc.) and 非自立 nouns
             let first_is_noun = first.pos.first().is_some_and(|pos| pos == "名詞");
-            let is_location_noun = first_is_noun && matches!(first.surface.as_str(),
-                "中" | "上" | "下" | "外" | "内" | "側" | "前" | "後" | "間" | "奥" | "隅" | "先"
+            let is_location_or_suffix_noun = first_is_noun && (
+                first.pos.get(1).is_some_and(|p| p == "非自立" || p == "接尾")
+                || matches!(first.surface.as_str(),
+                    "中" | "上" | "下" | "外" | "内" | "側" | "前" | "後" | "間"
+                    | "奥" | "隅" | "先" | "ここ" | "そこ" | "あそこ" | "どこ"
+                )
             );
 
             let is_te_de = {
@@ -4076,14 +4077,13 @@ pub fn teha() -> Vec<TokenMatcher> {
                 {
                     true
                 }
-                // で as particle (格助詞)
-                // Allow after verbs/adjectives, and after nouns EXCEPT location nouns
+                // で as particle (格助詞) — valid for conditional ては after nouns
+                // but NOT after location/suffix nouns (that's location+topic, not conditional)
                 else if second.surface == "で"
                     && second.pos.first().is_some_and(|pos| pos == "助詞")
                     && second.pos.get(1).is_some_and(|pos| pos == "格助詞")
                 {
-                    // Reject location noun + で(格助詞) + は (that's location+topic, not conditional)
-                    !is_location_noun
+                    !is_location_or_suffix_noun
                 }
                 else {
                     false
@@ -4119,50 +4119,40 @@ pub fn teha() -> Vec<TokenMatcher> {
 pub fn teha_u301c_teha() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
-    // Match は particle
+    // Match て/で + は (2 tokens) or ちゃ/じゃ (1 token, は already embedded)
+    // は is REQUIRED — without it, plain て/で forms are not ては〜ては
     #[derive(Debug)]
-    struct HaKakariMatcher;
-    impl super::Matcher for HaKakariMatcher {
+    struct TeHaCompoundMatcher;
+    impl super::Matcher for TeHaCompoundMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(token) if token.surface == "は"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "係助詞") => (true, 1),
-                _ => (false, 0),
+            let Some(token) = ctx.current() else { return (false, 0) };
+            if !token.pos.first().is_some_and(|p| p == "助詞") { return (false, 0) }
+            if !token.pos.get(1).is_some_and(|p| p == "接続助詞") { return (false, 0) }
+            // ちゃ/じゃ already contain は
+            if token.surface == "ちゃ" || token.surface == "じゃ" {
+                return (true, 1);
             }
+            // て/で require following は
+            if token.surface == "て" || token.surface == "で" {
+                if let Some(next) = ctx.lookahead(1) {
+                    if next.surface == "は"
+                        && next.pos.first().is_some_and(|p| p == "助詞")
+                        && next.pos.get(1).is_some_and(|p| p == "係助詞")
+                    {
+                        return (true, 2);
+                    }
+                }
+            }
+            (false, 0)
         }
     }
 
-    // Match either て/で OR ちゃ/じゃ
-    #[derive(Debug)]
-    struct TeOrCasualMatcher;
-    impl super::Matcher for TeOrCasualMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                if !token.pos.first().is_some_and(|pos| pos == "助詞") {
-                return false;
-            }
-            if !token.pos.get(1).is_some_and(|pos| pos == "接続助詞") {
-                return false;
-            }
-            token.surface == "て"
-                || token.surface == "で"
-                || token.surface == "ちゃ"
-                || token.surface == "じゃ"
-            })
-        }
-    }
-
-    // Pattern: Verb + (て/で/ちゃ/じゃ) + [optional は] + (gap) + Verb + (て/で/ちゃ/じゃ) + [optional は]
-    // Note: ちゃ/じゃ already include the は meaning, so は is only needed after て/で
     vec![
-        super::flexible_verb_form(),                                                        // First verb
-        TokenMatcher::Custom(Arc::new(TeOrCasualMatcher)),                                  // て/で/ちゃ/じゃ
-        optional(TokenMatcher::Custom(Arc::new(HaKakariMatcher))), // Optional は
-        wildcard(0, 15, vec![]), // Gap between patterns (0-15 tokens)
-        super::flexible_verb_form(),                                                        // Second verb
-        TokenMatcher::Custom(Arc::new(TeOrCasualMatcher)),                                  // て/で/ちゃ/じゃ
-        optional(TokenMatcher::Custom(Arc::new(HaKakariMatcher))), // Optional は
+        super::flexible_verb_form(),                           // First verb
+        TokenMatcher::Custom(Arc::new(TeHaCompoundMatcher)),   // ては/ちゃ
+        wildcard(0, 15, vec![]),                               // Gap between patterns
+        super::flexible_verb_form(),                           // Second verb
+        TokenMatcher::Custom(Arc::new(TeHaCompoundMatcher)),   // ては/ちゃ
     ]
 }
 

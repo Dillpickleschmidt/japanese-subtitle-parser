@@ -1,5 +1,5 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
-use crate::matchers::{Matcher, noun, verb, adjective, check_token, verb_form, verb_base, surface, any, optional, wildcard,
+use crate::matchers::{Matcher, noun, verb, adjective, check_token, verb_form, verb_base, surface, any, optional, wildcard, wildcard_allow_commas,
     ichidan_mizen, godan_mizen, rareru_suffix, reru_suffix, eru_suffix, or, concat, flexible_verb_form, mashi_form, ii_form, past_auxiliary, surface_adjective_subtype, noun_subtype, surface_noun_suffix, surface_particle};
 use std::sync::Arc;
 
@@ -11,9 +11,7 @@ use std::sync::Arc;
 const NATURAL_RERU_VERBS: &[&str] = &[
     "くれる", "入れる", "切れる", "晴れる", "慣れる", "汚れる",
     "疲れる", "腫れる", "暮れる", "揺れる", "枯れる", "破れる", "触れる", "溺れる",
-    "覚める", "目覚める", "知れる", "しれる", "閉める", "決める", "止める", "始める",
-    "攻める", "責める", "包める", "詰める", "進める", "勤める", "務める", "離れる", "分かれる",
-    "崩れる",
+    "離れる", "分かれる", "崩れる",
 ];
 
 // Natural ichidan verbs ending in える (not potential forms)
@@ -4046,6 +4044,14 @@ pub fn temo() -> Vec<TokenMatcher> {
                     && first.pos.get(1).is_some_and(|p| p == "形容動詞語幹");
 
                 if is_na_adj {
+                    // Exclude てもいい/てもかまわない — those are separate patterns
+                    if let Some(after) = ctx.lookahead(2) {
+                        if matches!(after.surface.as_str(), "いい" | "良い" | "よい")
+                            || after.base_form == "構う"
+                        {
+                            return (false, 0);
+                        }
+                    }
                     return (true, 2);
                 }
                 // If it's a regular noun + でも, don't match (let でも pattern handle it)
@@ -4094,6 +4100,14 @@ pub fn temo() -> Vec<TokenMatcher> {
                 && third.pos.first().is_some_and(|p| p == "助詞")
                 && third.pos.get(1).is_some_and(|p| p == "係助詞")
             {
+                // Exclude てもいい/てもかまわない — those are separate patterns
+                if let Some(after) = ctx.lookahead(3) {
+                    if matches!(after.surface.as_str(), "いい" | "良い" | "よい")
+                        || matches!(after.base_form.as_str(), "構う" | "かまう")
+                    {
+                        return (false, 0);
+                    }
+                }
                 return (true, 3);
             }
 
@@ -4165,9 +4179,7 @@ pub fn teshimau_u30fb_chau() -> Vec<TokenMatcher> {
 // Note: Comma (、) is often used before the contrasting clause but is optional.
 // This pattern handles both cases.
 pub fn verb_te_b_2() -> Vec<TokenMatcher> {
-    // Pattern: Verb[連用形/連用タ接続] + て/で + (optional comma) + (0-3 tokens) + は
-    // Note: Using two separate approaches to handle with/without comma
-    // The wildcard stops at punctuation, so we need to explicitly include comma as optional
+    // Pattern: Verb[連用形/連用タ接続] + て/で + (0-3 tokens, may cross commas) + は
     super::concat(vec![
         vec![
             super::flexible_verb_form(),
@@ -4175,9 +4187,8 @@ pub fn verb_te_b_2() -> Vec<TokenMatcher> {
                 surface_particle("て", "接続助詞"),
                 surface_particle("で", "接続助詞")
             ]),
-            optional(surface("、")), // Optional comma
         ],
-        vec![wildcard(0, 3, vec![])],
+        vec![wildcard_allow_commas(0, 3, vec![])],
         vec![surface_particle("は", "係助詞")], // は topic/contrast particle
     ])
 }
@@ -5675,6 +5686,11 @@ pub fn reru_u30fb_rareru_potential() -> Vec<TokenMatcher> {
                     return false;
                 }
 
+                // Exclude auxiliary verbs (非自立) - e.g. いける in てはいけない
+                if token.pos.get(1).is_some_and(|p| p == "非自立") {
+                    return false;
+                }
+
                 // Exclude imperative forms - these are not potential forms
                 // Imperative forms may superficially look like potential (e.g., くれ from くれる)
                 if let Some(form) = token.features.get(5) {
@@ -6978,30 +6994,39 @@ pub fn meireigata() -> Vec<TokenMatcher> {
     struct ImperativeMatcher;
     impl Matcher for ImperativeMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                // Check if it's a verb
-                if !token.pos.first().is_some_and(|p| p == "動詞") {
-                    return false;
-                }
+            let Some(token) = ctx.current() else { return (false, 0) };
 
-                // Exclude auxiliary verbs (非自立) - these are part of compound patterns like なさい, ください
-                // Only match standalone verbs (自立)
-                if token.pos.get(1).is_some_and(|p| p == "非自立") {
-                    return false;
-                }
+            // Check if it's a verb
+            if !token.pos.first().is_some_and(|p| p == "動詞") {
+                return (false, 0);
+            }
 
-                // Explicitly exclude ください and なさい (polite request forms, not true imperatives)
-                // These have their own patterns (てください, なさい)
-                if token.base_form == "くださる" || token.base_form == "なさる" {
-                    return false;
-                }
+            // Exclude auxiliary verbs (非自立) - these are part of compound patterns like なさい, ください
+            // Only match standalone verbs (自立)
+            if token.pos.get(1).is_some_and(|p| p == "非自立") {
+                return (false, 0);
+            }
 
-                // Check if conjugation form is imperative (命令ｅ, 命令ｒｏ, or 命令ｙｏ, 命令ｉ)
-                // The conjugation form is at features index 5
-                token.features.get(5).is_some_and(|form| {
-                    form.starts_with("命令")
-                })
-            })
+            // Explicitly exclude ください and なさい (polite request forms, not true imperatives)
+            // These have their own patterns (てください, なさい)
+            if token.base_form == "くださる" || token.base_form == "なさる" {
+                return (false, 0);
+            }
+
+            // Check if conjugation form is imperative (命令ｅ, 命令ｒｏ, or 命令ｙｏ, 命令ｉ)
+            if !token.features.get(5).is_some_and(|form| form.starts_with("命令")) {
+                return (false, 0);
+            }
+
+            // Exclude imperative + negative (いけない = prohibition, not command)
+            // e.g. てはいけない: いけ is tokenized as imperative of 行ける, but followed by ない it's prohibition
+            if let Some(next) = ctx.lookahead(1) {
+                if next.base_form == "ない" && next.pos.first().is_some_and(|p| p == "助動詞") {
+                    return (false, 0);
+                }
+            }
+
+            (true, 1)
         }
     }
 

@@ -1,6 +1,6 @@
 use crate::pattern_matcher::{MatchContext, TokenMatcher};
 use std::sync::Arc;
-use super::{Matcher, noun, check_token, surface, any, optional, wildcard, past_auxiliary, mashi_form, verb, adjective, or, verb_form, verb_base, concat, flexible_verb_form, ii_form, surface_particle, godan_mizen, ichidan_mizen, noun_subtype, surface_noun_suffix};
+use super::{Matcher, noun, check_token, surface, any, optional, wildcard, wildcard_allow_commas, past_auxiliary, mashi_form, verb, adjective, or, verb_form, verb_base, concat, flexible_verb_form, ii_form, surface_particle, godan_mizen, ichidan_mizen, noun_subtype, surface_noun_suffix};
 
 // ========== たい (Want to do) ==========
 
@@ -2793,7 +2793,19 @@ pub fn i_adjective_kunakatta() -> Vec<TokenMatcher> {
 // Structures: Verb[基本形] (dictionary/casual form), Verb[連用形] + ます (polite form)
 // Matches verbs in non-past tense (casual dictionary form or polite ます form)
 pub fn verbs_non_past() -> Vec<TokenMatcher> {
-    vec![verb_form("基本形")]
+    // Exclude auxiliary verbs (非自立) like いる in ている — that's a different form
+    #[derive(Debug)]
+    struct NonPastVerbMatcher;
+    impl Matcher for NonPastVerbMatcher {
+        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
+            let Some(token) = ctx.current() else { return (false, 0) };
+            if !token.pos.first().is_some_and(|p| p == "動詞") { return (false, 0) }
+            if !token.features.get(5).is_some_and(|f| f == "基本形") { return (false, 0) }
+            if token.pos.get(1).is_some_and(|p| p == "非自立") { return (false, 0) }
+            (true, 1)
+        }
+    }
+    vec![TokenMatcher::Custom(Arc::new(NonPastVerbMatcher))]
 }
 
 // Pattern: Verb［た・ている］+ Noun (relative clause - verb modifying noun)
@@ -3082,7 +3094,7 @@ pub fn verb_te_b() -> Vec<TokenMatcher> {
             super::flexible_verb_form(),
             te_de_conjunction(),
         ],
-        vec![wildcard(0, 5, vec![])],
+        vec![wildcard_allow_commas(0, 5, vec![])],
         vec![TokenMatcher::Custom(Arc::new(NonRequestVerbMatcher))],
     ])
 }
@@ -4394,68 +4406,32 @@ pub fn adjective_te_b() -> Vec<TokenMatcher> {
                 && token.pos.first().is_some_and(|p| p == "助動詞")
                 && token.base_form == "だ";
 
-            // で case particle (格助詞) CAN be copula/linking OR instrumental/means
-            // To distinguish, we check what follows:
-            // - Copula で: followed by predicate (adj, noun, verb-て form)
-            // - Instrumental で: followed by action verb
-            let is_de_particle = token.surface == "で"
+            // で as 格助詞 — can be copula linking after nouns (医者で優しい)
+            // but NOT location/instrumental (公園で遊ぶ)
+            let is_de_particle = if token.surface == "で"
                 && token.pos.first().is_some_and(|p| p == "助詞")
-                && token.pos.get(1).is_some_and(|p| p == "格助詞");
+                && token.pos.get(1).is_some_and(|p| p == "格助詞")
+            {
+                // Reject if followed by verb (instrumental: ペンで書く, 公園で遊ぶ)
+                let next_is_verb = ctx.lookahead(1)
+                    .is_some_and(|t| t.pos.first().is_some_and(|p| p == "動詞"));
+                // Reject if followed by は (topic marker: ここでは)
+                let next_is_ha = ctx.lookahead(1)
+                    .is_some_and(|t| t.surface == "は" && t.pos.first().is_some_and(|p| p == "助詞"));
+                // Reject if followed by Noun+を (instrumental object: ロープで装備を)
+                let next_is_noun_wo = ctx.lookahead(1)
+                    .is_some_and(|t| t.pos.first().is_some_and(|p| p == "名詞"))
+                    && ctx.lookahead(2).is_some_and(|t| t.surface == "を");
+                // Reject if followed by ない (negative copula: 人でない)
+                let next_is_nai = ctx.lookahead(1)
+                    .is_some_and(|t| t.surface == "ない" && t.pos.first().is_some_and(|p| p == "形容詞"));
+                !next_is_verb && !next_is_ha && !next_is_noun_wo && !next_is_nai
+            } else {
+                false
+            };
 
-            if is_de_particle {
-                // Check what follows to determine if copula or instrumental
-                if let Some(next) = ctx.lookahead(1) {
-                    // If followed by verb in any form, it's instrumental (means/method)
-                    // Examples:
-                    //   - 力で + こい (連用タ接続) = "with strength" (instrumental)
-                    //   - 頭で + 考える (基本形) = "think with head" (instrumental)
-                    //   - ペンで + 書く = "write with pen" (instrumental)
-                    let is_verb = next.pos.first().is_some_and(|p| p == "動詞");
-
-                    // If followed by ない (negative), it's part of じゃない/ではない construction
-                    // Example: "人でない" = "is not a person" (not linking)
-                    let is_negative_copula = next.surface == "ない"
-                        && next.pos.first().is_some_and(|p| p == "形容詞");
-
-                    // If followed by は (topic marker), it's contrastive topic construction
-                    // Example: "口では" = "as for by mouth/verbally" (not copula linking)
-                    let is_contrastive_topic = next.surface == "は"
-                        && next.pos.first().is_some_and(|p| p == "助詞");
-
-                    // If followed by Noun + を, it's instrumental (Noun + で + Object + を + Verb)
-                    // Examples:
-                    //   - ロープで + 装備を + つなげ = "connect equipment with rope" (instrumental)
-                    //   - ペンで + 名前を + 書く = "write name with pen" (instrumental)
-                    let is_instrumental_object_pattern = next.pos.first().is_some_and(|p| p == "名詞")
-                        && ctx.lookahead(2).is_some_and(|t| {
-                            t.surface == "を"
-                                && t.pos.first().is_some_and(|p| p == "助詞")
-                                && t.pos.get(1).is_some_and(|p| p == "格助詞")
-                        });
-
-                    if is_verb || is_negative_copula || is_contrastive_topic || is_instrumental_object_pattern {
-                        return (false, 0);
-                    }
-                }
-
-                // Check what PRECEDES to distinguish copula vs instrumental
-                // If the noun is preceded by と (and), it's likely part of a list/instrumental phrase
-                // Example: "ナツとセミで" is instrumental "with Natsu and Semi"
-                // vs "学生で医者" is copula "student and doctor"
-                if let Some(prev) = ctx.lookbehind(1) {
-                    let is_preceded_by_to = prev.surface == "と"
-                        && prev.pos.first().is_some_and(|p| p == "助詞")
-                        && prev.pos.get(1).is_some_and(|p| p == "並立助詞" || p == "格助詞");
-
-                    if is_preceded_by_to {
-                        return (false, 0);
-                    }
-                }
-
-                // Otherwise, assume copula (followed by predicate)
-            }
-
-            (is_te || is_de_copula || is_de_particle, if is_te || is_de_copula || is_de_particle { 1 } else { 0 })
+            let matched = is_te || is_de_copula || is_de_particle;
+            (matched, if matched { 1 } else { 0 })
         }
     }
 

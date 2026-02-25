@@ -1261,6 +1261,16 @@ mod adjective_te_b_tests {
         assert_has_pattern(&patterns, "Adjective + て + B");
         assert_pattern_range(&patterns, "Adjective + て + B", 3, 6); // 医者で
     }
+
+    #[test]
+    fn test_adjective_te_not_location_de() {
+        // 公園で is location particle (格助詞), not conjunctive で
+        let sentence = "公園で音楽を聞きましょう";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "Adjective + て・Noun + で"));
+        assert!(!has_pattern(&patterns, "Adjective + て + B"));
+    }
 }
 
 // ========== Adjective + て・Noun + で ==========
@@ -2186,6 +2196,16 @@ mod verb_te_b_tests {
         assert_has_pattern(&patterns, "Verb + て+ B");
         // Should detect at least one of the sequences
         // The pattern matcher will find the first complete sequence
+    }
+
+    #[test]
+    fn test_te_b_across_comma() {
+        // Sequential actions separated by comma should still match
+        let sentence = "コンビニに行って、ハンバーガーを買って、食べた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert_has_pattern(&patterns, "Verb + て+ B");
     }
 
     #[test]

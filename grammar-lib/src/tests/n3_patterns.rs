@@ -1788,6 +1788,15 @@ mod kake_tests {
         assert_has_pattern(&patterns, "かけ");
         assert_pattern_range(&patterns, "かけ", 0, 7); // 終わりかけです
     }
+
+    #[test]
+    fn test_kake_not_dekakeru() {
+        // 出かける is a standard verb, not the かけ grammar pattern
+        let sentence = "今晩、出かけましょうか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "かけ_compound"));
+    }
 }
 
 // ========== いくら〜でも (no matter how much) ==========
@@ -2144,6 +2153,24 @@ mod ari_tests {
 
         assert_has_pattern(&patterns, "あり");
         assert_pattern_range(&patterns, "あり", 0, 8); // めっちゃありです (includes following です)
+    }
+
+    #[test]
+    fn test_ari_not_arimasu() {
+        // あります is polite ある, not literary あり
+        let sentence = "私は新しい辞書があります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "あり"));
+    }
+
+    #[test]
+    fn test_ari_not_ku_arimasen() {
+        // 難しくありません is polite い-adj negation, not literary あり
+        let sentence = "この宿題は難しくありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "あり"));
     }
 }
 

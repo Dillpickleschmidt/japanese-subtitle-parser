@@ -53,7 +53,11 @@ pub fn or(alts: Vec<TokenMatcher>) -> TokenMatcher {
 }
 
 pub fn wildcard(min: usize, max: usize, stop_conditions: Vec<TokenMatcher>) -> TokenMatcher {
-    TokenMatcher::Wildcard { min, max, stop_conditions }
+    TokenMatcher::Wildcard { min, max, stop_conditions, allow_commas: false }
+}
+
+pub fn wildcard_allow_commas(min: usize, max: usize, stop_conditions: Vec<TokenMatcher>) -> TokenMatcher {
+    TokenMatcher::Wildcard { min, max, stop_conditions, allow_commas: true }
 }
 
 // ========== Verb Matchers ==========

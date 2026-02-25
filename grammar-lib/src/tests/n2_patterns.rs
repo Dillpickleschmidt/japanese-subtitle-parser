@@ -7517,6 +7517,16 @@ mod teha_tests {
         assert!(!patterns.iter().any(|p| p.pattern_name == "ては"),
             "ては should not match 'あとで' temporal expression");
     }
+
+    #[test]
+    fn test_teha_not_location_deha() {
+        // ここで is location+topic (格助詞), not conditional ては
+        let sentence = "ここで休んでもいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "ては"));
+    }
+
 }
 
 // Pattern: ては〜ては (doing A and B repeatedly, alternating actions)
@@ -7563,6 +7573,15 @@ mod teha_uff5e_teha_tests {
 
         assert_has_pattern(&patterns, "ては〜ては");
         assert_pattern_range(&patterns, "ては〜ては", 0, 13); // ミスしては怒られ怒られては
+    }
+
+    #[test]
+    fn test_teha_teha_not_mottekite() {
+        // 持ってきてください is chained te-forms, not ては〜ては
+        let sentence = "明日、教科書を持ってきてください";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "ては〜ては"));
     }
 }
 

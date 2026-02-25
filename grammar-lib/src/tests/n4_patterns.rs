@@ -5858,14 +5858,15 @@ mod temo_tests {
     }
 
     // Testing: standard[4] - Verb[なくて] + も
+    // Note: なくてもいい is a separate pattern, so ても should NOT match here
     #[test]
     fn test_temo_verb_negative() {
         let sentence = "これは明日までに終わらなくてもいいから";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert_has_pattern(&patterns, "ても");
-        assert_pattern_range(&patterns, "ても", 11, 15); // なくても
+        assert!(!has_pattern(&patterns, "ても"));
+        assert_has_pattern(&patterns, "なくてもいい");
     }
 
     // Testing: standard[5] - い-Adjective[なくて] + も
@@ -5923,6 +5924,24 @@ mod temo_tests {
         assert_has_pattern(&patterns, "あとで");
         assert!(!patterns.iter().any(|p| p.pattern_name == "ても"),
             "ても should not match 'あとで' temporal expression");
+    }
+
+    #[test]
+    fn test_temo_not_temoii() {
+        // てもいい is its own pattern, not standalone ても
+        let sentence = "今日、早く帰ってもいいですか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "ても"));
+    }
+
+    #[test]
+    fn test_temo_not_temo_kamawanai() {
+        // てもかまわない is its own pattern, not standalone ても
+        let sentence = "私のパソコンを使ってもかまわない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "ても"));
     }
 }
 
@@ -11876,6 +11895,17 @@ mod nai_wa_nai_tests {
         assert_has_pattern(&patterns, "～ない～はない");
         assert_pattern_range(&patterns, "～ない～はない", 5, 12); // ない漢字はない
     }
+
+    // Testing: いける in てはいけない is auxiliary (非自立), not potential
+    #[test]
+    fn test_ikenai_not_potential() {
+        let sentence = "宿題を忘れてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!patterns.iter().any(|p| p.pattern_name == "れる・られる (Potential)"),
+                "Should not match いけない as potential form - it's auxiliary in てはいけない");
+    }
 }
 
 // Pattern: 命令形 (imperative form)
@@ -11887,7 +11917,7 @@ mod nai_wa_nai_tests {
 //   - Ichidan verbs: 見る → 見ろ/見よ, 食べる → 食べろ
 //   - Exceptions: する → しろ/せよ, 来る → こい, くれる → くれ
 mod imperative_form_tests {
-    use crate::tests::{assert_has_pattern, assert_pattern_range, detect_patterns, tokenize_sentence};
+    use crate::tests::{assert_has_pattern, assert_pattern_range, detect_patterns, has_pattern, tokenize_sentence};
 
     // Test: Godan る-verb imperative (止まる → 止まれ)
     #[test]
@@ -12044,6 +12074,15 @@ mod imperative_form_tests {
 
         assert_has_pattern(&patterns, "命令形");
         assert_pattern_range(&patterns, "命令形", 0, 5); // がんばれよ
+    }
+
+    // Test: いけない is prohibition, not imperative command
+    #[test]
+    fn test_imperative_not_ikenai() {
+        let sentence = "宿題を忘れてはいけない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "命令形"));
     }
 }
 

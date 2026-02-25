@@ -77,10 +77,12 @@ pub enum TokenMatcher {
     Custom(Arc<dyn crate::matchers::Matcher>),
     /// Skip min to max tokens (only one per pattern supported)
     /// stop_conditions: matchers that when matched, stop the wildcard
+    /// allow_commas: if true, commas (読点) don't stop the wildcard
     Wildcard {
         min: usize,
         max: usize,
         stop_conditions: Vec<TokenMatcher>,
+        allow_commas: bool,
     },
     /// Optional - try to match, continue either way
     Optional(Box<TokenMatcher>),
@@ -223,7 +225,7 @@ impl PatternMatcher {
 
         for (i, matcher) in pattern.tokens.iter().enumerate() {
             match matcher {
-                TokenMatcher::Wildcard { min, max, stop_conditions } => {
+                TokenMatcher::Wildcard { min, max, stop_conditions, allow_commas } => {
                     return self.match_with_wildcard(
                         pattern,
                         tokens,
@@ -233,6 +235,7 @@ impl PatternMatcher {
                         *min,
                         *max,
                         stop_conditions,
+                        *allow_commas,
                         start,
                     );
                 }
@@ -312,6 +315,7 @@ impl PatternMatcher {
         min: usize,
         max: usize,
         stop_conditions: &[TokenMatcher],
+        allow_commas: bool,
         start: usize,
     ) -> Option<PatternMatch> {
         let remaining_matchers: Vec<_> = pattern.tokens.iter().skip(wildcard_index + 1).collect();
@@ -328,10 +332,12 @@ impl PatternMatcher {
             let mut should_stop = false;
             for offset in 0..skip_count {
                 let pos = current_pos + offset;
-                // Stop at punctuation
+                // Stop at punctuation (allow commas if flag is set)
                 if tokens[pos].pos.first().is_some_and(|p| p == "記号") {
-                    should_stop = true;
-                    break;
+                    if !(allow_commas && tokens[pos].pos.get(1).is_some_and(|p| p == "読点")) {
+                        should_stop = true;
+                        break;
+                    }
                 }
                 // Stop if any stop_condition matches
                 let ctx = MatchContext { tokens, position: pos };

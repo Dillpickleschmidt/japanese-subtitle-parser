@@ -7640,15 +7640,33 @@ pub fn ari() -> Vec<TokenMatcher> {
     struct AriMatcher;
     impl Matcher for AriMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
-                Some(token) if
-            token.surface == "あり"
+            let Some(token) = ctx.current() else { return (false, 0) };
+            if !(token.surface == "あり"
                 && token.base_form == "ある"
                 && token.pos.first().is_some_and(|pos| pos == "動詞")
                 && token.pos.get(1).is_some_and(|pos| pos == "自立")
-                && token.features.get(5).is_some_and(|f| f == "連用形") => (true, 1),
-                _ => (false, 0),
+                && token.features.get(5).is_some_and(|f| f == "連用形"))
+            {
+                return (false, 0);
             }
+            // Exclude polite forms: あります, ありません, ありました, ありませんでした
+            if let Some(next) = ctx.lookahead(1) {
+                if next.surface == "ます" || next.surface == "ません"
+                    || next.surface == "まし" || next.surface == "ませ"
+                {
+                    return (false, 0);
+                }
+            }
+            // Exclude い-adjective polite negation: 難しくありません
+            if let Some(prev) = ctx.lookbehind(1) {
+                if prev.features.get(5).is_some_and(|f| f == "連用テ接続")
+                    && (prev.pos.first().is_some_and(|p| p == "形容詞")
+                        || prev.pos.first().is_some_and(|p| p == "助動詞"))
+                {
+                    return (false, 0);
+                }
+            }
+            (true, 1)
         }
     }
 
@@ -7898,6 +7916,11 @@ pub fn kake_compound() -> Vec<TokenMatcher> {
                     && token.surface.ends_with("かけ")
                     && token.base_form.ends_with("かける")
                     && token.base_form != "かける"
+                    // Exclude lexical compound verbs that are standard vocabulary
+                    && !matches!(token.base_form.as_str(),
+                        "出かける" | "見かける" | "話しかける" | "追いかける"
+                        | "呼びかける" | "働きかける" | "語りかける"
+                    )
             })
         }
     }
