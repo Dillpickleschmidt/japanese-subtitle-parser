@@ -3643,6 +3643,7 @@ pub fn tokorodatta_u2460() -> Vec<TokenMatcher> {
 
 // Pattern: だって (because/but/even)
 // Structures: Noun + だって (particle "even") OR だって + Phrase (conjunction "because/but")
+// Rejects quotation use (だって before 言う/思う/聞く = だ+って = casual と)
 pub fn datte() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
@@ -3657,6 +3658,16 @@ pub fn datte() -> Vec<TokenMatcher> {
                             || (token.pos.first().is_some_and(|pos| pos == "助詞")
                                 && token.pos.get(1).is_some_and(|pos| pos == "副助詞"))) =>
                 {
+                    // Reject when followed by speech/thought verb (quotation marker)
+                    if ctx.lookahead(1).is_some_and(|t| {
+                        t.pos.first().is_some_and(|p| p == "動詞")
+                            && matches!(
+                                t.base_form.as_str(),
+                                "言う" | "思う" | "聞く" | "話す" | "伝える" | "書く"
+                            )
+                    }) {
+                        return (false, 0);
+                    }
                     (true, 1)
                 }
                 _ => (false, 0),

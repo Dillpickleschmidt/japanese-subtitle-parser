@@ -4062,6 +4062,14 @@ mod datte_tests {
         assert_has_pattern(&patterns, "だって");
         assert_pattern_range(&patterns, "だって", 10, 13); // だって
     }
+    // False positive: だって before 言う is quotation (だ + って = と), not exclamatory
+    #[test]
+    fn test_datte_not_quotation() {
+        let sentence = "たけしさんは運転するのが下手だって言っています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "だって"));
+    }
 }
 
 // ========== っぽい (ish/like/tendency to) ==========
