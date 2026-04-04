@@ -2358,10 +2358,10 @@ pub fn nishite_u2460() -> Vec<TokenMatcher> {
         }
     }
 
-    // Match て particle (接続助詞)
+    // Match て, rejecting when followed by いる/い (progressive → にしている, not standalone にして)
     #[derive(Debug)]
-    struct TeParticleMatcher;
-    impl super::Matcher for TeParticleMatcher {
+    struct TeNotProgressiveMatcher;
+    impl super::Matcher for TeNotProgressiveMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
                 Some(token)
@@ -2369,6 +2369,12 @@ pub fn nishite_u2460() -> Vec<TokenMatcher> {
                         && token.pos.first().is_some_and(|p| p == "助詞")
                         && token.pos.get(1).is_some_and(|p| p == "接続助詞") =>
                 {
+                    if ctx.lookahead(1).is_some_and(|t| {
+                        t.pos.first().is_some_and(|p| p == "動詞")
+                            && t.base_form == "いる"
+                    }) {
+                        return (false, 0);
+                    }
                     (true, 1)
                 }
                 _ => (false, 0),
@@ -2377,18 +2383,12 @@ pub fn nishite_u2460() -> Vec<TokenMatcher> {
     }
 
     vec![
-        // Match number/counter or noun - use specific noun types to avoid matching across particles
         noun(),
-        // Optional: allow one more noun token (for multi-token numbers like ３０)
         optional(noun()),
-        // Optional: allow one more noun token (for counters like 歳, or suffixes like 目)
         optional(noun()),
-        // Match に
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
-        // Match し
         TokenMatcher::Custom(Arc::new(ShiVerbMatcher)),
-        // Match て
-        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TeNotProgressiveMatcher)),
     ]
 }
 
@@ -3680,10 +3680,10 @@ pub fn nishite_u2461() -> Vec<TokenMatcher> {
         }
     }
 
-    // Match て particle (接続助詞)
+    // Match て, rejecting when followed by いる/い (progressive → にしている, not standalone にして)
     #[derive(Debug)]
-    struct TeParticleMatcher;
-    impl super::Matcher for TeParticleMatcher {
+    struct TeNotProgressiveMatcher;
+    impl super::Matcher for TeNotProgressiveMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
                 Some(token)
@@ -3691,6 +3691,12 @@ pub fn nishite_u2461() -> Vec<TokenMatcher> {
                         && token.pos.first().is_some_and(|p| p == "助詞")
                         && token.pos.get(1).is_some_and(|p| p == "接続助詞") =>
                 {
+                    if ctx.lookahead(1).is_some_and(|t| {
+                        t.pos.first().is_some_and(|p| p == "動詞")
+                            && t.base_form == "いる"
+                    }) {
+                        return (false, 0);
+                    }
                     (true, 1)
                 }
                 _ => (false, 0),
@@ -3702,7 +3708,7 @@ pub fn nishite_u2461() -> Vec<TokenMatcher> {
         TokenMatcher::Custom(Arc::new(NounOrNaAdjectiveMatcher)),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
         TokenMatcher::Custom(Arc::new(ShiVerbMatcher)),
-        TokenMatcher::Custom(Arc::new(TeParticleMatcher)),
+        TokenMatcher::Custom(Arc::new(TeNotProgressiveMatcher)),
     ]
 }
 

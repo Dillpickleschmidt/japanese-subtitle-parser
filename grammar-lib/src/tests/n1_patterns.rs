@@ -2249,6 +2249,15 @@ mod nishite_tests {
         assert_has_pattern(&patterns, "にして①");
         assert_pattern_range(&patterns, "にして①", 2, 8); // ６０歳にして
     }
+
+    // False positive: 楽しみにしている is a set phrase (to look forward to), not にして①
+    #[test]
+    fn test_nishite_not_tanoshimi_ni_shiteiru() {
+        let sentence = "おばあさんはすごくお菓子を作るのが上手だから、みんなが楽しみにしています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "にして①"));
+    }
 }
 
 // ============================================================================
@@ -2306,6 +2315,15 @@ mod nishite_u2461_tests {
 
         assert_has_pattern(&patterns, "にして②");
         assert_pattern_range(&patterns, "にして②", 2, 7); // 不幸にして
+    }
+
+    // False positive: 楽しみにしている is a set phrase (to look forward to), not にして②
+    #[test]
+    fn test_nishite2_not_tanoshimi_ni_shiteiru() {
+        let sentence = "おばあさんはすごくお菓子を作るのが上手だから、みんなが楽しみにしています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "にして②"));
     }
 }
 
