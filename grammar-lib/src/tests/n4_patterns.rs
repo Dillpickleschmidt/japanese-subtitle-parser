@@ -714,8 +714,10 @@ mod demo_tests {
 
         // Should have あとで pattern, but NOT でも pattern
         assert_has_pattern(&patterns, "あとで");
-        assert!(!patterns.iter().any(|p| p.pattern_name == "でも"),
-            "でも should not match 'あとで' temporal expression");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "でも"),
+            "でも should not match 'あとで' temporal expression"
+        );
     }
 }
 
@@ -1477,8 +1479,10 @@ mod koto_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should NOT match こと pattern (バカな + こと is adjective + noun, not verb nominalization)
-        assert!(!patterns.iter().any(|p| p.pattern_name == "こと"),
-            "こと pattern should not match na-adjective + こと");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "こと"),
+            "こと pattern should not match na-adjective + こと"
+        );
     }
 }
 
@@ -3998,8 +4002,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが pattern since だ is followed by ぜ, not が
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match when だ is not followed by が");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match when だ is not followed by が"
+        );
     }
 
     // Test that だ + よ should NOT match だが・ですが
@@ -4010,8 +4016,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが pattern since だ is followed by よ, not が
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match when だ is followed by よ");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match when だ is followed by よ"
+        );
     }
 
     #[test]
@@ -4021,8 +4029,10 @@ mod daga_desuga_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match copula だ in questions");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match copula だ in questions"
+        );
     }
 
     // Test from subtitle 184: だと should not match だが pattern
@@ -4032,8 +4042,10 @@ mod daga_desuga_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match when だ is followed by と (conditional)");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match when だ is followed by と (conditional)"
+        );
     }
 
     // Test from subtitle 283: ことだ should not match だが pattern
@@ -4043,8 +4055,10 @@ mod daga_desuga_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match copula だ at end of sentence (ことだ)");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match copula だ at end of sentence (ことだ)"
+        );
     }
 
     // Test from subtitle 130: いじめっ子だ should not match だが pattern
@@ -4054,8 +4068,10 @@ mod daga_desuga_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match copula だ at sentence end");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match copula だ at sentence end"
+        );
     }
 
     // Test from subtitle 386: yojijukugo + だ at end should not match
@@ -4065,8 +4081,10 @@ mod daga_desuga_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match sentence-final だ");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match sentence-final だ"
+        );
     }
 
     // Test that です alone (without が) should NOT match
@@ -4077,8 +4095,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが・ですが pattern since です is not followed by が
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match when です is not followed by が");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match when です is not followed by が"
+        );
     }
 
     // Test from subtitle 149: だと should not match だが pattern
@@ -4089,8 +4109,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが・ですが pattern since だ is followed by と (quotation), not が
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match when だ is followed by と instead of が");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match when だ is followed by と instead of が"
+        );
     }
 
     // Test from subtitle 168: です at sentence end should not match
@@ -4101,8 +4123,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが・ですが pattern since です is not followed by が
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match です at sentence end without が");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match です at sentence end without が"
+        );
     }
 
     // Test from subtitle 270: ですか should not match ですが pattern
@@ -4125,8 +4149,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが・ですが pattern since だ is followed by ぞ (emphasis particle), not が (conjunction)
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match when だ is followed by ぞ (emphasis particle)");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match when だ is followed by ぞ (emphasis particle)"
+        );
     }
 
     // Test from subtitle 284: だ with exclamation mark should not match
@@ -4137,8 +4163,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが・ですが pattern - this is sentence-final だ with exclamation
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match 出発だ！ (sentence-final copula with exclamation)");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match 出発だ！ (sentence-final copula with exclamation)"
+        );
     }
 
     // Test from subtitle 296: sentence-final だ should not match
@@ -4149,8 +4177,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが・ですが pattern - this is sentence-final だ (copula), not だが (conjunction)
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match sentence-final だ without が following");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match sentence-final だ without が following"
+        );
     }
 
     // Test from subtitle 306: です with exclamation should not match
@@ -4161,8 +4191,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが・ですが pattern - this is sentence-final です with exclamation
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match 反対です！ (sentence-final です with exclamation)");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match 反対です！ (sentence-final です with exclamation)"
+        );
     }
 
     // Test from subtitle 322: 見張りです should not match
@@ -4173,8 +4205,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが・ですが pattern - this is sentence-final です (copula), not ですが (conjunction)
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match 見張りです (sentence-final です without が following)");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match 見張りです (sentence-final です without が following)"
+        );
     }
 
     // Test from subtitle 380: わけですね should not match
@@ -4183,11 +4217,12 @@ mod daga_desuga_tests {
         let sentence = "振り出しに戻ったわけですね";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
 
         // Should not match だが・ですが pattern - です is followed by ね, not が
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match わけですね (です followed by ね, not が)");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match わけですね (です followed by ね, not が)"
+        );
     }
 
     // Test from subtitle 354: もとの島だ should not match
@@ -4198,8 +4233,10 @@ mod daga_desuga_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should not match だが・ですが pattern - this is sentence-final だ (copula), not だが (conjunction)
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match もとの島だ (sentence-final だ without が following)");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match もとの島だ (sentence-final だ without が following)"
+        );
     }
 
     // Test from subtitle 354: full text with character name
@@ -4209,11 +4246,11 @@ mod daga_desuga_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        print_debug(sentence, &tokens, &patterns);
-
         // Should not match だが・ですが pattern - this is sentence-final だ (copula), not だが (conjunction)
-        assert!(!patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
-                "だが・ですが should not match (柳)もとの島だ (sentence-final だ without が following)");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "だが・ですが"),
+            "だが・ですが should not match (柳)もとの島だ (sentence-final だ without が following)"
+        );
     }
 }
 
@@ -4784,6 +4821,15 @@ mod toki_tests {
         assert_has_pattern(&patterns, "とき");
         assert_pattern_range(&patterns, "とき", 1, 4); // のとき
     }
+
+    #[test]
+    fn test_toki_not_to_kiita() {
+        let sentence = "漫画はすごく面白いと聞いた";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "とき"));
+    }
 }
 
 // ========== かい (question particle - casual) ==========
@@ -5312,8 +5358,10 @@ mod souiu_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert!(!patterns.iter().any(|p| p.pattern_name == "そういう"),
-                "Standalone 'ああ' interjection should not match そういう pattern");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "そういう"),
+            "Standalone 'ああ' interjection should not match そういう pattern"
+        );
     }
 
     #[test]
@@ -5324,8 +5372,10 @@ mod souiu_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert!(!patterns.iter().any(|p| p.pattern_name == "そういう"),
-                "Exclamation 'うわあああっ' should not match そういう pattern");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "そういう"),
+            "Exclamation 'うわあああっ' should not match そういう pattern"
+        );
     }
 }
 
@@ -5345,7 +5395,8 @@ mod sonna_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "そんな・こんな・あんな・どんな");
-        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3); // そんな
+        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3);
+        // そんな
     }
 
     #[test]
@@ -5355,7 +5406,8 @@ mod sonna_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "そんな・こんな・あんな・どんな");
-        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3); // こんな
+        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3);
+        // こんな
     }
 
     #[test]
@@ -5365,7 +5417,8 @@ mod sonna_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "そんな・こんな・あんな・どんな");
-        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3); // あんな
+        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3);
+        // あんな
     }
 
     #[test]
@@ -5375,7 +5428,8 @@ mod sonna_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "そんな・こんな・あんな・どんな");
-        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3); // どんな
+        assert_pattern_range(&patterns, "そんな・こんな・あんな・どんな", 0, 3);
+        // どんな
     }
 }
 
@@ -5910,7 +5964,10 @@ mod temo_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should NOT match ても - じゃ is copula, not て-form
-        assert!(!has_pattern(&patterns, "ても"), "ても should not match じゃねえか");
+        assert!(
+            !has_pattern(&patterns, "ても"),
+            "ても should not match じゃねえか"
+        );
     }
 
     // False positive test: あとで should NOT match ても
@@ -5922,8 +5979,10 @@ mod temo_tests {
 
         // Should have あとで pattern, but NOT ても pattern
         assert_has_pattern(&patterns, "あとで");
-        assert!(!patterns.iter().any(|p| p.pattern_name == "ても"),
-            "ても should not match 'あとで' temporal expression");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "ても"),
+            "ても should not match 'あとで' temporal expression"
+        );
     }
 
     #[test]
@@ -6066,8 +6125,12 @@ mod causative_passive_tests {
         assert_has_pattern(&patterns, "Verb［れる・られる］");
 
         // Should NOT have causative-passive pattern
-        assert!(!patterns.iter().any(|p| p.pattern_name == "Causative-Passive"),
-            "Simple passive 言われた should not match Causative-Passive pattern");
+        assert!(
+            !patterns
+                .iter()
+                .any(|p| p.pattern_name == "Causative-Passive"),
+            "Simple passive 言われた should not match Causative-Passive pattern"
+        );
     }
 
     // Testing: 流された should NOT match causative-passive (流す is a natural verb)
@@ -6087,8 +6150,12 @@ mod causative_passive_tests {
         assert_has_pattern(&patterns, "Verb［れる・られる］");
 
         // Should NOT have causative-passive pattern
-        assert!(!patterns.iter().any(|p| p.pattern_name == "Causative-Passive"),
-            "流された should NOT match Causative-Passive (流す is a natural verb, not causative)");
+        assert!(
+            !patterns
+                .iter()
+                .any(|p| p.pattern_name == "Causative-Passive"),
+            "流された should NOT match Causative-Passive (流す is a natural verb, not causative)"
+        );
     }
 
     // Testing: Simple passive in て-form compound should NOT match causative-passive
@@ -6109,8 +6176,12 @@ mod causative_passive_tests {
         assert_has_pattern(&patterns, "Verb［れる・られる］");
 
         // Should NOT have causative-passive pattern
-        assert!(!patterns.iter().any(|p| p.pattern_name == "Causative-Passive"),
-            "Simple passive いかれ should not match Causative-Passive pattern");
+        assert!(
+            !patterns
+                .iter()
+                .any(|p| p.pattern_name == "Causative-Passive"),
+            "Simple passive いかれ should not match Causative-Passive pattern"
+        );
     }
 }
 
@@ -6173,6 +6244,15 @@ mod number_amount_ha_tests {
 
         assert_has_pattern(&patterns, "Number/Amount + は");
         assert_pattern_range(&patterns, "Number/Amount + は", 5, 10); // 回ぐらいは
+    }
+
+    #[test]
+    fn test_number_amount_ha_not_isshuukan_ijou() {
+        let sentence = "一週間以上話していない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "Number/Amount + は"));
     }
 
     // Note: The structure variant "Noun + くらい + は" (without counter) is primarily
@@ -6994,6 +7074,15 @@ mod demo_demo_tests {
         assert_has_pattern(&patterns, "〜でも 〜でも");
         assert_pattern_range(&patterns, "〜でも 〜でも", 0, 11); // ケーキでもクッキーでも
     }
+
+    #[test]
+    fn test_demo_demo_not_repeated_de() {
+        let sentence = "公園で家族みんなで花火を見る";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "〜でも 〜でも"));
+    }
 }
 
 // Pattern: 〜ようと思う・〜おうと思う (intend to/thinking of doing)
@@ -7560,6 +7649,15 @@ mod teitadakemasenka_tests {
 
         assert_has_pattern(&patterns, "ていただけませんか");
         assert_pattern_range(&patterns, "ていただけませんか", 4, 14); // 待ってもらえませんか
+    }
+
+    #[test]
+    fn test_teitadakemasenka_not_teimasenka() {
+        let sentence = "まだ知っていませんか";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "ていただけませんか"));
     }
 }
 
@@ -11367,10 +11465,24 @@ mod nisuru_u30fb_kusuru_tests {
         // Should NOT match ～にする・～くする for "ことしよう" because に is missing
         // The pattern should only match when に is present for nouns (e.g., "ことにしよう")
         // Debug: print any matches for this pattern
-        for p in patterns.iter().filter(|p| p.pattern_name == "～にする・～くする") {
-            let matched = sentence.chars().skip(p.start_char as usize).take((p.end_char - p.start_char) as usize).collect::<String>();
-            println!("Found match: {} ({}..{})", matched, p.start_char, p.end_char);
-            assert!(matched != "ことしよう", "Should not match こと+しよう without に particle, but matched: {}", matched);
+        for p in patterns
+            .iter()
+            .filter(|p| p.pattern_name == "～にする・～くする")
+        {
+            let matched = sentence
+                .chars()
+                .skip(p.start_char as usize)
+                .take((p.end_char - p.start_char) as usize)
+                .collect::<String>();
+            println!(
+                "Found match: {} ({}..{})",
+                matched, p.start_char, p.end_char
+            );
+            assert!(
+                matched != "ことしよう",
+                "Should not match こと+しよう without に particle, but matched: {}",
+                matched
+            );
         }
     }
 
@@ -11379,7 +11491,7 @@ mod nisuru_u30fb_kusuru_tests {
     fn test_suru_verbs_should_not_match() {
         // Test both with and without special characters
         let sentences = vec![
-            "準備できしだいすぐに出発するぞ！", // Standard text
+            "準備できしだいすぐに出発するぞ！",           // Standard text
             "\u{202a}準備できしだい\nすぐに出発するぞ！", // Exact subtitle text with special char and newline
         ];
 
@@ -11389,9 +11501,19 @@ mod nisuru_u30fb_kusuru_tests {
 
             // Should NOT match ～にする・～くする for "出発する"
             // 出発する is a compound verb (出発 + する), not "make into departure"
-            if let Some(p) = patterns.iter().find(|p| p.pattern_name == "～にする・～くする") {
-                let matched = sentence.chars().skip(p.start_char as usize).take((p.end_char - p.start_char) as usize).collect::<String>();
-                panic!("Should not match サ変 compound verb 出発する, but matched: {}", matched);
+            if let Some(p) = patterns
+                .iter()
+                .find(|p| p.pattern_name == "～にする・～くする")
+            {
+                let matched = sentence
+                    .chars()
+                    .skip(p.start_char as usize)
+                    .take((p.end_char - p.start_char) as usize)
+                    .collect::<String>();
+                panic!(
+                    "Should not match サ変 compound verb 出発する, but matched: {}",
+                    matched
+                );
             }
         }
     }
@@ -11555,7 +11677,7 @@ mod potential_verb_tests {
         assert_has_pattern(&patterns, "れる・られる (Potential)");
         // Check first occurrence: 話せない
         assert_pattern_range(&patterns, "れる・られる (Potential)", 3, 7); // 話せない (first match)
-        // Note: There's also 話せます at position 13-17, but assert_pattern_range checks first match
+                                                                           // Note: There's also 話せます at position 13-17, but assert_pattern_range checks first match
     }
 
     // Testing: つ-verb - 打つ → 打てる
@@ -11692,8 +11814,12 @@ mod potential_verb_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should NOT match potential pattern
-        assert!(!patterns.iter().any(|p| p.pattern_name == "れる・られる (Potential)"),
-                "Should not match 覚める as potential form - it's a natural eru verb");
+        assert!(
+            !patterns
+                .iter()
+                .any(|p| p.pattern_name == "れる・られる (Potential)"),
+            "Should not match 覚める as potential form - it's a natural eru verb"
+        );
     }
 
     // Testing: 聞こえる should NOT match (natural eru verb meaning "to be audible")
@@ -11705,7 +11831,6 @@ mod potential_verb_tests {
         let sentence = "聞こえるかな…";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
-        print_debug(sentence, &tokens, &patterns);
 
         // Should NOT match potential pattern
         assert!(!patterns.iter().any(|p| p.pattern_name == "れる・られる (Potential)"),
@@ -11737,8 +11862,12 @@ mod potential_verb_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should NOT match potential pattern
-        assert!(!patterns.iter().any(|p| p.pattern_name == "れる・られる (Potential)"),
-                "Should not match 分かってる as potential form - it's ている contracted to てる");
+        assert!(
+            !patterns
+                .iter()
+                .any(|p| p.pattern_name == "れる・られる (Potential)"),
+            "Should not match 分かってる as potential form - it's ている contracted to てる"
+        );
 
         // Should match ている pattern instead
         assert_has_pattern(&patterns, "ている①");
@@ -11752,8 +11881,12 @@ mod potential_verb_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should NOT match potential pattern (it's imperative)
-        assert!(!patterns.iter().any(|p| p.pattern_name == "れる・られる (Potential)"),
-                "Should not match やめろ as potential form - it's imperative (command) form");
+        assert!(
+            !patterns
+                .iter()
+                .any(|p| p.pattern_name == "れる・られる (Potential)"),
+            "Should not match やめろ as potential form - it's imperative (command) form"
+        );
     }
 
     // Testing: exact text from subtitle 371
@@ -11764,10 +11897,13 @@ mod potential_verb_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should NOT match potential pattern for やめろ
-        assert!(!patterns.iter().any(|p| {
-            p.pattern_name == "れる・られる (Potential)" &&
-            sentence[p.start_char as usize..p.end_char as usize].contains("やめろ")
-        }), "Should not match やめろ as potential form - it's imperative (command) form");
+        assert!(
+            !patterns.iter().any(|p| {
+                p.pattern_name == "れる・られる (Potential)"
+                    && sentence[p.start_char as usize..p.end_char as usize].contains("やめろ")
+            }),
+            "Should not match やめろ as potential form - it's imperative (command) form"
+        );
     }
 
     #[test]
@@ -11777,8 +11913,12 @@ mod potential_verb_tests {
         let patterns = detect_patterns(&tokens);
 
         // Should NOT match potential pattern
-        assert!(!patterns.iter().any(|p| p.pattern_name == "れる・られる (Potential)"),
-                "Should not match 言ってる as potential form - it's ている contracted to てる");
+        assert!(
+            !patterns
+                .iter()
+                .any(|p| p.pattern_name == "れる・られる (Potential)"),
+            "Should not match 言ってる as potential form - it's ている contracted to てる"
+        );
 
         // Should match ている pattern instead
         assert_has_pattern(&patterns, "ている①");
@@ -11903,8 +12043,12 @@ mod nai_wa_nai_tests {
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        assert!(!patterns.iter().any(|p| p.pattern_name == "れる・られる (Potential)"),
-                "Should not match いけない as potential form - it's auxiliary in てはいけない");
+        assert!(
+            !patterns
+                .iter()
+                .any(|p| p.pattern_name == "れる・られる (Potential)"),
+            "Should not match いけない as potential form - it's auxiliary in てはいけない"
+        );
     }
 }
 
@@ -11917,7 +12061,9 @@ mod nai_wa_nai_tests {
 //   - Ichidan verbs: 見る → 見ろ/見よ, 食べる → 食べろ
 //   - Exceptions: する → しろ/せよ, 来る → こい, くれる → くれ
 mod imperative_form_tests {
-    use crate::tests::{assert_has_pattern, assert_pattern_range, detect_patterns, has_pattern, tokenize_sentence};
+    use crate::tests::{
+        assert_has_pattern, assert_pattern_range, detect_patterns, has_pattern, tokenize_sentence,
+    };
 
     // Test: Godan る-verb imperative (止まる → 止まれ)
     #[test]
@@ -12029,8 +12175,10 @@ mod imperative_form_tests {
 
         assert_has_pattern(&patterns, "命令形");
         // Should NOT match potential form れる・られる
-        assert!(!patterns.iter().any(|p| p.pattern_name == "れる・られる"),
-            "Should not match potential form for imperative 走り抜けろ");
+        assert!(
+            !patterns.iter().any(|p| p.pattern_name == "れる・られる"),
+            "Should not match potential form for imperative 走り抜けろ"
+        );
     }
 
     // Test: Full subtitle sentence - 走り抜けろ should be imperative, not potential
@@ -12046,12 +12194,15 @@ mod imperative_form_tests {
         assert_pattern_range(&patterns, "命令形", 6, 11); // 走り抜けろ
 
         // 走り抜けろ should NOT match potential form (it's imperative)
-        let hashirinukero_potential: Vec<_> = patterns.iter()
+        let hashirinukero_potential: Vec<_> = patterns
+            .iter()
             .filter(|p| p.pattern_name == "れる・られる" && p.start_char == 6)
             .collect();
 
-        assert!(hashirinukero_potential.is_empty(),
-            "走り抜けろ should not match potential form (it's in 命令ｒｏ form)");
+        assert!(
+            hashirinukero_potential.is_empty(),
+            "走り抜けろ should not match potential form (it's in 命令ｒｏ form)"
+        );
     }
 
     // Test: Exception verb する → しろ
@@ -12096,7 +12247,9 @@ mod imperative_form_tests {
 //   - 真っ + は column words (H→P): 真っ平, 真っ裸 (はだか→ぱだか)
 //   - Exceptions: 真っ青 (青い→さお), 真っ赤 (赤い→か)
 mod ma_prefix_tests {
-    use crate::tests::{assert_has_pattern, assert_pattern_range, detect_patterns, tokenize_sentence};
+    use crate::tests::{
+        assert_has_pattern, assert_pattern_range, detect_patterns, tokenize_sentence,
+    };
 
     // Test: 真ん + ま-column word (真ん中 - dead center)
     #[test]
@@ -12522,22 +12675,37 @@ mod de_particle_tests {
         let patterns = detect_patterns(&tokens);
 
         // でも should NOT match
-        let demo_matches: Vec<_> = patterns.iter()
+        let demo_matches: Vec<_> = patterns
+            .iter()
             .filter(|p| p.pattern_name == "でも")
             .collect();
-        assert_eq!(demo_matches.len(), 0, "でも should not match 大声で (no も follows)");
+        assert_eq!(
+            demo_matches.len(),
+            0,
+            "でも should not match 大声で (no も follows)"
+        );
 
         // ても should NOT match
-        let temo_matches: Vec<_> = patterns.iter()
+        let temo_matches: Vec<_> = patterns
+            .iter()
             .filter(|p| p.pattern_name == "ても")
             .collect();
-        assert_eq!(temo_matches.len(), 0, "ても should not match 大声で (no も follows)");
+        assert_eq!(
+            temo_matches.len(),
+            0,
+            "ても should not match 大声で (no も follows)"
+        );
 
         // ては should NOT match
-        let teha_matches: Vec<_> = patterns.iter()
+        let teha_matches: Vec<_> = patterns
+            .iter()
             .filter(|p| p.pattern_name == "ては")
             .collect();
-        assert_eq!(teha_matches.len(), 0, "ては should not match 大声で (no は follows)");
+        assert_eq!(
+            teha_matches.len(),
+            0,
+            "ては should not match 大声で (no は follows)"
+        );
     }
 }
 
@@ -12553,18 +12721,23 @@ mod souiu_debug_tests {
         let patterns = detect_patterns(&tokens);
 
         // そういう should NOT match standalone ああ interjection
-        let souiu_matches: Vec<_> = patterns.iter()
+        let souiu_matches: Vec<_> = patterns
+            .iter()
             .filter(|p| p.pattern_name == "そういう")
             .collect();
         assert_eq!(souiu_matches.len(), 0,
             "そういう should not match standalone 'ああ' interjection (needs to be followed by いう)");
 
         // だが・ですが should NOT match だよ (だ not followed by が)
-        let daga_matches: Vec<_> = patterns.iter()
+        let daga_matches: Vec<_> = patterns
+            .iter()
             .filter(|p| p.pattern_name == "だが・ですが")
             .collect();
-        assert_eq!(daga_matches.len(), 0,
-            "だが・ですが should not match 'だよ' (だ must be followed by が, not よ)");
+        assert_eq!(
+            daga_matches.len(),
+            0,
+            "だが・ですが should not match 'だよ' (だ must be followed by が, not よ)"
+        );
     }
 
     #[test]
@@ -12574,8 +12747,10 @@ mod souiu_debug_tests {
 
         println!("\n=== Tokens for '{}' ===", sentence);
         for (i, token) in tokens.iter().enumerate() {
-            println!("{}: surface='{}' base='{}' pos={:?}",
-                i, token.surface, token.base_form, token.pos);
+            println!(
+                "{}: surface='{}' base='{}' pos={:?}",
+                i, token.surface, token.base_form, token.pos
+            );
         }
 
         let patterns = detect_patterns(&tokens);
@@ -12583,15 +12758,21 @@ mod souiu_debug_tests {
         println!("\n=== Patterns ===");
         for pattern in &patterns {
             let matched_text = &sentence[pattern.start_char as usize..pattern.end_char as usize];
-            println!("{}: '{}' at {}-{}",
-                pattern.pattern_name, matched_text, pattern.start_char, pattern.end_char);
+            println!(
+                "{}: '{}' at {}-{}",
+                pattern.pattern_name, matched_text, pattern.start_char, pattern.end_char
+            );
         }
 
-        let souiu_matches: Vec<_> = patterns.iter()
+        let souiu_matches: Vec<_> = patterns
+            .iter()
             .filter(|p| p.pattern_name == "そういう")
             .collect();
 
-        assert_eq!(souiu_matches.len(), 0,
-            "そういう should not match standalone 'ああ' in '（ちさ）ああ 花ちゃん'");
+        assert_eq!(
+            souiu_matches.len(),
+            0,
+            "そういう should not match standalone 'ああ' in '（ちさ）ああ 花ちゃん'"
+        );
     }
 }

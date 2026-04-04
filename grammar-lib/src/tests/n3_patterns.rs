@@ -1797,6 +1797,15 @@ mod kake_tests {
         let patterns = detect_patterns(&tokens);
         assert!(!has_pattern(&patterns, "かけ_compound"));
     }
+
+    #[test]
+    fn test_kake_compound_not_dekakenakatta() {
+        let sentence = "今日は出かけなかった";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "かけ_compound"));
+    }
 }
 
 // ========== いくら〜でも (no matter how much) ==========
@@ -2170,6 +2179,15 @@ mod ari_tests {
         let sentence = "この宿題は難しくありません";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "あり"));
+    }
+
+    #[test]
+    fn test_ari_not_ku_arimasen_deshita() {
+        let sentence = "この宿題は難しくありませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
         assert!(!has_pattern(&patterns, "あり"));
     }
 }
@@ -2703,7 +2721,8 @@ mod sokode_tests {
     // (I have decided to marry my girlfriend. To that end, I have decided to go to her parents' place to talk to them)
     #[test]
     fn test_sokode_marriage() {
-        let sentence = "彼女と結婚をすることにした。そこで、彼女の親の実家に行って挨拶をすることに決めた";
+        let sentence =
+            "彼女と結婚をすることにした。そこで、彼女の親の実家に行って挨拶をすることに決めた";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2753,7 +2772,8 @@ mod sonotameni_tests {
     // (Hamada-san loves fishing. For that reason, he does it every morning before he goes to work)
     #[test]
     fn test_sonotame_fishing() {
-        let sentence = "ハマダさんはとても釣りが好きです。そのため毎朝仕事に行く前に、釣りに行っています";
+        let sentence =
+            "ハマダさんはとても釣りが好きです。そのため毎朝仕事に行く前に、釣りに行っています";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2766,7 +2786,8 @@ mod sonotameni_tests {
     // (Japan's population continues to age. To that end, when a child is born, you receive money from the government)
     #[test]
     fn test_sonotame_population() {
-        let sentence = "日本では高齢化が進んでいる。そのため、子供が生まれたら政府からお金がもらえる";
+        let sentence =
+            "日本では高齢化が進んでいる。そのため、子供が生まれたら政府からお金がもらえる";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2779,7 +2800,8 @@ mod sonotameni_tests {
     // (I want my kids to have a life without any struggles. For the sake of that, I work until late at night every day)
     #[test]
     fn test_sonotameni_children() {
-        let sentence = "子供達にはなんの不自由もない生活をしてほしい。そのために毎日夜遅くまで仕事をしている";
+        let sentence =
+            "子供達にはなんの不自由もない生活をしてほしい。そのために毎日夜遅くまで仕事をしている";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2792,7 +2814,8 @@ mod sonotameni_tests {
     // (I want a new car, but I am struggling to pay my mortgage. For that reason, I am holding off on doing it)
     #[test]
     fn test_sonotameni_car() {
-        let sentence = "新しい車が欲しいけど今は住宅ローンで精一杯。そのために車を買うのを我慢している";
+        let sentence =
+            "新しい車が欲しいけど今は住宅ローンで精一杯。そのために車を買うのを我慢している";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2855,7 +2878,8 @@ mod sonokekka_tests {
     // (Tanaka-kun only played video games without exercising for a year. As a result, he gained 20 kilograms)
     #[test]
     fn test_sonokekka_weight_gain() {
-        let sentence = "タナカ君は一年間運動をしないでゲームばっかりしていた。その結果２０キロも太った";
+        let sentence =
+            "タナカ君は一年間運動をしないでゲームばっかりしていた。その結果２０キロも太った";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -3513,7 +3537,8 @@ mod mottomo_tests {
     // Test: もっとも - Korea knowledge
     #[test]
     fn test_mottomo_korea() {
-        let sentence = "私は韓国についてものすごく詳しいです。もっとも、韓国には行った事が無いけど。";
+        let sentence =
+            "私は韓国についてものすごく詳しいです。もっとも、韓国には行った事が無いけど。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -3524,7 +3549,8 @@ mod mottomo_tests {
     // Test: もっとも - computer example
     #[test]
     fn test_mottomo_computer() {
-        let sentence = "今日は会社に自分のパソコンを持ってきた。もっとも、自分のパソコンはいらないが。";
+        let sentence =
+            "今日は会社に自分のパソコンを持ってきた。もっとも、自分のパソコンはいらないが。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -5919,6 +5945,15 @@ mod demoaru_tests {
         assert_has_pattern(&patterns, "でもある");
         assert_pattern_range(&patterns, "でもある", 3, 11); // 親切でもあります
     }
+
+    #[test]
+    fn test_demoaru_not_kotomoaru() {
+        let sentence = "簡単なこともある";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "でもある"));
+    }
 }
 
 // Pattern: では・それでは・じゃあ (conjunction/transition)
@@ -6421,7 +6456,8 @@ mod tara_ii_to_ii_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "たらいい・といい_な形だったら");
-        assert_pattern_range(&patterns, "たらいい・といい_な形だったら", 3, 11); // 静かだったらいい
+        assert_pattern_range(&patterns, "たらいい・といい_な形だったら", 3, 11);
+        // 静かだったらいい
     }
 
     // Testing: standard[7] - な-Adjective + であれば + いい
@@ -6432,7 +6468,8 @@ mod tara_ii_to_ii_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "たらいい・といい_な形であれば");
-        assert_pattern_range(&patterns, "たらいい・といい_な形であれば", 3, 10); // 楽であればいい
+        assert_pattern_range(&patterns, "たらいい・といい_な形であれば", 3, 10);
+        // 楽であればいい
     }
 
     // Testing: standard[8] - な-Adjective + だ + といい
@@ -7125,7 +7162,6 @@ mod nimotozuite_tests {
     }
 }
 
-
 // ========== どころか (far from, let alone) ==========
 // Pattern: どころか (far from, let alone, anything but)
 // Data source: grammar_points_data.json["どころか"]
@@ -7539,6 +7575,15 @@ mod totemo_nai_tests {
 
         assert_has_pattern(&patterns, "とても～ない");
         assert_pattern_range(&patterns, "とても～ない", 7, 14); // とても行けない
+    }
+
+    #[test]
+    fn test_totemo_nai_not_kamoshirenai() {
+        let sentence = "このカレーはとても辛いかもしれない";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "とても～ない"));
     }
 }
 
@@ -8431,6 +8476,15 @@ mod nagaramo_tests {
 
         assert_has_pattern(&patterns, "ながらも");
         assert_pattern_range(&patterns, "ながらも", 0, 7); // 緊張しながらも
+    }
+
+    #[test]
+    fn test_nagaramo_not_plain_nagara() {
+        let sentence = "本を読みながら食べる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "ながらも"));
     }
 }
 
@@ -9605,7 +9659,7 @@ mod nikurabete_tests {
 
         assert_has_pattern(&patterns, "に比べて");
         assert_pattern_range(&patterns, "に比べて", 0, 7); // 去年に比べれば (first occurrence)
-        // Note: This sentence also contains 昨日に比べたら at chars 15-22
+                                                           // Note: This sentence also contains 昨日に比べたら at chars 15-22
     }
 
     // Test: Noun + に比べると (conditional と form)
@@ -10139,7 +10193,8 @@ mod katoiuto_u2460_tests {
     #[test]
     fn test_doushite_katoiuto_standard() {
         // Testing: どうして + Phrase + かというと (from example)
-        let sentence = "どうして明日のパーティーに行きたくないかというと、元カレが来ると聞いたからです。";
+        let sentence =
+            "どうして明日のパーティーに行きたくないかというと、元カレが来ると聞いたからです。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -10242,7 +10297,8 @@ mod hakuraidew_tests {
     // Test: くらいなもの variant (emphatic, with verb)
     #[test]
     fn test_kurai_na_mono() {
-        let sentence = "電車は仕事に行くときに使っているくらいなものです。プライベートでは車しか使いません。";
+        let sentence =
+            "電車は仕事に行くときに使っているくらいなものです。プライベートでは車しか使いません。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -10842,7 +10898,8 @@ mod hodo_tests {
     // Structure: standard[1] - "い-Adjective + ほど"
     #[test]
     fn test_hodo_i_adjective() {
-        let sentence = "その気持ちは痛いほど分かるけど、だからってそういう事言ってもいいという訳ではないよ";
+        let sentence =
+            "その気持ちは痛いほど分かるけど、だからってそういう事言ってもいいという訳ではないよ";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -11595,6 +11652,15 @@ mod mono_mon_tests {
         assert_has_pattern(&patterns, "もの・もん");
         assert_pattern_range(&patterns, "もの・もん", 5, 11); // ないんだもの
     }
+
+    #[test]
+    fn test_mono_mon_not_tabemono() {
+        let sentence = "辛い食べ物が好き";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "もの・もん"));
+    }
 }
 
 // Pattern: もしも～なら・もしも～でも (supposing that / assuming that)
@@ -11683,10 +11749,13 @@ mod youna_ki_ga_suru_tests {
 
         assert_has_pattern(&patterns, "ような気がする");
         // Multiple matches possible due to wildcard, check that one of them has the expected range
-        let has_expected_range = patterns.iter().any(|p| {
-            p.pattern_name == "ような気がする" && p.start_char == 3 && p.end_char == 13
-        });
-        assert!(has_expected_range, "Expected pattern range [3-13] for '出来るような気がする' not found");
+        let has_expected_range = patterns
+            .iter()
+            .any(|p| p.pattern_name == "ような気がする" && p.start_char == 3 && p.end_char == 13);
+        assert!(
+            has_expected_range,
+            "Expected pattern range [3-13] for '出来るような気がする' not found"
+        );
     }
 
     // Test: い-Adjective + ような + 気がする
@@ -11699,10 +11768,13 @@ mod youna_ki_ga_suru_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "ような気がする");
-        let has_expected_range = patterns.iter().any(|p| {
-            p.pattern_name == "ような気がする" && p.start_char == 7 && p.end_char == 17
-        });
-        assert!(has_expected_range, "Expected pattern range [7-17] for '危ないような気がする' not found");
+        let has_expected_range = patterns
+            .iter()
+            .any(|p| p.pattern_name == "ような気がする" && p.start_char == 7 && p.end_char == 17);
+        assert!(
+            has_expected_range,
+            "Expected pattern range [7-17] for '危ないような気がする' not found"
+        );
     }
 
     // Test: な-Adjective + な + ような + 気がする
@@ -11715,10 +11787,13 @@ mod youna_ki_ga_suru_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "ような気がする");
-        let has_expected_range = patterns.iter().any(|p| {
-            p.pattern_name == "ような気がする" && p.start_char == 11 && p.end_char == 21
-        });
-        assert!(has_expected_range, "Expected pattern range [11-21] for '元気なような気がする' not found");
+        let has_expected_range = patterns
+            .iter()
+            .any(|p| p.pattern_name == "ような気がする" && p.start_char == 11 && p.end_char == 21);
+        assert!(
+            has_expected_range,
+            "Expected pattern range [11-21] for '元気なような気がする' not found"
+        );
     }
 
     // Test: Noun + の + ような + 気がする
@@ -11731,10 +11806,13 @@ mod youna_ki_ga_suru_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "ような気がする");
-        let has_expected_range = patterns.iter().any(|p| {
-            p.pattern_name == "ような気がする" && p.start_char == 6 && p.end_char == 16
-        });
-        assert!(has_expected_range, "Expected pattern range [6-16] for '警察のような気がする' not found");
+        let has_expected_range = patterns
+            .iter()
+            .any(|p| p.pattern_name == "ような気がする" && p.start_char == 6 && p.end_char == 16);
+        assert!(
+            has_expected_range,
+            "Expected pattern range [6-16] for '警察のような気がする' not found"
+        );
     }
 
     // Note: Verb + 気がする (without ような) is handled by the separate "がする" pattern
@@ -11749,10 +11827,13 @@ mod youna_ki_ga_suru_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "ような気がする");
-        let has_expected_range = patterns.iter().any(|p| {
-            p.pattern_name == "ような気がする" && p.start_char == 7 && p.end_char == 18
-        });
-        assert!(has_expected_range, "Expected pattern range [7-18] for 'できるような気がします' not found");
+        let has_expected_range = patterns
+            .iter()
+            .any(|p| p.pattern_name == "ような気がする" && p.start_char == 7 && p.end_char == 18);
+        assert!(
+            has_expected_range,
+            "Expected pattern range [7-18] for 'できるような気がします' not found"
+        );
     }
 }
 
@@ -12037,7 +12118,8 @@ mod wakenihaikanai_tests {
     // Example from grammar data: "残すわけにはいかない" (there's no way I can leave it)
     #[test]
     fn test_verb_wakenihaikanai_undesirable() {
-        let sentence = "この料理は妻が頑張って作ってくれたやつだから、不味くても残すわけにはいかない。";
+        let sentence =
+            "この料理は妻が頑張って作ってくれたやつだから、不味くても残すわけにはいかない。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -12063,7 +12145,8 @@ mod wakenihaikanai_tests {
     // Example from grammar data: "買うわけにはいかない" (it cannot be so that I buy it)
     #[test]
     fn test_verb_wakenihaikanai_impossible() {
-        let sentence = "このジャケットが欲しいけど、今月はお金を使い過ぎたから買うわけにはいかない。";
+        let sentence =
+            "このジャケットが欲しいけど、今月はお金を使い過ぎたから買うわけにはいかない。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -12254,7 +12337,8 @@ mod ndatte_tests {
     fn test_na_adjective_ndatte() {
         // Testing: structure.standard[2] - "な-Adjective + な + んだって"
         // After na-adjectives: な (助動詞) + ん (名詞/非自立) + だ (助動詞) + って (助詞/格助詞)
-        let sentence = "あの博士は凄い事言っているように聞こえるけど、実は言っていること全部適当なんだって。";
+        let sentence =
+            "あの博士は凄い事言っているように聞こえるけど、実は言っていること全部適当なんだって。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -12598,7 +12682,8 @@ mod ten_tests {
     // Testing: structure.standard[2] - "［な］Adjective + な + 点（てん）(で)"
     #[test]
     fn test_ten_na_adjective() {
-        let sentence = "アプリは使いやすさと便利さが一番重要な点で、見た目などはあまり綺麗じゃなくてもいい";
+        let sentence =
+            "アプリは使いやすさと便利さが一番重要な点で、見た目などはあまり綺麗じゃなくてもいい";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -12818,7 +12903,8 @@ mod kaette_tests {
     // Testing: Phrase + かえって + Phrase (contrary result)
     #[test]
     fn test_kaette_contrary() {
-        let sentence = "手伝ってくれてるのはありがたいけど、かえって邪魔になってるからあっちに行ってくれる？";
+        let sentence =
+            "手伝ってくれてるのはありがたいけど、かえって邪魔になってるからあっちに行ってくれる？";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -13053,7 +13139,8 @@ mod iumademonai_sentence_initial_tests {
     // Testing: 言うまでもないことだが at sentence start
     #[test]
     fn test_iumademonai_koto_daga() {
-        let sentence = "いうまでもないことだが、毎日漢字の勉強をすれば、どんどん漢字を覚えることができる。";
+        let sentence =
+            "いうまでもないことだが、毎日漢字の勉強をすれば、どんどん漢字を覚えることができる。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -13064,7 +13151,8 @@ mod iumademonai_sentence_initial_tests {
     // Testing: 言うまでもないが (standalone)
     #[test]
     fn test_iumademonai_ga() {
-        let sentence = "電化製品を使っている間、いうまでもないが、濡れた手や水の周りで使うのは危険だ。";
+        let sentence =
+            "電化製品を使っている間、いうまでもないが、濡れた手や水の周りで使うのは危険だ。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -14058,6 +14146,15 @@ mod renyoukei_tests {
         assert_has_pattern(&patterns, "連用形");
         assert_pattern_range(&patterns, "連用形", 5, 8); // 広く、
     }
+
+    #[test]
+    fn test_renyoukei_not_casual_fragment() {
+        let sentence = "そんなに怒っているから、先に謝ったほうがいいよ。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "連用形"));
+    }
 }
 
 // ========== 前者は・後者は (The Former / The Latter) ==========
@@ -14091,7 +14188,8 @@ mod zenshaha_koushaha_tests {
     // Same example continues with 後者は
     #[test]
     fn test_kousha_wa() {
-        let sentence = "地下鉄と新幹線、前者は地下をゆっくりと走り、後者は速いスピードで地上を走る。";
+        let sentence =
+            "地下鉄と新幹線、前者は地下をゆっくりと走り、後者は速いスピードで地上を走る。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 

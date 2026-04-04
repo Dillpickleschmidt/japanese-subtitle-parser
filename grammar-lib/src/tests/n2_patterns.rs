@@ -4007,9 +4007,6 @@ fn test_niwatatte_false_positive_asokoni() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    // Debug output
-    print_debug(sentence, &tokens, &patterns);
-
     // Should NOT have にわたって pattern
     assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
             "Should not match にわたって for location particle に in あそこにいた");
@@ -4033,7 +4030,6 @@ fn test_niwatatte_false_positive_anna_tokoro_ni() {
     let sentence = "あっ あんなところに…";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-    print_debug(sentence, &tokens, &patterns);
 
     // Should NOT have にわたって pattern - this is just ところ + に, not にわたって
     assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
@@ -4094,7 +4090,6 @@ fn test_niwatatte_false_positive_subtitle_379() {
     let sentence = "戻ろうや 浜辺に";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-    print_debug(sentence, &tokens, &patterns);
 
     // Should NOT have にわたって pattern - this is just 浜辺に (to the beach), not にわたって
     assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
@@ -4108,9 +4103,6 @@ fn test_niwatatte_false_positive_konna_me_ni() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    // Debug output to see what's happening
-    print_debug(sentence, &tokens, &patterns);
-
     // Should NOT have にわたって pattern - this is just 目に (to such a situation)
     assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
             "Should not match にわたって for idiomatic expression 目に");
@@ -4122,9 +4114,6 @@ fn test_niwatatte_false_positive_hana_ni_vote() {
     let sentence = "どっちかいうと 花に１票";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    // Debug output to see what's happening
-    print_debug(sentence, &tokens, &patterns);
 
     // Should NOT have にわたって pattern - this is just 花に (to/for flowers), not にわたって
     assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
@@ -4162,9 +4151,6 @@ fn test_niwatatte_false_positive_you_ni() {
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
 
-    // Debug output to see tokenization
-    print_debug(sentence, &tokens, &patterns);
-
     // Should NOT have にわたって pattern - this is ように (so that), not にわたって
     assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),
             "Should not match にわたって for ように purpose pattern");
@@ -4176,9 +4162,6 @@ fn test_niwatatte_false_positive_gohan_ni() {
     let sentence = "とりあえず ごはんにしませんか？";
     let tokens = tokenize_sentence(sentence);
     let patterns = detect_patterns(&tokens);
-
-    // Debug output to see tokenization
-    print_debug(sentence, &tokens, &patterns);
 
     // Should NOT have にわたって pattern - this is just ごはんにする (decide on a meal), not にわたって
     assert!(!patterns.iter().any(|p| p.pattern_name == "にわたって"),

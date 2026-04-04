@@ -454,7 +454,8 @@ mod woyoginakusareru_tests {
 
     #[test]
     fn test_woyoginakusareru_past() {
-        let sentence = "パーク内での迷惑行為が悪化し始めたため、人気撮影スポットの封鎖をよぎなくされた";
+        let sentence =
+            "パーク内での迷惑行為が悪化し始めたため、人気撮影スポットの封鎖をよぎなくされた";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -474,7 +475,8 @@ mod woyoginakusareru_tests {
 
     #[test]
     fn test_woyoginakusareru_polite() {
-        let sentence = "最近大きな地震があったため、この地域の人たちは避難所での生活をよぎなくされます";
+        let sentence =
+            "最近大きな地震があったため、この地域の人たちは避難所での生活をよぎなくされます";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -506,7 +508,8 @@ mod niitatteha_tests {
 
     #[test]
     fn test_niitatteha_extreme_example_2() {
-        let sentence = "最近ここにいる社員みんなのやる気がない。藤田さんにいたってはパソコンもつけていない";
+        let sentence =
+            "最近ここにいる社員みんなのやる気がない。藤田さんにいたってはパソコンもつけていない";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -743,7 +746,8 @@ mod kiwamarinai_kiwamaru_tests {
     // Testing: structure.standard[0] - "な-Adjective + (な + こと) + 極まりない"
     #[test]
     fn test_na_adj_nakoto_kiwamarinai() {
-        let sentence = "目上の人に向かってその口の聞き方はなんだ。失礼なこと極まりないやつだな、お前は。";
+        let sentence =
+            "目上の人に向かってその口の聞き方はなんだ。失礼なこと極まりないやつだな、お前は。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -1084,7 +1088,8 @@ mod ika_tests {
     // Testing: Noun + いかん + によって（は）
     #[test]
     fn test_ikan_niyotte() {
-        let sentence = "実験の結果いかんによっては、最初からやり直さないといけなくなる可能性もあります。";
+        let sentence =
+            "実験の結果いかんによっては、最初からやり直さないといけなくなる可能性もあります。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -1205,7 +1210,8 @@ mod niatte_tests {
     // Testing: Noun + にあって (basic form)
     #[test]
     fn test_niatte_position() {
-        let sentence = "彼女は校長先生という立場にあって、いつも生徒たちのために一生懸命働いている。";
+        let sentence =
+            "彼女は校長先生という立場にあって、いつも生徒たちのために一生懸命働いている。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -1216,7 +1222,8 @@ mod niatte_tests {
     // Testing: Noun + にあって (situation)
     #[test]
     fn test_niatte_situation() {
-        let sentence = "インフルエンザが流行っているという状況にあって、外にいる人はみんなマスクをしている。";
+        let sentence =
+            "インフルエンザが流行っているという状況にあって、外にいる人はみんなマスクをしている。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -1323,7 +1330,8 @@ mod ichi_taritomo_nai_tests {
     // Testing: 何人たりとも (special set expression - no matter who)
     #[test]
     fn test_taritomo_nanbito() {
-        let sentence = "この洞窟へは２０年前に起きた事故以来、何人たりとも立ち入ることが許されない。";
+        let sentence =
+            "この洞窟へは２０年前に起きた事故以来、何人たりとも立ち入ることが許されない。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -1579,7 +1587,8 @@ mod tekaratoiumono_tests {
     // Testing: structure.standard[0] - another example
     #[test]
     fn test_tekaratoiumono_walking() {
-        let sentence = "仕事に行く前に散歩に行くようにしてからというもの、どんどん体重が減ってきた。";
+        let sentence =
+            "仕事に行く前に散歩に行くようにしてからというもの、どんどん体重が減ってきた。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -1711,7 +1720,8 @@ mod wokawakirini_tests {
     // Testing: structure.standard[1] - "Verb[た] + の + を皮切りに"
     #[test]
     fn test_wokawakirini_verb_ta_nishite() {
-        let sentence = "あの俳優はテレビ東京に出演したのを皮切りに、色々な局に出演することになった。";
+        let sentence =
+            "あの俳優はテレビ東京に出演したのを皮切りに、色々な局に出演することになった。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -1844,7 +1854,8 @@ mod tomonaku_tomonashini_tests {
 
     #[test]
     fn test_tomonashini_walking() {
-        let sentence = "暇だったから近所を歩くともなしに歩いていたら、高校の同級生にばったりあった。";
+        let sentence =
+            "暇だったから近所を歩くともなしに歩いていたら、高校の同級生にばったりあった。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2317,7 +2328,8 @@ mod monowo_tests {
     #[test]
     fn test_monowo_ba_verb() {
         // Testing: structure.standard[0] - "Verb[ば] + Verb + ものを"
-        let sentence = "目を合わせなかったら止められなかったものを、なんで警察なんかと目を合わせちゃうんだ。";
+        let sentence =
+            "目を合わせなかったら止められなかったものを、なんで警察なんかと目を合わせちゃうんだ。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2339,7 +2351,8 @@ mod monowo_tests {
     #[test]
     fn test_monowo_ba_na_adjective() {
         // Testing: structure.standard[2] - "Verb[ば] + な-Adjective + な + ものを"
-        let sentence = "道具を使えば楽なものを、わざわざ自分の力でやろうとするから怪我をするんだよ。";
+        let sentence =
+            "道具を使えば楽なものを、わざわざ自分の力でやろうとするから怪我をするんだよ。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2378,6 +2391,15 @@ mod monowo_tests {
 
         assert_has_pattern(&patterns, "ものを");
         assert_pattern_range(&patterns, "ものを", 9, 13); // なものを
+    }
+
+    #[test]
+    fn test_monowo_not_tabemono_wo() {
+        let sentence = "辛い食べ物を食べる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "ものを"));
     }
 }
 
@@ -2580,7 +2602,8 @@ mod womotte2_tests {
 
     #[test]
     fn test_womotte_game_service() {
-        let sentence = "このゲームのオンラインサービスは2023年8月10日をもって終了することに決定しました";
+        let sentence =
+            "このゲームのオンラインサービスは2023年8月10日をもって終了することに決定しました";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2902,7 +2925,8 @@ mod tamadeda_tests {
     // Testing: structure.standard[0] - "Verb[た] + まで + だ"
     #[test]
     fn test_tamadeda_standard() {
-        let sentence = "なんで俺が悪者扱いされないといけないんだ？俺はただ自分の意見を言ったまでだ。";
+        let sentence =
+            "なんで俺が悪者扱いされないといけないんだ？俺はただ自分の意見を言ったまでだ。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2957,7 +2981,8 @@ mod karaaru_tests {
     // Testing: structure.standard[0] - "Number + Counter + からある"
     #[test]
     fn test_karaaru_weight() {
-        let sentence = "おじいちゃんは８０歳なのに６０キロからあるダンベルを持ち上げることができる。";
+        let sentence =
+            "おじいちゃんは８０歳なのに６０キロからあるダンベルを持ち上げることができる。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -2968,7 +2993,8 @@ mod karaaru_tests {
     // Testing: structure.standard[1] - "Number + Counter + からある + Noun"
     #[test]
     fn test_karaaru_with_noun() {
-        let sentence = "彼は小柄であるにも関わらず、７０キロからある冷蔵庫を一人で持ち上げることができる。";
+        let sentence =
+            "彼は小柄であるにも関わらず、７０キロからある冷蔵庫を一人で持ち上げることができる。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -3187,7 +3213,8 @@ mod verb_nai_mono_darou_ka_tests {
     // Test polite form: ないものでしょうか
     #[test]
     fn test_nai_mono_deshou_ka_polite() {
-        let sentence = "難しいのはわかっているんですが、佐々木さんの腕でなんとかできないものでしょうか。";
+        let sentence =
+            "難しいのはわかっているんですが、佐々木さんの腕でなんとかできないものでしょうか。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -3243,7 +3270,8 @@ mod akumademo_tests {
     // Test without も: あくまで
     #[test]
     fn test_akumademo_without_mo() {
-        let sentence = "犯人のことなら私にお任せください！あくまで彼を捕まえるまで探し続けるつもりです！";
+        let sentence =
+            "犯人のことなら私にお任せください！あくまで彼を捕まえるまで探し続けるつもりです！";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -3403,6 +3431,15 @@ mod nagarani_tests {
 
         assert_has_pattern(&patterns, "ながらに");
         assert_pattern_range(&patterns, "ながらに", 0, 6); // いつもながら
+    }
+
+    #[test]
+    fn test_nagarani_not_plain_nagara() {
+        let sentence = "音楽を聴きながら寝た";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "ながらに"));
     }
 }
 
@@ -3587,7 +3624,8 @@ mod dano_tests {
 
     #[test]
     fn test_dano_verbs() {
-        let sentence = "彼は仕事はやめるだの家事を手伝わないだの、本当に自分以外のことは何も考えていない。";
+        let sentence =
+            "彼は仕事はやめるだの家事を手伝わないだの、本当に自分以外のことは何も考えていない。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -3596,7 +3634,10 @@ mod dano_tests {
         assert_pattern_range(&patterns, "だの", 8, 10); // だの (single token)
 
         // Check that both occurrences are detected (second one also single token)
-        let dano_matches: Vec<_> = patterns.iter().filter(|p| p.pattern_name == "だの").collect();
+        let dano_matches: Vec<_> = patterns
+            .iter()
+            .filter(|p| p.pattern_name == "だの")
+            .collect();
         assert_eq!(dano_matches.len(), 2, "Should detect both だの occurrences");
     }
 
@@ -3617,7 +3658,8 @@ mod dano_tests {
 
     #[test]
     fn test_dano_nouns() {
-        let sentence = "揚げ物だのコンビニ弁当だのばかり食べてると、また健康診断の時に先生に怒られるよ。";
+        let sentence =
+            "揚げ物だのコンビニ弁当だのばかり食べてると、また健康診断の時に先生に怒られるよ。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -3656,7 +3698,10 @@ mod dano_tests {
         assert_pattern_range(&patterns, "だの", 5, 7); // だの (single token)
 
         // Check that both occurrences are detected
-        let dano_matches: Vec<_> = patterns.iter().filter(|p| p.pattern_name == "だの").collect();
+        let dano_matches: Vec<_> = patterns
+            .iter()
+            .filter(|p| p.pattern_name == "だの")
+            .collect();
         assert_eq!(dano_matches.len(), 2, "Should detect both だの occurrences");
     }
 }
@@ -3697,7 +3742,8 @@ mod beku_tests {
 
     #[test]
     fn test_beku_subeku_classical() {
-        let sentence = "ここでの交通事故を防止すべく、ガードレールなどの設備を設置することになった。";
+        let sentence =
+            "ここでの交通事故を防止すべく、ガードレールなどの設備を設置することになった。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -3930,7 +3976,8 @@ mod yueni_tests {
     // Test 4: い-Adjective + が + ゆえに (conjunction form)
     #[test]
     fn test_yueni_i_adjective_ga() {
-        let sentence = "お巡りさんたちが夜も眠らずにパトロールしているがゆえに、夜でも安心して散歩できる。";
+        let sentence =
+            "お巡りさんたちが夜も眠らずにパトロールしているがゆえに、夜でも安心して散歩できる。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -4042,7 +4089,8 @@ mod tsu_u301c_tsu_tests {
     fn test_tsu_tsu_mochitsu_motaretsu() {
         // Testing: standard[11] - 持ちつ持たれつ (give-and-take)
         // This is the same verb in active and passive forms
-        let sentence = "僕たちは持ちつ持たれつの関係で、保育園の頃から今に至るまでお互い助け合ってきた。";
+        let sentence =
+            "僕たちは持ちつ持たれつの関係で、保育園の頃から今に至るまでお互い助け合ってきた。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -4352,7 +4400,8 @@ mod wakeari_yakuatte_tests {
     #[test]
     fn test_wakeari_no_noun() {
         // Testing: 訳あり + の + Noun (standard[2])
-        let sentence = "わけありの商品は普通よりかなり安いことが多いから、いらなくてもつい買っちゃう。";
+        let sentence =
+            "わけありの商品は普通よりかなり安いことが多いから、いらなくてもつい買っちゃう。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -4424,7 +4473,8 @@ mod ikan_u301c_zu_tests {
     #[test]
     fn test_ikan_wo_towazu() {
         // Testing: いかん + をとわず (without questioning)
-        let sentence = "未経験者や経験者のいかんをとわず、ここで働く前には新規研修を受けてもらいます。";
+        let sentence =
+            "未経験者や経験者のいかんをとわず、ここで働く前には新規研修を受けてもらいます。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -4518,7 +4568,8 @@ mod nimatsuwaru_tests {
     #[test]
     fn test_nimatsuwaru_scary_story() {
         // Testing: この地域 + にまつわる + 怖い話 (scary stories connected to this area)
-        let sentence = "僕が小さい頃は、おじいちゃんにこの地域にまつわる怖い話をよくしてもらってた。";
+        let sentence =
+            "僕が小さい頃は、おじいちゃんにこの地域にまつわる怖い話をよくしてもらってた。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -4923,7 +4974,8 @@ mod tono_tests {
 
     #[test]
     fn test_tono_verb_quote() {
-        let sentence = "この周辺で誘拐事件が起きたとの放送があったが、犯人の特徴については放送されなかった。";
+        let sentence =
+            "この周辺で誘拐事件が起きたとの放送があったが、犯人の特徴については放送されなかった。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -5217,7 +5269,8 @@ mod toomoikiya_tests {
     #[test]
     fn test_toomoikiya_i_adjective() {
         // From grammar data: 優しいと思いきや
-        let sentence = "木村くんのピアノの先生は優しいとおもいきや、見学してみたらめちゃくちゃ怖かった。";
+        let sentence =
+            "木村くんのピアノの先生は優しいとおもいきや、見学してみたらめちゃくちゃ怖かった。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -5424,7 +5477,8 @@ mod kotodashi_tests {
     #[test]
     fn test_kotodashi_verb() {
         // Testing structure: Verb + ことだし
-        let sentence = "せっかく君のお父さんとお母さんが来ることだし、どっかいい焼肉屋さんにでも行こう。";
+        let sentence =
+            "せっかく君のお父さんとお母さんが来ることだし、どっかいい焼肉屋さんにでも行こう。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -6059,7 +6113,8 @@ mod nonannotte_tests {
 
     #[test]
     fn test_nonannotte_verb() {
-        let sentence = "あんな痩せているのにあの量一人で食べちゃうなんて、びっくりしたのなんのって。";
+        let sentence =
+            "あんな痩せているのにあの量一人で食べちゃうなんて、びっくりしたのなんのって。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -6069,7 +6124,8 @@ mod nonannotte_tests {
 
     #[test]
     fn test_nonannotte_i_adjective() {
-        let sentence = "名古屋の夏は暑いのなんのって、外に出た瞬間シャツが汗でびっしょりになるんだよ。";
+        let sentence =
+            "名古屋の夏は暑いのなんのって、外に出た瞬間シャツが汗でびっしょりになるんだよ。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -6361,7 +6417,8 @@ mod gurumide_tests {
 
     #[test]
     fn test_gurumide_town_with_no() {
-        let sentence = "街ぐるみの治安をよくするために、町内会の人たちが毎晩パトロールをしています。";
+        let sentence =
+            "街ぐるみの治安をよくするために、町内会の人たちが毎晩パトロールをしています。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -6494,7 +6551,8 @@ mod toatte_tests {
 
     #[test]
     fn test_toatte_verb() {
-        let sentence = "あのグループの卒業ライブが行われるとあって、この会場は大勢のファンで溢れている。";
+        let sentence =
+            "あのグループの卒業ライブが行われるとあって、この会場は大勢のファンで溢れている。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -6504,7 +6562,8 @@ mod toatte_tests {
 
     #[test]
     fn test_toatte_i_adjective() {
-        let sentence = "北海道は夏の間でも涼しいとあって、冬の間だけでなく夏にも多くの観光客が訪れるらしい。";
+        let sentence =
+            "北海道は夏の間でも涼しいとあって、冬の間だけでなく夏にも多くの観光客が訪れるらしい。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -6708,7 +6767,8 @@ mod sobakara_tests {
 
     #[test]
     fn test_sobakara_verb_past_wasureru() {
-        let sentence = "早く読みすぎると読んだそばから忘れるから、もっとゆっくり読むようにしている。";
+        let sentence =
+            "早く読みすぎると読んだそばから忘れるから、もっとゆっくり読むようにしている。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -7009,7 +7069,8 @@ mod tara_u301c_de_tests {
     // Testing: structure.standard[1] - い-Adj[たら] + い-Adj[い] + で
     #[test]
     fn test_tarade_i_adj_tara_form() {
-        let sentence = "大きい方が荷物とかいっぱい積めるけど、大きかったら大きいでデメリットがある。";
+        let sentence =
+            "大きい方が荷物とかいっぱい積めるけど、大きかったら大きいでデメリットがある。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -7495,6 +7556,15 @@ mod naidemonai_tests {
         assert_has_pattern(&patterns, "ないでもない");
         assert_pattern_range(&patterns, "ないでもない", 10, 18); // ないものでもない
     }
+
+    #[test]
+    fn test_naidemonai_not_repeated_plain_negative() {
+        let sentence = "泳げるけど、あまり上手ではありません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "ないでもない"));
+    }
 }
 
 // ============================================================================
@@ -7533,7 +7603,8 @@ mod monotoomotteita_tests {
     // Testing: structure.standard[0] - "Verb + ものと思（おも）っていた"
     #[test]
     fn test_monotoomotteita_verb() {
-        let sentence = "てっきり帰りに食べてくるものと思っていたから、あなたの分は作ってないですよ。";
+        let sentence =
+            "てっきり帰りに食べてくるものと思っていたから、あなたの分は作ってないですよ。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -7599,7 +7670,8 @@ mod denakutenandarou_tests {
 
     #[test]
     fn test_denakutenandarou_darou() {
-        let sentence = "あの子が新しいってだけでいじめられている。あれはパワハラでなくてなんだろう。";
+        let sentence =
+            "あの子が新しいってだけでいじめられている。あれはパワハラでなくてなんだろう。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -8433,7 +8505,8 @@ mod nbakarini_tests {
     fn test_nbakarini_harisake() {
         // Testing: 張り裂け + んばかりの (as if about to tear apart)
         // Example from grammar_points_data.json
-        let sentence = "私は胸が張り裂けんばかりの気持ちになって、その場から動くことができなくなった。";
+        let sentence =
+            "私は胸が張り裂けんばかりの気持ちになって、その場から動くことができなくなった。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -8824,7 +8897,8 @@ mod toiwazu_tests {
     #[test]
     fn test_toiwazu_tansu_tana() {
         // Testing: Noun + といわず + Noun + といわず (wardrobe and shelves)
-        let sentence = "旅行から帰ってきたら、タンスといわず、棚といわず、家中泥棒に物色されていた。";
+        let sentence =
+            "旅行から帰ってきたら、タンスといわず、棚といわず、家中泥棒に物色されていた。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -9194,7 +9268,8 @@ mod nimomashite_tests {
     fn test_nimomashite_dare() {
         // Testing: structure.standard[2] - "誰にもまして"
         // Example from grammar_points_data.json: "斎藤くんは誰にもまして仕事を一生懸命やってくれる"
-        let sentence = "斎藤くんは誰にもまして仕事を一生懸命やってくれるからものすごく助かっている。";
+        let sentence =
+            "斎藤くんは誰にもまして仕事を一生懸命やってくれるからものすごく助かっている。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -9492,7 +9567,8 @@ mod niterashite_niterasuto_tests {
     fn test_niterashite_experience() {
         // Testing: structure.standard[0] - "Noun + に照らして"
         // Example from grammar_points_data.json: "経験に照らして"
-        let sentence = "母は自分の経験に照らして、こういう時はどうすればいいかをアドバイスしてくれた。";
+        let sentence =
+            "母は自分の経験に照らして、こういう時はどうすればいいかをアドバイスしてくれた。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -9646,7 +9722,8 @@ mod tokitara_tests {
     fn test_tokitara_boss_complaint() {
         // Testing: Noun + ときたら (expressing frustration)
         // Based on: "私の上司ときたら、自分が仕事できないくせに..."
-        let sentence = "私の上司ときたら、自分が仕事できないくせに少しでもミスをしたらものすごく怒る。";
+        let sentence =
+            "私の上司ときたら、自分が仕事できないくせに少しでもミスをしたらものすごく怒る。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -9819,6 +9896,15 @@ mod biru_tests {
         assert_has_pattern(&patterns, "びる");
         assert_pattern_range(&patterns, "びる", 4, 7); // 田舎び (verb only, て is separate)
     }
+
+    #[test]
+    fn test_biru_not_abiru() {
+        let sentence = "シャワーを浴びる";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+
+        assert!(!has_pattern(&patterns, "びる"));
+    }
 }
 
 // ============================================================================
@@ -9864,7 +9950,8 @@ mod nishitatokorode_tests {
     fn test_nishitatte_casual() {
         // Testing: Noun + にしたって (less formal)
         // Based on: "私にしたってそんなことはしたくないけど、上司に言われたからにはするしかない。"
-        let sentence = "私にしたってそんなことはしたくないけど、上司に言われたからにはするしかない。";
+        let sentence =
+            "私にしたってそんなことはしたくないけど、上司に言われたからにはするしかない。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -10283,7 +10370,8 @@ mod naimademo_tests {
     fn test_naimademo_verb_negative_become() {
         // Testing: structure.standard[0] - "Verb[ない] + までも + Phrase"
         // Example from grammar data: なれないまでも
-        let sentence = "プロ野球選手にはなれないまでも、プロ野球に関わる仕事をしているので満足している。";
+        let sentence =
+            "プロ野球選手にはなれないまでも、プロ野球に関わる仕事をしているので満足している。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -10307,7 +10395,8 @@ mod naimademo_tests {
     fn test_naimademo_noun_janai() {
         // Testing: structure.standard[2] note - "(1) じゃない"
         // Example from grammar data: 幸せじゃないまでも
-        let sentence = "好きな仕事ができないから幸せじゃないまでも、生活費に困っていないから文句は言えない。";
+        let sentence =
+            "好きな仕事ができないから幸せじゃないまでも、生活費に困っていないから文句は言えない。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -10801,7 +10890,8 @@ mod tohaiumonono_tests {
     fn test_tohaiumonono_na_adjective_with_da() {
         // Testing: standard[2] - "な-Adjective + だ + とは言うものの"
         // Example: 便利だとは言うものの (note: no は in this example)
-        let sentence = "スマホは便利だというものの、使い方がわからないとスマホの便利さをしれきれない。";
+        let sentence =
+            "スマホは便利だというものの、使い方がわからないとスマホの便利さをしれきれない。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -10862,19 +10952,26 @@ mod niiwasereba_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
-        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 7); // 私にいわせれば
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 7);
+        // 私にいわせれば
     }
 
     #[test]
     fn test_niiwasereba_kare() {
         // Testing: standard[0] - "彼にいわせれば"
         // Sentence from grammar_points_data.json
-        let sentence = "私はあのパーソナルトレーナーは厳しすぎると思ったが、彼にいわせれば優しすぎるらしい。";
+        let sentence =
+            "私はあのパーソナルトレーナーは厳しすぎると思ったが、彼にいわせれば優しすぎるらしい。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
-        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 26, 33); // 彼にいわせれば
+        assert_pattern_range(
+            &patterns,
+            "に言わせれば・に言わせると・に言わせたら",
+            26,
+            33,
+        ); // 彼にいわせれば
     }
 
     #[test]
@@ -10887,7 +10984,8 @@ mod niiwasereba_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
-        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 2, 9); // 家にいわせれば
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 2, 9);
+        // 家にいわせれば
     }
 
     #[test]
@@ -10899,7 +10997,8 @@ mod niiwasereba_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
-        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 8); // 私からいわせれば
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 8);
+        // 私からいわせれば
     }
 
     #[test]
@@ -10910,7 +11009,8 @@ mod niiwasereba_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
-        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 7); // 母にいわせると
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 7);
+        // 母にいわせると
     }
 
     #[test]
@@ -10921,7 +11021,8 @@ mod niiwasereba_tests {
         let patterns = detect_patterns(&tokens);
 
         assert_has_pattern(&patterns, "に言わせれば・に言わせると・に言わせたら");
-        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 8); // 先生にいわせたら
+        assert_pattern_range(&patterns, "に言わせれば・に言わせると・に言わせたら", 0, 8);
+        // 先生にいわせたら
     }
 }
 
@@ -11155,7 +11256,8 @@ mod naraizashirazu_tests {
 
     #[test]
     fn test_naraizashirazu_noun_god() {
-        let sentence = "神ならいざしらず、俺みたいなやつにはああいうことをする奴たちを許すことなどできない。";
+        let sentence =
+            "神ならいざしらず、俺みたいなやつにはああいうことをする奴たちを許すことなどできない。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -11184,7 +11286,8 @@ mod wokinjienai_tests {
     // Testing: structure.standard[1] - "Verb + の + を禁じ得ない"
     #[test]
     fn test_wokinjienai_verb_nominalized_standard() {
-        let sentence = "初めて広島にある平和記念資料館に行ったとき、涙をこらえるのをきんじえなかった。";
+        let sentence =
+            "初めて広島にある平和記念資料館に行ったとき、涙をこらえるのをきんじえなかった。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -11195,7 +11298,8 @@ mod wokinjienai_tests {
     // Testing: structure.polite[0] - "Noun + を禁じ得ません"
     #[test]
     fn test_wokinjienai_noun_polite() {
-        let sentence = "税金を国民のためではなく自分たちのためだけに使う政治家に怒りをきんじえません。";
+        let sentence =
+            "税金を国民のためではなく自分たちのためだけに使う政治家に怒りをきんじえません。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -11403,7 +11507,8 @@ mod nihikikae_tests {
     // Testing: structure.standard[3] - "Verb + の + にひきかえ"
     #[test]
     fn test_nihikikae_verb() {
-        let sentence = "周りの人たちはどんどん就職していっているのにひきかえ、俺はまだ面接さえしていない。";
+        let sentence =
+            "周りの人たちはどんどん就職していっているのにひきかえ、俺はまだ面接さえしていない。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -11778,7 +11883,8 @@ mod wozenteini_tests {
     // Example 3: From grammar_points_data.json - Verb + こと + をぜんていに (racing)
     #[test]
     fn test_wozenteini_verb_koto_racing() {
-        let sentence = "この車はレースをするということをぜんていに改造されているため公道では運転できません。";
+        let sentence =
+            "この車はレースをするということをぜんていに改造されているため公道では運転できません。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -11789,7 +11895,8 @@ mod wozenteini_tests {
     // Example 4: From grammar_points_data.json - をぜんていにして variant
     #[test]
     fn test_wozenteini_nishite_variant() {
-        let sentence = "名前を出さないということをぜんていにして、労基に上司のパワハラなどを通報した。";
+        let sentence =
+            "名前を出さないということをぜんていにして、労基に上司のパワハラなどを通報した。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -11848,7 +11955,8 @@ mod monotoshite_tests {
     // Example from grammar_points_data.json
     #[test]
     fn test_monotoshite_i_adjective_difficult() {
-        let sentence = "昨日のテストは難しいものとして勉強したが、実際に受けてみたら全然余裕だった。";
+        let sentence =
+            "昨日のテストは難しいものとして勉強したが、実際に受けてみたら全然余裕だった。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
@@ -11860,7 +11968,8 @@ mod monotoshite_tests {
     // Example from grammar_points_data.json
     #[test]
     fn test_monotoshite_na_adjective_impossible() {
-        let sentence = "彼のアイデアは不可能なものとして、誰も彼のアイデアを取り入れようとしなかった。";
+        let sentence =
+            "彼のアイデアは不可能なものとして、誰も彼のアイデアを取り入れようとしなかった。";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
