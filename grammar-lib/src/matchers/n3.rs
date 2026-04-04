@@ -350,38 +350,51 @@ pub fn nomani() -> Vec<TokenMatcher> {
 
 // Pattern: うちに (while/during - temporal expression)
 // Structures: Verb[る] + うちに / い-Adj + うちに / な-Adj + な + うちに / Noun + の + うちに
+// For Noun + の + うちに, rejects person-reference nouns before の (pronouns,
+// proper nouns, relationship nouns) since those indicate うち = "house".
 pub fn uchini() -> Vec<TokenMatcher> {
     #[derive(Debug)]
     struct AttributivePrecedingMatcher;
     impl Matcher for AttributivePrecedingMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                // Matches: Verb (基本形), い-Adjective (基本形), な (助動詞 体言接続), の (助詞 連体化)
-                if token.pos.first().is_some_and(|pos| pos == "動詞")
-                    && token.features.get(5).is_some_and(|f| f == "基本形")
-                {
-                    return true;
+            let token = match ctx.current() {
+                Some(t) => t,
+                None => return (false, 0),
+            };
+
+            // Verb (基本形)
+            if token.pos.first().is_some_and(|pos| pos == "動詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+            {
+                return (true, 1);
+            }
+            // い-Adjective (基本形)
+            if token.pos.first().is_some_and(|pos| pos == "形容詞")
+                && token.features.get(5).is_some_and(|f| f == "基本形")
+            {
+                return (true, 1);
+            }
+            // な (助動詞 体言接続)
+            if token.surface == "な"
+                && token.pos.first().is_some_and(|pos| pos == "助動詞")
+                && token.base_form == "だ"
+                && token.features.get(5).is_some_and(|f| f == "体言接続")
+            {
+                return (true, 1);
+            }
+            // の (助詞 連体化) — but reject if preceded by person-reference noun
+            if token.surface == "の"
+                && token.pos.first().is_some_and(|pos| pos == "助詞")
+                && token.pos.get(1).is_some_and(|pos| pos == "連体化")
+            {
+                if let Some(prev) = ctx.lookbehind(1) {
+                    if super::is_person_reference(prev) {
+                        return (false, 0);
+                    }
                 }
-                if token.pos.first().is_some_and(|pos| pos == "形容詞")
-                    && token.features.get(5).is_some_and(|f| f == "基本形")
-                {
-                    return true;
-                }
-                if token.surface == "な"
-                    && token.pos.first().is_some_and(|pos| pos == "助動詞")
-                    && token.base_form == "だ"
-                    && token.features.get(5).is_some_and(|f| f == "体言接続")
-                {
-                    return true;
-                }
-                if token.surface == "の"
-                    && token.pos.first().is_some_and(|pos| pos == "助詞")
-                    && token.pos.get(1).is_some_and(|pos| pos == "連体化")
-                {
-                    return true;
-                }
-                false
-            })
+                return (true, 1);
+            }
+            (false, 0)
         }
     }
 

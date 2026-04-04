@@ -181,6 +181,14 @@ mod uchini_tests {
         assert_has_pattern(&patterns, "うちに");
         assert_pattern_range(&patterns, "うちに", 1, 5); // のうちに
     }
+    // False positive: あなたのうちに = "to your house", not "while/during"
+    #[test]
+    fn test_uchini_not_house() {
+        let sentence = "友達をあなたのうちに連れてきてすみませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "うちに"));
+    }
 }
 
 // ========== おきに (at intervals of / every) ==========
@@ -14236,3 +14244,4 @@ mod wakeda_debug_tests {
         print_debug(sentence, &tokens, &patterns);
     }
 }
+

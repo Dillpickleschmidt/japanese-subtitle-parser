@@ -5628,7 +5628,7 @@ pub fn u301c_ni_u301c_nai() -> Vec<TokenMatcher> {
     }
 
     vec![
-        any(), // First verb (dictionary or volitional form)
+        verb(), // First verb (dictionary or volitional form)
         optional(TokenMatcher::Custom(Arc::new(VolitionalMatcher))),
         TokenMatcher::Custom(Arc::new(NiParticleMatcher)),
         optional(TokenMatcher::Custom(Arc::new(MoParticleMatcher))),
@@ -6267,10 +6267,11 @@ pub fn tteba_u30fb_ttara_dattara() -> Vec<TokenMatcher> {
         }
     }
 
-    // Matcher for たら (助動詞 た in 仮定形)
+    // Matcher for たら (助動詞 た in 仮定形), must be sentence-final or followed by ！
+    // This distinguishes exasperation だったら！ from conditional だったら、〜
     #[derive(Debug)]
-    struct TaraMatcher;
-    impl super::Matcher for TaraMatcher {
+    struct TaraSentenceFinalMatcher;
+    impl super::Matcher for TaraSentenceFinalMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
                 Some(token)
@@ -6279,18 +6280,30 @@ pub fn tteba_u30fb_ttara_dattara() -> Vec<TokenMatcher> {
                         && token.pos.first().is_some_and(|p| p == "助動詞")
                         && token.features.get(5).is_some_and(|f| f == "仮定形") =>
                 {
-                    (true, 1)
+                    // Check what follows: must be end-of-input, or punctuation (！。)
+                    match ctx.lookahead(1) {
+                        None => (true, 1), // end of sentence
+                        Some(next) => {
+                            let is_exclamation = next.surface == "！" || next.surface == "!";
+                            let is_period = next.surface == "。";
+                            if is_exclamation || is_period {
+                                (true, 1)
+                            } else {
+                                (false, 0)
+                            }
+                        }
+                    }
                 }
                 _ => (false, 0),
             }
         }
     }
 
-    // Pattern: [Noun/な-Adj] + だっ + たら
+    // Pattern: [Noun/な-Adj] + だっ + たら (sentence-final only)
     vec![
         TokenMatcher::Custom(Arc::new(NounOrNaAdjMatcher)),
         TokenMatcher::Custom(Arc::new(DatMatcher)),
-        TokenMatcher::Custom(Arc::new(TaraMatcher)),
+        TokenMatcher::Custom(Arc::new(TaraSentenceFinalMatcher)),
     ]
 }
 

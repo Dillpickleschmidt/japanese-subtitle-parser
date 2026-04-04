@@ -6945,6 +6945,15 @@ mod nouchi_de_tests {
         assert_has_pattern(&patterns, "～のうち(で)");
         assert_pattern_range(&patterns, "～のうち(で)", 0, 4); // このうち
     }
+
+    // False positive: はなのうちで = "at Hana's house", not "among Hana"
+    #[test]
+    fn test_nouchi_not_house_person_name() {
+        let sentence = "今晩、みんなではなのうちで晩ご飯を作るつもりです";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "～のうち(で)"));
+    }
 }
 
 // Pattern: に際して (on the occasion of, at the time of)

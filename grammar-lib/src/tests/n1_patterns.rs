@@ -4838,6 +4838,15 @@ mod u301c_ni_u301c_nai_tests {
         assert_has_pattern(&patterns, "〜に〜ない");
         assert_pattern_range(&patterns, "〜に〜ない", 36, 48); // 辞めようにも辞められない
     }
+    // False positive: パーティーに来られない is destination に + potential negative,
+    // not the 〜に〜ない pattern which requires the same verb twice
+    #[test]
+    fn test_ni_nai_not_destination_ni_potential() {
+        let sentence = "けんじさんは明日の夜、パーティーに来られないかもしれません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "〜に〜ない"));
+    }
 }
 
 // Pattern: をものともせず (undaunted by, in defiance of)
@@ -6353,6 +6362,23 @@ mod tteba_ttara_tests {
 
         assert_has_pattern(&patterns, "ってば・ったら");
         assert_pattern_range(&patterns, "ってば・ったら", 0, 6); // 金太郎ってば
+    }
+
+    // False positive: standard conditional だったら should not match exasperation ったら
+    #[test]
+    fn test_ttara_not_standard_conditional() {
+        let sentence = "週末だったら、海に行きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "ってば・ったら"));
+    }
+
+    #[test]
+    fn test_ttara_not_conditional_singer() {
+        let sentence = "歌手だったら、たぶん世界中をツアーで回ります";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "ってば・ったら"));
     }
 
     // TODO: UNDETECTABLE - あなたったら tokenizes incorrectly

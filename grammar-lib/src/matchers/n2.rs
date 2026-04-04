@@ -3283,10 +3283,10 @@ pub fn tamae() -> Vec<TokenMatcher> {
     ]
 }
 
-// Pattern: ～のうち(で)
 // Pattern: ～のうち(で) (among, out of)
 // Structures: この/その + うち + (で/の/から) OR Any + の + うち + (で/の/から)
-// Note: Using two matcher patterns due to different prefix structures
+// For the Noun + の variant, rejects person-reference nouns before の
+// (pronouns, proper nouns, relationship nouns) since those indicate うち = "house".
 pub fn uff5e_nouchi_de() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
@@ -3296,23 +3296,36 @@ pub fn uff5e_nouchi_de() -> Vec<TokenMatcher> {
     impl Matcher for UchiMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
-                Some(token) if token.surface == "うち"
-                && token.pos.first().is_some_and(|pos| pos == "名詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "非自立") => (true, 1),
+                Some(token)
+                    if token.surface == "うち"
+                        && token.pos.first().is_some_and(|pos| pos == "名詞")
+                        && token.pos.get(1).is_some_and(|pos| pos == "非自立") =>
+                {
+                    (true, 1)
+                }
                 _ => (false, 0),
             }
         }
     }
 
-    // Match の as 助詞/連体化
+    // Match の (連体化), rejecting person-reference nouns before it
     #[derive(Debug)]
-    struct NoRentaikaMatcher;
-    impl Matcher for NoRentaikaMatcher {
+    struct NoRentaikaNotPersonMatcher;
+    impl Matcher for NoRentaikaNotPersonMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
-                Some(token) if token.surface == "の"
-                && token.pos.first().is_some_and(|pos| pos == "助詞")
-                && token.pos.get(1).is_some_and(|pos| pos == "連体化") => (true, 1),
+                Some(token)
+                    if token.surface == "の"
+                        && token.pos.first().is_some_and(|pos| pos == "助詞")
+                        && token.pos.get(1).is_some_and(|pos| pos == "連体化") =>
+                {
+                    if let Some(prev) = ctx.lookbehind(1) {
+                        if super::is_person_reference(prev) {
+                            return (false, 0);
+                        }
+                    }
+                    (true, 1)
+                }
                 _ => (false, 0),
             }
         }
@@ -3324,8 +3337,14 @@ pub fn uff5e_nouchi_de() -> Vec<TokenMatcher> {
     impl Matcher for DeNoKaraMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
-                Some(token) if (token.surface == "で" || token.surface == "の" || token.surface == "から")
-                && token.pos.first().is_some_and(|pos| pos == "助詞") => (true, 1),
+                Some(token)
+                    if (token.surface == "で"
+                        || token.surface == "の"
+                        || token.surface == "から")
+                        && token.pos.first().is_some_and(|pos| pos == "助詞") =>
+                {
+                    (true, 1)
+                }
                 _ => (false, 0),
             }
         }
@@ -3334,7 +3353,7 @@ pub fn uff5e_nouchi_de() -> Vec<TokenMatcher> {
     // Pattern: Any + の + うち + optional(で/の/から)
     vec![
         any(),
-        TokenMatcher::Custom(Arc::new(NoRentaikaMatcher)),
+        TokenMatcher::Custom(Arc::new(NoRentaikaNotPersonMatcher)),
         TokenMatcher::Custom(Arc::new(UchiMatcher)),
         optional(TokenMatcher::Custom(Arc::new(DeNoKaraMatcher))),
     ]
