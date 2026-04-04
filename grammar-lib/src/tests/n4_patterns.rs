@@ -45,6 +45,14 @@ mod zutto_tests {
         assert_has_pattern(&patterns, "ずっと ①");
         assert_pattern_range(&patterns, "ずっと ①", 4, 7); // ずっと
     }
+    // False positive: よりずっと危ない is comparative (②), not continuous (①)
+    #[test]
+    fn test_zutto_not_comparative() {
+        let sentence = "あの山は見た目よりずっと危ないから、一人で登らないほうがいい";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "ずっと ①"));
+    }
 }
 
 // ========== Number + も (as many as / not even) ==========

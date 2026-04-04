@@ -382,7 +382,6 @@ pub fn surface_noun_suffix(surface_text: &'static str) -> TokenMatcher {
 // ========== Token Classification Helpers ==========
 
 /// Check if a token refers to a person (pronoun, proper noun, or relationship noun).
-/// Used to disambiguate うち (house) from grammatical うち (while/among).
 pub fn is_person_reference(token: &KagomeToken) -> bool {
     if token.pos.first().is_some_and(|p| p == "名詞") {
         // Pronouns: あなた, 私, 彼, etc.

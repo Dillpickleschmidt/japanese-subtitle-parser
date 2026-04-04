@@ -7,7 +7,12 @@ use serde::{Deserialize, Serialize};
 // PUBLIC TYPES
 // ============================================================================
 
-/// Context for pattern matching - provides access to token stream for lookahead
+/// Context for pattern matching - provides access to token stream for lookahead.
+///
+/// `lookahead(n)` and `lookbehind(n)` are sentence-break-aware for n > 1:
+/// they return None if any intermediate token (between current and target) is
+/// sentence-ending punctuation. For n == 1, they always return the adjacent
+/// token directly.
 pub struct MatchContext<'a> {
     pub tokens: &'a [KagomeToken],
     pub position: usize,
@@ -20,17 +25,39 @@ impl<'a> MatchContext<'a> {
 
     #[allow(dead_code)]
     pub fn lookahead(&self, n: usize) -> Option<&'a KagomeToken> {
+        // For n > 1, check that no intermediate token is a sentence break
+        for i in 1..n {
+            if let Some(t) = self.tokens.get(self.position + i) {
+                if is_sentence_break(t) {
+                    return None;
+                }
+            }
+        }
         self.tokens.get(self.position + n)
     }
 
     #[allow(dead_code)]
     pub fn lookbehind(&self, n: usize) -> Option<&'a KagomeToken> {
-        if self.position >= n {
-            self.tokens.get(self.position - n)
-        } else {
-            None
+        if self.position < n {
+            return None;
         }
+        // For n > 1, check that no intermediate token is a sentence break
+        for i in 1..n {
+            if let Some(t) = self.tokens.get(self.position - i) {
+                if is_sentence_break(t) {
+                    return None;
+                }
+            }
+        }
+        self.tokens.get(self.position - n)
     }
+}
+
+/// Check if a token is sentence-ending punctuation
+fn is_sentence_break(token: &KagomeToken) -> bool {
+    matches!(token.surface.as_str(), "。" | "！" | "？" | "!" | "?")
+        || (token.pos.first().is_some_and(|p| p == "記号")
+            && token.pos.get(1).is_some_and(|p| p == "句点"))
 }
 
 #[derive(Debug)]

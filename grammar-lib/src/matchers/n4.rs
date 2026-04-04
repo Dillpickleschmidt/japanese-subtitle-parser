@@ -3438,29 +3438,45 @@ pub fn igai() -> Vec<TokenMatcher> {
 
 // Pattern: ずっと ① (continuously/the whole time)
 // Structure: ずっと + Phrase
-//
-// Examples:
-// - ずっとゲームをしないで (instead of continuously gaming)
-// - ずっと立ってた (standing the whole time)
-// - からずっと寝てない (haven't slept at all since...)
-//
-// Tokenization: ずっと (副詞/一般)
+// Rejects comparative context (より/方が nearby) — that's ずっと ②
 pub fn zutto_u2460() -> Vec<TokenMatcher> {
-    // Match ずっと adverb (副詞/一般)
     #[derive(Debug)]
-    struct ZuttoMatcher;
-    impl Matcher for ZuttoMatcher {
+    struct ZuttoContinuousMatcher;
+    impl Matcher for ZuttoContinuousMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
+            if !check_token(ctx, |token| {
                 token.surface == "ずっと"
                     && token.base_form == "ずっと"
                     && token.pos.first().is_some_and(|pos| pos == "副詞")
                     && token.pos.get(1).is_some_and(|pos| pos == "一般")
             })
+            .0
+            {
+                return (false, 0);
+            }
+
+            // Reject comparative context (same signals as ずっと ②)
+            let has_yori_before =
+                (1..=3).any(|i| ctx.lookbehind(i).is_some_and(|t| t.surface == "より"));
+            let has_yori_after =
+                (1..=2).any(|i| ctx.lookahead(i).is_some_and(|t| t.surface == "より"));
+            let has_hou_ga_before = (2..=5).any(|i| {
+                ctx.lookbehind(i).is_some_and(|t| t.surface == "方")
+                    && ctx.lookbehind(i - 1).is_some_and(|t| t.surface == "が")
+            });
+            let has_wa_before = ctx
+                .lookbehind(1)
+                .is_some_and(|t| t.surface == "は" && t.pos.first().is_some_and(|p| p == "助詞"));
+
+            if has_yori_before || has_yori_after || has_hou_ga_before || has_wa_before {
+                return (false, 0);
+            }
+
+            (true, 1)
         }
     }
 
-    vec![TokenMatcher::Custom(Arc::new(ZuttoMatcher))]
+    vec![TokenMatcher::Custom(Arc::new(ZuttoContinuousMatcher))]
 }
 
 // Pattern: だいたい

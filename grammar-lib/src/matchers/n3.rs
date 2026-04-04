@@ -6221,7 +6221,6 @@ pub fn zutto_u2461() -> Vec<TokenMatcher> {
     struct ZuttoComparativeMatcher;
     impl Matcher for ZuttoComparativeMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            // First check if current token is ずっと
             if !check_token(ctx, |token| {
                 token.surface == "ずっと"
                     && token.base_form == "ずっと"
@@ -6231,27 +6230,21 @@ pub fn zutto_u2461() -> Vec<TokenMatcher> {
             {
                 return (false, 0);
             }
-            // Check for comparative context:
-            // 1. より before ずっと (within 3 tokens back)
+
+            // Check for comparative context
             let has_yori_before =
                 (1..=3).any(|i| ctx.lookbehind(i).is_some_and(|t| t.surface == "より"));
-
-            // 2. 方 + が before ずっと (within 5 tokens back)
+            let has_yori_after =
+                (1..=2).any(|i| ctx.lookahead(i).is_some_and(|t| t.surface == "より"));
             let has_hou_ga_before = (2..=5).any(|i| {
                 ctx.lookbehind(i).is_some_and(|t| t.surface == "方")
                     && ctx.lookbehind(i - 1).is_some_and(|t| t.surface == "が")
             });
-
-            // 3. より after ずっと (within 2 tokens ahead)
-            let has_yori_after =
-                (1..=2).any(|i| ctx.lookahead(i).is_some_and(|t| t.surface == "より"));
-
-            // 4. は particle immediately before ずっと (comparison topic marker)
             let has_wa_before = ctx
                 .lookbehind(1)
                 .is_some_and(|t| t.surface == "は" && t.pos.first().is_some_and(|p| p == "助詞"));
 
-            if has_yori_before || has_hou_ga_before || has_yori_after || has_wa_before {
+            if has_yori_before || has_yori_after || has_hou_ga_before || has_wa_before {
                 (true, 1)
             } else {
                 (false, 0)
