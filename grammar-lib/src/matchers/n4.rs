@@ -568,29 +568,53 @@ pub fn daga_u30fb_desuga() -> Vec<TokenMatcher> {
     vec![TokenMatcher::Custom(Arc::new(DagaDesugaCompositeMatcher))]
 }
 
-// Pattern: なくて (negative て-form)
+// Pattern: なくて (negative て-form, causal/sequential conjunction)
 // Structures: Verb/Adjective + なくて
-// Matches: Verb[未然形] + なく(助動詞) + て OR なく(形容詞) + て
+// Rejects copula negation (じゃなくて / ではなくて) — that's ではなくて・じゃなくて
 pub fn nakute() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
-    // Match なく as auxiliary or adjective (from ない)
+    // Match なく (from ない), rejecting copula negation context
     #[derive(Debug)]
-    struct NakuMatcher;
-    impl Matcher for NakuMatcher {
+    struct NakuNotCopulaMatcher;
+    impl Matcher for NakuNotCopulaMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                token.surface == "なく"
-                    && token.base_form == "ない"
-                    && (token.pos.first().is_some_and(|pos| pos == "助動詞")
-                        || token.pos.first().is_some_and(|pos| pos == "形容詞"))
-                    && token.features.get(5).is_some_and(|f| f == "連用テ接続")
-            })
+            let token = match ctx.current() {
+                Some(t) => t,
+                None => return (false, 0),
+            };
+
+            if !(token.surface == "なく"
+                && token.base_form == "ない"
+                && (token.pos.first().is_some_and(|pos| pos == "助動詞")
+                    || token.pos.first().is_some_and(|pos| pos == "形容詞"))
+                && token.features.get(5).is_some_and(|f| f == "連用テ接続"))
+            {
+                return (false, 0);
+            }
+
+            // Reject じゃなくて: じゃ(副助詞) immediately before なく
+            if ctx.lookbehind(1).is_some_and(|t| {
+                t.surface == "じゃ" && t.pos.first().is_some_and(|p| p == "助詞")
+            }) {
+                return (false, 0);
+            }
+
+            // Reject ではなくて: は(係助詞) + ��(copula or case particle) before なく
+            if ctx.lookbehind(1).is_some_and(|t| {
+                t.surface == "は" && t.pos.get(1).is_some_and(|p| p == "係助詞")
+            }) && ctx.lookbehind(2).is_some_and(|t| {
+                t.surface == "で" && t.pos.first().is_some_and(|p| p == "助動詞" || p == "助詞")
+            }) {
+                return (false, 0);
+            }
+
+            (true, 1)
         }
     }
 
     vec![
-        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        TokenMatcher::Custom(Arc::new(NakuNotCopulaMatcher)),
         surface_particle("て", "接続助詞"),
     ]
 }

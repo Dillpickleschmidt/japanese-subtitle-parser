@@ -4369,52 +4369,49 @@ mod nakute_tests {
         assert!(ranges.contains(&(22, 25)), "Should detect なくて at 22-25");
     }
 
-    // Structure: ［な］Adjective + ではなくて + Phrase (standard[2])
+    // Structure: ［な］Adjective + ではなくて — should only match ではなくて・じゃなくて, not standalone なくて
     #[test]
     fn na_adjective_dewanakute() {
         let sentence = "このスマホは便利ではなくて残念だ";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        // なくて is detected as part of ではなくて
-        assert_has_pattern(&patterns, "なくて");
-        assert_pattern_range(&patterns, "なくて", 10, 13); // なくて
-
-        // Also verify ではなくて・じゃなくて pattern is detected
+        assert!(!has_pattern(&patterns, "なくて"));
         assert_has_pattern(&patterns, "ではなくて・じゃなくて");
         assert_pattern_range(&patterns, "ではなくて・じゃなくて", 8, 13); // ではなくて
     }
 
-    // Structure: Noun + ではなくて + Phrase (standard[3])
+    // Structure: Noun + ではなくて — should only match ではなくて・じゃなくて
     #[test]
     fn noun_dewanakute() {
         let sentence = "虫歯ではなくて安心した";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        // なくて is detected as part of ではなくて
-        assert_has_pattern(&patterns, "なくて");
-        assert_pattern_range(&patterns, "なくて", 4, 7); // なくて
-
-        // Also verify ではなくて・じゃなくて pattern is detected
+        assert!(!has_pattern(&patterns, "なくて"));
         assert_has_pattern(&patterns, "ではなくて・じゃなくて");
         assert_pattern_range(&patterns, "ではなくて・じゃなくて", 2, 7); // ではなくて
     }
 
-    // Variant: じゃなくて instead of ではなくて (casual)
+    // Variant: じゃなくて — should only match ではなくて・じゃなくて
     #[test]
     fn noun_janakute_casual() {
         let sentence = "昨日は仕事じゃなくて嬉しい";
         let tokens = tokenize_sentence(sentence);
         let patterns = detect_patterns(&tokens);
 
-        // なくて is detected as part of じゃなくて
-        assert_has_pattern(&patterns, "なくて");
-        assert_pattern_range(&patterns, "なくて", 7, 10); // なくて
-
-        // Also verify ではなくて・じゃなくて pattern is detected
+        assert!(!has_pattern(&patterns, "なくて"));
         assert_has_pattern(&patterns, "ではなくて・じゃなくて");
         assert_pattern_range(&patterns, "ではなくて・じゃなくて", 5, 10); // じゃなくて
+    }
+
+    // False positive: じゃなくて is copula negation (ではなくて・じゃなくて), not standalone なくて
+    #[test]
+    fn not_janakute_copula() {
+        let sentence = "はなはいつもパソコンじゃなくて、ペンで日記を書きます";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "なくて"));
     }
 
     // Real example from data: Verb potential form negative

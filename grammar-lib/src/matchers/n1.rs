@@ -5647,36 +5647,34 @@ pub fn u301c_ni_u301c_nai() -> Vec<TokenMatcher> {
 pub fn nakushite_ha() -> Vec<TokenMatcher> {
     use std::sync::Arc;
 
-    // Matcher for なくし or なく (verb なくす or adjective ない)
+    // Matcher for なくし (handles both tokenizations):
+    //   - なく(形容詞/ない) + し(動詞/する) → 2 tokens
+    //   - なくし(動詞/なくす) as single token → 1 token (Kagome ambiguity)
     #[derive(Debug)]
-    struct NakushiNakuMatcher;
-    impl super::Matcher for NakushiNakuMatcher {
+    struct NakushiMatcher;
+    impl super::Matcher for NakushiMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
+                // Split: なく(adj ない) + し(verb する)
                 Some(token)
-                    if (token.surface == "なくし"
-                        && token.base_form == "なくす"
-                        && token.pos.first().is_some_and(|p| p == "動詞"))
-                        || (token.surface == "なく"
-                            && token.base_form == "ない"
-                            && token.pos.first().is_some_and(|p| p == "形容詞")) =>
+                    if token.surface == "なく"
+                        && token.base_form == "ない"
+                        && token.pos.first().is_some_and(|p| p == "形容詞") =>
                 {
-                    (true, 1)
+                    if let Some(next) = ctx.lookahead(1) {
+                        if next.surface == "し"
+                            && next.base_form == "する"
+                            && next.pos.first().is_some_and(|p| p == "動詞")
+                        {
+                            return (true, 2);
+                        }
+                    }
+                    (false, 0)
                 }
-                _ => (false, 0),
-            }
-        }
-    }
-
-    // Optional matcher for し (verb する in 連用形) - only for なく variant
-    #[derive(Debug)]
-    struct ShiVerbMatcher;
-    impl super::Matcher for ShiVerbMatcher {
-        fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            match ctx.current() {
+                // Single token: なくし(verb なくす) — Kagome sometimes merges these
                 Some(token)
-                    if token.surface == "し"
-                        && token.base_form == "する"
+                    if token.surface == "なくし"
+                        && token.base_form == "なくす"
                         && token.pos.first().is_some_and(|p| p == "動詞") =>
                 {
                     (true, 1)
@@ -5724,10 +5722,9 @@ pub fn nakushite_ha() -> Vec<TokenMatcher> {
 
     vec![
         any(), // Noun or こと
-        TokenMatcher::Custom(Arc::new(NakushiNakuMatcher)),
-        optional(TokenMatcher::Custom(Arc::new(ShiVerbMatcher))),
+        TokenMatcher::Custom(Arc::new(NakushiMatcher)),
         TokenMatcher::Custom(Arc::new(TeMatcher)),
-        optional(TokenMatcher::Custom(Arc::new(HaMatcher))),
+        TokenMatcher::Custom(Arc::new(HaMatcher)), // は required to distinguish from verb なくす+て
     ]
 }
 

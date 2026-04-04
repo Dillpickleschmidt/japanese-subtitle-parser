@@ -6107,6 +6107,24 @@ mod nakushiteha_tests {
         assert_has_pattern(&patterns, "なくして(は)");
         assert_pattern_range(&patterns, "なくして(は)", 10, 17); // ことなくしては
     }
+
+    // False positive: なくして from verb なくす (to lose)
+    #[test]
+    fn test_nakushiteha_not_nakusu_verb() {
+        let sentence = "借りた地図をなくしてすみませんでした";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "なくして(は)"));
+    }
+
+    // False positive: お金がなくて = て-form of ない (causal)
+    #[test]
+    fn test_nakushiteha_not_nakute_causal() {
+        let sentence = "お金がなくて、新しいコンピューターが買えません";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "なくして(は)"));
+    }
 }
 
 // ============================================================================

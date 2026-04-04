@@ -5294,16 +5294,32 @@ pub fn dehanakute_u30fb_janakute() -> Vec<TokenMatcher> {
     }
 
     // Match なく (形容詞 or 助動詞, base: ない)
+    // Rejects when followed by て+も — that's なくてもいい, not contrastive ではなくて
     #[derive(Debug)]
-    struct NakuMatcher;
-    impl super::Matcher for NakuMatcher {
+    struct NakuNotTemoMatcher;
+    impl super::Matcher for NakuNotTemoMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
-            check_token(ctx, |token| {
-                token.surface == "なく"
-                    && token.base_form == "ない"
-                    && (token.pos.first().is_some_and(|pos| pos == "形容詞")
-                        || token.pos.first().is_some_and(|pos| pos == "助動詞"))
-            })
+            match ctx.current() {
+                Some(token)
+                    if token.surface == "なく"
+                        && token.base_form == "ない"
+                        && (token.pos.first().is_some_and(|pos| pos == "形容詞")
+                            || token.pos.first().is_some_and(|pos| pos == "助動詞")) =>
+                {
+                    // Reject if followed by て + も (なくても construction)
+                    if ctx.lookahead(1).is_some_and(|t| {
+                        t.surface == "て"
+                            && t.pos.first().is_some_and(|p| p == "助詞")
+                            && t.pos.get(1).is_some_and(|p| p == "接続助詞")
+                    }) && ctx.lookahead(2).is_some_and(|t| {
+                        t.surface == "も" && t.pos.first().is_some_and(|p| p == "助詞")
+                    }) {
+                        return (false, 0);
+                    }
+                    (true, 1)
+                }
+                _ => (false, 0),
+            }
         }
     }
 
@@ -5324,7 +5340,7 @@ pub fn dehanakute_u30fb_janakute() -> Vec<TokenMatcher> {
         optional(TokenMatcher::Custom(Arc::new(NoNominalizerMatcher))),
         TokenMatcher::Custom(Arc::new(DeJaMatcher)),
         optional(TokenMatcher::Custom(Arc::new(WaParticleMatcher))),
-        TokenMatcher::Custom(Arc::new(NakuMatcher)),
+        TokenMatcher::Custom(Arc::new(NakuNotTemoMatcher)),
         optional(TokenMatcher::Custom(Arc::new(TeConjunctionMatcher))),
     ]
 }

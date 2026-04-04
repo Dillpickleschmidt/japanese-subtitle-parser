@@ -6097,6 +6097,15 @@ mod dewanakute_janakute_tests {
         assert_has_pattern(&patterns, "ではなくて・じゃなくて");
         assert_pattern_range(&patterns, "ではなくて・じゃなくて", 8, 13); // じゃなくて
     }
+
+    // False positive: じゃなくてもいい is なくてもいい applied to copula, not contrastive "not A but B"
+    #[test]
+    fn test_not_janakutemoii() {
+        let sentence = "歌が上手じゃなくてもいいよ、カラオケは楽しむためだけだから。";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "ではなくて・じゃなくて"));
+    }
 }
 
 // Pattern: そうだ (hearsay - I heard that)
