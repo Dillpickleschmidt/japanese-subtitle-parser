@@ -4722,6 +4722,15 @@ mod ni_suru_tests {
         assert_has_pattern(&patterns, "にする");
         assert_pattern_range(&patterns, "にする", 2, 8); // 緑茶にしよう
     }
+
+    // False positive: 楽しみにしている is a set phrase (to look forward to), not にする (to decide on)
+    #[test]
+    fn test_ni_suru_not_tanoshimi_ni_shiteiru() {
+        let sentence = "みんなが楽しみにしています";
+        let tokens = tokenize_sentence(sentence);
+        let patterns = detect_patterns(&tokens);
+        assert!(!has_pattern(&patterns, "にする"));
+    }
 }
 
 // ========== まえに (Before) ==========

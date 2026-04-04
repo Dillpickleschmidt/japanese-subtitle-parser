@@ -5119,11 +5119,10 @@ pub fn ni_suru() -> Vec<TokenMatcher> {
     use super::Matcher;
     use std::sync::Arc;
 
-    // Match する verb (base_form = する, conjugation type = サ変・スル)
-    // Exclude imperative forms (命令) as they belong to different patterns
+    // Match する verb, excluding imperative and progressive (にしている) forms
     #[derive(Debug)]
-    struct SuruVerbMatcher;
-    impl Matcher for SuruVerbMatcher {
+    struct SuruVerbNotProgressiveMatcher;
+    impl Matcher for SuruVerbNotProgressiveMatcher {
         fn matches(&self, ctx: &MatchContext) -> (bool, usize) {
             match ctx.current() {
                 Some(token)
@@ -5132,6 +5131,17 @@ pub fn ni_suru() -> Vec<TokenMatcher> {
                         && token.features.get(4).is_some_and(|f| f.starts_with("サ変"))
                         && !token.features.get(5).is_some_and(|f| f.contains("命令")) =>
                 {
+                    // Reject progressive にしている (e.g. 楽しみにしている)
+                    if ctx.lookahead(1).is_some_and(|t| {
+                        t.surface == "て"
+                            && t.pos.first().is_some_and(|p| p == "助詞")
+                            && t.pos.get(1).is_some_and(|p| p == "接続助詞")
+                    }) && ctx.lookahead(2).is_some_and(|t| {
+                        t.pos.first().is_some_and(|p| p == "動詞")
+                            && t.base_form == "いる"
+                    }) {
+                        return (false, 0);
+                    }
                     (true, 1)
                 }
                 _ => (false, 0),
@@ -5142,7 +5152,7 @@ pub fn ni_suru() -> Vec<TokenMatcher> {
     vec![
         super::noun(),
         super::surface_particle("に", "格助詞"),
-        TokenMatcher::Custom(Arc::new(SuruVerbMatcher)),
+        TokenMatcher::Custom(Arc::new(SuruVerbNotProgressiveMatcher)),
     ]
 }
 
